@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterStateSnapshot } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject, defer } from 'rxjs';
+import { Observable, Subject, defer } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
@@ -23,6 +23,7 @@ import { ResourcesViewerComponent } from './resources-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../resources.utils';
+import { RatingService } from '../../shared/forms/rating.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -79,6 +80,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
 
+  promptedForRating = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -87,7 +90,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private ratingService: RatingService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -100,6 +104,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
+        this.promptedForRating = false;
         this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
@@ -180,5 +185,24 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  canDeactivate(
+    currentRoute?: ActivatedRouteSnapshot,
+    currentState?: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    const nextUrl = nextState?.url || '';
+    if (
+      this.promptedForRating ||
+      !this.resource?._id ||
+      this.canManage ||
+      nextUrl.includes('/update') ||
+      nextUrl.includes('/add')
+    ) {
+      return true;
+    }
+    this.promptedForRating = true;
+    return this.ratingService.promptRating(this.resource, 'resource', this.parent);
   }
 }

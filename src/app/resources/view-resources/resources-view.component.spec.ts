@@ -14,6 +14,7 @@ import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DeviceInfoService } from '../../shared/device-info.service';
+import { RatingService } from '../../shared/forms/rating.service';
 
 describe('ResourcesViewComponent', () => {
 
@@ -22,6 +23,10 @@ describe('ResourcesViewComponent', () => {
   let statusElement;
   let testimage;
   let de;
+
+  const ratingServiceMock = {
+    promptRating: vi.fn().mockReturnValue(of(true))
+  };
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
@@ -50,6 +55,7 @@ describe('ResourcesViewComponent', () => {
   };
 
   beforeEach(() => {
+    ratingServiceMock.promptRating.mockReturnValue(of(true));
     resourcesServiceMock.resourcesListener.mockReturnValue(of([]));
     TestBed.configureTestingModule({
       imports: [ ResourcesViewComponent, MatIconTestingModule ],
@@ -59,6 +65,7 @@ describe('ResourcesViewComponent', () => {
         { provide: StateService, useValue: stateServiceMock },
         { provide: UserService, useValue: userServiceMock },
         { provide: ResourcesService, useValue: resourcesServiceMock },
+        { provide: RatingService, useValue: ratingServiceMock },
         PlanetMessageService,
         DeviceInfoService,
         { provide: CouchService, useValue: couchServiceMock },
@@ -120,6 +127,34 @@ describe('ResourcesViewComponent', () => {
 
     expect(component.downloadFileSize).toBe('2.4 MB');
     expect(component.formattedFileSize).toBe('');
+  });
+
+  it('delegates to ratingService.promptRating on canDeactivate', () => {
+    component.resource = { _id: 'r-1' };
+    component.canManage = false;
+    component.promptedForRating = false;
+
+    const result = component.canDeactivate();
+    (result as Observable<boolean>).subscribe(val => expect(val).toBe(true));
+
+    expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource', component.parent);
+    expect(component.promptedForRating).toBe(true);
+  });
+
+  it('skips promptRating when navigating to edit/update or if already prompted', () => {
+    component.resource = { _id: 'r-1' };
+    component.canManage = false;
+    component.promptedForRating = false;
+    ratingServiceMock.promptRating.mockClear();
+
+    const editResult = component.canDeactivate(undefined, undefined, { url: '/resources/update/r-1' } as any);
+    expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
+    expect(editResult).toBe(true);
+
+    component.promptedForRating = true;
+    const promptedResult = component.canDeactivate();
+    expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
+    expect(promptedResult).toBe(true);
   });
 
 

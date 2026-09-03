@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterStateSnapshot } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject, defer } from 'rxjs';
+import { Observable, Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { RatingService } from '../../shared/forms/rating.service';
 import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -74,6 +75,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
+  promptedForRating = false;
   constructor(
     private router: Router,
     private userService: UserService,
@@ -82,7 +84,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private ratingService: RatingService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -115,6 +118,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     }, () => this.isLoading = false);
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
+      this.promptedForRating = false;
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
     });
   }
@@ -251,6 +255,29 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  canDeactivate(
+    currentRoute?: ActivatedRouteSnapshot,
+    currentState?: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    const nextUrl = nextState?.url || '';
+    if (
+      this.promptedForRating ||
+      !this.courseDetail?._id ||
+      this.canManage ||
+      nextUrl.includes('/update') ||
+      nextUrl.includes('/step/') ||
+      nextUrl.includes('/exam') ||
+      nextUrl.includes('/survey') ||
+      nextUrl.includes('/progress/') ||
+      nextUrl.includes('/enrolled/')
+    ) {
+      return true;
+    }
+    this.promptedForRating = true;
+    return this.ratingService.promptRating(this.courseDetail, 'course', this.parent);
   }
 
 }
