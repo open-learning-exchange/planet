@@ -7,7 +7,7 @@ import {
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
 } from '@angular/material/dialog';
-import { TagsService } from './tags.service';
+import { TAG_IN_USE_ERROR, TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
@@ -269,6 +269,20 @@ export class PlanetTagInputDialogComponent {
       .map((t: any) => ({ name: t.name, value: t._id || t.name }));
   }
 
+  isDeleteDisabled(tag: any) {
+    return this.deleteDisabledReason(tag) !== '';
+  }
+
+  deleteDisabledReason(tag: any) {
+    if ((tag.subTags || []).length > 0) {
+      return $localize`You may only delete a collection with no subcollections`;
+    }
+    if (tag.count > 0) {
+      return $localize`You may only delete a collection which is not used by any item`;
+    }
+    return '';
+  }
+
   deleteTag(event, tag) {
     event.stopPropagation();
     const amount = 'single';
@@ -294,7 +308,9 @@ export class PlanetTagInputDialogComponent {
         this.planetMessageService.showMessage($localize`Collection deleted: ${tag.name}`);
         this.resetValidationAndCheck(this.addTagForm);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this collection.`)
+      onError: (error) => this.planetMessageService.showAlert(error?.message === TAG_IN_USE_ERROR ?
+        $localize`You may only delete a collection which is not used by any item` :
+        $localize`There was a problem deleting this collection.`)
     };
   }
 
