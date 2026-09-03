@@ -236,8 +236,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     }
     const currentProvider = this.chatService.getChatAIProvider();
     this.chatService.setSelectedConversationId({
-      '_id': conversation?._id,
-      '_rev': conversation?._rev
+      _id: conversation?._id,
+      _rev: conversation?._rev
     });
     this.onConversationRender(index);
   }
@@ -261,7 +261,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   recordSearch(complete = false) {
     this.searchService.recordSearch({
       type: this.dbName,
-      filter: { 'title': this.titleSearch }
+      filter: { title: this.titleSearch }
     }, complete);
   }
 

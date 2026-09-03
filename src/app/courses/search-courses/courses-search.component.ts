@@ -89,9 +89,9 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   trackByFn = trackByCategory;
 
   categories = [
-    { 'label': 'languageOfInstruction', 'options': languages },
-    { 'label': 'gradeLevel', 'options': constants.gradeLevels },
-    { 'label': 'subjectLevel', 'options': constants.subjectLevels },
+    { label: 'languageOfInstruction', options: languages },
+    { label: 'gradeLevel', options: constants.gradeLevels },
+    { label: 'subjectLevel', options: constants.subjectLevels },
   ];
 
   searchLists = [];
@@ -102,9 +102,7 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.searchLists = this.categories.reduce((lists, category) => {
-      return lists.concat(this.createSearchList(category, this.filteredData));
-    }, []);
+    this.searchLists = this.categories.reduce((lists, category) => lists.concat(this.createSearchList(category, this.filteredData)), []);
   }
 
   reset({ startingSelection = {}, isInit = false } = {}) {

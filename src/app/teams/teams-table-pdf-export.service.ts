@@ -129,19 +129,17 @@ export class TeamsTablePdfExportService {
     currencyCode?: string,
     currencySymbol?: string
   ) {
-    return data.map(row => {
-      return Object.entries(row).reduce(
-        (object, [ key, value ]: [ string, any ]) => {
-          const formattedKey = markdownToPlainText(key);
-          const formatter = columnFormatters[formattedKey];
-          const formattedValue = moneyColumns.includes(formattedKey) ?
-            this.formatCurrency(value, currencyCode, currencySymbol) :
-            formatter ? formatter(value, row) : value;
-          return { ...object, [formattedKey]: this.formatValue(formattedValue) };
-        },
-        {}
-      );
-    });
+    return data.map(row => Object.entries(row).reduce(
+      (object, [ key, value ]: [ string, any ]) => {
+        const formattedKey = markdownToPlainText(key);
+        const formatter = columnFormatters[formattedKey];
+        const formattedValue = moneyColumns.includes(formattedKey) ?
+          this.formatCurrency(value, currencyCode, currencySymbol) :
+          formatter ? formatter(value, row) : value;
+        return { ...object, [formattedKey]: this.formatValue(formattedValue) };
+      },
+      {}
+    ));
   }
 
   private formatValue(value: any) {

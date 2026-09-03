@@ -246,9 +246,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setupList(resourcesRes, myLibrarys) {
     return resourcesRes.map((resource: any) => {
-      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
-        return resource._id === resourceId;
-      });
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => resource._id === resourceId);
       resource.canManage = this.currentUser.isUserAdmin ||
         (resource.doc.addedBy === this.currentUser.name && resource.doc.sourcePlanet === this.planetConfiguration.code);
       const downloadFilename = resourceAttachmentFilename(resource.doc);
@@ -481,7 +479,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogGuard.open('send-resource', () =>
-      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { registrationRequest: 'accepted' }).pipe(
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendResource().bind(this),
