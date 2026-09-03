@@ -34,7 +34,7 @@
     "@types/textract": "^2.4.5",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
-    "express": "^4.18.2",
+    "express": "^5.2.1",
     "nano": "^10.1.2",
     "openai": "^4.28.0",
     "textract": "^2.5.0",
