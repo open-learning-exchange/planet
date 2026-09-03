@@ -2,6 +2,37 @@
 @use 'app/mixins' as m;
 @use 'planet-mat-theme';
 
+// Vertical chrome budget for full-height views, and the toolbar row height it is built
+// from. A shorter viewport gets a smaller budget instead of paying the desktop one: a
+// landscape phone is only ~360px tall, so a fixed desktop reserve leaves almost nothing
+// for content. See $chrome-height in _variables.scss for the derivation.
+:root {
+  --planet-chrome: #{v.$chrome-height};
+  --planet-toolbar-row: #{v.$toolbar-row};
+}
+
+@media (max-width: v.$screen-compact) {
+  :root {
+    --planet-chrome: #{v.$chrome-height-compact};
+    --planet-toolbar-row: #{v.$toolbar-row-compact};
+  }
+}
+
+// Last, so a viewport that is both narrow and short (landscape phone) lands here.
+@media (max-height: v.$screen-short) {
+  :root {
+    --planet-chrome: #{v.$chrome-height-short};
+    --planet-toolbar-row: #{v.$toolbar-row-short};
+  }
+
+  // Shrink the app header and every page toolbar row to match the budget above.
+  .mat-toolbar,
+  .mat-toolbar-row {
+    --mat-toolbar-standard-height: #{v.$toolbar-row-short};
+    --mat-toolbar-mobile-height: #{v.$toolbar-row-short};
+  }
+}
+
 body {
   font-family: v.$font-family;
   margin: 0;
@@ -425,11 +456,12 @@ body {
     padding: 1rem;
   }
 
-  // Style to make the view-container fill the available screen space
-  // 352px = 5 * 64px toolbars + 32px of padding
+  // Style to make the view-container fill the available screen space.
+  // The reserve comes from --planet-chrome, so it tracks the current breakpoint's toolbar
+  // height instead of always charging desktop rates.
   // Overflow must be set on children
   .view-container.view-full-height {
-    height: v.$view-container-height;
+    @include m.full-height;
     overflow-y: auto;
     box-sizing: border-box;
 
@@ -645,7 +677,7 @@ body {
   }
 
   .view-container.view-full-height.no-toolbar {
-    height: v.$view-container-height-no-toolbar;
+    @include m.full-height-no-toolbar;
   }
 
   // Width of a form with 3 standard matInputs (180px + 10px of padding)

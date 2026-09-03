@@ -1,5 +1,29 @@
 @use './variables' as v;
 
+// Height of a container filling the screen below the app chrome. Two declarations by
+// design: the vh line is the fallback for WebViews without dynamic viewport units, and
+// the dvh line keeps mobile browsers from hiding the bottom behind a collapsing URL bar.
+@mixin full-height($subtract: 0) {
+  @if $subtract == 0 {
+    height: v.$view-container-height;
+    height: v.$view-container-height-dynamic;
+  } @else {
+    height: calc(#{v.$view-container-height} - #{$subtract});
+    height: calc(#{v.$view-container-height-dynamic} - #{$subtract});
+  }
+}
+
+// Same, for a view that renders no page toolbar of its own.
+@mixin full-height-no-toolbar($subtract: 0) {
+  @if $subtract == 0 {
+    height: v.$view-container-height-no-toolbar;
+    height: v.$view-container-height-dynamic-no-toolbar;
+  } @else {
+    height: calc(#{v.$view-container-height-no-toolbar} - #{$subtract});
+    height: calc(#{v.$view-container-height-dynamic-no-toolbar} - #{$subtract});
+  }
+}
+
 @mixin left-right-grid-areas {
   .left-tile {
     grid-area: lt;
@@ -129,6 +153,6 @@
   }
 
   .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{v.$search-filters-height});
+    @include full-height(v.$search-filters-height);
   }
 }

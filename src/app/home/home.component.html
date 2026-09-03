@@ -145,12 +145,12 @@
 }
 
 <mat-sidenav-container class="main-content" #content>
-  @if (!isMobile && (layout === 'modern' || forceModern)) {
+  @if (!usesOverlayNav && (layout === 'modern' || forceModern)) {
     <mat-sidenav #sidenav mode="side" class="primary-color nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
       <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
     </mat-sidenav>
   }
-  @if (isMobile && (layout === 'modern' || forceModern)) {
+  @if (usesOverlayNav && (layout === 'modern' || forceModern)) {
     <mat-sidenav #mobileSidenav mode="over" class="primary-color nav-shadow">
       <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
     </mat-sidenav>

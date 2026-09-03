@@ -80,6 +80,10 @@ $font-family: Roboto, sans-serif;
 $screen-md: 1000px;
 $screen-sm: 780px;
 $screen-xs: 480px;
+// Width at which Material drops toolbar rows to their mobile height
+$screen-compact: 599px;
+// Viewport heights where desktop chrome swallows the screen (landscape phones)
+$screen-short: 500px;
 
 @mixin screen-sizes($md: 1000px, $sm: 780px, $xs: 480px) {
   --screen-md: #{$md};
@@ -87,9 +91,35 @@ $screen-xs: 480px;
   --screen-xs: #{$xs};
 }
 
-// Maximum full height of view container (avoiding vertical overflow)
-$view-container-height: calc(100vh - 216px);
-$view-container-height-no-toolbar: calc(#{$view-container-height} + 64px);
+// Material toolbar row height at each breakpoint. Published as --planet-toolbar-row so a
+// view can add a row back without re-deriving the current height.
+$toolbar-row: 64px;
+$toolbar-row-compact: 56px;
+$toolbar-row-short: 48px;
+
+// Vertical chrome reserved above a full-height view: the app header, the page's toolbar
+// rows, and the view container's own padding. Budgeted as three toolbar rows plus 24px, so
+// a shorter breakpoint pays its smaller row height rather than the desktop one. The desktop
+// total stays at the 216px this used to be hardcoded to, leaving desktop layouts untouched.
+$chrome-rows: 3;
+$chrome-padding: 24px;
+
+@function chrome-height($row) {
+  @return $chrome-rows * $row + $chrome-padding;
+}
+
+$chrome-height: chrome-height($toolbar-row); // 216px
+$chrome-height-compact: chrome-height($toolbar-row-compact); // 192px
+$chrome-height-short: chrome-height($toolbar-row-short); // 168px
+
+// Maximum full height of view container (avoiding vertical overflow).
+// Prefer the full-height mixins in _mixins.scss, which also emit a dvh declaration so
+// mobile browsers don't hide the bottom of a view behind a collapsing URL bar.
+$chrome: var(--planet-chrome, #{$chrome-height});
+$view-container-height: calc(100vh - #{$chrome});
+$view-container-height-dynamic: calc(100dvh - #{$chrome});
+$view-container-height-no-toolbar: calc(#{$view-container-height} + var(--planet-toolbar-row, #{$toolbar-row}));
+$view-container-height-dynamic-no-toolbar: calc(#{$view-container-height-dynamic} + var(--planet-toolbar-row, #{$toolbar-row}));
 $search-filters-height: 25vh;
 // Height of dashboard
 $dashboard-height: calc(100vh - 128px);

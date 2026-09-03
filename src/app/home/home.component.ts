@@ -73,6 +73,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   deviceType: DeviceType;
   isAndroid: boolean;
   isMobile: boolean;
+  isShortViewport: boolean;
   showBanner = true;
   readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
@@ -89,6 +90,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
+
+  // A landscape phone is wide enough to read as a tablet but far too short for a pinned
+  // sidenav and a full-height header, so both dimensions decide the compact layout.
+  get usesOverlayNav(): boolean {
+    return this.isMobile || this.isShortViewport;
+  }
 
   get notificationsLabel(): string {
     return $localize`Notifications: ${this.notifications.length}:count:`;
@@ -116,6 +123,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       this.deviceType = deviceType;
       this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
     });
+    this.deviceInfoService.watchShortViewport().pipe(takeUntil(this.onDestroy$)).subscribe((isShortViewport) => {
+      this.isShortViewport = isShortViewport;
+    });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
 
@@ -141,7 +151,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       ),
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
-      if (this.isMobile) {
+      if (this.usesOverlayNav) {
         this.mobileSidenav?.close();
       }
     });
@@ -176,9 +186,11 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   syncToolbarLayout() {
-    const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
-    if (this.forceModern !== isScreenTooNarrow) {
-      this.forceModern = isScreenTooNarrow;
+    // Classic's inline nav links also have to go on a short viewport, where the row they
+    // sit in costs a fifth of the screen.
+    const needsModern = window.innerWidth < this.classicToolbarWidth || this.isShortViewport;
+    if (this.forceModern !== needsModern) {
+      this.forceModern = needsModern;
     }
   }
 
@@ -276,7 +288,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   toggleNav() {
-    if (this.isMobile) {
+    if (this.usesOverlayNav) {
       this.mobileSidenav?.toggle();
       return;
     }

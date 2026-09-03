@@ -28,11 +28,17 @@ export const DEFAULT_DEVICE_BREAKPOINTS: Required<DeviceBreakpoints> = {
   smallMobile: 480
 };
 
+// DeviceType is a width taxonomy, so it reads a landscape phone (~800x360) as a tablet and
+// hands it desktop-height chrome. Short viewports are tracked separately: any viewport this
+// short cannot afford stacked toolbars, whatever its width.
+export const DEFAULT_SHORT_VIEWPORT_HEIGHT = 500;
+
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceInfoService {
   private readonly deviceTypeCache = new Map<string, Observable<DeviceType>>();
+  private readonly shortViewportCache = new Map<number, Observable<boolean>>();
 
   constructor(private breakpointObserver: BreakpointObserver) {}
 
@@ -73,6 +79,27 @@ export class DeviceInfoService {
     return deviceType$;
   }
 
+  public isShortViewport(height: number = DEFAULT_SHORT_VIEWPORT_HEIGHT): boolean {
+    return this.breakpointObserver.isMatched(this.maxHeightQuery(height));
+  }
+
+  public watchShortViewport(height: number = DEFAULT_SHORT_VIEWPORT_HEIGHT): Observable<boolean> {
+    const existingStream = this.shortViewportCache.get(height);
+
+    if (existingStream) {
+      return existingStream;
+    }
+
+    const isShortViewport$ = this.breakpointObserver.observe(this.maxHeightQuery(height)).pipe(
+      map(({ matches }) => matches),
+      distinctUntilChanged(),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+
+    this.shortViewportCache.set(height, isShortViewport$);
+    return isShortViewport$;
+  }
+
   public isAndroid(): boolean {
     return /Android/i.test(navigator.userAgent);
   }
@@ -86,6 +113,10 @@ export class DeviceInfoService {
 
   private maxWidthQuery(width: number): string {
     return `(max-width: ${width}px)`;
+  }
+
+  private maxHeightQuery(height: number): string {
+    return `(max-height: ${height}px)`;
   }
 
   private getCacheKey(breakpoints: Required<DeviceBreakpoints>): string {

@@ -7,6 +7,7 @@
   grid-template-rows: 64px 1fr;
   grid-template-areas: "header" "main";
   height: 100vh;
+  height: 100dvh;
 
   @keyframes pulsate {
     100% { transform: scale(1.1) }
@@ -114,7 +115,15 @@
 // Top toolbar is smaller on small screens
 @media (max-width: 600px) {
   :host {
-    grid-template-rows: 56px 1fr;
+    grid-template-rows: v.$toolbar-row-compact 1fr;
+  }
+}
+
+// Landscape phones: match the shorter toolbar row styles.scss sets at this height, so the
+// header stops charging a full desktop row against a ~360px tall screen.
+@media (max-height: v.$screen-short) {
+  :host {
+    grid-template-rows: v.$toolbar-row-short 1fr;
   }
 }
 
@@ -204,6 +213,23 @@
   .bottom-nav {
     grid-area: btm;
     margin-bottom: 16px;
+  }
+
+  // A landscape phone can't fit every nav item, and the lists above clip what overflows.
+  // Drop the spacer row and let the nav scroll so all of it stays reachable.
+  @media (max-height: v.$screen-short) {
+    grid-template-rows: auto auto;
+    grid-template-areas: "tp" "btm";
+    height: auto;
+    min-height: 100%;
+
+    .top-nav, .bottom-nav {
+      overflow: visible;
+    }
+
+    .bottom-nav {
+      margin-bottom: 0;
+    }
   }
 
 }
