@@ -171,6 +171,13 @@ export class DialogsFormComponent {
     this.passwordVisibility.set(fieldName, !visibility);
   }
 
+  clearRating(fieldName: string) {
+    const control = this.modalForm.controls[fieldName];
+    control.setValue(0);
+    control.markAsDirty();
+    control.markAsTouched();
+  }
+
   openDialog(field: DialogField) {
     const control = this.modalForm.controls[field.name];
     const currentValue = control.value as Array<{ _id: string }> | null;
