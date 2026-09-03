@@ -90,10 +90,11 @@
   </mat-form-field>
 </ng-template>
 <ng-template #planetToggleGroup>
-  <mat-button-toggle-group class="font-size-1 margin-lr-5" (change)="onFilterChange($event.value)" #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>Planet</mat-button-toggle>
-    <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>myPlanet</mat-button-toggle>
-    <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>Both</mat-button-toggle>
+  <mat-button-toggle-group class="font-size-1 margin-lr-5 app-source-toggle" (change)="onFilterChange($event.value)" #filterGroup="matButtonToggleGroup">
+    @for (source of appSources; track source.value) {
+      <mat-button-toggle [value]="source.value" [checked]="this.filter.app === source.value">{{source.label}}</mat-button-toggle>
+    }
+    <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>All</mat-button-toggle>
   </mat-button-toggle-group>
 </ng-template>
 <ng-template #clearBtn>

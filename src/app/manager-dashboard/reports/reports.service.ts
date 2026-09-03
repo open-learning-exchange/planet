@@ -13,7 +13,6 @@ import { CoursesService } from '../../courses/courses.service';
 interface ActivityRequestObject {
   planetCode?: string;
   tillDate?: number;
-  fromMyPlanet?: boolean;
   filterAdmin?: boolean;
 }
 
@@ -89,12 +88,11 @@ export class ReportsService {
     );
   }
 
-  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', fromMyPlanet }: any = { field: 'createdOn' }) {
+  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time' }: any = { field: 'createdOn' }) {
     return planetCode ?
       findDocuments({
         ...{ [field]: planetCode },
-        ...this.timeFilter(dateField, tillDate),
-        ...(fromMyPlanet !== undefined ? { androidId: { $exists: fromMyPlanet } } : {})
+        ...this.timeFilter(dateField, tillDate)
       }) :
       undefined;
   }
@@ -128,10 +126,10 @@ export class ReportsService {
 
   getAllActivities(
     db: 'login_activities' | 'resource_activities' | 'course_activities',
-    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
+    { planetCode, tillDate, filterAdmin }: ActivityRequestObject = {}
   ) {
     const dateField = db === 'login_activities' ? 'loginTime' : 'time';
-    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
+    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField }))
       .pipe(map((activities: any) => this.filterAdmin(activities, filterAdmin)));
   }
 
@@ -143,8 +141,8 @@ export class ReportsService {
     });
   }
 
-  getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet })).pipe(
+  getRatingInfo({ planetCode, tillDate, filterAdmin }: ActivityRequestObject = {}) {
+    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time' })).pipe(
       map((ratings: any) => this.filterAdmin(ratings, filterAdmin)));
   }
 
