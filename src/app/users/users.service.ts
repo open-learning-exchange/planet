@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Subject, combineLatest, of, throwError } from 'rxjs';
+import { forkJoin, ReplaySubject, combineLatest, of, throwError } from 'rxjs';
 import { switchMap, map, catchError, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
@@ -17,7 +17,7 @@ export class UsersService {
 
   private dbName = '_users';
   private adminConfig = '_node/nonode@nohost/_config/admins/';
-  usersUpdated = new Subject<any>();
+  usersUpdated = new ReplaySubject<any[]>(1);
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   data: { users: any[], loginActivities: any[], childUsers: any[], parentUsers: any[] } = {
     users: [], loginActivities: [], childUsers: [], parentUsers: []
@@ -41,19 +41,27 @@ export class UsersService {
     ]).pipe(
       switchMap(([ childUsers, parentUsers ]) => {
         const childLocal = checkIfLocal(childUsers);
-        return !childLocal ? of([ [], { rows: [] } ]) : forkJoin([
-          this.couchService.findAll(this.dbName),
-          this.couchService.get('login_activities/_design/login_activities/_view/byUser?group=true'),
+        return !childLocal ? of([ [], { rows: [] }, [], [] ]) : forkJoin([
+          this.couchService.findAll(this.dbName).pipe(catchError(() => of([]))),
+          this.couchService.get('login_activities/_design/login_activities/_view/byUser?group=true')
+            .pipe(catchError(() => of({ rows: [] }))),
           of(dataToUse(this.data.childUsers, childUsers, childLocal)),
           of(parentUsers.newData)
-        ]);
+        ]).pipe(catchError(() => of([
+          [], { rows: [] }, dataToUse(this.data.childUsers, childUsers, childLocal), parentUsers.newData
+        ])));
       })
     ).subscribe(
-      ([ users, { rows: loginActivities }, childUsers, parentUsers ]: [ any[], { rows: any[] }, any[], any[] ]) => {
+      ([ users, { rows: loginActivities } = { rows: [] }, childUsers, parentUsers ]: [ any[], { rows: any[] }, any[], any[] ]) => {
         if (childUsers === undefined) {
           return;
         }
-        this.data = { users, loginActivities, childUsers, parentUsers };
+        this.data = {
+          users: users || [],
+          loginActivities: loginActivities || [],
+          childUsers: childUsers || [],
+          parentUsers: parentUsers || []
+        };
         this.updateUsers();
       }
     );

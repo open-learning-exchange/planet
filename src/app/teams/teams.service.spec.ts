@@ -513,4 +513,14 @@ describe('TeamsService membership writes', () => {
     expect(next).toHaveBeenCalled();
     expect(error).not.toHaveBeenCalled();
   });
+
+  it('enriches team members without hanging on usersListener', () => {
+    const usersService = { requestUserData: vi.fn(), usersListener: () => of([]) };
+    const couchService = { findAll: (db: string) => of(db === 'teams' ? [ { _id: 'm1', userId: 'u1' } ] : []) };
+    const service = new TeamsService(couchService as any, {} as any, {} as any, usersService as any, {} as any, {} as any);
+    let result: any[];
+    service.getTeamMembers({ _id: 't1' } as any, true).subscribe(m => result = m);
+    expect(result).toHaveLength(1);
+  });
 });
+

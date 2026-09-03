@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of, empty, forkJoin, throwError } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
+import { switchMap, map, take, timeout, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -344,15 +344,19 @@ export class TeamsService {
     };
     this.usersService.requestUserData();
     return forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selector)),
-      this.couchService.findAll('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0)),
-      this.usersService.usersListener(true).pipe(take(1)),
-      this.couchService.findAll('attachments')
+      this.couchService.findAll(this.dbName, findDocuments(selector)).pipe(catchError(() => of([]))),
+      this.couchService.findAll('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0)).pipe(catchError(() => of([]))),
+      this.usersService.usersListener(true).pipe(
+        take(1),
+        timeout(3000),
+        catchError(() => of([]))
+      ),
+      this.couchService.findAll('attachments').pipe(catchError(() => of([])))
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
       ...membershipDocs.map(doc => ({
         ...doc,
-        userDoc: users.find(user => (user.doc.couchId || user._id) === doc.userId && user.doc.planetCode === doc.userPlanetCode),
-        attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
+        userDoc: (users || []).find(user => (user.doc?.couchId || user._id) === doc.userId && user.doc?.planetCode === doc.userPlanetCode),
+        attachmentDoc: (attachments || []).find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));

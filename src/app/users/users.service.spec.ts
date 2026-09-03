@@ -76,4 +76,15 @@ describe('UsersService notifications', () => {
       undefined
     );
   });
+
+  it('replays user snapshots to late subscribers', () => {
+    const userSvc = { get: () => ({ name: 'a' }) };
+    const service = new UsersService({} as any, userSvc as any, { couchStateListener: () => NEVER } as any, {} as any, {} as any);
+    service.data.users = [ { _id: 'u1', name: 'u1' } ];
+    service.updateUsers();
+    let users: any[];
+    service.usersListener(true).subscribe(res => users = res);
+    expect(users).toHaveLength(1);
+  });
 });
+
