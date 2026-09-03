@@ -93,9 +93,14 @@
         <planet-loading-spinner text="Loading messages..." i18n-text></planet-loading-spinner>
       }
       @if (!newsLoading) {
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [customLabels]="customVoiceLabels" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
           @if (isRoot) {
             <button mat-stroked-button (click)="openAddMessageDialog()" i18n>New message</button>
+            @if (canManageLabels) {
+              <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+                <mat-icon>label</mat-icon>
+              </button>
+            }
           }
           @if (news?.length === 0) {
             <p i18n>No messages available.</p>
@@ -137,34 +142,22 @@
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
-        <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length + requests.length}})
+        <span [matBadge]="requests.length" [matBadgeHidden]="requests.length === 0 || userStatus !== 'member'" matBadgeColor="accent" matBadgeOverlap="false" [matBadgeDescription]="requestBadgeDescription">
+          <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
+        </span>
       </ng-template>
       @if (!teamDataLoading && requests.length > 0) {
         <div class="join-requests-section" style="margin-top: 32px;">
           <h4 i18n>{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} } ({{requests.length}})</h4>
           <div class="card-grid member-cards">
             @for (request of requests; track request) {
-              <mat-card>
-                <mat-card-header>
-                  <img mat-card-avatar [src]="request.avatar" alt="" class="cursor-pointer" (click)="openMemberDialog(request, $event)">
-                  <a mat-card-title tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openMemberDialog(request, $event)" (keydown.space)="openMemberDialog(request, $event)" (click)="openMemberDialog(request, $event)">
-                    {{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name | truncateText:20}}
-                  </a>
-                  <mat-card-subtitle>
-                    @if (request.userPlanetCode !== planetCode) {
-                      <p class="primary-text-color">
-                        <ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}
-                      </p>
-                    }
-                  </mat-card-subtitle>
-                </mat-card-header>
-                @if (userStatus === 'member') {
-                  <mat-card-actions>
-                    <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
-                    <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)">Reject</button>
-                  </mat-card-actions>
-                }
-              </mat-card>
+              <planet-teams-member
+                [member]="request"
+                [isRequest]="true"
+                [canManageRequests]="userStatus === 'member'"
+                [disableAccept]="disableAddingMembers"
+                (requestAction)="changeMembership($event, request)">
+              </planet-teams-member>
             }
           </div>
         </div>
@@ -179,20 +172,18 @@
           <h4 i18n>Members ({{members.length}})</h4>
           <div class="card-grid member-cards">
             @for (member of members; track member) {
-              <mat-card>
-                <planet-teams-member
-                  [member]="member"
-                  [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
-                  [actionMenu]="[]
-                    .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
-                    .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
-                    .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
-                  [visits]="visits[member?.name]"
-                  [userStatus]="userStatus"
-                  [teamLeader]="leader"
-                  (actionClick)="memberActionClick($event)">
-                </planet-teams-member>
-              </mat-card>
+              <planet-teams-member
+                [member]="member"
+                [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
+                [actionMenu]="[]
+                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
+                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
+                [visits]="visits[member?.name]"
+                [userStatus]="userStatus"
+                [teamLeader]="leader"
+                (actionClick)="memberActionClick($event)">
+              </planet-teams-member>
             }
           </div>
         }
@@ -201,7 +192,7 @@
     @if (team?.public === true || userStatus === 'member') {
       <mat-tab #taskTab>
         <ng-template mat-tab-label>
-          <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" i18n>Tasks</span></ng-container>
+          <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" [matBadgeDescription]="taskBadgeDescription" i18n>Tasks</span></ng-container>
         </ng-template>
         @if (taskCount === 0) {
           <p i18n>There are currently no tasks assigned to this { mode, select, team {team} enterprise {enterprise} }.</p>
@@ -213,7 +204,7 @@
           <ng-container i18n>Calendar</ng-container>
         </ng-template>
         @if (calendarTab.isActive) {
-          <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         }
       </mat-tab>
       @if (mode!=='team') {
@@ -276,7 +267,7 @@
                   </button>
                 }
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'document' })">
+                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: mode === 'team' ? 'resource' : 'document' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>

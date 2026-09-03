@@ -51,6 +51,7 @@ describe('ResourcesViewComponent', () => {
   };
 
   beforeEach(() => {
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([]));
     TestBed.configureTestingModule({
       imports: [ ResourcesViewComponent, MatIconTestingModule ],
       providers: [
@@ -97,6 +98,42 @@ describe('ResourcesViewComponent', () => {
 
     expect(copySpy).toHaveBeenCalledWith(`${window.location.origin}/resources/view/test-resource-id`);
     expect(showMessageSpy).toHaveBeenCalledWith('Resource link copied to clipboard');
+  });
+
+  it('shows the selected attachment size and the total only for bundles', () => {
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ {
+      _id: 'id',
+      doc: {
+        addedBy: 'user',
+        sourcePlanet: 'planet_code',
+        openWhichFile: 'index.html',
+        _attachments: {
+          'index.html': { length: 50000 },
+          'style.css': { length: 100000 }
+        }
+      }
+    } ]));
+
+    component.ngOnInit();
+
+    expect(component.downloadFileSize).toBe('48.8 KB');
+    expect(component.formattedFileSize).toBe('146.5 KB');
+  });
+
+  it('omits the redundant total for a single attachment', () => {
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ {
+      _id: 'id',
+      doc: {
+        addedBy: 'user',
+        sourcePlanet: 'planet_code',
+        _attachments: { 'manual.pdf': { length: 2516582 } }
+      }
+    } ]));
+
+    component.ngOnInit();
+
+    expect(component.downloadFileSize).toBe('2.4 MB');
+    expect(component.formattedFileSize).toBe('');
   });
 
 

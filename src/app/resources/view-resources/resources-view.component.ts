@@ -24,6 +24,7 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
 import { ResourcesViewerComponent } from './resources-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../resources.utils';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -57,6 +58,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   mediaType = '';
   resourceSrc = '';
+  formattedFileSize = '';
+  downloadFileSize = '';
   pdfSrc: any;
   contentType = '';
   isUserEnrolled = false;
@@ -112,8 +115,13 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           }
           this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
           this.router.navigate([ '/resources' ]);
+          this.isLoading = false;
+          return;
         }
         this.isLoading = false;
+        const attachmentCount = Object.keys(this.resource.doc?._attachments || {}).length;
+        this.formattedFileSize = attachmentCount > 1 ? formatResourceAttachmentsSize(this.resource.doc) : '';
+        this.downloadFileSize = formatResourceAttachmentSize(this.resource.doc);
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
