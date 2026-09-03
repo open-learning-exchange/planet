@@ -31,7 +31,6 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
     `,
   selector: 'planet-courses-search-list',
-  styleUrls: ['./courses-search.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [MatSelectionList, MatListOption, MatListItemTitle]
 })
@@ -75,7 +74,6 @@ export class CoursesSearchListComponent {
       </planet-courses-search-list>
     }
     `,
-  styleUrls: ['./courses-search.scss'],
   selector: 'planet-courses-search',
   encapsulation: ViewEncapsulation.None,
   imports: [CoursesSearchListComponent]
