@@ -22,7 +22,7 @@
           <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
         </mat-form-field>
         <span class="toolbar-fill"></span>
-        <button mat-icon-button (click)="toggleFiltersRow()" ><mat-icon>filter_list</mat-icon></button>
+        <button mat-icon-button (click)="toggleFiltersRow()" aria-label="Toggle filter controls" i18n-aria-label><mat-icon>filter_list</mat-icon></button>
       </mat-toolbar-row>
       @if (showFiltersRow) {
         <mat-toolbar-row class="filter-row">
