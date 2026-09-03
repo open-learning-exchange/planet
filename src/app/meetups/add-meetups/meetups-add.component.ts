@@ -131,6 +131,11 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   ngOnInit() {
     if (this.meetup._id) {
+      if (!this.canEditMeetup(this.meetup)) {
+        this.planetMessageService.showAlert($localize`You are not authorized to edit this meetup`);
+        this.goBack();
+        return;
+      }
       this.setMeetupData({ ...this.meetup });
     } else {
       this.createForm();
@@ -138,6 +143,11 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
         data => {
+          if (!this.canEditMeetup(data)) {
+            this.planetMessageService.showAlert($localize`You are not authorized to edit this meetup`);
+            this.router.navigate([ '/meetups' ]);
+            return;
+          }
           this.setMeetupData(data);
           this.captureInitialState();
           this.onFormChanges();
@@ -148,6 +158,11 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       this.captureInitialState();
       this.onFormChanges();
     }
+  }
+
+  canEditMeetup(meetup: any): boolean {
+    const user = this.userService.get();
+    return !!user?._id && (user.isUserAdmin || user.name === meetup?.createdBy);
   }
 
   private parseDateValue(value: string | Date | null): number {
