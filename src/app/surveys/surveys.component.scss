@@ -27,6 +27,11 @@
   @include m.table-column-fixed(16rem);
 }
 
+.mat-column-deadline {
+  @include m.table-column-fixed(12rem);
+  text-align: start;
+}
+
 .mat-column-taken {
   justify-content: center;
   text-align: center;

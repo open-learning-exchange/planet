@@ -18,6 +18,7 @@ type SurveyDoc = {
   teamId: string;
   publicAccess?: boolean;
   isArchived?: boolean;
+  deadline?: number | null;
 };
 
 type ConfigurationDoc = {
@@ -68,6 +69,10 @@ const isPublicSurvey = (survey: SurveyDoc | null, teamId: string): survey is Sur
     survey.isArchived !== true &&
     Array.isArray(survey.questions) &&
     survey.questions.length > 0;
+
+// Surveys store their deadline as the last millisecond of the day submissions are still accepted
+const isPastDeadline = (survey: SurveyDoc, now = Date.now()) =>
+  typeof survey.deadline === 'number' && survey.deadline < now;
 
 const sanitizePublicQuestion = (question: any) => {
   const { correctChoice, marks, ...publicQuestion } = question || {};
@@ -189,6 +194,13 @@ export const getPublicSurvey = async (req: Request, res: Response) => {
     });
   }
 
+  if (isPastDeadline(survey)) {
+    return res.status(403).json({
+      'error': 'Forbidden',
+      'message': 'The deadline for this survey has passed'
+    });
+  }
+
   return res.status(200).json({
     'survey': sanitizePublicSurvey(survey),
     'team': sanitizeTeam(team)
@@ -225,6 +237,13 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
     return res.status(404).json({
       'error': 'Not Found',
       'message': 'Survey not found or not public'
+    });
+  }
+
+  if (isPastDeadline(survey)) {
+    return res.status(403).json({
+      'error': 'Forbidden',
+      'message': 'The deadline for this survey has passed'
     });
   }
 

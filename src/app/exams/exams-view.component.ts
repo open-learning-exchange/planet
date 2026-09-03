@@ -28,6 +28,7 @@ import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.compone
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
+import { isSurveyDeadlinePassed } from './survey-deadline.helpers';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
 import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 
@@ -94,6 +95,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   slideAnimationVariant: 'a' | 'b' = 'a';
   isInternalNavigation = false;
   isFinished = false;
+  private deadlineChecked = false;
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -278,6 +280,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       survey$,
       teamId ? this.couchService.get(`teams/${teamId}`) : of(null)
     ]).pipe(takeUntil(this.onDestroy$)).subscribe(([ survey, team ]: [ any, any ]) => {
+      if (this.closeExpiredSurvey(survey)) {
+        return;
+      }
       this.title = survey.name;
       this.setTakingExam(survey, survey._id, 'survey', team ? { _id: team._id, name: team.name, type: team.type } : undefined, true);
     }, () => {
@@ -471,8 +476,40 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     });
   }
 
+  // Surveys stop accepting submissions once their deadline has passed
+  closeExpiredSurvey(survey): boolean {
+    this.deadlineChecked = true;
+    if (!isSurveyDeadlinePassed(survey)) {
+      return false;
+    }
+    this.planetMessageService.showAlert($localize`The deadline for this survey has passed`);
+    this.isFinished = true;
+    this.isInternalNavigation = true;
+    this.goBack();
+    return true;
+  }
+
+  // A submission only holds a snapshot of the survey, so its deadline can be older than the one
+  // managers see, and only the survey itself can say whether submissions are still accepted
+  checkSurveyDeadline(submission) {
+    const isSurvey = submission?.parent?.type === 'surveys' || submission?.type === 'survey';
+    if (this.deadlineChecked || this.previewMode || this.mode !== 'take' || !isSurvey) {
+      return;
+    }
+    this.deadlineChecked = true;
+    const surveyId = (submission.parentId || '').split('@')[0] || submission.parent?._id;
+    if (!surveyId) {
+      return;
+    }
+    this.couchService.get(`exams/${surveyId}`).pipe(
+      catchError(() => of(submission.parent)),
+      takeUntil(this.onDestroy$)
+    ).subscribe(survey => this.closeExpiredSurvey(survey));
+  }
+
   setSubmissionListener() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+      this.checkSurveyDeadline(submission);
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
       const questions = submission.parent.questions || [];

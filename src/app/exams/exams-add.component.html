@@ -54,6 +54,21 @@
                 <planet-markdown-textbox class="full-width" [required]="false" [formControl]="examForm.controls.description"></planet-markdown-textbox>
                 <mat-error><planet-form-error-messages [control]="examForm.controls.description"></planet-form-error-messages></mat-error>
               </mat-form-field>
+              @if (examType === 'survey') {
+                <mat-form-field class="full-width" (click)="deadlinePicker.open()">
+                  <mat-label i18n>Deadline</mat-label>
+                  <input matInput [matDatepicker]="deadlinePicker" [min]="deadlineMinDate" formControlName="deadline">
+                  @if (examForm.controls.deadline.value) {
+                    <button mat-icon-button matIconSuffix type="button" (click)="clearDeadline(); $event.stopPropagation()" aria-label="Remove deadline" i18n-aria-label matTooltip="Remove deadline" i18n-matTooltip>
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                  <mat-datepicker-toggle matIconSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #deadlinePicker></mat-datepicker>
+                  <mat-hint i18n>Optional. Submissions are accepted until the end of this day</mat-hint>
+                  <mat-error><planet-form-error-messages [control]="examForm.controls.deadline"></planet-form-error-messages></mat-error>
+                </mat-form-field>
+              }
             </div>
           </mat-expansion-panel>
         </mat-accordion>
