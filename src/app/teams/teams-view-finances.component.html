@@ -50,9 +50,9 @@
     </div>
     @if (!emptyTable) {
       <mat-card class="finance-table-card">
-        <mat-table class="finance-table responsive-table" [dataSource]="table">
+        <mat-table class="finance-table responsive-table" [dataSource]="table" matSort [matSortDisableClear]="true">
           <ng-container matColumnDef="date">
-            <mat-header-cell *matHeaderCellDef i18n>Date</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header="date" i18n>Date</mat-header-cell>
             <mat-cell *matCellDef="let element">{{ element.date | date }}</mat-cell>
           </ng-container>
           <ng-container matColumnDef="description">
@@ -77,11 +77,11 @@
             </mat-cell>
           </ng-container>
           <ng-container matColumnDef="credit">
-            <mat-header-cell *matHeaderCellDef class="num" i18n>Credit</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header="credit" class="num" i18n>Credit</mat-header-cell>
             <mat-cell *matCellDef="let element" class="num credit">{{ element.credit ? '+' + (element.credit | currency:curCode?.code:curCode?.symbol) : '' }}</mat-cell>
           </ng-container>
           <ng-container matColumnDef="debit">
-            <mat-header-cell *matHeaderCellDef class="num" i18n>Debit</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header="debit" class="num" i18n>Debit</mat-header-cell>
             <mat-cell *matCellDef="let element" class="num debit">{{ element.debit ? '−' + (element.debit | currency:curCode?.code:curCode?.symbol) : '' }}</mat-cell>
           </ng-container>
           <ng-container matColumnDef="balance">
