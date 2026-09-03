@@ -26,8 +26,6 @@
 @mixin search-filter-lists($list) {
   > #{$list} {
     .mat-caption {
-      // An inline <span> in the template: the grid's flex parent blockifies it,
-      // the stacked layout does not.
       display: block;
       margin-bottom: 0.25rem;
       white-space: normal;
@@ -46,8 +44,6 @@
       .mat-mdc-list-option {
         height: auto;
         min-height: 48px;
-        // Material ships 16px; 8px buys list width and still clears the
-        // scrollbar the grid layout puts on this element.
         padding: 4px 8px;
       }
     }
@@ -86,9 +82,6 @@
 }
 
 @mixin search-filters-stacked($list) {
-  // search-filters is scoped to the list page, so nothing here has a grid to
-  // undo and the host would otherwise keep the inline default of a custom
-  // element.
   display: block;
 
   @include search-filter-lists($list);
@@ -111,8 +104,6 @@
     align-self: center;
     margin: 0 0.5rem;
 
-    // Material's fill infix is 56px, the same as a toolbar row, which lands the
-    // underline on the row's bottom edge.  Size it from its content instead.
     .mat-mdc-form-field-infix {
       min-height: 0;
       padding-top: 1rem;
