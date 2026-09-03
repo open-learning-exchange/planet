@@ -145,5 +145,4 @@ export class NewsService {
   postSharedWithCommunity(post) {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
   }
-
 }

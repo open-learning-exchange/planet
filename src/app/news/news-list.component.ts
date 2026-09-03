@@ -10,8 +10,8 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { dedupeShelfReduce } from '../shared/utils';
 import { trackById } from '../shared/table-helpers';
+import { dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
 
 import { MatButton } from '@angular/material/button';
 import { NewsListItemComponent } from './news-list-item.component';
@@ -35,6 +35,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
+  @Input() customLabels: string[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
   @ViewChild('anchor', { static: false }) anchor: any;
@@ -312,8 +313,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
     const labels = action === 'remove' ?
-      news.labels.filter(existingLabel => existingLabel !== label) :
-      [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
+      (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
+      dedupeVoiceLabels([ ...(news.labels || []), label ]);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 

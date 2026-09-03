@@ -44,9 +44,11 @@ import {
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
+import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports.component';
 import { PlanetCalendarComponent } from '../shared/calendar.component';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voice-labels';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -98,6 +100,7 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
+  customVoiceLabels: string[] = this.configuration.customVoiceLabels || [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -128,6 +131,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   voiceSearch = '';
   voiceSearch$ = new Subject<string>();
   availableLabels: string[] = [];
+  private viewLabelNames = new Set<string>();
   selectedLabel = '';
   pinned = false;
   attachmentMap: Record<string, any> = {};
@@ -303,6 +307,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
           name: planetCode,
           planetType: childPlanetType || 'community'
         };
+        this.customVoiceLabels = this.configuration.customVoiceLabels || [];
         this.team = requestedTeam;
         this.teamId = this.team._id;
         this.requestNewsAndUsers(planetCode);
@@ -673,9 +678,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     let filtered = this.news;
     if (this.selectedLabel) {
-      filtered = filtered.filter(item => (item.doc.labels || []).includes(this.selectedLabel)
-          || (item.doc.viewIn || []).some(view => view.name === this.selectedLabel)
-          || (this.selectedLabel === 'shared chat' && item.doc.chat === true));
+      filtered = filtered.filter(item =>
+        (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel))
+          || (item.doc.viewIn || []).some(view => view.name && voiceLabelsEqual(view.name, this.selectedLabel))
+          || (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true));
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
@@ -690,30 +696,54 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getAvailableLabels(news: any[]): string[] {
-    const labelSet = new Set<string>();
+    const labels: string[] = [];
+    this.viewLabelNames = new Set<string>();
     news.forEach(item => {
-      (item.doc.labels || []).forEach(label => labelSet.add(label));
+      labels.push(...(item.doc.labels || []));
       (item.doc.viewIn || []).forEach(view => {
         if (view.name) {
-          labelSet.add(view.name);
+          labels.push(view.name);
+          this.viewLabelNames.add(normalizeVoiceLabel(view.name));
         }
       });
       if (item.doc.chat === true) {
-        labelSet.add('shared chat');
+        labels.push(SHARED_CHAT_LABEL);
       }
     });
 
-    return Array.from(labelSet);
+    return dedupeVoiceLabels(labels);
   }
 
   getLabelIcon(label: string): string {
-    return label === 'shared chat' ? 'question_answer'
-      : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
+    return voiceLabelsEqual(label, SHARED_CHAT_LABEL) ? 'question_answer'
+      : this.viewLabelNames.has(normalizeVoiceLabel(label)) ? 'groups'
       : 'label_important';
   }
 
+  get canManageLabels(): boolean {
+    return !this.planetCode &&
+      (this.isCommunityLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
+  }
+
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
-    this.selectedLabel = action === 'select' ? label : '';
+    this.selectedLabel = action === 'select' ?
+      this.availableLabels.find(availableLabel => voiceLabelsEqual(availableLabel, label)) || label : '';
     this.applyFilters();
+  }
+
+  openManageLabelsDialog() {
+    if (this.planetCode) {
+      return;
+    }
+    this.dialog.open(DialogsVoiceLabelsComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: { target: 'community', customLabels: this.customVoiceLabels }
+    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+      if (updatedLabels) {
+        this.customVoiceLabels = updatedLabels;
+        this.configuration = { ...this.configuration, customVoiceLabels: updatedLabels };
+      }
+    });
   }
 }
