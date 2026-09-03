@@ -669,14 +669,19 @@ body {
   }
 
   .mdc-toolbar-input {
-    align-self: center;
-    padding-top: 0;
+    align-self: baseline;
+    padding-top: 4px;
   }
 
   .mat-mdc-dialog-actions, .mat-mdc-card-footer.action-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 5px;
+  }
+
+  .filter-dialog .mat-mdc-dialog-content {
+    flex: 1 1 auto;
+    max-height: none;
   }
 
   .fit-screen-dialog .mat-mdc-dialog-content {
@@ -707,6 +712,14 @@ body {
       display: flex;
       justify-content: center;
       align-items: center;
+      flex: 0 1 auto;
+      min-width: 0;
+      overflow: hidden;
+
+      .mat-mdc-form-field-infix {
+        min-width: 0;
+        max-width: 100%;
+      }
     }
   }
 

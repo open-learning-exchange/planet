@@ -1,3 +1,5 @@
+@use './variables' as v;
+
 @mixin left-right-grid-areas {
   .left-tile {
     grid-area: lt;
@@ -18,4 +20,124 @@
   flex: 0 1 $basis;
   flex-shrink: var(--table-column-flex-shrink, 1);
   min-width: 0;
+}
+
+// $list is the child list element, e.g. 'planet-resources-search-list'.
+@mixin search-filter-lists($list) {
+  > #{$list} {
+    .mat-caption {
+      // An inline <span> in the template: the grid's flex parent blockifies it,
+      // the stacked layout does not.
+      display: block;
+      margin-bottom: 0.25rem;
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
+
+    .mat-mdc-selection-list {
+      padding: 0;
+
+      .mat-mdc-list-item-title {
+        white-space: normal;
+        overflow-wrap: break-word;
+        line-height: 1.25;
+      }
+
+      .mat-mdc-list-option {
+        height: auto;
+        min-height: 48px;
+        // Material ships 16px; 8px buys list width and still clears the
+        // scrollbar the grid layout puts on this element.
+        padding: 4px 8px;
+      }
+    }
+  }
+}
+
+@mixin search-filters($list) {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+  grid-auto-flow: column;
+  align-items: stretch;
+  grid-column-gap: 0.75rem;
+  padding: 0.5rem 0;
+
+  @include search-filter-lists($list);
+
+  > #{$list} {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    .mat-caption {
+      flex: none;
+    }
+
+    .mat-mdc-selection-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+    }
+  }
+}
+
+@mixin search-filters-stacked($list) {
+  // search-filters is scoped to the list page, so nothing here has a grid to
+  // undo and the host would otherwise keep the inline default of a custom
+  // element.
+  display: block;
+
+  @include search-filter-lists($list);
+
+  > #{$list} {
+    display: block;
+
+    + #{$list} {
+      margin-top: 1rem;
+    }
+  }
+}
+
+@mixin search-toolbar {
+  .search-bar {
+    height: v.$search-filters-height;
+  }
+
+  .search-title-input {
+    align-self: center;
+    margin: 0 0.5rem;
+
+    // Material's fill infix is 56px, the same as a toolbar row, which lands the
+    // underline on the row's bottom edge.  Size it from its content instead.
+    .mat-mdc-form-field-infix {
+      min-height: 0;
+      padding-top: 1rem;
+      padding-bottom: 0.25rem;
+    }
+  }
+
+  .filter-row {
+    .search-title-input {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .mat-mdc-outlined-button, .mat-mdc-raised-button {
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: v.$screen-xs) {
+      .search-by-label {
+        display: none;
+      }
+    }
+  }
+
+  .view-full-height.view-with-search {
+    height: calc(#{v.$view-container-height} - #{v.$search-filters-height});
+  }
 }
