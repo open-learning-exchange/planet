@@ -6,7 +6,7 @@
           @if (newsLoading) {
             <planet-loading-spinner text="Loading voices..." i18n-text></planet-loading-spinner>
           } @else {
-            <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"
+            <planet-news-list [items]="filteredNews" [customLabels]="customVoiceLabels" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"
               [useReplyRoutes]="!isRemoteExchange" [readOnly]="isRemoteExchange" (changeLabelsFilter)="changeLabelsFilter($event)">
               @if (!activeReplyId) {
                 <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
@@ -44,6 +44,11 @@
                       <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New Voice</button>
                     }
                   </ng-container>
+                  @if (canManageLabels) {
+                    <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+                      <mat-icon>label</mat-icon>
+                    </button>
+                  }
                   <button mat-icon-button [matTooltip]="voicesToolbarPinTooltip" [attr.aria-label]="voicesToolbarPinTooltip" (click)="pinned = !pinned" class="pin-btn">
                     <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
                   </button>

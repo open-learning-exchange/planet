@@ -1,0 +1,38 @@
+@use '../../variables' as v;
+
+:host {
+  display: block;
+}
+
+.labels-dialog-section {
+  margin: 0 0 12px;
+}
+
+.labels-section-heading {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.labels-add-section {
+  margin-top: 20px;
+}
+
+.labels-input {
+  flex: 1;
+}
+
+.add-label-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.add-btn {
+  margin-top: 8px;
+}
+
+.labels-empty {
+  color: v.$grey-text;
+  font-size: 0.875rem;
+}
