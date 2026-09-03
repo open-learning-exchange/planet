@@ -4,7 +4,6 @@ import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { UserService } from '../user.service';
 import { finalize, tap } from 'rxjs/operators';
-import { defer } from 'rxjs';
 import { DialogFormValueMap, DialogsFormService } from '../dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
 import { RatingService } from './rating.service';
@@ -161,53 +160,49 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   deleteRating() {
-    return defer(() => {
-      const deletedRating = this.rating.userRating;
-      const { _id, _rev } = deletedRating;
-      this.dialogsLoadingService.start();
-      return this.couchService.delete(`${this.dbName}/${_id}?rev=${_rev}`).pipe(
-        tap(() => {
-          this.rating.allRatings = this.rating.allRatings.filter(rating => rating._id !== deletedRating._id);
-          this.rating.userRating = {};
-          this.recalculateRating();
-          this.resetRatingState();
-          this.ratingService.newRatings(false);
-        }),
-        finalize(() => this.dialogsLoadingService.stop())
-      );
-    });
+    const deletedRating = this.rating.userRating;
+    const { _id, _rev } = deletedRating;
+    this.dialogsLoadingService.start();
+    return this.couchService.delete(`${this.dbName}/${_id}?rev=${_rev}`).pipe(
+      tap(() => {
+        this.rating.allRatings = this.rating.allRatings.filter(rating => rating._id !== deletedRating._id);
+        this.rating.userRating = {};
+        this.recalculateRating();
+        this.resetRatingState();
+        this.ratingService.newRatings(false);
+      }),
+      finalize(() => this.dialogsLoadingService.stop())
+    );
   }
 
   updateRating(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel>) {
-    return defer(() => {
-      // Later parameters of Object.assign will overwrite values from previous objects
-      const configuration = this.stateService.configuration;
-      const previousRating = this.rating.userRating;
-      const newRating = {
-        type: this.ratingType,
-        item: this.item._id,
-        title: this.item.title || this.item.courseTitle,
-        createdTime: this.couchService.datePlaceholder,
-        ...this.rating.userRating,
-        ...form.value,
-        time: this.couchService.datePlaceholder,
-        user: this.userService.get(),
-        createdOn: configuration.code,
-        parentCode: configuration.parentCode
-      };
-      this.dialogsLoadingService.start();
-      return this.couchService.updateDocument(this.dbName, newRating).pipe(tap((res: any) => {
-        newRating._rev = res.rev;
-        newRating._id = res.id;
-        const previousIndex = this.rating.allRatings.findIndex(rating => rating._id === previousRating?._id);
-        this.rating.allRatings = previousIndex === -1 ?
-          [ ...this.rating.allRatings, newRating ] :
-          this.rating.allRatings.map((rating, index) => index === previousIndex ? newRating : rating);
-        this.rating.userRating = newRating;
-        this.recalculateRating();
-        this.ratingService.newRatings(false);
-      }), finalize(() => this.dialogsLoadingService.stop()));
-    });
+    // Later parameters of Object.assign will overwrite values from previous objects
+    const configuration = this.stateService.configuration;
+    const previousRating = this.rating.userRating;
+    const newRating = {
+      type: this.ratingType,
+      item: this.item._id,
+      title: this.item.title || this.item.courseTitle,
+      createdTime: this.couchService.datePlaceholder,
+      ...this.rating.userRating,
+      ...form.value,
+      time: this.couchService.datePlaceholder,
+      user: this.userService.get(),
+      createdOn: configuration.code,
+      parentCode: configuration.parentCode
+    };
+    this.dialogsLoadingService.start();
+    return this.couchService.updateDocument(this.dbName, newRating).pipe(tap((res: any) => {
+      newRating._rev = res.rev;
+      newRating._id = res.id;
+      const previousIndex = this.rating.allRatings.findIndex(rating => rating._id === previousRating?._id);
+      this.rating.allRatings = previousIndex === -1 ?
+        [ ...this.rating.allRatings, newRating ] :
+        this.rating.allRatings.map((rating, index) => index === previousIndex ? newRating : rating);
+      this.rating.userRating = newRating;
+      this.recalculateRating();
+      this.ratingService.newRatings(false);
+    }), finalize(() => this.dialogsLoadingService.stop()));
   }
 
   openDialog() {
@@ -270,5 +265,4 @@ export class PlanetRatingComponent implements OnChanges {
     });
     this.isPopupOpen = false;
   }
-
 }
