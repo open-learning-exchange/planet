@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../../database/couchdb.service';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../../state.service';
-import { findDocuments } from '../../database/mango-queries';
+import { findDocuments, inSelector } from '../../database/mango-queries';
 import { fuzzyWordMatch } from '../../search/fuzzy-search';
 import { createDeleteArray } from '../../tables/table.helpers';
+
+export const TAG_IN_USE_ERROR = 'tagInUse';
 
 @Injectable({
   providedIn: 'root'
@@ -83,10 +85,28 @@ export class TagsService {
 
   deleteTag(tag) {
     return this.couchService.findAll('tags', findDocuments({ tagId: tag._id })).pipe(
-      switchMap((tags: any[]) => {
-        const deleteTagsArray = createDeleteArray(tags);
-        return this.couchService.bulkDocs('tags', [ ...deleteTagsArray, { ...tag, _deleted: true } ]);
-      })
+      switchMap((links: any[]) => this.findTagUsage(tag.db, links).pipe(
+        switchMap((usedLinkIds: string[]) => {
+          if (usedLinkIds.length > 0) {
+            return throwError(new Error(TAG_IN_USE_ERROR));
+          }
+          // Any remaining links point at deleted docs, so they are safe to clean up with the definition
+          return this.couchService.bulkDocs('tags', [ ...createDeleteArray(links), { ...tag, _deleted: true } ]);
+        })
+      ))
+    );
+  }
+
+  /**
+   * Returns the ids of the docs still using a collection, ignoring links to docs which no longer exist
+   */
+  private findTagUsage(db: string, links: any[]) {
+    const linkIds = links.map((link: any) => link.linkId).filter((linkId: string) => linkId !== undefined);
+    if (linkIds.length === 0) {
+      return of([]);
+    }
+    return this.couchService.findAll(db, findDocuments({ _id: inSelector(linkIds) }, [ '_id' ])).pipe(
+      map((docs: any[]) => docs.map((doc: any) => doc._id))
     );
   }
 
