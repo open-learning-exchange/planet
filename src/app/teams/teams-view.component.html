@@ -204,7 +204,7 @@
           <ng-container i18n>Calendar</ng-container>
         </ng-template>
         @if (calendarTab.isActive) {
-          <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         }
       </mat-tab>
       @if (mode!=='team') {

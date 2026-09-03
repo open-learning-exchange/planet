@@ -1,4 +1,4 @@
-import { Component, Inject, Input, LOCALE_ID, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, Input, LOCALE_ID, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -51,10 +51,9 @@ const taskEventColors = {
     `,
   imports: [FullCalendarModule]
 })
-export class PlanetCalendarComponent implements OnInit, OnChanges {
+export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('calendar') calendar: any;
-  @Input() resizeCalendar: boolean;
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
@@ -111,6 +110,10 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     eventClick: this.eventClick.bind(this)
   };
 
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeFrameId: number | null = null;
+  private calendarWidth: number;
+
   constructor(
     @Inject(DOCUMENT) private document: Document,
     @Inject(LOCALE_ID) private localeId: string,
@@ -120,7 +123,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     private tasksService: TasksService,
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private elementRef: ElementRef<HTMLElement>,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit() {
@@ -146,12 +151,35 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.events = [ ...this.events ];
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
-      this.calendar.getApi().updateSize();
-      this.resizeCalendar = false;
+  ngAfterViewInit() {
+    if (typeof ResizeObserver === 'undefined') {
+      return;
     }
-    this.calendarOptions.events = [ ...this.events ];
+    this.ngZone.runOutsideAngular(() => {
+      this.resizeObserver = new ResizeObserver(entries => this.onCalendarResize(entries[0]?.contentRect.width));
+      this.resizeObserver.observe(this.elementRef.nativeElement);
+    });
+  }
+
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
+    if (this.resizeFrameId !== null) {
+      cancelAnimationFrame(this.resizeFrameId);
+    }
+  }
+
+  private onCalendarResize(width?: number) {
+    if (!width || width === this.calendarWidth) {
+      return;
+    }
+    this.calendarWidth = width;
+    if (this.resizeFrameId !== null) {
+      cancelAnimationFrame(this.resizeFrameId);
+    }
+    this.resizeFrameId = requestAnimationFrame(() => {
+      this.calendar?.getApi()?.updateSize();
+      this.resizeFrameId = null;
+    });
   }
 
   getMeetups() {
