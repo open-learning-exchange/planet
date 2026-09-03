@@ -20,6 +20,8 @@ import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -154,7 +156,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService
+    private planetStepListService: PlanetStepListService,
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.createProfileForm();
@@ -435,9 +438,23 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   removeExistingResume() {
-    this.resumeMarkedForDeletion = true;
-    this.currentResumeFileName = '';
-    this.clearResumeSelection();
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            dialogRef.close();
+            this.resumeMarkedForDeletion = true;
+            this.currentResumeFileName = '';
+            this.clearResumeSelection();
+          },
+          onError: () => {}
+        },
+        showMainParagraph: false,
+        extraMessage: $localize`Are you sure you want to remove the existing CV/Resume?`,
+        displayName: this.currentResumeFileName
+      }
+    });
   }
 
   onSubmit() {

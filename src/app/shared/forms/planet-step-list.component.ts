@@ -94,6 +94,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
   @Input() confirmDelete = false;
+  @Input() deletePromptMessage?: string;
   @Output() stepClicked = new EventEmitter<number>();
   @Output() stepsChange = new EventEmitter<unknown[]>();
 
@@ -180,7 +181,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
           onError: () => {}
         },
         showMainParagraph: false,
-        extraMessage: $localize`Are you sure you want to delete the following step?`,
+        extraMessage: this.deletePromptMessage || $localize`Are you sure you want to delete the following step?`,
         displayName: stepTitle
       }
     });
