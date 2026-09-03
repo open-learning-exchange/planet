@@ -64,6 +64,9 @@
         <mat-icon>file_download</mat-icon><span i18n>Download</span>@if (downloadFileSize) {<span> ({{ downloadFileSize }})</span>}
       </a>
     }
+    <button mat-icon-button type="button" (click)="copyLink()" matTooltip="Copy Resource Link" i18n-matTooltip aria-label="Copy Resource Link" i18n-aria-label>
+      <mat-icon>content_copy</mat-icon>
+    </button>
   </ng-template>
 
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">

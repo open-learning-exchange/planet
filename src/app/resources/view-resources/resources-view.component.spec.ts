@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -84,6 +85,19 @@ describe('ResourcesViewComponent', () => {
 
   it('should be created', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should copy resource link and show notification when copyLink is called', () => {
+    const clipboard = TestBed.inject(Clipboard);
+    const planetMessageService = TestBed.inject(PlanetMessageService);
+    const copySpy = vi.spyOn(clipboard, 'copy');
+    const showMessageSpy = vi.spyOn(planetMessageService, 'showMessage');
+    component.resourceId = 'test-resource-id';
+
+    component.copyLink();
+
+    expect(copySpy).toHaveBeenCalledWith(`${window.location.origin}/resources/view/test-resource-id`);
+    expect(showMessageSpy).toHaveBeenCalledWith('Resource link copied to clipboard');
   });
 
   it('shows the selected attachment size and the total only for bundles', () => {
