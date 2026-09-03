@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -47,6 +47,13 @@ import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
+import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSelect, MatSelectTrigger } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
+import { LabelComponent } from '../shared/label.component';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voice-labels';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -85,7 +92,17 @@ import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
     MatMenuItem,
     SurveysComponent,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    FormsModule,
+    MatFormField,
+    MatLabel,
+    MatPrefix,
+    MatSuffix,
+    MatInput,
+    MatSelect,
+    MatSelectTrigger,
+    MatOption,
+    LabelComponent
   ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -105,6 +122,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   user = this.userService.get();
   news: any[] = [];
+  filteredNews: any[] = [];
+  messageSearch = '';
+  messageSearch$ = new Subject<string>();
+  availableLabels: string[] = [];
+  selectedLabel = '';
+  pinned = false;
+  private viewLabelNames = new Set<string>();
   private readonly emptyVoiceLabels: string[] = [];
   newsLoading = true;
   resources: any[] = [];
@@ -139,6 +163,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return $localize`Incomplete tasks: ${this.taskCount}:count:`;
   }
 
+  get chatToolbarPinTooltip(): string {
+    return this.pinned ? $localize`Unpin Messages Toolbar` : $localize`Pin Messages Toolbar`;
+  }
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
@@ -161,6 +189,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
+    this.messageSearch$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.onDestroy$)
+    ).subscribe(searchValue => {
+      this.messageSearch = searchValue;
+      this.applyFilters();
+    });
     this.planetCode = this.stateService.configuration.code;
     this.route.paramMap.pipe(takeUntil(this.onDestroy$), map((params: ParamMap) =>
       params.get('teamId') || planetAndParentId(this.stateService.configuration)
@@ -233,7 +269,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.news = news.map(post => ({
           ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
         }));
+        this.availableLabels = this.getAvailableLabels(this.news);
         this.newsLoading = false;
+        this.applyFilters();
       }, () => {
         this.newsLoading = false;
       });
@@ -707,6 +745,63 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  onLabelFilterChange(label: string): void {
+    this.selectedLabel = label;
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    let filtered = this.news;
+    if (this.selectedLabel) {
+      filtered = filtered.filter(item =>
+        (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel))
+          || (item.doc.viewIn || []).some(view => view.name && voiceLabelsEqual(view.name, this.selectedLabel))
+          || (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true));
+    }
+    if (this.messageSearch) {
+      const lower = this.messageSearch.toLowerCase();
+      filtered = filtered.filter(item => {
+        if (typeof item.doc.messageLower !== 'string') {
+          item.doc.messageLower = (item.doc.message || '').toLowerCase();
+        }
+        return item.doc.messageLower.includes(lower);
+      });
+    }
+    this.filteredNews = filtered;
+  }
+
+  getAvailableLabels(news: any[]): string[] {
+    const labels: string[] = [];
+    this.viewLabelNames = new Set<string>();
+    labels.push(...this.customVoiceLabels);
+    news.forEach(item => {
+      labels.push(...(item.doc.labels || []));
+      (item.doc.viewIn || []).forEach(view => {
+        if (view.name) {
+          labels.push(view.name);
+          this.viewLabelNames.add(normalizeVoiceLabel(view.name));
+        }
+      });
+      if (item.doc.chat === true) {
+        labels.push(SHARED_CHAT_LABEL);
+      }
+    });
+
+    return dedupeVoiceLabels(labels);
+  }
+
+  getLabelIcon(label: string): string {
+    return voiceLabelsEqual(label, SHARED_CHAT_LABEL) ? 'question_answer'
+      : this.viewLabelNames.has(normalizeVoiceLabel(label)) ? 'groups'
+      : 'label_important';
+  }
+
+  changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
+    this.selectedLabel = action === 'select' ?
+      this.availableLabels.find(availableLabel => voiceLabelsEqual(availableLabel, label)) || label : '';
+    this.applyFilters();
+  }
+
   openManageLabelsDialog() {
     this.dialog.open(DialogsVoiceLabelsComponent, {
       width: '500px',
@@ -715,6 +810,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }).afterClosed().subscribe((updatedLabels?: string[]) => {
       if (updatedLabels) {
         this.team = { ...this.team, customVoiceLabels: updatedLabels };
+        this.availableLabels = this.getAvailableLabels(this.news);
+        this.applyFilters();
       }
     });
   }

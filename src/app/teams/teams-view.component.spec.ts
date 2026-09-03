@@ -32,3 +32,94 @@ describe('TeamsViewComponent task projections', () => {
     expect(component.isUserInMemberDocs([ { userId: 'alex', userPlanetCode: 'planet-b' } ], user)).toBe(false);
   });
 });
+
+describe('TeamsViewComponent chat action bar and filtering', () => {
+  it('filters team messages by keyword search case-insensitively', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.news = [
+      { doc: { message: 'First team announcement' } },
+      { doc: { message: 'Weekly sprint planning' } },
+      { doc: { message: 'Lunch break discussion' } }
+    ];
+    component.selectedLabel = '';
+    component.messageSearch = 'sprint';
+
+    component.applyFilters();
+
+    expect(component.filteredNews.length).toBe(1);
+    expect(component.filteredNews[0].doc.message).toBe('Weekly sprint planning');
+  });
+
+  it('filters team messages by selected label', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.news = [
+      { doc: { message: 'Bug in login', labels: [ 'bug' ] } },
+      { doc: { message: 'Frontend update', labels: [ 'frontend' ] } },
+      { doc: { message: 'General chat', chat: true } }
+    ];
+    component.messageSearch = '';
+    component.selectedLabel = 'bug';
+
+    component.applyFilters();
+
+    expect(component.filteredNews.length).toBe(1);
+    expect(component.filteredNews[0].doc.message).toBe('Bug in login');
+
+    component.selectedLabel = 'shared chat';
+    component.applyFilters();
+
+    expect(component.filteredNews.length).toBe(1);
+    expect(component.filteredNews[0].doc.message).toBe('General chat');
+  });
+
+  it('collects available labels from team customVoiceLabels and messages', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.team = { customVoiceLabels: [ 'SprintGoal', 'Frontend' ] };
+    const news = [
+      { doc: { labels: [ 'Frontend', 'Bug' ] } },
+      { doc: { viewIn: [ { name: 'Leadership' } ] } },
+      { doc: { chat: true } }
+    ];
+
+    const labels = component.getAvailableLabels(news);
+
+    expect(labels).toContain('SprintGoal');
+    expect(labels).toContain('Frontend');
+    expect(labels).toContain('Bug');
+    expect(labels).toContain('Leadership');
+    expect(labels).toContain('shared chat');
+    expect(component.getLabelIcon('shared chat')).toBe('question_answer');
+    expect(component.getLabelIcon('Leadership')).toBe('groups');
+    expect(component.getLabelIcon('SprintGoal')).toBe('label_important');
+  });
+
+  it('updates selectedLabel and applies filters when changeLabelsFilter is triggered', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.availableLabels = [ 'help', 'frontend' ];
+    component.news = [
+      { doc: { message: 'Need help with CSS', labels: [ 'help' ] } },
+      { doc: { message: 'Frontend refactor', labels: [ 'frontend' ] } }
+    ];
+    component.messageSearch = '';
+
+    component.changeLabelsFilter({ label: 'help', action: 'select' });
+
+    expect(component.selectedLabel).toBe('help');
+    expect(component.filteredNews.length).toBe(1);
+    expect(component.filteredNews[0].doc.message).toBe('Need help with CSS');
+
+    component.changeLabelsFilter({ label: 'help', action: 'remove' });
+
+    expect(component.selectedLabel).toBe('');
+    expect(component.filteredNews.length).toBe(2);
+  });
+
+  it('updates chatToolbarPinTooltip dynamically based on pinned state', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.pinned = false;
+    expect(component.chatToolbarPinTooltip).toBe('Pin Messages Toolbar');
+
+    component.pinned = true;
+    expect(component.chatToolbarPinTooltip).toBe('Unpin Messages Toolbar');
+  });
+});
