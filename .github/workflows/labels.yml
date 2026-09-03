@@ -2,7 +2,13 @@ name: Planet labels
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review, edited]
+    # Never `edited`: it fires on every title or description rewrite -- and
+    # coderabbit rewrites the description of each pull request several times.
+    # Every one of those queued a run that cancelled the labelling run still in
+    # flight and then skipped itself, so a push could end up unlabelled behind a
+    # pile of skipped checks. Retargeting a pull request changes its diff without
+    # a push: relabel it by hand with the dispatch below.
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
       pr:
@@ -32,7 +38,6 @@ jobs:
     name: planet labels
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: ${{ github.event.action != 'edited' || github.event.changes.base }}
     steps:
       - name: label the pull request by size
         shell: bash
