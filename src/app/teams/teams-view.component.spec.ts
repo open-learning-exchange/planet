@@ -1,3 +1,5 @@
+import { of } from 'rxjs';
+import { vi } from 'vitest';
 import { TeamsViewComponent } from './teams-view.component';
 
 describe('TeamsViewComponent task projections', () => {
@@ -31,4 +33,27 @@ describe('TeamsViewComponent task projections', () => {
     expect(component.isUserInMemberDocs([ { userId: 'alex' } ], user)).toBe(true);
     expect(component.isUserInMemberDocs([ { userId: 'alex', userPlanetCode: 'planet-b' } ], user)).toBe(false);
   });
+
+  it('opens invite member dialog with noSpinner and stops loading on add', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    let dialogCfg: any;
+    component.dialog = { open: vi.fn((_, cfg) => (dialogCfg = cfg, { close: vi.fn() })) };
+    component.members = [];
+    component.openInviteMemberDialog();
+    expect(dialogCfg.data.noSpinner).toBe(true);
+
+    const dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
+    component.dialogsLoadingService = dialogsLoadingService;
+    component.dialogRef = { close: vi.fn() };
+    component.planetMessageService = { showMessage: vi.fn() };
+    component.teamsService = { addMembers: () => of({ ok: true }), sendNotifications: () => of({}) };
+    component.router = { url: '/teams/t1' };
+    component.team = { _id: 't1' };
+    component.requests = [];
+    component.getMembers = () => of([]);
+    component.addMembers([ { _id: 'u1' } ]);
+    expect(dialogsLoadingService.stop).toHaveBeenCalled();
+  });
 });
+
+
