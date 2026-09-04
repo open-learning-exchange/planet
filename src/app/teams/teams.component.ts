@@ -414,7 +414,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         type: 'enterprise',
         displayName,
         rules: team.rules,
-        extraMessage: enterpriseJoinAgreement()
+        extraMessage: enterpriseJoinAgreement(),
+        extraMessageType: 'supplementary'
       }
     });
   }

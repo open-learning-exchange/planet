@@ -6,6 +6,11 @@
  * amount - Required if showMainParagraph.  Sets the text of the main message on the modal.  See HTML for options.
  * cancelable - Optional. Shows/hides the cancel button.
  * message - Optional.  Error message that is displayed when value is truthy.
+ * extraMessage - Optional.  Additional message shown below the main message.  Accepts HTML.
+ * extraMessageType - Optional, defaults to 'body'.  Semantic role of extraMessage.  Use 'body' when it
+ *  carries the dialog's primary question, warning, or instructions (i.e. with showMainParagraph false),
+ *  and 'supplementary' for supporting notes, consequences, agreements, and metadata, which render in
+ *  smaller italic text so they read as secondary to the primary message.
  * displayName - Optional. If deleteItem does not have a 'name' property, set this to
  *  display to the user what is being deleted.
  * okClick - Optional.  { request, onNext, onError } run when user clicks OK.  Defaults to closing
@@ -25,16 +30,7 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
-  styles: [`
-    .break-word {
-      word-wrap: break-word;
-      white-space: normal;
-      word-break: break-word;
-    }
-    .enterprise-rules {
-      margin-top: 12px;
-    }
-  `],
+  styleUrls: [ './dialogs-prompt.component.scss' ],
   imports: [
     CdkScrollable,
     MatDialogContent,
@@ -56,6 +52,7 @@ export class DialogsPromptComponent {
   spinnerOn: boolean;
   labels: string[];
   isDateUtc = false;
+  extraMessageType: 'body' | 'supplementary';
 
   constructor(
     public dialogRef: MatDialogRef<DialogsPromptComponent>,
@@ -73,6 +70,7 @@ export class DialogsPromptComponent {
     this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
     this.labels = this.data.showLabels;
     this.isDateUtc = this.data.isDateUtc;
+    this.extraMessageType = this.setDefault(this.data.extraMessageType, 'body');
   }
 
   ok() {

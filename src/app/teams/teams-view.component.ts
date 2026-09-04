@@ -516,7 +516,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           type: 'enterprise',
           displayName: this.team.name,
           rules: this.team.rules,
-          extraMessage: enterpriseJoinAgreement()
+          extraMessage: enterpriseJoinAgreement(),
+          extraMessageType: 'supplementary'
         }
       });
       return;
