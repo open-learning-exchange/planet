@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
+import { CouchService } from '../../../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { ManagerService } from '../manager.service';
-import { attachNamesToPlanets } from './reports.utils';
+import { StateService } from '../../../shared/state.service';
+import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { ManagerService } from '../../manager.service';
+import { attachNamesToPlanets } from '../reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
