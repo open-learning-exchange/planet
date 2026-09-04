@@ -43,10 +43,10 @@
     "@angular/service-worker": "20.3.21",
     "@covalent/markdown": "^11.19.5",
     "@covalent/text-editor": "^11.19.5",
-    "@fullcalendar/angular": "^6.1.10",
-    "@fullcalendar/core": "^6.1.10",
-    "@fullcalendar/daygrid": "^6.1.10",
-    "@fullcalendar/interaction": "^6.1.10",
+    "@fullcalendar/angular": "^6.1.21",
+    "@fullcalendar/core": "^6.1.21",
+    "@fullcalendar/daygrid": "^6.1.21",
+    "@fullcalendar/interaction": "^6.1.21",
     "chart.js": "^3.9.1",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
@@ -66,8 +66,6 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "2.0.5",
-    "@analogjs/vitest-angular": "2.0.5",
     "@angular-devkit/build-angular": "20.3.26",
     "@angular-eslint/builder": "20.7.0",
     "@angular-eslint/eslint-plugin": "20.7.0",
@@ -98,12 +96,20 @@
     "sass-lint": "^1.13.1",
     "ts-node": "~8.5.4",
     "typescript": "~5.8.3",
-    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^3.2.6"
   },
   "overrides": {
     "@typescript-eslint/visitor-keys": {
       "eslint-visitor-keys": "4.2.1"
+    },
+    "@covalent/markdown": {
+      "@angular/core": "$@angular/core",
+      "@angular/common": "$@angular/common",
+      "@angular/platform-browser": "$@angular/platform-browser"
+    },
+    "@covalent/text-editor": {
+      "@angular/core": "$@angular/core",
+      "@angular/common": "$@angular/common"
     }
   }
 }
