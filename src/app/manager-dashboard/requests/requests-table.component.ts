@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { map, switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
+import { filterSpecificFieldsHybrid, sortNumberOrString } from '../../shared/table-helpers';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
@@ -216,7 +216,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
         map(planets => this.dialog.open(DialogsListComponent, {
           data: {
             disableSelection: true,
-            filterPredicate: filterSpecificFields([ 'name', 'code' ]),
+            filterPredicate: filterSpecificFieldsHybrid([ 'name', 'code' ]),
             ...planets
           },
           maxHeight: '500px',

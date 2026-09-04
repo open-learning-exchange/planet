@@ -13,7 +13,7 @@ import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
-import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
+import { filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -159,7 +159,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.useDialogLoading) {
       this.dialogsLoadingService.start();
     }
-    this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
+    this.surveys.filterPredicate = filterSpecificFieldsHybrid([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
     this.couchService.checkAuthorization(this.dbName)

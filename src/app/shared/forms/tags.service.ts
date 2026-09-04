@@ -4,6 +4,7 @@ import { of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
+import { fuzzyWordMatch } from '../fuzzy-search';
 import { createDeleteArray } from '../table-helpers';
 
 @Injectable({
@@ -38,7 +39,7 @@ export class TagsService {
 
   filterTags(tags: any[], filterString: string): string[] {
     // Includes any tag with a sub tag that matches in addition to tags that match
-    const tagTest = (tag) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1;
+    const tagTest = (tag) => fuzzyWordMatch(filterString, tag.name ?? '');
     return tags.reduce((newTags, tag) => {
       const newTag = { ...tag, subTags: (tag.subTags || []).filter(tagTest) };
       if (tagTest(tag)) {
