@@ -13,9 +13,10 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
-import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService } from './public-surveys.service';
+import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService, PublicSurveyTeam } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
 import { AndroidAppPromptService } from '../../shared/android-app-prompt.service';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
   selector: 'planet-public-survey',
@@ -23,14 +24,17 @@ import { AndroidAppPromptService } from '../../shared/android-app-prompt.service
   styleUrls: ['./public-survey.component.scss'],
   imports: [
     MatIcon, PlanetMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton,
-    ReactiveFormsModule, MatFormField, MatLabel, MatHint, MatError, MatInput, MatRadioGroup, MatRadioButton
+    ReactiveFormsModule, MatFormField, MatLabel, MatHint, MatError, MatInput, MatRadioGroup, MatRadioButton,
+    PlanetLoadingSpinnerComponent
   ]
 })
 export class PublicSurveyComponent implements OnInit {
   @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
 
   survey: PublicSurvey | null = null;
+  team: PublicSurveyTeam | null = null;
   errorMessage = '';
+  hasStarted = false;
   questionNum = 1;
   answers: StoredExamAnswer[] = [];
   currentAnswer: ExamAnswerValue | null = null;
@@ -73,9 +77,11 @@ export class PublicSurveyComponent implements OnInit {
     this.route.paramMap.pipe(
       switchMap(params => this.publicSurveysService.getSurvey(params.get('teamId') || '', params.get('surveyId') || ''))
     ).subscribe({
-      next: ({ survey }) => {
+      next: ({ survey, team }) => {
         this.survey = survey;
+        this.team = team;
         this.errorMessage = '';
+        this.hasStarted = false;
         this.questionNum = 1;
         this.answers = Array.from({ length: survey.questions.length }, () => ({ value: null, valid: false }));
         this.currentAnswer = this.answers[0]?.value ?? null;
@@ -90,6 +96,10 @@ export class PublicSurveyComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  startSurvey() {
+    this.hasStarted = true;
   }
 
   moveQuestion(direction: number) {

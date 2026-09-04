@@ -1,3 +1,5 @@
+@use '../../variables' as v;
+
 .state-view {
   display: flex;
   flex-direction: column;
@@ -23,4 +25,94 @@
   display: flex;
   gap: 12px;
   justify-content: center;
+}
+
+.survey-intro {
+  display: flex;
+  justify-content: center;
+  padding: 5vh 1rem;
+}
+
+.survey-intro__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: min(100%, 620px);
+  padding: 2rem 1.5rem;
+  background-color: v.$white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px v.$shadow;
+  text-align: center;
+}
+
+.survey-intro__icon {
+  font-size: 3rem;
+  height: 3rem;
+  width: 3rem;
+}
+
+.survey-intro__invite {
+  margin: 0;
+  color: v.$grey-text;
+}
+
+.survey-intro__name {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+.survey-intro__team {
+  margin: 0;
+  color: v.$grey-text;
+}
+
+.survey-intro__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  color: v.$grey-text;
+}
+
+.survey-intro__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  mat-icon {
+    font-size: 1.25rem;
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+}
+
+.survey-intro__description {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid v.$light-grey;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+.survey-intro__start {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: v.$screen-xs) {
+  .survey-intro {
+    padding: 2vh 0.5rem;
+  }
+
+  .survey-intro__card {
+    padding: 1.5rem 1rem;
+  }
+
+  .survey-intro__name {
+    font-size: 1.4rem;
+  }
 }

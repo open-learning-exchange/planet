@@ -5,7 +5,34 @@
   </div>
 }
 
-@if (survey && !isSubmitted && !showDemographics) {
+@if (isLoading) {
+  <planet-loading-spinner text="Loading survey..." i18n-text></planet-loading-spinner>
+}
+
+@if (survey && !hasStarted && !isSubmitted) {
+  <div class="survey-intro">
+    <div class="survey-intro__card km-survey-intro">
+      <mat-icon aria-hidden="true" class="survey-intro__icon primary-text-color">assignment</mat-icon>
+      <p class="survey-intro__invite" i18n>You have been invited to take the following survey</p>
+      <h1 class="survey-intro__name km-survey-name">{{ survey.name }}</h1>
+      @if (team?.name) {
+        <p class="survey-intro__team" i18n>Shared by {{ team.name }}</p>
+      }
+      <div class="survey-intro__meta">
+        <span class="survey-intro__meta-item">
+          <mat-icon aria-hidden="true">help_outline</mat-icon>
+          <span i18n>{maxQuestions, plural, =1 {1 question} other {{{maxQuestions}} questions}}</span>
+        </span>
+      </div>
+      @if (survey.description) {
+        <planet-markdown class="survey-intro__description" [content]="survey.description"></planet-markdown>
+      }
+      <button mat-raised-button color="primary" class="survey-intro__start km-start-survey" (click)="startSurvey()" i18n>Start Survey</button>
+    </div>
+  </div>
+}
+
+@if (survey && hasStarted && !isSubmitted && !showDemographics) {
   <planet-exams-question-frame
     [title]="survey.name"
     [questionNum]="questionNum"
@@ -48,7 +75,7 @@
   </planet-exams-question-frame>
 }
 
-@if (survey && showDemographics && !isSubmitted) {
+@if (survey && hasStarted && showDemographics && !isSubmitted) {
   <div class="state-view">
     <div [formGroup]="demographicsForm" class="demographics-form">
       <mat-radio-group formControlName="gender">
