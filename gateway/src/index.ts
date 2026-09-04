@@ -6,6 +6,7 @@ import WebSocket from 'ws';
 
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
+import { registerSyncRoutes, startTimedSyncScheduler } from './modules/sync/register';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/', (req: Request, res: Response) => {
 
 registerChatApiRoutes(app);
 registerPublicRoutes(app);
+registerSyncRoutes(app);
 registerChatApiWebSocket(wss);
 
 app.use((error: any, req: Request, res: Response, next: any) => {
@@ -40,4 +42,7 @@ app.use((error: any, req: Request, res: Response, next: any) => {
 
 const port = Number(process.env.SERVE_PORT || 5000);
 
-server.listen(port, () => console.log(`Gateway running on port ${port}`)); // eslint-disable-line no-console
+server.listen(port, () => {
+  console.log(`Gateway running on port ${port}`); // eslint-disable-line no-console
+  startTimedSyncScheduler();
+});

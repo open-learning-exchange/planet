@@ -2,6 +2,102 @@
   <button mat-icon-button routerLink="/manager"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Synchronization Task</span>
 </mat-toolbar>
+<form class="container" [formGroup]="form">
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-card-title i18n>Timed Sync</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (configuration.alwaysOnline) {
+        <div class="instructions" i18n>
+          This planet is set as Always Online, so it replicates continuously and timed syncs are not used.
+        </div>
+      }
+      <mat-list>
+        <mat-list-item>
+          <div matListItemTitle class="list-item-content">
+            <span i18n>Automatic Sync</span>
+            <mat-slide-toggle formControlName="enabled" i18n>Sync on a schedule</mat-slide-toggle>
+          </div>
+        </mat-list-item>
+        <mat-list-item>
+          <div matListItemTitle class="list-item-content">
+            <span i18n>Frequency</span>
+            <mat-form-field>
+              <mat-label i18n>Sync Frequency</mat-label>
+              <mat-select formControlName="preset">
+                @for (preset of presets; track preset.value) {
+                  <mat-option [value]="preset.value">{{preset.label}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </mat-list-item>
+        @if (form.controls.preset.value === 'custom') {
+          <mat-list-item>
+            <div matListItemTitle class="list-item-content">
+              <span i18n>Hours Between Syncs</span>
+              <mat-form-field>
+                <mat-label i18n>Hours</mat-label>
+                <input matInput type="number" formControlName="intervalHours" [min]="minIntervalHours" [max]="maxIntervalHours">
+                <mat-error><planet-form-error-messages [control]="form.controls.intervalHours"></planet-form-error-messages></mat-error>
+              </mat-form-field>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+      <div class="hint" i18n>
+        A timed sync re-runs the databases of the last manual sync with the credentials that sync saved, so run Sync once from this page
+        before turning it on, and again after the manager password changes.
+      </div>
+      @if (status) {
+        <mat-list>
+          <mat-list-item>
+            <div matListItemTitle class="list-item-content">
+              <span i18n>Last Automatic Sync</span>
+              @if (status.lastRunAt) {
+                <span>{{status.lastRunAt | date:'medium'}}</span>
+              } @else {
+                <span i18n>Never</span>
+              }
+            </div>
+          </mat-list-item>
+          @if (status.enabled && status.nextRunAt) {
+            <mat-list-item>
+              <div matListItemTitle class="list-item-content">
+                <span i18n>Next Automatic Sync</span>
+                <span>{{status.nextRunAt | date:'medium'}}</span>
+              </div>
+            </mat-list-item>
+          }
+          @if (status.lastResult === 'error') {
+            <mat-list-item>
+              <div matListItemTitle class="list-item-content warn-text-color">
+                <span i18n>Last Error</span>
+                <span>{{status.lastError}}</span>
+              </div>
+            </mat-list-item>
+          }
+          @if (status.skipReason === 'noReplicators' || status.skipReason === 'syncInProgress') {
+            <mat-list-item>
+              <div matListItemTitle class="list-item-content warn-text-color">
+                <span i18n>Waiting</span>
+                @if (status.skipReason === 'noReplicators') {
+                  <span i18n>There is no completed sync to repeat yet. Run Sync below to save the settings a timed sync reuses.</span>
+                } @else {
+                  <span i18n>A sync is still running, so the next timed sync waits for it to finish.</span>
+                }
+              </div>
+            </mat-list-item>
+          }
+        </mat-list>
+      }
+    </mat-card-content>
+  </mat-card>
+  <div class="update-button-container">
+    <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveSchedule()" i18n>Save Schedule</button>
+  </div>
+</form>
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
