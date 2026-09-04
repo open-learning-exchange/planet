@@ -20,11 +20,13 @@ const couchHost = couchUser && couchPass
   : (couchUrl || defaultCouchUrl);
 
 const db = nano(couchHost);
+const adminActivitiesDB = db.use<any>('admin_activities');
 const chatDB = db.use('chat_history');
 const resourceDB = db.use('resources');
 const configurationDB = db.use('configurations');
 const examsDB = db.use('exams');
+const replicatorDB = db.use<any>('_replicator');
 const submissionsDB = db.use('submissions');
 const teamsDB = db.use('teams');
 
-export { chatDB, configurationDB, examsDB, resourceDB, submissionsDB, teamsDB };
+export { adminActivitiesDB, chatDB, configurationDB, examsDB, replicatorDB, resourceDB, submissionsDB, teamsDB };
