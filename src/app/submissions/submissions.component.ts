@@ -5,7 +5,7 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '../shared/table-helpers';
 import { appSourceLabel } from '../shared/app-source';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
@@ -247,7 +247,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   setupTable() {
     this.submissions.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'parent.name' ]),
+      filterSpecificFieldsHybrid([ 'parent.name' ]),
       filterDropdowns(this.filter)
     ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {

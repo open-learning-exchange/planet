@@ -10,7 +10,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { filterSpecificFields, createDeleteArray } from '../shared/table-helpers';
+import { filterSpecificFieldsHybrid, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
@@ -209,9 +209,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   setFilterPredicate(db: string) {
     switch (db) {
       case 'resources':
-        return filterSpecificFields([ 'title' ]);
+        return filterSpecificFieldsHybrid([ 'title' ]);
       case 'courses':
-        return filterSpecificFields([ 'courseTitle' ]);
+        return filterSpecificFieldsHybrid([ 'courseTitle' ]);
     }
   }
 
