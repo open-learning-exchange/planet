@@ -198,10 +198,7 @@ export class ChangePasswordDirective implements OnChanges {
 
   updateAdminPassword(userData) {
     return this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
-      .pipe(
-        catchError(this.passwordError('Error changing admin password')),
-        switchMap((response) => of(response))
-      );
+      .pipe(catchError(this.passwordError('Error changing admin password')));
   }
 
 }
