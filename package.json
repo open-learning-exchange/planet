@@ -87,6 +87,8 @@
     "@types/pouchdb-find": "^6.3.4",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
     "@typescript-eslint/parser": "^8.57.1",
+    "@typescript-eslint/types": "^8.69.0",
+    "@typescript-eslint/utils": "^8.69.0",
     "eslint": "^9.39.4",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsdoc": "^46.10.1",
@@ -111,6 +113,9 @@
     "@covalent/text-editor": {
       "@angular/core": "$@angular/core",
       "@angular/common": "$@angular/common"
+    },
+    "vitest": {
+      "vite": "$vite"
     }
   }
 }
