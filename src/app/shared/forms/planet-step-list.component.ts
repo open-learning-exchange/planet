@@ -14,9 +14,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
 
 export type PlanetStepControl = AbstractControl<any, any>;
-export type PlanetStepControls = Record<string, PlanetStepControl>;
-export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
-export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
+export type PlanetStepFormArray = FormArray<FormGroup<any>>;
 export type PlanetStepListSteps = unknown[] | PlanetStepFormArray;
 
 interface StepMoveEvent {

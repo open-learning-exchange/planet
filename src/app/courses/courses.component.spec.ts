@@ -166,7 +166,7 @@ describe('CoursesComponent', () => {
     userServiceMock.shelfChange$.next(userServiceMock.shelf);
 
     expect(component.courses.data).not.toBe(previousData);
-    expect(component.courses.data[0].admission).toBe(true);
+    expect((component.courses.data[0] as { admission: boolean }).admission).toBe(true);
   });
 
   // TODO: Update tests to use vitest spies

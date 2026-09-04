@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
@@ -43,8 +43,8 @@ describe('RequestsComponent', () => {
     get: vi.fn().mockReturnValue({ isUserAdmin: true })
   };
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [RequestsComponent, NoopAnimationsModule],
       providers: [
         CouchService,
@@ -67,7 +67,7 @@ describe('RequestsComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RequestsComponent);

@@ -4,7 +4,7 @@ import { MeetupsComponent } from './meetups.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { MaterialModule } from '../shared/material.module';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 
 
 describe('MeetupsComponent', () => {

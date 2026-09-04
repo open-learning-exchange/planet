@@ -197,7 +197,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   // Only questionNum may differ between two views of one test, so any other change of destination
   // -- a different submission, mode or test id -- still counts as leaving
   isSameExamDestination(): boolean {
-    const destination = this.router.getCurrentNavigation()?.finalUrl;
+    const destination = this.router.currentNavigation()?.finalUrl;
     const identity = (url: string) => {
       const [ path, ...params ] = url.split(';');
       return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');

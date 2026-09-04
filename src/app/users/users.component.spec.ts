@@ -38,7 +38,7 @@ describe('Users', () => {
 
   it('Should be a UsersComponent', () => {
     const { comp } = setup();
-    expect(comp instanceof UsersComponent).toBe(true, 'Should create UsersComponent');
+    expect(comp instanceof UsersComponent).toBe(true);
   });
 
   // describe('Init', () => {

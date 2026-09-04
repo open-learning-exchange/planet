@@ -121,7 +121,7 @@ describe('CoursesAddComponent', () => {
         displayName: 'Test draft'
       })
     }));
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -158,7 +158,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -204,7 +204,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }

@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { enableProdMode, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 
 
 import { environment } from './environments/environment';
@@ -18,9 +18,15 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(BrowserModule, AppRoutingModule, MaterialModule, PlanetDialogsModule, FullCalendarModule, environment.production
-      ? ServiceWorkerModule.register('/ngsw-worker.js')
-      : []),
+    provideZoneChangeDetection(),
+    importProvidersFrom(
+      BrowserModule,
+      AppRoutingModule,
+      MaterialModule,
+      PlanetDialogsModule,
+      FullCalendarModule,
+      environment.production ? ServiceWorkerModule.register('/ngsw-worker.js') : []
+    ),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations()
   ]
