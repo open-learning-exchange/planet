@@ -774,13 +774,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[], sortBy: string) {
     switch (reportType) {
       case 'logins':
-        let data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
-          .map(activity => ({
-            ...activity,
-            androidId: activity.androidId || '',
-            deviceName: activity.deviceName || '',
-            customDeviceName: activity.customDeviceName || ''
-          }));
+        let data = this.activityService.appendUserDemographics(
+          filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members), this.today
+        ).map(activity => ({
+          ...activity,
+          androidId: activity.androidId || '',
+          deviceName: activity.deviceName || '',
+          customDeviceName: activity.customDeviceName || ''
+        }));
         if (sortBy) {
           data = this.sortData(data, sortBy);
         }
@@ -813,8 +814,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
-    const exportData = data.map(activity => ({
+    const exportData = this.activityService.appendUserDemographics(data, this.today).map(activity => ({
       [$localize`User`]: activity.user || '',
+      [$localize`Gender`]: activity.gender,
+      [$localize`Age (years)`]: activity.age,
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,
@@ -893,7 +896,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data = this.sortData(data, sortBy);
     }
     this.csvService.exportCSV({
-      data: this.activityService.appendAge(
+      data: this.activityService.appendUserDemographics(
         filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
         .map(activity => {
           const baseActivity = {
