@@ -9,7 +9,7 @@ import {
 } from '@angular/material/table';
 import { finalize } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
-import { sortNumberOrString, filterSpecificFieldsByWord } from '@shared/tables/table-helpers';
+import { sortNumberOrString, filterSpecificFieldsByWord } from '@shared/tables/table.helpers';
 import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';

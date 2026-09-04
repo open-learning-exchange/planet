@@ -12,7 +12,7 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '@shared/state.service';
 import { DialogsAddResourcesComponent } from '@shared/dialogs/pickers/dialogs-add-resources.component';

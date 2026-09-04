@@ -6,7 +6,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { ManagerService } from '../../manager.service';
-import { filterSpecificFields } from '@shared/tables/table-helpers';
+import { filterSpecificFields } from '@shared/tables/table.helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
 import { CsvService } from '@shared/export/csv.service';
 import { ReportsService } from '../reports.service';

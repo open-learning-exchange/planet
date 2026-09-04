@@ -17,7 +17,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
-import { showFormErrors } from '@shared/tables/table-helpers';
+import { showFormErrors } from '@shared/tables/table.helpers';
 import { LoginTasksService } from './login-tasks.service';
 
 interface LoginFormControls {

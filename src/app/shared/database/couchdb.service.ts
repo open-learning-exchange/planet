@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
 import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { findDocuments } from './mangoQueries';
+import { findDocuments } from './mango-queries';
 
 class DatePlaceholder {}
 

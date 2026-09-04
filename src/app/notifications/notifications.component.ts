@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mangoQueries';
-import { filterDropdowns } from '@shared/tables/table-helpers';
+import { findDocuments } from '@shared/database/mango-queries';
+import { filterDropdowns } from '@shared/tables/table.helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 

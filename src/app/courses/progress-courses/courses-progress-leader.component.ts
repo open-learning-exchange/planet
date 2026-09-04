@@ -6,7 +6,7 @@ import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { CsvService } from '@shared/export/csv.service';
 import { dedupeObjectArray } from '@shared/utils';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';

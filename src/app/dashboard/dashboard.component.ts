@@ -4,7 +4,7 @@ import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '@shared/state.service';

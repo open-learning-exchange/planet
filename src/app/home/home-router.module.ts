@@ -8,7 +8,7 @@ import { UsersAchievementsUpdateComponent } from '../users/users-achievements/us
 import { TeamsViewComponent } from '../teams/teams-view.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
-import { myDashboardRoute } from './router-constants';
+import { myDashboardRoute } from './router.constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '@shared/auth/auth-guard.service';

@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { CouchService } from '@shared/database/couchdb.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields } from '@shared/tables/table-helpers';
+import { filterSpecificFields } from '@shared/tables/table.helpers';
 import { StateService } from '@shared/state.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { ValidatorService } from '../../validators/validator.service';

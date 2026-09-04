@@ -8,7 +8,7 @@ import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
-import { trackByIndex } from '@shared/tables/table-helpers';
+import { trackByIndex } from '@shared/tables/table.helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

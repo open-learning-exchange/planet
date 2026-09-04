@@ -10,9 +10,9 @@ import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv, endOfDay } from '../reports.utils';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { CsvService } from '@shared/export/csv.service';
-import { filterSpecificFields } from '@shared/tables/table-helpers';
+import { filterSpecificFields } from '@shared/tables/table.helpers';
 import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
@@ -38,7 +38,8 @@ import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner
     MatExpansionPanelTitle,
     MyPlanetTableComponent,
     PlanetLoadingSpinnerComponent
-  ]
+  ],
+  providers: [ TimePipe ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

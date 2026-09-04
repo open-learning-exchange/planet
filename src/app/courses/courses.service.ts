@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '@shared/database/couchdb.service';
 import { Subject, forkJoin, of } from 'rxjs';
 import { UserService } from '@shared/auth/user.service';
-import { findDocuments, inSelector } from '@shared/database/mangoQueries';
+import { findDocuments, inSelector } from '@shared/database/mango-queries';
 import { switchMap, map, filter, take } from 'rxjs/operators';
 import { RatingService } from '@shared/ratings/rating.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';

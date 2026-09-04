@@ -7,7 +7,7 @@ import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { StateService } from '@shared/state.service';
 import { of, Subject } from 'rxjs';
 import { addDateAndTime, getClockTime } from '@shared/utils';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { assigneeMatches, effectiveAssignees, storedAssignee } from './tasks.utils';
 
 @Injectable({

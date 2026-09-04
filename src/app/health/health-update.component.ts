@@ -7,7 +7,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '@shared/auth/user.service';
 import { HealthService } from './health.service';
-import { showFormErrors } from '@shared/tables/table-helpers';
+import { showFormErrors } from '@shared/tables/table.helpers';
 import { languages } from '@shared/language/languages';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes.component';

@@ -10,7 +10,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { DialogsChatShareComponent } from '../dialogs-chat-share.component';
 import { SearchService } from '@shared/search/search.service';
-import { showFormErrors, trackById } from '@shared/tables/table-helpers';
+import { showFormErrors, trackById } from '@shared/tables/table.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';

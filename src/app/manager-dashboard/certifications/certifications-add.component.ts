@@ -6,7 +6,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
 import { DialogsAddTableComponent } from '@shared/tables/dialogs-add-table.component';
 import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '@shared/tables/table-helpers';
+import { showFormErrors } from '@shared/tables/table.helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';

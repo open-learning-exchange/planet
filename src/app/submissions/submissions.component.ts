@@ -5,13 +5,13 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '@shared/tables/table-helpers';
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '@shared/tables/table.helpers';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '@shared/auth/user.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 import { StateService } from '@shared/state.service';

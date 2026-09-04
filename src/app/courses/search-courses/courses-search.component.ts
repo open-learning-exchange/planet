@@ -5,7 +5,7 @@ import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/mate
 import * as constants from '../constants';
 import { languages } from '@shared/language/languages';
 import { dedupeShelfReduce } from '@shared/utils';
-import { trackByCategory } from '@shared/tables/table-helpers';
+import { trackByCategory } from '@shared/tables/table.helpers';
 
 
 @Component({

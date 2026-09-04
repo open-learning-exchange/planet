@@ -3,7 +3,7 @@ import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFo
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { showFormErrors } from '@shared/tables/table-helpers';
+import { showFormErrors } from '@shared/tables/table.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';

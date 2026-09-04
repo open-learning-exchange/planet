@@ -9,7 +9,7 @@ import { DialogsAddMeetupsComponent } from '@shared/dialogs/pickers/dialogs-add-
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { days, millisecondsToDay } from '../../meetups/constants';
 import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { styleVariables } from '@shared/utils';
 import { AuthService } from '@shared/auth/auth-guard.service';
 import { TasksService } from '../../tasks/tasks.service';

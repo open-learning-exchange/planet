@@ -20,7 +20,7 @@ import { FuzzySearchService } from '@shared/search/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
   createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
-} from '@shared/tables/table-helpers';
+} from '@shared/tables/table.helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { SyncService } from '@shared/database/sync.service';
@@ -34,7 +34,7 @@ import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
-import { levelList } from './resources-constants';
+import { levelList } from './resources.constants';
 import { SearchService } from '@shared/search/search.service';
 import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '@shared/platform/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';

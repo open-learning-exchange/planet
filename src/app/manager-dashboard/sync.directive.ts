@@ -5,7 +5,7 @@ import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
 import { SyncService } from '@shared/database/sync.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { ManagerService } from './manager.service';
 import { StateService } from '@shared/state.service';
 import { ReportsService } from './reports/reports.service';

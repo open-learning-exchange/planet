@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Subject, of, Observable, forkJoin } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
 
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
 import { CoursesService } from '../../courses/courses.service';
 import { NewsService } from '../../news/news.service';

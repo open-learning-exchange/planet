@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { map, switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields, sortNumberOrString } from '@shared/tables/table-helpers';
+import { filterSpecificFields, sortNumberOrString } from '@shared/tables/table.helpers';
 import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
@@ -22,7 +22,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

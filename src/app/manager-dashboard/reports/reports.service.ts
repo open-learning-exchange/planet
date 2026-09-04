@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { dedupeShelfReduce, ageFromBirthDate } from '@shared/utils';
 import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material/dialog';

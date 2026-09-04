@@ -13,7 +13,7 @@ import {
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { findByIdInArray } from '@shared/utils';
-import { commonSortingDataAccessor } from '@shared/tables/table-helpers';
+import { commonSortingDataAccessor } from '@shared/tables/table.helpers';
 import { SyncService } from '@shared/database/sync.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';

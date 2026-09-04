@@ -2,7 +2,7 @@ import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { CoursesService } from '../courses/courses.service';
@@ -15,7 +15,7 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { ChatService } from '@shared/ai/chat.service';
 import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
-import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '@shared/charts/chart-utils';
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '@shared/charts/chart.utils';
 import { PdfService } from '@shared/export/pdf.service';
 
 @Injectable({

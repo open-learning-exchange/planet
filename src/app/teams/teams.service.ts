@@ -4,7 +4,7 @@ import { switchMap, map, take } from 'rxjs/operators';
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '@shared/state.service';
 import { ValidatorService } from '../validators/validator.service';

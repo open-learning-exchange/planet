@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '@shared/utils';
 import { ExamsService, QuestionChoiceFormGroup, QuestionFormGroup } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { trackByIdVal } from '@shared/tables/table-helpers';
+import { trackByIdVal } from '@shared/tables/table.helpers';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';

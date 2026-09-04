@@ -11,7 +11,7 @@ import { HealthService } from '../health/health.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { dedupeObjectArray } from '@shared/utils';
 import { environment } from '../../environments/environment';
 

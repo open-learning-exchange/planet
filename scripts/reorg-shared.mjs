@@ -68,6 +68,12 @@ const exists = modulePath => existsSync(join(repoRoot, `${modulePath}.ts`)) ||
   existsSync(join(repoRoot, modulePath, 'index.ts')) ||
   existsSync(join(repoRoot, modulePath));
 
+// A specifier is either relative to the importing file or aliased, in which
+// case it names a path under shared directly and the directory is irrelevant.
+const toModulePath = (dir, specifier) => specifier.startsWith('@shared/')
+  ? `${sharedPrefix}${specifier.slice('@shared/'.length)}`
+  : posix.normalize(posix.join(dir, specifier));
+
 const specifierFor = (fromDir, target) => {
   if (target.startsWith(sharedPrefix) && dirname(target) !== fromDir) {
     return `@shared/${target.slice(sharedPrefix.length)}`;
@@ -84,16 +90,16 @@ const resolveTarget = (filePath, specifier) => {
   const currentDir = dirname(filePath);
   const previousDir = previousDirs.get(filePath);
   for (const dir of [ currentDir, previousDir ].filter(Boolean)) {
-    const moved = moduleMap.get(posix.normalize(posix.join(dir, specifier)));
+    const moved = moduleMap.get(toModulePath(dir, specifier));
     if (moved) {
       return moved;
     }
   }
-  if (exists(posix.normalize(posix.join(currentDir, specifier)))) {
+  if (exists(toModulePath(currentDir, specifier))) {
     return null;
   }
   if (previousDir) {
-    const candidate = posix.normalize(posix.join(previousDir, specifier));
+    const candidate = toModulePath(previousDir, specifier);
     if (exists(candidate)) {
       return candidate;
     }
@@ -110,7 +116,7 @@ const rewriteImports = () => {
     const filePath = relative(repoRoot, abs).split(/[\\/]/).join('/');
     const original = readFileSync(abs, 'utf8');
     const updated = original.replace(
-      /(\bfrom\s*|\bimport\s*\()(['"])(\.[^'"]*)\2/g,
+      /(\bfrom\s*|\bimport\s*\()(['"])((?:\.|@shared\/)[^'"]*)\2/g,
       (match, prefix, quote, specifier) => {
         const target = resolveTarget(filePath, specifier);
         if (!target) {

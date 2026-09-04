@@ -5,7 +5,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm, AIProvider } from '../chat.model';
 import { ChatService } from '@shared/ai/chat.service';
-import { showFormErrors, trackByIdVal } from '@shared/tables/table-helpers';
+import { showFormErrors, trackByIdVal } from '@shared/tables/table.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { NgClass } from '@angular/common';

@@ -16,7 +16,7 @@ import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
-} from '@shared/tables/table-helpers';
+} from '@shared/tables/table.helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { StateService } from '@shared/state.service';

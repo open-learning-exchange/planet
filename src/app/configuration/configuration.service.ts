@@ -4,7 +4,7 @@ import { UserService } from '@shared/auth/user.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { catchError, map, switchMap, mergeMap, takeWhile, toArray } from 'rxjs/operators';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
 import { SyncService } from '@shared/database/sync.service';
 import { dedupeShelfReduce, stringToHex } from '@shared/utils';

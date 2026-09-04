@@ -3,8 +3,8 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '@shared/state.service';
-import { findDocuments } from '@shared/database/mangoQueries';
-import { createDeleteArray } from '@shared/tables/table-helpers';
+import { findDocuments } from '@shared/database/mango-queries';
+import { createDeleteArray } from '@shared/tables/table.helpers';
 
 @Injectable({
   providedIn: 'root'

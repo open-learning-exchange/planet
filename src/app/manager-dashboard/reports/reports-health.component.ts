@@ -1,6 +1,6 @@
 import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
 import type { ChartConfiguration } from 'chart.js';
-import { loadChart } from '@shared/charts/chart-utils';
+import { loadChart } from '@shared/charts/chart.utils';
 import { StateService } from '@shared/state.service';
 import { HealthService } from '../../health/health.service';
 import { generateWeeksArray, filterByDate, weekDataLabels } from './reports.utils';

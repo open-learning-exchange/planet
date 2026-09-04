@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '@shared/database/couchdb.service';
 import { catchError, switchMap, map, tap } from 'rxjs/operators';
 import { of, Observable, Subject, BehaviorSubject, forkJoin } from 'rxjs';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { environment } from '../../../environments/environment';
 import { addToArray, removeFromArray, dedupeShelfReduce } from '@shared/utils';
 import { StateService } from '@shared/state.service';

@@ -9,7 +9,7 @@ import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';

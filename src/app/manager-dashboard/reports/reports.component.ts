@@ -8,7 +8,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '@shared/state.service';
-import { trackById } from '@shared/tables/table-helpers';
+import { trackById } from '@shared/tables/table.helpers';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

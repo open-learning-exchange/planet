@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { findDocuments, inSelector } from '@shared/database/mangoQueries';
+import { findDocuments, inSelector } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
 import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 

@@ -14,7 +14,7 @@ import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
-} from '@shared/tables/table-helpers';
+} from '@shared/tables/table.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';

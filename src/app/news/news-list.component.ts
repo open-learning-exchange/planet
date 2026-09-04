@@ -10,7 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
-import { trackById } from '@shared/tables/table-helpers';
+import { trackById } from '@shared/tables/table.helpers';
 import { dedupeVoiceLabels, voiceLabelsEqual } from '@shared/voices/voice-labels';
 
 import { MatButton } from '@angular/material/button';

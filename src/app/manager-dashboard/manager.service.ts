@@ -5,7 +5,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { ReportsService } from './reports/reports.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { environment } from '../../environments/environment';
 
 @Injectable({

@@ -17,7 +17,7 @@ import { FuzzySearchService } from '@shared/search/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
   commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
-} from '@shared/tables/table-helpers';
+} from '@shared/tables/table.helpers';
 import * as constants from './constants';
 import { languages } from '@shared/language/languages';
 import { SyncService } from '@shared/database/sync.service';

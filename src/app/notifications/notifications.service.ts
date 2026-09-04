@@ -3,7 +3,7 @@ import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { switchMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 

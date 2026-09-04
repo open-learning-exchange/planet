@@ -8,7 +8,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { TagsService } from '@shared/forms/tags/tags.service';
 import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { normalizedContentType } from '@shared/utils';
 
 @Injectable({

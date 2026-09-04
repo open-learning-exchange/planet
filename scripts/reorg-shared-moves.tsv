@@ -111,3 +111,12 @@ src/app/shared/dialogs/dialogs-submissions.component.ts	src/app/courses/step-vie
 src/app/shared/dialogs/dialogs-submissions.module.ts	src/app/courses/step-view-courses/dialogs-submissions.module.ts
 src/app/shared/dialogs/dialogs-chat-share.component.ts	src/app/chat/dialogs-chat-share.component.ts
 src/app/shared/dialogs/dialogs-chat-share.component.html	src/app/chat/dialogs-chat-share.component.html
+src/app/shared/database/mangoQueries.ts	src/app/shared/database/mango-queries.ts
+src/app/shared/language/restrict-diacritics.directives.ts	src/app/shared/language/restrict-diacritics.directive.ts
+src/app/shared/auth/beta-then-auth-guard-service.ts	src/app/shared/auth/beta-then-auth-guard.service.ts
+src/app/shared/charts/chart-utils.ts	src/app/shared/charts/chart.utils.ts
+src/app/shared/tables/table-helpers.ts	src/app/shared/tables/table.helpers.ts
+src/app/resources/zip-utils.ts	src/app/resources/zip.utils.ts
+src/app/resources/resources-constants.ts	src/app/resources/resources.constants.ts
+src/app/home/router-constants.ts	src/app/home/router.constants.ts
+src/app/users/user-constants.ts	src/app/users/user.constants.ts

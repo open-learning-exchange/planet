@@ -14,10 +14,10 @@ import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component
 import { UserService } from '@shared/auth/user.service';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill
-} from '@shared/tables/table-helpers';
+} from '@shared/tables/table.helpers';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { FeedbackService } from './feedback.service';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { UsersService } from '../users/users.service';

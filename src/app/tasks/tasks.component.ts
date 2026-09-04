@@ -6,7 +6,7 @@ import { TasksAssigneesDialogComponent } from './tasks-assignees-dialog.componen
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { environment } from '../../environments/environment';
 import { UserService } from '@shared/auth/user.service';
-import { trackById } from '@shared/tables/table-helpers';
+import { trackById } from '@shared/tables/table.helpers';
 import { CouchService } from '@shared/database/couchdb.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';

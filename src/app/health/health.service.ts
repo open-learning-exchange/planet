@@ -5,7 +5,7 @@ import { switchMap, catchError } from 'rxjs/operators';
 import { StateService } from '@shared/state.service';
 import { UsersService } from '../users/users.service';
 import { stringToHex, ageFromBirthDate } from '@shared/utils';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 
 @Injectable({
   providedIn: 'root'

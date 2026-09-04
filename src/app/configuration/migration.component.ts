@@ -14,7 +14,7 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { LowercaseDirective } from '@shared/text/lowercase.directive';
-import { RestrictDiacriticsDirective } from '@shared/language/restrict-diacritics.directives';
+import { RestrictDiacriticsDirective } from '@shared/language/restrict-diacritics.directive';
 import { MatButton } from '@angular/material/button';
 
 const removeProtocol = (str: string) =>

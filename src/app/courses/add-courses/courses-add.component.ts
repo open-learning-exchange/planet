@@ -18,7 +18,7 @@ import { PlanetStepListService } from '@shared/ui/planet-step-list.component';
 import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '@shared/database/pouch.service';
 import { TagsService } from '@shared/forms/tags/tags.service';
-import { showFormErrors } from '@shared/tables/table-helpers';
+import { showFormErrors } from '@shared/tables/table.helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

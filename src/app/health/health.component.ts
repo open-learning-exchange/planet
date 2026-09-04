@@ -13,7 +13,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { CouchService } from '@shared/database/couchdb.service';
 import { conditionAndTreatmentFields } from './health.constants';
-import { findDocuments } from '@shared/database/mangoQueries';
+import { findDocuments } from '@shared/database/mango-queries';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
