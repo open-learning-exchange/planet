@@ -27,6 +27,7 @@ export class ReportsService {
     { value: '24h', label: $localize`Last 24 Hours` },
     { value: '7d', label: $localize`Last 7 Days` },
     { value: '1m', label: $localize`Last Month` },
+    { value: '3m', label: $localize`Last 3 Months` },
     { value: '6m', label: $localize`Last 6 Months` },
     { value: '12m', label: $localize`Last 12 Months` },
     { value: 'all', label: $localize`All Time` },
@@ -331,6 +332,10 @@ export class ReportsService {
       case '1m':
         startDate = new Date(now);
         startDate.setMonth(now.getMonth() - 1);
+        break;
+      case '3m':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 3);
         break;
       case '6m':
         startDate = new Date(now);
