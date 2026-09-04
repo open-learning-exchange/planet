@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
-import { ConfigurationService } from '../configuration/configuration.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { StateService } from '../shared/state.service';
+import { ConfigurationService } from '../../configuration/configuration.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { StateService } from '../../shared/state.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -12,8 +12,8 @@ import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/m
 import { MatList, MatListItem, MatListItemTitle } from '@angular/material/list';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { SubmitDirective } from '../shared/submit.directive';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { SubmitDirective } from '../../shared/submit.directive';
 
 @Component({
   templateUrl: './manager-currency.component.html',

@@ -1,30 +1,30 @@
 import { Component, Inject, Input, LOCALE_ID, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { CouchService } from '../shared/couchdb.service';
-import { TeamsService } from './teams.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { CouchService } from '../../shared/couchdb.service';
+import { TeamsService } from '../teams.service';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
-import { convertUtcDate } from './teams.utils';
-import { CsvService } from '../shared/csv.service';
-import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { AttachmentInputState } from '../shared/forms/file-upload.component';
-import { TeamsAttachmentsService } from './teams-attachments.service';
+import { convertUtcDate } from '../teams.utils';
+import { CsvService } from '../../shared/csv.service';
+import { StateService } from '../../shared/state.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { fullLabel } from '../../manager-dashboard/reports/reports.utils';
+import { AttachmentInputState } from '../../shared/forms/file-upload.component';
+import { TeamsAttachmentsService } from '../teams-attachments.service';
 import { formatDate, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
+import { PdfImageSection, TeamsTablePdfExportService } from '../teams-table-pdf-export.service';
 
 interface NewReportForm {
   _id?: string,

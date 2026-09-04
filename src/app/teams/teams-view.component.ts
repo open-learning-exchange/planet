@@ -40,7 +40,7 @@ import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
 import { PlanetCalendarComponent } from '../shared/calendar.component';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
-import { TeamsReportsComponent } from './teams-reports.component';
+import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';

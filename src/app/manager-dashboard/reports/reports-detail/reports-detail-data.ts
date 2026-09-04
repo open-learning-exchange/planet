@@ -1,4 +1,4 @@
-import { filterByDate, isSelectedMember } from './reports.utils';
+import { filterByDate, isSelectedMember } from '../reports.utils';
 
 export interface ReportDetailFilter {
   app: 'planet' | 'myplanet' | '';

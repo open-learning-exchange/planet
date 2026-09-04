@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
-import { ManagerAIServicesComponent } from './manager-aiservices.component';
+import { ManagerAIServicesComponent } from './manager-settings/manager-aiservices.component';
 import { ManagerDashboardRouterModule } from './manager-dashboard-router.module';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { ManagerSyncComponent } from './manager-sync.component';
@@ -15,17 +15,17 @@ import { RequestsComponent } from '../manager-dashboard/requests/requests.compon
 import { RequestsTableComponent } from './requests/requests-table.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsTableComponent } from './reports/reports-table.component';
-import { ReportsDetailComponent } from './reports/reports-detail.component';
-import { ReportsPendingComponent } from './reports/reports-pending.component';
-import { PendingTableComponent } from './reports/pending-table.component';
+import { ReportsDetailComponent } from './reports/reports-detail/reports-detail.component';
+import { ReportsPendingComponent } from './reports/reports-pending/reports-pending.component';
+import { PendingTableComponent } from './reports/reports-pending/pending-table.component';
 import { ReportsMyPlanetComponent } from './reports/myplanet/reports-myplanet.component';
 import { LogsMyPlanetComponent } from './reports/myplanet/logs-myplanet.component';
 import { MyPlanetToolbarComponent } from './reports/myplanet/myplanet-toolbar.component';
 import { MyPlanetTableComponent } from './reports/myplanet/myplanet-table.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { ReportsDetailActivitiesComponent } from './reports/reports-detail-activities.component';
+import { ReportsDetailActivitiesComponent } from './reports/reports-detail/reports-detail-activities.component';
 import { ReportsHealthComponent } from './reports/reports-health.component';
-import { ManagerCurrencyComponent } from './manager-currency.component';
+import { ManagerCurrencyComponent } from './manager-settings/manager-currency.component';
 
 @NgModule({
   imports: [

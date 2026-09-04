@@ -4,8 +4,8 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { CouchService } from '../../shared/couchdb.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CouchService } from '../../../shared/couchdb.service';
+import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
