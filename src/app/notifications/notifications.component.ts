@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { filterDropdowns } from '../shared/table-helpers';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mangoQueries';
+import { filterDropdowns } from '@shared/tables/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -17,7 +17,7 @@ import { MatSelect } from '@angular/material/select';
 import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+import { ChallengesService } from '@shared/challenges/challenges.service';
 
 @Component({
   templateUrl: './notifications.component.html',

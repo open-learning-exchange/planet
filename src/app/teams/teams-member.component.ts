@@ -1,6 +1,6 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
-import { UserService } from '../shared/user.service';
-import { StateService } from '../shared/state.service';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { DatePipe } from '@angular/common';
@@ -8,8 +8,8 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { MatSelectionList, MatSelectionListChange, MatListOption, MatListItemTitle } from '@angular/material/list';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { TimeAgoPipe } from '../shared/time-ago.pipe';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
 
 const defaultAvatar = 'assets/image.png';
 // Must match the length of $initials-palette in _variables.scss, which owns the colors.

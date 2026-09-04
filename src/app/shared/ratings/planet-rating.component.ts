@@ -1,0 +1,185 @@
+import { Component, Input, OnChanges } from '@angular/core';
+import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { map } from 'rxjs/operators';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { RatingService } from './rating.service';
+import { StateService } from '@shared/state.service';
+import { NgClass } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { PlanetStackedBarComponent } from '@shared/charts/planet-stacked-bar.component';
+import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
+
+const popupFormFields = [
+  {
+    label: $localize`Rate`,
+    type: 'rating',
+    name: 'rate',
+    placeholder: $localize`Your Rating`,
+    required: false
+  },
+  {
+    label: $localize`Comment`,
+    type: 'textarea',
+    name: 'comment',
+    placeholder: $localize`Would you like to leave a comment?`,
+    required: false
+  }
+];
+
+interface RateFormModel {
+  rate: FormControl<number>;
+}
+
+interface PopupFormModel {
+  rate: FormControl<number>;
+  comment: FormControl<string>;
+}
+
+@Component({
+  templateUrl: './planet-rating.component.html',
+  styles: [` .list-item-rating {
+    max-width: 225px;
+  } `],
+  selector: 'planet-rating',
+  imports: [NgClass, MatIcon, PlanetStackedBarComponent, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
+})
+export class PlanetRatingComponent implements OnChanges {
+
+  @Input() rating: any = { userRating: {} };
+  @Input() item: any;
+  @Input() parent;
+  @Input() ratingType = '';
+  @Input() disabled = false;
+
+  rateForm: FormGroup<RateFormModel>;
+  popupForm: FormGroup<PopupFormModel>;
+  isPopupOpen = false;
+  stackedBarData = [];
+  enrolled = true;
+  get rateFormField() {
+    return { rate: this.rating.userRating.rate || 0 };
+  }
+  get commentField() {
+    return { comment: this.rating.userRating.comment || '' };
+  }
+
+  private dbName = 'ratings';
+
+  constructor(
+    private fb: NonNullableFormBuilder,
+    private couchService: CouchService,
+    private planetMessage: PlanetMessageService,
+    private userService: UserService,
+    private dialogsForm: DialogsFormService,
+    private ratingService: RatingService,
+    private stateService: StateService
+  ) {
+    this.rateForm = this.fb.group({ rate: 0 });
+    this.popupForm = this.fb.group({ rate: 0, comment: '' });
+  }
+
+  ngOnChanges() {
+    // After any changes to ratings ensures all properties are set
+    this.rating = Object.assign({ rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} }, this.rating);
+    this.stackedBarData = [
+      { class: 'primary-color', amount: this.rating.maleRating },
+      { class: 'primary-light-color',
+        amount: this.rating.totalRating === 0 ?
+          1 :
+          this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
+        noLabel: true
+      },
+      { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
+    ];
+    this.rateForm.setValue({
+      rate: this.rateFormField.rate
+    });
+    this.popupForm.setValue({
+      rate: this.rateFormField.rate,
+      comment: this.commentField.comment
+    });
+  }
+
+  isEnrolled(id: any, type: any): boolean {
+    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
+    const { inShelf } = this.userService.countInShelf([ id ], idType);
+    return inShelf;
+  }
+
+  onStarClick(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel> = this.rateForm) {
+    if (!this.isEnrolled(this.item._id, this.ratingType)) {
+      if (this.ratingType === 'course') {
+        this.planetMessage.showMessage($localize`Please join the course before rating!`);
+      } else {
+        this.planetMessage.showMessage($localize`Please add the resource to your library before rating!`);
+      }
+      this.enrolled = false;
+      return;
+    }
+
+    this.enrolled = true;
+    if (this.disabled || form.controls.rate.value === 0) {
+      return;
+    }
+    this.updateRating(form).subscribe(res => {
+      if (!this.isPopupOpen) {
+        this.openDialog();
+        this.planetMessage.showMessage($localize`Thank you, your rating is submitted!`);
+      } else {
+        this.rateForm.setValue({ rate: this.popupForm.controls.rate.value });
+        this.isPopupOpen = false;
+        if (this.popupForm.controls.comment.dirty && this.popupForm.controls.comment.value !== '') {
+          this.planetMessage.showMessage($localize`Thank you for your additional comments`);
+        }
+      }
+    }, (err) => {
+      this.ratingError();
+    });
+  }
+
+  updateRating(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel>) {
+    // Later parameters of Object.assign will overwrite values from previous objects
+    const configuration = this.stateService.configuration;
+    const newRating = {
+      type: this.ratingType,
+      item: this.item._id,
+      title: this.item.title || this.item.courseTitle,
+      createdTime: this.couchService.datePlaceholder,
+      ...this.rating.userRating,
+      ...form.value,
+      time: this.couchService.datePlaceholder,
+      user: this.userService.get(),
+      createdOn: configuration.code,
+      parentCode: configuration.parentCode
+    };
+    // Use call because 'this' will be undefined otherwise
+    return this.couchService.updateDocument(this.dbName, newRating).pipe(map((res: any) => {
+      newRating._rev = res.rev;
+      newRating._id = res.id;
+      this.rating.userRating = newRating;
+      this.ratingService.newRatings(false);
+      return res;
+    }));
+  }
+
+  openDialog() {
+    this.popupForm.patchValue(this.rateForm.value);
+    this.isPopupOpen = true;
+    this.dialogsForm
+      .confirm($localize`Rating`, popupFormFields, this.popupForm)
+      .subscribe((res) => {
+        if (res) {
+          this.onStarClick(this.popupForm);
+        }
+      });
+  }
+
+  ratingError() {
+    this.planetMessage.showAlert($localize`There was an issue updating your rating`);
+    this.rateForm.patchValue({ rate: this.rating.userRating.rate || 0 });
+    this.popupForm.patchValue({ comment: this.rating.userRating.comment || '' });
+  }
+}

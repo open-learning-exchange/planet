@@ -3,12 +3,12 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
+import { UserService } from '@shared/auth/user.service';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { trackByIndex } from '../../shared/table-helpers';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
+import { trackByIndex } from '@shared/tables/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -23,11 +23,11 @@ import {
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
 import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './courses-view.component.html',

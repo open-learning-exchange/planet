@@ -11,8 +11,8 @@ import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import { AuthService } from '../shared/auth-guard.service';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
+import { AuthService } from '@shared/auth/auth-guard.service';
+import { UnsavedChangesGuard } from '@shared/unsaved-changes/unsaved-changes.guard';
 
 const dashboardPath = (route): string => `${myDashboardRoute}/${route}`;
 

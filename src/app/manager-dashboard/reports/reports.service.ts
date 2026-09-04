@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
-import { findDocuments } from '../../shared/mangoQueries';
-import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mangoQueries';
+import { dedupeShelfReduce, ageFromBirthDate } from '@shared/utils';
 import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
-import { StateService } from '../../shared/state.service';
+import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
+import { StateService } from '@shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 
 interface ActivityRequestObject {

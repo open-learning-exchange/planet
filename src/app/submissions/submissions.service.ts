@@ -2,21 +2,21 @@ import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
-import { findDocuments } from '../shared/mangoQueries';
-import { CouchService } from '../shared/couchdb.service';
-import { StateService } from '../shared/state.service';
+import { findDocuments } from '@shared/database/mangoQueries';
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
 import { CoursesService } from '../courses/courses.service';
-import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, converter } from '../shared/utils';
-import { CsvService } from '../shared/csv.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { UserService } from '@shared/auth/user.service';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, converter } from '@shared/utils';
+import { CsvService } from '@shared/export/csv.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { ChatService } from '../shared/chat.service';
-import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
-import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import { PdfService } from '../shared/pdf.service';
+import { ChatService } from '@shared/ai/chat.service';
+import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '@shared/charts/chart-utils';
+import { PdfService } from '@shared/export/pdf.service';
 
 @Injectable({
   providedIn: 'root'

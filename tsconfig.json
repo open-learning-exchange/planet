@@ -1,6 +1,10 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": [ "src/app/shared/*" ]
+    },
     "importHelpers": true,
     "module": "esnext",
     "esModuleInterop": true,

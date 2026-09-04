@@ -5,24 +5,24 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
-import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { DialogsAddResourcesComponent } from '@shared/dialogs/pickers/dialogs-add-resources.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import {
   PlanetStepListComponent,
   PlanetStepListItemComponent,
   PlanetStepListNumberDirective,
   PlanetStepListFormDirective,
   PlanetStepListActionsDirective
-} from '../../shared/forms/planet-step-list.component';
+} from '@shared/ui/planet-step-list.component';
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 
 interface CoursesStepForm {
   id: FormControl<string>;

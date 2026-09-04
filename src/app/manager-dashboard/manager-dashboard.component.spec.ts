@@ -7,17 +7,17 @@ import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ManagerDashboardComponent } from './manager-dashboard.component';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { CoursesService } from '../courses/courses.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { StateService } from '../shared/state.service';
+import { StateService } from '@shared/state.service';
 import { ManagerService } from './manager.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { SyncService } from '../shared/sync.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { SyncService } from '@shared/database/sync.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 
 describe('ManagerDashboardComponent', () => {
   let component: ManagerDashboardComponent;

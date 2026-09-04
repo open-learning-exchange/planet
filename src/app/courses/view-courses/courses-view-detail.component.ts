@@ -1,20 +1,20 @@
 import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
-import { StateService } from '../../shared/state.service';
+import { StateService } from '@shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
-import { languages } from '../../shared/languages';
-import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
-import { LanguageLabelComponent } from '../../shared/language-label.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { languages } from '@shared/language/languages';
+import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
 import { DatePipe } from '@angular/common';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 import { environment } from '../../../environments/environment';
-import { couchAttachmentUrl } from '../../shared/utils';
+import { couchAttachmentUrl } from '@shared/utils';
 
 @Component({
   selector: 'planet-courses-detail',

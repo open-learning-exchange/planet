@@ -3,9 +3,9 @@ import {
 } from '@angular/core';
 import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
 import * as constants from '../constants';
-import { languages } from '../../shared/languages';
-import { dedupeShelfReduce } from '../../shared/utils';
-import { trackByCategory } from '../../shared/table-helpers';
+import { languages } from '@shared/language/languages';
+import { dedupeShelfReduce } from '@shared/utils';
+import { trackByCategory } from '@shared/tables/table-helpers';
 
 
 @Component({

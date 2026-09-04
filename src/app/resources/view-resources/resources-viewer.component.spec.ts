@@ -1,6 +1,6 @@
 import { Subject, of, throwError } from 'rxjs';
 
-import { CSV_PREVIEW_MAX_BYTES } from '../../shared/csv.service';
+import { CSV_PREVIEW_MAX_BYTES } from '@shared/export/csv.service';
 import { ResourcesViewerComponent } from './resources-viewer.component';
 
 describe('ResourcesViewerComponent CSV preview', () => {

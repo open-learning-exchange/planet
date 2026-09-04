@@ -1,0 +1,368 @@
+import { Component, DestroyRef, Inject, Input, forwardRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors,
+  ValidatorFn, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+} from '@angular/material/dialog';
+import { TagsService } from './tags.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { ValidatorService } from '../../../validators/validator.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { UserService } from '@shared/auth/user.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
+import { CustomValidators } from '../../../validators/custom-validators';
+import { mapToArray, isInMap } from '@shared/utils';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { Observable } from 'rxjs';
+import { NgClass } from '@angular/common';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatActionList, MatListItem, MatListItemMeta, MatListItemIcon, MatDivider, MatNavList } from '@angular/material/list';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+
+interface TagFormControls {
+  name: FormControl<string>;
+  attachedTo: FormControl<string>;
+}
+
+type TagFormGroup = FormGroup<TagFormControls>;
+
+@Component({
+  selector: 'planet-tag-input-toggle-icon',
+  template: `
+    @if (!isOpen) {
+      <mat-icon [inline]="true">expand_more</mat-icon>
+    }
+    @if (isOpen) {
+      <mat-icon [inline]="true">expand_less</mat-icon>
+    }
+    `,
+  styles: [`
+    mat-icon {
+      vertical-align: middle;
+    }
+  `],
+  imports: [MatIcon]
+})
+export class PlanetTagInputToggleIconComponent {
+
+  @Input() isOpen = false;
+
+}
+
+@Component({
+  templateUrl: 'planet-tag-input-dialog.component.html',
+  styleUrls: ['planet-tag-input-dialog.scss'],
+  imports: [
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSuffix,
+    FormsModule,
+    AuthorizedRolesDirective,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    ReactiveFormsModule,
+    MatError,
+    FormErrorMessagesComponent,
+    MatSelect,
+    MatOption,
+    MatButton,
+    MatIconButton,
+    MatActionList,
+    MatListItem,
+    forwardRef(() => PlanetTagInputToggleIconComponent),
+    MatCheckbox,
+    MatListItemMeta,
+    MatTooltip,
+    MatIcon,
+    MatListItemIcon,
+    MatDivider,
+    MatNavList,
+    NgClass,
+    MatDialogActions,
+    MatDialogClose
+  ]
+})
+export class PlanetTagInputDialogComponent {
+  private readonly destroyRef = inject(DestroyRef);
+
+  deleteDialog: any;
+  tags: any[] = [];
+  selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
+  indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
+  filterValue = '';
+  mode = 'filter';
+  #selectMany = true;
+  get selectMany() {
+    return this.#selectMany;
+  }
+  set selectMany(value: boolean) {
+    this.#selectMany = value;
+    this.data.reset(value);
+  }
+  addTagForm: TagFormGroup;
+  newTagInfo: { id: string, parentId?: string };
+  isUserAdmin = false;
+  isInMap = isInMap;
+  subcollectionIsOpen = new Map();
+  get okClickValue() {
+    return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
+  }
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+
+  constructor(
+    public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private tagsService: TagsService,
+    private fb: NonNullableFormBuilder,
+    private planetMessageService: PlanetMessageService,
+    private validatorService: ValidatorService,
+    private dialogsFormService: DialogsFormService,
+    private userService: UserService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog,
+    private deviceInfoService: DeviceInfoService,
+  ) {
+    this.dataInit();
+    // April 17, 2019: Removing selectMany toggle, but may revisit later
+    // August 2, 2019: We are not readding the toggle, but for filter mode we allow select many to be turned off
+    this.selectMany = this.mode === 'add' || this.data.selectMany;
+    this.data.startingTags
+      .filter((tag: any) => tag)
+      .forEach(tag => {
+        this.tagChange(tag.tagId || tag, { tagOne: !this.selectMany });
+        this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
+      });
+    this.addTagForm = this.fb.group({
+      name: ['', {
+        validators: this.tagNameSyncValidator(),
+        asyncValidators: this.tagNameAsyncValidator()
+      }],
+      attachedTo: ['']
+    });
+    this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+      });
+  }
+
+  dataInit() {
+    this.tags = this.filterTags(this.filterValue);
+    this.mode = this.data.mode;
+    if (this.newTagInfo && this.newTagInfo.id !== undefined && this.mode === 'add') {
+      const { parentId, id } = this.newTagInfo;
+      const parentTag = parentId ? this.data.tags.find(tag => tag._id === parentId) : undefined;
+      this.tagChange(id, { parentTag });
+    }
+    this.newTagInfo = undefined;
+  }
+
+  resetSelection() {
+    this.data.tagUpdate('', false, true);
+    this.selected.clear();
+    this.data.reset(this.selectMany);
+  }
+
+  tagChange(tagId, { tagOne = false, parentTag }: { tagOne?, parentTag? } = {}) {
+    const newState = !this.selected.get(tagId);
+    const updateTag = (id) => {
+      this.selected.set(id, newState || this.indeterminate.get(id));
+      this.indeterminate.set(id, false);
+      this.data.tagUpdate(id, this.selected.get(id), tagOne);
+    };
+    updateTag(tagId);
+    if (parentTag && (newState || parentTag.subTags.every(sub => !this.selected.get(sub._id)))) {
+      updateTag(parentTag._id);
+    }
+  }
+
+  updateFilter(value) {
+    this.filterValue = value;
+    this.tags = this.filterTags(value);
+  }
+
+  filterTags(value) {
+    return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
+  }
+
+  private forEachTagControl(
+    form: TagFormGroup,
+    callback: (key: keyof TagFormControls, control: TagFormControls[keyof TagFormControls]) => void
+  ): void {
+    (Object.entries(form.controls) as [keyof TagFormControls, TagFormControls[keyof TagFormControls]][])
+      .forEach(([ key, control ]) => callback(key, control));
+  }
+
+  selectOne(tag) {
+    this.data.tagUpdate(tag, true, true);
+    this.dialogRef.close();
+  }
+
+  checkboxChange(event, tag) {
+    event.source.checked = isInMap(tag, this.selected);
+  }
+
+  addLabel() {
+    if (this.addTagForm.valid) {
+      const { name, attachedTo } = this.addTagForm.getRawValue();
+      this.tagsService.updateTag({ name, attachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
+        this.newTagInfo = { id: res[0].id, parentId: attachedTo };
+        this.planetMessageService.showMessage($localize`New collection added`);
+        this.forEachTagControl(this.addTagForm, (_, control) => control.updateValueAndValidity());
+        this.data.initTags();
+        this.addTagForm.controls.name.reset('');
+        this.addTagForm.controls.attachedTo.reset('');
+      });
+    } else {
+      this.forEachTagControl(this.addTagForm, (_, control) => control.markAsTouched({ onlySelf: true }));
+    }
+  }
+
+  editTagClick(event, tag) {
+    const onSubmit = ((newTag) => {
+      this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
+        const newTagId = res[0].id;
+        this.planetMessageService.showMessage($localize`Collection updated`);
+        this.selected.set(newTagId, this.selected.get(tag._id));
+        this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
+        this.data.initTags(this.mode === 'add' ? newTagId : undefined);
+        this.dialogsFormService.closeDialogsForm();
+        this.dialogsLoadingService.stop();
+      });
+    }).bind(this);
+    event.stopPropagation();
+    const subcollectionField = tag.subTags && tag.subTags.length > 0 ? [] : [
+      {
+        placeholder: $localize`Subcollection of...`, name: 'attachedTo', type: 'selectbox',
+        options: this.subcollectionOfOptions(tag, this.tags), required: false, reset: true
+      }
+    ];
+    this.dialogsFormService.openDialogsForm($localize`Edit Collection`, [
+      { placeholder: $localize`Name`, name: 'name', required: true, type: 'textbox' },
+      ...subcollectionField
+    ], this.tagForm(tag), { onSubmit });
+  }
+
+  subcollectionOfOptions(tag, tags) {
+    return tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
+      .map((t: any) => ({ name: t.name, value: t._id || t.name }));
+  }
+
+  deleteTag(event, tag) {
+    event.stopPropagation();
+    const amount = 'single';
+    const okClick = this.deleteSelectedTag(tag);
+    const displayName = tag.name;
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'tag',
+        displayName
+      }
+    });
+  }
+
+  deleteSelectedTag(tag) {
+    return {
+      request: this.tagsService.deleteTag(tag),
+      onNext: (data) => {
+        this.data.initTags();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage($localize`Collection deleted: ${tag.name}`);
+        this.resetValidationAndCheck(this.addTagForm);
+      },
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this collection.`)
+    };
+  }
+
+  tagForm(tag: any = {}): TagFormGroup {
+    const existingName = typeof tag.name === 'string' ? tag.name : '';
+    return this.fb.group({
+      name: [existingName, {
+        validators: this.tagNameSyncValidator(),
+        asyncValidators: this.tagNameAsyncValidator(existingName)
+      }],
+      attachedTo: [ tag.attachedTo || '' ]
+    });
+  }
+
+  tagNameSyncValidator(): ValidatorFn[] {
+    return [
+      (control: AbstractControl<string>) => CustomValidators.required(control),
+      (control: AbstractControl<string>): ValidationErrors | null => control.value.match('_') ? { noUnderscore: true } : null
+    ];
+  }
+
+  tagNameAsyncValidator(existingName = ''): AsyncValidatorFn {
+    const existingNameLower = existingName.toLowerCase();
+    return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
+      const controlValue = control.value;
+      const exception = controlValue.toLowerCase() === existingNameLower ? controlValue : '';
+      return this.validatorService.isUnique$(
+        'tags', '_id', control,
+        { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${controlValue.toLowerCase()}` } }
+      );
+    };
+  }
+
+  resetValidationAndCheck(form: TagFormGroup) {
+    this.forEachTagControl(form, (key, control) => {
+      control.clearValidators();
+      control.clearAsyncValidators();
+
+      if (key === 'name') {
+        control.setValidators(this.tagNameSyncValidator());
+        control.setAsyncValidators(this.tagNameAsyncValidator());
+      }
+
+      control.markAsUntouched();
+      control.updateValueAndValidity();
+    });
+  }
+
+  toggleSubcollection(event, tagId) {
+    event.stopPropagation();
+    const newState = !this.subcollectionIsOpen.get(tagId);
+    this.subcollectionIsOpen.clear();
+    this.subcollectionIsOpen.set(tagId, newState);
+  }
+
+  emptySelection() {
+    const checkValue = (iterator) => {
+      const { value: entry, done } = iterator.next();
+      if (done) {
+        return true;
+      }
+      const [ key, value ] = entry;
+      if (value === true && this.indeterminate.get(key) !== true) {
+        return false;
+      }
+      return checkValue(iterator);
+    };
+    return checkValue(this.selected.entries());
+  }
+
+}

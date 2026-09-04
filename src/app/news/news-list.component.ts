@@ -2,16 +2,16 @@ import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewIni
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, Subscription } from 'rxjs';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { trackById } from '../shared/table-helpers';
-import { dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { trackById } from '@shared/tables/table-helpers';
+import { dedupeVoiceLabels, voiceLabelsEqual } from '@shared/voices/voice-labels';
 
 import { MatButton } from '@angular/material/button';
 import { NewsListItemComponent } from './news-list-item.component';

@@ -13,7 +13,7 @@ import {
   ExamAnswerOption, ExamAnswerValue, addCheckedAnswer, createOtherAnswerOption, isExamAnswerOption,
   isOtherAnswerOption, restoreExamAnswer
 } from './exam-answer.helpers';
-import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
 
 @Component({
   selector: 'planet-exams-take-widget',

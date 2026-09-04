@@ -5,26 +5,26 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
   MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { UserService } from '../shared/user.service';
+import { UserService } from '@shared/auth/user.service';
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
 import { environment } from '../../environments/environment';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { conditionAndTreatmentFields } from './health.constants';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '@shared/database/mangoQueries';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { MatDivider } from '@angular/material/list';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { LabelComponent } from '../shared/label.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { FullNamePipe } from '../shared/full-name.pipe';
+import { LabelComponent } from '@shared/ui/label.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
 
 @Component({
   templateUrl: './health.component.html',

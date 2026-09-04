@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Subject, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { StateService } from '../shared/state.service';
-import { UserService } from '../shared/user.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { findDocuments } from '@shared/database/mangoQueries';
 import { environment } from '../../environments/environment';
-import { dedupeObjectArray } from '../shared/utils';
+import { dedupeObjectArray } from '@shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({

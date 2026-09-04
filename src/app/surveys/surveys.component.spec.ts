@@ -3,7 +3,7 @@ import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { SurveysComponent } from './surveys.component';
-import { DeviceType } from '../shared/device-info.service';
+import { DeviceType } from '@shared/platform/device-info.service';
 
 describe('SurveysComponent', () => {
   let couchService: any;

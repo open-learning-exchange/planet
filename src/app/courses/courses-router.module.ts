@@ -9,7 +9,7 @@ import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesGuard } from '@shared/unsaved-changes/unsaved-changes.guard';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },

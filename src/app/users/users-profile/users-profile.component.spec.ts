@@ -7,10 +7,10 @@ import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { UsersProfileComponent } from './users-profile.component';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
-import { MaterialModule } from '../../shared/material.module';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { MaterialModule } from '@shared/material.module';
 
 describe('UserProfileComponent', () => {
   let component: UsersProfileComponent;

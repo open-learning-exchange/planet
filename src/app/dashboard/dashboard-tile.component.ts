@@ -5,26 +5,26 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { CoursesService } from '../courses/courses.service';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { MatCard } from '@angular/material/card';
 import { NgClass, NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { environment } from '../../environments/environment';
-import { couchAttachmentUrl } from '../shared/utils';
+import { couchAttachmentUrl } from '@shared/utils';
 
 @Component({
   selector: 'planet-dashboard-tile-title',

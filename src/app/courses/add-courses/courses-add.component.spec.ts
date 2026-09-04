@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoursesAddComponent } from './courses-add.component';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { ValidatorService } from '../../validators/validator.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CouchService } from '../../shared/couchdb.service';
-import { MaterialModule } from '../../shared/material.module';
+import { CouchService } from '@shared/database/couchdb.service';
+import { MaterialModule } from '@shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { PouchService } from '../../shared/database/pouch.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { PouchService } from '@shared/database/pouch.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;

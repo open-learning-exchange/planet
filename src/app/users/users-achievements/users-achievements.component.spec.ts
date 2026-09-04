@@ -6,13 +6,13 @@ import { vi } from 'vitest';
 
 import { UsersAchievementsComponent } from './users-achievements.component';
 import { UsersAchievementsService } from './users-achievements.service';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
-import { PdfService } from '../../shared/pdf.service';
+import { PdfService } from '@shared/export/pdf.service';
 
 describe('UsersAchievementsComponent', () => {
   let component: UsersAchievementsComponent;

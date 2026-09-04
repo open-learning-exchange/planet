@@ -3,8 +3,8 @@ import { BehaviorSubject, EMPTY, Subscription, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CommunityComponent } from './community.component';
-import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
-import { DeviceType } from '../shared/device-info.service';
+import { DialogsVoiceLabelsComponent } from '@shared/voices/dialogs-voice-labels.component';
+import { DeviceType } from '@shared/platform/device-info.service';
 
 describe('CommunityComponent custom labels', () => {
   it('allows community leaders and planet managers to manage community labels', () => {

@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { StateService } from '../shared/state.service';
+import { StateService } from '@shared/state.service';
 import { MatDivider } from '@angular/material/list';
 import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 
 @Component({

@@ -6,14 +6,14 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
 import { ResourcesViewComponent } from './resources-view.component';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { StateService } from '../../shared/state.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
 import { ResourcesService } from '../resources.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DeviceInfoService } from '../../shared/device-info.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService } from '@shared/platform/device-info.service';
 
 describe('ResourcesViewComponent', () => {
 

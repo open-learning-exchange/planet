@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { findDocuments } from '@shared/database/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 

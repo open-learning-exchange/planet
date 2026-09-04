@@ -5,9 +5,9 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { sortNumberOrString } from '../../shared/table-helpers';
+import { sortNumberOrString } from '@shared/tables/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
-import { truncateText } from '../../shared/utils';
+import { truncateText } from '@shared/utils';
 import { DatePipe } from '@angular/common';
 
 const columns = {

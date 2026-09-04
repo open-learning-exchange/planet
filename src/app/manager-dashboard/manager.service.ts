@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { of, forkJoin } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { StateService } from '../shared/state.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
 import { ReportsService } from './reports/reports.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '@shared/database/mangoQueries';
 import { environment } from '../../environments/environment';
 
 @Injectable({

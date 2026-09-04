@@ -4,24 +4,24 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { CsvService } from '../../shared/csv.service';
-import { dedupeObjectArray } from '../../shared/utils';
-import { findDocuments } from '../../shared/mangoQueries';
+import { CsvService } from '@shared/export/csv.service';
+import { dedupeObjectArray } from '@shared/utils';
+import { findDocuments } from '@shared/database/mangoQueries';
 import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
-import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { PlanetSelectorComponent } from '../../shared/forms/planet-selector.component';
+import { PlanetSelectorComponent } from '@shared/forms/planet-selector.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { CoursesProgressChartComponent } from './courses-progress-chart.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',

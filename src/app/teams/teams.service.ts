@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { of, empty, forkJoin, throwError } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { findDocuments } from '@shared/database/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
-import { StateService } from '../shared/state.service';
+import { StateService } from '@shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { fullName, truncateText } from '../shared/utils';
+import { fullName, truncateText } from '@shared/utils';
 
 const nameField = {
   type: 'textbox',

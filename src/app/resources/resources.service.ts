@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Subject, forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { RatingService } from '../shared/forms/rating.service';
-import { UserService } from '../shared/user.service';
+import { RatingService } from '@shared/ratings/rating.service';
+import { UserService } from '@shared/auth/user.service';
 import { UsersService } from '../users/users.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { TagsService } from '../shared/forms/tags.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { normalizedContentType } from '../shared/utils';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { TagsService } from '@shared/forms/tags/tags.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mangoQueries';
+import { normalizedContentType } from '@shared/utils';
 
 @Injectable({
   providedIn: 'root'
