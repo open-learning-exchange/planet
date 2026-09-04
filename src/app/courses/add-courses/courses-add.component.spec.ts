@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -29,7 +29,7 @@ describe('CoursesAddComponent', () => {
       ]), MaterialModule, BrowserAnimationsModule, CoursesAddComponent, FormErrorMessagesComponent],
       providers: [
         CouchService,
-        ValidatorService,
+        { provide: ValidatorService, useValue: { isUnique$: () => of(null) } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         {
