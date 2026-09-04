@@ -3,7 +3,7 @@
  *  list, rendered as a Material table
  */
 
-import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import {
@@ -11,7 +11,7 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
+import { composeFilterFunctions, filterDropdowns, isAllVisibleSelected, toggleVisibleSelection } from '../table-helpers';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
@@ -21,6 +21,8 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { fullName } from '../utils';
 
 @Component({
@@ -63,7 +65,7 @@ import { fullName } from '../utils';
     MatTooltip
   ]
 })
-export class DialogsListComponent implements AfterViewInit {
+export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   tableData = new MatTableDataSource();
   tableColumns: string[] = [];
@@ -78,6 +80,8 @@ export class DialogsListComponent implements AfterViewInit {
   selectedNames: string[] = [];
   tooltipText = '';
   @ViewChild('paginator') paginator: MatPaginator;
+  private renderedRows: any[] = [];
+  private onDestroy$ = new Subject<void>();
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[],
@@ -109,8 +113,17 @@ export class DialogsListComponent implements AfterViewInit {
     this.initializeTooltip();
   }
 
+  ngOnInit() {
+    this.tableData.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+  }
+
   ngAfterViewInit() {
     this.tableData.paginator = this.paginator;
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   ok() {
@@ -127,31 +140,18 @@ export class DialogsListComponent implements AfterViewInit {
     }));
   }
 
+  // Reports on the rows of the current page only, so the button never acts on rows the user cannot see.
+  // 'hidden' when there is nothing rendered to act on, otherwise the ICU label picks Select vs Deselect.
   isAllSelected() {
-    // Finds first instance that a filtered row id is not selected, and undefined if all are selected
-    // Convert to boolean with ! (true = all selected, false = not all selected)
-    const allShownSelected = !this.tableData.filteredData.find((row: any) => {
-      return this.selection.selected.indexOf(this.selectIdentifier(row)) === -1;
-    });
-
-    if (this.tableData.filteredData.length === 0) {
+    if (this.renderedRows.length === 0) {
       return 'hidden';
     }
-    return allShownSelected ? 'yes' : 'no';
-
+    return isAllVisibleSelected(this.selection, this.renderedRows, row => this.selectIdentifier(row)) ? 'yes' : 'no';
   }
 
   masterToggle() {
-    const isAllSelected = this.isAllSelected() === 'yes';
-    this.tableData.filteredData.forEach((row: any) => {
-      const selectIdentifier = this.selectIdentifier(row);
-      if (isAllSelected) {
-        this.selection.deselect(selectIdentifier);
-      } else {
-        this.selection.select(selectIdentifier);
-      }
-      this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
-    });
+    toggleVisibleSelection(this.selection, this.renderedRows, row => this.selectIdentifier(row));
+    this.renderedRows.forEach((row: any) => this.setSelectedNames(row[this.data.nameProperty], this.selectIdentifier(row)));
   }
 
   rowClick(row: any) {

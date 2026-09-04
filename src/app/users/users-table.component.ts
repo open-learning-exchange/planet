@@ -2,7 +2,7 @@ import {
   Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
@@ -13,7 +13,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
+  isAllVisibleSelected, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
@@ -189,24 +190,20 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   isAllSelected() {
-    return this.renderedData.length > 0 && this.renderedData.every((row: any) => this.selection.isSelected(row.doc));
+    return isAllVisibleSelected(this.selection, this.renderedData, (row: any) => row.doc);
   }
 
   onlyManagerSelected() {
     return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  /** Selects every row on the current page, or deselects them when they are all already selected. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.renderedData.forEach((row: any) => this.selection.deselect(row.doc));
-    } else {
-      this.renderedData.forEach((row: any) => {
-        if (!this.selection.isSelected(row.doc)) {
-          this.selection.select(row.doc);
-        }
-      });
-    }
+    toggleVisibleSelection(this.selection, this.renderedData, (row: any) => row.doc);
+  }
+
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
   }
 
   gotoProfileView(userName: string, event?: Event) {

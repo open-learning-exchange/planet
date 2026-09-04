@@ -1,4 +1,5 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
+import { SelectionModel } from '@angular/cdk/collections';
 import { FuzzySearchService } from './fuzzy-search.service';
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
@@ -215,4 +216,36 @@ export const filterIds = (filterObj: { ids: string[] }) => {
   return (data: any, filter: string) => {
     return filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true;
   };
+};
+
+// Select-all semantics shared by every paginated table.  The header checkbox only ever reports on and
+// acts upon the rows rendered on the current page, so it can never select documents the user cannot see.
+const selectableVisibleValues = <T, S>(
+  visibleRows: T[], selectValue: (row: T) => S, isSelectable: (row: T) => boolean
+) => visibleRows.filter(row => isSelectable(row)).map(row => selectValue(row));
+
+export const isAllVisibleSelected = <T, S>(
+  selection: SelectionModel<S>,
+  visibleRows: T[],
+  selectValue: (row: T) => S = (row: any) => row._id,
+  isSelectable: (row: T) => boolean = () => true
+) => {
+  const values = selectableVisibleValues(visibleRows, selectValue, isSelectable);
+  return values.length > 0 && values.every(value => selection.isSelected(value));
+};
+
+// Selects every selectable row on the current page, or deselects just those rows when they are all
+// already selected.  Deselecting is scoped to the page rather than clearing the whole selection.
+export const toggleVisibleSelection = <T, S>(
+  selection: SelectionModel<S>,
+  visibleRows: T[],
+  selectValue: (row: T) => S = (row: any) => row._id,
+  isSelectable: (row: T) => boolean = () => true
+) => {
+  const values = selectableVisibleValues(visibleRows, selectValue, isSelectable);
+  if (isAllVisibleSelected(selection, visibleRows, selectValue, isSelectable)) {
+    selection.deselect(...values);
+  } else {
+    selection.select(...values);
+  }
 };

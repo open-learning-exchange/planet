@@ -13,7 +13,9 @@ import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
-import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
+import {
+  filterSpecificFields, sortNumberOrString, createDeleteArray, isAllVisibleSelected, toggleVisibleSelection
+} from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -308,8 +310,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    const selectableRowsInPage = this.renderedRows.filter(row => this.isRowSelectable(row));
-    return selectableRowsInPage.length > 0 && selectableRowsInPage.every(row => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows, row => row._id, row => this.isRowSelectable(row));
   }
 
   isRowSelectable(row: any): boolean {
@@ -317,15 +318,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => {
-        if (this.isRowSelectable(row)) {
-          this.selection.select(row._id);
-        }
-      });
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, row => row._id, row => this.isRowSelectable(row));
   }
 
   deleteSelected() {

@@ -13,7 +13,7 @@ import {
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { findByIdInArray } from '../shared/utils';
-import { commonSortingDataAccessor } from '../shared/table-helpers';
+import { commonSortingDataAccessor, isAllVisibleSelected, toggleVisibleSelection } from '../shared/table-helpers';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -117,16 +117,12 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows);
   }
 
   goBack() {

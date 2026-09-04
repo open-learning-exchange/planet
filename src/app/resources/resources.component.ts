@@ -17,7 +17,8 @@ import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
+  isAllVisibleSelected, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -289,7 +290,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
   applyResFilter(filterResValue: string) {
@@ -298,11 +299,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows);
   }
 
   updateResource(resource) {

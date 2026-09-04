@@ -14,7 +14,8 @@ import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
+  isAllVisibleSelected, toggleVisibleSelection
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { languages } from '../shared/languages';
@@ -415,16 +416,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows);
   }
 
   countSelectNotEnrolled(selected: any) {
