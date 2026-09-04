@@ -4,6 +4,7 @@ import { CoursesAddComponent } from './courses-add.component';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { ValidatorService } from '../../validators/validator.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
@@ -30,6 +31,7 @@ describe('CoursesAddComponent', () => {
         CouchService,
         ValidatorService,
         provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
