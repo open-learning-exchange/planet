@@ -123,17 +123,19 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
   private initRoute(params: ParamMap): AchievementsRoute {
     const currentUser = this.userService.get();
     const nameParam = params.get('name');
+    const localPlanetCode = this.stateService.configuration.code;
+    const currentUserPlanetCode = currentUser.planetCode || localPlanetCode;
     let achievementsId: string;
     let userRequest: { name: string, planetCode: string } | null = null;
     this.resetRouteState();
     if (nameParam === null || nameParam === undefined) {
-      achievementsId = currentUser._id + '@' + this.stateService.configuration.code;
+      achievementsId = currentUser._id + '@' + localPlanetCode;
       this.user = currentUser;
       this.userName = currentUser.name;
-      this.userPlanetCode = currentUser.planetCode;
+      this.userPlanetCode = currentUserPlanetCode;
     } else {
       const name = nameParam.split('@')[0];
-      const planetCode = params.get('planet');
+      const planetCode = params.get('planet') || localPlanetCode;
       achievementsId = 'org.couchdb.user:' + name + '@' + planetCode;
       // Set synchronously so the name and avatar of the newly routed user show while its document is still loading
       this.userName = name;
@@ -141,11 +143,12 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
       this.user = { name, planetCode };
       userRequest = { name, planetCode };
     }
-    this.ownAchievements = achievementsId === (currentUser._id + '@' + currentUser.planetCode);
+    this.ownAchievements = achievementsId === (currentUser._id + '@' + currentUserPlanetCode);
     return { achievementsId, ownAchievements: this.ownAchievements, fallbackId: currentUser._id, userRequest };
   }
 
   private resetRouteState() {
+    this.isLoading = true;
     this.user = {};
     this.userName = undefined;
     this.userPlanetCode = undefined;

@@ -214,8 +214,12 @@ describe('UsersAchievementsComponent', () => {
     expect(component.ownAchievements).toBe(false);
   });
 
-  it('falls back to the achievements of the logged in user without a planet code', () => {
-    navigate('carl', 'local');
+  it('normalizes a missing planet code when loading the logged in user achievements', () => {
+    navigate('carl');
+
+    expect(component.userPlanetCode).toBe('local');
+    expect(component.user).toEqual({ name: 'carl', planetCode: 'local' });
+    expect(component.ownAchievements).toBe(true);
     request(achievementsUrl('carl')).error({ status: 404 });
     request('achievements/org.couchdb.user:carl').next(achievementsDoc({ purpose: 'carl purpose' }));
 
@@ -248,7 +252,11 @@ describe('UsersAchievementsComponent', () => {
   it('treats a missing planet code as local when requesting a user', () => {
     navigate('alice');
 
+    expect(component.userPlanetCode).toBe('local');
+    expect(component.user).toEqual({ name: 'alice', planetCode: 'local' });
     expect(couchService.get).toHaveBeenCalledWith('_users/org.couchdb.user:alice');
+    expect(couchService.get).toHaveBeenCalledWith(achievementsUrl('alice'));
+    expect(couchService.get).not.toHaveBeenCalledWith('achievements/org.couchdb.user:alice@null');
   });
 
   it('shows an alert when the achievements request fails without a 404', () => {
@@ -283,6 +291,28 @@ describe('UsersAchievementsComponent', () => {
     expect(component.isLoading).toBe(false);
   });
 
+  it('restores authenticated loading until certifications are recalculated after a route change', () => {
+    vi.useFakeTimers();
+    navigate('alice', 'local');
+    courses$.next([]);
+    progress$.next([]);
+    certifications$.next([]);
+    vi.advanceTimersByTime(600);
+
+    expect(component.isLoading).toBe(false);
+
+    navigate('bob', 'local');
+
+    expect(component.isLoading).toBe(true);
+
+    courses$.next([]);
+    progress$.next([]);
+    certifications$.next([]);
+    vi.advanceTimersByTime(600);
+
+    expect(component.isLoading).toBe(false);
+  });
+
   it('stops loading in the public view once the achievements respond', () => {
     createComponent({ currentUser: {}, requiresAuth: false });
     navigate('alice', 'local');
@@ -291,6 +321,22 @@ describe('UsersAchievementsComponent', () => {
     expect(component.isLoading).toBe(true);
 
     request(achievementsUrl('alice')).next(achievementsDoc());
+
+    expect(component.isLoading).toBe(false);
+  });
+
+  it('restores loading on every public route change', () => {
+    createComponent({ currentUser: {}, requiresAuth: false });
+    navigate('alice', 'local');
+    request(achievementsUrl('alice')).next(achievementsDoc());
+
+    expect(component.isLoading).toBe(false);
+
+    navigate('bob', 'local');
+
+    expect(component.isLoading).toBe(true);
+
+    request(achievementsUrl('bob')).next(achievementsDoc());
 
     expect(component.isLoading).toBe(false);
   });
