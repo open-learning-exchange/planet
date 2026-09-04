@@ -4,6 +4,7 @@ import { SubmissionsService } from './submissions.service';
 
 describe('SubmissionsService survey exports', () => {
   let service: SubmissionsService;
+  let couchService: { findAll: ReturnType<typeof vi.fn> };
   let csvService: { exportCSV: ReturnType<typeof vi.fn> };
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn>; showMessage: ReturnType<typeof vi.fn> };
@@ -30,8 +31,9 @@ describe('SubmissionsService survey exports', () => {
     dialogsLoadingService = { stop: vi.fn() };
     planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     pdfService = { download: vi.fn().mockResolvedValue(undefined) };
+    couchService = { findAll: vi.fn().mockReturnValue(of([])) };
     service = new SubmissionsService(
-      {} as any,
+      couchService as any,
       { configuration: { name: 'Planet' } } as any,
       {} as any,
       {} as any,
@@ -77,5 +79,65 @@ describe('SubmissionsService survey exports', () => {
     ));
     expect(pdfService.download).toHaveBeenCalled();
     expect(planetMessageService.showMessage).not.toHaveBeenCalledWith('There is no survey response');
+  });
+
+  it('exports the respondent rather than the account that collected the response', async () => {
+    vi.spyOn(service, 'getSubmissionsExport').mockReturnValue(of([
+      [ {
+        ...submissionWithEmbeddedTeam,
+        user: { _id: 'org.couchdb.user:gg', name: 'gg', age: '', gender: '' },
+        respondent: { age: 34, gender: 'male' },
+        collectedBy: { _id: 'org.couchdb.user:gg', name: 'gg' }
+      } ],
+      1,
+      [ 'Question' ]
+    ]) as any);
+
+    await service.exportSubmissionsCsv(exam, 'survey', 'team-1').toPromise();
+
+    expect(csvService.exportCSV).toHaveBeenCalledWith(expect.objectContaining({
+      data: [ expect.objectContaining({ Gender: 'Male', 'Age (years)': 34 }) ]
+    }));
+  });
+
+  it('labels responses by the app that recorded them', () => {
+    expect(service.submissionOrigin({ channel: 'myplanet' })).toBe('myPlanet');
+    expect(service.submissionOrigin({ channel: 'myplanet-lite' })).toBe('myPlanet');
+    expect(service.submissionOrigin({ channel: 'public' })).toBe('Planet');
+    expect(service.submissionOrigin({ app: 'myplanet-lite' })).toBe('myPlanet');
+    expect(service.submissionOrigin({ androidId: 'android-1' })).toBe('myPlanet');
+    // myPlanet Lite tagged nothing but a device name before it carried an app identifier.
+    expect(service.submissionOrigin({ deviceName: 'samsung SM-A336E' })).toBe('myPlanet');
+    expect(service.submissionOrigin({})).toBe('Planet');
+  });
+
+  it('takes the group type from the team document when the response does not carry one', async () => {
+    couchService.findAll.mockReturnValue(of([ { _id: 'team-1', type: 'enterprise' } ]));
+    vi.spyOn(service, 'getSubmissionsExport').mockReturnValue(of([
+      [ { ...submissionWithEmbeddedTeam, team: { _id: 'team-1', name: 'Tech Pioneers' } } ],
+      1,
+      [ 'Question' ]
+    ]) as any);
+
+    await service.exportSubmissionsCsv(exam, 'survey', 'team-1').toPromise();
+
+    expect(csvService.exportCSV).toHaveBeenCalledWith(expect.objectContaining({
+      data: [ expect.objectContaining({ Group: 'Tech Pioneers', 'Group Type': 'Enterprise' }) ]
+    }));
+  });
+
+  it('does not look up teams the responses already type', async () => {
+    vi.spyOn(service, 'getSubmissionsExport').mockReturnValue(of([
+      [ { ...submissionWithEmbeddedTeam, team: { _id: 'team-1', name: 'Tech Pioneers', type: 'team' } } ],
+      1,
+      [ 'Question' ]
+    ]) as any);
+
+    await service.exportSubmissionsCsv(exam, 'survey', 'team-1').toPromise();
+
+    expect(couchService.findAll).not.toHaveBeenCalled();
+    expect(csvService.exportCSV).toHaveBeenCalledWith(expect.objectContaining({
+      data: [ expect.objectContaining({ 'Group Type': 'Team' }) ]
+    }));
   });
 });

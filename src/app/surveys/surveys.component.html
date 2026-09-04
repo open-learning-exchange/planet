@@ -66,8 +66,19 @@
         <mat-cell *matCellDef="let element"><span>{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="taken">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="taken" i18n>Number of Times Taken</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="taken">
+          <span i18n>Number of Times Taken</span>
+          <mat-icon class="taken-info-icon" i18n-matTooltip
+            matTooltip="Responses to this survey, including responses to the copies teams adopted. An archived survey keeps the responses it already has.">info_outline</mat-icon>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div class="taken-cell">
+            <span>{{element.taken}}</span>
+            @if (element.takenBreakdown) {
+              <span class="taken-breakdown">{{element.takenBreakdown}}</span>
+            }
+          </div>
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Linked</mat-header-cell>

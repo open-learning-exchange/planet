@@ -264,11 +264,15 @@ export class SubmissionsService {
     }
   }
 
-  getSubmissionsIncludingDerived(surveyId: string, type: 'exam' | 'survey', statusFilter: string): Observable<any[]> {
+  getSubmissionsIncludingDerived(surveyId: string, type: 'exam' | 'survey', statusFilter?: string): Observable<any[]> {
     return this.couchService.findAll('exams', findDocuments({ sourceSurveyId: surveyId })).pipe(
       switchMap((teamSurveys: any[]) => {
         const allSurveyIds = [surveyId, ...teamSurveys.map(ts => ts._id)];
-        const query = findDocuments({ 'parent._id': { $in: allSurveyIds }, type, status: statusFilter });
+        const query = findDocuments({
+          'parent._id': { $in: allSurveyIds },
+          type,
+          ...(statusFilter ? { status: statusFilter } : {})
+        });
 
         return this.getSubmissions(query);
       })
@@ -302,6 +306,21 @@ export class SubmissionsService {
     }
   }
 
+  // A response collected on behalf of a walk-up respondent keeps their details in `respondent`;
+  // `user` is the respondent only when a member answered a survey sent to them.
+  private submissionRespondent(submission: any) {
+    return submission?.respondent || submission?.user || {};
+  }
+
+  submissionOrigin(submission: any) {
+    const channel = submission?.channel || submission?.app;
+    if (channel) {
+      // myPlanet and myPlanet Lite both report as myPlanet until the reports tell them apart.
+      return channel === 'myplanet' || channel === 'myplanet-lite' ? 'myPlanet' : 'Planet';
+    }
+    return submission?.androidId !== undefined || submission?.deviceName !== undefined ? 'myPlanet' : 'Planet';
+  }
+
   private localizedGroupType(type?: string) {
     switch (type) {
       case 'team':
@@ -313,6 +332,32 @@ export class SubmissionsService {
       default:
         return type ? toProperCase(type) : '';
     }
+  }
+
+  // A client may know the team a response belongs to without knowing whether that team is a team
+  // or an enterprise, so the team document — not the submission's snapshot — settles the type.
+  private teamTypesFor(submissions: any[]): Observable<{ [teamId: string]: string }> {
+    const teamIds = [ ...new Set(submissions
+      .filter(submission => submission.team?._id && !submission.team.type)
+      .map(submission => submission.team._id)) ];
+    if (!teamIds.length) {
+      return of({});
+    }
+    return this.couchService.findAll('teams', findDocuments({ _id: { $in: teamIds } })).pipe(
+      map((teams: any[]) => teams.reduce((types, team) => ({ ...types, [team._id]: team.type }), {})),
+      catchError(() => of({}))
+    );
+  }
+
+  private withTeamInfo(submissions: any[]): Observable<any[]> {
+    return this.teamTypesFor(submissions).pipe(
+      map(teamTypes => submissions.map(submission => ({
+        ...submission,
+        teamInfo: submission.team ?
+          { name: submission.team.name, type: submission.team.type || teamTypes[submission.team._id] } :
+          null
+      })))
+    );
   }
 
   private filterSurveySubmissionsByTeam(submissions: any[], teamId?: string) {
@@ -332,23 +377,25 @@ export class SubmissionsService {
           }
         }));
         const filteredSubmissions = this.filterSurveySubmissionsByTeam(normalizedSubmissions, team);
-        const submissionsWithTeamInfo = filteredSubmissions.map(submission => ({
-          ...submission,
-          teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
-        }));
-        return [submissionsWithTeamInfo, time, questionTexts] as [any[], number, string[]];
+        return [filteredSubmissions, time, questionTexts] as [any[], number, string[]];
       }),
+      switchMap(([ filteredSubmissions, time, questionTexts ]: [any[], number, string[]]) =>
+        this.withTeamInfo(filteredSubmissions).pipe(
+          map(submissionsWithTeamInfo => [submissionsWithTeamInfo, time, questionTexts] as [any[], number, string[]])
+        )
+      ),
       tap(([ updatedSubmissions, time, questionTexts ]: [any[], number, string[]]) => {
         const title = `${this.localizedSubmissionType(type)} - ${exam.name} (${updatedSubmissions.length})`;
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
+          const respondent = this.submissionRespondent(submission);
           return {
-            [$localize`Gender`]: this.localizedGender(submission.user.gender),
-            [$localize`Age (years)`]: submission.user.birthDate ?
-              ageFromBirthDate(time, submission.user.birthDate) :
-              submission.user.age || this.notAvailable(),
+            [$localize`Gender`]: this.localizedGender(respondent.gender),
+            [$localize`Age (years)`]: respondent.birthDate ?
+              ageFromBirthDate(time, respondent.birthDate) :
+              respondent.age || this.notAvailable(),
             [$localize`Planet`]: submission.source,
-            [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
+            [$localize`Source`]: this.submissionOrigin(submission),
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
             [$localize`Group`]: submission.teamInfo?.name || this.notAvailable(),
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
@@ -526,10 +573,18 @@ export class SubmissionsService {
           const planetsWithName = attachNamesToPlanets(planets);
           const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
             ...submission,
-            planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName),
-            teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
+            planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
           }));
           return [submissionsWithPlanetName, time, questionTexts] as [any[], number, string[]];
+        }),
+        switchMap((tuple: [any[], number, string[]] | null) => {
+          if (!tuple) {
+            return of(null);
+          }
+          const [ submissions, time, questionTexts ] = tuple;
+          return this.withTeamInfo(submissions).pipe(
+            map(submissionsWithTeamInfo => [submissionsWithTeamInfo, time, questionTexts] as [any[], number, string[]])
+          );
         })
       ).subscribe(async tuple => {
         if (!tuple) {
@@ -582,12 +637,13 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
-      const userAge = submission.user.birthDate ?
-        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
-        submission.user.age;
-      const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
+      const respondent = this.submissionRespondent(submission);
+      const userAge = respondent.birthDate ?
+        ageFromBirthDate(submission.lastUpdateTime, respondent.birthDate) :
+        respondent.age;
+      const userGender = respondent.gender ? this.localizedGender(respondent.gender) : '';
       const communityOrNation = submission.planetName;
-      const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
+      const planetSource = this.submissionOrigin(submission);
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';

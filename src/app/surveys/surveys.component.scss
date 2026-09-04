@@ -1,4 +1,5 @@
 @use "../mixins" as m;
+@use "../variables" as v;
 
 :host {
   display: block;
@@ -30,6 +31,25 @@
 .mat-column-taken {
   justify-content: center;
   text-align: center;
+}
+
+.taken-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.taken-breakdown {
+  color: v.$grey-text;
+  font-size: 0.75rem;
+}
+
+.taken-info-icon {
+  color: v.$grey-text;
+  font-size: 1rem;
+  height: 1rem;
+  margin-inline-start: 0.25rem;
+  width: 1rem;
 }
 
 .mat-column-courseTitle {

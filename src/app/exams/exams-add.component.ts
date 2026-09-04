@@ -26,7 +26,6 @@ import {
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -185,7 +184,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     forkJoin([
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id')),
       this.examType === 'survey' ?
-        this.submissionsService.getSubmissions(findDocuments({ 'parent._id': this.route.snapshot.paramMap.get('id') })) :
+        // Responses to the copies teams adopted are responses to this survey, so editing it in
+        // place would rewrite the questions they were answered with.
+        this.submissionsService.getSubmissionsIncludingDerived(this.route.snapshot.paramMap.get('id'), 'survey') :
         of([])
     ]).subscribe(([ exam, submissions ]) => {
       this.pageType = 'Update';

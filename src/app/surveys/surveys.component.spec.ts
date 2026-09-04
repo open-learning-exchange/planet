@@ -239,4 +239,48 @@ describe('SurveysComponent', () => {
     const fields = dialogsFormService.openDialogsForm.mock.calls[0][1];
     expect(fields.find(field => field.name === 'includeCharts').disabled).toBe(true);
   });
+
+  describe('submission counts', () => {
+    const communitySurvey = { _id: 'survey-1', name: 'NY' };
+    const adoptedSurvey = { _id: 'survey-2', name: 'NY - Tech Pioneers', teamId: 'team-1', sourceSurveyId: 'survey-1' };
+    const complete = (surveyId: string, teamId: string | null) =>
+      ({ key: [ surveyId, teamId ], value: { status: 'complete', teamId, parent: null } });
+
+    const loadSurveys = (rows: any[]) => {
+      couchService.findAll = vi.fn((dbName: string) => of(dbName === 'exams' ? [ communitySurvey, adoptedSurvey ] : []));
+      couchService.get = vi.fn().mockReturnValue(of({ rows }));
+      component['loadSurveys']();
+    };
+
+    it('rolls up the responses a community survey received through the teams that adopted it', () => {
+      loadSurveys([
+        complete('survey-1', null),
+        complete('survey-2', 'team-1'),
+        complete('survey-2', 'team-1')
+      ]);
+
+      const survey = component.allSurveys.find(row => row._id === 'survey-1');
+      expect(survey.taken).toBe(3);
+      expect(survey.takenBreakdown).toBe('1 direct · 2 via 1 team');
+    });
+
+    it('says nothing about teams for a survey answered only where it lives', () => {
+      loadSurveys([ complete('survey-1', null) ]);
+
+      const survey = component.allSurveys.find(row => row._id === 'survey-1');
+      expect(survey.taken).toBe(1);
+      expect(survey.takenBreakdown).toBe('');
+    });
+
+    it('counts only the responses belonging to the team being viewed', () => {
+      component.teamId = 'team-1';
+      loadSurveys([
+        complete('survey-1', null),
+        complete('survey-2', 'team-1'),
+        complete('survey-2', 'team-2')
+      ]);
+
+      expect(component.allSurveys.find(row => row._id === 'survey-2').taken).toBe(1);
+    });
+  });
 });

@@ -233,10 +233,16 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           ].filter(Boolean);
 
           const collectSubmissions = (surveyId: string) => submissionsBySurvey[surveyId] || [];
-          const taken = [
-            ...collectSubmissions(survey._id),
-            ...derivedTeamSurveys.flatMap(ts => collectSubmissions(ts._id))
-          ].filter(submission => submission.status === 'complete' && (!targetTeamId || submission.teamId === targetTeamId)).length;
+          const isCounted = (submission: { status: string; teamId: string | null }) =>
+            submission.status === 'complete' && (!targetTeamId || submission.teamId === targetTeamId);
+          // A community survey's responses can arrive through the teams that adopted it, so the
+          // total rolls those up and the breakdown says how many were answered here.
+          const directTaken = collectSubmissions(survey._id).filter(isCounted).length;
+          const teamTakenCounts = derivedTeamSurveys
+            .map(ts => collectSubmissions(ts._id).filter(isCounted).length)
+            .filter(count => count > 0);
+          const derivedTaken = teamTakenCounts.reduce((total, count) => total + count, 0);
+          const taken = directTaken + derivedTaken;
           const course = surveyCourseMap[survey._id];
 
           return {
@@ -244,7 +250,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             teamIds,
             course,
             courseTitle: course ? course.courseTitle : '',
-            taken
+            taken,
+            takenBreakdown: this.takenBreakdown(directTaken, derivedTaken, teamTakenCounts.length)
           };
         }),
         ...this.createParentSurveys(submissions)
@@ -273,6 +280,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       // without a target team, include surveys that are original rather than derived copies
       return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
+  }
+
+  private takenBreakdown(directTaken: number, derivedTaken: number, teamCount: number) {
+    if (!derivedTaken) {
+      return '';
+    }
+    const viaTeams = teamCount === 1 ? $localize`1 team` : $localize`${teamCount} teams`;
+    return $localize`${directTaken} direct · ${derivedTaken} via ${viaTeams}`;
   }
 
   createParentSurveys(submissions) {

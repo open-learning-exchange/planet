@@ -181,8 +181,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       this.submissions.data = submissions.map(submission => ({
         ...submission,
-        submittedBy: this.submissionsService.submissionName(submission.user),
-        docSource: submission.androidId ? 'myPlanet' : 'planet'
+        ...this.submittedByLabel(submission),
+        docSource: this.submissionsService.submissionOrigin(submission)
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
@@ -297,6 +297,21 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       return 'view';
     }
     return listMode;
+  }
+
+  // Only a member who answered a survey sent to them is the submission's author. A response an
+  // operator collected from a walk-up respondent is shown as collected, and one with no identity
+  // at all — a manager recording answers, or a public link — is anonymous rather than "Unknown".
+  private submittedByLabel(submission) {
+    const respondentName = this.submissionsService.submissionName(submission.user || {});
+    if (submission.user?._id && respondentName) {
+      return { submittedBy: respondentName, submittedByProfile: submission.user.name };
+    }
+    const collectorName = this.submissionsService.submissionName(submission.collectedBy || {});
+    if (collectorName) {
+      return { submittedBy: $localize`Collected by ${collectorName}`, submittedByProfile: '' };
+    }
+    return { submittedBy: respondentName || $localize`Anonymous`, submittedByProfile: '' };
   }
 
   isNumber(value) {

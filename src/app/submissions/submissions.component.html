@@ -118,14 +118,10 @@
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header="user" i18n>Submitted by</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          @if (element?.user?.name) {
-            <span class="cursor-pointer" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
+          @if (element?.submittedByProfile) {
+            <span class="cursor-pointer" [routerLink]="['/users/profile/', element.submittedByProfile]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
           } @else {
-            @if (element?.submittedBy) {
-              <span>{{element.submittedBy}}</span>
-            } @else {
-              <span i18n>Unknown</span>
-            }
+            <span>{{element.submittedBy}}</span>
           }
         </mat-cell>
       </ng-container>

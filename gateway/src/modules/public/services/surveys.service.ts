@@ -16,6 +16,7 @@ type SurveyDoc = {
   questions: any[];
   type: string;
   teamId: string;
+  sourceSurveyId?: string;
   publicAccess?: boolean;
   isArchived?: boolean;
 };
@@ -90,7 +91,9 @@ const sanitizeSurveySnapshot = (survey: SurveyDoc) => ({
   'name': survey.name,
   'description': survey.description || '',
   'questions': survey.questions,
-  'type': survey.type
+  'type': survey.type,
+  'teamId': survey.teamId,
+  ...(survey.sourceSurveyId ? { 'sourceSurveyId': survey.sourceSurveyId } : {})
 });
 
 const sanitizeTeam = (team: TeamDoc) => ({
@@ -159,10 +162,13 @@ const buildPublicSubmission = (
   configuration: ConfigurationDoc | null
 ) => {
   const now = Date.now();
+  const respondent = sanitizePublicSubmissionUser(payload.user);
   return {
     'parentId': survey._id,
     'parent': sanitizeSurveySnapshot(survey),
-    'user': sanitizePublicSubmissionUser(payload.user),
+    'user': respondent,
+    respondent,
+    'channel': 'public',
     'type': 'survey',
     'answers': normalizeAnswers(payload.answers),
     'grade': 0,
