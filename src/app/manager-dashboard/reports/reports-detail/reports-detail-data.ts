@@ -1,5 +1,5 @@
-import { AppSourceFilter, isFromAppSource } from '../../shared/app-source';
-import { filterByDate, isSelectedMember } from './reports.utils';
+import { AppSourceFilter, isFromAppSource } from '../../../shared/app-source';
+import { filterByDate, isSelectedMember } from '../reports.utils';
 
 export interface ReportDetailFilter {
   app: AppSourceFilter;

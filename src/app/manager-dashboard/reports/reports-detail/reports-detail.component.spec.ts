@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { FormBuilder } from '@angular/forms';
 
 import { ReportsDetailComponent } from './reports-detail.component';
-import { ReportsService } from './reports.service';
+import { ReportsService } from '../reports.service';
 
 describe('ReportsDetailComponent exports', () => {
 
