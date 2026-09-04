@@ -17,6 +17,8 @@ import { ReportsComponent } from './reports/reports.component';
 import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
+import { ReportsCsvPreviewComponent } from './reports/reports-csv-preview.component';
+import { ReportsExportDialogComponent } from './reports/reports-export-dialog.component';
 import { PendingTableComponent } from './reports/pending-table.component';
 import { ReportsMyPlanetComponent } from './reports/myplanet/reports-myplanet.component';
 import { LogsMyPlanetComponent } from './reports/myplanet/logs-myplanet.component';
@@ -49,6 +51,8 @@ import { ManagerCurrencyComponent } from './manager-currency.component';
     ReportsTableComponent,
     ReportsDetailComponent,
     ReportsPendingComponent,
+    ReportsCsvPreviewComponent,
+    ReportsExportDialogComponent,
     PendingTableComponent,
     ReportsMyPlanetComponent,
     LogsMyPlanetComponent,

@@ -1,0 +1,33 @@
+.csv-preview {
+  padding: 1rem;
+
+  .csv-preview-header {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .csv-preview-title {
+    margin: 0;
+  }
+
+  .csv-preview-fill {
+    flex: 1 1 auto;
+  }
+
+  .csv-preview-table-wrapper {
+    max-width: 100%;
+    overflow: auto;
+
+    th,
+    td {
+      max-width: 25rem;
+      overflow: hidden;
+      padding-right: 1rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

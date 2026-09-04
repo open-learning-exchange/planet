@@ -1,5 +1,6 @@
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { formatDate as formatLocaleDate } from '@angular/common';
+import { Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv/build';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,11 +12,88 @@ import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
 export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
 export const CSV_PREVIEW_MAX_ROWS = 5000;
+export const CSV_PREVIEW_STORAGE_PREFIX = 'planet-csv-preview-';
+export const CSV_PREVIEW_STORAGE_MAX_BYTES = 4 * 1024 * 1024;
+export const CSV_PREVIEW_STORAGE_TTL = 10 * 60 * 1000;
+export const CSV_PREVIEW_ROUTE = '/manager/reports/csv-preview';
 
 export interface CsvPreview {
   columns: string[];
   rows: Array<Record<string, string>>;
   truncated: boolean;
+}
+
+export interface CsvPreviewTable extends CsvPreview {
+  title: string;
+  createdOn: number;
+}
+
+export const csvColumnsOf = (rows: any[]): string[] => {
+  const columns: string[] = [];
+  rows.forEach(row => Object.keys(row).forEach(column => {
+    if (columns.indexOf(column) === -1) {
+      columns.push(column);
+    }
+  }));
+  return columns;
+};
+
+// A preview tab is opened while the user's click is still fresh, then filled in once the report rows
+// are built, which can require a round trip for team membership. Opening it later trips pop-up blockers.
+export class CsvPreviewSession {
+
+  constructor(
+    private storageKey: string,
+    private target: Window | null,
+    private onError: (message: string) => void
+  ) {}
+
+  get isOpen(): boolean {
+    return !!this.target && !this.target.closed;
+  }
+
+  publish(rows: any[], title: string) {
+    if (!this.target) {
+      return;
+    }
+    if (!rows.length) {
+      this.cancel($localize`There was no data during that period to export`);
+      return;
+    }
+    const table: CsvPreviewTable = {
+      title,
+      columns: csvColumnsOf(rows),
+      rows: rows.slice(0, CSV_PREVIEW_MAX_ROWS),
+      truncated: rows.length > CSV_PREVIEW_MAX_ROWS,
+      createdOn: Date.now()
+    };
+    const serialized = JSON.stringify(table);
+    if (serialized.length > CSV_PREVIEW_STORAGE_MAX_BYTES) {
+      this.cancel($localize`This report is too large to preview. Download it instead.`);
+      return;
+    }
+    try {
+      window.localStorage.setItem(this.storageKey, serialized);
+    } catch {
+      this.cancel($localize`Unable to preview this report. Download it instead.`);
+    }
+  }
+
+  cancel(message?: string) {
+    this.discard();
+    if (message) {
+      this.onError(message);
+    }
+  }
+
+  private discard() {
+    try {
+      window.localStorage.removeItem(this.storageKey);
+    } catch {}
+    this.target?.close();
+    this.target = null;
+  }
+
 }
 
 @Injectable({
@@ -32,6 +110,7 @@ export class CsvService {
     private couchService: CouchService,
     private reportsService: ReportsService,
     private planetMessageService: PlanetMessageService,
+    private router: Router,
     @Inject(LOCALE_ID) private localeId: string
   ) {}
 
@@ -42,9 +121,13 @@ export class CsvService {
   }
 
   exportCSV({ data, title }: { data: any[], title: string }) {
-    const reportDate = formatLocaleDate(new Date(), 'mediumDate', this.localeId);
-    const options = { title, filename: $localize`Report of ${title} on ${reportDate}`, showTitle: true };
-    const formattedData = data.map(
+    this.exportFormattedCSV({ data: this.formatExportRows(data), title });
+  }
+
+  // Strips the fields that are never exported and renders each remaining value as CSV text. The rows
+  // this returns are what both the download and the preview show, so the two always agree.
+  formatExportRows(data: any[]): any[] {
+    return (data || []).map(
       ({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => (
         Object.entries(dataToDisplay).reduce(
           (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
@@ -52,11 +135,45 @@ export class CsvService {
         )
       )
     );
-    if (formattedData.length === 0) {
+  }
+
+  exportFormattedCSV({ data, title }: { data: any[], title: string }) {
+    if (data.length === 0) {
       this.planetMessageService.showAlert($localize`There was no data during that period to export`);
       return;
     }
-    this.generate(formattedData, options);
+    const reportDate = formatLocaleDate(new Date(), 'mediumDate', this.localeId);
+    this.generate(data, { title, filename: $localize`Report of ${title} on ${reportDate}`, showTitle: true });
+  }
+
+  // Opens the preview tab now so it keeps the user gesture that triggered it, then the caller fills it
+  // in with `publish` once the rows are ready.
+  openPreviewWindow(): CsvPreviewSession {
+    this.purgeStalePreviews();
+    const storageKey = `${CSV_PREVIEW_STORAGE_PREFIX}${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    const target = window.open(this.previewUrl(storageKey), '_blank');
+    if (!target) {
+      this.planetMessageService.showAlert($localize`Allow pop-ups for this site to preview reports`);
+    }
+    return new CsvPreviewSession(storageKey, target, message => this.planetMessageService.showAlert(message));
+  }
+
+  private previewUrl(storageKey: string): string {
+    const path = this.router.serializeUrl(this.router.createUrlTree([ CSV_PREVIEW_ROUTE ], { queryParams: { key: storageKey } }));
+    return new URL(path.replace(/^\//, ''), document.baseURI).href;
+  }
+
+  private purgeStalePreviews() {
+    try {
+      Object.keys(window.localStorage)
+        .filter(key => key.startsWith(CSV_PREVIEW_STORAGE_PREFIX))
+        .forEach(key => {
+          const createdOn = JSON.parse(window.localStorage.getItem(key) || '{}')?.createdOn;
+          if (!createdOn || Date.now() - createdOn > CSV_PREVIEW_STORAGE_TTL) {
+            window.localStorage.removeItem(key);
+          }
+        });
+    } catch {}
   }
 
   exportSummaryCSV(
@@ -70,13 +187,20 @@ export class CsvService {
       showLabels: true,
       useKeysAsHeaders: true
     };
+    this.generate(this.summaryRows(logins, resourceViews, courseViews, stepCompletions, chatActivities, voicesActivities), options);
+  }
+
+  summaryRows(
+    logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
+    chatActivities: any[], voicesActivities: any[]
+  ): any[] {
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
     const groupedChatData = this.reportsService.groupChatUsage(chatActivities).byMonth;
     const groupedVoicesData = this.reportsService.groupVoicesCreated(voicesActivities).byMonth;
-    const formattedData = this.buildSummaryTable([
+    return this.buildSummaryTable([
       { title: $localize`Unique Member Visits`, data: groupedLogins, countUnique: true },
       { title: $localize`Total Member Visits`, data: groupedLogins, countUnique: false },
       { title: $localize`Resource Views`, data: groupedResourceViews, countUnique: false },
@@ -85,7 +209,6 @@ export class CsvService {
       { title: $localize`Chats Created`, data: groupedChatData, countUnique: false },
       { title: $localize`Voices Created`, data: groupedVoicesData, countUnique: false }
     ]);
-    this.generate(formattedData, options);
   }
 
   private getMonthlyData(month: string, data: any[], countUnique: boolean): number {

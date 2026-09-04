@@ -10,6 +10,7 @@ import { ManagerCurrencyComponent } from './manager-currency.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
+import { ReportsCsvPreviewComponent } from './reports/reports-csv-preview.component';
 import { ReportsMyPlanetComponent } from './reports/myplanet/reports-myplanet.component';
 import { LogsMyPlanetComponent } from './reports/myplanet/logs-myplanet.component';
 
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: 'reports', component: ReportsComponent },
   { path: 'reports/detail', component: ReportsDetailComponent },
   { path: 'reports/pending', component: ReportsPendingComponent },
+  { path: 'reports/csv-preview', component: ReportsCsvPreviewComponent },
   { path: 'reports/myplanet', component: ReportsMyPlanetComponent },
   { path: 'logs/myplanet', component: LogsMyPlanetComponent },
   { path: 'requests', component: RequestsComponent }

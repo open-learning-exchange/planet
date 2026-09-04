@@ -1,0 +1,38 @@
+<div class="csv-preview">
+  @if (isLoading) {
+    <span i18n>Loading Report...</span>
+  } @else if (loadError) {
+    <span i18n>This report preview is no longer available. Open the export dialog and preview it again.</span>
+  } @else {
+    <div class="csv-preview-header">
+      <h3 class="csv-preview-title">{{title}}</h3>
+      <span class="csv-preview-fill"></span>
+      <button mat-raised-button color="primary" (click)="download()">
+        <mat-icon>download</mat-icon><span i18n>Download CSV</span>
+      </button>
+    </div>
+    <p class="mat-caption">
+      @if (truncated) {
+        <span i18n>Showing the first {{maxRows}} of the exported rows. Download the report for all of them.</span>
+      } @else {
+        <span i18n>Rows: {{rowCount}}</span>
+      }
+    </p>
+    <div class="csv-preview-table-wrapper">
+      <table mat-table [dataSource]="dataSource" matSort>
+        @for (column of columns; track column) {
+          <ng-container [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [title]="column">{{column}}</th>
+            <td mat-cell *matCellDef="let row" [title]="row[column]">{{row[column]}}</td>
+          </ng-container>
+        }
+        <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="columns.length" i18n>No data found</td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSize]="50" [pageSizeOptions]="[25, 50, 100, 200]" showFirstLastButtons></mat-paginator>
+  }
+</div>

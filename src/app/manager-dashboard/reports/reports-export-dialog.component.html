@@ -1,0 +1,61 @@
+<h1 mat-dialog-title><span><mat-icon>download</mat-icon>{{data.title}}</span></h1>
+@if (exportForm) {
+  <form [formGroup]="exportForm" novalidate>
+    <mat-dialog-content class="export-dialog-content">
+      <p class="mat-caption export-dialog-hint" i18n>Choose a report, then download it or preview it in a new tab.</p>
+      @if (data.reports.length > 1) {
+        <mat-form-field class="full-width">
+          <mat-label i18n>Report</mat-label>
+          <mat-select formControlName="report" required>
+            @for (report of data.reports; track report.value) {
+              <mat-option [value]="report.value">{{report.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      <mat-form-field class="full-width" (click)="startPicker.open()">
+        <mat-label i18n>From</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate" required [min]="data.minDate" [max]="data.maxDate">
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+        <mat-error><planet-form-error-messages [control]="exportForm.controls.startDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width" (click)="endPicker.open()">
+        <mat-label i18n>To</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate" required [min]="data.minDate" [max]="data.maxDate">
+        <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+        <mat-error><planet-form-error-messages [control]="exportForm.controls.endDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      @if (showTeam) {
+        <mat-form-field class="full-width">
+          <mat-label i18n>Team</mat-label>
+          <mat-select formControlName="team">
+            @for (option of data.teamOptions; track option.name) {
+              <mat-option [value]="option.value">{{option.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      @if (sortingOptions.length) {
+        <mat-form-field class="full-width">
+          <mat-label i18n>Sort By</mat-label>
+          <mat-select formControlName="sortBy">
+            @for (option of sortingOptions; track option.value) {
+              <mat-option [value]="option.value">{{option.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
+      <button type="button" class="km-preview" mat-raised-button color="accent" [disabled]="exportForm.invalid" (click)="export('preview')" i18n>
+        Preview
+      </button>
+      <button type="button" class="km-download" mat-raised-button color="primary" [disabled]="exportForm.invalid" (click)="export('download')" i18n>
+        Download
+      </button>
+    </mat-dialog-actions>
+  </form>
+}

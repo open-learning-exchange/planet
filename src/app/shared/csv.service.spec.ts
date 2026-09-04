@@ -1,7 +1,9 @@
 import * as papa from 'papaparse';
 import { of } from 'rxjs';
 
-import { CSV_PREVIEW_MAX_ROWS, CsvService } from './csv.service';
+import {
+  CSV_PREVIEW_MAX_ROWS, CSV_PREVIEW_STORAGE_MAX_BYTES, CsvPreviewSession, CsvService, csvColumnsOf
+} from './csv.service';
 
 describe('CsvService', () => {
   let service: CsvService;
@@ -9,7 +11,7 @@ describe('CsvService', () => {
 
   beforeEach(() => {
     couchService = { get: vi.fn() };
-    service = new CsvService(couchService as any, {} as any, {} as any, 'en-US');
+    service = new CsvService(couchService as any, {} as any, {} as any, {} as any, 'en-US');
   });
 
   const parseCsv = (csv: string) => (service as any).parseCsv(papa, csv);
@@ -107,5 +109,73 @@ describe('CsvService', () => {
       'resources/doc%2Fwith%3Fchars/data/scores%20%231%25.csv',
       { responseType: 'text', domain: undefined }
     );
+  });
+
+  it('collects the union of row keys in the order they first appear', () => {
+    expect(csvColumnsOf([ { Title: 'Ada', Views: 2 }, { Views: 1, Rating: 5 } ])).toEqual([ 'Title', 'Views', 'Rating' ]);
+  });
+
+  it('drops the fields that are never exported when formatting rows', () => {
+    expect(service.formatExportRows([
+      { _id: 'a', _rev: '1', resourceId: 'r', type: 'view', createdOn: 'planet', parentCode: 'code', hasInfo: true, user: 'ada' }
+    ])).toEqual([ { user: 'ada' } ]);
+  });
+});
+
+describe('CsvPreviewSession', () => {
+  const key = 'planet-csv-preview-test';
+  let target: { close: ReturnType<typeof vi.fn>, closed: boolean };
+  let onError: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    window.localStorage.clear();
+    target = { close: vi.fn(), closed: false };
+    onError = vi.fn();
+  });
+
+  const session = () => new CsvPreviewSession(key, target as any, onError);
+
+  it('publishes the rows for the preview tab to pick up', () => {
+    session().publish([ { Title: 'Ada' } ], 'Resource Views');
+
+    expect(JSON.parse(window.localStorage.getItem(key))).toEqual(expect.objectContaining({
+      title: 'Resource Views',
+      columns: [ 'Title' ],
+      rows: [ { Title: 'Ada' } ],
+      truncated: false
+    }));
+  });
+
+  it('closes the tab without storing anything when there are no rows', () => {
+    session().publish([], 'Resource Views');
+
+    expect(window.localStorage.getItem(key)).toBeNull();
+    expect(target.close).toHaveBeenCalled();
+    expect(onError).toHaveBeenCalled();
+  });
+
+  it('closes the tab when the report is too large to store', () => {
+    session().publish([ { Title: 'a'.repeat(CSV_PREVIEW_STORAGE_MAX_BYTES) } ], 'Resource Views');
+
+    expect(window.localStorage.getItem(key)).toBeNull();
+    expect(target.close).toHaveBeenCalled();
+    expect(onError).toHaveBeenCalled();
+  });
+
+  it('marks the preview truncated when the rows pass the preview limit', () => {
+    const rows = Array.from({ length: CSV_PREVIEW_MAX_ROWS + 1 }, (_, index) => ({ Title: `${index}` }));
+
+    session().publish(rows, 'Resource Views');
+
+    const stored = JSON.parse(window.localStorage.getItem(key));
+    expect(stored.rows).toHaveLength(CSV_PREVIEW_MAX_ROWS);
+    expect(stored.truncated).toBe(true);
+  });
+
+  it('does nothing when the preview tab was blocked', () => {
+    new CsvPreviewSession(key, null, onError).publish([ { Title: 'Ada' } ], 'Resource Views');
+
+    expect(window.localStorage.getItem(key)).toBeNull();
+    expect(onError).not.toHaveBeenCalled();
   });
 });
