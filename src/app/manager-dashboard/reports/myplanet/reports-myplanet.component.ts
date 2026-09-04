@@ -12,7 +12,7 @@ import { CouchService } from '../../../shared/couchdb.service';
 import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv, endOfDay } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
-import { filterSpecificFields } from '../../../shared/table-helpers';
+import { FuzzySearchService } from '../../../shared/fuzzy-search.service';
 import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
@@ -65,9 +65,10 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     private timePipe: TimePipe,
     fb: NonNullableFormBuilder,
     activityService: ReportsService,
+    fuzzySearchService: FuzzySearchService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
-    super(fb, activityService, 'all');
+    super(fb, activityService, fuzzySearchService, 'all');
   }
 
   ngOnInit() {
@@ -118,12 +119,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   }
 
   applyFilters() {
-    this.planets = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
-      .map(planet => ({
-        ...planet,
-        children: this.filterMyPlanetData(planet.children)
-      }));
+    this.planets = this.filterPlanetsBySearch(this.allPlanets, children => this.filterMyPlanetData(children));
     this.isEmpty = areNoChildren(this.planets);
   }
 

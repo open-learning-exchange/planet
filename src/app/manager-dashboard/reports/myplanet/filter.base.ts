@@ -1,10 +1,16 @@
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ReportsService } from '../reports.service';
+import { FuzzySearchService } from '../../../shared/fuzzy-search.service';
+import { filterSpecificFieldsHybrid } from '../../../shared/table-helpers';
 
 export interface MyPlanetFiltersForm {
   startDate: FormControl<Date>;
   endDate: FormControl<Date>;
 }
+
+export const planetSearchFields = [ 'name', 'doc.code' ];
+export const deviceNameSearchFields = [ 'customDeviceName', 'deviceName' ];
+export const deviceIdSearchFields = [ 'androidId', 'uniqueAndroidId' ];
 
 export abstract class MyPlanetFiltersBase {
 
@@ -26,9 +32,15 @@ export abstract class MyPlanetFiltersBase {
     return this.selectedTimeFilter === this.defaultTimeFilter;
   }
 
+  // Device names are fuzzy matched to tolerate typos, while ids only match exactly to avoid unrelated devices
+  private matchPlanetFields = filterSpecificFieldsHybrid(planetSearchFields, this.fuzzySearchService);
+  private matchDeviceNameFields = filterSpecificFieldsHybrid(deviceNameSearchFields, this.fuzzySearchService);
+  private matchDeviceIdFields = filterSpecificFieldsHybrid(deviceIdSearchFields);
+
   protected constructor(
     protected fb: NonNullableFormBuilder,
     protected activityService: ReportsService,
+    protected fuzzySearchService: FuzzySearchService,
     defaultTimeFilter: string
   ) {
     this.defaultTimeFilter = defaultTimeFilter;
@@ -85,6 +97,26 @@ export abstract class MyPlanetFiltersBase {
     this.searchValue = '';
     this.resetDateFilter();
     this.applyFilters();
+  }
+
+  // Keeps planets which match the search themselves, plus planets with at least one device matching by name or id
+  protected filterPlanetsBySearch(planets: any[], filterChildren: (children: any[]) => any[]): any[] {
+    if (!this.searchValue.trim()) {
+      return planets.map(planet => ({ ...planet, children: filterChildren(planet.children) }));
+    }
+    return planets.reduce((filteredPlanets, planet) => {
+      const children = filterChildren(planet.children);
+      const isPlanetMatch = this.matchPlanetFields(planet, this.searchValue);
+      const matchingChildren = isPlanetMatch ? children : children.filter(child => this.isDeviceMatch(child));
+      if (isPlanetMatch || matchingChildren.length > 0) {
+        filteredPlanets.push({ ...planet, children: matchingChildren });
+      }
+      return filteredPlanets;
+    }, []);
+  }
+
+  private isDeviceMatch(device: any): boolean {
+    return this.matchDeviceNameFields(device, this.searchValue) || this.matchDeviceIdFields(device, this.searchValue);
   }
 
   protected updateMinDate(newMinDate: Date) {

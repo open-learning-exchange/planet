@@ -59,6 +59,10 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => (data
   }));
 };
 
+// Coerces a field value into a searchable string so numeric fields (i.e. device ids) can be matched
+const searchableString = (fieldValue: any): string =>
+  typeof fieldValue === 'string' ? fieldValue : typeof fieldValue === 'number' ? fieldValue.toString() : '';
+
 // Enhanced version that combines exact and fuzzy search
 export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => (
   (data: any, filter: string) => {
@@ -68,8 +72,8 @@ export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchSe
     }
 
     return filterFields.some(field => {
-      const fieldValue = getProperty(data, field);
-      if (typeof fieldValue !== 'string') {
+      const fieldValue = searchableString(getProperty(data, field));
+      if (fieldValue === '') {
         return false;
       }
 

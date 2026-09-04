@@ -6,9 +6,9 @@ import { CouchService } from '../../../shared/couchdb.service';
 import { StateService } from '../../../shared/state.service';
 import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
-import { filterSpecificFields } from '../../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
 import { CsvService } from '../../../shared/csv.service';
+import { FuzzySearchService } from '../../../shared/fuzzy-search.service';
 import { ReportsService } from '../reports.service';
 import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from '../reports.utils';
@@ -58,9 +58,10 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     private managerService: ManagerService,
     fb: NonNullableFormBuilder,
     activityService: ReportsService,
+    fuzzySearchService: FuzzySearchService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
-    super(fb, activityService, '24h');
+    super(fb, activityService, fuzzySearchService, '24h');
   }
 
   ngOnInit() {
@@ -141,12 +142,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   }
 
   applyFilters() {
-    this.apklogs = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
-      .map(planet => ({
-        ...planet,
-        children: this.filterLogs(planet.children)
-      }));
+    this.apklogs = this.filterPlanetsBySearch(this.allPlanets, children => this.filterLogs(children));
     this.isEmpty = areNoChildren(this.apklogs);
   }
 
