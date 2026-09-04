@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 import { RequestsComponent } from './requests.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -63,7 +64,8 @@ describe('RequestsComponent', () => {
         ReportsService,
         ManagerService,
         DeviceInfoService,
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
       ]
     })
       .compileComponents();

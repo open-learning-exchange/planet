@@ -110,7 +110,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         this.onUserUpdate();
         this.getNotification();
       });
-    this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
+    this.couchService.get('_node/nonode@nohost/_config/planet').pipe(takeUntil(this.onDestroy$))
+      .subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -252,7 +253,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       },
       0,
       [ { time: 'desc' } ])
-    ).subscribe(data => {
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(data => {
       this.notifications = data;
     }, (error) => console.log(error));
   }
