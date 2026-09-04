@@ -1,7 +1,7 @@
 @use '../variables' as v;
 
 planet-tasks {
-  mat-action-list {
+  mat-list {
     .mat-mdc-list-item {
       align-items: center;
     }
@@ -22,6 +22,11 @@ planet-tasks {
     .mat-mdc-list-item.mdc-list-item--with-leading-avatar .mdc-list-item__content {
       margin-left: -16px;
     }
+
+    .task-title:focus-visible {
+      outline: 2px solid v.$primary;
+      outline-offset: 2px;
+    }
   }
 
   .deadline-soon {
@@ -39,4 +44,39 @@ planet-tasks {
     }
   }
 
+}
+
+planet-tasks-assignees-dialog {
+  .task-assignees-dialog-content {
+    min-width: 280px;
+    max-width: 400px;
+  }
+
+  .task-assignee-row-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 48px;
+  }
+
+  .task-assignee-avatar {
+    display: block;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .task-assignee-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
 }

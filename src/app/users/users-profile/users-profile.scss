@@ -2,6 +2,14 @@
 
 :host {
 
+  // In a dialog the toolbar is a nested panel rather than a page header, so it takes the
+  // low-emphasis fill and the same corner radius as the cards below it.
+  .dialog-toolbar {
+    background-color: v.$primary-lighter;
+    color: v.$primary-lighter-text;
+    border-radius: 12px;
+  }
+
   .profile-container {
     max-width: 900px;
     display: grid;
@@ -21,13 +29,20 @@
   .cards-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 16px;
     margin-top: 10px;
 
     mat-card {
-      flex: 1;
+      flex: 1 1 260px;
       width: 100%;
-      min-width: 300px;
+      min-width: 0;
+    }
+
+    .mat-mdc-list-item-title {
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   }
 
@@ -62,6 +77,10 @@
 
     .cards-container {
       flex-direction: column;
+
+      mat-card {
+        flex-basis: auto;
+      }
     }
 
     .profile-list-lt, .profile-list-rt {

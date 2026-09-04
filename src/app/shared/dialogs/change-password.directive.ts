@@ -14,27 +14,27 @@ import { ManagerService } from '../../manager-dashboard/manager.service';
 
 const changePasswordFields = [
   {
-    'label': $localize`Old Password`,
-    'type': 'password',
-    'name': 'oldPassword',
-    'placeholder': $localize`Old Password`,
-    'required': true
+    label: $localize`Old Password`,
+    type: 'password',
+    name: 'oldPassword',
+    placeholder: $localize`Old Password`,
+    required: true
   }
 ];
 const resetPasswordFields = [
   {
-    'label': $localize`Password`,
-    'type': 'password',
-    'name': 'password',
-    'placeholder': $localize`Password`,
-    'required': true
+    label: $localize`Password`,
+    type: 'password',
+    name: 'password',
+    placeholder: $localize`Password`,
+    required: true
   },
   {
-    'label': $localize`Confirm Password`,
-    'type': 'password',
-    'name': 'confirmPassword',
-    'placeholder': $localize`Confirm Password`,
-    'required': true
+    label: $localize`Confirm Password`,
+    type: 'password',
+    name: 'confirmPassword',
+    placeholder: $localize`Confirm Password`,
+    required: true
   }
 ];
 
@@ -119,7 +119,7 @@ export class ChangePasswordDirective implements OnChanges {
   onPasswordSubmit(credentialData) {
     const user = this.userDetail || this.userService.get();
     const obs = this.isLoggedInUser
-      ? this.couchService.post('_session', { 'name': user.name, 'password': credentialData.oldPassword })
+      ? this.couchService.post('_session', { name: user.name, password: credentialData.oldPassword })
       : of(true);
     obs.pipe(
       switchMap(() => this.changePassword(credentialData, user)),
@@ -164,15 +164,13 @@ export class ChangePasswordDirective implements OnChanges {
   }
 
   passwordError(reason: string) {
-    return () => {
-      return of({ error: { ok: false, reason } });
-    };
+    return () => of({ error: { ok: false, reason } });
   }
 
   reinitSession(username, password) {
     return forkJoin([
-      this.couchService.post('_session', { 'name': username, password }, { withCredentials: true }),
-      this.couchService.post('_session', { 'name': this.planetConfiguration.adminName, password },
+      this.couchService.post('_session', { name: username, password }, { withCredentials: true }),
+      this.couchService.post('_session', { name: this.planetConfiguration.adminName, password },
         { withCredentials: true, domain: this.planetConfiguration.parentDomain })
     ]).pipe(
       // Silent error for now so other specific messages are shown

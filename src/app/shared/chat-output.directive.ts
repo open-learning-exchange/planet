@@ -22,14 +22,14 @@ export class ChatOutputDirective implements OnChanges {
     escapedText = escapedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
     // Markdown links
-    escapedText = escapedText.replace(/\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g, (match, p1, p2) => {
-      return `<a class="chat-link" href="${p2}" target="_blank">${p1}</a>`;
-    });
+    escapedText = escapedText.replace(
+      /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g, (match, p1, p2) => `<a class="chat-link" href="${p2}" target="_blank">${p1}</a>`
+    );
 
     // Plain URLs
-    escapedText = escapedText.replace(/(?<!=")(https?:\/\/[^\s\[\]]+)/g, (match) => {
-      return `<a class="chat-link" href="${match}" target="_blank">${match}</a>`;
-    });
+    escapedText = escapedText.replace(
+      /(?<!=")(https?:\/\/[^\s\[\]]+)/g, (match) => `<a class="chat-link" href="${match}" target="_blank">${match}</a>`
+    );
 
     escapedText = escapedText.replace(/^###### (.*)$/gm, '<h6>$1</h6>')
       .replace(/^##### (.*)$/gm, '<h5>$1</h5>')

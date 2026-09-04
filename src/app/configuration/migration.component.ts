@@ -17,11 +17,11 @@ import { LowercaseDirective } from '../shared/lowercase.directive';
 import { RestrictDiacriticsDirective } from '../shared/restrict-diacritics.directives';
 import { MatButton } from '@angular/material/button';
 
-const removeProtocol = (str: string) => {
+const removeProtocol = (str: string) =>
   // RegEx grabs the fragment of the string between '//' and last character
   // First match includes characters, second does not (so we use second)
-  return /\/\/(.*?)$/.exec(str)[1];
-};
+  /\/\/(.*?)$/.exec(str)[1]
+;
 
 const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 
@@ -120,10 +120,8 @@ export class MigrationComponent implements OnInit {
         return this.couchService.put(`_node/nonode@nohost/_config/admins/${name}`, password);
       }),
       switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
-      switchMap(() => {
-        return Object.entries(this.admins).filter(admin => admin[0] !== this.credential.name)
-          .map(admin => this.couchService.put(`_node/nonode@nohost/_config/admins/${admin[0]}`, admin[1]));
-      }),
+      switchMap(() => Object.entries(this.admins).filter(admin => admin[0] !== this.credential.name)
+        .map(admin => this.couchService.put(`_node/nonode@nohost/_config/admins/${admin[0]}`, admin[1]))),
       switchMap(() => this.getDatabaseNames()),
       switchMap((syncDatabases: string[]) => forkJoin(syncDatabases.map(db => this.syncService.sync(this.syncDoc(db), this.credential))))
     ).subscribe(() => {
