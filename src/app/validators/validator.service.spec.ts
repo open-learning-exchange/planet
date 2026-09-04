@@ -1,5 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ValidatorService } from './validator.service';
 import { of } from 'rxjs/observable/of';

@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { SubmissionsComponent } from './submissions.component';
-import { DeviceType } from '../shared/device-info.service';
+import { DeviceType } from '@shared/platform/device-info.service';
 
 describe('SubmissionsComponent', () => {
   const createComponent = () => new SubmissionsComponent(

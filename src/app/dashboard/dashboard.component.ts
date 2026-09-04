@@ -2,26 +2,26 @@ import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
-import { StateService } from '../shared/state.service';
-import { dedupeShelfReduce, dedupeObjectArray, fullName } from '../shared/utils';
+import { StateService } from '@shared/state.service';
+import { dedupeShelfReduce, dedupeObjectArray, fullName } from '@shared/utils';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { NgClass, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { DashboardTileComponent } from './dashboard-tile.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 
 @Component({
   templateUrl: './dashboard.component.html',

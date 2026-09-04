@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { SurveysComponent } from './surveys.component';
 import { ExamsAddComponent } from '../exams/exams-add.component';
 import { ExamsViewComponent } from '../exams/exams-view.component';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesGuard } from '@shared/unsaved-changes/unsaved-changes.guard';
 
 const routes: Routes = [
   { path: '', component: SurveysComponent },

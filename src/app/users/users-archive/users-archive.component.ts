@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { CouchService } from '../../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { showFormErrors } from '../../shared/table-helpers';
-import { UserService } from '../../shared/user.service';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { UserService } from '@shared/auth/user.service';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButton } from '@angular/material/button';
-import { SubmitDirective } from '../../shared/submit.directive';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
 
 interface ArchiveFormControls {
   description: FormControl<string>;

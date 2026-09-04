@@ -3,11 +3,11 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 // Make sure not to import the entire rxjs library!!!
 import { Observable, timer, of } from 'rxjs';
 
-import { findDocuments } from '../shared/mangoQueries';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { deepEqual } from '../shared/utils';
+import { deepEqual } from '@shared/utils';
 
 @Injectable({
   providedIn: 'root'

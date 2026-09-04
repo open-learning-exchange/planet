@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ConfigurationCheckService } from '../shared/configuration-check.service';
+import { ConfigurationCheckService } from '@shared/platform/configuration-check.service';
 import { MatCard } from '@angular/material/card';
 import { MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetLanguageComponent } from '../shared/planet-language.component';
+import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
 import { RouterOutlet } from '@angular/router';
 
 @Component({

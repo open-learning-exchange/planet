@@ -1,0 +1,89 @@
+import { Component, Inject, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { MeetupsAddComponent } from '../../../meetups/add-meetups/meetups-add.component';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes.component';
+
+import { MeetupsViewComponent } from '../../../meetups/view-meetups/meetups-view.component';
+
+@Component({
+  template: `
+@switch (view) {
+  @case ('add') {
+    <planet-meetups-add #meetupsAdd [isDialog]="true" [link]="link"
+      [sync]="sync" [meetup]="meetup" (goBackEvent)="checkUnsavedChangesAndClose()">
+    </planet-meetups-add>
+  }
+  @case ('view') {
+    <planet-meetups-view
+      [isDialog]="true"
+      [meetupDetail]="meetup"
+      [editable]="editable"
+      (switchView)="switchView($event)">
+    </planet-meetups-view>
+  }
+}
+`,
+  imports: [MeetupsAddComponent, MeetupsViewComponent]
+})
+export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
+  @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;
+
+  link: any = {};
+  view = 'add';
+  meetup: any = {};
+  sync: { type: 'local' | 'sync', planetCode: string };
+  editable = true;
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog
+  ) {
+    this.link = this.data.link || this.link;
+    this.sync = this.data.sync || this.sync;
+    this.view = this.data.view || this.view;
+    this.meetup = this.data.meetup || this.meetup;
+    this.editable = this.data.editable !== undefined && this.data.editable !== null ? this.data.editable : this.editable;
+    this.dialogRef.disableClose = true;
+    this.dialogRef.backdropClick().subscribe(() => {
+      this.checkUnsavedChangesAndClose();
+    });
+  }
+
+  canDeactivate(): boolean {
+    return this.meetupsAdd ? this.meetupsAdd.canDeactivate() : true;
+  }
+
+  private checkUnsavedChangesAndClose(): void {
+    if (this.meetupsAdd && this.meetupsAdd.canDeactivate() === false) {
+      const dialogResult = UnsavedChangesPromptComponent.open(this.dialog);
+      dialogResult.subscribe(confirmed => {
+        if (confirmed) {
+          this.meetupsAdd.hasUnsavedChanges = false;
+          this.meetupsChange();
+        }
+      });
+    } else {
+      this.meetupsChange();
+    }
+  }
+
+  meetupsChange() {
+    if (typeof this.data?.onMeetupsChange === 'function') {
+      this.data.onMeetupsChange();
+    }
+    this.dialogsLoadingService.stop();
+    this.dialogRef.close();
+  }
+
+  switchView(view: 'add' | 'view' | 'close') {
+    if (view === 'close') {
+      this.checkUnsavedChangesAndClose();
+    }
+    this.view = view;
+  }
+
+}

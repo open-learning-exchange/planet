@@ -2,17 +2,17 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { PouchService } from '../shared/database/pouch.service';
-import { SyncService } from '../shared/sync.service';
-import { StateService } from '../shared/state.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PouchService } from '@shared/database/pouch.service';
+import { SyncService } from '@shared/database/sync.service';
+import { StateService } from '@shared/state.service';
 import { HealthService } from '../health/health.service';
 import { SubmissionsService } from '../submissions/submissions.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
-import { findDocuments } from '../shared/mangoQueries';
-import { dedupeObjectArray } from '../shared/utils';
+import { findDocuments } from '@shared/database/mango-queries';
+import { dedupeObjectArray } from '@shared/utils';
 import { environment } from '../../environments/environment';
 
 @Injectable({

@@ -1,7 +1,7 @@
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { urlToParamObject } from '../shared/utils';
+import { urlToParamObject } from '@shared/utils';
 import { FeedbackDirective } from './feedback.directive';
 
 describe('FeedbackDirective', () => {

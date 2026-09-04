@@ -1,15 +1,15 @@
 import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
 import type { ChartConfiguration } from 'chart.js';
-import { loadChart } from '../../shared/chart-utils';
-import { StateService } from '../../shared/state.service';
+import { loadChart } from '@shared/charts/chart.utils';
+import { StateService } from '@shared/state.service';
 import { HealthService } from '../../health/health.service';
 import { generateWeeksArray, filterByDate, weekDataLabels } from './reports.utils';
 import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
-import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
+import { dedupeShelfReduce, styleVariables } from '@shared/utils';
 import { conditions } from '../../health/health.constants';
 
-import { LabelComponent } from '../../shared/label.component';
+import { LabelComponent } from '@shared/ui/label.component';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';

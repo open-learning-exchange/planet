@@ -4,17 +4,17 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
-import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
+import { DialogsAddTableComponent } from '@shared/tables/dialogs-add-table.component';
 import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '../../shared/table-helpers';
+import { showFormErrors } from '@shared/tables/table.helpers';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 
 
 interface CertificationFormControls {

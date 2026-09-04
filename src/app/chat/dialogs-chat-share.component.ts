@@ -1,0 +1,224 @@
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { MatStepper, MatStep } from '@angular/material/stepper';
+import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogContent, MatDialogClose, MatDialogActions } from '@angular/material/dialog';
+import { forkJoin } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { NewsService } from '../news/news.service';
+import { TeamsService } from '../teams/teams.service';
+import { UserService } from '@shared/auth/user.service';
+import { UserChallengeStatusService } from '@shared/challenges/user-challenge-status.service';
+import { DialogsAnnouncementSuccessComponent } from '@shared/challenges/dialogs-announcement.component';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import {
+  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
+} from '@angular/material/expansion';
+import { MatCheckbox } from '@angular/material/checkbox';
+
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { TeamsComponent } from '../teams/teams.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+interface TeamForm {
+  message: FormControl<string>;
+  linkId: FormControl<string>;
+  teamType: FormControl<string>;
+}
+
+interface CommunityForm {
+  message: FormControl<string>;
+}
+
+@Component({
+  templateUrl: './dialogs-chat-share.component.html',
+  styles: [`
+    .mat-expansion-panel {
+      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+    }
+  `],
+  imports: [
+    CdkScrollable,
+    MatDialogContent,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelContent,
+    MatCheckbox,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatButton,
+    MatDialogClose,
+    MatSelect,
+    MatOption,
+    MatStepper,
+    MatStep,
+    TeamsComponent,
+    MatError,
+    FormErrorMessagesComponent,
+    MatDialogActions
+  ]
+})
+export class DialogsChatShareComponent implements OnInit {
+  user = this.userService.get();
+  conversation: any;
+  teamInfo: any;
+  membersInfo: any;
+  excludeIds: any[] = [];
+  showForm: boolean;
+  teamForm: FormGroup<TeamForm>;
+  communityForm: FormGroup<CommunityForm>;
+
+  @ViewChild('linkStepper') linkStepper: MatStepper;
+  selectedLink: { db, title, selector? };
+  links: { db, title, selector? }[] = [
+    { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
+    { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } }
+  ];
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogsChatShareComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private couchService: CouchService,
+    private fb: NonNullableFormBuilder,
+    private newsService: NewsService,
+    private teamsService: TeamsService,
+    private userService: UserService,
+    private dialog: MatDialog,
+    private userStatusService: UserChallengeStatusService,
+    private challengesService: ChallengesService,
+  ) {
+    this.conversation = data || this.conversation;
+  }
+
+  ngOnInit() {
+    this.communityForm = this.fb.group({
+      message: ''
+    });
+    this.teamForm = this.fb.group({
+      message: '',
+      linkId: '',
+      teamType: ''
+    });
+    this.getTeams();
+  }
+
+  teamSelect({ teamId, teamType }: { teamId: string; teamType: string }) {
+    this.teamForm.controls.linkId.setValue(teamId);
+    this.teamForm.controls.teamType.setValue(teamType);
+    this.linkStepper.selected.completed = true;
+    this.linkStepper.next();
+  }
+
+  linkStepperChange({ selectedIndex }: StepperSelectionEvent) {
+    if (selectedIndex === 0 && this.teamForm.pristine !== true) {
+      this.teamForm.reset({
+        message: '',
+        linkId: '',
+        teamType: ''
+      });
+    }
+  }
+
+  getTeam(linkId: string) {
+    return this.couchService.get(`teams/${linkId}`);
+  }
+
+  getTeamMembers(team: any) {
+    return this.teamsService.getTeamMembers(team, true).pipe(
+      map(memberships => memberships.filter(membership => membership.docType === 'membership'))
+    );
+  }
+
+  getTeams() {
+    const allTeams$ = this.couchService.findAll('teams', { selector: { status: 'active' } });
+    const userTeams$ = this.couchService.findAll('teams', {
+      selector: { userId: this.user._id, userPlanetCode: this.user.planetCode }
+    });
+
+    forkJoin([ allTeams$, userTeams$ ]).pipe(
+      map(([ allTeams, userTeams ]) => this.compareTeams(allTeams, userTeams))
+    ).subscribe();
+  }
+
+  compareTeams(allTeams, userTeams) {
+    const difference = allTeams.filter(team => !userTeams.some(userTeam => userTeam.teamId === team._id));
+    this.excludeIds = [ ...this.excludeIds, ...difference.map(team => team._id) ];
+  }
+
+  sendNotifications(type, members, teamType) {
+    return this.teamsService.sendNotifications(type, members, {
+      url: `${teamType}/view/${this.teamInfo._id}`, team: { ...this.teamInfo }
+    });
+  }
+
+  shareWithTeam() {
+    if (!this.teamForm.valid) {
+      return;
+    }
+
+    const team = this.teamForm.getRawValue();
+    this.conversation.message = team.message ? team.message : '</br>';
+    const { linkId, teamType } = team;
+
+    this.getTeam(linkId).pipe(
+      switchMap((teamData) => {
+        this.teamInfo = teamData;
+        return this.getTeamMembers(teamData);
+      })
+    ).subscribe((membersData) => {
+      this.conversation.chat = true;
+      this.newsService.postNews({
+        viewIn: [ { _id: linkId, section: 'teams', public: false } ],
+        messageType: teamType,
+        messagePlanetCode: this.teamInfo.planetCode,
+        ...this.conversation
+      }, $localize`Chat has been shared to ${this.teamInfo.type} ${this.teamInfo.name}`).pipe(
+        switchMap(() => this.sendNotifications('message', membersData, teamType)),
+      ).subscribe();
+    });
+    this.interact();
+  }
+
+  shareWithCommunity() {
+    if (this.communityForm.valid) {
+      const message = this.communityForm.controls.message.value;
+      this.conversation.message = message ? { text: message, images: [] } : { text: '</br>', images: [] };
+    }
+    this.conversation.chat = true;
+    this.interact();
+    this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).subscribe(() => {});
+    const challenge = this.challengesService.getActiveChallenge();
+    if (
+      challenge &&
+      this.userStatusService.getStatus('joinedCourse') &&
+      this.userStatusService.getStatus('surveyComplete') &&
+      !this.userStatusService.getStatus('hasPost')
+    ) {
+      this.dialog.open(DialogsAnnouncementSuccessComponent, {
+        width: '50vw',
+        maxHeight: '100vh',
+        data: challenge
+      });
+      this.userStatusService.updateStatus('hasPost', {
+        status: true,
+        amount: challenge.voicePostReward ?? 2
+      });
+    }
+  }
+
+  interact() {
+    this.dialogRef.close({  interacted: true });
+  }
+}

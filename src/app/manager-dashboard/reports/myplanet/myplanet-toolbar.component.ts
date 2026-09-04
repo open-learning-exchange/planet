@@ -1,7 +1,7 @@
 import { Component, DestroyRef, EventEmitter, Input, Output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { MyPlanetFiltersForm } from './filter.base';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet } from '@angular/common';

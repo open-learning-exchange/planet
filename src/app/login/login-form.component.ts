@@ -7,17 +7,17 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { from, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { MaterialModule } from '../shared/material.module';
-import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
-import { SharedComponentsModule } from '../shared/shared-components.module';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
+import { MaterialModule } from '@shared/material.module';
+import { PlanetFormsModule } from '@shared/forms/planet-forms.module';
+import { SharedComponentsModule } from '@shared/shared-components.module';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { ValidatorService } from '../validators/validator.service';
-import { PouchAuthService } from '../shared/database/pouch-auth.service';
-import { StateService } from '../shared/state.service';
-import { showFormErrors } from '../shared/table-helpers';
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { StateService } from '@shared/state.service';
+import { showFormErrors } from '@shared/tables/table.helpers';
 import { LoginTasksService } from './login-tasks.service';
 
 interface LoginFormControls {

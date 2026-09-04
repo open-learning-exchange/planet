@@ -8,14 +8,14 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { NewsListItemComponent } from './news-list-item.component';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { LabelComponent } from '../shared/label.component';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
+import { LabelComponent } from '@shared/ui/label.component';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { StateService } from '../shared/state.service';
-import { AuthService } from '../shared/auth-guard.service';
+import { StateService } from '@shared/state.service';
+import { AuthService } from '@shared/auth/auth-guard.service';
 
 describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {

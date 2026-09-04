@@ -7,29 +7,29 @@ import { MatDialog } from '@angular/material/dialog';
 import { EMPTY, Observable, Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
-import { UserService } from '../shared/user.service';
+import { UserService } from '@shared/auth/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { ChallengesService } from '@shared/challenges/challenges.service';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes.component';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;

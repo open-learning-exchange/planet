@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { StateService } from '../shared/state.service';
-import { SyncService } from '../shared/sync.service';
-import { UserService } from '../shared/user.service';
+import { StateService } from '@shared/state.service';
+import { SyncService } from '@shared/database/sync.service';
+import { UserService } from '@shared/auth/user.service';
 import { ConfigurationService } from './configuration.service';
 
 describe('ConfigurationService patches', () => {

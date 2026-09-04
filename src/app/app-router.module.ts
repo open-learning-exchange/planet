@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AuthService } from './shared/auth-guard.service';
+import { AuthService } from '@shared/auth/auth-guard.service';
 import { HomeComponent } from './home/home.component';
-import { UserGuard } from './shared/user-guard.service';
-import { UnsavedChangesGuard } from './shared/unsaved-changes.guard';
+import { UserGuard } from '@shared/auth/user-guard.service';
+import { UnsavedChangesGuard } from '@shared/unsaved-changes/unsaved-changes.guard';
 
 const routes: Routes = [
   {

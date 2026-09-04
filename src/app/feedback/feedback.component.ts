@@ -9,18 +9,20 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/user.service';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { UserService } from '@shared/auth/user.service';
+import {
+  filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill
+} from '@shared/tables/table.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { FeedbackService } from './feedback.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { UsersService } from '../users/users.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { truncateText } from '../shared/utils';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
+import { truncateText } from '@shared/utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -33,7 +35,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import {
   FEEDBACK_STATUS_OPTIONS, FEEDBACK_TYPE_OPTIONS, getFeedbackDisplayTitle, getFeedbackPriorityLabel, getFeedbackStatusLabel,
   getFeedbackTypeIcon, getFeedbackTypeLabel, normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,

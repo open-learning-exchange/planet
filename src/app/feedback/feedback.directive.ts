@@ -1,14 +1,14 @@
 import { Directive, HostListener, Input } from '@angular/core';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { Validators } from '@angular/forms';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { AuthService } from '../shared/auth-guard.service';
+import { AuthService } from '@shared/auth/auth-guard.service';
 import {
   FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
   normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,

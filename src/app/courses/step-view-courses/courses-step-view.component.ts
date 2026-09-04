@@ -5,26 +5,26 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
+import { UserService } from '@shared/auth/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
-import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
-import { StateService } from '../../shared/state.service';
-import { ChatService } from '../../shared/chat.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
-import { ChallengesService } from '../../shared/challenges/challenges.service';
+import { DialogsSubmissionsComponent } from './dialogs-submissions.component';
+import { StateService } from '@shared/state.service';
+import { ChatService } from '@shared/ai/chat.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
+import { coursesStepPrompt } from '@shared/ai/ai-prompts.constants';
+import { ChallengesService } from '@shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',

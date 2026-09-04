@@ -5,9 +5,9 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CoursesService } from '../courses/courses.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { DashboardTileComponent } from './dashboard-tile.component';
 

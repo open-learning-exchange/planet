@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { ChatService } from '../shared/chat.service';
+import { ChatService } from '@shared/ai/chat.service';
 import { AIProvider, ProviderName } from './chat.model';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';

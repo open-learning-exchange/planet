@@ -2,7 +2,7 @@ import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
 import { MatActionList, MatListItem } from '@angular/material/list';
-import { AvatarComponent } from '../shared/avatar.component';
+import { AvatarComponent } from '@shared/ui/avatar.component';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { assigneeName } from './tasks.utils';
 

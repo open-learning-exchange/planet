@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { from, throwError, Observable, forkJoin } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
-import { CouchService } from '../couchdb.service';
-import { UserChallengeStatusService } from '../user-challenge-status.service';
+import { CouchService } from './couchdb.service';
+import { UserChallengeStatusService } from '@shared/challenges/user-challenge-status.service';
 
 interface SessionInfo {
   userCtx: {

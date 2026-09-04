@@ -1,0 +1,228 @@
+import { Injectable } from '@angular/core';
+import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
+import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { findDocuments } from './mango-queries';
+
+class DatePlaceholder {}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CouchService {
+  private headers = new HttpHeaders().set('Content-Type', 'application/json');
+  private defaultOpts = { headers: this.headers, withCredentials: true };
+  private baseUrl = environment.couchAddress;
+  private reqNum = 0;
+  datePlaceholder = new DatePlaceholder();
+
+  private setOpts(opts: any = {}) {
+    const { domain, protocol, ...httpOpts } = opts;
+    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
+  }
+
+  private couchDBReq(type: string, db: string, [ domain, protocol, opts ]: any[], data?: any) {
+    const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
+    let httpReq: Observable<any>;
+    if (type === 'post' || type === 'put') {
+      httpReq = this.http[type](url, data, opts);
+    } else {
+      httpReq = this.http[type](url, opts);
+    }
+    this.reqNum++;
+    return this.formatHttpReq(httpReq);
+  }
+
+  constructor(
+    private http: HttpClient,
+    private planetMessageService: PlanetMessageService
+  ) {}
+
+  formatHttpReq(httpReq: Observable<any>) {
+    return httpReq
+      .pipe(catchError(err => {
+        if (err.status === 403) {
+          this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
+        }
+        return throwError(err);
+      }));
+  }
+
+  put(db: string, data: any, opts?: any): Observable<any> {
+    return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '');
+  }
+
+  post(db: string, data: any, opts?: any): Observable<any> {
+    return this.couchDBReq('post', db, this.setOpts(opts), JSON.stringify(data) || '');
+  }
+
+  get(db: string, opts?: any): Observable<any> {
+    return this.couchDBReq('get', db, this.setOpts(opts));
+  }
+
+  delete(db: string, opts?: any): Observable<any> {
+    return this.couchDBReq('delete', db, this.setOpts(opts));
+  }
+
+  getAttachment(url: string, opts?: any): Observable<Blob> {
+    const [ , , httpOpts ] = this.setOpts(opts);
+    return this.formatHttpReq(this.http.get(url, { ...httpOpts, responseType: 'blob' as const })) as Observable<Blob>;
+  }
+
+  putAttachment(db: string, file: File | FormData, opts?: any) {
+    return this.couchDBReq('put', db, this.setOpts(opts), file);
+  }
+
+  updateDocument(db: string, doc: any, opts?: any) {
+    let docWithDate: any;
+    return this.currentTime().pipe(
+      switchMap((date) => {
+        docWithDate = this.fillInDateFields(doc, date, opts && opts.utcKeys);
+        return this.post(db, docWithDate, opts);
+      }),
+      map((res: any) => ({ ...res, res, doc: { ...docWithDate, _rev: res.rev, _id: res.id } }))
+    );
+  }
+
+  localComparison(db: string, parentDocs: any[]) {
+    return this.findAll(db, findDocuments({ _id: { $gt: null } }, 0, 0, 1000)).pipe(map((localDocs) => parentDocs.map((parentDoc) => {
+      const localDoc: any = localDocs.find((doc: any) => doc._id === parentDoc._id);
+      return {
+        ...parentDoc,
+        localStatus: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
+      };
+    })));
+  }
+
+  findAll(db: string, query: any = { selector: { _id: { $gt: null } }, limit: 1000 }, opts?: any) {
+    return this.findAllRequest(db, query, opts).pipe(flatMap(({ docs }) => docs), toArray());
+  }
+
+  findAllStream(db: string, query: any = { selector: { _id: { $gt: null } }, limit: 1000 }, opts?: any) {
+    return this.findAllRequest(db, query, opts).pipe(map(({ docs }) => docs));
+  }
+
+  findAttachmentsByIds(ids: string[], opts?: any) {
+    const uniqueIds = Array.from(new Set((ids || []).filter(id => !!id)));
+    if (uniqueIds.length === 0) {
+      return of([]);
+    }
+    const chunkSize = 50;
+    const queries = [];
+    for (let i = 0; i < uniqueIds.length; i += chunkSize) {
+      const chunk = uniqueIds.slice(i, i + chunkSize);
+      queries.push(
+        this.findAll('attachments', findDocuments({ _id: { $in: chunk } }, 0, 0, chunk.length), opts)
+      );
+    }
+    return forkJoin(queries).pipe(
+      map((results: any[]) => results.reduce((acc: any[], docs: any[]) => acc.concat(docs), []))
+    );
+  }
+
+  private findAllRequest(db: string, query: any, opts: any) {
+    return this.post(db + '/_find', query, opts).pipe(
+      catchError(() => of({ docs: [], rows: [] })),
+      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
+    );
+  }
+
+  bulkGet(db: string, ids: string[], opts?: any) {
+    const docs = ids.map(id => ({ id }));
+    const revNum = doc => +(doc._rev.split('-')[0]);
+    return this.post(db + '/_bulk_get', { docs }, opts).pipe(
+      map((response: any) => response.results
+        .map((result: any) => result.docs.reduce((maxDoc, { ok: doc }) => revNum(maxDoc) > revNum(doc) ? maxDoc : doc, { _rev: '0-0' }))
+        .filter((doc: any) => doc !== undefined && doc._deleted !== true)
+      )
+    );
+  }
+
+  bulkDocs(db: string, docs: any[], opts?: any) {
+    return this.updateDocument(db + '/_bulk_docs', { docs }, opts);
+  }
+
+  stream(method: string, db: string) {
+    const url = this.baseUrl + '/' + db;
+    const req = new HttpRequest(method, url, {
+      reportProgress: true
+    });
+    return this.http.request(req);
+  }
+
+  getTags(db: string, opts?: any) {
+    return this.couchDBReq('get', db + '/_design/' + db + '/_view/count_tags?group=true', this.setOpts(opts)).pipe(
+      map((res: any) => res.rows.sort((a, b) => b.value - a.value))
+    );
+  }
+
+  getUrl(url: string, reqOpts?: any) {
+    const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
+    const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
+    const urlPrefix = domain ?
+      (protocol || environment.parentProtocol) + '://' + domain :
+      window.location.origin;
+    return this.http.get(urlPrefix + '/' + url, opts).pipe(
+      map((response: any) => {
+        if (typeof response === 'string' && response.trimStart().startsWith('<!')) {
+          throw new Error('Received HTML instead of expected response');
+        }
+        return response;
+      })
+    );
+  }
+
+  private compareRev(parent, local) {
+    if (parent === local) {
+      return 'match';
+    }
+    local = parseInt(local.split('-')[0], 10);
+    parent = parseInt(parent.split('-')[0], 10);
+    return (local < parent) ? 'newerAvailable' : (local > parent) ? 'parentOlder' : 'mismatch';
+  }
+
+  currentTime() {
+    return this.getUrl('time').pipe(catchError(() => of(Date.now())));
+  }
+
+  fillInDateFields(data, date, utcKeys: string[] = [], propertyKey = '') {
+    switch (data && data.constructor) {
+      case DatePlaceholder:
+        return date;
+      case Array:
+        return data.map((item) => this.fillInDateFields(item, date, utcKeys, propertyKey));
+      case Object:
+        return Object.entries(data).reduce((dataWithDate, [ key, value ]) => {
+          dataWithDate[key] = this.fillInDateFields(value, date, utcKeys, key);
+          return dataWithDate;
+        }, {});
+      default:
+        return utcKeys.indexOf(propertyKey) > -1 ? this.dateConversion(data) : data;
+    }
+  }
+
+  checkAuthorization(db, opts?) {
+    return this.get(db, opts).pipe(
+      catchError((err) => err.error === 'forbidden' ? of(false) : throwError(err)),
+      map((res) => res !== false)
+    );
+  }
+
+  dateConversion(date: number | Date) {
+    const localDate = new Date(date);
+    return Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate());
+  }
+
+  getDocumentByID(db: string, docId: string): Observable<any> {
+    const url = `${this.baseUrl}/${db}/${docId}`;
+    return this.http.get(url, this.defaultOpts).pipe(
+      catchError(err => {
+        this.planetMessageService.showAlert($localize`Error fetching document: ${err.message}`);
+        return throwError(err);
+      })
+    );
+  }
+
+}

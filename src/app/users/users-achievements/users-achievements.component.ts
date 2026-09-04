@@ -1,30 +1,30 @@
 import { Component, Inject, LOCALE_ID, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { catchError, auditTime } from 'rxjs/operators';
 import { throwError, combineLatest } from 'rxjs';
-import { StateService } from '../../shared/state.service';
+import { StateService } from '@shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
-import { PdfService } from '../../shared/pdf.service';
+import { PdfService } from '@shared/export/pdf.service';
 import { NgClass, DatePipe, formatDate } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
-import { PlanetBetaDirective } from '../../shared/beta.directive';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
-import { AvatarComponent } from '../../shared/avatar.component';
-import { fullName } from '../../shared/utils';
-import { FullNamePipe } from '../../shared/full-name.pipe';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetBetaDirective } from '@shared/auth/beta.directive';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { AvatarComponent } from '@shared/ui/avatar.component';
+import { fullName } from '@shared/utils';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
 
 @Component({
   templateUrl: './users-achievements.component.html',

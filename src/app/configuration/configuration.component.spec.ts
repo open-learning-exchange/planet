@@ -4,15 +4,15 @@ import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { ConfigurationComponent } from './configuration.component';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { ConfigurationService } from './configuration.service';
-import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { SyncService } from '../shared/sync.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { SyncService } from '@shared/database/sync.service';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;

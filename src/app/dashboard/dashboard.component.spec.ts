@@ -4,13 +4,13 @@ import { BehaviorSubject, NEVER, of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DashboardComponent } from './dashboard.component';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CoursesService } from '../courses/courses.service';
-import { StateService } from '../shared/state.service';
+import { StateService } from '@shared/state.service';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
 describe('DashboardComponent', () => {

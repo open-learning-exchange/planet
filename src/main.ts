@@ -7,8 +7,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { AppRoutingModule } from './app/app-router.module';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { MaterialModule } from './app/shared/material.module';
-import { PlanetDialogsModule } from './app/shared/dialogs/planet-dialogs.module';
+import { MaterialModule } from '@shared/material.module';
+import { PlanetDialogsModule } from '@shared/dialogs/planet-dialogs.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppComponent } from './app/app.component';

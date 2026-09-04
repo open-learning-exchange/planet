@@ -17,10 +17,10 @@ import { timer, throwError, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
-import { LabelComponent } from '../label.component';
+import { LabelComponent } from '@shared/ui/label.component';
 import { MatButton } from '@angular/material/button';
-import { SubmitDirective } from '../submit.directive';
-import { TruncateTextPipe } from '../truncate-text.pipe';
+import { SubmitDirective } from './submit.directive';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({

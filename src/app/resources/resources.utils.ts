@@ -1,4 +1,4 @@
-import { formatBytes } from '../shared/utils';
+import { formatBytes } from '@shared/utils';
 
 interface ResourceAttachment {
   content_type?: string;

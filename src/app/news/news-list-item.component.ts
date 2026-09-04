@@ -1,30 +1,30 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
-import { StateService } from '../shared/state.service';
+import { StateService } from '@shared/state.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
-import { AuthService } from '../shared/auth-guard.service';
-import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { AuthService } from '@shared/auth/auth-guard.service';
+import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '@shared/utils';
+import { DeviceInfoService, DeviceType } from '@shared/platform/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { LabelComponent } from '../shared/label.component';
+import { LabelComponent } from '@shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { ChatOutputDirective } from '../shared/chat-output.directive';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { ChatOutputDirective } from '@shared/ai/chat-output.directive';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TimeAgoPipe } from '../shared/time-ago.pipe';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
-import { FullNamePipe } from '../shared/full-name.pipe';
+import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
+import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '@shared/voices/voice-labels';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
 
 @Component({
   selector: 'planet-news-list-item',

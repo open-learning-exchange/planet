@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { StateService } from '../state.service';
-import { DialogsAnnouncementComponent } from '../dialogs/dialogs-announcement.component';
+import { StateService } from '@shared/state.service';
+import { DialogsAnnouncementComponent } from './dialogs-announcement.component';
 
 const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
 

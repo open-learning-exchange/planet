@@ -1,0 +1,64 @@
+import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { StateService } from '@shared/state.service';
+import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewText,
+  markdownImageRegex, normalizeMarkdownWhitespace, truncateText
+} from '@shared/utils';
+
+import { TdMarkdownComponent } from '@covalent/markdown';
+
+@Component({
+  selector: 'planet-markdown',
+  host: { class: 'planet-markdown-renderer' },
+  template: `
+    @if (previewMode) {
+      <td-markdown [content]="limitedContent"></td-markdown>
+      @if (images?.length) {
+        <div class="image-gallery">
+          @for (image of images; track image) {
+            <img [src]="image" class="minified-image" alt="Preview Image" />
+          }
+        </div>
+      }
+    } @else {
+      <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
+    }
+    `,
+  styleUrls: ['./planet-markdown.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [TdMarkdownComponent]
+})
+export class PlanetMarkdownComponent implements OnChanges {
+
+  @Input() content: string;
+  @Input() imageSource: 'parent' | 'local' = 'local';
+  @Input() previewMode: boolean;
+  @Input() limit = 450;
+  couchAddress: string;
+  images: string[] = [];
+  limitedContent: string;
+
+  constructor(private stateService: StateService) {}
+
+  ngOnChanges() {
+    this.couchAddress = this.imageSource === 'parent' ?
+      `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
+      `${environment.couchAddress}/`;
+
+    this.content = normalizeMarkdownWhitespace(this.content);
+
+    this.images = this.extractImageUrls(this.content);
+    const previewText = getMarkdownPreviewText(this.content);
+    const textOnly = this.content.replace(new RegExp(markdownImageRegex), '');
+
+    if (this.previewMode) {
+      this.limitedContent = truncateText(previewText, calculateMdAdjustedLimit(previewText, this.limit));
+    } else {
+      this.limitedContent = truncateText(textOnly, this.limit);
+    }
+  }
+
+  extractImageUrls(content: string): string[] {
+    return extractMarkdownImageUrls(content).map(url => url.startsWith('http') ? url : `${this.couchAddress}${url}`);
+  }
+}
