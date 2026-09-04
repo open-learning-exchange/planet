@@ -129,7 +129,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private dialog: MatDialog
   ) {
     this.userData();
-    const nav = this.router.getCurrentNavigation();
+    const nav = this.router.currentNavigation();
     this.title = nav?.extras?.state?.['title'] || '';
   }
 

@@ -1,3 +1,4 @@
+import { reflectComponentType } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
@@ -22,6 +23,7 @@ describe('App', () => {
   });
 
   it('Should be an AppComponent', () => {
-    expect(fixture).toMatchSnapshot();
+    expect(reflectComponentType(AppComponent)?.selector).toBe('planet-app');
+    expect(fixture.nativeElement.firstElementChild).toMatchSnapshot();
   });
 });

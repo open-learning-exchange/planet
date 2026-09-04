@@ -4,12 +4,13 @@ import { CoursesAddComponent } from './courses-add.component';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { ValidatorService } from '../../validators/validator.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -28,8 +29,9 @@ describe('CoursesAddComponent', () => {
       ]), MaterialModule, BrowserAnimationsModule, CoursesAddComponent, FormErrorMessagesComponent],
       providers: [
         CouchService,
-        ValidatorService,
+        { provide: ValidatorService, useValue: { isUnique$: () => of(null) } },
         provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -121,7 +123,7 @@ describe('CoursesAddComponent', () => {
         displayName: 'Test draft'
       })
     }));
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -158,7 +160,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -204,7 +206,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }

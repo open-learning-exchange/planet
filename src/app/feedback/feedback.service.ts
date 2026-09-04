@@ -10,7 +10,7 @@ import { normalizeFeedbackStatus } from './feedback.utils';
 })
 export class FeedbackService {
   readonly dbName = 'feedback';
-  private feedbackUpdate = new Subject<any[]>();
+  private feedbackUpdate = new Subject<void>();
   feedbackUpdate$ = this.feedbackUpdate.asObservable();
 
   setFeedback() {

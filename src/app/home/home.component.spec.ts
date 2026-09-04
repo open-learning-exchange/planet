@@ -67,7 +67,7 @@ describe('Home', () => {
 
   it('Should be a HomeComponent', () => {
     const { comp } = setup();
-    expect(comp instanceof HomeComponent).toBe(true, 'Should create HomeComponent');
+    expect(comp instanceof HomeComponent).toBe(true);
   });
 
   it('should close the mobile nav when a new page is selected', () => {

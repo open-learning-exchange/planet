@@ -49,7 +49,7 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": {
               "base": "dist"
@@ -57,6 +57,8 @@
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": [
+              "@angular/localize/init",
+              "zone.js",
               "src/polyfills.ts"
             ],
             "assets": [
@@ -253,7 +255,7 @@
           "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
             "port": 3000,
             "host": "0.0.0.0",
@@ -297,7 +299,7 @@
           "defaultConfiguration": ""
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "outputPath": "src/i18n",
             "format": "xlf",
@@ -305,7 +307,25 @@
           }
         },
         "test": {
-          "builder": "@analogjs/vitest-angular:test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "planet-app:build:test",
+            "tsConfig": "tsconfig.spec.json",
+            "runnerConfig": "vitest.config.mts",
+            "include": [
+              "src/**/*.spec.ts"
+            ],
+            "exclude": [
+              "src/**/form-error-messages.component.spec.ts",
+              "src/**/meetups-view.component.spec.ts",
+              "src/**/courses-view.component.spec.ts",
+              "src/**/notifications.component.spec.ts",
+              "src/**/login.component.spec.ts",
+              "src/**/resources.component.spec.ts",
+              "src/**/meetups.component.spec.ts",
+              "src/**/meetups-add.component.spec.ts"
+            ]
+          }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",

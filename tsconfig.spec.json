@@ -5,12 +5,13 @@
     "target": "es2022",
     "baseUrl": "./",
     "types": [
+      "@angular/localize",
       "vitest/globals",
       "node"
     ]
   },
   "files": [
-    "src/test-setup.ts"
+    "src/polyfills.ts"
   ],
   "include": [
     "**/*.spec.ts",

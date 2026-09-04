@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
@@ -55,8 +55,8 @@ describe('ManagerDashboardComponent', () => {
     currentTimeListener: vi.fn().mockReturnValue(of(Date.now()))
   };
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [ManagerDashboardComponent],
       providers: [
         { provide: HttpClient, useValue: HttpTestingController},
@@ -84,7 +84,7 @@ describe('ManagerDashboardComponent', () => {
         { provide: MatDialog, useValue: { open: vi.fn() } }
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ManagerDashboardComponent);
