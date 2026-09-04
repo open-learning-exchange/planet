@@ -5,8 +5,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
-import { catchError, auditTime, map, switchMap, takeUntil } from 'rxjs/operators';
-import { throwError, combineLatest, merge, of, Observable, Subject } from 'rxjs';
+import { catchError, auditTime, filter, map, shareReplay, switchMap, take, takeUntil } from 'rxjs/operators';
+import { throwError, combineLatest, defer, EMPTY, merge, of, Observable, Subject } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
@@ -27,7 +27,7 @@ import { fullName } from '../../shared/utils';
 import { FullNamePipe } from '../../shared/full-name.pipe';
 
 interface AchievementsRoute {
-  achievementsId: string;
+  achievementsId: string | null;
   ownAchievements: boolean;
   fallbackId: string;
   userRequest: { name: string, planetCode: string } | null;
@@ -37,7 +37,8 @@ type AchievementsUpdate =
   { type: 'user', user: any } |
   { type: 'userError' } |
   { type: 'achievements', achievements: any } |
-  { type: 'achievementsError', error: any };
+  { type: 'achievementsError', error: any } |
+  { type: 'certifications', courses: any[], progress: any[], certifications: any[], user: any };
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -97,21 +98,13 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.route.paramMap.pipe(
-      map((params: ParamMap) => this.initRoute(params)),
+    this.localPlanetCode().pipe(
+      switchMap((localPlanetCode: string) => this.route.paramMap.pipe(
+        map((params: ParamMap) => this.initRoute(params, localPlanetCode))
+      )),
       switchMap((achievementsRoute: AchievementsRoute) => this.routeUpdates(achievementsRoute)),
       takeUntil(this.onDestroy$)
     ).subscribe((update: AchievementsUpdate) => this.applyUpdate(update));
-    if (this.publicView) {
-      return;
-    }
-    combineLatest([
-      this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
-    ]).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, progress, certifications ]) => {
-      this.setCertifications(courses, progress, certifications);
-      this.isLoading = false;
-    });
-    this.coursesService.requestCourses();
   }
 
   ngOnDestroy() {
@@ -119,17 +112,35 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  // The configuration is fetched asynchronously and route activation does not wait for it, so no ID is built from a missing local code
+  private localPlanetCode(): Observable<string> {
+    return merge(
+      this.stateService.couchStateListener('configurations').pipe(
+        map(() => this.stateService.configuration.code)
+      ),
+      defer(() => {
+        const code = this.stateService.configuration.code;
+        if (!code) {
+          this.stateService.requestData('configurations', 'local');
+        }
+        return of(code);
+      })
+    ).pipe(
+      filter((code: any): code is string => typeof code === 'string' && code.length > 0),
+      take(1)
+    );
+  }
+
   // Clears state from the previously viewed user and describes the requests the new route needs
-  private initRoute(params: ParamMap): AchievementsRoute {
+  private initRoute(params: ParamMap, localPlanetCode: string): AchievementsRoute {
     const currentUser = this.userService.get();
     const nameParam = params.get('name');
-    const localPlanetCode = this.stateService.configuration.code;
     const currentUserPlanetCode = currentUser.planetCode || localPlanetCode;
-    let achievementsId: string;
+    let achievementsId: string | null;
     let userRequest: { name: string, planetCode: string } | null = null;
     this.resetRouteState();
-    if (nameParam === null || nameParam === undefined) {
-      achievementsId = currentUser._id + '@' + localPlanetCode;
+    if (nameParam === null) {
+      achievementsId = currentUser._id ? currentUser._id + '@' + localPlanetCode : null;
       this.user = currentUser;
       this.userName = currentUser.name;
       this.userPlanetCode = currentUserPlanetCode;
@@ -143,7 +154,7 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
       this.user = { name, planetCode };
       userRequest = { name, planetCode };
     }
-    this.ownAchievements = achievementsId === (currentUser._id + '@' + currentUserPlanetCode);
+    this.ownAchievements = !!currentUser._id && achievementsId === (currentUser._id + '@' + currentUserPlanetCode);
     return { achievementsId, ownAchievements: this.ownAchievements, fallbackId: currentUser._id, userRequest };
   }
 
@@ -156,11 +167,52 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     this.achievementNotFound = false;
     this.ownAchievements = false;
     this.openAchievementIndex = -1;
+    this.certifications = [];
   }
 
   private routeUpdates({ achievementsId, ownAchievements, fallbackId, userRequest }: AchievementsRoute): Observable<AchievementsUpdate> {
-    const achievements$ = this.achievementsUpdates(achievementsId, ownAchievements, fallbackId);
-    return userRequest ? merge(this.userUpdates(userRequest.name, userRequest.planetCode), achievements$) : achievements$;
+    const routedUser = userRequest ? { name: userRequest.name, planetCode: userRequest.planetCode } : this.user;
+    const user$ = (userRequest ?
+      this.userUpdates(userRequest.name, userRequest.planetCode) :
+      of<AchievementsUpdate>({ type: 'user', user: routedUser })
+    ).pipe(shareReplay({ bufferSize: 1, refCount: true }));
+    return merge(
+      achievementsId ? this.achievementsUpdates(achievementsId, ownAchievements, fallbackId) : EMPTY,
+      user$,
+      this.certificationUpdates(user$.pipe(
+        map((update: AchievementsUpdate) => update.type === 'user' ? update.user : routedUser)
+      ))
+    );
+  }
+
+  // Owned by the active route so switchMap cancels a previous user's pending work.
+  // The listeners are shared and hot, so they are merged before the request to keep an immediate emission from being missed.
+  // The user is a combineLatest source rather than a gate so these requests are not serialized behind the user document
+  private certificationUpdates(user$: Observable<any>): Observable<AchievementsUpdate> {
+    if (this.publicView) {
+      return EMPTY;
+    }
+    return merge(
+      combineLatest([
+        this.coursesService.coursesListener$(),
+        this.coursesService.progressListener$(),
+        this.certificationsService.getCertifications(),
+        user$
+      ]).pipe(
+        auditTime(500),
+        map(([ courses, progress, certifications, user ]): AchievementsUpdate => ({
+          type: 'certifications', courses, progress, certifications, user
+        })),
+        // A failed certifications request must not tear down the route subscription. CouchService already reports the failure
+        catchError(() => of<AchievementsUpdate>({
+          type: 'certifications', courses: [], progress: [], certifications: [], user: {}
+        }))
+      ),
+      defer(() => {
+        this.coursesService.requestCourses();
+        return EMPTY;
+      })
+    );
   }
 
   private achievementsUpdates(id: string, ownAchievements: boolean, fallbackId: string): Observable<AchievementsUpdate> {
@@ -206,6 +258,10 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
         }
         this.stopPublicViewLoading();
         break;
+      case 'certifications':
+        this.setCertifications(update.courses, update.progress, update.certifications, update.user);
+        this.isLoading = false;
+        break;
     }
   }
 
@@ -250,12 +306,16 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
   }
 
-  setCertifications(courses = [], progress = [], certifications = []) {
+  private setCertifications(courses: any[], progress: any[], certifications: any[], user: any) {
+    if (!user?._id) {
+      this.certifications = [];
+      return;
+    }
     this.certifications = certifications.filter(certification => {
       const certificateCourses = courses
         .filter(course => certification.courseIds.indexOf(course._id) > -1)
         .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
-      return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, this.user));
+      return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, user));
     });
   }
 
