@@ -96,6 +96,7 @@
     "sass-lint": "^1.13.1",
     "ts-node": "~8.5.4",
     "typescript": "~5.8.3",
+    "vite": "^7.3.6",
     "vitest": "^3.2.6"
   },
   "overrides": {
