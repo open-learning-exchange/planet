@@ -14,6 +14,13 @@ import { DatePipe } from '@angular/common';
     .mat-subtitle-2 {
       margin-top: 0;
     }
+    .report-label {
+      padding: 2px 8px;
+      margin-right: 4px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.08);
+      font-weight: 600;
+    }
   `],
   imports: [
     MatDialogTitle, CdkScrollable, MatDialogContent, TeamsReportsDetailComponent, MatDialogActions, MatButton, MatDialogClose, DatePipe

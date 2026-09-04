@@ -24,6 +24,9 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface NewReportForm {
@@ -32,6 +35,7 @@ interface NewReportForm {
   beginningBalance: string,
   description: string,
   endDate: Date,
+  label?: string,
   otherExpenses: number,
   otherIncome: number,
   receiptImages?: AttachmentInputState,
@@ -57,6 +61,10 @@ interface NewReportForm {
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
     DatePipe,
     CurrencyPipe
   ]
@@ -71,6 +79,8 @@ export class TeamsReportsComponent implements OnChanges {
   configuration = this.stateService.configuration;
   curCode = this.stateService.configuration.currency || {};
   reportCards: any[] = [];
+  filteredCards: any[] = [];
+  filter = '';
 
   ngOnChanges() {
     this.reportCards = (this.reports || [])
@@ -81,6 +91,7 @@ export class TeamsReportsComponent implements OnChanges {
         const net = income - expenses;
         return {
           report,
+          searchText: this.searchableText(report),
           receiptImageCount: this.teamsAttachmentsService.receiptAttachments(report).length,
           income,
           expenses,
@@ -89,6 +100,29 @@ export class TeamsReportsComponent implements OnChanges {
           isLoss: net < 0
         };
       });
+    this.applyFilter(this.filter);
+  }
+
+  applyFilter(filter: string) {
+    this.filter = filter;
+    const search = (filter || '').trim().toLowerCase();
+    this.filteredCards = search === '' ?
+      this.reportCards :
+      this.reportCards.filter(card => card.searchText.indexOf(search) > -1);
+  }
+
+  private searchableText(report) {
+    return [
+      report.label,
+      formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC'),
+      formatDate(report.endDate, 'mediumDate', this.localeId, 'UTC')
+    ].filter(text => !!text).join(' ').toLowerCase();
+  }
+
+  private reportLabels() {
+    return Array.from(new Set(
+      this.reportCards.map(({ report }) => (report.label || '').trim()).filter(label => label !== '')
+    )).sort((a, b) => a.localeCompare(b));
   }
 
   trackByReport(index: number, card: any) {
@@ -130,6 +164,13 @@ export class TeamsReportsComponent implements OnChanges {
       this.dialogsFormService.openDialogsForm(
         dialogTitle,
         [
+          {
+            name: 'label',
+            placeholder: $localize`Label (optional)`,
+            type: 'textbox',
+            maxLength: 50,
+            suggestions: this.reportLabels()
+          },
           { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
           { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
           { name: 'description', placeholder: $localize`Summary`, type: 'markdown', required: true },
@@ -183,12 +224,13 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   openDeleteReportDialog(report) {
+    const dateRange = `${$localize`Report from`} ${formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC')}
+      ${$localize`to`} ${formatDate(report.endDate, 'mediumDate', this.localeId, 'UTC')}`;
     const deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayName: `${$localize`Report from`} ${formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC')}
-          ${$localize`to`} ${formatDate(report.endDate, 'mediumDate', this.localeId, 'UTC')}`,
+        displayName: report.label ? `${report.label} (${dateRange})` : dateRange,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
@@ -212,6 +254,7 @@ export class TeamsReportsComponent implements OnChanges {
       'startDate', 'endDate', 'description', 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses'
     ];
     const initialValues = {
+      label: '',
       description: '',
       beginningBalance: 0,
       sales: 0,
@@ -246,7 +289,9 @@ export class TeamsReportsComponent implements OnChanges {
       (value as Date).getTime() :
       numberFields.indexOf(key) > -1 ?
         +value :
-        value;
+        key === 'label' ?
+          ((value as string) || '').trim() :
+          value;
     const { receiptImages = this.teamsAttachmentsService.emptyAttachmentState(), ...reportFields } = newReport as NewReportForm;
     const { _id, _rev, _attachments, ...newDoc } = Object.entries(reportFields).reduce(
       (obj, [ key, value ]: [ string, string | Date | number ]) => ({
@@ -287,8 +332,8 @@ export class TeamsReportsComponent implements OnChanges {
 
   exportReportsPdf() {
     const { data, title, titleName } = this.reportsExportData();
-    const totalIncome = this.reportCards.reduce((sum, card) => sum + card.income, 0);
-    const totalExpenses = this.reportCards.reduce((sum, card) => sum + card.expenses, 0);
+    const totalIncome = this.filteredCards.reduce((sum, card) => sum + card.income, 0);
+    const totalExpenses = this.filteredCards.reduce((sum, card) => sum + card.expenses, 0);
     this.dialogsLoadingService.start();
     this.receiptImageSections()
       .pipe(finalize(() => this.dialogsLoadingService.stop()))
@@ -307,7 +352,7 @@ export class TeamsReportsComponent implements OnChanges {
           $localize`Ending Balance`
         ],
         summary: [
-          { label: $localize`Reports`, value: this.reportCards.length },
+          { label: $localize`Reports`, value: this.filteredCards.length },
           { label: $localize`Total Credit`, value: totalIncome, format: 'currency' },
           { label: $localize`Total Debit`, value: totalExpenses, format: 'currency' },
           { label: $localize`Net Profit/Loss`, value: totalIncome - totalExpenses, format: 'currency' }
@@ -318,7 +363,9 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   private reportsExportData() {
-    const data = this.reportCards.map(({ report, income, expenses, net, endingBalance }) => ({
+    const hasLabels = this.filteredCards.some(({ report }) => !!report.label);
+    const data = this.filteredCards.map(({ report, income, expenses, net, endingBalance }) => ({
+      ...(hasLabels ? { [$localize`Label`]: report.label || '' } : {}),
       [$localize`Start Date`]: fullLabel(report.startDate, this.localeId),
       [$localize`End Date`]: fullLabel(report.endDate, this.localeId),
       [$localize`Created Date`]: fullLabel(report.createdDate, this.localeId),
@@ -342,7 +389,7 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   private receiptImageSections() {
-    const reportsWithReceipts = this.reportCards
+    const reportsWithReceipts = this.filteredCards
       .map(({ report }) => report)
       .filter(report => this.teamsAttachmentsService.receiptAttachments(report).length > 0);
     if (reportsWithReceipts.length === 0) {

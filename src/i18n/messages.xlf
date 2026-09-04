@@ -4570,6 +4570,9 @@ Other Notes</source>
       <trans-unit id="6590475405017990661" datatype="html">
         <source>reports</source>
       </trans-unit>
+      <trans-unit id="4886946918461962420" datatype="html">
+        <source>Filter by label or date...</source>
+      </trans-unit>
       <trans-unit id="6825329815737519497" datatype="html">
         <source>Export as CSV</source>
       </trans-unit>
@@ -4578,6 +4581,9 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1708910385866786607" datatype="html">
         <source>No reports available at the moment.</source>
+      </trans-unit>
+      <trans-unit id="9070825613982367493" datatype="html">
+        <source>No reports match your search.</source>
       </trans-unit>
       <trans-unit id="7078271376845640958" datatype="html">
         <source>Loss</source>
@@ -4605,6 +4611,9 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="add-report-dialog-title" datatype="html">
         <source>Add Report</source>
+      </trans-unit>
+      <trans-unit id="7852991617746780291" datatype="html">
+        <source>Label (optional)</source>
       </trans-unit>
       <trans-unit id="5013593594310835150" datatype="html">
         <source>Other Income</source>

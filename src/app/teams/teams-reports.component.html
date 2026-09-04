@@ -7,10 +7,20 @@
     <div class="reports-toolbar">
       <span class="reports-count">
         <mat-icon>description</mat-icon>
-        <span><strong>{{ reportCards.length }}</strong>&nbsp;<ng-container i18n>reports</ng-container></span>
+        <span><strong>{{ filteredCards.length }}</strong>&nbsp;<ng-container i18n>reports</ng-container></span>
       </span>
-      <span class="spacer"></span>
       @if (reportCards.length > 0) {
+        <mat-form-field subscriptSizing="dynamic" class="reports-filter font-size-1">
+          <mat-label i18n>Filter by label or date...</mat-label>
+          <input matInput [(ngModel)]="filter" (ngModelChange)="applyFilter($event)">
+          <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="filter ? 'visible' : 'hidden'"
+            matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      }
+      <span class="spacer"></span>
+      @if (filteredCards.length > 0) {
         <button mat-stroked-button [matMenuTriggerFor]="reportsExportMenu">
           <mat-icon>file_download</mat-icon><span i18n>Export</span>
         </button>
@@ -28,9 +38,12 @@
     @if (reportCards.length === 0) {
       <p class="reports-empty" i18n>No reports available at the moment.</p>
     }
-    @if (reportCards.length > 0) {
+    @if (reportCards.length > 0 && filteredCards.length === 0) {
+      <p class="reports-empty" i18n>No reports match your search.</p>
+    }
+    @if (filteredCards.length > 0) {
       <div class="reports-grid">
-        @for (card of reportCards; track trackByReport($index, card)) {
+        @for (card of filteredCards; track trackByReport($index, card)) {
           <mat-card class="report-card"
             role="button" tabindex="0"
             (click)="openReportCard($event, card.report)"
@@ -39,7 +52,12 @@
             <mat-card-content>
               <div class="report-card-header">
                 <div>
-                  <div class="report-card-eyebrow" i18n>Financial Report</div>
+                  <div class="report-card-eyebrow-row">
+                    <span class="report-card-eyebrow" i18n>Financial Report</span>
+                    @if (card.report.label) {
+                      <span class="report-card-label" [matTooltip]="card.report.label">{{ card.report.label }}</span>
+                    }
+                  </div>
                   <div class="report-card-range">
                     {{ card.report.startDate | date : 'mediumDate' : '+0000' }} &ndash;
                     {{ card.report.endDate | date : 'mediumDate' : '+0000' }}
