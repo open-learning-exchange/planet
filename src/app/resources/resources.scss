@@ -1,7 +1,8 @@
-@use '../variables' as v;
-@use './resources-shared' as r;
+@use '../mixins' as m;
 
 .resources-list {
+  @include m.search-toolbar;
+
   .mat-column-title {
     padding: 0;
   }
@@ -13,14 +14,6 @@
   .mat-mdc-progress-bar {
     height: 10px;
     width: 120px;
-  }
-
-  .search-bar {
-    height: r.$toolbar-height;
-  }
-
-  .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{r.$toolbar-height});
   }
 
   .mat-mdc-button, .mat-mdc-outlined-button {
@@ -41,6 +34,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  planet-resources-search {
+    @include m.search-filters('planet-resources-search-list');
+  }
 }
 
 .list-content-menu .header {
@@ -54,4 +51,8 @@
 
 .ellipsis-menu {
   text-align: center;
+}
+
+.filter-dialog planet-resources-search {
+  @include m.search-filters-stacked('planet-resources-search-list');
 }

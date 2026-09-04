@@ -261,8 +261,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     if (this.isDialog) {
       // Toggle selection
       const index = this.selectedIds.indexOf(teamId);
-      index === -1 ? this.selectedIds.push(teamId) : this.selectedIds.splice(index, 1);
-
+      if (index === -1) {
+        this.selectedIds.push(teamId);
+      } else {
+        this.selectedIds.splice(index, 1);
+      }
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }
