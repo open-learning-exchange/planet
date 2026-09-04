@@ -231,15 +231,15 @@ export const stringToHex = (string: string) => string.split('').map(char => char
 
 export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
-export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
+export const ageFromBirthDate = (currentTime: number | Date, birthDate: string | number | Date) => {
   const now = new Date(currentTime);
   const birth = new Date(birthDate);
+  if (!birthDate || isNaN(now.getTime()) || isNaN(birth.getTime())) {
+    return null;
+  }
   const yearDiff = now.getFullYear() - birth.getFullYear();
-  const afterBirthDay = now.getMonth() < birth.getMonth() ?
-    false :
-    now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
-      false :
-      true;
+  const afterBirthDay = now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
   return yearDiff - (afterBirthDay ? 0 : 1);
 };
 

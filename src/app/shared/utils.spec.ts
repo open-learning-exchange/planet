@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import {
-  couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName, hasMarkdownImages,
-  normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
+  ageFromBirthDate, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
+  hasMarkdownImages, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -337,6 +337,30 @@ ${'\t'.repeat(18)}
       expect(formatBytes(2516582)).toBe('2.4 MB');
       expect(formatBytes(1073741824)).toBe('1 GB');
       expect(formatBytes(1048575)).toBe('1 MB');
+    });
+
+  });
+
+  describe('ageFromBirthDate', () => {
+
+    const now = new Date(2026, 8, 4);
+
+    it('counts full years lived', () => {
+      expect(ageFromBirthDate(now, new Date(1998, 8, 4))).toBe(28);
+      expect(ageFromBirthDate(now, new Date(1998, 7, 30))).toBe(28);
+      expect(ageFromBirthDate(now, new Date(1998, 8, 30))).toBe(27);
+      expect(ageFromBirthDate(now, new Date(1998, 9, 4))).toBe(27);
+    });
+
+    it('does not count a birthday later in the same month', () => {
+      expect(ageFromBirthDate(now, new Date(1998, 8, 5))).toBe(27);
+    });
+
+    it('returns null when there is no usable birth date', () => {
+      expect(ageFromBirthDate(now, undefined)).toBeNull();
+      expect(ageFromBirthDate(now, null)).toBeNull();
+      expect(ageFromBirthDate(now, '')).toBeNull();
+      expect(ageFromBirthDate(now, new Date('unparseable'))).toBeNull();
     });
 
   });

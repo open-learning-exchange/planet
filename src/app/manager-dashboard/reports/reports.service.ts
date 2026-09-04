@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
+import { localizedGender } from './reports.utils';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -190,22 +191,28 @@ export class ReportsService {
     });
   }
 
-  appendGender(array) {
-    return array.map((item: any) => {
-      const user = this.users.find((u: any) => u.name === item.user) || {};
-      return ({
-        ...item,
-        gender: user.gender
-      });
-    });
+  userOfActivity(item: any) {
+    const user = this.users.find((u: any) => (u.doc || u).name === item.user);
+    return user ? (user.doc || user) : {};
   }
 
-  appendAge(array, time) {
+  appendGender(array) {
+    return array.map((item: any) => ({
+      ...item,
+      gender: item.gender || this.userOfActivity(item).gender
+    }));
+  }
+
+  // Adds the demographics decision makers ask for to exported rows. Records which store their own
+  // demographics (health examinations) keep theirs, the rest are matched to their user profile.
+  appendUserDemographics(array, time: number | Date) {
     return array.map((item: any) => {
-      const user = this.users.find((u: any) => u.name === item.user) || {};
+      const user = this.userOfActivity(item);
+      const age = item.age ?? ageFromBirthDate(time, user.birthDate);
       return ({
         ...item,
-        age: ageFromBirthDate(time, user.birthDate)
+        age: age ?? '',
+        gender: localizedGender(item.gender || user.gender)
       });
     });
   }

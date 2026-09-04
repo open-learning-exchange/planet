@@ -12,7 +12,7 @@ import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, codeToPlanetName, fullLabel, localizedGender } from '../manager-dashboard/reports/reports.utils';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
@@ -292,14 +292,7 @@ export class SubmissionsService {
   }
 
   private localizedGender(gender?: string) {
-    switch (gender) {
-      case 'male':
-        return $localize`Male`;
-      case 'female':
-        return $localize`Female`;
-      default:
-        return gender || this.notAvailable();
-    }
+    return localizedGender(gender, this.notAvailable());
   }
 
   private localizedGroupType(type?: string) {
@@ -344,9 +337,8 @@ export class SubmissionsService {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
             [$localize`Gender`]: this.localizedGender(submission.user.gender),
-            [$localize`Age (years)`]: submission.user.birthDate ?
-              ageFromBirthDate(time, submission.user.birthDate) :
-              submission.user.age || this.notAvailable(),
+            [$localize`Age (years)`]:
+              ageFromBirthDate(time, submission.user.birthDate) ?? submission.user.age ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
@@ -582,9 +574,7 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
-      const userAge = submission.user.birthDate ?
-        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
-        submission.user.age;
+      const userAge = ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) ?? submission.user.age;
       const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
       const communityOrNation = submission.planetName;
       const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';

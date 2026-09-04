@@ -1,5 +1,6 @@
 import { millisecondsToDay } from '../../meetups/constants';
 import { CsvService } from '../../shared/csv.service';
+import { toProperCase } from '../../shared/utils';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -96,6 +97,17 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
   locale,
   { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
 );
+
+export const localizedGender = (gender?: string, fallback = '') => {
+  switch (gender) {
+    case 'male':
+      return $localize`Male`;
+    case 'female':
+      return $localize`Female`;
+    default:
+      return gender ? toProperCase(gender) : fallback;
+  }
+};
 
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),
