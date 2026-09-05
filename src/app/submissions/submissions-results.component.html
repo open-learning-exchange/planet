@@ -1,0 +1,25 @@
+@if (questionCharts.length === 0) {
+  <div class="submissions-results-empty" i18n>No chartable questions in this survey. Charts cover choice and rating scale questions.</div>
+} @else {
+  <div class="submissions-results">
+    <p class="submissions-results-count">
+      <ng-container i18n>Total respondents:</ng-container>&nbsp;<strong>{{totalRespondents}}</strong>
+    </p>
+    @for (questionChart of questionCharts; track questionChart.index) {
+      <section class="submissions-results-question">
+        <h3 class="mat-subtitle-1 submissions-results-title">
+          {{questionChart.title}}: {{questionBody(questionChart.index)}}
+        </h3>
+        <planet-chart
+          [chartId]="'survey-question-' + questionChart.index"
+          [type]="questionChart.type"
+          [labels]="questionChart.labels"
+          [datasets]="questionChart.datasets">
+        </planet-chart>
+        @if (questionChart.footnote) {
+          <p class="submissions-results-footnote">{{questionChart.footnote}}</p>
+        }
+      </section>
+    }
+  </div>
+}

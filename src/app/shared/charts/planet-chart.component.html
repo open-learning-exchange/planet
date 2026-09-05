@@ -1,0 +1,31 @@
+<div class="planet-chart">
+  @if (showActions && chart) {
+    <div class="planet-chart-actions">
+      <button mat-icon-button [matMenuTriggerFor]="chartMenu" matTooltip="Chart actions" i18n-matTooltip>
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #chartMenu="matMenu">
+        <button mat-menu-item (click)="downloadChart()">
+          <mat-icon>get_app</mat-icon><span i18n>Download as PNG</span>
+        </button>
+        <button mat-menu-item (click)="copyChart()">
+          <mat-icon>content_copy</mat-icon><span i18n>Copy to clipboard</span>
+        </button>
+      </mat-menu>
+    </div>
+  }
+  @if (hasData) {
+    <div class="planet-chart-canvas" [style.height.px]="height">
+      @if (isVisible) {
+        <canvas #canvas [id]="chartId"></canvas>
+      }
+    </div>
+  } @else {
+    <div class="planet-chart-empty" [style.height.px]="height">
+      @if (title) {
+        <h3 class="mat-subtitle-1 planet-chart-empty-title">{{title}}</h3>
+      }
+      <span>{{emptyMessage}}</span>
+    </div>
+  }
+</div>

@@ -142,3 +142,18 @@
   color: v.$grey-text;
   padding: 32px;
 }
+
+.finance-charts-toggle {
+  margin: 0 0 10px;
+}
+
+.finance-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+
+  @media (max-width: v.$screen-md) {
+    grid-template-columns: 1fr;
+  }
+}

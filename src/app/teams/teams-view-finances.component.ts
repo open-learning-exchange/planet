@@ -27,6 +27,8 @@ import { MatIcon } from '@angular/material/icon';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { AttachmentInputState } from '../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
+import { PlanetChartComponent } from '../shared/charts/planet-chart.component';
+import { FinanceCharts, financeChartData } from './teams-finances-charts';
 import { forkJoin, of } from 'rxjs';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
@@ -75,6 +77,7 @@ interface TransactionForm {
     MatMenuItem,
     MatMenuTrigger,
     PlanetLoadingSpinnerComponent,
+    PlanetChartComponent,
     CurrencyPipe,
     DatePipe
   ]
@@ -98,6 +101,10 @@ export class TeamsViewFinancesComponent implements OnChanges {
   configuration: any = {};
   planetName: any;
   totals = { credit: 0, debit: 0, balance: 0 };
+  showCharts = false;
+  chartsShowLabel = $localize`Show charts`;
+  chartsHideLabel = $localize`Hide charts`;
+  charts: FinanceCharts = { balance: { labels: [], datasets: [] }, monthly: { labels: [], datasets: [] } };
 
   get stats() {
     const { credit, debit, balance } = this.totals;
@@ -295,6 +302,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
     const fromDate = this.startDate ? this.startDate.getTime() : -Infinity;
     const toDate = this.endDate ? endOfDay(this.endDate).getTime() : Infinity;
     this.table.data = this.allTransactions.filter(transaction => transaction.date >= fromDate && transaction.date <= toDate);
+    this.charts = financeChartData(this.table.data, this.localeId);
     this.updateTotals();
   }
 

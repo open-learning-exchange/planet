@@ -10,6 +10,7 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
+import { SubmissionsResultsComponent } from './submissions-results.component';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -78,7 +79,8 @@ const columnsByFilterAndMode = {
     MatRow,
     MatNoDataRow,
     MatPaginator,
-    DatePipe
+    DatePipe,
+    SubmissionsResultsComponent
   ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -105,6 +107,16 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     status: 'requires grading'
   };
   surveyId: string | null = null;
+  surveyView: 'table' | 'charts' = 'table';
+
+  /* All rows in the survey results view share one survey, so the parent doc is the survey itself. */
+  get surveyExam() {
+    return (this.submissions.filteredData as any[])[0]?.parent;
+  }
+
+  get surveySubmissions() {
+    return this.submissions.filteredData as any[];
+  }
   isManagerSurveysRoute = false;
   searchValue = '';
 

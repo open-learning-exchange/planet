@@ -15,6 +15,31 @@
         }
       </div>
     }
+    @if (!emptyTable) {
+      <div class="finance-charts-toggle">
+        <button mat-stroked-button (click)="showCharts = !showCharts">
+          <mat-icon>{{ showCharts ? 'expand_less' : 'insert_chart_outlined' }}</mat-icon>
+          <span>{{ showCharts ? chartsHideLabel : chartsShowLabel }}</span>
+        </button>
+      </div>
+      @if (showCharts) {
+        <div class="finance-charts">
+          <planet-chart
+            chartId="team-finance-balance"
+            type="line"
+            title="Balance over time" i18n-title
+            [labels]="charts.balance.labels"
+            [datasets]="charts.balance.datasets">
+          </planet-chart>
+          <planet-chart
+            chartId="team-finance-monthly"
+            title="Credits and debits by month" i18n-title
+            [labels]="charts.monthly.labels"
+            [datasets]="charts.monthly.datasets">
+          </planet-chart>
+        </div>
+      }
+    }
     <div class="finance-toolbar">
       <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
         <mat-label i18n>Start date</mat-label>

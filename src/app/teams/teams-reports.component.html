@@ -28,6 +28,23 @@
     @if (reportCards.length === 0) {
       <p class="reports-empty" i18n>No reports available at the moment.</p>
     }
+    @if (reportCards.length > 1) {
+      <div class="reports-charts-toggle">
+        <button mat-stroked-button (click)="showCharts = !showCharts">
+          <mat-icon>{{ showCharts ? 'expand_less' : 'insert_chart_outlined' }}</mat-icon>
+          <span>{{ showCharts ? chartsHideLabel : chartsShowLabel }}</span>
+        </button>
+      </div>
+      @if (showCharts) {
+        <planet-chart
+          chartId="team-reports-periods"
+          title="Income and expenses by period" i18n-title
+          [labels]="chartLabels"
+          [datasets]="chartDatasets"
+          [height]="360">
+        </planet-chart>
+      }
+    }
     @if (reportCards.length > 0) {
       <div class="reports-grid">
         @for (card of reportCards; track trackByReport($index, card)) {

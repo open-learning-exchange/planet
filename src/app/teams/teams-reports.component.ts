@@ -7,6 +7,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
+import { PlanetChartComponent } from '../shared/charts/planet-chart.component';
+import { chartPalette } from '../shared/charts/chart-palette';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
@@ -45,6 +47,7 @@ interface NewReportForm {
   styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html',
   imports: [
+    PlanetChartComponent,
     NgClass,
     MatButton,
     MatIconButton,
@@ -71,6 +74,11 @@ export class TeamsReportsComponent implements OnChanges {
   configuration = this.stateService.configuration;
   curCode = this.stateService.configuration.currency || {};
   reportCards: any[] = [];
+  showCharts = false;
+  chartsShowLabel = $localize`Show charts`;
+  chartsHideLabel = $localize`Hide charts`;
+  chartLabels: string[] = [];
+  chartDatasets: any[] = [];
 
   ngOnChanges() {
     this.reportCards = (this.reports || [])
@@ -89,6 +97,21 @@ export class TeamsReportsComponent implements OnChanges {
           isLoss: net < 0
         };
       });
+    this.setChartData();
+  }
+
+  /* Reports are period summaries, so each card is one bar group; oldest period first reads as a trend. */
+  private setChartData() {
+    const chronological = [ ...this.reportCards ].sort((a, b) => a.report.startDate - b.report.startDate);
+    this.chartLabels = chronological.map(card => formatDate(card.report.startDate, 'MMM y', this.localeId, '+0000'));
+    this.chartDatasets = [
+      { label: $localize`Income`, data: chronological.map(card => card.income), backgroundColor: chartPalette.credit },
+      { label: $localize`Expenses`, data: chronological.map(card => card.expenses), backgroundColor: chartPalette.debit },
+      {
+        label: $localize`Net`, data: chronological.map(card => card.net), type: 'line',
+        borderColor: chartPalette.primary, backgroundColor: chartPalette.primary, tension: 0
+      }
+    ];
   }
 
   trackByReport(index: number, card: any) {

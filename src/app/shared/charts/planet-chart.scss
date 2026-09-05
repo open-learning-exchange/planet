@@ -1,0 +1,32 @@
+@use '../../variables' as v;
+
+.planet-chart {
+  position: relative;
+  width: 100%;
+
+  .planet-chart-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+  }
+
+  .planet-chart-canvas {
+    position: relative;
+    width: 100%;
+  }
+
+  .planet-chart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: v.$grey-text;
+    text-align: center;
+
+    .planet-chart-empty-title {
+      margin: 0;
+    }
+  }
+}

@@ -66,3 +66,8 @@
     max-width: 100px;
   }
 }
+
+/* The table stays in the DOM while charts are shown so its sort and paginator bindings survive. */
+.submissions-hidden {
+  display: none;
+}

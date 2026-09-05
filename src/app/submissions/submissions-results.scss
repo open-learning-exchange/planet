@@ -1,0 +1,29 @@
+@use '../variables' as v;
+
+.submissions-results {
+  padding: 10px;
+
+  .submissions-results-count {
+    margin: 0 0 10px;
+  }
+
+  .submissions-results-question {
+    margin-bottom: 25px;
+
+    .submissions-results-title {
+      margin: 0 0 5px;
+    }
+
+    .submissions-results-footnote {
+      margin: 5px 0 0;
+      color: v.$grey-text;
+      font-size: 0.85em;
+    }
+  }
+}
+
+.submissions-results-empty {
+  padding: 20px;
+  text-align: center;
+  color: v.$grey-text;
+}
