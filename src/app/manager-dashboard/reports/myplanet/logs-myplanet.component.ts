@@ -148,8 +148,8 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     this.isEmpty = areNoChildren(this.apklogs);
   }
 
-  private mapToCsvData(children: any[], planetName?: string): any[] {
-    return children.map((data: any) => ({
+  private mapToCsvData = (children: any[], planetName?: string): any[] =>
+    children.map((data: any) => ({
       ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
       [$localize`ID`]: data.androidId,
       [$localize`Name`]: data.deviceName || data.customDeviceName,
@@ -158,7 +158,6 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
       [$localize`Version`]: data.version,
       [$localize`Error`]:  data.error || $localize`N/A`,
     }));
-  }
 
   exportAll(): void {
     this.csvService.exportMyPlanet(this.apklogs, undefined, this.mapToCsvData, $localize`myPlanet Logs`);

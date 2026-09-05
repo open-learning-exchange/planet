@@ -181,8 +181,8 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     );
   }
 
-  private mapToCsvData(children: any[], planetName?: string): any[] {
-    return children.map((data: any) => ({
+  private mapToCsvData = (children: any[], planetName?: string): any[] =>
+    children.map((data: any) => ({
       ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
       [$localize`ID`]: data.androidId.toString() || data.uniqueAndroidId.toString(),
       [$localize`Name`]: data.deviceName || data.customDeviceName,
@@ -195,16 +195,13 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       [$localize`No of Visits`]: data.count,
       [$localize`Used Time`]: this.timePipe.transform(data.totalUsedTime),
     }));
-  }
 
   exportAll(): void {
-    this.csvService.exportMyPlanet(this.planets, undefined, this.mapToCsvData.bind(this), $localize`myPlanet Reports`);
+    this.csvService.exportMyPlanet(this.planets, undefined, this.mapToCsvData, $localize`myPlanet Reports`);
   }
 
   exportSingle(planet: any): void {
-    this.csvService.exportMyPlanet(
-      planet.children, planet.name, this.mapToCsvData.bind(this), $localize`myPlanet Reports for ${planet.name}`
-    );
+    this.csvService.exportMyPlanet(planet.children, planet.name, this.mapToCsvData, $localize`myPlanet Reports for ${planet.name}`);
   }
 
 }
