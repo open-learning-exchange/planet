@@ -147,6 +147,16 @@ export class TeamsService {
     );
   }
 
+  // Rejecting deletes the request document we are already holding rather than re-finding it by its
+  // fields.  myPlanet stamps request documents with its own idea of teamPlanetCode, so a field lookup
+  // can come back empty and silently reject nothing.  Only use this where the document is known to
+  // still be a request -- after an accept it has already been rewritten as a membership.
+  rejectRequest(team, requestDoc) {
+    return requestDoc?._id && requestDoc?._rev && requestDoc.fromShelf !== true ?
+      this.couchService.bulkDocs(this.dbName, [ { _id: requestDoc._id, _rev: requestDoc._rev, _deleted: true } ]) :
+      this.removeFromRequests(team, requestDoc);
+  }
+
   cancelJoinRequest(team) {
     const user = this.userService.get();
     return this.removeFromRequests(team, { userId: user._id, userPlanetCode: this.stateService.configuration.code });

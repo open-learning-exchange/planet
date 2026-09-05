@@ -1,4 +1,4 @@
-import { memberCompare } from './teams.utils';
+import { isTeamFull, memberCompare } from './teams.utils';
 import { TeamsViewComponent } from './teams-view.component';
 
 describe('team member helpers', () => {
@@ -7,6 +7,16 @@ describe('team member helpers', () => {
       { userId: 'org.couchdb.user:leader', userPlanetCode: 'planet-a' },
       { userId: 'org.couchdb.user:leader', userPlanetCode: 'planet-b' }
     )).toBe(false);
+  });
+
+  it('does not report a team as full when its limit is missing or zero', () => {
+    expect(isTeamFull(3, undefined)).toBe(false);
+    expect(isTeamFull(3, 0)).toBe(false);
+  });
+
+  it('reports a team as full once its own limit is reached', () => {
+    expect(isTeamFull(4, 4)).toBe(true);
+    expect(isTeamFull(3, 4)).toBe(false);
   });
 
   it('does not grant leader access from a non-authoritative membership document', () => {

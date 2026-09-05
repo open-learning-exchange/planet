@@ -166,6 +166,47 @@ describe('TeamsService membership writes', () => {
     } ]);
   });
 
+  it('rejects a request by its own revision instead of re-finding it by field', () => {
+    const { service, couchService } = createService();
+    const request = {
+      ...membership,
+      ...enrichedFields,
+      _id: 'request-1',
+      _rev: '1-request',
+      docType: 'request',
+      // myPlanet stamps the requesting user's planet code here, so a field lookup finds nothing.
+      teamPlanetCode: 'planet-b'
+    };
+
+    service.rejectRequest(team, request).subscribe();
+
+    expect(couchService.findAll).not.toHaveBeenCalled();
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [
+      { _id: 'request-1', _rev: '1-request', _deleted: true }
+    ]);
+  });
+
+  it('falls back to finding the request to reject when no revision is known', () => {
+    const storedRequest = { ...membership, _id: 'request-1', _rev: '1-request', docType: 'request' };
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ storedRequest ]))
+    });
+
+    service.rejectRequest(team, { userId: membership.userId, userPlanetCode: membership.userPlanetCode }).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalled();
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ { ...storedRequest, _deleted: true } ]);
+  });
+
+  it('still clears a leftover request by field after an accept has rewritten the document', () => {
+    const { service, couchService } = createService();
+
+    service.removeFromRequests(team, { ...membership, _id: 'request-1', _rev: '1-request' }).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalled();
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', []);
+  });
+
   it('validates mixed add-member writes and reduces request deletions to tombstones', () => {
     const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
     const request = {

@@ -23,7 +23,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
+import { enterpriseJoinAgreement, isTeamFull, memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -315,7 +315,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(requestDateCompare);
-      this.disableAddingMembers = this.members.length >= this.team.limit;
+      this.disableAddingMembers = isTeamFull(this.members.length, this.team.limit);
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
       this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
@@ -590,7 +590,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         });
       case 'rejected':
         return ({
-          obs: this.teamsService.removeFromRequests(this.team, memberDoc),
+          obs: this.teamsService.rejectRequest(this.team, memberDoc),
           message: $localize`Rejected: ${memberName}`
         });
     }
