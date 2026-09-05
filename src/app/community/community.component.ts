@@ -15,6 +15,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
+import { UsersLinksService } from '../users/users-links.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
@@ -179,7 +180,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
-    private challengesService: ChallengesService
+    private challengesService: ChallengesService,
+    private usersLinksService: UsersLinksService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -569,6 +571,40 @@ export class CommunityComponent implements OnInit, OnDestroy {
       return;
     }
     this.deleteMode = !this.deleteMode;
+  }
+
+  councillorActionMenu(councillor): ('title' | 'links')[] {
+    if (this.isRemoteExchange) {
+      return [];
+    }
+    const canManageMembers = this.user.roles.indexOf('_admin') > -1 || this.user.roles.indexOf('manager') > -1;
+    const isSelf = councillor.userId === this.user._id && councillor.userPlanetCode === this.stateService.configuration.code;
+    return [
+      ...(canManageMembers ? [ 'title' as const ] : []),
+      ...(canManageMembers || isSelf ? [ 'links' as const ] : [])
+    ];
+  }
+
+  councillorActionClick({ member: councillor, change }) {
+    if (change === 'links') {
+      this.openLinksDialog(councillor);
+      return;
+    }
+    this.openChangeTitleDialog({ member: councillor });
+  }
+
+  openLinksDialog(councillor) {
+    if (this.isRemoteExchange) {
+      return;
+    }
+    this.usersLinksService.openDialog(councillor.doc.name, councillor.doc.socialLinks || []).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(socialLinks => {
+      // Replace the docs held by the tile so the icons update before the user list refreshes.
+      councillor.doc = { ...councillor.doc, socialLinks };
+      councillor.userDoc = { ...councillor.userDoc, doc: councillor.doc };
+      this.usersService.requestUsers();
+    });
   }
 
   openChangeTitleDialog({ member: councillor }) {

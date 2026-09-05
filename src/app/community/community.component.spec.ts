@@ -92,8 +92,9 @@ describe('CommunityComponent remote exchange behavior', () => {
       get: vi.fn(() => of({ _id: 'remote@local', description: '' }))
     };
     const userService = { get: vi.fn(() => ({ _id: 'user', isUserAdmin: false, roles: [] })), userChange$: EMPTY };
-    const usersService = { usersListener: vi.fn(() => EMPTY) };
+    const usersService = { usersListener: vi.fn(() => EMPTY), requestUsers: vi.fn() };
     const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
+    const usersLinksService = { openDialog: vi.fn(() => of([])) };
     const component = new CommunityComponent(
       dialog as any,
       router as any,
@@ -111,10 +112,11 @@ describe('CommunityComponent remote exchange behavior', () => {
       deviceInfoService as any,
       {} as any,
       { checkConfiguration: vi.fn(() => of(undefined)) } as any,
-      { getActiveChallenge: vi.fn(() => null) } as any
+      { getActiveChallenge: vi.fn(() => null) } as any,
+      usersLinksService as any
     );
 
-    return { component, couchService, dialog, dialogsFormService, routeParamMap, router, stateService };
+    return { component, couchService, dialog, dialogsFormService, routeParamMap, router, stateService, usersLinksService };
   };
 
   it('sets remote exchange mode synchronously from the route snapshot', () => {
@@ -159,12 +161,44 @@ describe('CommunityComponent remote exchange behavior', () => {
     component.openDeleteLinkDialog({});
     component.confirmDeleteDescription();
     component.openChangeTitleDialog({ member: {} });
+    component.openLinksDialog({ doc: { name: 'ann' } });
     component.openDescriptionDialog();
     component.toggleDeleteMode();
 
     expect(dialog.open).not.toHaveBeenCalled();
     expect(dialogsFormService.openDialogsForm).not.toHaveBeenCalled();
     expect(component.deleteMode).toBe(false);
+  });
+
+  it('offers title changes to managers and link editing to managers and the leader themselves', () => {
+    const { component } = createComponent();
+    const councillor = { userId: 'user', userPlanetCode: 'local' };
+    const otherCouncillor = { userId: 'org.couchdb.user:bob', userPlanetCode: 'local' };
+
+    expect(component.councillorActionMenu(councillor)).toEqual([]);
+
+    component.planetCode = null;
+
+    expect(component.councillorActionMenu(councillor)).toEqual([ 'links' ]);
+    expect(component.councillorActionMenu(otherCouncillor)).toEqual([]);
+
+    component.user = { ...component.user, roles: [ 'manager' ] };
+
+    expect(component.councillorActionMenu(otherCouncillor)).toEqual([ 'title', 'links' ]);
+  });
+
+  it('saves edited links onto the docs the member tile reads from', () => {
+    const { component, usersLinksService } = createComponent();
+    const socialLinks = [ { platform: 'website', url: 'https://ole.org/' } ];
+    usersLinksService.openDialog.mockReturnValue(of(socialLinks));
+    component.planetCode = null;
+    const councillor: any = { doc: { name: 'ann' }, userDoc: { doc: { name: 'ann' } } };
+
+    component.openLinksDialog(councillor);
+
+    expect(usersLinksService.openDialog).toHaveBeenCalledWith('ann', []);
+    expect(councillor.doc.socialLinks).toEqual(socialLinks);
+    expect(councillor.userDoc.doc.socialLinks).toEqual(socialLinks);
   });
 
   it('cancels the previous exchange load when the route code changes', () => {

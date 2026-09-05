@@ -47,6 +47,7 @@ import { MatTooltip } from '@angular/material/tooltip';
       bp {Blood Pressure should be systolic/diastolic}
       notFileMatch {File not found in list}
       invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/}
+      invalidPhone {Please enter a valid phone number}
     }</span>
       }{{number === undefined ? '' : ' ' + number}}
       @if (error === 'matDatepickerMin' || error === 'matDatepickerMax') {

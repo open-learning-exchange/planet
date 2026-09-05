@@ -23,6 +23,7 @@
     <span class="tile-chip chip-primary">{{member?.role | truncateText:38}}</span>
   }
 </div>
+<planet-social-links [links]="socialLinks"></planet-social-links>
 @if (memberType === 'community' && !member?.doc?.leadershipTitle && !member?.doc?.isUserAdmin && actionMenu.indexOf('title') > -1) {
   <button type="button" class="tile-add-title cursor-pointer" (click)="openDialog({ member: member, change: 'title' })" i18n>+ Add title</button>
 }
@@ -58,6 +59,12 @@
       (click)="openDialog({ member: member, change: 'leader' })" mat-menu-item>
       <mat-icon>person</mat-icon>
       <span i18n>Make Leader</span>
+    </button>
+  }
+  @if (actionMenu.indexOf('links') > -1) {
+    <button (click)="openDialog({ member: member, change: 'links' })" mat-menu-item>
+      <mat-icon>link</mat-icon>
+      <span i18n>{ hasLinks, select, true {Edit Links} false {Add Links}}</span>
     </button>
   }
   @if (actionMenu.indexOf('title') > -1) {

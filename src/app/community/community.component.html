@@ -70,8 +70,8 @@
                 <planet-teams-member
                   [leadershipTitle]="councillor.doc.leadershipTitle"
                   [member]="councillor"
-                  [actionMenu]="!isRemoteExchange && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
-                  (actionClick)="openChangeTitleDialog($event)">
+                  [actionMenu]="councillorActionMenu(councillor)"
+                  (actionClick)="councillorActionClick($event)">
                 </planet-teams-member>
               }
             </div>

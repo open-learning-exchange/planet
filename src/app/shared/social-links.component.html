@@ -1,0 +1,14 @@
+@if (displayLinks.length > 0) {
+  <div class="social-links">
+    @for (link of displayLinks; track link.href) {
+      <a class="social-link" [href]="link.href" [attr.target]="link.isExternal ? '_blank' : null" rel="noopener noreferrer"
+        [matTooltip]="link.tooltip" [attr.aria-label]="link.tooltip" (click)="$event.stopPropagation()">
+        @if (link.isSvgIcon) {
+          <mat-icon [svgIcon]="link.icon"></mat-icon>
+        } @else {
+          <mat-icon>{{link.icon}}</mat-icon>
+        }
+      </a>
+    }
+  </div>
+}

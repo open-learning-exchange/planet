@@ -1,0 +1,59 @@
+<h2 mat-dialog-title i18n>Links &amp; Contacts</h2>
+<mat-dialog-content>
+  <p class="mat-caption" i18n>Anything you add here is visible to everyone who can see your profile.</p>
+  <form [formGroup]="linksForm">
+    <div formArrayName="links">
+      @for (linkGroup of links.controls; track linkGroup; let i = $index) {
+        <div class="link-row" [formGroupName]="i">
+          <mat-form-field class="platform-field">
+            <mat-label i18n>Type</mat-label>
+            <mat-select formControlName="platform" (selectionChange)="platformChange(linkGroup)" required>
+              <mat-select-trigger>
+                @if (isSvgIcon(linkGroup.value.platform)) {
+                  <mat-icon class="platform-icon" [svgIcon]="platformIcon(linkGroup.value.platform)"></mat-icon>
+                } @else {
+                  <mat-icon class="platform-icon">{{platformIcon(linkGroup.value.platform)}}</mat-icon>
+                }
+                {{platformLabel(linkGroup.value.platform)}}
+              </mat-select-trigger>
+              @for (platform of platforms; track platform.value) {
+                <mat-option [value]="platform.value">
+                  @if (platform.isSvgIcon) {
+                    <mat-icon class="platform-icon" [svgIcon]="platform.icon"></mat-icon>
+                  } @else {
+                    <mat-icon class="platform-icon">{{platform.icon}}</mat-icon>
+                  }
+                  {{platform.label}}
+                </mat-option>
+              }
+            </mat-select>
+            <mat-error><planet-form-error-messages [control]="linkGroup.controls.platform"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+          <mat-form-field class="value-field">
+            <mat-label>{{valueLabel(linkGroup.value.platform)}}</mat-label>
+            <input matInput formControlName="url" [placeholder]="valuePlaceholder(linkGroup.value.platform)" required>
+            <mat-error><planet-form-error-messages [control]="linkGroup.controls.url"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+          <mat-form-field class="label-field">
+            <mat-label i18n>Label</mat-label>
+            <input matInput formControlName="label" maxlength="40">
+            <mat-hint i18n>Optional</mat-hint>
+          </mat-form-field>
+          <button type="button" mat-icon-button color="warn" (click)="removeLink(i)" matTooltip="Remove link" i18n-matTooltip aria-label="Remove link" i18n-aria-label>
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+  </form>
+  <button type="button" mat-stroked-button (click)="addLink()" [disabled]="links.length >= maxLinks">
+    <mat-icon>add</mat-icon><span i18n>Add Another</span>
+  </button>
+  @if (links.length >= maxLinks) {
+    <p class="mat-caption" i18n>You have reached the maximum of {{maxLinks}} links.</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button type="button" mat-raised-button (click)="cancelForm()" i18n>Cancel</button>
+  <button type="button" mat-raised-button color="primary" (click)="submitForm()" [disabled]="isSubmitDisabled" i18n>OK</button>
+</mat-dialog-actions>

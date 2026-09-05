@@ -24,6 +24,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
 import { FullNamePipe } from '../../shared/full-name.pipe';
+import { SocialLinksComponent } from '../../shared/social-links.component';
+import { MemberLink, sanitizeMemberLinks } from '../../shared/social-platforms.constants';
+import { UsersLinksService } from '../users-links.service';
 
 @Component({
   selector: 'planet-users-profile',
@@ -55,7 +58,8 @@ import { FullNamePipe } from '../../shared/full-name.pipe';
     TruncateTextPipe,
     AvatarComponent,
     FullNamePipe,
-    MatTooltip
+    MatTooltip,
+    SocialLinksComponent
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
@@ -64,6 +68,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   userDetail: any = {};
   urlName = '';
   editable = false;
+  private cachedRawLinks: any;
+  private cachedLinks: MemberLink[] = [];
   hasAchievement = false;
   totalLogins = 0;
   lastLogin = 0;
@@ -85,7 +91,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private usersAchievementsService: UsersAchievementsService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private usersLinksService: UsersLinksService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -106,6 +113,30 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       if (user._id === this.userDetail._id && user.planetCode === this.userDetail.planetCode) {
         this.userDetail = user;
       }
+    });
+  }
+
+  // Cached until the doc's array is replaced so the child input is not handed a new array
+  // on every change detection pass.
+  get socialLinks(): MemberLink[] {
+    const rawLinks = this.userDetail?.socialLinks;
+    if (rawLinks !== this.cachedRawLinks) {
+      this.cachedRawLinks = rawLinks;
+      this.cachedLinks = sanitizeMemberLinks(rawLinks);
+    }
+    return this.cachedLinks;
+  }
+
+  // i18n template only accepts strings, not boolean
+  get hasLinks(): 'true' | 'false' {
+    return this.socialLinks.length > 0 ? 'true' : 'false';
+  }
+
+  openLinksDialog() {
+    this.usersLinksService.openDialog(this.userDetail.name, this.socialLinks).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(socialLinks => {
+      this.userDetail = { ...this.userDetail, socialLinks };
     });
   }
 

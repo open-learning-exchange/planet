@@ -1,6 +1,7 @@
 import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { findPlatform, isValidMemberLinkValue } from '../shared/social-platforms.constants';
 
 const isStringEdgeCase = (string: string) => string.trim() === '' || string.trim() !== string;
 
@@ -287,6 +288,21 @@ export class CustomValidators {
         }
       }
     });
+  }
+
+  // Validates a member link against the platform picked in the same form group, so an email
+  // platform requires an address, a phone platform a number, and everything else an http(s) URL.
+  static memberLinkValue(ac: AbstractControl<string | null>): ValidationErrors | null {
+    const platform = ac.parent?.get('platform')?.value || '';
+    const value = (ac.value ?? '').trim();
+    if (!platform || !value) {
+      return null;
+    }
+    if (isValidMemberLinkValue({ platform, url: value })) {
+      return null;
+    }
+    const { scheme } = findPlatform(platform) || {};
+    return scheme === 'mailto' ? { email: true } : scheme === 'tel' ? { invalidPhone: true } : { invalidLink: true };
   }
 
   static atLeastOneDaySelected(): ValidatorFn {

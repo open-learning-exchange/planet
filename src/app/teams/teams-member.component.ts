@@ -10,6 +10,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelectionList, MatSelectionListChange, MatListOption, MatListItemTitle } from '@angular/material/list';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
+import { SocialLinksComponent } from '../shared/social-links.component';
+import { MemberLink, sanitizeMemberLinks } from '../shared/social-platforms.constants';
 
 const defaultAvatar = 'assets/image.png';
 // Must match the length of $initials-palette in _variables.scss, which owns the colors.
@@ -31,13 +33,14 @@ const initialsColorCount = 12;
     MatListItemTitle,
     DatePipe,
     TruncateTextPipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    SocialLinksComponent
   ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
 
   @Input() member: any;
-  @Input() actionMenu: ('remove' | 'leader' | 'title')[] = [];
+  @Input() actionMenu: ('remove' | 'leader' | 'title' | 'links')[] = [];
   @Input() visits: { [_id: string]: number };
   @Input() userStatus = '';
   @Input() leadershipTitle = '';
@@ -57,6 +60,8 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   initials = '';
   initialsColorIndex = 0;
   hasImage = false;
+  private cachedRawLinks: any;
+  private cachedLinks: MemberLink[] = [];
 
   constructor(
     private userService: UserService,
@@ -68,6 +73,22 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   get isTeamLeader() {
     return !!this.teamLeader && this.member?.userId === this.teamLeader.userId &&
       this.member?.userPlanetCode === this.teamLeader.userPlanetCode;
+  }
+
+  // Both call sites rebuild their bindings every change detection pass, so the sanitized
+  // list is cached until the doc's array is actually replaced.
+  get socialLinks(): MemberLink[] {
+    const rawLinks = this.member?.userDoc?.doc?.socialLinks ?? this.member?.doc?.socialLinks;
+    if (rawLinks !== this.cachedRawLinks) {
+      this.cachedRawLinks = rawLinks;
+      this.cachedLinks = sanitizeMemberLinks(rawLinks);
+    }
+    return this.cachedLinks;
+  }
+
+  // i18n template only accepts strings, not boolean
+  get hasLinks(): 'true' | 'false' {
+    return this.socialLinks.length > 0 ? 'true' : 'false';
   }
 
   get isSelf() {
@@ -103,7 +124,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.initialsColorIndex = hash % initialsColorCount;
   }
 
-  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
+  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' | 'links' }) {
     this.actionClick.emit(actionParams);
   }
 

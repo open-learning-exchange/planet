@@ -204,4 +204,40 @@ describe('TeamsMemberComponent', () => {
       expect(usersProfileDialogService.open).toHaveBeenCalledWith({ member });
     });
   });
+
+  describe('social links', () => {
+    it('prefers the links on userDoc and falls back to the community shaped doc', () => {
+      component.member = { userDoc: { doc: { socialLinks: [ { platform: 'x', url: 'https://x.com/ann' } ] } } };
+      expect(component.socialLinks).toEqual([ { platform: 'x', url: 'https://x.com/ann', label: '' } ]);
+
+      component.member = { doc: { socialLinks: [ { platform: 'email', url: 'ann@ole.org' } ] } };
+      expect(component.socialLinks).toEqual([ { platform: 'email', url: 'ann@ole.org', label: '' } ]);
+    });
+
+    // Both call sites rebuild their bindings every change detection pass, so an uncached
+    // getter would hand the child component a new array forever.
+    it('reuses the sanitized array until the stored array is replaced', () => {
+      const socialLinks = [ { platform: 'website', url: 'https://ole.org/' } ];
+      component.member = { doc: { socialLinks } };
+
+      const first = component.socialLinks;
+
+      expect(component.socialLinks).toBe(first);
+
+      component.member.doc.socialLinks = [ ...socialLinks ];
+
+      expect(component.socialLinks).not.toBe(first);
+    });
+
+    it('drops unsafe entries and reports whether any link survived', () => {
+      component.member = { doc: { socialLinks: [ { platform: 'website', url: 'javascript:alert(1)' } ] } };
+
+      expect(component.socialLinks).toEqual([]);
+      expect(component.hasLinks).toBe('false');
+
+      component.member = { doc: { socialLinks: [ { platform: 'website', url: 'https://ole.org/' } ] } };
+
+      expect(component.hasLinks).toBe('true');
+    });
+  });
 });

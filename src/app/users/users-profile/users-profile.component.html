@@ -127,6 +127,23 @@
     <div class="cards-container">
       <mat-card>
         <mat-card-header>
+          <mat-card-title i18n class="primary-text-color">Links &amp; Contacts</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (socialLinks.length > 0) {
+            <planet-social-links [links]="socialLinks"></planet-social-links>
+          } @else {
+            <span i18n>No links added.</span>
+          }
+          @if (editable) {
+            <button mat-stroked-button (click)="openLinksDialog()">
+              <mat-icon>link</mat-icon><span i18n>{ hasLinks, select, true {Edit Links} false {Add Links}}</span>
+            </button>
+          }
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-header>
           <mat-card-title i18n class="primary-text-color">Teams</mat-card-title>
         </mat-card-header>
         <mat-card-content>

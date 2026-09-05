@@ -5,6 +5,7 @@ import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
+import { UsersLinksService } from '../users/users-links.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -153,7 +154,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private reportsService: ReportsService,
     private stateService: StateService,
     private tasksService: TasksService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private usersLinksService: UsersLinksService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -456,7 +458,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     };
   }
 
-  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' }) {
+  // Links live on the member's own user doc, so editing another member's links is limited to
+  // local planet admins rather than the team leader, who only manages team level fields.
+  canEditMemberLinks(member): boolean {
+    return member?.userPlanetCode === this.planetCode &&
+      (member?.userId === this.currentUserId || this.user.isUserAdmin === true);
+  }
+
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' | 'links' }) {
+    if (change === 'links') {
+      this.openLinksDialog(member);
+      return;
+    }
     if (change === 'title') {
       this.dialogsFormService.openDialogsForm(
         member.role ? $localize`Change Role` : $localize`Add Role`,
@@ -467,6 +480,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     } else {
       this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
     }
+  }
+
+  openLinksDialog(member) {
+    this.usersLinksService.openDialog(member.userDoc?.doc?.name || member.name, member.userDoc?.doc?.socialLinks || []).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(socialLinks => {
+      // Replace the doc held by the tile so the icons update without refetching the members.
+      member.userDoc = { ...member.userDoc, doc: { ...member.userDoc?.doc, socialLinks } };
+    });
   }
 
   changeMembershipRequest(type, memberDoc?, stopLoading = true) {

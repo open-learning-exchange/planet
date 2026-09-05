@@ -18,6 +18,7 @@ import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import { socialPlatforms } from '../shared/social-platforms.constants';
 
 interface CommunityLinkForm {
   title: FormControl<string>;
@@ -80,16 +81,7 @@ export class CommunityLinkDialogComponent {
     { db: 'social', title: $localize`Web & Social` }
   ];
   linkForm: FormGroup<CommunityLinkForm>;
-  socialPlatforms = [
-    { value: 'instagram', label: 'Instagram' },
-    { value: 'facebook', label: 'Facebook' },
-    { value: 'whatsapp', label: 'WhatsApp' },
-    { value: 'discord', label: 'Discord' },
-    { value: 'x', label: 'X (Twitter)' },
-    { value: 'youtube', label: 'YouTube' },
-    { value: 'tiktok', label: 'TikTok' },
-    { value: 'website', label: 'Website' }
-  ];
+  socialPlatforms = socialPlatforms;
 
   constructor(
     private dialogRef: MatDialogRef<CommunityLinkDialogComponent>,

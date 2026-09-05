@@ -181,7 +181,8 @@
                 [actionMenu]="[]
                   .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
                   .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
-                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
+                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])
+                  .concat(canEditMemberLinks(member) ? [ 'links' ] : [])"
                 [visits]="visits[member?.name]"
                 [userStatus]="userStatus"
                 [teamLeader]="leader"

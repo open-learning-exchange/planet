@@ -1,0 +1,24 @@
+.link-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.platform-field {
+  flex: 0 0 150px;
+}
+
+.value-field {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.label-field {
+  flex: 0 1 130px;
+  min-width: 0;
+}
+
+.platform-icon {
+  margin-right: 5px;
+  vertical-align: middle;
+}
