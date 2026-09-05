@@ -140,7 +140,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
-  selectedTimeFilter = '12m';
+  selectedTimeFilter = '3m';
   showCustomDateFields = false;
   resourcesLoading = true;
   coursesLoading = true;
@@ -343,7 +343,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-          ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
+          ? this.dateQueryParams.startDate : this.defaultStartDate()
       );
       this.setLoginActivities();
     });
@@ -942,14 +942,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }, { emitEvent: true });
   }
 
+  private defaultStartDate() {
+    return this.selectedTimeFilter === 'custom' ?
+      this.filter.startDate :
+      this.activityService.getDateRange(this.selectedTimeFilter, this.minDate).startDate;
+  }
+
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
     const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
     this.showCustomDateFields = showCustomDateFields;
 
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date();
-      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentStartDate = this.defaultStartDate();
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
@@ -967,7 +972,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.filter.app = '';
     this.selectedTeam = 'All';
     this.filter.members = [];
-    this.onTimeFilterChange('12m');
+    this.onTimeFilterChange('3m');
   }
 
   onHealthLoadingChange(loading: boolean) {
