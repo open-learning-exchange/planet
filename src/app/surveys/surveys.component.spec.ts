@@ -1,5 +1,5 @@
 import { FormBuilder } from '@angular/forms';
-import { of, Subject, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { SurveysComponent } from './surveys.component';
@@ -35,11 +35,11 @@ describe('SurveysComponent', () => {
 
   beforeEach(() => {
     couchService = {
-      get: vi.fn((path: string) => of({ _id: path.replace('teams/', ''), name: path, type: 'team' }))
+      get: vi.fn((path: string) => of({ _id: path.replace('teams/', ''), name: path, type: 'team' })),
+      post: vi.fn().mockReturnValue(of({})),
+      put: vi.fn().mockReturnValue(of({}))
     };
-    submissionsService = {
-      createSubmission: vi.fn().mockReturnValue(of({ id: 'submission-1' }))
-    };
+    submissionsService = {};
     planetMessageService = {
       showAlert: vi.fn()
     };
@@ -63,45 +63,30 @@ describe('SurveysComponent', () => {
     component = createComponent();
   });
 
-  it('fetches the current input team for each recording', () => {
+  it('sends the current input team along to each recording', () => {
     component.teamId = 'team-1';
     component.recordSurvey({ _id: 'survey-1', name: 'Survey 1' });
 
     component.teamId = 'team-2';
     component.recordSurvey({ _id: 'survey-2', name: 'Survey 2' });
 
-    expect(couchService.get).toHaveBeenNthCalledWith(1, 'teams/team-1');
-    expect(couchService.get).toHaveBeenNthCalledWith(2, 'teams/team-2');
-    expect(submissionsService.createSubmission).toHaveBeenNthCalledWith(
+    expect(router.navigate).toHaveBeenNthCalledWith(
       2,
-      { _id: 'survey-2', name: 'Survey 2' },
-      'survey',
-      {},
-      { _id: 'team-2', name: 'teams/team-2', type: 'team' }
+      [ 'surveys/dispense', expect.objectContaining({ surveyId: 'survey-2', surveyTeamId: 'team-2', mode: 'take' }) ],
+      expect.anything()
     );
   });
 
-  it('stops loading and shows an alert when recording fails', () => {
-    submissionsService.createSubmission.mockReturnValue(throwError(() => new Error('failed')));
-
+  it('leaves the submission to be created by the first saved answer', () => {
     component.recordSurvey({ _id: 'survey-1', name: 'Survey 1' });
 
-    expect(dialogsLoadingService.start).toHaveBeenCalled();
-    expect(dialogsLoadingService.stop).toHaveBeenCalled();
-    expect(planetMessageService.showAlert).toHaveBeenCalledWith('There was a problem recording the survey.');
-    expect(router.navigate).not.toHaveBeenCalled();
-  });
-
-  it('does not navigate after the component is destroyed during recording', () => {
-    const createSubmission$ = new Subject<any>();
-    submissionsService.createSubmission.mockReturnValue(createSubmission$);
-
-    component.recordSurvey({ _id: 'survey-1', name: 'Survey 1' });
-    component.ngOnDestroy();
-    createSubmission$.next({ id: 'submission-1' });
-
-    expect(dialogsLoadingService.stop).toHaveBeenCalled();
-    expect(router.navigate).not.toHaveBeenCalled();
+    expect(couchService.post).not.toHaveBeenCalled();
+    expect(couchService.put).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(
+      [ 'dispense', expect.objectContaining({ questionNum: 1, surveyId: 'survey-1', mode: 'take' }) ],
+      expect.anything()
+    );
+    expect(router.navigate.mock.calls[0][0][1].surveyTeamId).toBeUndefined();
   });
 
   it('keeps the search input synchronized with the table filter', () => {

@@ -210,6 +210,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.examType = params.get('type') || this.examType;
     const courseId = params.get('id');
     const submissionId = params.get('submissionId');
+    const surveyId = params.get('surveyId');
     const mode = params.get('mode');
     this.mode = mode || this.mode;
     this.isFinished = false;
@@ -229,7 +230,38 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       this.grade = mode === 'take' ? 0 : undefined;
       this.comment = undefined;
       this.submissionsService.openSubmission({ submissionId, status: params.get('status') });
+    } else if (surveyId) {
+      // No submission exists yet -- one is only written to the database once the first answer is
+      // saved, so opening a survey and leaving it never leaves an empty record behind
+      this.mode = mode || 'take';
+      this.grade = this.mode === 'take' ? 0 : undefined;
+      this.comment = undefined;
+      this.setRecordingSurvey(surveyId, params.get('surveyTeamId'));
     }
+  }
+
+  setRecordingSurvey(surveyId: string, teamId: string | null) {
+    const inProgress = this.submissionsService.submission;
+    // Moving back to a question of a recording already under way, which the browser can do from a
+    // url that predates the submission's id, has to keep the answers already given
+    if (inProgress && inProgress.parentId === surveyId && inProgress.status === 'pending') {
+      this.title = inProgress.parent.name;
+      this.setQuestion(inProgress.parent.questions);
+      this.submissionsService.resumeSubmission();
+      return;
+    }
+    this.isLoading = true;
+    forkJoin([
+      this.couchService.get(`exams/${surveyId}`),
+      teamId ? this.couchService.get(`teams/${teamId}`) : of(null)
+    ]).subscribe(([ survey, team ]: [ any, any ]) => {
+      this.title = survey.name;
+      this.setTakingExam(survey, survey._id, 'survey', team ? { _id: team._id, name: team.name, type: team.type } : undefined);
+    }, () => {
+      this.planetMessageService.showAlert($localize`There was a problem recording the survey.`);
+      this.isInternalNavigation = true;
+      this.goBack();
+    });
   }
 
   setExamPreview() {
@@ -318,8 +350,17 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     // A zero direction keeps the same url, which the router skips without running the guard, so
     // flagging it would leave the next real exit unprompted
     this.isInternalNavigation = direction !== 0;
-    this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    this.router.navigate([ { ...this.examParams(), questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
+  }
+
+  // A survey opened for recording starts without a submission id, so once the first answer creates
+  // the submission the url has to carry it or the next question would start a second submission
+  examParams() {
+    const params = this.route.snapshot.params;
+    return params.surveyId && this.submissionId ?
+      { ...params, submissionId: this.submissionId, status: 'pending' } :
+      params;
   }
 
   examComplete() {
@@ -346,14 +387,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.isNewQuestion = true;
   }
 
-  setTakingExam(exam, parentId, type) {
+  setTakingExam(exam, parentId, type, team?: { _id: string, name: string, type: string }) {
     const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
     this.submissionsService.openSubmission({
       parentId,
       parent: exam,
       user,
-      type });
+      type,
+      team });
   }
 
   setQuestion(questions: any[]) {
@@ -415,7 +457,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           this.questionNum = nextUnansweredQuestion;
           this.isInternalNavigation = true;
           this.router.navigate([ {
-            ...this.route.snapshot.params,
+            ...this.examParams(),
             questionNum: this.questionNum
           } ], { relativeTo: this.route });
         }

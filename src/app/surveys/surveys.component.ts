@@ -502,32 +502,20 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  private getRecordTeam(): Observable<any> {
-    const targetTeamId = this.teamId || this.routeTeamId;
-    if (!targetTeamId) {
-      return of(null);
-    }
-    return this.couchService.get('teams/' + targetTeamId);
-  }
-
+  // The submission is not created here: it is written once the first answer is saved, so opening a
+  // survey and abandoning it does not leave an empty pending submission behind
   recordSurvey(survey: any) {
-    this.dialogsLoadingService.start();
-    this.getRecordTeam().pipe(
-      switchMap((team: any) => {
-        const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
-        const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
-        return this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo);
-      }),
-      takeUntil(this.onDestroy$),
-      finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe((res: any) => {
-      this.router.navigate([
-        this.teamId ? 'surveys/dispense' : 'dispense',
-        { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
-      ], { relativeTo: this.route });
-    }, () => {
-      this.planetMessageService.showAlert($localize`There was a problem recording the survey.`);
-    });
+    const targetTeamId = this.teamId || this.routeTeamId;
+    this.router.navigate([
+      this.teamId ? 'surveys/dispense' : 'dispense',
+      {
+        questionNum: 1,
+        surveyId: survey._id,
+        mode: 'take',
+        snap: this.route.snapshot.url,
+        ...(targetTeamId ? { surveyTeamId: targetTeamId } : {})
+      }
+    ], { relativeTo: this.route });
   }
 
   toggleSurveyPublicAccess(survey: any) {

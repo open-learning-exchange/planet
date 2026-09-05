@@ -68,8 +68,8 @@ export class SubmissionsService {
     this.submission = this.submissions.find((submission) => submission._id === id);
   }
 
-  private newSubmission({ parentId, parent, user, type }) {
-    this.submission = this.createNewSubmission({ parentId, parent, user, type });
+  private newSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
+    this.submission = this.createNewSubmission({ parentId, parent, user, type, team });
   }
 
   private createNewSubmission({ parentId, parent, user, type, sender, team }: { parentId, parent, user, type, sender?, team? }) {
@@ -87,7 +87,9 @@ export class SubmissionsService {
     return { source: configuration.code, parentCode: configuration.parentCode };
   }
 
-  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }: any) {
+  openSubmission(
+    { parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending', team = undefined }: any
+  ) {
     const selector = submissionId ? { _id: submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
     const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
     obs.subscribe((res) => {
@@ -97,11 +99,17 @@ export class SubmissionsService {
       this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
       if (this.submission === undefined) {
         attempts += 1;
-        this.newSubmission({ parentId, parent, user, type });
+        this.newSubmission({ parentId, parent, user, type, team });
       }
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
     });
+  }
+
+  // Re-emits the submission already in progress, so returning to a question of a survey that has
+  // not been saved under an id yet continues it rather than starting a second one
+  resumeSubmission() {
+    this.submissionUpdated.next({ submission: this.submission, attempts: this.submissionAttempts });
   }
 
   submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
@@ -219,10 +227,6 @@ export class SubmissionsService {
         );
       })
     );
-  }
-
-  createSubmission(parent: any, type: string, user: any = {}, team?: { _id: string, name: string, type: string }) {
-    return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
   }
 
   submissionName(user) {
