@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
+import { ACTIVITY_DATE_FIELDS, dateFieldForDb } from './reports.constants';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -89,7 +90,10 @@ export class ReportsService {
     );
   }
 
-  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', fromMyPlanet }: any = { field: 'createdOn' }) {
+  selector(
+    planetCode: string,
+    { field = 'createdOn', tillDate, dateField = ACTIVITY_DATE_FIELDS.activity, fromMyPlanet }: any = { field: 'createdOn' }
+  ) {
     return planetCode ?
       findDocuments({
         ...{ [field]: planetCode },
@@ -130,21 +134,21 @@ export class ReportsService {
     db: 'login_activities' | 'resource_activities' | 'course_activities',
     { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
   ) {
-    const dateField = db === 'login_activities' ? 'loginTime' : 'time';
+    const dateField = dateFieldForDb(db);
     return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
       .pipe(map((activities: any) => this.filterAdmin(activities, filterAdmin)));
   }
 
   groupLoginActivities(loginActivities) {
     return ({
-      byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
+      byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: ACTIVITY_DATE_FIELDS.login })
         .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
-      byMonth: this.groupByMonth(this.appendGender(loginActivities), 'loginTime', 'user')
+      byMonth: this.groupByMonth(this.appendGender(loginActivities), ACTIVITY_DATE_FIELDS.login, 'user')
     });
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet })).pipe(
+    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, fromMyPlanet })).pipe(
       map((ratings: any) => this.filterAdmin(ratings, filterAdmin)));
   }
 
@@ -157,9 +161,9 @@ export class ReportsService {
 
   groupDocVisits(activites, type: 'resourceId' | 'courseId') {
     return ({
-      byDoc: this.groupBy(activites, [ 'parentCode', 'createdOn', type ], { maxField: 'time' })
+      byDoc: this.groupBy(activites, [ 'parentCode', 'createdOn', type ], { maxField: ACTIVITY_DATE_FIELDS.activity })
         .filter(activity => activity.title !== '' && activity !== undefined),
-      byMonth: this.groupByMonth(this.appendGender(activites), 'time')
+      byMonth: this.groupByMonth(this.appendGender(activites), ACTIVITY_DATE_FIELDS.activity)
     });
   }
 
@@ -175,8 +179,11 @@ export class ReportsService {
   }
 
   getAdminActivities({ planetCode, tillDate, domain }: { planetCode?: string, tillDate?: number, domain?: string }) {
-    return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate, dateField: 'time' }), { domain })
-      .pipe(map(adminActivities => this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' })));
+    return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate }), { domain }).pipe(
+      map(adminActivities => this.groupBy(
+        adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: ACTIVITY_DATE_FIELDS.activity }
+      ))
+    );
   }
 
   mostRecentAdminActivities(planet, logins, adminActivities) {
@@ -288,7 +295,7 @@ export class ReportsService {
 
   groupChatUsage(chats: any) {
     return ({
-      byMonth: this.groupByMonth(this.appendGender(chats), 'createdDate', '_id')
+      byMonth: this.groupByMonth(this.appendGender(chats), ACTIVITY_DATE_FIELDS.chat, '_id')
     });
   }
 
@@ -299,13 +306,13 @@ export class ReportsService {
 
   groupVoicesCreated(voices: any[]) {
     return ({
-      byMonth: this.groupByMonth(this.appendGender(voices), 'time', '_id')
+      byMonth: this.groupByMonth(this.appendGender(voices), ACTIVITY_DATE_FIELDS.activity, '_id')
     });
   }
 
   groupStepCompletion(steps: any[]) {
     return ({
-      byMonth: this.groupByMonth(this.appendGender(steps), 'time', 'userId')
+      byMonth: this.groupByMonth(this.appendGender(steps), ACTIVITY_DATE_FIELDS.activity, 'userId')
     });
   }
 

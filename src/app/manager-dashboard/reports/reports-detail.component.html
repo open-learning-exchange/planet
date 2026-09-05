@@ -294,6 +294,9 @@
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="loadComparisonData()" i18n>Compare</button>
             <span class="toolbar-fill"></span>
+            <button mat-icon-button [disabled]="comparisonTableData.length === 0" (click)="previewComparisonTableCSV()" matTooltip="Preview CSV" i18n-matTooltip>
+              <mat-icon>preview</mat-icon>
+            </button>
             <button mat-icon-button [disabled]="comparisonTableData.length === 0" (click)="downloadComparisonTableCSV()" matTooltip="Download as CSV" i18n-matTooltip>
               <mat-icon>get_app</mat-icon>
             </button>

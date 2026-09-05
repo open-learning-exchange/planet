@@ -1,4 +1,5 @@
-import { filterByDate, isSelectedMember } from './reports.utils';
+import { filterByDate, filterByMember, isSelectedMember } from './reports.utils';
+import { ActivityDateField } from './reports.constants';
 
 export interface ReportDetailFilter {
   app: 'planet' | 'myplanet' | '';
@@ -18,12 +19,22 @@ export class ReportsDetailData {
     this.filteredData = newData;
   }
   filteredData: any[] = [];
-  dateField: string;
+  dateField: ActivityDateField;
 
   constructor(
-    dateField: string
+    dateField: ActivityDateField
   ) {
     this.dateField = dateField;
+  }
+
+  // The date field is a property of the data, so callers ask the data for a range rather than
+  // naming the field themselves.
+  inRange(dateRange: { startDate: Date, endDate: Date }, members: any[] = []) {
+    return filterByMember(filterByDate(this.data, this.dateField, dateRange), members);
+  }
+
+  filteredInRange(dateRange: { startDate: Date, endDate: Date }) {
+    return filterByDate(this.filteredData, this.dateField, dateRange);
   }
 
   filter({ app, members, startDate, endDate }: ReportDetailFilter) {

@@ -22,6 +22,7 @@ import {
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
+import { ACTIVITY_DATE_FIELDS, DATE_SORT_FIELDS, dateFieldForReport } from './reports.constants';
 import {
   ReportExportAction, ReportExportOption, ReportExportValue, ReportsExportDialogComponent
 } from './reports-export-dialog.component';
@@ -135,19 +136,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
   codeParam = '';
-  loginActivities = new ReportsDetailData('loginTime');
-  resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
-  courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
+  loginActivities = new ReportsDetailData(ACTIVITY_DATE_FIELDS.login);
+  resourceActivities = { byDoc: [], total: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity) };
+  courseActivities = { byDoc: [], total: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity) };
   progress = {
-    enrollments: new ReportsDetailData('time'),
-    completions: new ReportsDetailData('time'),
-    steps: new ReportsDetailData('time')
+    enrollments: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity),
+    completions: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity),
+    steps: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity)
   };
-  chatActivities = new ReportsDetailData('createdDate');
-  voicesActivities = new ReportsDetailData('time');
+  chatActivities = new ReportsDetailData(ACTIVITY_DATE_FIELDS.chat);
+  voicesActivities = new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity);
   today: Date;
   minDate: Date;
-  ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
+  ratings = { total: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity), resources: [], courses: [] };
   dateFilterForm: FormGroup<DateFilterForm>;
   teams: any;
   selectedTeam: any = 'All';
@@ -357,7 +358,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.loginActivities.data = loginActivities;
       const adminName = this.stateService.configuration.adminName.split('@')[0];
       this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
-      this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
+      this.minDate = new Date(
+        new Date(this.activityService.minTime(this.loginActivities.data, ACTIVITY_DATE_FIELDS.login)).setHours(0, 0, 0, 0)
+      );
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
           ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
@@ -597,7 +600,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (!reports.length) {
       return;
     }
-    const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
+    const minDate = new Date(this.activityService.minTime(this.loginActivities.data, ACTIVITY_DATE_FIELDS.login)).setHours(0, 0, 0, 0);
     const teamOptions = [
       { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
@@ -689,7 +692,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   private loginData(dateRange: { startDate: Date, endDate: Date }, members: any[], sortBy: string) {
-    const data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
+    const data = this.loginActivities.inRange(dateRange, members)
       .map(activity => ({
         ...activity,
         androidId: activity.androidId || '',
@@ -700,11 +703,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   private courseOverviewData(dateRange: { startDate: Date, endDate: Date }, members: any[]): ReportExportData {
-    const filteredCourseData = filterByMember(filterByDate(
-      this.courseActivities?.total?.data,
-      'time',
-      dateRange
-    ), members) as any[];
+    const filteredCourseData = this.courseActivities.total.inRange(dateRange, members) as any[];
     const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: any }, activity: any) => {
       if (!stats[activity.courseId]) {
         stats[activity.courseId] = {
@@ -721,9 +720,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return stats;
     }, {});
 
-    const filteredEnrollments = filterByMember(filterByDate(this.progress.enrollments.data, 'time', dateRange), members) as any[];
-    const filteredCompletions = filterByMember(filterByDate(this.progress.completions.data, 'time', dateRange), members) as any[];
-    const filteredSteps = filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members) as any[];
+    const filteredEnrollments = this.progress.enrollments.inRange(dateRange, members) as any[];
+    const filteredCompletions = this.progress.completions.inRange(dateRange, members) as any[];
+    const filteredSteps = this.progress.steps.inRange(dateRange, members) as any[];
 
     filteredEnrollments.forEach((enrollment: any) => {
       if (courseStats[enrollment.courseId]) {
@@ -764,11 +763,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   private resourceOverviewData(dateRange: { startDate: Date, endDate: Date }, members: any[]): ReportExportData {
-    const filteredResourceData = filterByMember(filterByDate(
-      this.resourceActivities?.total?.data || [],
-      'time',
-      dateRange
-    ), members) as any[];
+    const filteredResourceData = this.resourceActivities.total.inRange(dateRange, members) as any[];
     const resourceStats = filteredResourceData.reduce((stats: { [resourceId: string]: any }, activity: any) => {
       if (activity.resourceId && !stats[activity.resourceId]) {
         stats[activity.resourceId] = {
@@ -806,7 +801,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }
     return data.sort((a, b) => {
       let comparison = 0;
-      if ([ 'loginTime', 'logoutTime', 'time' ].includes(field)) {
+      if ((DATE_SORT_FIELDS as string[]).includes(field)) {
         const dateA = new Date(a[field]).getTime();
         const dateB = new Date(b[field]).getTime();
         comparison = dateA - dateB;
@@ -818,7 +813,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   private chatExportData(dateRange: any, members: any[], sortBy: string): ReportExportData {
-    let data = filterByMember(filterByDate(this.chatActivities.data, 'createdDate', dateRange), members);
+    let data = this.chatActivities.inRange(dateRange, members);
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
@@ -835,12 +830,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   private deliverSummary(dateRange: any, members: any[], sortBy: string, preview: CsvPreviewSession | null) {
-    const loginData = filterByMember(filterByDate(this.loginActivities?.data, 'loginTime', dateRange), members);
-    const resourceData = filterByMember(filterByDate(this.resourceActivities?.total?.data, 'time', dateRange), members);
-    const courseData = filterByMember(filterByDate(this.courseActivities?.total?.data, 'time', dateRange), members);
-    const progressData = filterByMember(filterByDate(this.progress?.steps?.data, 'time', dateRange), members);
-    const chatData = filterByMember(filterByDate(this.chatActivities?.data, 'createdDate', dateRange), members);
-    const voicesData = filterByMember(filterByDate(this.voicesActivities?.data, 'time', dateRange), members);
+    const loginData = this.loginActivities.inRange(dateRange, members);
+    const resourceData = this.resourceActivities.total.inRange(dateRange, members);
+    const courseData = this.courseActivities.total.inRange(dateRange, members);
+    const progressData = this.progress.steps.inRange(dateRange, members);
+    const chatData = this.chatActivities.inRange(dateRange, members);
+    const voicesData = this.voicesActivities.inRange(dateRange, members);
 
     if (sortBy) {
       const order = sortBy.endsWith('Asc') ? 1 : -1;
@@ -907,7 +902,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }
     return {
       data: this.activityService.appendAge(
-        filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
+        filterByMember(filterByDate(data, dateFieldForReport(reportType), dateRange), members), this.today)
         .map(activity => {
           const baseActivity = {
             ...activity,
@@ -1027,19 +1022,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   private getMetricsForDateRange(range: { startDate: Date, endDate: Date }) {
-    const loginData = filterByDate(this.loginActivities.filteredData, 'loginTime', range);
+    const loginData = this.loginActivities.filteredInRange(range);
     const loginProcessed = this.activityService.groupLoginActivities(loginData);
     const resourceProcessed = this.activityService.groupDocVisits(
-      filterByDate(this.resourceActivities.total.filteredData, 'time', range),
+      this.resourceActivities.total.filteredInRange(range),
       'resourceId'
     );
     const courseProcessed = this.activityService.groupDocVisits(
-      filterByDate(this.courseActivities.total.filteredData, 'time', range),
+      this.courseActivities.total.filteredInRange(range),
       'courseId'
     );
-    const stepProcessed = this.activityService.groupStepCompletion(filterByDate(this.progress.steps.filteredData, 'time', range));
-    const chatProcessed = this.activityService.groupChatUsage(filterByDate(this.chatActivities.filteredData, 'createdDate', range));
-    const voicesProcessed = this.activityService.groupVoicesCreated(filterByDate(this.voicesActivities.filteredData, 'time', range));
+    const stepProcessed = this.activityService.groupStepCompletion(this.progress.steps.filteredInRange(range));
+    const chatProcessed = this.activityService.groupChatUsage(this.chatActivities.filteredInRange(range));
+    const voicesProcessed = this.activityService.groupVoicesCreated(this.voicesActivities.filteredInRange(range));
 
     return {
       totalMemberVisits: loginProcessed.byUser.reduce((t, u) => t + u.count, 0),
@@ -1155,26 +1150,44 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  downloadComparisonTableCSV() {
+  private comparisonTableExportData(): ReportExportData | null {
     if (this.comparisonTableData.length === 0) {
       this.planetMessageService.showAlert($localize`No comparison data available`);
-      return;
+      return null;
     }
     const week1Header = this.week1Label.replace(/,/g, '');
     const week2Header = this.week2Label.replace(/,/g, '');
 
-    const data = this.comparisonTableData.map(row => ({
-      [$localize`Metric`]: row.metric,
-      [week1Header]: row.week1,
-      [week2Header]: row.week2,
-      [$localize`Net Change`]: row.change
-    }));
-
-    this.csvService.exportCSV({
-      data,
+    return {
+      data: this.comparisonTableData.map(row => ({
+        [$localize`Metric`]: row.metric,
+        [week1Header]: row.week1,
+        [week2Header]: row.week2,
+        [$localize`Net Change`]: row.change
+      })),
       title: `${this.planetName || $localize`Reports`}_Comparison_${formatDate(new Date())}`
-    });
+    };
+  }
 
+  downloadComparisonTableCSV() {
+    const comparisonTable = this.comparisonTableExportData();
+    if (!comparisonTable) {
+      return;
+    }
+    this.csvService.exportCSV(comparisonTable);
     this.planetMessageService.showMessage($localize`Comparison table downloaded as CSV`);
+  }
+
+  previewComparisonTableCSV() {
+    const preview = this.csvService.openPreviewWindow();
+    if (!preview.isOpen) {
+      return;
+    }
+    const comparisonTable = this.comparisonTableExportData();
+    if (!comparisonTable) {
+      preview.cancel();
+      return;
+    }
+    preview.publish(this.csvService.formatExportRows(comparisonTable.data), comparisonTable.title);
   }
 }

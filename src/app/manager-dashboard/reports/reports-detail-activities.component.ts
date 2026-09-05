@@ -7,6 +7,7 @@ import {
 } from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
+import { ACTIVITY_DATE_FIELDS } from './reports.constants';
 import { truncateText } from '../../shared/utils';
 import { DatePipe } from '@angular/common';
 
@@ -59,9 +60,9 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
   @Input() progress = {
-    enrollments: new ReportsDetailData('time'),
-    completions: new ReportsDetailData('time'),
-    steps: new ReportsDetailData('time')
+    enrollments: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity),
+    completions: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity),
+    steps: new ReportsDetailData(ACTIVITY_DATE_FIELDS.activity)
   };
   @Input() activityType: 'resources' | 'courses' | 'health' | 'chat' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
