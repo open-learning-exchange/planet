@@ -22,6 +22,25 @@ describe('TeamsViewComponent task projections', () => {
     expect(component.taskCount).toBe(1);
   });
 
+  // TEMP NOTE (for review, strip before merge): links are leaders only for now, and they live
+  // on the global user doc, so the team leader is deliberately not an editor here.
+  it('limits link editing to local leaders, edited by themselves or a planet admin', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.planetCode = 'planet-a';
+    component.currentUserId = 'alex';
+    component.user = { _id: 'alex', isUserAdmin: false };
+    const leaderDoc = { roles: [ 'leader' ] };
+
+    expect(component.canEditMemberLinks({ userId: 'alex', userPlanetCode: 'planet-a', userDoc: { doc: leaderDoc } })).toBe(true);
+    expect(component.canEditMemberLinks({ userId: 'alex', userPlanetCode: 'planet-a', userDoc: { doc: { roles: [] } } })).toBe(false);
+    expect(component.canEditMemberLinks({ userId: 'alex', userPlanetCode: 'planet-b', userDoc: { doc: leaderDoc } })).toBe(false);
+    expect(component.canEditMemberLinks({ userId: 'bob', userPlanetCode: 'planet-a', userDoc: { doc: leaderDoc } })).toBe(false);
+
+    component.user = { _id: 'alex', isUserAdmin: true };
+
+    expect(component.canEditMemberLinks({ userId: 'bob', userPlanetCode: 'planet-a', userDoc: { doc: leaderDoc } })).toBe(true);
+  });
+
   it('matches membership on the local planet code rather than the user doc planet', () => {
     const component: any = Object.create(TeamsViewComponent.prototype);
     component.planetCode = 'planet-a';

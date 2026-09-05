@@ -170,10 +170,20 @@ describe('CommunityComponent remote exchange behavior', () => {
     expect(component.deleteMode).toBe(false);
   });
 
+  // TEMP NOTE (for review, strip before merge): links are leaders only for now.
+  it('does not offer link editing for a member who is not a leader', () => {
+    const { component } = createComponent();
+    component.planetCode = null;
+    component.user = { ...component.user, roles: [ 'manager' ] };
+
+    expect(component.councillorActionMenu({ userId: 'org.couchdb.user:bob', userPlanetCode: 'local', doc: { roles: [] } }))
+      .toEqual([ 'title' ]);
+  });
+
   it('offers title changes to managers and link editing to managers and the leader themselves', () => {
     const { component } = createComponent();
-    const councillor = { userId: 'user', userPlanetCode: 'local' };
-    const otherCouncillor = { userId: 'org.couchdb.user:bob', userPlanetCode: 'local' };
+    const councillor = { userId: 'user', userPlanetCode: 'local', doc: { roles: [ 'leader' ] } };
+    const otherCouncillor = { userId: 'org.couchdb.user:bob', userPlanetCode: 'local', doc: { roles: [ 'leader' ] } };
 
     expect(component.councillorActionMenu(councillor)).toEqual([]);
 

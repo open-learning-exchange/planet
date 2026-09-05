@@ -77,7 +77,11 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Email</h4>
-          <p matListItemLine><b>{{userDetail.email || 'N/A'}}</b></p>
+          @if (canSeeContact('email')) {
+            <p matListItemLine><b>{{userDetail.email || 'N/A'}}</b>@if (!isContactShared('email')) {<span class="contact-private" i18n>not shown to others</span>}</p>
+          } @else {
+            <p matListItemLine><b i18n>Not shared</b></p>
+          }
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
@@ -104,7 +108,11 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Phone</h4>
-          <p matListItemLine><b>{{userDetail.phoneNumber || 'N/A'}}</b></p>
+          @if (canSeeContact('phoneNumber')) {
+            <p matListItemLine><b>{{userDetail.phoneNumber || 'N/A'}}</b>@if (!isContactShared('phoneNumber')) {<span class="contact-private" i18n>not shown to others</span>}</p>
+          } @else {
+            <p matListItemLine><b i18n>Not shared</b></p>
+          }
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
@@ -125,23 +133,25 @@
       </mat-list>
     </div>
     <div class="cards-container">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title i18n class="primary-text-color">Links &amp; Contacts</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          @if (socialLinks.length > 0) {
-            <planet-social-links [links]="socialLinks"></planet-social-links>
-          } @else {
-            <span i18n>No links added.</span>
-          }
-          @if (editable) {
-            <button mat-stroked-button (click)="openLinksDialog()">
-              <mat-icon>link</mat-icon><span i18n>{ hasLinks, select, true {Edit Links} false {Add Links}}</span>
-            </button>
-          }
-        </mat-card-content>
-      </mat-card>
+      @if (socialLinks.length > 0 || canEditLinks) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title i18n class="primary-text-color">Links &amp; Contacts</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (socialLinks.length > 0) {
+              <planet-social-links [links]="socialLinks"></planet-social-links>
+            } @else {
+              <span i18n>No links added.</span>
+            }
+            @if (canEditLinks) {
+              <button mat-stroked-button (click)="openLinksDialog()">
+                <mat-icon>link</mat-icon><span i18n>{ hasLinks, select, true {Edit Links} false {Add Links}}</span>
+              </button>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
       <mat-card>
         <mat-card-header>
           <mat-card-title i18n class="primary-text-color">Teams</mat-card-title>

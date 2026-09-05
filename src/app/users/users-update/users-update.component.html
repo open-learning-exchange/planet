@@ -73,6 +73,16 @@
                 <planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages>
               </mat-error>
             </mat-form-field>
+            @if (!submissionMode) {
+              <mat-slide-toggle [formControl]="editForm.controls.contactVisibility.controls.email"
+                i18n i18n-matTooltip matTooltip="Off means only you and planet admins can see it">
+                Show my email on my profile
+              </mat-slide-toggle>
+              <mat-slide-toggle [formControl]="editForm.controls.contactVisibility.controls.phoneNumber"
+                i18n i18n-matTooltip matTooltip="Off means only you and planet admins can see it">
+                Show my phone number on my profile
+              </mat-slide-toggle>
+            }
           </div>
           <div class="profile-dropdowns">
             <mat-form-field>

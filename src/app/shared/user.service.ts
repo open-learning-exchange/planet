@@ -216,8 +216,14 @@ export class UserService {
 
   updateUser(userInfo) {
     const planetConfiguration = this.stateService.configuration;
+    // TEMP NOTE (for review, strip before merge): `credentials` holds the logged in user's own
+    // password fields (derived_key, salt, ...). They were spread onto every update, so an admin
+    // saving a copy of someone else's doc that had those fields stripped -- which is what the
+    // profile view hands out -- replaced that user's password hash with the admin's and locked
+    // them out. The fallback only makes sense for the editor's own doc.
+    const isCurrentUser = userInfo._id !== undefined && userInfo._id === this.user._id;
     const newUserInfo = {
-      ...this.credentials,
+      ...(isCurrentUser ? this.credentials : {}),
       ...userInfo,
       // Fix for Health & Achievements forms which can initialize middle name to undefined
       middleName: userInfo.middleName || '',

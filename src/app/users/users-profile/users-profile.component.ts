@@ -25,7 +25,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
 import { FullNamePipe } from '../../shared/full-name.pipe';
 import { SocialLinksComponent } from '../../shared/social-links.component';
-import { MemberLink, sanitizeMemberLinks } from '../../shared/social-platforms.constants';
+import { canHoldMemberLinks, MemberLink, sanitizeMemberLinks } from '../../shared/social-platforms.constants';
 import { UsersLinksService } from '../users-links.service';
 
 @Component({
@@ -130,6 +130,22 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   // i18n template only accepts strings, not boolean
   get hasLinks(): 'true' | 'false' {
     return this.socialLinks.length > 0 ? 'true' : 'false';
+  }
+
+  get canEditLinks(): boolean {
+    return this.editable && canHoldMemberLinks(this.userDetail);
+  }
+
+  // TEMP NOTE (for review, strip before merge): email and phone used to be readable by every
+  // logged in user, including a nation browsing a community's leaders. They are opt in now, and
+  // absent flags on existing docs read as opted out. `editable` is the member themselves or a
+  // local planet admin, who both keep the old view.
+  isContactShared(field: 'email' | 'phoneNumber'): boolean {
+    return this.userDetail?.contactVisibility?.[field] === true;
+  }
+
+  canSeeContact(field: 'email' | 'phoneNumber'): boolean {
+    return this.editable || this.isContactShared(field);
   }
 
   openLinksDialog() {

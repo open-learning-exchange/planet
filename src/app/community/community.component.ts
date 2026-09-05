@@ -16,6 +16,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
 import { UsersLinksService } from '../users/users-links.service';
+import { canHoldMemberLinks } from '../shared/social-platforms.constants';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
@@ -579,9 +580,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     const canManageMembers = this.user.roles.indexOf('_admin') > -1 || this.user.roles.indexOf('manager') > -1;
     const isSelf = councillor.userId === this.user._id && councillor.userPlanetCode === this.stateService.configuration.code;
+    // The tab only lists leaders and admins, so canHoldMemberLinks is redundant here today. It
+    // is kept so the leaders only gate stays in one predicate.
+    const canEditLinks = canHoldMemberLinks(councillor.doc) && (canManageMembers || isSelf);
     return [
       ...(canManageMembers ? [ 'title' as const ] : []),
-      ...(canManageMembers || isSelf ? [ 'links' as const ] : [])
+      ...(canEditLinks ? [ 'links' as const ] : [])
     ];
   }
 

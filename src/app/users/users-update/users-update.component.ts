@@ -49,6 +49,12 @@ interface UsersUpdateFormGroup {
   gender: FormControl<string>;
   level: FormControl<string>;
   betaEnabled: FormControl<boolean>;
+  contactVisibility: FormGroup<ContactVisibilityFormGroup>;
+}
+
+interface ContactVisibilityFormGroup {
+  email: FormControl<boolean>;
+  phoneNumber: FormControl<boolean>;
 }
 
 @Component({
@@ -190,7 +196,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       age: this.fb.control<number | null>(null),
       gender: this.fb.control('', this.conditionalValidator(Validators.required)),
       level: this.fb.control('', this.conditionalValidator(Validators.required)),
-      betaEnabled: this.fb.control(false)
+      betaEnabled: this.fb.control(false),
+      contactVisibility: this.fb.group({
+        email: this.fb.control(false),
+        phoneNumber: this.fb.control(false)
+      })
     });
     this.initialFormValues = { ...this.editForm.getRawValue() };
   }
@@ -225,8 +235,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   submitUser() {
     if (this.submissionMode) {
-      // Remove birthYear from submitted data
-      const { birthYear, ...cleanUserData } = this.editForm.getRawValue();
+      // Remove birthYear and the profile only visibility flags from submitted data
+      const { birthYear, contactVisibility, ...cleanUserData } = this.editForm.getRawValue();
       this.appendToSurvey(cleanUserData);
     } else {
       const attachment = this.file ? this.createAttachmentObj(this.file) : {};
@@ -387,7 +397,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       age: user.age ?? null,
       gender: user.gender ?? '',
       level: user.level ?? '',
-      betaEnabled: user.betaEnabled ?? false
+      betaEnabled: user.betaEnabled ?? false,
+      contactVisibility: {
+        email: user.contactVisibility?.email === true,
+        phoneNumber: user.contactVisibility?.phoneNumber === true
+      }
     };
   }
 

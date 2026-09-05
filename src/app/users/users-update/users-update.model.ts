@@ -7,6 +7,14 @@ export interface UserAttachment {
   stub?: boolean;
 }
 
+// TEMP NOTE (for review, strip before merge): opt in visibility for the contact fields that
+// used to be readable by every logged in user. Absent on existing docs, which reads as opted
+// out, so contacts stay private until their owner shares them.
+export interface ContactVisibility {
+  email: boolean;
+  phoneNumber: boolean;
+}
+
 export interface UserDocument {
   _id?: string;
   _rev?: string;
@@ -16,6 +24,7 @@ export interface UserDocument {
   age?: number;
   betaEnabled?: boolean;
   birthDate?: string | Date;
+  contactVisibility?: ContactVisibility;
   birthYear?: number;
   email?: string;
   firstName?: string;
@@ -33,6 +42,7 @@ export interface UsersUpdateFormValue {
   betaEnabled: boolean;
   birthDate: string | Date | null;
   birthYear: number | null;
+  contactVisibility: ContactVisibility;
   email: string;
   firstName: string;
   gender: string;
@@ -43,4 +53,4 @@ export interface UsersUpdateFormValue {
   phoneNumber: string;
 }
 
-export type SubmissionUserPayload = Omit<UsersUpdateFormValue, 'birthYear'>;
+export type SubmissionUserPayload = Omit<UsersUpdateFormValue, 'birthYear' | 'contactVisibility'>;

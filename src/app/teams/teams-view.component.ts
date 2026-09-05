@@ -6,6 +6,7 @@ import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UsersLinksService } from '../users/users-links.service';
+import { canHoldMemberLinks } from '../shared/social-platforms.constants';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -462,6 +463,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   // local planet admins rather than the team leader, who only manages team level fields.
   canEditMemberLinks(member): boolean {
     return member?.userPlanetCode === this.planetCode &&
+      canHoldMemberLinks(member?.userDoc?.doc) &&
       (member?.userId === this.currentUserId || this.user.isUserAdmin === true);
   }
 

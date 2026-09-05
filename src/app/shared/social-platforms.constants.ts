@@ -36,6 +36,13 @@ export interface MemberLink {
   label?: string;
 }
 
+// TEMP NOTE (for review, strip before merge): member links ship for community leaders only
+// while the wider product direction is decided. Everything else is already in place for all
+// members, so opening it up is deleting the calls to this predicate -- nothing else. Display is
+// deliberately not gated: only leaders can create links, so nobody else has any to show.
+export const canHoldMemberLinks = (userDoc: any): boolean =>
+  userDoc?.isUserAdmin === true || (userDoc?.roles || []).indexOf('leader') > -1;
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^\+?[\d\s().-]{4,20}$/;
 
