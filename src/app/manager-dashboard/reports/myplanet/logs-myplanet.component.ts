@@ -11,7 +11,6 @@ import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.ut
 import { CsvService } from '../../../shared/csv.service';
 import { ReportsService } from '../reports.service';
 import { MyPlanetFiltersBase } from './filter.base';
-import { exportMyPlanetCsv } from '../reports.utils';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 
@@ -39,7 +38,6 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
-  private exportCsvHelper = exportMyPlanetCsv(this.csvService);
   private allPlanets: any[] = [];
   apklogs: any[] = [];
   planetType = this.stateService.configuration.planetType;
@@ -163,11 +161,11 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   }
 
   exportAll(): void {
-    this.exportCsvHelper(this.apklogs, undefined, this.mapToCsvData, $localize`myPlanet Logs`);
+    this.csvService.exportMyPlanet(this.apklogs, undefined, this.mapToCsvData, $localize`myPlanet Logs`);
   }
 
   exportSingle(planet: any): void {
-    this.exportCsvHelper(planet.children, planet.name, this.mapToCsvData, $localize`myPlanet Logs for ${planet.name}`);
+    this.csvService.exportMyPlanet(planet.children, planet.name, this.mapToCsvData, $localize`myPlanet Logs for ${planet.name}`);
   }
 
 }

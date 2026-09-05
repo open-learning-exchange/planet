@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
+import { startOfDay, subtractMonthsClamped } from './reports.utils';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -329,21 +330,19 @@ export class ReportsService {
         startDate = new Date(now);
         startDate.setDate(now.getDate() - 7);
         break;
+      // The month ranges pin their start to the top of the day so it does not drift with
+      // the clock; the end stays 'now', and the day and hour ranges stay rolling.
       case '1m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 1);
+        startDate = startOfDay(subtractMonthsClamped(now, 1));
         break;
       case '3m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 3);
+        startDate = startOfDay(subtractMonthsClamped(now, 3));
         break;
       case '6m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 6);
+        startDate = startOfDay(subtractMonthsClamped(now, 6));
         break;
       case '12m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 12);
+        startDate = startOfDay(subtractMonthsClamped(now, 12));
         break;
       case 'all':
         startDate = minDate;

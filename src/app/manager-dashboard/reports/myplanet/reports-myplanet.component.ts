@@ -9,7 +9,7 @@ import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
 import { CouchService } from '../../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv, endOfDay } from '../reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, endOfDay } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
@@ -42,7 +42,6 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
-  private exportCsvHelper = exportMyPlanetCsv(this.csvService);
   private allPlanets: any[] = [];
   planets: any[] = [];
   isMobile: boolean;
@@ -199,11 +198,13 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   }
 
   exportAll(): void {
-    this.exportCsvHelper(this.planets, undefined, this.mapToCsvData.bind(this), $localize`myPlanet Reports`);
+    this.csvService.exportMyPlanet(this.planets, undefined, this.mapToCsvData.bind(this), $localize`myPlanet Reports`);
   }
 
   exportSingle(planet: any): void {
-    this.exportCsvHelper(planet.children, planet.name, this.mapToCsvData.bind(this), $localize`myPlanet Reports for ${planet.name}`);
+    this.csvService.exportMyPlanet(
+      planet.children, planet.name, this.mapToCsvData.bind(this), $localize`myPlanet Reports for ${planet.name}`
+    );
   }
 
 }
