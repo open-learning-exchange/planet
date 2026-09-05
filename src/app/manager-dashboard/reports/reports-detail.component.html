@@ -292,17 +292,18 @@
           <mat-toolbar class="comparison-toolbar">
             <mat-form-field class="margin-lr-5">
               <mat-label i18n>Week 1 End Date</mat-label>
-              <input matInput [matDatepicker]="week1Picker" [(ngModel)]="comparisonWeek1End" (dateChange)="onComparisonDateChange()">
+              <input matInput [matDatepicker]="week1Picker" [matDatepickerFilter]="comparisonDateFilter" [(ngModel)]="comparisonWeek1End" (dateChange)="onComparisonDateChange()">
               <mat-datepicker-toggle matIconSuffix [for]="week1Picker"></mat-datepicker-toggle>
               <mat-datepicker #week1Picker></mat-datepicker>
             </mat-form-field>
             <mat-form-field class="margin-lr-5">
               <mat-label i18n>Week 2 End Date</mat-label>
-              <input matInput [matDatepicker]="week2Picker" [(ngModel)]="comparisonWeek2End" (dateChange)="onComparisonDateChange()">
+              <input matInput [matDatepicker]="week2Picker" [matDatepickerFilter]="comparisonDateFilter" [(ngModel)]="comparisonWeek2End" (dateChange)="onComparisonDateChange()">
               <mat-datepicker-toggle matIconSuffix [for]="week2Picker"></mat-datepicker-toggle>
               <mat-datepicker #week2Picker></mat-datepicker>
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="loadComparisonData()" i18n>Compare</button>
+            <span class="comparison-hint" i18n>Weeks run Friday to Thursday</span>
             <span class="toolbar-fill"></span>
             <button mat-icon-button [disabled]="comparisonTableData.length === 0" (click)="downloadComparisonTableCSV()" matTooltip="Download as CSV" i18n-matTooltip>
               <mat-icon>get_app</mat-icon>
@@ -316,7 +317,11 @@
               <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width responsive-table">
                 <ng-container matColumnDef="metric">
                   <th mat-header-cell *matHeaderCellDef i18n>Metric</th>
-                  <td mat-cell *matCellDef="let row">{{row.metric}}</td>
+                  <td mat-cell *matCellDef="let row" [class.comparison-source-row]="row.isSourceRow">{{row.metric}}</td>
+                </ng-container>
+                <ng-container matColumnDef="source">
+                  <th mat-header-cell *matHeaderCellDef i18n>Source</th>
+                  <td mat-cell *matCellDef="let row" [class.comparison-source-row]="row.isSourceRow">{{row.source}}</td>
                 </ng-container>
                 <ng-container matColumnDef="week1">
                   <th mat-header-cell *matHeaderCellDef>{{week1Label}}</th>

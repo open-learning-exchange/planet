@@ -102,3 +102,15 @@
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   }
 }
+
+/* Per-source rows sit under the total they break down. */
+.comparison-source-row {
+  padding-left: 20px;
+  color: v.$grey-text;
+}
+
+.comparison-hint {
+  margin-left: 10px;
+  color: v.$grey-text;
+  font-size: 0.8em;
+}

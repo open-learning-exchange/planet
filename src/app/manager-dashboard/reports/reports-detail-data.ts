@@ -27,17 +27,25 @@ export class ReportsDetailData {
     this.dateField = dateField;
   }
 
-  filter({ app, members, startDate, endDate }: ReportDetailFilter) {
-    const isCorrectApp = item => isFromAppSource(item, app);
-    this.filteredData = filterByDate(
+  /*
+   * Returns a filtered view without touching `filteredData`, so a caller wanting a different window
+   * (the week-over-week comparison, say) can slice the full dataset instead of re-filtering the
+   * already narrowed `filteredData` and silently intersecting the two ranges.
+   */
+  slice({ app, members, startDate, endDate }: ReportDetailFilter) {
+    return filterByDate(
       this.data,
       this.dateField,
       {
         startDate: startDate || new Date(0),
         endDate,
-        additionalFilterFunction: (item) => isCorrectApp(item) && isSelectedMember(item, members)
+        additionalFilterFunction: (item) => isFromAppSource(item, app) && isSelectedMember(item, members)
       }
     );
+  }
+
+  filter(reportFilter: ReportDetailFilter) {
+    this.filteredData = this.slice(reportFilter);
   }
 
 }

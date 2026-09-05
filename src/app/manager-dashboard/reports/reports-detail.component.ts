@@ -19,11 +19,11 @@ import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
-  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  sortingOptionsMap, weekDataLabels, lastCompletedThursday, isThursday, thursdayWeekRangeFromEnd, startOfDay
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
-import { AppSourceFilter, appSourceLabel, appSources } from '../../shared/app-source';
+import { AppSource, AppSourceFilter, appSourceLabel, appSources } from '../../shared/app-source';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
@@ -157,7 +157,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   comparisonWeek2End: Date = new Date();
   comparisonLoading = false;
   comparisonTableData: any[] = [];
-  comparisonColumns = ['metric', 'week1', 'week2', 'change'];
+  comparisonColumns = [ 'metric', 'week1', 'week2', 'change' ];
+  comparisonBySource: { source: { value: AppSource, label: string }, week1: any, week2: any }[] = [];
+  /* The table is rebuilt whenever a filter moves, but only once the user has asked for a comparison. */
+  comparisonLoaded = false;
+  comparisonDateFilter = (date: Date | null) => !date || isThursday(date);
   week1Label = $localize`Week 1`;
   week2Label = $localize`Week 2`;
   comparisonData1: any = {};
@@ -329,6 +333,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setChatUsage();
     this.voicesActivities.filter(this.filter);
     this.setVoicesUsage();
+    /* Without this the comparison table keeps showing the numbers from the previous filter. */
+    if (this.comparisonLoaded) {
+      this.loadComparisonData();
+    }
   }
 
   getLoginActivities() {
@@ -985,7 +993,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeComparisonDates() {
-    this.comparisonWeek2End = lastThursday(this.today || new Date());
+    this.comparisonWeek2End = lastCompletedThursday(this.today || new Date());
     const prevThu = new Date(this.comparisonWeek2End);
     prevThu.setDate(prevThu.getDate() - 7);
     this.comparisonWeek1End = prevThu;
@@ -1010,33 +1018,57 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     };
 
     this.comparisonLoading = true;
+    this.comparisonLoaded = true;
     this.comparisonTableData = [];
 
-    this.comparisonData1 = this.getMetricsForDateRange(thursdayWeekRangeFromEnd(this.comparisonWeek1End));
-    this.comparisonData2 = this.getMetricsForDateRange(thursdayWeekRangeFromEnd(this.comparisonWeek2End));
+    const week1Range = thursdayWeekRangeFromEnd(this.comparisonWeek1End);
+    const week2Range = thursdayWeekRangeFromEnd(this.comparisonWeek2End);
+    this.comparisonData1 = this.getMetricsForDateRange(week1Range);
+    this.comparisonData2 = this.getMetricsForDateRange(week2Range);
+
+    /*
+     * The breakdown only earns its rows when the toolbar is showing every source and more than one
+     * of them actually reported activity; a Planet-only deployment keeps the plain table.
+     */
+    const bySource = this.filter.app === '' ?
+      appSources.map(source => ({
+        source,
+        week1: this.getMetricsForDateRange(week1Range, source.value),
+        week2: this.getMetricsForDateRange(week2Range, source.value)
+      })).filter(entry => this.hasAnyMetric(entry.week1) || this.hasAnyMetric(entry.week2)) :
+      [];
+    this.comparisonBySource = bySource.length > 1 ? bySource : [];
 
     this.generateComparisonTable();
     this.comparisonLoading = false;
   }
 
-  private getMetricsForDateRange(range: { startDate: Date, endDate: Date }) {
-    const loginData = filterByDate(this.loginActivities.filteredData, 'loginTime', range);
+  private hasAnyMetric(metrics: any) {
+    return Object.keys(metrics || {}).some(key => metrics[key] > 0);
+  }
+
+  /*
+   * Slices the full datasets rather than `filteredData`: the comparison weeks are their own window
+   * and must not be intersected with whatever range the toolbar happens to be showing. The app
+   * source is a parameter so the same metrics can be produced per source for the breakdown.
+   */
+  private getMetricsForDateRange(range: { startDate: Date, endDate: Date }, app: AppSourceFilter = this.filter.app) {
+    const scope = { ...this.filter, ...range, app };
+    const loginData = this.loginActivities.slice(scope);
     const loginProcessed = this.activityService.groupLoginActivities(loginData);
-    const resourceProcessed = this.activityService.groupDocVisits(
-      filterByDate(this.resourceActivities.total.filteredData, 'time', range),
-      'resourceId'
-    );
-    const courseProcessed = this.activityService.groupDocVisits(
-      filterByDate(this.courseActivities.total.filteredData, 'time', range),
-      'courseId'
-    );
-    const stepProcessed = this.activityService.groupStepCompletion(filterByDate(this.progress.steps.filteredData, 'time', range));
-    const chatProcessed = this.activityService.groupChatUsage(filterByDate(this.chatActivities.filteredData, 'createdDate', range));
-    const voicesProcessed = this.activityService.groupVoicesCreated(filterByDate(this.voicesActivities.filteredData, 'time', range));
+    const resourceProcessed = this.activityService.groupDocVisits(this.resourceActivities.total.slice(scope), 'resourceId');
+    const courseProcessed = this.activityService.groupDocVisits(this.courseActivities.total.slice(scope), 'courseId');
+    const stepProcessed = this.activityService.groupStepCompletion(this.progress.steps.slice(scope));
+    const chatProcessed = this.activityService.groupChatUsage(this.chatActivities.slice(scope));
+    const voicesProcessed = this.activityService.groupVoicesCreated(this.voicesActivities.slice(scope));
 
     return {
       totalMemberVisits: loginProcessed.byUser.reduce((t, u) => t + u.count, 0),
-      uniqueVisitors: new Set(loginData.map(l => l.user)).size,
+      /*
+       * `byUser` groups on parentCode + createdOn + user and drops blank users, so counting its rows
+       * keeps unique visitors consistent with the total visits computed just above it.
+       */
+      uniqueVisitors: loginProcessed.byUser.length,
       totalResourceViews: resourceProcessed.byDoc.reduce((t, d) => t + d.count, 0),
       totalCourseViews: courseProcessed.byDoc.reduce((t, d) => t + d.count, 0),
       totalStepCompleted: stepProcessed.byMonth.reduce((t, m) => t + m.count, 0),
@@ -1045,35 +1077,64 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     };
   }
 
+  /*
+   * Chat and Voices are created on the Planet side and carry no device or app marker, so every one
+   * of them classifies as Planet. Splitting them by source would read as "myPlanet chat collapsed
+   * to zero" rather than "not recorded per source", so those cells stay blank in the breakdown.
+   */
+  private comparisonMetrics = [
+    { key: 'uniqueVisitors', label: $localize`Unique Member Visits`, bySource: true },
+    { key: 'totalMemberVisits', label: $localize`Total Member Visits`, bySource: true },
+    { key: 'totalResourceViews', label: $localize`Resource Views`, bySource: true },
+    { key: 'totalCourseViews', label: $localize`Course Views`, bySource: true },
+    { key: 'totalStepCompleted', label: $localize`Steps Completed`, bySource: true },
+    { key: 'totalChatUsage', label: $localize`Chat Usage`, bySource: false },
+    { key: 'totalVoicesCreated', label: $localize`Voices Created`, bySource: false }
+  ];
+
+  private comparisonRow(label: string, source: string, week1: any, week2: any, key: string, isSourceRow: boolean) {
+    const week1Value = week1[key] || 0;
+    const week2Value = week2[key] || 0;
+    const changeValue = week2Value - week1Value;
+    const percentageChange = week1Value > 0 ? Math.round((changeValue / week1Value) * 100 * 10) / 10 : 0;
+    const sign = changeValue >= 0 ? '+' : '';
+    const changeText = week1Value === 0 ?
+      `${sign}${changeValue}` :
+      `${sign}${changeValue} (${sign}${percentageChange}%)`;
+
+    return {
+      metric: label,
+      source,
+      week1: week1Value,
+      week2: week2Value,
+      change: changeText,
+      changeValue,
+      percentageChange: week1Value === 0 ? null : percentageChange,
+      isSourceRow
+    };
+  }
+
   generateComparisonTable() {
-    const metrics = [
-      { key: 'uniqueVisitors', label: $localize`Unique Member Visits` },
-      { key: 'totalMemberVisits', label: $localize`Total Member Visits` },
-      { key: 'totalResourceViews', label: $localize`Resource Views` },
-      { key: 'totalCourseViews', label: $localize`Course Views` },
-      { key: 'totalStepCompleted', label: $localize`Steps Completed` },
-      { key: 'totalChatUsage', label: $localize`Chat Usage` },
-      { key: 'totalVoicesCreated', label: $localize`Voices Created` }
-    ];
+    const hasBreakdown = this.comparisonBySource.length > 0;
+    this.comparisonColumns = hasBreakdown ?
+      [ 'metric', 'source', 'week1', 'week2', 'change' ] :
+      [ 'metric', 'week1', 'week2', 'change' ];
 
-    this.comparisonTableData = metrics.map(metric => {
-      const week1Value = this.comparisonData1[metric.key] || 0;
-      const week2Value = this.comparisonData2[metric.key] || 0;
-      const changeValue = week2Value - week1Value;
-      const percentageChange = week1Value > 0 ? Math.round((changeValue / week1Value) * 100 * 10) / 10 : 0;
-      const changeText = week1Value === 0 ?
-        (changeValue >= 0 ? `+${changeValue}` : `${changeValue}`) :
-        (changeValue >= 0 ? `+${changeValue} (+${percentageChange}%)` :
-        `${changeValue} (${percentageChange}%)`);
-
-      return {
-        metric: metric.label,
-        week1: week1Value,
-        week2: week2Value,
-        change: changeText,
-        changeValue
-      };
-    });
+    this.comparisonTableData = this.comparisonMetrics.reduce((rows, metric) => {
+      const totalRow = this.comparisonRow(
+        metric.label, hasBreakdown ? $localize`All` : '', this.comparisonData1, this.comparisonData2, metric.key, false
+      );
+      if (!hasBreakdown || !metric.bySource) {
+        return [ ...rows, totalRow ];
+      }
+      return [
+        ...rows,
+        totalRow,
+        ...this.comparisonBySource.map(entry => this.comparisonRow(
+          metric.label, entry.source.label, entry.week1, entry.week2, metric.key, true
+        ))
+      ];
+    }, []);
   }
 
   private getChartAsCanvas(chartId: string): HTMLCanvasElement {
@@ -1156,11 +1217,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const week1Header = this.week1Label.replace(/,/g, '');
     const week2Header = this.week2Label.replace(/,/g, '');
 
+    /* Keep the change split across two columns so the export stays usable in a spreadsheet. */
     const data = this.comparisonTableData.map(row => ({
       [$localize`Metric`]: row.metric,
+      ...(this.comparisonBySource.length > 0 ? { [$localize`Source`]: row.source } : {}),
       [week1Header]: row.week1,
       [week2Header]: row.week2,
-      [$localize`Net Change`]: row.change
+      [$localize`Net Change`]: row.changeValue,
+      [$localize`Percent Change`]: row.percentageChange === null ? '' : row.percentageChange
     }));
 
     this.csvService.exportCSV({

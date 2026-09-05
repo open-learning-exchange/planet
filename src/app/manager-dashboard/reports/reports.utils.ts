@@ -182,6 +182,20 @@ export const lastThursday = (date: Date) => {
   return startOfDay(d);
 };
 
+/*
+ * The default comparison should sit on whole weeks. When today is itself a Thursday the week ending
+ * today has not finished, so step back to the previous one rather than compare a partial week.
+ */
+export const lastCompletedThursday = (date: Date) => {
+  const thursday = lastThursday(date);
+  if (thursday.getTime() === startOfDay(date).getTime()) {
+    thursday.setDate(thursday.getDate() - 7);
+  }
+  return thursday;
+};
+
+export const isThursday = (date: Date) => !!date && new Date(date).getDay() === 4;
+
 export const thursdayWeekRangeFromEnd = (endDate: Date) => {
   const end = startOfDay(endDate);
   const start = new Date(end);
