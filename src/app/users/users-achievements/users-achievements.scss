@@ -53,6 +53,15 @@
     margin: 2rem;
    }
 
+  .achievement-hidden-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    color: v.$grey-text;
+    margin: 0;
+  }
+
   .mat-mdc-list-base .mat-mdc-list-item {
     &.mat-mdc-list-item-word-wrap {
       height: initial;

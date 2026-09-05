@@ -49,7 +49,7 @@
             <div class="user-info">
               <planet-avatar [username]="userName" [planetCode]="userPlanetCode" imgClass="profile-image"></planet-avatar>
               <h2>{{ ((user | fullName) || user?.name) | truncateText:40 }}</h2>
-              @if (!publicView) {
+              @if (!publicView && isSectionVisible('personalInfo')) {
                 <div class="birth-info">
                   @if (user.birthDate) {
                     <span i18n>Birthdate: {{' ' + (user.birthDate | date:'mediumDate') + ' '}}</span>
@@ -59,31 +59,34 @@
                     }
                   </div>
                 }
-                @if (user.joinDate) {
+                @if (user.joinDate && isSectionVisible('personalInfo')) {
                   <div>
                     <span i18n>Member since: {{ user.joinDate | date:'mediumDate' }}</span>
                   </div>
                 }
               </div>
-              @if (achievements.purpose) {
+              @if (achievements.purpose && isSectionVisible('purpose')) {
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Purpose</h3>
+                  <ng-container *ngTemplateOutlet="hiddenLabel; context: { $implicit: 'purpose' }"></ng-container>
                   <planet-markdown [content]="achievements.purpose"></planet-markdown>
                 </div>
               }
-              @if (achievements.goals) {
+              @if (achievements.goals && isSectionVisible('goals')) {
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Goals</h3>
+                  <ng-container *ngTemplateOutlet="hiddenLabel; context: { $implicit: 'goals' }"></ng-container>
                   <planet-markdown [content]="achievements.goals"></planet-markdown>
                 </div>
               }
               <ng-container *planetBeta>
-                @if (certifications.length > 0) {
+                @if (certifications.length > 0 && isSectionVisible('certifications')) {
                   <div>
                     <mat-divider></mat-divider>
                     <h3 i18n>My Certifications</h3>
+                    <ng-container *ngTemplateOutlet="hiddenLabel; context: { $implicit: 'certifications' }"></ng-container>
                     <mat-list class="certs-list">
                       @for (certification of certifications; track certification) {
                         <mat-list-item>
@@ -94,10 +97,11 @@
                   </div>
                 }
               </ng-container>
-              @if (achievements?.links?.length > 0) {
+              @if (achievements?.links?.length > 0 && isSectionVisible('links')) {
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Links</h3>
+                  <ng-container *ngTemplateOutlet="hiddenLabel; context: { $implicit: 'links' }"></ng-container>
                   <mat-list>
                     @for (link of achievements.links; track link) {
                       <mat-list-item class="mat-list-item-word-wrap">
@@ -108,10 +112,11 @@
                   </mat-list>
                 </div>
               }
-              @if (achievements.achievementsHeader || achievements.achievements.length > 0) {
+              @if ((achievements.achievementsHeader || achievements.achievements.length > 0) && isSectionVisible('achievements')) {
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Achievements</h3>
+                  <ng-container *ngTemplateOutlet="hiddenLabel; context: { $implicit: 'achievements' }"></ng-container>
                   <planet-markdown [content]="achievements.achievementsHeader"></planet-markdown>
                   <mat-list>
                     @for (achievement of achievements.achievements; track achievement; let i = $index) {
@@ -145,10 +150,11 @@
                   </mat-list>
                 </div>
               }
-              @if (achievements.references.length > 0) {
+              @if (achievements.references.length > 0 && isSectionVisible('references')) {
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My References</h3>
+                  <ng-container *ngTemplateOutlet="hiddenLabel; context: { $implicit: 'references' }"></ng-container>
                   <mat-list class="references-list">
                     @for (reference of achievements.references; track reference) {
                       <mat-list-item class="mat-list-item-word-wrap">
@@ -183,3 +189,12 @@
       }
     </div>
   </div>
+
+<ng-template #hiddenLabel let-section>
+  @if (isSectionHidden(section)) {
+    <p class="achievement-hidden-label mat-caption">
+      <mat-icon inline="true">visibility_off</mat-icon>
+      <ng-container i18n>Only visible to you - not printed or shared</ng-container>
+    </p>
+  }
+</ng-template>

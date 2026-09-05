@@ -31,6 +31,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { FullNamePipe } from '../../shared/full-name.pipe';
+import { AchievementSection, achievementSectionKeys, achievementSections } from './users-achievements.constants';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -54,6 +55,8 @@ interface LinkFormControls {
   url: FormControl<string>;
 }
 
+type VisibilityFormControls = { [section in AchievementSection]: FormControl<boolean> };
+
 interface EditFormControls {
   purpose: FormControl<string>;
   goals: FormControl<string>;
@@ -64,6 +67,7 @@ interface EditFormControls {
   otherInfo: FormArray<FormControl<any>>;
   sendToNation: FormControl<boolean>;
   dateSortOrder: FormControl<DateSortOrder>;
+  visibility: FormGroup<VisibilityFormControls>;
 }
 
 interface ProfileFormControls {
@@ -117,6 +121,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   docInfo = { _id: this.user._id + '@' + this.configuration.code, _rev: undefined };
   readonly dbName = 'achievements';
   readonly resumeAttachmentKey = 'resume.pdf';
+  readonly sections = achievementSections;
   readonly maxResumeSizeMb = 512;
   achievementNotFound = false;
   editForm!: FormGroup<EditFormControls>;
@@ -172,7 +177,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
           goals: achievements.goals,
           achievementsHeader: achievements.achievementsHeader,
           sendToNation: achievements.sendToNation,
-          dateSortOrder: achievements.dateSortOrder || 'none'
+          dateSortOrder: achievements.dateSortOrder || 'none',
+          visibility: this.usersAchievementsService.visibility(achievements)
         });
         this.editForm.setControl('achievements', this.buildAchievementsFormArray(achievements.achievements));
         this.editForm.setControl('references', this.buildReferencesFormArray(achievements.references));
@@ -230,8 +236,18 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array<FormControl<any>>([]),
       sendToNation: this.fb.control(false),
-      dateSortOrder: this.fb.control<DateSortOrder>('none')
+      dateSortOrder: this.fb.control<DateSortOrder>('none'),
+      visibility: this.createVisibilityForm()
     });
+  }
+
+  createVisibilityForm(): FormGroup<VisibilityFormControls> {
+    return this.fb.group<VisibilityFormControls>(
+      achievementSectionKeys.reduce(
+        (controls, key) => ({ ...controls, [key]: this.fb.control(true) }),
+        {} as VisibilityFormControls
+      )
+    );
   }
 
   createProfileForm() {
