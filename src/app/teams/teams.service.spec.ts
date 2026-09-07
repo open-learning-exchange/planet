@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { TeamsService } from './teams.service';
 
@@ -10,12 +10,14 @@ describe('TeamsService membership writes', () => {
   const createService = (couchOverrides: any = {}) => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([])),
+      findAllStrict: vi.fn().mockReturnValue(of([])),
       get: vi.fn().mockReturnValue(of({})),
       bulkDocs: vi.fn().mockReturnValue(of(successfulBulkResponse)),
       ...couchOverrides
     };
     const service = new TeamsService(
       couchService as any,
+      {} as any,
       {} as any,
       {} as any,
       {} as any,
@@ -512,5 +514,200 @@ describe('TeamsService membership writes', () => {
 
     expect(next).toHaveBeenCalled();
     expect(error).not.toHaveBeenCalled();
+  });
+});
+
+describe('TeamsService membership safety', () => {
+  const team = {
+    _id: 'team-1',
+    teamPlanetCode: 'planet-a',
+    teamType: 'local'
+  };
+
+  const leavingMember = {
+    userId: 'org.couchdb.user:alex',
+    userPlanetCode: 'planet-a'
+  };
+
+  const leavingMembershipDoc = {
+    _id: 'membership-1',
+    _rev: '1-membership',
+    teamId: team._id,
+    teamPlanetCode: team.teamPlanetCode,
+    teamType: team.teamType,
+    userId: leavingMember.userId,
+    userPlanetCode: leavingMember.userPlanetCode,
+    docType: 'membership'
+  };
+
+  const remainingMembershipDoc = {
+    ...leavingMembershipDoc,
+    _id: 'membership-2',
+    _rev: '1-membership-2',
+    userId: 'org.couchdb.user:blake'
+  };
+
+  const remainingShelfDoc = {
+    _id: 'org.couchdb.user:blake',
+    _rev: '1-shelf',
+    myTeamIds: [ team._id ]
+  };
+
+  afterEach(() => vi.restoreAllMocks());
+
+  const createService = ({
+    teamsQuery = of([]),
+    shelfQuery = of([]),
+    attachmentsQuery = of([]),
+    usersQuery = of([])
+  }: any = {}) => {
+    const couchService = {
+      findAll: vi.fn().mockReturnValue(of([ leavingMembershipDoc ])),
+      findAllStrict: vi.fn().mockImplementation((db: string) => {
+        switch (db) {
+          case 'teams':
+            return teamsQuery;
+          case 'shelf':
+            return shelfQuery;
+          default:
+            return attachmentsQuery;
+        }
+      }),
+      get: vi.fn().mockReturnValue(of({})),
+      bulkDocs: vi.fn().mockReturnValue(of({ res: [ { id: leavingMembershipDoc._id, rev: '2-membership' } ] })),
+      updateDocument: vi.fn().mockReturnValue(of({ id: team._id, rev: '2-team' }))
+    };
+    const usersService = {
+      requestUserData: vi.fn(),
+      usersListener: vi.fn().mockReturnValue(usersQuery)
+    };
+    const planetMessageService = { showAlert: vi.fn() };
+    const service = new TeamsService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      usersService as any,
+      {} as any,
+      {} as any,
+      planetMessageService as any
+    );
+    return { service, couchService, usersService, planetMessageService };
+  };
+
+  it('archives the team once every authoritative membership read succeeds with no members left', () => {
+    const { service, couchService } = createService();
+    const error = vi.fn();
+
+    service.toggleTeamMembership(team, true, leavingMember).subscribe({ error });
+
+    expect(couchService.findAllStrict).toHaveBeenCalledWith('teams', expect.objectContaining({
+      selector: expect.objectContaining({ teamId: team._id, docType: 'membership' })
+    }));
+    expect(couchService.findAllStrict).toHaveBeenCalledWith('shelf', expect.objectContaining({
+      selector: { myTeamIds: { $in: [ team._id ] } }
+    }));
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({ status: 'archived' }));
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('does not archive the team while a membership document remains', () => {
+    const { service, couchService } = createService({ teamsQuery: of([ remainingMembershipDoc ]) });
+    const error = vi.fn();
+
+    service.toggleTeamMembership(team, true, leavingMember).subscribe({ error });
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('does not archive the team while a shelf membership remains', () => {
+    const { service, couchService } = createService({ shelfQuery: of([ remainingShelfDoc ]) });
+    const error = vi.fn();
+
+    service.toggleTeamMembership(team, true, leavingMember).subscribe({ error });
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('propagates a failed membership query instead of archiving the team', () => {
+    const { service, couchService } = createService({ teamsQuery: throwError(new Error('membership find failed')) });
+    const error = vi.fn();
+
+    service.toggleTeamMembership(team, true, leavingMember).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({ message: 'membership find failed' }));
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('propagates a failed shelf query instead of archiving the team', () => {
+    const { service, couchService } = createService({ shelfQuery: throwError(new Error('shelf find failed')) });
+    const error = vi.fn();
+
+    service.toggleTeamMembership(team, true, leavingMember).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({ message: 'shelf find failed' }));
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('reports a team with only a shelf membership as not empty', () => {
+    const { service } = createService({ shelfQuery: of([ remainingShelfDoc ]) });
+    const next = vi.fn();
+
+    service.isTeamEmpty(team).subscribe({ next });
+
+    expect(next).toHaveBeenCalledWith(false);
+  });
+
+  it('decides emptiness without user or attachment enrichment', () => {
+    const { service, couchService, usersService } = createService({
+      usersQuery: throwError(new Error('users unavailable')),
+      attachmentsQuery: throwError(new Error('attachments unavailable'))
+    });
+    const next = vi.fn();
+    const error = vi.fn();
+
+    service.isTeamEmpty(team).subscribe({ next, error });
+
+    expect(next).toHaveBeenCalledWith(true);
+    expect(error).not.toHaveBeenCalled();
+    expect(usersService.usersListener).not.toHaveBeenCalled();
+    expect(couchService.findAllStrict).not.toHaveBeenCalledWith('attachments');
+  });
+
+  it('keeps membership rows and surfaces the failure when enrichment cannot be loaded', () => {
+    const { service, planetMessageService } = createService({
+      teamsQuery: of([ remainingMembershipDoc ]),
+      shelfQuery: of([ remainingShelfDoc ]),
+      usersQuery: throwError(new Error('users unavailable')),
+      attachmentsQuery: throwError(new Error('attachments unavailable'))
+    });
+    const next = vi.fn();
+    const error = vi.fn();
+
+    service.getTeamMembers(team).subscribe({ next, error });
+
+    expect(error).not.toHaveBeenCalled();
+    expect(planetMessageService.showAlert).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith([
+      { ...remainingMembershipDoc, userDoc: undefined, attachmentDoc: undefined },
+      { ...remainingShelfDoc, fromShelf: true, docType: 'membership', userId: remainingShelfDoc._id, teamId: team._id }
+    ]);
+  });
+
+  it('enriches membership rows without changing which members exist', () => {
+    const userDoc = { _id: remainingMembershipDoc.userId, doc: { planetCode: 'planet-a' } };
+    const attachmentDoc = { _id: `${remainingMembershipDoc.userId}@${remainingMembershipDoc.userPlanetCode}` };
+    const { service, planetMessageService } = createService({
+      teamsQuery: of([ remainingMembershipDoc ]),
+      usersQuery: of([ userDoc ]),
+      attachmentsQuery: of([ attachmentDoc ])
+    });
+    const next = vi.fn();
+
+    service.getTeamMembers(team).subscribe({ next });
+
+    expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith([ { ...remainingMembershipDoc, userDoc, attachmentDoc } ]);
   });
 });
