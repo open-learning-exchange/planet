@@ -24,6 +24,7 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { environment } from '../../environments/environment';
 import { couchAttachmentUrl } from '../shared/utils';
+import { resolveResourceIconInfo } from '../resources/resources-icon.component';
 
 @Component({
   selector: 'planet-dashboard-tile-title',
@@ -311,18 +312,8 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
       return 'school';
     }
     if (this.cardType === 'myLibrary') {
-      switch (item?.mediaType) {
-        case 'video':
-          return 'movie';
-        case 'audio':
-          return 'audiotrack';
-        case 'image':
-          return 'image';
-        case 'pdf':
-          return 'picture_as_pdf';
-        default:
-          return 'menu_book';
-      }
+      const resourceIcon = resolveResourceIconInfo(item).icon;
+      return resourceIcon || 'insert_drive_file';
     }
     if (this.cardType === 'myTeams') {
       return 'group';

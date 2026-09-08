@@ -59,7 +59,7 @@ $shelf-library-text: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 900);
 $shelf-courses-accent: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 500);
 $shelf-courses-lighter: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 100);
 $shelf-courses-dark: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 800);
-$shelf-courses-text: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 900);
+$shelf-courses-text: mat.m2-get-contrast-color-from-palette(mat.$m2-orange-palette, 100);
 $shelf-teams-accent: mat.m2-get-color-from-palette(mat.$m2-green-palette, 500);
 $shelf-teams-lighter: mat.m2-get-color-from-palette(mat.$m2-green-palette, 100);
 $shelf-teams-dark: mat.m2-get-color-from-palette(mat.$m2-green-palette, 700);
