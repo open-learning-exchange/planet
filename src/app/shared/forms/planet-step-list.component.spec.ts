@@ -161,4 +161,26 @@ describe('PlanetStepListComponent', () => {
     expect(component.listMode).toBe(true);
     expect(stepClickedSpy).toHaveBeenCalledWith(-1);
   });
+
+  it('should not update navigation when the confirmed step no longer exists', () => {
+    component.confirmDelete = true;
+    component.listMode = false;
+    component.openIndex = 0;
+    const steps = new FormArray([
+      new FormGroup({ stepTitle: new FormControl('Step 1') })
+    ]);
+    component.steps = steps;
+    const stepClickedSpy = vi.spyOn(component.stepClicked, 'emit');
+    const stepsChangeSpy = vi.spyOn(component.stepsChange, 'emit');
+
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    steps.removeAt(0);
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    dialogConfig.data.okClick.onNext();
+
+    expect(component.listMode).toBe(false);
+    expect(component.openIndex).toBe(0);
+    expect(stepClickedSpy).not.toHaveBeenCalled();
+    expect(stepsChangeSpy).not.toHaveBeenCalled();
+  });
 });

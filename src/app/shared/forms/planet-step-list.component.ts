@@ -169,7 +169,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
           request: of(true),
           onNext: () => {
             dialogRef.close();
-            this.performStepMove(index, 0);
+            if (!this.performStepMove(index, 0)) {
+              return;
+            }
             if (!this.listMode) {
               if (this.openIndex === index) {
                 this.toList();
@@ -188,18 +190,24 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     });
   }
 
-  performStepMove(index: number, direction: number) {
+  performStepMove(index: number, direction: number): boolean {
     const { steps } = this;
     if (Array.isArray(steps)) {
+      if (index < 0 || index >= steps.length) {
+        return false;
+      }
       this.moveArrayStep(index, direction, steps);
       this.stepsChange.emit(steps);
-      return;
+      return true;
     }
     if (steps instanceof FormArray) {
-      if (this.moveFormArrayStep(index, direction, steps)) {
+      const stepMoved = this.moveFormArrayStep(index, direction, steps);
+      if (stepMoved) {
         this.stepsChange.emit(steps.value);
       }
+      return stepMoved;
     }
+    return false;
   }
 
   moveArrayStep(index: number, direction: number, steps: unknown[]) {
