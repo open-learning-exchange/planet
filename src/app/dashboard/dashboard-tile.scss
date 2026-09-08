@@ -268,12 +268,13 @@
 
           .dashboard-text {
             margin-top: 4px;
-            padding: 0 6px;
+            padding: 0 8px;
             font-size: 13px;
             font-weight: 500;
             line-height: 1.25;
             display: -webkit-box;
-            width: calc(#{v.$dashboard-tile-width} - 12px);
+            width: 100%;
+            box-sizing: border-box;
             -webkit-box-orient: vertical;
             overflow: hidden;
           }
