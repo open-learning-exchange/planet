@@ -154,9 +154,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   promptDeleteStep(index: number) {
     const { steps } = this;
-    const stepItem = Array.isArray(steps)
-      ? steps[index]
-      : (steps instanceof FormArray ? steps.at(index)?.value : null);
+    const stepControl = steps instanceof FormArray ? steps.at(index) : null;
+    const stepItem = Array.isArray(steps) ? steps[index] : stepControl?.value;
+    const stepValue = stepControl?.value;
 
     const titleVal = stepItem && this.nameProp && typeof stepItem[this.nameProp] === 'string' && stepItem[this.nameProp].trim()
       ? stepItem[this.nameProp].trim()
@@ -169,6 +169,12 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
           request: of(true),
           onNext: () => {
             dialogRef.close();
+            const targetUnchanged = this.steps === steps && (Array.isArray(steps)
+              ? index >= 0 && index < steps.length && steps[index] === stepItem
+              : steps instanceof FormArray && steps.at(index) === stepControl && stepControl?.value === stepValue);
+            if (!targetUnchanged) {
+              return;
+            }
             if (!this.performStepMove(index, 0)) {
               return;
             }

@@ -183,4 +183,28 @@ describe('PlanetStepListComponent', () => {
     expect(stepClickedSpy).not.toHaveBeenCalled();
     expect(stepsChangeSpy).not.toHaveBeenCalled();
   });
+
+  it('should not delete a different FormArray step after values are reordered', () => {
+    component.confirmDelete = true;
+    const steps = new FormArray([
+      new FormGroup({ stepTitle: new FormControl('Step 1') }),
+      new FormGroup({ stepTitle: new FormControl('Step 2') })
+    ]);
+    component.steps = steps;
+    const stepsChangeSpy = vi.spyOn(component.stepsChange, 'emit');
+
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    steps.setValue([
+      { stepTitle: 'Step 2' },
+      { stepTitle: 'Step 1' }
+    ]);
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    dialogConfig.data.okClick.onNext();
+
+    expect(steps.value).toEqual([
+      { stepTitle: 'Step 2' },
+      { stepTitle: 'Step 1' }
+    ]);
+    expect(stepsChangeSpy).not.toHaveBeenCalled();
+  });
 });
