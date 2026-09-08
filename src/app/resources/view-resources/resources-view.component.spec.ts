@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { Clipboard } from '@angular/cdk/clipboard';
+import { By } from '@angular/platform-browser';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -14,7 +15,8 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DeviceInfoService } from '../../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { LinkCopyService } from '../../shared/link-copy.service';
 
 describe('ResourcesViewComponent', () => {
 
@@ -50,8 +52,18 @@ describe('ResourcesViewComponent', () => {
     get: vi.fn().mockReturnValue(of({}))
   };
 
+  const linkCopyServiceMock = {
+    copyLink: vi.fn()
+  };
+
+  const planetMessageServiceMock = {
+    showAlert: vi.fn(),
+    showMessage: vi.fn()
+  };
+
   beforeEach(() => {
     resourcesServiceMock.resourcesListener.mockReturnValue(of([]));
+    linkCopyServiceMock.copyLink.mockReset();
     TestBed.configureTestingModule({
       imports: [ ResourcesViewComponent, MatIconTestingModule ],
       providers: [
@@ -60,19 +72,21 @@ describe('ResourcesViewComponent', () => {
         { provide: StateService, useValue: stateServiceMock },
         { provide: UserService, useValue: userServiceMock },
         { provide: ResourcesService, useValue: resourcesServiceMock },
-        PlanetMessageService,
-        DeviceInfoService,
+        { provide: PlanetMessageService, useValue: planetMessageServiceMock },
+        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(DeviceType.DESKTOP) } },
+        { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: CouchService, useValue: couchServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },
         {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              data: { parent: {} }
+              data: { parent: false }
             },
             paramMap: of({ get: () => 'id' })
           }
-        }
+        },
+        provideNoopAnimations()
       ]
     });
     fixture = TestBed.createComponent(ResourcesViewComponent);
@@ -87,17 +101,47 @@ describe('ResourcesViewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should copy resource link and show notification when copyLink is called', () => {
-    const clipboard = TestBed.inject(Clipboard);
-    const planetMessageService = TestBed.inject(PlanetMessageService);
-    const copySpy = vi.spyOn(clipboard, 'copy');
-    const showMessageSpy = vi.spyOn(planetMessageService, 'showMessage');
-    component.resourceId = 'test-resource-id';
+  it('copies local resource links from the desktop action', () => {
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
+    fixture.detectChanges();
 
-    component.copyLink();
+    fixture.debugElement.query(By.css('.km-copy-resource-link')).nativeElement.click();
 
-    expect(copySpy).toHaveBeenCalledWith(`${window.location.origin}/resources/view/test-resource-id`);
-    expect(showMessageSpy).toHaveBeenCalledWith('Resource link copied to clipboard');
+    expect(linkCopyServiceMock.copyLink).toHaveBeenCalledWith(
+      [ '/resources/view', 'id' ],
+      {
+        success: 'Resource link copied to clipboard',
+        failure: 'Failed to copy resource link'
+      }
+    );
+  });
+
+  it('does not offer link copying for a parent resource', () => {
+    component.parent = true;
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('.km-copy-resource-link'))).toBeNull();
+  });
+
+  it('renders a labeled menu item for link copying on smaller screens', async () => {
+    component.deviceType = DeviceType.MOBILE;
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('.menu')).nativeElement.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const copyButton = document.body.querySelector('.km-copy-resource-link') as HTMLButtonElement;
+    expect(copyButton).not.toBeNull();
+    expect(copyButton.textContent).toContain('Copy Resource Link');
+    copyButton.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(linkCopyServiceMock.copyLink).toHaveBeenCalled();
+    expect(document.body.querySelector('.km-copy-resource-link')).toBeNull();
   });
 
   it('shows the selected attachment size and the total only for bundles', () => {
