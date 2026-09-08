@@ -53,6 +53,7 @@ describe('TasksComponent', () => {
       { configuration: { code: 'planet-a' } } as any as StateService,
       { datePlaceholder: 0 } as any as CouchService,
       dialog as any as MatDialog,
+      { open: vi.fn() } as any,
       usersProfileDialogService as any as UsersProfileDialogService,
       {} as DialogsFormService,
       notificationsService as any as NotificationsService

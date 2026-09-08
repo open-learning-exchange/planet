@@ -9,7 +9,7 @@ import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
@@ -104,7 +104,6 @@ export class TasksComponent implements OnInit {
     this.filterTasks();
   }
   dbName = 'tasks';
-  deleteDialog: any;
   tasks: any[] = [];
   myTasks: any[] = [];
   taskViews: any[] = [];
@@ -124,6 +123,7 @@ export class TasksComponent implements OnInit {
     private stateService: StateService,
     private couchService: CouchService,
     private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private usersProfileDialogService: UsersProfileDialogService,
     private dialogsFormService: DialogsFormService,
     private notificationsService: NotificationsService
@@ -192,25 +192,20 @@ export class TasksComponent implements OnInit {
   }
 
   archiveClick(task) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.archiveTask(task),
-        changeType: 'delete',
-        type: 'task',
-        displayName: task.title
-      }
+    this.dialogsPromptService.open({
+      ...this.archiveTask(task),
+      changeType: 'delete',
+      type: 'task',
+      displayName: task.title
     });
   }
 
   archiveTask(task) {
     return {
       request: this.tasksService.archiveTask(task)(),
-      onNext: () => {
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted a task.`);
-        this.removeTaskFromTable();
-      },
-      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
+      onSuccess: () => this.removeTaskFromTable(),
+      successMessage: $localize`You have deleted a task.`,
+      errorMessage: $localize`There was a problem deleting this team.`
     };
   }
 

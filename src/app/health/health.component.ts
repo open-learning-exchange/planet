@@ -9,11 +9,12 @@ import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
 import { environment } from '../../environments/environment';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { map, takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { conditionAndTreatmentFields } from './health.constants';
 import { findDocuments } from '../shared/mangoQueries';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -79,7 +80,8 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dialogGuard: DialogGuardService
   ) {}
 
   ngOnInit() {
@@ -136,19 +138,22 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   examClick(eventDate) {
-    if (eventDate !== 'label') {
-      const event = this.events.find(e => e.date === +eventDate);
+    if (eventDate === 'label') {
+      return;
+    }
+    const event = this.events.find(e => e.date === +eventDate);
+    this.dialogGuard.open(`health-event:${event._id || eventDate}`, () =>
       (event._id ?
         this.healthService.getHealthData(this.userDetail._id, { docId: event._id })
         : of([ event ])
-      ).subscribe(([ eventDoc ]) => {
-        this.dialog.open(HealthEventDialogComponent, {
+      ).pipe(
+        map(([ eventDoc ]) => this.dialog.open(HealthEventDialogComponent, {
           data: { event: eventDoc, user: this.userDetail._id, route: this.route },
           width: '50vw',
           maxHeight: '90vh'
-        });
-      });
-    }
+        }))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   setEventData() {

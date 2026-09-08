@@ -1,7 +1,6 @@
 import {
   Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -10,7 +9,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, Observable, defer } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
@@ -18,7 +17,7 @@ import {
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
@@ -123,13 +122,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
-  promptDialog: MatDialogRef<DialogsPromptComponent>;
   deviceType: DeviceType;
   isMobile: boolean;
   trackById = trackById;
 
   constructor(
-    private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private usersProfileDialogService: UsersProfileDialogService,
     private userService: UserService,
     private usersService: UsersService,
@@ -270,24 +268,19 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     onSuccess: () => void,
     errorMessage: string
   }) {
-    this.promptDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          // Deferred so the request reads the user doc when OK is clicked rather than when the dialog opens
-          request: defer(request),
-          onNext: () => {
-            this.selection.deselect(user);
-            onSuccess();
-            this.promptDialog.close();
-          },
-          onError: () => this.planetMessageService.showAlert(errorMessage)
-        },
-        amount: 'single',
-        changeType,
-        type: 'user',
-        displayName: user.name,
-        extraMessage
-      }
+    this.dialogsPromptService.open({
+      // Function form so the request reads the user doc when OK is clicked rather than when the dialog opens
+      request,
+      onSuccess: () => {
+        this.selection.deselect(user);
+        onSuccess();
+      },
+      errorMessage,
+      amount: 'single',
+      changeType,
+      type: 'user',
+      displayName: user.name,
+      extraMessage
     });
   }
 

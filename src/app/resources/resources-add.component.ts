@@ -18,7 +18,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes.component';
+import { warningMsg } from '../shared/unsaved-changes';
 import { loadZipFile } from '../shared/zip-utils';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';

@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
@@ -19,7 +19,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findByIdInArray, filterById } from '../shared/utils';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -115,7 +116,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isAuthorized = false;
   currentFilter: { viewMode: 'team' | 'adopt' } = { viewMode: 'team' };
   allSurveys: any[] = [];
-  deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
   useDialogLoading = true;
@@ -143,6 +143,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
+    private dialogsPromptService: DialogsPromptService,
+    private dialogGuard: DialogGuardService,
     private chatService: ChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
@@ -347,13 +349,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.couchService.bulkDocs(this.dbName, deleteArray),
         ...surveys.reduce(this.submissionDeleteReq.bind(this), [])
       ]),
-      onNext: () => {
+      onSuccess: () => {
         this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === undefined);
         this.selection.clear();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} surveys`);
       },
-      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting survey.`)
+      successMessage: $localize`You have deleted ${deleteArray.length} surveys`,
+      errorMessage: $localize`There was a problem deleting survey.`
     };
   }
 
@@ -364,13 +365,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev),
         ...this.submissionDeleteReq([], survey)
       ]),
-      onNext: () => {
+      onSuccess: () => {
         this.selection.deselect(survey._id);
         this.surveys.data = filterById(this.surveys.data, survey._id);
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Survey deleted: ${survey.name}`);
       },
-      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this survey.`)
+      successMessage: $localize`Survey deleted: ${survey.name}`,
+      errorMessage: $localize`There was a problem deleting this survey.`
     };
   }
 
@@ -392,38 +392,39 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     return requests;
   }
 
-  openDeleteDialog(okClick, amount, displayName = '') {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'survey',
-        displayName
-      }
+  openDeleteDialog(deleteAction, amount, displayName = '') {
+    this.dialogsPromptService.open({
+      ...deleteAction,
+      amount,
+      changeType: 'delete',
+      type: 'survey',
+      displayName
     });
-    this.deleteDialog.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {});
   }
 
   openSendSurveyToUsersDialog(survey) {
-    this.submissionsService.getSubmissions(
-      findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
-    ).subscribe((submissions: any[]) => {
-      const excludeIds = submissions.map((submission: any) => submission.user._id);
-      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
-        width: '80vw',
-        data: {
-          okClick: (selection: any[]) => {
-            this.dialogsLoadingService.start();
-            this.sendSurvey(survey, selection).subscribe(() => {
-              this.dialogsLoadingService.stop();
-            });
-          },
-          excludeIds: [ ...excludeIds, this.userService.get()._id ],
-          mode: 'users'
-        }
-      });
-    });
+    this.dialogGuard.open(`send-survey-users:${survey._id}`, () =>
+      this.submissionsService.getSubmissions(
+        findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
+      ).pipe(
+        map((submissions: any[]) => {
+          const excludeIds = submissions.map((submission: any) => submission.user._id);
+          return this.dialog.open(DialogsAddTableComponent, {
+            width: '80vw',
+            data: {
+              okClick: (selection: any[]) => {
+                this.dialogsLoadingService.start();
+                this.sendSurvey(survey, selection).subscribe(() => {
+                  this.dialogsLoadingService.stop();
+                });
+              },
+              excludeIds: [ ...excludeIds, this.userService.get()._id ],
+              mode: 'users'
+            }
+          });
+        })
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   private createTeamSurveyFromSource(sourceSurvey: any, team: { _id: string, name: string }): Observable<any> {
@@ -641,16 +642,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     );
 
-    const archiveDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: archiveSurvey,
-          onNext: () => archiveDialog.close()
-        },
-        changeType: 'archive',
-        type: 'survey',
-        displayName: survey.name
-      }
+    this.dialogsPromptService.open({
+      request: archiveSurvey,
+      changeType: 'archive',
+      type: 'survey',
+      displayName: survey.name
     });
   }
 

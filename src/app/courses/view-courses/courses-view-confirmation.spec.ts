@@ -2,11 +2,18 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CoursesViewComponent } from './courses-view.component';
+import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
+import { DialogsPromptService } from '../../shared/dialogs/dialogs-prompt.service';
 
 describe('CoursesViewComponent leave confirmation', () => {
   it('leaves the course only after the confirmation request runs', () => {
     const dialogRef = { close: vi.fn() };
     const dialog = { open: vi.fn().mockReturnValue(dialogRef) };
+    const dialogsPromptService = new DialogsPromptService(
+      dialog as any,
+      new DialogGuardService(),
+      { showMessage: vi.fn(), showAlert: vi.fn() } as any
+    );
     const coursesService = {
       courseResignAdmission: vi.fn().mockReturnValue(of({}))
     };
@@ -18,7 +25,7 @@ describe('CoursesViewComponent leave confirmation', () => {
       {} as any,
       { configuration: {} } as any,
       { watchDeviceType: vi.fn().mockReturnValue(of(undefined)) } as any,
-      dialog as any
+      dialogsPromptService
     );
     component.courseDetail = { courseTitle: 'Course 1' };
     component.isUserEnrolled = true;

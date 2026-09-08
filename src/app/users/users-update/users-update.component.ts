@@ -16,7 +16,7 @@ import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes.component';
+import { warningMsg } from '../../shared/unsaved-changes';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 import { MatToolbar } from '@angular/material/toolbar';

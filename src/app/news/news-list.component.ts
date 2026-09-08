@@ -5,9 +5,8 @@ import { forkJoin, of, Subscription } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { trackById } from '../shared/table-helpers';
@@ -45,7 +44,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   isMainPostShared = true;
   showMainPostShare = false;
   replyViewing: any = { _id: 'root' };
-  deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent> | null = null;
   isLoadingMore = false;
   hasMoreNews = false;
@@ -68,8 +66,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService,
     private dialogGuard: DialogGuardService,
+    private dialogsPromptService: DialogsPromptService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -252,13 +250,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (this.readOnly) {
       return;
     }
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.deleteNews(news),
-        changeType: 'delete',
-        type: 'news',
-        displayName: news.chat ? news.news.conversations[0].response : news.message
-      }
+    this.dialogsPromptService.open({
+      ...this.deleteNews(news),
+      changeType: 'delete',
+      type: 'news',
+      displayName: news.chat ? news.news.conversations[0].response : news.message
     });
   }
 
@@ -275,15 +271,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         ),
         this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
       ]),
-      onNext: (data) => {
+      onSuccess: () => {
         if (isMainStory) {
           this.showReplies({ _id: parentId });
         }
-        this.deleteDialog.close();
       },
-      onError: (error) => {
-        this.planetMessageService.showAlert($localize`There was a problem deleting this message.`);
-      }
+      errorMessage: $localize`There was a problem deleting this message.`
     };
   }
 

@@ -13,6 +13,7 @@ describe('PlanetCalendarComponent read-only behavior', () => {
       { documentElement: { lang: 'en' } } as any,
       'en',
       dialog as any,
+      { open: vi.fn() } as any,
       {} as any,
       authService as any,
       {} as any,
@@ -69,6 +70,7 @@ describe('PlanetCalendarComponent', () => {
   const createComponent = (couchService: any = {}, element = document.createElement('div')) => new PlanetCalendarComponent(
     document,
     'en',
+    {} as any,
     {} as any,
     couchService,
     {} as any,

@@ -7,7 +7,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { convertUtcDate } from './teams.utils';
@@ -111,6 +112,8 @@ export class TeamsReportsComponent implements OnChanges {
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
+    private dialogsPromptService: DialogsPromptService,
+    private dialogGuard: DialogGuardService,
     private teamsService: TeamsService,
     private teamsAttachmentsService: TeamsAttachmentsService,
     private csvService: CsvService,
@@ -121,88 +124,82 @@ export class TeamsReportsComponent implements OnChanges {
   ) {}
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
-    const dialogTitle = isEdit ? $localize`:@@edit-report-dialog-title:Edit Report` : $localize`:@@add-report-dialog-title:Add Report`;
+    this.dialogGuard.open(`team-report:${(oldReport as any)._id || 'new'}`, () =>
+      this.couchService.currentTime().pipe(map((time: number) => this.openReportForm(oldReport, isEdit, time)))
+    ).subscribe();
+  }
 
-    this.couchService.currentTime().subscribe((time: number) => {
-      const currentDate = new Date(time);
-      const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-      const lastMonthEnd = currentDate.setDate(0);
-      this.dialogsFormService.openDialogsForm(
-        dialogTitle,
-        [
-          { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
-          { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
-          { name: 'description', placeholder: $localize`Summary`, type: 'markdown', required: true },
-          { name: 'beginningBalance', placeholder: $localize`Beginning Balance`, type: 'textbox', inputType: 'number', required: true },
-          { name: 'sales', placeholder: $localize`Sales (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherIncome', placeholder: $localize`Other (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'wages', placeholder: $localize`Personnel (Expenses)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          {
-            name: 'otherExpenses',
-            placeholder: $localize`Non-Personnel (Expenses)`,
-            type: 'textbox',
-            inputType: 'number',
-            required: true,
-            min: 0
-          },
-          {
-            name: 'receiptImages',
-            placeholder: $localize`Attached Images`,
-            type: 'file-upload',
-            fileUpload: {
-              accept: this.teamsAttachmentsService.receiptImageAccept,
-              existingAttachments: this.teamsAttachmentsService.receiptAttachments(oldReport),
-              hint: this.teamsAttachmentsService.receiptImageHint,
-              imagePreview: true,
-              maxFiles: this.teamsAttachmentsService.maxReceiptImages,
-              multiple: true,
-              typePills: this.teamsAttachmentsService.receiptImagePills
-            }
-          }
-        ],
-        this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
+  private openReportForm(oldReport: any, isEdit: boolean, time: number) {
+    const dialogTitle = isEdit ? $localize`:@@edit-report-dialog-title:Edit Report` : $localize`:@@add-report-dialog-title:Add Report`;
+    const currentDate = new Date(time);
+    const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    const lastMonthEnd = currentDate.setDate(0);
+    return this.dialogsFormService.openDialogsForm(
+      dialogTitle,
+      [
+        { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
+        { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
+        { name: 'description', placeholder: $localize`Summary`, type: 'markdown', required: true },
+        { name: 'beginningBalance', placeholder: $localize`Beginning Balance`, type: 'textbox', inputType: 'number', required: true },
+        { name: 'sales', placeholder: $localize`Sales (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+        { name: 'otherIncome', placeholder: $localize`Other (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+        { name: 'wages', placeholder: $localize`Personnel (Expenses)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
         {
-          disableIfInvalid: true,
-          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe({
-            next: (result: any) => {
-              this.dialogsFormService.closeDialogsForm();
-              const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
-              this.planetMessageService.showMessage($localize`Report ${action}`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be uploaded.`);
-              }
-            },
-            error: () => {
-              this.dialogsLoadingService.stop();
-              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the report.`);
-            }
-          })
+          name: 'otherExpenses',
+          placeholder: $localize`Non-Personnel (Expenses)`,
+          type: 'textbox',
+          inputType: 'number',
+          required: true,
+          min: 0
+        },
+        {
+          name: 'receiptImages',
+          placeholder: $localize`Attached Images`,
+          type: 'file-upload',
+          fileUpload: {
+            accept: this.teamsAttachmentsService.receiptImageAccept,
+            existingAttachments: this.teamsAttachmentsService.receiptAttachments(oldReport),
+            hint: this.teamsAttachmentsService.receiptImageHint,
+            imagePreview: true,
+            maxFiles: this.teamsAttachmentsService.maxReceiptImages,
+            multiple: true,
+            typePills: this.teamsAttachmentsService.receiptImagePills
+          }
         }
-      );
-    });
+      ],
+      this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
+      {
+        disableIfInvalid: true,
+        onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe({
+          next: (result: any) => {
+            this.dialogsFormService.closeDialogsForm();
+            const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
+            this.planetMessageService.showMessage($localize`Report ${action}`);
+            if (result?.failedAttachments?.length) {
+              this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be uploaded.`);
+            }
+          },
+          error: () => {
+            this.dialogsLoadingService.stop();
+            this.dialogsFormService.showErrorMessage($localize`There was a problem saving the report.`);
+          }
+        })
+      }
+    );
   }
 
   openDeleteReportDialog(report) {
-    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        changeType: 'delete',
-        type: 'report',
-        displayName: `${$localize`Report from`} ${formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC')}
+    this.dialogsPromptService.open({
+      changeType: 'delete',
+      type: 'report',
+      displayName: `${$localize`Report from`} ${formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC')}
           ${$localize`to`} ${formatDate(report.endDate, 'mediumDate', this.localeId, 'UTC')}`,
-        okClick: {
-          request: this.updateReport(report),
-          onNext: () => {
-            this.planetMessageService.showMessage($localize`Report deleted`);
-            this.dialogsLoadingService.stop();
-            deleteDialog.close();
-          },
-          onError: () => {
-            this.planetMessageService.showAlert($localize`There was a problem deleting the report.`);
-            this.dialogsLoadingService.stop();
-          }
-        },
-        isDateUtc: true
-      }
+      request: this.updateReport(report),
+      onSuccess: () => this.dialogsLoadingService.stop(),
+      successMessage: $localize`Report deleted`,
+      onError: () => this.dialogsLoadingService.stop(),
+      errorMessage: $localize`There was a problem deleting the report.`,
+      isDateUtc: true
     });
   }
 

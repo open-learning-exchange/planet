@@ -12,7 +12,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes.component';
+import { warningMsg } from '../../shared/unsaved-changes';
 import { DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';

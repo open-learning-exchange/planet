@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
-import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from './dialogs/dialogs-prompt.service';
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
@@ -118,6 +118,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     @Inject(DOCUMENT) private document: Document,
     @Inject(LOCALE_ID) private localeId: string,
     private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private couchService: CouchService,
     private authService: AuthService,
     private tasksService: TasksService,
@@ -363,24 +364,15 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     if (!this.editable) {
       return;
     }
-    const dialogRef = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.tasksService.archiveTask(task)(),
-          onNext: () => {
-            this.getTasks();
-            this.planetMessageService.showMessage($localize`Task deleted successfully`);
-            dialogRef.close();
-          },
-          onError: () => {
-            this.planetMessageService.showAlert($localize`There was an error deleting this task`);
-            dialogRef.close();
-          }
-        },
-        changeType: 'delete',
-        type: 'task',
-        displayName: task.title
-      }
+    this.dialogsPromptService.open({
+      request: this.tasksService.archiveTask(task)(),
+      onSuccess: () => this.getTasks(),
+      successMessage: $localize`Task deleted successfully`,
+      errorMessage: $localize`There was an error deleting this task`,
+      closeOnError: true,
+      changeType: 'delete',
+      type: 'task',
+      displayName: task.title
     });
   }
 }

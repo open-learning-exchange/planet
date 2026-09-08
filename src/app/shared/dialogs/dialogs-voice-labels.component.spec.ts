@@ -1,6 +1,5 @@
 import { NEVER, of } from 'rxjs';
 import { vi } from 'vitest';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 import { DialogsVoiceLabelsComponent } from './dialogs-voice-labels.component';
 
 describe('DialogsVoiceLabelsComponent', () => {
@@ -10,7 +9,7 @@ describe('DialogsVoiceLabelsComponent', () => {
   let couchService: any;
   let planetMessageService: any;
   let dialogsLoadingService: any;
-  let dialog: any;
+  let dialogsPromptService: any;
 
   const createComponent = (data: any) => new DialogsVoiceLabelsComponent(
     dialogRef,
@@ -20,7 +19,7 @@ describe('DialogsVoiceLabelsComponent', () => {
     couchService,
     planetMessageService,
     dialogsLoadingService,
-    dialog
+    dialogsPromptService
   );
 
   beforeEach(() => {
@@ -49,7 +48,7 @@ describe('DialogsVoiceLabelsComponent', () => {
     };
     planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
-    dialog = {};
+    dialogsPromptService = { confirmUnsavedChanges: vi.fn().mockReturnValue(of(true)) };
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -145,14 +144,13 @@ describe('DialogsVoiceLabelsComponent', () => {
   });
 
   it('asks for confirmation before discarding edited labels', () => {
-    vi.spyOn(UnsavedChangesPromptComponent, 'open').mockReturnValue(of(true));
     const component = createComponent({ target: 'community', customLabels: [] });
     component.ngOnInit();
     component.customLabels.push('Event');
 
     component.requestClose();
 
-    expect(UnsavedChangesPromptComponent.open).toHaveBeenCalledWith(dialog);
+    expect(dialogsPromptService.confirmUnsavedChanges).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalled();
   });
 

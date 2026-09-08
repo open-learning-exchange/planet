@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import {
-  MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions
 } from '@angular/material/dialog';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -15,7 +15,7 @@ import { PlanetMessageService } from '../planet-message.service';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { LabelComponent } from '../label.component';
 import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from '../voice-labels';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
+import { DialogsPromptService } from './dialogs-prompt.service';
 import { Subject } from 'rxjs';
 import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
 
@@ -59,7 +59,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialogsPromptService: DialogsPromptService
   ) {
     this.dialogRef.disableClose = true;
     this.dialogRef.backdropClick().pipe(takeUntil(this.onDestroy$)).subscribe(() => this.requestClose());
@@ -166,7 +166,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
     }
 
     this.isConfirmingClose = true;
-    UnsavedChangesPromptComponent.open(this.dialog).pipe(
+    this.dialogsPromptService.confirmUnsavedChanges().pipe(
       take(1),
       finalize(() => this.isConfirmingClose = false)
     ).subscribe(confirmed => {

@@ -3,15 +3,13 @@ import {
   ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { CoursesService } from '../courses/courses.service';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatCard } from '@angular/material/card';
 import { NgClass, NgStyle } from '@angular/common';
@@ -85,7 +83,6 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @Input() isLoading = false;
   @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items') itemDiv: ElementRef;
-  dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
   courseTileLines = 2;
   recentlyDragged = false;
@@ -103,7 +100,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private userService: UserService,
     private teamsService: TeamsService,
     private coursesService: CoursesService,
-    private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
   ) {
@@ -200,60 +197,39 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   removeResource(item: any) {
-    const dialogRef = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        changeType: 'remove',
-        type: 'resource',
-        displayName: item.title,
-        okClick: {
-          request: defer(() => this.userService.updateShelf(
-            this.userService.shelf.resourceIds.filter((shelfId) => shelfId !== item._id),
-            'resourceIds'
-          )),
-          onNext: () => {
-            dialogRef.close();
-            this.removeMessage(item);
-          },
-          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
-        }
-      }
+    this.dialogsPromptService.open({
+      changeType: 'remove',
+      type: 'resource',
+      displayName: item.title,
+      request: () => this.userService.updateShelf(
+        this.userService.shelf.resourceIds.filter((shelfId) => shelfId !== item._id),
+        'resourceIds'
+      ),
+      onSuccess: () => this.removeMessage(item),
+      onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
     });
   }
 
   removeCourse(item: any) {
-    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        changeType: 'leave',
-        type: 'course',
-        displayName: item.title,
-        okClick: {
-          request: defer(() => this.coursesService.courseResignAdmission(item._id, 'resign', item.title)),
-          onNext: () => {
-            this.dialogPrompt.close();
-            this.removeMessage(item);
-          },
-          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
-        }
-      }
+    this.dialogsPromptService.open({
+      changeType: 'leave',
+      type: 'course',
+      displayName: item.title,
+      request: () => this.coursesService.courseResignAdmission(item._id, 'resign', item.title),
+      onSuccess: () => this.removeMessage(item),
+      onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
     });
   }
 
   removeTeam(item, userId, userPlanetCode) {
     const teamDoc = { userId, userPlanetCode, teamId: item._id, fromShelf: item.fromShelf };
-    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))),
-          onNext: () => {
-            this.dialogPrompt.close();
-            this.removeMessage(item);
-          },
-          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
-        },
-        changeType: 'leave',
-        type: 'team',
-        displayName: item.title
-      }
+    this.dialogsPromptService.open({
+      request: this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))),
+      onSuccess: () => this.removeMessage(item),
+      onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`),
+      changeType: 'leave',
+      type: 'team',
+      displayName: item.title
     });
   }
 

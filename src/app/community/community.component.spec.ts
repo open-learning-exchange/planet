@@ -84,6 +84,7 @@ describe('CommunityComponent remote exchange behavior', () => {
       requestData: vi.fn()
     };
     const dialog = { open: vi.fn() };
+    const dialogsPromptService = { open: vi.fn(), confirm: vi.fn(() => of(undefined)) };
     const dialogsFormService = { openDialogsForm: vi.fn() };
     const newsService = { newsUpdated$: EMPTY, requestNews: vi.fn(() => new Subscription()) };
     const teamsService = { getTeamMembers: vi.fn(() => of([])) };
@@ -96,6 +97,7 @@ describe('CommunityComponent remote exchange behavior', () => {
     const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
     const component = new CommunityComponent(
       dialog as any,
+      dialogsPromptService as any,
       router as any,
       route as any,
       stateService as any,

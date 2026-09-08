@@ -29,7 +29,7 @@ import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -119,6 +119,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private dialogsLoadingService: DialogsLoadingService,
     private formBuilder: FormBuilder,
     private challengesService: ChallengesService,
@@ -168,7 +169,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     if (this.mode !== 'take' || this.previewMode) {
       return true;
     }
-    return UnsavedChangesPromptComponent.open(this.dialog, {
+    return this.dialogsPromptService.confirmUnsavedChanges({
       type: this.examType === 'survey' ? 'survey' : 'exam',
       extraMessage: $localize`Your progress will be saved.`
     }).pipe(

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject, defer } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
@@ -26,8 +26,7 @@ import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../../shared/dialogs/dialogs-prompt.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -82,7 +81,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private dialog: MatDialog
+    private dialogsPromptService: DialogsPromptService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -210,20 +209,15 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseToggle(courseId, type) {
     const courseTitle = this.courseDetail.courseTitle;
     if (type === 'resign') {
-      const dialogRef = this.dialog.open(DialogsPromptComponent, {
-        data: {
-          changeType: 'leave',
-          type: 'course',
-          displayName: courseTitle,
-          okClick: {
-            request: defer(() => this.coursesService.courseResignAdmission(courseId, type, courseTitle)),
-            onNext: () => {
-              this.isUserEnrolled = false;
-              dialogRef.close();
-            },
-            onError: () => dialogRef.close()
-          }
-        }
+      this.dialogsPromptService.open({
+        changeType: 'leave',
+        type: 'course',
+        displayName: courseTitle,
+        request: () => this.coursesService.courseResignAdmission(courseId, type, courseTitle),
+        onSuccess: () => {
+          this.isUserEnrolled = false;
+        },
+        closeOnError: true
       });
       return;
     }

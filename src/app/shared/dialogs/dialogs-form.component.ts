@@ -28,7 +28,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
 import { deepEqual } from '../utils';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
+import { DialogsPromptService } from './dialogs-prompt.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -108,7 +108,8 @@ export class DialogsFormComponent {
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsListService: DialogsListService,
     private userService: UserService,
-    private dialogGuard: DialogGuardService
+    private dialogGuard: DialogGuardService,
+    private dialogsPromptService: DialogsPromptService
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.createModalForm(this.data.formGroup);
@@ -141,7 +142,7 @@ export class DialogsFormComponent {
 
   checkUnsavedChangesAndClose() {
     if (this.data && this.data.confirmUnsavedChanges && this.isDirty()) {
-      UnsavedChangesPromptComponent.open(this.dialog).subscribe(confirmed => {
+      this.dialogsPromptService.confirmUnsavedChanges().subscribe(confirmed => {
         if (confirmed) {
           this.dialogRef.close();
         }

@@ -5,7 +5,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -51,14 +51,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   showResendConfiguration = false;
   requestStatus = 'loading';
   devMode = isDevMode();
-  deleteCommunityDialog: any;
   versionLocal = '';
   versionParent = '';
   versionLatestApk = '';
   versionLocalApk = '';
   notAvailable = $localize`N/A`;
   dialogRef: MatDialogRef<DialogsListComponent>;
-  resetPinDialog: MatDialogRef<DialogsPromptComponent>;
   pin: string;
   activityLogs: any = {};
   private onDestroy$ = new Subject<void>();
@@ -80,7 +78,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private configurationService: ConfigurationService,
     private stateService: StateService,
     private managerService: ManagerService,
-    private dialogGuard: DialogGuardService
+    private dialogGuard: DialogGuardService,
+    private dialogsPromptService: DialogsPromptService
   ) {}
 
   ngOnInit() {
@@ -185,25 +184,18 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           this.couchService.post('_replicator/_bulk_docs', { docs: replicators })
         ]);
       })),
-      onNext: (res: any) => {
-        this.deleteCommunityDialog.close();
-        this.router.navigate([ '/login/configuration' ]);
-      },
-      onError: error => this.planetMessageService.showAlert($localize`An error occurred please try again.`)
+      onSuccess: () => this.router.navigate([ '/login/configuration' ]),
+      errorMessage: $localize`An error occurred please try again.`
     };
   }
 
   openDeleteCommunityDialog() {
-    this.deleteCommunityDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.deleteCommunity(),
-        changeType: 'delete',
-        type: 'community',
-        displayName: this.planetConfiguration.name
-      }
+    this.dialogsPromptService.open({
+      ...this.deleteCommunity(),
+      changeType: 'delete',
+      type: 'community',
+      displayName: this.planetConfiguration.name
     });
-    // Reset the message when the dialog closes
-    this.deleteCommunityDialog.afterClosed().subscribe();
   }
 
   setFilterPredicate(db: string) {
@@ -279,20 +271,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   confirmResetPin() {
-    this.resetPinDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        type: 'pin',
-        changeType: 'reset',
-        okClick: {
-          request: this.resetPin(),
-          onNext: () => {
-            this.resetPinDialog.close();
-            this.getSatellitePin();
-            this.planetMessageService.showMessage($localize`PIN reset successfully`);
-          },
-          onError: () => this.planetMessageService.showAlert($localize`There was an error resetting the PIN`)
-        }
-      }
+    this.dialogsPromptService.open({
+      type: 'pin',
+      changeType: 'reset',
+      request: this.resetPin(),
+      onSuccess: () => this.getSatellitePin(),
+      successMessage: $localize`PIN reset successfully`,
+      errorMessage: $localize`There was an error resetting the PIN`
     });
   }
 

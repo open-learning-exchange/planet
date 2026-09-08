@@ -10,7 +10,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -164,6 +164,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
@@ -512,21 +513,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (this.isRemoteExchange) {
       return;
     }
-    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.couchService.updateDocument('teams', { ...link, _deleted: true }).pipe(switchMap(() => this.getLinks())),
-          onNext: (res) => {
-            this.setLinksAndFinances(res);
-            this.planetMessageService.showMessage($localize` Deleted link: ${link.title}`);
-            deleteDialog.close();
-          },
-          onError: () => this.planetMessageService.showAlert($localize`There was an error deleting ${link.title}`)
-        },
-        changeType: 'delete',
-        type: 'link',
-        displayName: link.title
-      }
+    this.dialogsPromptService.open({
+      request: this.couchService.updateDocument('teams', { ...link, _deleted: true }).pipe(switchMap(() => this.getLinks())),
+      onSuccess: (res) => this.setLinksAndFinances(res),
+      successMessage: $localize` Deleted link: ${link.title}`,
+      errorMessage: $localize`There was an error deleting ${link.title}`,
+      changeType: 'delete',
+      type: 'link',
+      displayName: link.title
     });
   }
 
@@ -534,28 +528,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (this.isRemoteExchange) {
       return;
     }
-    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
-            switchMap((updatedTeam) => {
-              this.team = updatedTeam;
-              this.servicesDescriptionLabel = 'Add';
-              return of(updatedTeam);
-            })
-          ),
-          onNext: () => {
-            this.planetMessageService.showMessage($localize`Description deleted successfully.`);
-            deleteDialog.close();
-          },
-          onError: () => {
-            this.planetMessageService.showAlert($localize`There was an error deleting the description.`);
-          }
-        },
-        changeType: 'delete',
-        type: 'description',
-        displayName: $localize`Community Description`
-      }
+    this.dialogsPromptService.open({
+      request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
+        switchMap((updatedTeam) => {
+          this.team = updatedTeam;
+          this.servicesDescriptionLabel = 'Add';
+          return of(updatedTeam);
+        })
+      ),
+      successMessage: $localize`Description deleted successfully.`,
+      errorMessage: $localize`There was an error deleting the description.`,
+      changeType: 'delete',
+      type: 'description',
+      displayName: $localize`Community Description`
     });
   }
 

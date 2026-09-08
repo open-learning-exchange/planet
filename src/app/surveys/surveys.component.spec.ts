@@ -27,6 +27,8 @@ describe('SurveysComponent', () => {
     dialogsLoadingService,
     { doesUserHaveRole: vi.fn().mockReturnValue(false), get: vi.fn() } as any,
     dialogsFormService,
+    { open: vi.fn() } as any,
+    { open: vi.fn().mockReturnValue(of({})) } as any,
     { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
     {} as any,
     new FormBuilder().nonNullable,

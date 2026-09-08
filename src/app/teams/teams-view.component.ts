@@ -5,7 +5,7 @@ import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
@@ -113,11 +113,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   visits: any = {};
   leader: any = {};
   planetCode: string;
-  dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
-  cancelDialog: any;
   finances: any[] = [];
   teamDataLoading = true;
   reports: any[] = [];
@@ -147,6 +145,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
@@ -417,26 +416,21 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   ) {
     const config = this.dialogPromptConfig(item, change);
     const displayName = config.name || (item.userDoc ? item.userDoc.fullName : item.name);
-    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: config.request(),
-          onNext: (res) => {
-            this.dialogPrompt.close();
-            this.planetMessageService.showMessage($localize`You have ${config.successMsg} ${displayName}`);
-            if (change === 'course') {
-              this.team = res;
-              this.visibleCourses = this.visibleCourses.filter(course => course._id !== item._id);
-            }
-            if (change === 'archive') {
-              this.goBack();
-            }
-          },
-          onError: () => this.planetMessageService.showAlert($localize`There was a problem ${config.errorMsg} ${displayName}`)
-        },
-        displayName,
-        ...dialogParams
-      }
+    this.dialogsPromptService.open({
+      request: config.request(),
+      onSuccess: (res) => {
+        if (change === 'course') {
+          this.team = res;
+          this.visibleCourses = this.visibleCourses.filter(course => course._id !== item._id);
+        }
+        if (change === 'archive') {
+          this.goBack();
+        }
+      },
+      successMessage: $localize`You have ${config.successMsg} ${displayName}`,
+      errorMessage: $localize`There was a problem ${config.errorMsg} ${displayName}`,
+      displayName,
+      ...dialogParams
     });
   }
 
@@ -497,27 +491,16 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   changeMembership(type, memberDoc?) {
     if (type === 'request' && this.team.type === 'enterprise') {
-      this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
-        data: {
-          okClick: {
-            request: this.changeMembershipRequest(type, memberDoc, false)(),
-            onNext: (message) => {
-              this.dialogPrompt.close();
-              this.setStatus(this.team, this.leader, this.userService.get());
-              this.planetMessageService.showMessage(message);
-            },
-            onError: () => {
-              this.planetMessageService.showAlert(
-                $localize`There was a problem requesting to join this enterprise.`
-              );
-            }
-          },
-          changeType: 'request',
-          type: 'enterprise',
-          displayName: this.team.name,
-          rules: this.team.rules,
-          extraMessage: enterpriseJoinAgreement()
-        }
+      this.dialogsPromptService.open({
+        request: this.changeMembershipRequest(type, memberDoc, false)(),
+        onSuccess: () => this.setStatus(this.team, this.leader, this.userService.get()),
+        successMessage: (message) => message,
+        errorMessage: $localize`There was a problem requesting to join this enterprise.`,
+        changeType: 'request',
+        type: 'enterprise',
+        displayName: this.team.name,
+        rules: this.team.rules,
+        extraMessage: enterpriseJoinAgreement()
       });
       return;
     }
@@ -535,36 +518,29 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   cancelJoinRequest() {
     return {
       request: this.teamsService.cancelJoinRequest(this.team),
-      onNext: () => {
-        this.cancelDialog.close();
+      onSuccess: () => {
         this.requests = this.requests.filter(request =>
           request.userId !== this.user._id || request.userPlanetCode !== this.planetCode
         );
         this.setStatus(this.team, this.leader, this.userService.get());
-        const msg = this.mode === 'enterprise'
-          ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
-          : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + this.team.name;
-        this.planetMessageService.showMessage(msg);
       },
-      onError: () => {
-        const msg = this.mode === 'enterprise'
-          ? $localize`There was a problem cancelling your request to join this enterprise.`
-          : $localize`There was a problem cancelling your request to join this team.`;
-        this.planetMessageService.showAlert(msg);
-      }
+      successMessage: this.mode === 'enterprise'
+        ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
+        : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + this.team.name,
+      errorMessage: this.mode === 'enterprise'
+        ? $localize`There was a problem cancelling your request to join this enterprise.`
+        : $localize`There was a problem cancelling your request to join this team.`
     };
   }
 
   openCancelJoinRequestDialog() {
-    this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.cancelJoinRequest(),
-        showMainParagraph: false,
-        extraMessage: this.mode === 'enterprise'
-          ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
-          : $localize`Are you sure you want to cancel the request to join the following team?`,
-        displayName: this.team.name
-      }
+    this.dialogsPromptService.open({
+      ...this.cancelJoinRequest(),
+      showMainParagraph: false,
+      extraMessage: this.mode === 'enterprise'
+        ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
+        : $localize`Are you sure you want to cancel the request to join the following team?`,
+      displayName: this.team.name
     });
   }
 

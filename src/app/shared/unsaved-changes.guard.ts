@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
-import { UnsavedChangesPromptComponent } from './unsaved-changes.component';
+import { DialogsPromptService } from './dialogs/dialogs-prompt.service';
 
 export interface CanComponentDeactivate {
   canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
@@ -16,7 +15,7 @@ export interface CanComponentDeactivate {
 export class UnsavedChangesGuard  {
 
   constructor(
-    private dialog: MatDialog
+    private dialogsPromptService: DialogsPromptService
   ) {}
 
   canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
@@ -26,8 +25,7 @@ export class UnsavedChangesGuard  {
 
       // If component returns false (has unsaved changes), show dialog
       if (result === false) {
-        const dialogResult = UnsavedChangesPromptComponent.open(this.dialog);
-        return dialogResult.pipe(
+        return this.dialogsPromptService.confirmUnsavedChanges().pipe(
           switchMap(dialogResponse => {
             const confirmed = dialogResponse === true;
             if (confirmed && component.onLeaveConfirmed) {

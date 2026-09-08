@@ -5,20 +5,18 @@ import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 
 @Injectable()
 export class MeetupService {
 
   private meetupUpdated = new Subject<any[]>();
-  deleteDialog: MatDialogRef<DialogsPromptComponent>;
   meetupUpdated$ = this.meetupUpdated.asObservable();
   meetups = [];
   userShelf = this.userService.shelf;
 
   constructor(
-    private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private couchService: CouchService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService
@@ -104,30 +102,24 @@ export class MeetupService {
           (meetups[0] || meetups).recurring === 'daily' ? 'days' : 'weeks'
         })`
         : '';
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.deleteMeetups([ meetups ].flat(), displayName, callback),
-        changeType: 'delete',
-        type: 'event',
-        amount: isMany ? 'many' : 'single',
-        displayName,
-        extraMessage: recurringInfo
-      }
+    this.dialogsPromptService.open({
+      ...this.deleteMeetups([ meetups ].flat(), displayName, callback),
+      changeType: 'delete',
+      type: 'event',
+      amount: isMany ? 'many' : 'single',
+      displayName,
+      extraMessage: recurringInfo
     });
   }
 
   deleteMeetups(meetups: any[], displayName, callback) {
     return {
       request: this.couchService.bulkDocs('meetups', meetups.map(m => ({ ...m, _deleted: true }))),
-      onNext: (data) => {
-        callback(data.res);
-        this.deleteDialog.close();
-        const message = displayName ?
-          $localize`Event deleted: ${displayName}` :
-          $localize`You have deleted ${meetups.length} events`;
-        this.planetMessageService.showMessage(message);
-      },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this meetup`)
+      onSuccess: (data) => callback(data.res),
+      successMessage: displayName ?
+        $localize`Event deleted: ${displayName}` :
+        $localize`You have deleted ${meetups.length} events`,
+      errorMessage: $localize`There was a problem deleting this meetup`
     };
   }
 

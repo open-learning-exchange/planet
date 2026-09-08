@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DialogsPromptService } from './dialogs-prompt.service';
 
 @Component({
   selector: 'planet-meetups-add',
@@ -44,6 +45,7 @@ describe('DialogsAddMeetupsComponent', () => {
   let data: any;
   let dialogRef: any;
   let dialogsLoadingService: any;
+  let dialogsPromptService: any;
 
   beforeEach(() => {
     data = {
@@ -57,13 +59,16 @@ describe('DialogsAddMeetupsComponent', () => {
     dialogsLoadingService = {
       stop: vi.fn()
     };
+    dialogsPromptService = {
+      confirmUnsavedChanges: vi.fn().mockReturnValue(of(true))
+    };
 
     TestBed.configureTestingModule({
       imports: [DialogsAddMeetupsComponent],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: dialogRef },
-        { provide: MatDialog, useValue: {} },
+        { provide: DialogsPromptService, useValue: dialogsPromptService },
         { provide: DialogsLoadingService, useValue: dialogsLoadingService }
       ]
     });

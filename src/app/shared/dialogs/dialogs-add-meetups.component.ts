@@ -1,9 +1,9 @@
 import { Component, Inject, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { MeetupsAddComponent } from '../../meetups/add-meetups/meetups-add.component';
 import { CanComponentDeactivate } from '../unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
+import { DialogsPromptService } from './dialogs-prompt.service';
 
 import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.component';
 
@@ -40,7 +40,7 @@ export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
     public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialogsPromptService: DialogsPromptService
   ) {
     this.link = this.data.link || this.link;
     this.sync = this.data.sync || this.sync;
@@ -59,8 +59,7 @@ export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
 
   private checkUnsavedChangesAndClose(): void {
     if (this.meetupsAdd && this.meetupsAdd.canDeactivate() === false) {
-      const dialogResult = UnsavedChangesPromptComponent.open(this.dialog);
-      dialogResult.subscribe(confirmed => {
+      this.dialogsPromptService.confirmUnsavedChanges().subscribe(confirmed => {
         if (confirmed) {
           this.meetupsAdd.hasUnsavedChanges = false;
           this.meetupsChange();

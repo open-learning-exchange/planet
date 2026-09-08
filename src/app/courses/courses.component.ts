@@ -11,7 +11,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subject, defer, of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
@@ -26,7 +26,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptOptions, DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
 import { StateService } from '../shared/state.service';
@@ -147,7 +147,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   dialogRef: MatDialogRef<DialogsListComponent> | null = null;
   filterDialogRef: MatDialogRef<any> | null = null;
   message = '';
-  deleteDialog: any;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
@@ -216,6 +215,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     public dialogGuard: DialogGuardService,
+    private dialogsPromptService: DialogsPromptService,
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
@@ -330,30 +330,27 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   deleteSelected() {
     const selected = this.selection.selected.map(courseId => findByIdInArray(this.courses.data, courseId).doc);
     let amount = 'many';
-    let okClick = this.deleteCourses(selected);
+    let deleteAction: DialogsPromptOptions = this.deleteCourses(selected);
     let displayName = '';
     if (selected.length === 1) {
       const course = selected[0];
       amount = 'single';
-      okClick = this.deleteCourse(course);
+      deleteAction = this.deleteCourse(course);
       displayName = course.courseTitle;
     }
-    this.openDeleteDialog(okClick, amount, displayName, selected.length);
+    this.openDeleteDialog(deleteAction, amount, displayName, selected.length);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '', count) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'course',
-        displayName,
-        count
-      }
-    });
+  openDeleteDialog(deleteAction, amount, displayName = '', count) {
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.dialogsPromptService.confirm({
+      ...deleteAction,
+      amount,
+      changeType: 'delete',
+      type: 'course',
+      displayName,
+      count
+    }).subscribe(() => {
       this.message = '';
     });
   }
@@ -362,15 +359,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const { _id: courseId, _rev: courseRev } = course;
     return {
       request: this.couchService.delete('courses/' + courseId + '?rev=' + courseRev),
-      onNext: (data) => {
+      onSuccess: (data) => {
         this.selection.deselect(course._id);
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
         this.getCourses();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Course deleted: ${course.courseTitle}`);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this course.`)
+      successMessage: $localize`Course deleted: ${course.courseTitle}`,
+      errorMessage: $localize`There was a problem deleting this course.`
     };
   }
 
@@ -378,13 +374,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const deleteArray = createDeleteArray(courses);
     return {
       request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
-      onNext: (data: any) => {
+      onSuccess: () => {
         this.getCourses();
         this.selection.clear();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} courses`);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting courses.`)
+      successMessage: $localize`You have deleted ${deleteArray.length} courses`,
+      errorMessage: $localize`There was a problem deleting courses.`
     };
   }
 
@@ -399,25 +394,20 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.planetMessageService.showMessage($localize`None of the selected courses are in myCourses.`);
         return;
       }
-      const dialogRef = this.dialog.open(DialogsPromptComponent, {
-        data: {
-          changeType: 'leave',
-          type: 'course',
-          amount: enrolledIds.length === 1 ? 'single' : 'many',
-          count: enrolledIds.length,
-          displayName: enrolledIds.length === 1 ?
-            this.coursesService.getCourseNameFromId(enrolledIds[0], this.parent) || $localize`Selected course` : '',
-          okClick: {
-            request: defer(() => this.coursesService.courseAdmissionMany(enrolledIds, type, this.parent)),
-            onNext: () => {
-              this.userShelf = this.userService.shelf;
-              this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
-              this.countSelectNotEnrolled(this.selection.selected);
-              dialogRef.close();
-            },
-            onError: () => dialogRef.close()
-          }
-        }
+      this.dialogsPromptService.open({
+        changeType: 'leave',
+        type: 'course',
+        amount: enrolledIds.length === 1 ? 'single' : 'many',
+        count: enrolledIds.length,
+        displayName: enrolledIds.length === 1 ?
+          this.coursesService.getCourseNameFromId(enrolledIds[0], this.parent) || $localize`Selected course` : '',
+        request: () => this.coursesService.courseAdmissionMany(enrolledIds, type, this.parent),
+        onSuccess: () => {
+          this.userShelf = this.userService.shelf;
+          this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+          this.countSelectNotEnrolled(this.selection.selected);
+        },
+        closeOnError: true
       });
       return;
     }
@@ -560,22 +550,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }
     const courseTitle = this.coursesService.getCourseNameFromId(courseId, this.parent) || $localize`this course`;
     if (type === 'resign') {
-      const dialogRef = this.dialog.open(DialogsPromptComponent, {
-        data: {
-          changeType: 'leave',
-          type: 'course',
-          displayName: courseTitle,
-          okClick: {
-            request: defer(() => this.coursesService.courseResignAdmission(courseId, type, courseTitle)),
-            onNext: () => {
-              this.userShelf = this.userService.shelf;
-              this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
-              this.countSelectNotEnrolled(this.selection.selected);
-              dialogRef.close();
-            },
-            onError: () => dialogRef.close()
-          }
-        }
+      this.dialogsPromptService.open({
+        changeType: 'leave',
+        type: 'course',
+        displayName: courseTitle,
+        request: () => this.coursesService.courseResignAdmission(courseId, type, courseTitle),
+        onSuccess: () => {
+          this.userShelf = this.userService.shelf;
+          this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+          this.countSelectNotEnrolled(this.selection.selected);
+        },
+        closeOnError: true
       });
       return;
     }

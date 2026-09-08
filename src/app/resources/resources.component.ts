@@ -11,9 +11,9 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
-import { Subject, of, combineLatest, defer } from 'rxjs';
+import { Subject, of, combineLatest } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptOptions, DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -136,7 +136,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   filterDialogRef: MatDialogRef<any> | null = null;
   readonly dbName = 'resources';
   message = '';
-  deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
@@ -203,6 +202,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     public dialogGuard: DialogGuardService,
+    private dialogsPromptService: DialogsPromptService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
@@ -336,30 +336,27 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteSelected() {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
     let amount = 'many';
-    let okClick = this.deleteResources(resources);
+    let deleteAction: DialogsPromptOptions = this.deleteResources(resources);
     let displayName = '';
     if (resources.length === 1) {
       const resource: any = resources[0];
       amount = 'single';
-      okClick = this.deleteResource(resource);
+      deleteAction = this.deleteResource(resource);
       displayName = resource.doc.title;
     }
-    this.openDeleteDialog(okClick, amount, displayName, resources.length);
+    this.openDeleteDialog(deleteAction, amount, displayName, resources.length);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '', count) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'resource',
-        displayName,
-        count
-      }
-    });
+  openDeleteDialog(deleteAction, amount, displayName = '', count) {
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.dialogsPromptService.confirm({
+      ...deleteAction,
+      amount,
+      changeType: 'delete',
+      type: 'resource',
+      displayName,
+      count
+    }).subscribe(() => {
       this.message = '';
     });
   }
@@ -368,13 +365,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { _id: resourceId, _rev: resourceRev } = resource;
     return {
       request: this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev),
-      onNext: (data) => {
+      onSuccess: (data) => {
         this.selection.deselect(resourceId);
         this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted resource: ${resource.doc.title}`);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
+      successMessage: $localize`You have deleted resource: ${resource.doc.title}`,
+      errorMessage: $localize`There was a problem deleting this resource.`
     };
   }
 
@@ -382,13 +378,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const deleteArray = createDeleteArray(resources);
     return {
       request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
-      onNext: (data) => {
+      onSuccess: () => {
         this.resourcesService.requestResourcesUpdate(this.parent);
         this.selection.clear();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} resources`);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
+      successMessage: $localize`You have deleted ${deleteArray.length} resources`,
+      errorMessage: $localize`There was a problem deleting this resource.`
     };
   }
 
@@ -405,23 +400,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       const foundResource = removableResourceIds.length === 1 ?
         (this.resources.data.find((r: any) => r._id === removableResourceIds[0]) as any) : null;
       const resourceTitle = foundResource?.doc?.title || '';
-      const dialogRef = this.dialog.open(DialogsPromptComponent, {
-        data: {
-          changeType: 'remove',
-          type: 'resource',
-          amount: removableResourceIds.length === 1 ? 'single' : 'many',
-          count: removableResourceIds.length,
-          displayName: resourceTitle,
-          okClick: {
-            request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
-            onNext: () => {
-              this.removeFilteredFromSelection();
-              this.onSelectionChange(this.selection.selected);
-              dialogRef.close();
-            },
-            onError: () => this.planetMessageService.showAlert($localize`There was a problem removing from myLibrary.`)
-          }
-        }
+      this.dialogsPromptService.open({
+        changeType: 'remove',
+        type: 'resource',
+        amount: removableResourceIds.length === 1 ? 'single' : 'many',
+        count: removableResourceIds.length,
+        displayName: resourceTitle,
+        request: () => this.resourcesService.libraryAddRemove(removableResourceIds, type),
+        onSuccess: () => {
+          this.removeFilteredFromSelection();
+          this.onSelectionChange(this.selection.selected);
+        },
+        errorMessage: $localize`There was a problem removing from myLibrary.`
       });
       return;
     }

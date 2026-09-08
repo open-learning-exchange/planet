@@ -5,7 +5,7 @@ import {
   ValidatorFn, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
 import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
 } from '@angular/material/dialog';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
@@ -16,7 +16,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../../shared/dialogs/dialogs-prompt.service';
 import { Observable } from 'rxjs';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -104,7 +104,6 @@ export class PlanetTagInputToggleIconComponent {
 export class PlanetTagInputDialogComponent {
   private readonly destroyRef = inject(DestroyRef);
 
-  deleteDialog: any;
   tags: any[] = [];
   selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
@@ -139,7 +138,7 @@ export class PlanetTagInputDialogComponent {
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private deviceInfoService: DeviceInfoService,
   ) {
     this.dataInit();
@@ -271,30 +270,24 @@ export class PlanetTagInputDialogComponent {
 
   deleteTag(event, tag) {
     event.stopPropagation();
-    const amount = 'single';
-    const okClick = this.deleteSelectedTag(tag);
-    const displayName = tag.name;
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'tag',
-        displayName
-      }
+    this.dialogsPromptService.open({
+      ...this.deleteSelectedTag(tag),
+      amount: 'single',
+      changeType: 'delete',
+      type: 'tag',
+      displayName: tag.name
     });
   }
 
   deleteSelectedTag(tag) {
     return {
       request: this.tagsService.deleteTag(tag),
-      onNext: (data) => {
+      onSuccess: () => {
         this.data.initTags();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Collection deleted: ${tag.name}`);
         this.resetValidationAndCheck(this.addTagForm);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this collection.`)
+      successMessage: $localize`Collection deleted: ${tag.name}`,
+      errorMessage: $localize`There was a problem deleting this collection.`
     };
   }
 

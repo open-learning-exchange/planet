@@ -1,5 +1,4 @@
 import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
   MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
@@ -11,7 +10,8 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
 import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
@@ -90,7 +90,6 @@ export class TeamsViewFinancesComponent implements OnChanges {
   allTransactions: any[] = [];
   table = new MatTableDataSource<any>();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
-  deleteDialog: any;
   startDate: Date;
   endDate: Date;
   emptyTable = true;
@@ -115,7 +114,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
-    private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
+    private dialogGuard: DialogGuardService,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private planetMessageService: PlanetMessageService,
@@ -163,56 +163,60 @@ export class TeamsViewFinancesComponent implements OnChanges {
 
 
   openEditTransactionDialog(transaction: any = {}) {
-    this.couchService.currentTime().subscribe((time: number) => {
-      this.dialogsFormService.openDialogsForm(
-        transaction._id ? $localize`Edit Transaction` : $localize`Add Transaction`,
-        [
-          {
-            name: 'type', placeholder: $localize`Type`, type: 'selectbox',
-            options: [ { value: 'credit', name: $localize`Credit` }, { value: 'debit', name: $localize`Debit` } ], required: true
-          },
-          { name: 'description', placeholder: $localize`Note`, type: 'textbox', required: true },
-          { name: 'amount', placeholder: $localize`Amount`, type: 'textbox', inputType: 'number', required: true, step: '0.01' },
-          { name: 'date', placeholder: $localize`Date`, type: 'date', required: true },
-          {
-            name: 'receiptImages',
-            placeholder: $localize`Attached Images`,
-            type: 'file-upload',
-            fileUpload: {
-              accept: this.teamsAttachmentsService.receiptImageAccept,
-              existingAttachments: this.teamsAttachmentsService.receiptAttachments(transaction),
-              hint: this.teamsAttachmentsService.receiptImageHint,
-              imagePreview: true,
-              maxFiles: this.teamsAttachmentsService.maxReceiptImages,
-              multiple: true,
-              typePills: this.teamsAttachmentsService.receiptImagePills
-            }
-          }
-        ],
+    this.dialogGuard.open(`team-transaction:${transaction._id || 'new'}`, () =>
+      this.couchService.currentTime().pipe(map((time: number) => this.openTransactionForm(transaction, time)))
+    ).subscribe();
+  }
+
+  private openTransactionForm(transaction: any, time: number) {
+    return this.dialogsFormService.openDialogsForm(
+      transaction._id ? $localize`Edit Transaction` : $localize`Add Transaction`,
+      [
         {
-          type: [ transaction.type || 'credit', CustomValidators.required ],
-          description: [ transaction.description || '', CustomValidators.required ],
-          amount: [ transaction.amount || '', [ CustomValidators.nonNegativeNumberValidator ] ],
-          date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ],
-          receiptImages: [ this.teamsAttachmentsService.attachmentStateForDoc(transaction) ]
+          name: 'type', placeholder: $localize`Type`, type: 'selectbox',
+          options: [ { value: 'credit', name: $localize`Credit` }, { value: 'debit', name: $localize`Debit` } ], required: true
         },
+        { name: 'description', placeholder: $localize`Note`, type: 'textbox', required: true },
+        { name: 'amount', placeholder: $localize`Amount`, type: 'textbox', inputType: 'number', required: true, step: '0.01' },
+        { name: 'date', placeholder: $localize`Date`, type: 'date', required: true },
         {
-          onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
-            next: (result: any) => {
-              this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
-              }
-              this.dialogsFormService.closeDialogsForm();
-            },
-            error: () => {
-              this.dialogsLoadingService.stop();
-              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the transaction.`);
-            }
-          })
+          name: 'receiptImages',
+          placeholder: $localize`Attached Images`,
+          type: 'file-upload',
+          fileUpload: {
+            accept: this.teamsAttachmentsService.receiptImageAccept,
+            existingAttachments: this.teamsAttachmentsService.receiptAttachments(transaction),
+            hint: this.teamsAttachmentsService.receiptImageHint,
+            imagePreview: true,
+            maxFiles: this.teamsAttachmentsService.maxReceiptImages,
+            multiple: true,
+            typePills: this.teamsAttachmentsService.receiptImagePills
+          }
         }
-      );
-    });
+      ],
+      {
+        type: [ transaction.type || 'credit', CustomValidators.required ],
+        description: [ transaction.description || '', CustomValidators.required ],
+        amount: [ transaction.amount || '', [ CustomValidators.nonNegativeNumberValidator ] ],
+        date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ],
+        receiptImages: [ this.teamsAttachmentsService.attachmentStateForDoc(transaction) ]
+      },
+      {
+        onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
+          next: (result: any) => {
+            this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
+            if (result?.failedAttachments?.length) {
+              this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
+            }
+            this.dialogsFormService.closeDialogsForm();
+          },
+          error: () => {
+            this.dialogsLoadingService.stop();
+            this.dialogsFormService.showErrorMessage($localize`There was a problem saving the transaction.`);
+          }
+        })
+      }
+    );
   }
 
   submitTransaction(newTransaction: TransactionForm, oldTransaction: any) {
@@ -249,13 +253,11 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   openArchiveTransactionDialog(transaction) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.archiveTransaction(transaction),
-        changeType: 'delete',
-        type: 'transaction',
-        displayName: transaction.description
-      }
+    this.dialogsPromptService.open({
+      ...this.archiveTransaction(transaction),
+      changeType: 'delete',
+      type: 'transaction',
+      displayName: transaction.description
     });
   }
 
@@ -263,11 +265,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
     const { receiptImages, ...transactionDoc } = transaction;
     return {
       request: this.submitTransaction({ ...transactionDoc, status: 'archived' }, {}),
-      onNext: () => {
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted a transaction.`);
-      },
-      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this transaction.`)
+      successMessage: $localize`You have deleted a transaction.`,
+      errorMessage: $localize`There was a problem deleting this transaction.`
     };
   }
 

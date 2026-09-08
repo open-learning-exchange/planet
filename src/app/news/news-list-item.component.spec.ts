@@ -31,7 +31,8 @@ describe('NewsListItemComponent read-only behavior', () => {
       {} as any,
       authService as any,
       clipboard as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any,
+      { open: vi.fn(() => of({})) } as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
@@ -189,7 +190,8 @@ describe('NewsListItemComponent notifications', () => {
       {} as any,
       {} as any,
       {} as any,
-      { watchDeviceType: () => of(DeviceType.DESKTOP) } as any
+      { watchDeviceType: () => of(DeviceType.DESKTOP) } as any,
+      { open: () => of({}) } as any
     );
     return { component, notificationsService };
   };

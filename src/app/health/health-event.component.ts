@@ -7,13 +7,12 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { switchMap } from 'rxjs/operators';
 import { of, forkJoin, interval, race } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes.component';
+import { warningMsg } from '../shared/unsaved-changes';
 import { debounce } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -74,7 +73,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
   healthForm: FormGroup<HealthEventFormControls>;
   conditions = conditions;
-  dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   event: any = {};
   initialFormValues: any;
   hasUnsavedChanges = false;
@@ -87,7 +85,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private userService: UserService,
     private stateService: StateService,
     private couchService: CouchService,
-    private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private planetMessageService: PlanetMessageService
   ) {
     this.healthForm = this.fb.group({
@@ -202,23 +200,15 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
   showWarning(invalidFields) {
     this.hasUnsavedChanges = false;
-    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.saveEvent(),
-          onNext: (data) => {
-            this.dialogPrompt.close(true);
-            this.goBack();
-          }
-        },
-        displayName: '',
-        showMainParagraph: false,
-        extraMessage: $localize`The value(s) of the following are not in the normal range.
+    this.dialogsPromptService.confirm({
+      request: this.saveEvent(),
+      onSuccess: () => this.goBack(),
+      displayName: '',
+      showMainParagraph: false,
+      extraMessage: $localize`The value(s) of the following are not in the normal range.
          Click <b>Cancel</b> to fix or click <b>OK</b> to submit.`,
-        showLabels: invalidFields
-      }
-    });
-    this.dialogPrompt.afterClosed().subscribe(result => {
+      showLabels: invalidFields
+    }).subscribe(result => {
       this.hasUnsavedChanges = !result;
     });
   }

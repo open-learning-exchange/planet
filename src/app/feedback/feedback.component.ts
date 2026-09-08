@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular
 import { Router, RouterLink } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -10,10 +9,9 @@ import {
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../shared/dialogs/dialogs-prompt.service';
 import { UserService } from '../shared/user.service';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
@@ -102,7 +100,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     status: 'displayStatus'
   } as const;
   message: string;
-  deleteDialog: any;
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   typeOptions = FEEDBACK_TYPE_OPTIONS.map(option => ({ text: option.label, value: option.value }));
@@ -134,9 +131,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog,
+    private dialogsPromptService: DialogsPromptService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService,
     private feedbackService: FeedbackService,
     private router: Router,
     private stateService: StateService,
@@ -217,16 +213,13 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(feedback) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.deleteFeedback(feedback),
-        changeType: 'delete',
-        type: 'feedback',
-        displayName: feedback.displayTitle || feedback.title
-      }
-    });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.dialogsPromptService.confirm({
+      ...this.deleteFeedback(feedback),
+      changeType: 'delete',
+      type: 'feedback',
+      displayName: feedback.displayTitle || feedback.title
+    }).subscribe(() => {
       this.message = '';
     });
   }
@@ -235,13 +228,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     const { _id: feedbackId, _rev: feedbackRev } = feedback;
     return {
       request: this.couchService.delete(this.dbName + '/' + feedbackId + '?rev=' + feedbackRev),
-      onNext: (data) => {
+      onSuccess: (data) => {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted feedback.`);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There is a problem deleting this feedback.`)
+      successMessage: $localize`You have deleted feedback.`,
+      errorMessage: $localize`There is a problem deleting this feedback.`
     };
   }
 

@@ -8,10 +8,11 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { AuthService } from '../shared/auth-guard.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
@@ -96,6 +97,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private authService: AuthService,
     private clipboard: Clipboard,
     private deviceInfoService: DeviceInfoService,
+    private dialogGuard: DialogGuardService,
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -261,12 +263,14 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       event.stopPropagation();
       event.preventDefault();
     }
-    this.authService.checkAuthenticationStatus().subscribe(() => {
-      this.usersProfileDialogService.open(
-        { member: { ...member, userPlanetCode: member.planetCode } },
-        { restoreFocus: false }
-      );
-    });
+    this.dialogGuard.open(`member-profile:${member.name}@${member.planetCode}`, () =>
+      this.authService.checkAuthenticationStatus().pipe(
+        map(() => this.usersProfileDialogService.open(
+          { member: { ...member, userPlanetCode: member.planetCode } },
+          { restoreFocus: false }
+        ))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   addTeamLabelsFromViewIn() {

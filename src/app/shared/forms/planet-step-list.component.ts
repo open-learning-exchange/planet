@@ -1,7 +1,7 @@
 import { Component, Input, EventEmitter, Output, Directive, ContentChildren, ViewChild,
   TemplateRef, Injectable, OnDestroy, AfterContentChecked, ViewEncapsulation, HostBinding, QueryList
 } from '@angular/core';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
@@ -9,9 +9,8 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../dialogs/dialogs-prompt.service';
 
 export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
@@ -106,7 +105,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   constructor(
     private planetStepListService: PlanetStepListService,
-    private dialog: MatDialog
+    private dialogsPromptService: DialogsPromptService
   ) {
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(this.moveStep.bind(this));
     this.planetStepListService.stepAdded$.pipe(takeUntil(this.onDestroy$)).subscribe(this.stepClick.bind(this));
@@ -162,27 +161,20 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
       : null;
     const stepTitle = titleVal || `${this.defaultName} ${index + 1}`;
 
-    const dialogRef = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: of(true),
-          onNext: () => {
-            dialogRef.close();
-            this.performStepMove(index, 0);
-            if (!this.listMode) {
-              if (this.openIndex === index) {
-                this.toList();
-              } else if (this.openIndex > index) {
-                this.openIndex--;
-              }
-            }
-          },
-          onError: () => {}
-        },
-        showMainParagraph: false,
-        extraMessage: $localize`Are you sure you want to delete the following step?`,
-        displayName: stepTitle
-      }
+    this.dialogsPromptService.open({
+      onSuccess: () => {
+        this.performStepMove(index, 0);
+        if (!this.listMode) {
+          if (this.openIndex === index) {
+            this.toList();
+          } else if (this.openIndex > index) {
+            this.openIndex--;
+          }
+        }
+      },
+      showMainParagraph: false,
+      extraMessage: $localize`Are you sure you want to delete the following step?`,
+      displayName: stepTitle
     });
   }
 

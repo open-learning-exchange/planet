@@ -106,6 +106,7 @@ export class DialogsFormService {
       disableClose: options.confirmUnsavedChanges,
       data: { title, formGroup, fields, ...options }
     });
+    return this.dialogRef;
   }
 
   closeDialogsForm() {

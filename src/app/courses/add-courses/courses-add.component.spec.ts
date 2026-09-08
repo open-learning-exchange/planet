@@ -129,9 +129,7 @@ describe('CoursesAddComponent', () => {
       request: expect.anything(),
       onNext: expect.any(Function)
     }));
-    expect(component.deleteDialog).toBe(dialogRef);
     afterClosed$.next();
-    expect(component.deleteDialog).toBeNull();
     expect(component.draftExists).toBe(true);
     expect(deleteDraftSpy).not.toHaveBeenCalled();
   });

@@ -1,6 +1,6 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptService } from '../../shared/dialogs/dialogs-prompt.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -76,7 +76,6 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     'createdDate',
     'action'
   ];
-  editDialog: any;
   viewNationDetailDialog: any;
   dialogRef: MatDialogRef<DialogsListComponent>;
   onDestroy$ = new Subject<void>();
@@ -99,6 +98,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private validatorService: ValidatorService,
     private reportsService: ReportsService,
     private dialogGuard: DialogGuardService,
+    private dialogsPromptService: DialogsPromptService,
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -123,13 +123,11 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   updateClick(planet, change) {
-    this.editDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.updateCommunity(planet.doc, change),
-        changeType: change,
-        type: 'community',
-        displayName: planet.nameDoc ? planet.nameDoc.name : planet.doc.name
-      }
+    this.dialogsPromptService.open({
+      ...this.updateCommunity(planet.doc, change),
+      changeType: change,
+      type: 'community',
+      displayName: planet.nameDoc ? planet.nameDoc.name : planet.doc.name
     });
   }
 
@@ -148,11 +146,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
             // update registration request to accepted
             this.couchService.put(`${this.dbName}/${communityId}`, { ...community, registrationRequest: 'accepted' })
           ]),
-          onNext: (data) => {
-            this.requestUpdate.emit();
-            this.editDialog.close();
-          },
-          onError: (error) => this.planetMessageService.showAlert($localize`Planet was not accepted`)
+          onSuccess: () => this.requestUpdate.emit(),
+          errorMessage: $localize`Planet was not accepted`
         };
     }
   }
@@ -171,11 +166,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     const { _id: id, _rev: rev } = community;
     return {
       request: this.pipeRemovePlanetUser(this.couchService.delete(`${this.dbName}/${id}?rev=${rev}`), community),
-      onNext: ([ data, userRes ]) => {
-        this.requestUpdate.emit();
-        this.editDialog.close();
-      },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this community`)
+      onSuccess: () => this.requestUpdate.emit(),
+      errorMessage: $localize`There was a problem deleting this community`
     };
   }
 
