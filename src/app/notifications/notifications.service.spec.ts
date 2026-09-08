@@ -83,6 +83,20 @@ describe('NotificationsService', () => {
     ]);
   });
 
+  it('queries canonical and historical notifications for an associated account', () => {
+    expect(notificationUserFilter({
+      _id: 'org.couchdb.user:alex@community-c',
+      name: 'alex@community-c',
+      planetCode: 'community-c',
+      requestId: 'request-1'
+    })).toEqual([
+      { user: 'org.couchdb.user:alex', userPlanetCode: 'community-c' },
+      { user: 'org.couchdb.user:alex', userPlanetCode: { $exists: false } },
+      { user: 'org.couchdb.user:alex@community-c', userPlanetCode: 'community-c' },
+      { user: 'org.couchdb.user:alex@community-c', userPlanetCode: { $exists: false } }
+    ]);
+  });
+
   it('keeps the legacy user filter when the current user has no planet code', () => {
     expect(notificationUserFilter({ name: 'alex' })).toEqual([
       { user: 'org.couchdb.user:alex' }

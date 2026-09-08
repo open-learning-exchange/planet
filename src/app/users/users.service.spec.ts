@@ -49,7 +49,7 @@ describe('UsersService notifications', () => {
     });
   });
 
-  it('cleans associated and code-less task identities when deleting users', () => {
+  it('limits destructive task cleanup to the deleted account origin', () => {
     const { service, tasksService } = createService();
 
     service.deleteUser({
@@ -63,7 +63,7 @@ describe('UsersService notifications', () => {
 
     expect(tasksService.removeAssigneeFromTasks).toHaveBeenCalledWith(
       'org.couchdb.user:alex',
-      [ 'planet-b', 'planet-a' ]
+      'planet-b'
     );
 
     tasksService.removeAssigneeFromTasks.mockClear();
@@ -75,7 +75,7 @@ describe('UsersService notifications', () => {
 
     expect(tasksService.removeAssigneeFromTasks).toHaveBeenCalledWith(
       'org.couchdb.user:legacy',
-      undefined
+      'planet-a'
     );
   });
 
@@ -124,9 +124,10 @@ describe('UsersService notifications', () => {
 
     expect(couchService.findAll).toHaveBeenCalledWith('teams', {
       selector: {
-        userId: 'org.couchdb.user:alex',
+        userId: { $in: [ 'org.couchdb.user:alex', 'org.couchdb.user:alex@planet-b' ] },
         $or: [
           { userPlanetCode: 'planet-b' },
+          { userPlanetCode: 'planet-a' },
           { userPlanetCode: '' },
           { userPlanetCode: { $exists: false } }
         ]

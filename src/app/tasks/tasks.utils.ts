@@ -1,12 +1,9 @@
-import { canonicalUserId } from '../shared/identity.utils';
+import { canonicalUserId, identityMatches, identityPlanetCode } from '../shared/identity.utils';
 
 export interface AssigneeIdentity {
   userId: string;
   userPlanetCode?: string;
 }
-
-const assigneePlanetCode = (assignee: any, localPlanetCode?: string) =>
-  assignee?.userPlanetCode || assignee?.resolvedUserPlanetCode || assignee?.planetCode || localPlanetCode;
 
 export const assigneeIdentityCandidates = (user: any, localPlanetCode?: string): AssigneeIdentity[] => {
   const source = user?.doc ? { ...user.doc, _id: user.doc._id || user._id } : user;
@@ -14,7 +11,7 @@ export const assigneeIdentityCandidates = (user: any, localPlanetCode?: string):
   if (!userId) {
     return [];
   }
-  const planetCodes = new Set<string | undefined>([ assigneePlanetCode(source) ]);
+  const planetCodes = new Set<string | undefined>([ identityPlanetCode(source) ]);
   if ((source.requestId || source.sync) && localPlanetCode) {
     planetCodes.add(localPlanetCode);
   }
@@ -24,12 +21,11 @@ export const assigneeIdentityCandidates = (user: any, localPlanetCode?: string):
 export const assigneeKey = (
   assignee: Partial<AssigneeIdentity> = {}, localPlanetCode?: string
 ): string => assignee.userId ?
-  `${assignee.userId}\u0000${assigneePlanetCode(assignee, localPlanetCode) || ''}` : '';
+  `${assignee.userId}\u0000${identityPlanetCode(assignee, localPlanetCode) || ''}` : '';
 
 export const assigneeMatches = (
   assignee: Partial<AssigneeIdentity>, identity: Partial<AssigneeIdentity>, localPlanetCode?: string
-): boolean => assignee?.userId === identity?.userId &&
-    assigneePlanetCode(assignee, localPlanetCode) === assigneePlanetCode(identity, localPlanetCode);
+): boolean => identityMatches(assignee, identity, localPlanetCode);
 
 export const effectiveAssignees = (task: any): any[] =>
   Array.isArray(task?.assignees) && task.assignees.length > 0 ?
@@ -43,7 +39,7 @@ export const assigneeName = (assignee: any): string => assignee?.userDoc?.fullNa
 
 export const storedAssignee = (assignee: any, localPlanetCode?: string): any => ({
   userId: assignee?.userId,
-  userPlanetCode: assigneePlanetCode(assignee, localPlanetCode),
+  userPlanetCode: identityPlanetCode(assignee, localPlanetCode),
   name: assignee?.name,
   userDoc: assignee?.userDoc?.fullName ? { fullName: assignee.userDoc.fullName } : undefined
 });

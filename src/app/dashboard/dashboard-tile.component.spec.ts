@@ -44,8 +44,7 @@ describe('DashboardTileComponent', () => {
         {} as any,
         {} as any,
         { detectChanges } as any,
-        { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any,
-        { configuration: { code: 'nation' } } as any
+        { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
       ));
     });
 

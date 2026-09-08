@@ -5,7 +5,7 @@ import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments, userPlanetCodeSelector } from '../shared/mangoQueries';
-import { userIdentity } from '../shared/identity.utils';
+import { userIdentityCandidates } from '../shared/identity.utils';
 import { teamIdentityDocs } from '../teams/teams.utils';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -186,11 +186,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getTeamMembership() {
     const configuration = this.stateService.configuration;
-    const identity = userIdentity(this.user, configuration.code);
+    const identities = userIdentityCandidates(this.user, configuration.code);
+    const identity = identities[0];
+    const userIds = [ ...new Set(identities.map(candidate => candidate.userId)) ];
     return this.couchService.findAll('teams', findDocuments({
-      userId: identity.userId,
+      userId: userIds.length === 1 ? identity.userId : { $in: userIds },
       docType: 'membership',
-      ...userPlanetCodeSelector(identity.userPlanetCode)
+      ...userPlanetCodeSelector(...identities.map(candidate => candidate.userPlanetCode))
     })).pipe(
       switchMap((memberships) => forkJoin([
         of(memberships),
@@ -199,7 +201,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       map(([ memberships, teams ]: any[]) => teams
         .filter(team => team.type === undefined || team.type === 'team' || team.type === 'enterprise')
         .map(team => {
-          const matchingMemberships = teamIdentityDocs(memberships, team, identity, configuration.code);
+          const matchingMemberships = teamIdentityDocs(memberships, team, identities, configuration.code);
           return {
             ...team,
             membershipDoc: matchingMemberships.find(membership =>
@@ -224,7 +226,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isEmptyShelf(shelf) {
     return shelf.courseIds.length === 0
       && shelf.meetupIds.length === 0
-      && shelf.myTeamIds.length === 0
       && shelf.resourceIds.length === 0;
   }
 

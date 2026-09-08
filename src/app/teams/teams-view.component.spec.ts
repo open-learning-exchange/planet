@@ -190,7 +190,7 @@ describe('TeamsViewComponent identity', () => {
       (component as any).changeObject('added', request).obs.subscribe();
 
       expect(teamsService.toggleTeamMembership).toHaveBeenCalledWith(team, false, {
-        ...request,
+        userId: request.userId,
         userPlanetCode: 'community',
         docType: 'membership'
       });
@@ -210,7 +210,7 @@ describe('TeamsViewComponent identity', () => {
       (component as any).changeObject('added', request).obs.subscribe();
 
       expect(teamsService.toggleTeamMembership).toHaveBeenCalledWith(team, false, {
-        ...request,
+        userId: request.userId,
         userPlanetCode: 'community',
         docType: 'membership'
       });
@@ -266,17 +266,46 @@ describe('TeamsViewComponent identity', () => {
       expect(teamsService.changeTeamLeadership).toHaveBeenCalledWith(malformedLeader, promoted);
     });
 
-    // Known gap, recorded in the workplan: with no matching row the promotion still writes
-    // isLeader on the new leader while changeTeamLeadership skips demotion, so a team can end with
-    // two leaders. This asserts only that the path is survivable, not that the outcome is correct.
-    it('survives promotion when no persisted leader record matches', () => {
+    it('promotes when the team has no persisted leader record', () => {
       const component = build();
       component.members = [];
       component.leader = { userId: 'org.couchdb.user:missing', userPlanetCode: serverPlanet };
       component.team = { _id: 'team-1' };
 
       expect(() => component.makeLeader({ userId: 'org.couchdb.user:bob' })().subscribe()).not.toThrow();
-      expect(teamsService.changeTeamLeadership).toHaveBeenCalledWith({}, { userId: 'org.couchdb.user:bob' });
+      expect(teamsService.changeTeamLeadership).toHaveBeenCalledWith(undefined, { userId: 'org.couchdb.user:bob' });
+    });
+
+    it('uses the sole persisted leader when the synthesized identity does not match', () => {
+      const component = build();
+      const persistedLeader = { _id: 'leader-1', userId: '', isLeader: true };
+      const promoted = { _id: 'member-1', userId: 'org.couchdb.user:bob' };
+      component.members = [ persistedLeader, promoted ];
+      component.leader = { userId: 'org.couchdb.user:missing', userPlanetCode: serverPlanet };
+      component.team = { _id: 'team-1' };
+
+      component.makeLeader(promoted)().subscribe();
+
+      expect(teamsService.changeTeamLeadership).toHaveBeenCalledWith(persistedLeader, promoted);
+    });
+
+    it('fails closed when multiple persisted leaders already exist', () => {
+      const component = build();
+      const error = vi.fn();
+      component.members = [
+        { _id: 'leader-1', userId: 'one', isLeader: true },
+        { _id: 'leader-2', userId: 'two', isLeader: true }
+      ];
+      component.leader = component.members[0];
+      component.team = { _id: 'team-1' };
+      component.getMembers = vi.fn().mockReturnValue(of([]));
+
+      component.makeLeader({ _id: 'member-1', userId: 'three' })().subscribe({ error });
+
+      expect(error).toHaveBeenCalledWith(expect.objectContaining({
+        message: 'Multiple persisted team leaders must be resolved before promotion.'
+      }));
+      expect(teamsService.changeTeamLeadership).not.toHaveBeenCalled();
     });
 
     it('removes a cancelled associated request from local state with the canonical matcher', () => {
@@ -304,7 +333,7 @@ describe('TeamsViewComponent identity', () => {
       expect(component.userStatus).toBe('unrelated');
     });
 
-    it('excludes both stored and materialized ids from the invite dialog', () => {
+    it('excludes the materialized associated member without hiding the same-named native user', () => {
       const component = build();
       component.members = [ {
         userId: 'org.couchdb.user:ann',
@@ -317,9 +346,25 @@ describe('TeamsViewComponent identity', () => {
       component.openInviteMemberDialog();
 
       expect(dialog.open.mock.calls[0][1].data.excludeIds).toEqual([
-        'org.couchdb.user:ann',
         'org.couchdb.user:ann@community'
       ]);
+    });
+
+    it('recognizes a historical materialized membership for an associated account', () => {
+      const component = build({ user: {
+        _id: 'org.couchdb.user:ann@community',
+        name: 'ann@community',
+        planetCode: 'community',
+        requestId: 'request-1'
+      } });
+      component.team = { _id: 'team-1', teamPlanetCode: 'community' };
+
+      expect(component.isUserInMemberDocs([ {
+        userId: 'org.couchdb.user:ann@community', userPlanetCode: 'community'
+      } ], component.user)).toBe(true);
+      expect(component.isUserInMemberDocs([ {
+        userId: 'org.couchdb.user:ann@community', userPlanetCode: serverPlanet
+      } ], component.user)).toBe(true);
     });
   });
 

@@ -47,7 +47,7 @@ import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { assigneeIdentityCandidates, isTaskAssignedTo } from '../tasks/tasks.utils';
-import { userIdentity } from '../shared/identity.utils';
+import { userIdentity, userIdentityCandidates } from '../shared/identity.utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -393,7 +393,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   // Explicit account origin distinguishes a native user from an associated same-named account.
   // The current server is only the fallback for native/legacy user objects without their own origin.
   private matchesCurrentUser(doc, user = this.user) {
-    return memberCompare(doc, userIdentity(user, this.planetCode), this.team?.teamPlanetCode || this.planetCode);
+    return userIdentityCandidates(user, this.planetCode).some(identity => memberCompare(
+      doc, identity, this.team?.teamPlanetCode || this.planetCode
+    ));
   }
 
   sameMember(member1, member2) {
@@ -606,15 +608,20 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
           message: $localize`Removed: ${memberName}`
         });
-      case 'added':
+      case 'added': {
+        const requestMember = { ...memberDoc };
+        delete requestMember._id;
+        delete requestMember._rev;
+        delete requestMember.docType;
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, {
-            ...memberDoc,
+            ...requestMember,
             userPlanetCode: memberPlanetCode(memberDoc) || this.team.teamPlanetCode || this.planetCode,
             docType: 'membership'
           }),
           message: $localize`Accepted: ${memberName}`
         });
+      }
       case 'rejected':
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
@@ -638,11 +645,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxHeight: '90vh',
       data: {
         okClick: (selected: any[]) => this.addMembers(selected),
-        excludeIds: [ ...new Set(this.members.flatMap(member => [
-          member.userId,
-          member.userDoc?._id,
-          member.userDoc?.doc?._id
-        ]).filter(Boolean)) ],
+        excludeIds: [ ...new Set(this.members.map(member =>
+          member.userDoc?._id || member.userDoc?.doc?._id || member.userId
+        ).filter(Boolean)) ],
         hideChildren: true,
         mode: 'users'
       }
@@ -779,11 +784,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
+    const persistedLeaders = this.members.filter(mem => mem.isLeader);
     const currentLeader = this.members.find(mem => this.leader?._id && mem._id === this.leader._id) ||
       this.members.find(mem => memberCompare(
         mem, this.leader, this.team?.teamPlanetCode || this.planetCode
-      )) || {};
-    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(
+      )) || persistedLeaders[0];
+    return () => (persistedLeaders.length > 1 ?
+      throwError(new Error('Multiple persisted team leaders must be resolved before promotion.')) :
+      this.teamsService.changeTeamLeadership(currentLeader, member)
+    ).pipe(
       catchError(error => this.refreshMembersOnError(error)),
       switchMap(() => this.getMembers())
     );

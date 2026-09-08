@@ -12,8 +12,7 @@ import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { fullName, truncateText } from '../shared/utils';
 import { memberCompare, memberIdentity } from './teams.utils';
-import { canonicalUserId, userIdentity } from '../shared/identity.utils';
-import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
+import { userIdentity, userIdentityCandidates } from '../shared/identity.utils';
 import { notificationRecipient } from '../notifications/notifications.service';
 
 const nameField = {
@@ -204,15 +203,31 @@ export class TeamsService {
       return throwError(new Error('Membership user ID is required.'));
     }
     const deleted = leaveTeam ? { _deleted: true } : {};
-    const membershipProps = this.membershipProps(team, memberInfo, 'membership');
-    const lookupSelector = memberInfo._id ? { _id: memberInfo._id } : membershipProps;
+    const persistedMemberInfo = { ...memberInfo };
+    delete persistedMemberInfo._id;
+    delete persistedMemberInfo._rev;
+    delete persistedMemberInfo.docType;
+    const membershipProps = this.membershipProps(team, persistedMemberInfo, 'membership');
+    const identity = memberIdentity(memberInfo, team);
+    const lookupSelector = {
+      teamId: team._id,
+      docType: 'membership',
+      userId: persistedMemberInfo.userId,
+      ...userPlanetCodeSelector(identity.userPlanetCode)
+    };
     return this.couchService.findAll(this.dbName, findDocuments(lookupSelector)).pipe(
-      map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
+      map((docs) => docs.filter(doc => memberCompare(
+        doc, identity, team.teamPlanetCode
+      ))),
+      switchMap((docs) => leaveTeam && docs.length === 0 ?
+        throwError(new Error('Membership document not found.')) :
+        of(docs.length === 0 ? [ membershipProps ] : docs)
+      ),
       switchMap((membershipDocs: any[]) => this.writeMembershipDocs(
         membershipDocs.map(membershipDoc => this.membershipWriteDoc(
           {
             ...membershipDoc,
-            ...memberInfo,
+            ...persistedMemberInfo,
             ...membershipProps,
             ...(membershipProps.userPlanetCode === undefined && membershipDoc.userPlanetCode !== undefined ?
               { userPlanetCode: membershipDoc.userPlanetCode } : {}),
@@ -369,7 +384,7 @@ export class TeamsService {
     ]).pipe(map(([ membershipDocs, users, attachments ]: any[]) => {
       const usersWithIdentities = users.map(user => ({
         user,
-        identities: assigneeIdentityCandidates(user, this.stateService.configuration.code)
+        identities: userIdentityCandidates(user, this.stateService.configuration.code)
       }));
       return membershipDocs.map(doc => {
         if (doc.docType !== 'membership' && doc.docType !== 'request') {
@@ -404,10 +419,9 @@ export class TeamsService {
   }
 
   sendNotifications(type, members, notificationParams) {
-    const currentUser = {
-      user: canonicalUserId(this.userService.get()),
-      userPlanetCode: this.stateService.configuration.code
-    };
+    const currentUser = notificationRecipient(
+      this.userService.get(), notificationParams.team.teamPlanetCode
+    );
     const notifications = members.filter((user: any) => {
       const recipient = notificationRecipient(user, notificationParams.team.teamPlanetCode);
       return (currentUser.user !== recipient.user || currentUser.userPlanetCode !== recipient.userPlanetCode) &&

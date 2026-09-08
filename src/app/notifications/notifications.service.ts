@@ -21,13 +21,17 @@ export const notificationRecipient = (user: any, legacyPlanetCode?: string) => {
 };
 
 export const notificationUserFilter = (user: any) => {
-  const userId = `org.couchdb.user:${user.name}`;
-  const userFilters = user.planetCode ?
+  const source = { ...user, _id: user._id || `org.couchdb.user:${user.name}` };
+  const recipient = notificationRecipient(source);
+  // Notifications stored before ID normalization address the materialized @planet ID, and writers
+  // outside notificationRecipient still use it, so the reader accepts both forms of the own account ID.
+  const recipientIds = [ ...new Set([ recipient.user, source._id ]) ];
+  const userFilters = recipientIds.flatMap(recipientId => recipient.userPlanetCode ?
     [
-      { user: userId, userPlanetCode: user.planetCode },
-      { user: userId, userPlanetCode: { $exists: false } }
+      { user: recipientId, userPlanetCode: recipient.userPlanetCode },
+      { user: recipientId, userPlanetCode: { $exists: false } }
     ] :
-    [ { user: userId } ];
+    [ { user: recipientId } ]);
   return user.isUserAdmin ? [ ...userFilters, { user: 'SYSTEM' } ] : userFilters;
 };
 

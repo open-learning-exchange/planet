@@ -155,6 +155,31 @@ describe('TeamsService membership writes', () => {
     expect(members[0].userDoc).toBe(userDoc);
   });
 
+  it('resolves a historical materialized membership to its associated user document', () => {
+    const historical = {
+      ...membership,
+      userId: 'org.couchdb.user:alex@community',
+      userPlanetCode: 'planet-a'
+    };
+    const userDoc = {
+      _id: 'org.couchdb.user:alex@community',
+      doc: {
+        _id: 'org.couchdb.user:alex@community',
+        name: 'alex@community',
+        planetCode: 'community',
+        requestId: 'request-1'
+      }
+    };
+    const { service } = createService({
+      findAll: vi.fn().mockImplementation((db: string) => of(db === 'teams' ? [ historical ] : []))
+    }, { users: [ userDoc ] });
+    let members: any[];
+
+    service.getTeamMembers(team).subscribe(result => members = result);
+
+    expect(members[0].userDoc).toBe(userDoc);
+  });
+
   it('rejects a join request by composite identity', () => {
     const request = {
       _id: 'request-1', _rev: '1-request', docType: 'request',
@@ -287,7 +312,7 @@ describe('TeamsService membership writes', () => {
     }));
   });
 
-  it('preserves a supplied revision when no persisted membership document is found', () => {
+  it('does not reuse a supplied id or revision when no persisted membership document is found', () => {
     const supplied = {
       _id: 'membership-supplied',
       _rev: '1-supplied',
@@ -303,11 +328,13 @@ describe('TeamsService membership writes', () => {
 
     service.updateMembershipDoc(team, false, supplied).subscribe({ error });
 
-    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ expect.objectContaining({
-      _id: supplied._id,
-      _rev: supplied._rev,
-      userId: supplied.userId
-    }) ]);
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      teamId: team._id,
+      userId: supplied.userId,
+      teamPlanetCode: team.teamPlanetCode,
+      teamType: team.teamType,
+      docType: 'membership'
+    } ]);
     expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
   });
 
@@ -360,7 +387,16 @@ describe('TeamsService membership writes', () => {
       role: 'Coordinator'
     }).subscribe();
 
-    expect(couchService.findAll.mock.calls[0][1].selector).toEqual({ _id: membership._id });
+    expect(couchService.findAll.mock.calls[0][1].selector).toEqual({
+      teamId: team._id,
+      docType: 'membership',
+      userId: membership.userId,
+      $or: [
+        { userPlanetCode: team.teamPlanetCode },
+        { userPlanetCode: '' },
+        { userPlanetCode: { $exists: false } }
+      ]
+    });
     expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
       ...codelessMembership,
       role: 'Coordinator'
@@ -457,6 +493,54 @@ describe('TeamsService membership writes', () => {
       isLeader: true,
       docType: 'membership'
     }) ]);
+  });
+
+  it('creates a membership separately from the request document when accepting a request', () => {
+    const request = {
+      _id: 'request-1',
+      _rev: '1-request',
+      teamId: team._id,
+      userId: 'org.couchdb.user:ann',
+      userPlanetCode: 'planet-a',
+      docType: 'request'
+    };
+    const { service, couchService } = createService();
+
+    service.updateMembershipDoc(team, false, request).subscribe();
+
+    expect(couchService.findAll.mock.calls[0][1].selector).toEqual(expect.objectContaining({
+      teamId: team._id,
+      docType: 'membership',
+      userId: request.userId
+    }));
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ expect.not.objectContaining({
+      _id: request._id
+    }) ]);
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ expect.objectContaining({
+      userId: request.userId,
+      userPlanetCode: request.userPlanetCode,
+      docType: 'membership'
+    }) ]);
+  });
+
+  it('does not notify an associated actor about their own team action', () => {
+    const associated = {
+      _id: 'org.couchdb.user:ann@community',
+      name: 'ann@community',
+      planetCode: 'community',
+      requestId: 'request-1'
+    };
+    const updateDocument = vi.fn().mockReturnValue(of({}));
+    const { service } = createService({ updateDocument }, {}, {
+      get: vi.fn().mockReturnValue(associated)
+    });
+
+    service.sendNotifications('message', [ associated ], {
+      team: { ...team, teamPlanetCode: 'planet-a' },
+      url: '/teams/view/team-1'
+    }).subscribe();
+
+    expect(updateDocument).toHaveBeenCalledWith('notifications/_bulk_docs', { docs: [] });
   });
 
   it('keeps the notification recipient user and planet code together', () => {
@@ -707,6 +791,21 @@ describe('TeamsService membership writes', () => {
       ...membership,
       _deleted: true
     } ]);
+  });
+
+  it('fails a leave without writing or archiving when no membership matches', () => {
+    const { service, couchService } = createService();
+    const error = vi.fn();
+
+    service.toggleTeamMembership(team, true, {
+      userId: membership.userId,
+      userPlanetCode: membership.userPlanetCode
+    }).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Membership document not found.'
+    }));
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
   });
 
   it('rejects a membership update without a user ID before querying or writing', () => {

@@ -1,4 +1,4 @@
-import { assigneeMatches } from '../tasks/tasks.utils';
+import { identityMatches } from '../shared/identity.utils';
 
 // Keep the resolved view identity behind one accessor so consumers cannot accidentally forget the
 // fallback or reverse its precedence. Explicitly stored identity always wins.
@@ -21,12 +21,14 @@ const memberNameCompare = (member1, member2) => {
 // Single composite-identity comparison for members. Delegates to the task comparator so a member card,
 // a task assignment and a leadership check can never disagree about who a user is.
 export const memberCompare = (member1, member2, localPlanetCode?: string) =>
-  Boolean(member1?.userId) && assigneeMatches(member1, member2 || {}, localPlanetCode);
+  Boolean(member1?.userId) && identityMatches(member1, member2 || {}, localPlanetCode);
 
-export const teamIdentityDocs = (docs: any[], team: any, identity: any, fallbackPlanetCode?: string) =>
-  docs.filter(doc => doc.teamId === team._id && memberCompare(
-    doc, identity, team.teamPlanetCode || fallbackPlanetCode
-  ));
+export const teamIdentityDocs = (docs: any[], team: any, identity: any | any[], fallbackPlanetCode?: string) => {
+  const identities = Array.isArray(identity) ? identity : [ identity ];
+  return docs.filter(doc => doc.teamId === team._id && identities.some(candidate => memberCompare(
+    doc, candidate, team.teamPlanetCode || fallbackPlanetCode
+  )));
+};
 
 export const requestDateCompare = (request1, request2) =>
   (request1.createdDate || 0) - (request2.createdDate || 0) ||  (request1.userId || '').localeCompare(request2.userId || '');

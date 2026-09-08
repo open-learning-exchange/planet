@@ -24,3 +24,25 @@ export const userIdentity = (user: object, fallbackPlanetCode?: string) => {
     userPlanetCode: source?.userPlanetCode || source?.planetCode || fallbackPlanetCode
   };
 };
+
+// Pre-normalization membership rows can carry the locally materialized @planet ID. Keep both IDs
+// paired with the account's single origin when reading or deleting existing identity documents.
+export const userIdentityCandidates = (user: object, fallbackPlanetCode?: string) => {
+  const source = identitySource(user);
+  const identity = userIdentity(source, fallbackPlanetCode);
+  const candidates = [ identity ];
+  if (source?._id && source._id !== identity.userId) {
+    candidates.push({ ...identity, userId: source._id });
+    if (fallbackPlanetCode && fallbackPlanetCode !== identity.userPlanetCode) {
+      candidates.push({ userId: source._id, userPlanetCode: fallbackPlanetCode });
+    }
+  }
+  return candidates;
+};
+
+export const identityPlanetCode = (identity: any, fallbackPlanetCode?: string) =>
+  identity?.userPlanetCode || identity?.resolvedUserPlanetCode || identity?.planetCode || fallbackPlanetCode;
+
+export const identityMatches = (identity1: any, identity2: any, fallbackPlanetCode?: string) =>
+  identity1?.userId === identity2?.userId &&
+  identityPlanetCode(identity1, fallbackPlanetCode) === identityPlanetCode(identity2, fallbackPlanetCode);

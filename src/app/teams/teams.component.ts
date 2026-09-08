@@ -34,7 +34,7 @@ import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { enterpriseJoinAgreement, teamIdentityDocs } from './teams.utils';
 import { userPlanetCodeSelector } from '../shared/mangoQueries';
-import { userIdentity } from '../shared/identity.utils';
+import { userIdentityCandidates } from '../shared/identity.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -191,10 +191,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getMembershipStatus() {
-    const identity = userIdentity(this.user, this.planetCode);
+    const identities = userIdentityCandidates(this.user, this.planetCode);
+    const identity = identities[0];
+    const userIds = [ ...new Set(identities.map(candidate => candidate.userId)) ];
     return this.couchService.findAll(this.dbName, { selector: {
-      userId: identity.userId,
-      ...userPlanetCodeSelector(identity.userPlanetCode)
+      userId: userIds.length === 1 ? identity.userId : { $in: userIds },
+      ...userPlanetCodeSelector(...identities.map(candidate => candidate.userPlanetCode))
     } }).pipe(map((membershipDocs: any[]) => this.userMembership = membershipDocs));
   }
 
@@ -207,8 +209,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     const noVisit = { visitCount: 0, lastVisit: undefined };
     return teamRes.map((res: any) => {
       const doc = res.doc || res;
-      const identity = userIdentity(this.user, this.planetCode);
-      const matchingRows = teamIdentityDocs(this.userMembership, doc, identity, this.planetCode);
+      const identities = userIdentityCandidates(this.user, this.planetCode);
+      const matchingRows = teamIdentityDocs(this.userMembership, doc, identities, this.planetCode);
       const membershipDoc = matchingRows.find(req => req.docType === 'membership') ||
         matchingRows.find(req => req.docType === 'request') || {};
       const visitLog = this.teamActivities.filter(activity => activity.teamId === doc._id).reduce(({ visitCount, lastVisit }, activity) =>

@@ -8,9 +8,8 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
-import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
 import { userPlanetCodeSelector } from '../shared/mangoQueries';
-import { userIdentity } from '../shared/identity.utils';
+import { identityMatches, userIdentity, userIdentityCandidates } from '../shared/identity.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -191,17 +190,15 @@ export class UsersService {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    const taskIdentities = assigneeIdentityCandidates(user, this.stateService.configuration.code);
-    const taskPlanetCodes = taskIdentities.map(({ userPlanetCode }) => userPlanetCode)
-      .filter((code): code is string => !!code);
+    const taskIdentity = userIdentity(user, this.stateService.configuration.code);
     return this.couchService.get('shelf/' + userId).pipe(
       switchMap(shelfUser => forkJoin([
         this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
         this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
         this.deleteUserFromTeams(user),
         this.tasksService.removeAssigneeFromTasks(
-          taskIdentities[0]?.userId || user._id,
-          taskPlanetCodes.length > 0 ? taskPlanetCodes : undefined
+          taskIdentity.userId || user._id,
+          taskIdentity.userPlanetCode
         )
       ])),
       map(() => this.requestUsers(true))
@@ -209,14 +206,19 @@ export class UsersService {
   }
 
   deleteUserFromTeams(user) {
-    const identity = userIdentity(user, this.stateService.configuration.code);
+    const identities = userIdentityCandidates(user, this.stateService.configuration.code);
+    const identity = identities[0];
+    const userIds = [ ...new Set(identities.map(candidate => candidate.userId)) ];
     return this.couchService.findAll('teams', { selector: {
-      userId: identity.userId,
-      ...userPlanetCodeSelector(identity.userPlanetCode)
+      userId: userIds.length === 1 ? identity.userId : { $in: userIds },
+      ...userPlanetCodeSelector(...identities.map(candidate => candidate.userPlanetCode))
     } }).pipe(
       switchMap(teams => {
+        // Missing stored and team origins cannot be attributed safely, so destructive cleanup skips them.
         const docsWithUser = teams
-          .filter((doc: any) => (doc.userPlanetCode || doc.teamPlanetCode) === identity.userPlanetCode)
+          .filter((doc: any) => identities.some(candidate => identityMatches(
+            doc, candidate, doc.teamPlanetCode
+          )))
           .map((doc: any) => ({ ...doc, _deleted: true }));
         return this.couchService.bulkDocs('teams', docsWithUser);
       })

@@ -277,10 +277,11 @@ describe('DashboardComponent', () => {
 
     expect(couchServiceMock.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({
       selector: {
-        userId: 'org.couchdb.user:alex',
+        userId: { $in: [ 'org.couchdb.user:alex', 'org.couchdb.user:alex@community' ] },
         docType: 'membership',
         $or: [
           { userPlanetCode: 'community' },
+          { userPlanetCode: 'earth_code' },
           { userPlanetCode: '' },
           { userPlanetCode: { $exists: false } }
         ]
@@ -310,6 +311,32 @@ describe('DashboardComponent', () => {
 
     expect(teams.map(team => team._id)).toEqual([ 'community-team' ]);
     expect(teams[0].membershipDoc._id).toBe('membership-community');
+  });
+
+  it('loads a historical materialized membership written under the server origin', () => {
+    const user = {
+      _id: 'org.couchdb.user:alex@community',
+      name: 'alex@community',
+      planetCode: 'community',
+      requestId: 'request-1'
+    };
+    const historical = {
+      _id: 'membership-historical',
+      teamId: 'team-1',
+      userId: 'org.couchdb.user:alex@community',
+      userPlanetCode: 'earth_code',
+      docType: 'membership'
+    };
+    couchServiceMock.findAll.mockReturnValue(of([ historical ]));
+    couchServiceMock.bulkGet.mockReturnValue(of([
+      { _id: 'team-1', name: 'Nation Team', teamPlanetCode: 'earth_code' }
+    ]));
+    createComponent(user);
+    let teams: any[];
+
+    component.getTeamMembership().subscribe(result => teams = result);
+
+    expect(teams[0].membershipDoc).toBe(historical);
   });
 
   it('preserves the explicit membership document when a code-less duplicate also survives', () => {
@@ -365,6 +392,15 @@ describe('DashboardComponent', () => {
       [ { _id: 'c' }, { _id: 'a' }, { _id: 'new' }, { _id: 'b' } ],
       [ 'a', 'b', 'c' ]
     ).map(team => team._id)).toEqual([ 'a', 'b', 'c', 'new' ]);
+  });
+
+  it('does not treat saved team ordering as dashboard content', () => {
+    createComponent();
+    component.data = { resources: [], courses: [], meetups: [], myTeams: [] };
+
+    expect(component.isEmptyShelf({
+      resourceIds: [], courseIds: [], meetupIds: [], myTeamIds: [ 'old-team-order' ]
+    })).toBe(true);
   });
 
   it('opens the course dialog with its expected configuration', () => {
