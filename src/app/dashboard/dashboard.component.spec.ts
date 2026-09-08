@@ -215,7 +215,7 @@ describe('DashboardComponent', () => {
       selector: { type: 'survey', status: 'pending', 'user.name': 'johndoe' }
     }));
     expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
-      selector: { type: 'exam', status: 'requires grading', 'user.name': { '$gt': null } }
+      selector: { type: 'exam', status: 'requires grading', 'user.name': { $gt: null } }
     }));
   });
 

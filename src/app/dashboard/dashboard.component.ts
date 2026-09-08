@@ -105,7 +105,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getSurveys();
     this.getExams();
     this.initDashboard();
-    this.couchService.findAll('login_activities', findDocuments({ 'user': this.user.name }, [ 'user' ], [], 1000))
+    this.couchService.findAll('login_activities', findDocuments({ user: this.user.name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
           console.warn('Error fetching login activities');
@@ -169,12 +169,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.bulkGet(db, shelf.filter(id => id))
       .pipe(
-        map(docs => {
-          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
-        }),
-        catchError(() => {
-          return of([]);
-        })
+        map(docs => docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }))),
+        catchError(() => of([]))
       );
   }
 
@@ -214,7 +210,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.submissionsService.getSubmissions(findDocuments({
       type,
       status,
-      'user.name': username || { '$gt': null }
+      'user.name': username || { $gt: null }
     }));
   }
 

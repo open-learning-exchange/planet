@@ -47,12 +47,12 @@ export class ConfigurationCheckService {
 
   checkAdminExistence() {
     return this.couchService.get('_users/_all_docs').pipe(
-      tap((data) => {
-        return true; // user can see data so there is no admin
-      }),
-      catchError((error) => {
-        return of(false); // user doesn't have permission so there is an admin
-      })
+      tap((data) =>
+        true // user can see data so there is no admin
+      ),
+      catchError((error) =>
+        of(false) // user doesn't have permission so there is an admin
+      )
     );
   }
 

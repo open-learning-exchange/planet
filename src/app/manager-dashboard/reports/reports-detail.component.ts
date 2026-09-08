@@ -450,7 +450,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getTeams() {
-    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any[]) => {
+    this.couchService.findAll('teams', { selector: { status: 'active' } }).subscribe((teams: any[]) => {
       this.teams = teams
         .filter(team => team.teamPlanetCode === this.planetCode && team.name)
         .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
@@ -611,16 +611,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
-      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
+      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
     ];
-    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const teamField = { placeholder: $localize`Team`, name: 'team', options: teamOptions, type: 'selectbox' };
     const sortingOptions = sortingOptionsMap[reportType];
     const fields = [
       ...commonFields,
       ...(reportType === 'health' ? [] : [ teamField ]),
       ...(sortingOptions && sortingOptions.length > 0
-        ? [ { 'placeholder': $localize`Sort By`, 'name': 'sortBy', 'options': sortingOptions, 'type': 'selectbox' } ]
+        ? [ { placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' } ]
         : [])
     ];
     const formGroup = {
@@ -879,16 +879,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   exportDocView(reportType: string, dateRange: any, members: any[], sortBy: string) {
     let data = {
-      'resourceViews': this.resourceActivities.total.data,
-      'courseViews': this.courseActivities.total.data,
-      'stepCompletions': this.progress.steps.data,
-      'health': this.healthComponent && this.healthComponent.examinations
+      resourceViews: this.resourceActivities.total.data,
+      courseViews: this.courseActivities.total.data,
+      stepCompletions: this.progress.steps.data,
+      health: this.healthComponent && this.healthComponent.examinations
     }[reportType];
     const title = {
-      'resourceViews': $localize`Resource Views`,
-      'courseViews': $localize`:@@course-views-single:Course Views`,
-      'health': $localize`Community Health`,
-      'stepCompletions': $localize`Courses Progress` }[reportType];
+      resourceViews: $localize`Resource Views`,
+      courseViews: $localize`:@@course-views-single:Course Views`,
+      health: $localize`Community Health`,
+      stepCompletions: $localize`Courses Progress` }[reportType];
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }

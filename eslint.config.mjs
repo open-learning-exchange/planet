@@ -158,7 +158,9 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
             },
         }],
 
+        "@typescript-eslint/no-unused-expressions": "error",
         "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
 
@@ -249,6 +251,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         radix: "error",
         "use-isnan": "error",
         "valid-typeof": "off",
+        "arrow-body-style": "error",
         "arrow-parens": "off",
         "comma-dangle": "off",
         curly: "error",
@@ -262,6 +265,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
+        "quote-props": ["error", "as-needed"],
         "no-var": "error",
         "object-shorthand": ["error", "always"],
         quotes: "off",

@@ -23,6 +23,7 @@ import { ChatOutputDirective } from '../shared/chat-output.directive';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
+import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
 import { FullNamePipe } from '../shared/full-name.pipe';
 
 @Component({
@@ -63,11 +64,13 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
+  @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
+  @Input() customLabels: string[] = [];
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
@@ -76,7 +79,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
-  labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
+  labels = { listed: [], all: [ ...DEFAULT_VOICE_LABELS ] };
   teamLabels = [];
   previewLimit = 500;
   deviceType: DeviceType;
@@ -111,7 +114,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
-    this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
+    this.updateLabelsAll();
     if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
       const viewIn = this.item.doc.viewIn[0];
       if (viewIn.name) {
@@ -124,12 +127,31 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.handleItemExpansion();
   }
 
+  updateLabelsAll() {
+    this.labels.all = dedupeVoiceLabels([ ...DEFAULT_VOICE_LABELS, ...this.customLabels ]);
+    this.labels.listed = this.labels.all.filter(label =>
+      !(this.item.doc.labels || []).some(itemLabel => voiceLabelsEqual(itemLabel, label))
+    );
+  }
+
+  get canEditLabels(): boolean {
+    const originPlanet = this.item.doc.createdOn || this.item.doc.messagePlanetCode || this.item.doc.user?.planetCode;
+    return this.editable && originPlanet === this.planetCode && this.canModifyNews;
+  }
+
+  get canModifyNews(): boolean {
+    return this.item.doc.user?.name === this.currentUser.name || this.currentUser.isUserAdmin;
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
   addReply(news) {
+    if (this.readOnly) {
+      return;
+    }
     const label = this.formLabel(news);
     this.authService.checkAuthenticationStatus().subscribe(() => {
       this.updateNews.emit({
@@ -175,18 +197,21 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     const link = this.router.url;
     const notification = {
       ...recipient,
-      'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      message:  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
-      'priority': 1,
-      'type': 'replyMessage',
-      'replyTo': news._id,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      priority: 1,
+      type: 'replyMessage',
+      replyTo: news._id,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
     };
     this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {
+    if (this.readOnly) {
+      return;
+    }
     const label = this.formLabel(news);
     const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
@@ -206,19 +231,28 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openDeleteDialog(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.deleteNews.emit(news);
   }
 
   shareStory(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.shareNews.emit({ news, local: this.targetLocalPlanet });
   }
 
   labelClick(label, action) {
+    if (this.readOnly && action !== 'select') {
+      return;
+    }
     this.changeLabels.emit({ label, action, news: this.item.doc });
   }
 
   shouldShowShare() {
-    return this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
+    return !this.readOnly && this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 

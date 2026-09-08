@@ -21,13 +21,13 @@ interface FullscreenState {
 }
 
 @Component({
-  'selector': 'planet-markdown-textbox',
-  'templateUrl': './planet-markdown-textbox.component.html',
-  'styleUrls': ['planet-markdown-textbox.scss'],
-  'providers': [
+  selector: 'planet-markdown-textbox',
+  templateUrl: './planet-markdown-textbox.component.html',
+  styleUrls: ['planet-markdown-textbox.scss'],
+  providers: [
     { provide: MatFormFieldControl, useExisting: PlanetMarkdownTextboxComponent },
   ],
-  'encapsulation': ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
   imports: [TdTextEditorComponent, NgClass, FormsModule]
 })
 export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {

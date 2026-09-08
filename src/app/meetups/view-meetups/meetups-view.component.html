@@ -13,13 +13,15 @@
         @if (editable === true) {
           @if ((canManage && !meetupDetail.isTask) || meetupDetail.isTask) {
             <button mat-stroked-button
-              (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button">
+              (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button"
+              i18n-aria-label aria-label="Edit" matTooltip="Edit" i18n-matTooltip>
               <mat-icon>edit</mat-icon>
             </button>
           }
           @if ((canManage && !meetupDetail.isTask) || meetupDetail.isTask) {
             <button mat-stroked-button
-              (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button">
+              (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button"
+              i18n-aria-label aria-label="Delete" matTooltip="Delete" i18n-matTooltip>
               <mat-icon>delete</mat-icon>
             </button>
           }
@@ -76,8 +78,15 @@
       @if (meetupDetail?.meetupLink) {
         <p><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener noreferrer">{{meetupDetail?.meetupLink}}</a></p>
       }
-      @if (meetupDetail?.assignee) {
-        <p><b i18n>Assigned to:</b><a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openAssigneeProfile($event)" (keydown.space)="openAssigneeProfile($event)" (click)="openAssigneeProfile($event)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
+      @let meetupAssignees = effectiveAssignees(meetupDetail);
+      @if (meetupAssignees.length > 0) {
+        <p><b i18n>Assigned to:</b>{{' '}}
+          @for (assignee of meetupAssignees; track assigneeTrackKey(assignee); let isLast = $last) {
+            <a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openProfile(assignee.name, assignee.userPlanetCode, $event)"
+              (keydown.space)="openProfile(assignee.name, assignee.userPlanetCode, $event)"
+              (click)="openProfile(assignee.name, assignee.userPlanetCode, $event)">{{assigneeName(assignee)}}</a>{{isLast ? '' : ', '}}
+          }
+        </p>
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>

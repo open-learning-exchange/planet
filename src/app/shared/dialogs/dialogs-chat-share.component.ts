@@ -142,9 +142,9 @@ export class DialogsChatShareComponent implements OnInit {
   }
 
   getTeams() {
-    const allTeams$ = this.couchService.findAll('teams', { 'selector': { 'status': 'active' } });
+    const allTeams$ = this.couchService.findAll('teams', { selector: { status: 'active' } });
     const userTeams$ = this.couchService.findAll('teams', {
-      'selector': { 'userId': this.user._id, 'userPlanetCode': this.user.planetCode }
+      selector: { userId: this.user._id, userPlanetCode: this.user.planetCode }
     });
 
     forkJoin([ allTeams$, userTeams$ ]).pipe(
@@ -180,7 +180,7 @@ export class DialogsChatShareComponent implements OnInit {
     ).subscribe((membersData) => {
       this.conversation.chat = true;
       this.newsService.postNews({
-        viewIn: [ { '_id': linkId, section: 'teams', public: false } ],
+        viewIn: [ { _id: linkId, section: 'teams', public: false } ],
         messageType: teamType,
         messagePlanetCode: this.teamInfo.planetCode,
         ...this.conversation
