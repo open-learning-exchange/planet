@@ -181,6 +181,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
           onError: () => {}
         },
         showMainParagraph: false,
+        spinnerOn: false,
         extraMessage: this.deletePromptMessage || $localize`Are you sure you want to delete the following step?`,
         displayName: stepTitle
       }
@@ -195,7 +196,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
       return;
     }
     if (steps instanceof FormArray) {
-      this.moveFormArrayStep(index, direction, steps);
+      if (this.moveFormArrayStep(index, direction, steps)) {
+        this.stepsChange.emit(steps.value);
+      }
     }
   }
 
@@ -206,15 +209,16 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
   }
 
-  moveFormArrayStep<TControl extends PlanetStepControl>(index: number, direction: number, steps: FormArray<TControl>) {
+  moveFormArrayStep<TControl extends PlanetStepControl>(index: number, direction: number, steps: FormArray<TControl>): boolean {
     const step = steps.at(index) as TControl | null;
     if (!step) {
-      return;
+      return false;
     }
     steps.removeAt(index);
     if (direction !== 0) {
       steps.insert(index + direction, step);
     }
+    return true;
   }
 
   changeStep(direction: number) {

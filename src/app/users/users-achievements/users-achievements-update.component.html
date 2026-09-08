@@ -69,7 +69,7 @@
               }
             </a>
           }
-          <planet-step-list [steps]="achievements" [ignoreClick]="true" [confirmDelete]="true" nameProp="title" defaultName="Achievement" i18n-defaultName deletePromptMessage="Are you sure you want to delete the following achievement?" i18n-deletePromptMessage>
+          <planet-step-list [steps]="achievements" [ignoreClick]="true" [confirmDelete]="true" nameProp="title" defaultName="Achievement" i18n-defaultName deletePromptMessage="Are you sure you want to delete the following achievement?" i18n-deletePromptMessage (stepsChange)="resetAchievementSort()">
             @for (achievement of achievements.controls; track achievement; let i = $index) {
               <planet-step-list-item>
                 <span matListItemTitle>{{achievement.value.title || achievement.value}}</span>

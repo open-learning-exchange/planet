@@ -11,7 +11,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
+import { PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { normalizedContentType } from '../../shared/utils';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
@@ -21,6 +21,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
@@ -107,6 +108,7 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatListItemMeta,
     MatButton,
     MatCheckbox,
+    MatTooltip,
     SubmitDirective,
     FileUploadComponent,
     TruncateTextPipe,
@@ -156,7 +158,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService,
     private dialog: MatDialog
   ) {
     this.createForm();
@@ -197,10 +198,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.captureInitialState();
         this.onFormChanges();
       });
-
-    this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
-      () => this.editForm.controls.dateSortOrder.setValue('none')
-    );
   }
 
   private captureInitialState() {
@@ -387,6 +384,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.achievements.setValue(this.sortDate(this.achievements.value, sort));
   }
 
+  resetAchievementSort() {
+    this.editForm.controls.dateSortOrder.setValue('none');
+  }
+
   sortDate(achievements: any[], sortOrder: DateSortOrder = 'none') {
     if (sortOrder === 'none') {
       return achievements;
@@ -446,11 +447,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
             dialogRef.close();
             this.resumeMarkedForDeletion = true;
             this.currentResumeFileName = '';
-            this.clearResumeSelection();
+            this.updateUnsavedChangesFlag();
           },
           onError: () => {}
         },
         showMainParagraph: false,
+        spinnerOn: false,
         extraMessage: $localize`Are you sure you want to remove the existing CV/Resume?`,
         displayName: this.currentResumeFileName
       }

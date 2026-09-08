@@ -51,6 +51,7 @@ describe('PlanetStepListComponent', () => {
 
     const dialogConfig = dialogMock.open.mock.calls[0][1];
     expect(dialogConfig.data.showMainParagraph).toBe(false);
+    expect(dialogConfig.data.spinnerOn).toBe(false);
     expect(dialogConfig.data.extraMessage).toBe('Are you sure you want to delete the following step?');
     expect(dialogConfig.data.displayName).toBe('Step 1');
   });
@@ -121,12 +122,15 @@ describe('PlanetStepListComponent', () => {
       new FormGroup({ stepTitle: new FormControl('Step 2') })
     ]);
     component.steps = steps;
+    const stepsChangeSpy = vi.spyOn(component.stepsChange, 'emit');
 
     component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    expect(stepsChangeSpy).not.toHaveBeenCalled();
     const dialogConfig = dialogMock.open.mock.calls[0][1];
     dialogConfig.data.okClick.onNext();
 
     expect(steps.value).toEqual([{ stepTitle: 'Step 2' }]);
+    expect(stepsChangeSpy).toHaveBeenCalledWith([{ stepTitle: 'Step 2' }]);
   });
 
   it('should keep the open step selected when deleting an earlier step', () => {
