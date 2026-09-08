@@ -4,13 +4,17 @@ import { switchMap, map, take } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments, userPlanetCodeSelector } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { fullName, truncateText } from '../shared/utils';
+import { memberCompare, memberIdentity } from './teams.utils';
+import { canonicalUserId, userIdentity } from '../shared/identity.utils';
+import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
+import { notificationRecipient } from '../notifications/notifications.service';
 
 const nameField = {
   type: 'textbox',
@@ -64,8 +68,9 @@ export class TeamsService {
     private validatorService: ValidatorService
   ) {}
 
-  addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
+  addTeamDialog(user: any, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
+    const creatorIdentity = userIdentity(user, configuration.code);
     const key = `${team._id ? 'update' : 'create'}-${type === 'enterprise' ? 'enterprise' : 'team'}`;
     const title = {
       'create-team': $localize`:@@create-team:Create Team`,
@@ -93,14 +98,24 @@ export class TeamsService {
     return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
       .pipe(
         switchMap((response: any) => response !== undefined ?
-          this.updateTeam(
-            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
-          ) :
+          this.updateTeam({
+            limit: 12,
+            status: 'active',
+            createdDate: this.couchService.datePlaceholder,
+            teamPlanetCode: configuration.code,
+            parentCode: configuration.parentCode,
+            ...(!team._id ? {
+              createdBy: creatorIdentity.userId,
+              createdByPlanetCode: creatorIdentity.userPlanetCode
+            } : {}),
+            ...team,
+            ...response,
+            type
+          }) :
           empty()
         ),
         switchMap((response) => !team._id ?
-          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
+          this.toggleTeamMembership(response, false, { ...creatorIdentity, isLeader: true }) :
           of(response)
         )
       );
@@ -132,31 +147,39 @@ export class TeamsService {
   }
 
   requestToJoinTeam(team, user) {
-    const userPlanetCode = this.stateService.configuration.code;
+    const identity = userIdentity(user, this.stateService.configuration.code);
     return this.couchService.updateDocument(this.dbName, {
       createdDate: this.couchService.datePlaceholder,
-      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
+      ...this.membershipProps(team, identity, 'request')
     }).pipe(
       switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
     );
   }
 
   removeFromRequests(team, memberInfo) {
-    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, memberInfo, 'request'))).pipe(
-      switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
+    const { userId, userPlanetCode } = memberIdentity(memberInfo, team);
+    if (!userId) {
+      return throwError(new Error('Request user ID is required.'));
+    }
+    return this.couchService.findAll(this.dbName, findDocuments({
+      teamId: team._id,
+      docType: 'request',
+      userId,
+      ...userPlanetCodeSelector(userPlanetCode)
+    })).pipe(
+      switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs
+        .filter(doc => memberCompare(doc, { userId, userPlanetCode }, team.teamPlanetCode))
+        .map(doc => ({ ...doc, _deleted: true }))))
     );
   }
 
   cancelJoinRequest(team) {
     const user = this.userService.get();
-    return this.removeFromRequests(team, { userId: user._id, userPlanetCode: this.stateService.configuration.code });
+    return this.removeFromRequests(team, userIdentity(user, this.stateService.configuration.code));
   }
 
   toggleTeamMembership(team, leaveTeam, memberInfo) {
-    return (memberInfo.fromShelf === true && leaveTeam === true ?
-      this.updateShelf(memberInfo) :
-      this.updateMembershipDoc(team, leaveTeam, memberInfo)
-    ).pipe(
+    return this.updateMembershipDoc(team, leaveTeam, memberInfo).pipe(
       switchMap(() => leaveTeam ? this.isTeamEmpty(team) : of(team)),
       switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
       switchMap((newTeam) => of({ ...team, ...newTeam }))
@@ -182,7 +205,8 @@ export class TeamsService {
     }
     const deleted = leaveTeam ? { _deleted: true } : {};
     const membershipProps = this.membershipProps(team, memberInfo, 'membership');
-    return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
+    const lookupSelector = memberInfo._id ? { _id: memberInfo._id } : membershipProps;
+    return this.couchService.findAll(this.dbName, findDocuments(lookupSelector)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
       switchMap((membershipDocs: any[]) => this.writeMembershipDocs(
         membershipDocs.map(membershipDoc => this.membershipWriteDoc(
@@ -201,14 +225,18 @@ export class TeamsService {
   }
 
   addMembers(team, selected, requests) {
-    if (selected.some(user => !user?._id)) {
+    const selectedIdentities = selected.map(user => userIdentity(
+      user, team.teamPlanetCode || this.stateService.configuration.code
+    ));
+    if (selectedIdentities.some(identity => !identity.userId)) {
       return throwError(new Error('Membership user ID is required.'));
     }
-    const selectedUserIds = new Set(selected.map(user => user._id));
-    const newMembershipDocs = selected.map(user =>
-      this.membershipProps(team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
+    const newMembershipDocs = selectedIdentities.map(identity =>
+      this.membershipProps(team, identity, 'membership')
     );
-    const requestsToDelete = requests.filter(request => selectedUserIds.has(request.userId))
+    const requestsToDelete = requests.filter(request => selectedIdentities.some(identity =>
+      memberCompare(request, identity, team.teamPlanetCode)
+    ))
       .map(({ _id, _rev }) => ({ _id, _rev, _deleted: true }));
     return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
   }
@@ -229,9 +257,8 @@ export class TeamsService {
   }
 
   changeTeamLeadership(oldLeader, newLeader) {
-    const shouldDemoteOldLeader = Boolean(oldLeader?._id) && oldLeader._id !== newLeader?._id && oldLeader.fromShelf !== true;
+    const shouldDemoteOldLeader = Boolean(oldLeader?._id) && oldLeader._id !== newLeader?._id;
     return this.freshMembershipDoc(newLeader).pipe(
-      // Shelf revisions belong to another database, so preserving them makes unsupported promotions fail closed with a conflict.
       switchMap(freshNewLeader => this.writeMembershipDocs([
         this.membershipWriteDoc(freshNewLeader, { isLeader: true })
       ])),
@@ -244,14 +271,6 @@ export class TeamsService {
         ) : of(promotionResponse)
       )
     );
-  }
-
-  // Included for backwards compatibility for older teams where membership was stored in shelf.  Only for member leaving a team.
-  updateShelf(membershipDoc) {
-    const { userId, teamId } = membershipDoc;
-    return this.couchService.get('shelf/' + userId).pipe(switchMap(shelf =>
-      this.userService.updateShelf(shelf.myTeamIds.filter(myTeamId => myTeamId !== teamId), 'myTeamIds')
-    ));
   }
 
   // Membership documents contain exactly this persisted schema; other member fields are enriched view data.
@@ -298,7 +317,7 @@ export class TeamsService {
     if (!member?.userId) {
       return throwError(new Error('Membership user ID is required.'));
     }
-    return member._id && member.fromShelf !== true ?
+    return member._id ?
       this.couchService.get(`${this.dbName}/${member._id}`).pipe(map(doc => ({ ...member, ...doc }))) :
       of(member);
   }
@@ -345,17 +364,28 @@ export class TeamsService {
     this.usersService.requestUserData();
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments(selector)),
-      this.couchService.findAll('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0)),
       this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
-    ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
-      ...membershipDocs.map(doc => ({
-        ...doc,
-        userDoc: users.find(user => (user.doc.couchId || user._id) === doc.userId && user.doc.planetCode === doc.userPlanetCode),
-        attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
-      })),
-      ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
-    ]));
+    ]).pipe(map(([ membershipDocs, users, attachments ]: any[]) => {
+      const usersWithIdentities = users.map(user => ({
+        user,
+        identities: assigneeIdentityCandidates(user, this.stateService.configuration.code)
+      }));
+      return membershipDocs.map(doc => {
+        if (doc.docType !== 'membership' && doc.docType !== 'request') {
+          return doc;
+        }
+        const identity = memberIdentity(doc, team);
+        return {
+          ...doc,
+          resolvedUserPlanetCode: identity.userPlanetCode,
+          userDoc: usersWithIdentities.find(({ identities }) => identities.some(
+            candidate => memberCompare(candidate, identity, team.teamPlanetCode)
+          ))?.user,
+          attachmentDoc: attachments.find(attachment => attachment._id === `${identity.userId}@${identity.userPlanetCode}`)
+        };
+      });
+    }));
   }
 
   getTeamResources(linkDocs: any[]) {
@@ -374,9 +404,14 @@ export class TeamsService {
   }
 
   sendNotifications(type, members, notificationParams) {
+    const currentUser = {
+      user: canonicalUserId(this.userService.get()),
+      userPlanetCode: this.stateService.configuration.code
+    };
     const notifications = members.filter((user: any) => {
-      const userId = user.userId || user._id;
-      return this.userService.get()._id !== userId && user.name !== 'satellite';
+      const recipient = notificationRecipient(user, notificationParams.team.teamPlanetCode);
+      return (currentUser.user !== recipient.user || currentUser.userPlanetCode !== recipient.userPlanetCode) &&
+        user.name !== 'satellite';
     }).map((user: any) => this.teamNotification(this.teamNotificationMessage(type, notificationParams), type, user, notificationParams));
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
@@ -414,10 +449,9 @@ export class TeamsService {
 
   teamNotification(message, type, user, { team, url }) {
     const link = url.split(';')[0];
-    const userId = user.userId || user._id;
     const linkParams = type === 'request' ? { activeTab: 'applicantTab' } : {};
     return {
-      user: userId,
+      ...notificationRecipient(user, team.teamPlanetCode),
       message,
       link,
       linkParams,
@@ -425,8 +459,7 @@ export class TeamsService {
       type: 'team',
       priority: 1,
       status: 'unread',
-      time: this.couchService.datePlaceholder,
-      userPlanetCode: user.userPlanetCode
+      time: this.couchService.datePlaceholder
     };
   }
 

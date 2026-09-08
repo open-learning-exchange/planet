@@ -7,22 +7,35 @@ describe('TeamsService membership writes', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  const createService = (couchOverrides: any = {}) => {
+  const createService = (
+    couchOverrides: any = {}, usersServiceOverrides: any = {}, userServiceOverrides: any = {}
+  ) => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([])),
       get: vi.fn().mockReturnValue(of({})),
       bulkDocs: vi.fn().mockReturnValue(of(successfulBulkResponse)),
       ...couchOverrides
     };
+    const usersService = {
+      requestUserData: vi.fn(),
+      usersListener: vi.fn().mockReturnValue(of(usersServiceOverrides.users || []))
+    };
+    const userService = {
+      get: vi.fn().mockReturnValue({
+        _id: 'org.couchdb.user:current', name: 'current', planetCode: 'planet-a'
+      }),
+      addImageForReplication: vi.fn().mockReturnValue(of({})),
+      ...userServiceOverrides
+    };
     const service = new TeamsService(
       couchService as any,
       {} as any,
-      {} as any,
-      {} as any,
-      {} as any,
+      userService as any,
+      usersService as any,
+      { configuration: { code: 'planet-a' } } as any,
       {} as any
     );
-    return { service, couchService };
+    return { service, couchService, userService, usersService };
   };
 
   const team = {
@@ -103,28 +116,197 @@ describe('TeamsService membership writes', () => {
     } ]);
   });
 
-  it('preserves shelf identity when no persisted membership document is found', () => {
-    const shelfMembership = {
-      _id: 'org.couchdb.user:shelf-member',
-      _rev: '1-shelf',
-      fromShelf: true,
-      myTeamIds: [ team._id ],
+  it('reads team members from membership documents only, without scanning shelf', () => {
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockImplementation((db: string) => of(db === 'teams' ? [ membership ] : []))
+    });
+    let members: any[];
+
+    service.getTeamMembers(team).subscribe(result => members = result);
+
+    expect(couchService.findAll.mock.calls.map(call => call[0])).toEqual([ 'teams', 'attachments' ]);
+    expect(members.length).toBe(1);
+  });
+
+  it('resolves a membership with no planet code from the team origin without persisting the inference', () => {
+    const codeless = { ...membership, userPlanetCode: undefined };
+    const sameNamedElsewhere = { _id: membership.userId, doc: { planetCode: team.teamPlanetCode } };
+    const { service } = createService({
+      findAll: vi.fn().mockImplementation((db: string) => of(db === 'teams' ? [ codeless ] : []))
+    }, { users: [ sameNamedElsewhere ] });
+    let members: any[];
+
+    service.getTeamMembers(team).subscribe(result => members = result);
+
+    expect(members[0].userPlanetCode).toBeUndefined();
+    expect(members[0].resolvedUserPlanetCode).toBe(team.teamPlanetCode);
+    expect(members[0].userDoc).toBe(sameNamedElsewhere);
+  });
+
+  it('resolves the user document for a membership carrying an explicit planet code', () => {
+    const userDoc = { _id: membership.userId, doc: { planetCode: membership.userPlanetCode } };
+    const { service } = createService({
+      findAll: vi.fn().mockImplementation((db: string) => of(db === 'teams' ? [ membership ] : []))
+    }, { users: [ userDoc ] });
+    let members: any[];
+
+    service.getTeamMembers(team).subscribe(result => members = result);
+
+    expect(members[0].userDoc).toBe(userDoc);
+  });
+
+  it('rejects a join request by composite identity', () => {
+    const request = {
+      _id: 'request-1', _rev: '1-request', docType: 'request',
+      userId: 'org.couchdb.user:ann', userPlanetCode: 'planet-a'
+    };
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ request ]))
+    });
+
+    service.removeFromRequests(team, { userId: 'org.couchdb.user:ann', userPlanetCode: 'planet-a' }).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({
+      selector: expect.objectContaining({
+        teamId: team._id,
+        docType: 'request',
+        userId: 'org.couchdb.user:ann',
+        $or: [
+          { userPlanetCode: 'planet-a' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      })
+    }));
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ { ...request, _deleted: true } ]);
+  });
+
+  it('does not widen request rejection to another planet sharing the user id', () => {
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([]))
+    });
+
+    service.removeFromRequests(team, { userId: 'org.couchdb.user:ann', userPlanetCode: 'community' }).subscribe();
+
+    // 'planet-a' is this server. Including it here would tombstone a different same-named user's request.
+    expect(couchService.findAll.mock.calls[0][1].selector.$or).toEqual([
+      { userPlanetCode: 'community' },
+      { userPlanetCode: '' },
+      { userPlanetCode: { $exists: false } }
+    ]);
+  });
+
+  it('rejects a request stored without a planet code as well as one carrying the team origin', () => {
+    const codelessRequest = {
+      _id: 'request-codeless', _rev: '1-request', docType: 'request', userId: 'org.couchdb.user:ann'
+    };
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ codelessRequest ]))
+    });
+
+    const remoteTeam = { ...team, teamPlanetCode: 'community' };
+    service.removeFromRequests(remoteTeam, { userId: 'org.couchdb.user:ann' }).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({
+      selector: expect.objectContaining({
+        $or: [
+          { userPlanetCode: 'community' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      })
+    }));
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ { ...codelessRequest, _deleted: true } ]);
+  });
+
+  it('does not delete a code-less team-origin request when removing an explicit foreign request', () => {
+    const explicit = {
+      _id: 'request-foreign', _rev: '1-foreign', docType: 'request',
+      userId: 'org.couchdb.user:ann', userPlanetCode: 'community'
+    };
+    const codeless = {
+      _id: 'request-local', _rev: '1-local', docType: 'request', userId: explicit.userId
+    };
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ explicit, codeless ]))
+    });
+
+    service.removeFromRequests(team, {
+      userId: explicit.userId, userPlanetCode: explicit.userPlanetCode
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ { ...explicit, _deleted: true } ]);
+  });
+
+  it('rejects request cleanup without a user id before issuing a broad query', () => {
+    const { service, couchService } = createService();
+    const error = vi.fn();
+
+    service.removeFromRequests(team, { userPlanetCode: 'planet-a' }).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Request user ID is required.'
+    }));
+    expect(couchService.findAll).not.toHaveBeenCalled();
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
+  });
+
+  it('writes and cancels an associated join request under its explicit origin', () => {
+    const associated = {
+      _id: 'org.couchdb.user:ann@community',
+      name: 'ann@community',
+      planetCode: 'community',
+      requestId: 'request-1'
+    };
+    const request = {
+      _id: 'request-doc', _rev: '1-request', userId: 'org.couchdb.user:ann', userPlanetCode: 'community'
+    };
+    const updateDocument = vi.fn().mockReturnValue(of({ id: request._id, rev: request._rev }));
+    const { service, couchService } = createService({
+      updateDocument,
+      findAll: vi.fn().mockReturnValue(of([ request ]))
+    }, {}, { get: vi.fn().mockReturnValue(associated) });
+
+    service.requestToJoinTeam(team, associated).subscribe();
+    service.cancelJoinRequest(team).subscribe();
+
+    expect(updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
+      userId: 'org.couchdb.user:ann',
+      userPlanetCode: 'community',
+      docType: 'request'
+    }));
+    expect(couchService.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({
+      selector: expect.objectContaining({
+        userId: 'org.couchdb.user:ann',
+        $or: [
+          { userPlanetCode: 'community' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      })
+    }));
+  });
+
+  it('preserves a supplied revision when no persisted membership document is found', () => {
+    const supplied = {
+      _id: 'membership-supplied',
+      _rev: '1-supplied',
       teamId: team._id,
-      userId: 'org.couchdb.user:shelf-member'
+      userId: 'org.couchdb.user:supplied'
     };
     const { service, couchService } = createService({
       bulkDocs: vi.fn().mockReturnValue(of({
-        res: [ { id: shelfMembership._id, error: 'conflict', reason: 'Document update conflict.' } ]
+        res: [ { id: supplied._id, error: 'conflict', reason: 'Document update conflict.' } ]
       }))
     });
     const error = vi.fn();
 
-    service.updateMembershipDoc(team, false, shelfMembership).subscribe({ error });
+    service.updateMembershipDoc(team, false, supplied).subscribe({ error });
 
     expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ expect.objectContaining({
-      _id: shelfMembership._id,
-      _rev: shelfMembership._rev,
-      userId: shelfMembership.userId
+      _id: supplied._id,
+      _rev: supplied._rev,
+      userId: supplied.userId
     }) ]);
     expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
   });
@@ -146,15 +328,14 @@ describe('TeamsService membership writes', () => {
     } ]);
   });
 
-  it('preserves stored planet identity when a stale shelf row matches a persisted membership', () => {
+  it('preserves stored planet identity when the update omits a planet code', () => {
     const { service, couchService } = createService({
       findAll: vi.fn().mockReturnValue(of([ membership ]))
     });
 
     service.updateMembershipDoc(team, false, {
       _id: membership.userId,
-      _rev: '1-shelf',
-      fromShelf: true,
+      _rev: '1-stale',
       teamId: team._id,
       userId: membership.userId,
       role: 'Coordinator'
@@ -162,6 +343,26 @@ describe('TeamsService membership writes', () => {
 
     expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
       ...membership,
+      role: 'Coordinator'
+    } ]);
+  });
+
+  it('does not persist a planet code derived only for display and comparison', () => {
+    const codelessMembership = { ...membership };
+    delete codelessMembership.userPlanetCode;
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ codelessMembership ]))
+    });
+
+    service.updateMembershipDoc(team, false, {
+      ...codelessMembership,
+      resolvedUserPlanetCode: team.teamPlanetCode,
+      role: 'Coordinator'
+    }).subscribe();
+
+    expect(couchService.findAll.mock.calls[0][1].selector).toEqual({ _id: membership._id });
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      ...codelessMembership,
       role: 'Coordinator'
     } ]);
   });
@@ -197,6 +398,86 @@ describe('TeamsService membership writes', () => {
       },
       { _id: request._id, _rev: request._rev, _deleted: true }
     ]);
+  });
+
+  it('writes an associated member under their canonical id and explicit origin', () => {
+    const selected = [ {
+      _id: 'org.couchdb.user:new@community',
+      name: 'new@community',
+      planetCode: 'community',
+      requestId: 'request-1'
+    } ];
+    const { service, couchService } = createService();
+
+    service.addMembers(team, selected, []).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      teamId: team._id,
+      userId: 'org.couchdb.user:new',
+      teamPlanetCode: team.teamPlanetCode,
+      teamType: team.teamType,
+      userPlanetCode: 'community',
+      docType: 'membership'
+    } ]);
+  });
+
+  it('creates an associated account team with a matching creator membership identity', () => {
+    const associated = {
+      _id: 'org.couchdb.user:ann@community',
+      name: 'ann@community',
+      planetCode: 'community',
+      requestId: 'request-1'
+    };
+    const updateDocument = vi.fn().mockReturnValue(of({ id: team._id, rev: '1-team' }));
+    const bulkDocs = vi.fn().mockReturnValue(of(successfulBulkResponse));
+    const service = new TeamsService(
+      {
+        datePlaceholder: 'now',
+        updateDocument,
+        findAll: vi.fn().mockReturnValue(of([])),
+        bulkDocs
+      } as any,
+      { confirm: vi.fn().mockReturnValue(of({ name: 'New team' })) } as any,
+      {} as any,
+      {} as any,
+      { configuration: { code: 'planet-a', parentCode: 'earth', planetType: 'community' } } as any,
+      {} as any
+    );
+
+    service.addTeamDialog(associated, 'team').subscribe();
+
+    expect(updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
+      createdBy: 'org.couchdb.user:ann',
+      createdByPlanetCode: 'community',
+      teamPlanetCode: 'planet-a'
+    }));
+    expect(bulkDocs).toHaveBeenCalledWith('teams', [ expect.objectContaining({
+      userId: 'org.couchdb.user:ann',
+      userPlanetCode: 'community',
+      isLeader: true,
+      docType: 'membership'
+    }) ]);
+  });
+
+  it('keeps the notification recipient user and planet code together', () => {
+    const service = new TeamsService(
+      { datePlaceholder: 'now' } as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      { configuration: { code: 'planet-a' } } as any,
+      {} as any
+    );
+
+    expect(service.teamNotification('Welcome', 'added', {
+      _id: 'org.couchdb.user:new@community',
+      name: 'new@community',
+      planetCode: 'community',
+      requestId: 'request-1'
+    }, { team, url: '/teams/view/team-1;activeTab=members' })).toEqual(expect.objectContaining({
+      user: 'org.couchdb.user:new',
+      userPlanetCode: 'community'
+    }));
   });
 
   it('reports an individual add-member bulk failure', () => {
@@ -373,6 +654,10 @@ describe('TeamsService membership writes', () => {
 
     expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
     expect(bulkDocs).toHaveBeenCalledTimes(1);
+    expect(bulkDocs.mock.calls[0][1][0]).toEqual(expect.objectContaining({
+      _id: 'membership-new',
+      isLeader: true
+    }));
   });
 
   [
@@ -406,36 +691,6 @@ describe('TeamsService membership writes', () => {
     }).subscribe();
 
     expect(couchService.bulkDocs).toHaveBeenCalledTimes(1);
-  });
-
-  it('fails a shelf promotion before demoting until origin-aware migration is available', () => {
-    const shelf = {
-      _id: 'org.couchdb.user:new',
-      _rev: '1-shelf',
-      myTeamIds: [ team._id ]
-    };
-    const bulkDocs = vi.fn().mockReturnValue(of({
-      res: [ { error: 'conflict', reason: 'Document update conflict.' } ]
-    }));
-    const { service } = createService({
-      bulkDocs
-    });
-    const error = vi.fn();
-
-    service.changeTeamLeadership(membership, {
-      ...shelf,
-      fromShelf: true,
-      teamId: team._id,
-      userId: shelf._id
-    }).subscribe({ error });
-
-    expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
-    expect(bulkDocs).toHaveBeenCalledTimes(1);
-    expect(bulkDocs.mock.calls[0][1][0]).toEqual(expect.objectContaining({
-      _id: shelf._id,
-      _rev: shelf._rev,
-      isLeader: true
-    }));
   });
 
   it('sanitizes membership deletion writes', () => {
