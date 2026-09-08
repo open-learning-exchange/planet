@@ -31,10 +31,11 @@ export const resolveResourceIconInfo = (resource: any): ResourceIconInfo => {
     return { icon: '', tooltip: '', category: 'none' };
   }
 
+  const asString = (value: unknown): string => (typeof value === 'string' ? value : '');
   const attachmentObj = matchedKey ? attachments[matchedKey] : (attachments[primaryFilename] || attachments[rawFilename]);
-  const attachmentContentType = attachmentObj?.content_type ? attachmentObj.content_type.toLowerCase() : '';
+  const attachmentContentType = asString(attachmentObj?.content_type).toLowerCase();
   const directContentType = (
-    doc.contentType || doc.content_type || (doc.file && doc.file.type) || (typeof doc.type === 'string' ? doc.type : '') || ''
+    asString(doc.contentType) || asString(doc.content_type) || asString(doc.file && doc.file.type) || asString(doc.type)
   ).toLowerCase();
   const contentType = (attachmentContentType || directContentType).split(';')[0].trim();
 

@@ -196,7 +196,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 4px;
-            margin-top: 4px;
+            margin-top: 6px;
             max-width: 100%;
 
             &:empty {
@@ -267,16 +267,21 @@
           }
 
           .dashboard-text {
-            margin-top: 4px;
+            margin-top: 8px;
             padding: 0 8px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
-            line-height: 1.25;
+            line-height: 1.35;
+            letter-spacing: 0.01em;
             display: -webkit-box;
             width: 100%;
             box-sizing: border-box;
             -webkit-box-orient: vertical;
             overflow: hidden;
+          }
+
+          .tile-chips + .dashboard-text {
+            margin-top: 4px;
           }
 
           .dashboard-course-cover {
