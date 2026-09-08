@@ -186,9 +186,8 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
 
   removeFromShelf(event, item: any) {
     event.stopPropagation();
-    const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
-      this.removeTeam(item, userId, userPlanetCode);
+      this.removeTeam(item);
     } else if (this.shelfName === 'resourceIds') {
       this.removeResource(item);
     } else if (this.shelfName === 'courseIds') {
@@ -238,12 +237,13 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     });
   }
 
-  removeTeam(item, userId, userPlanetCode) {
-    const teamDoc = { userId, userPlanetCode, teamId: item._id, fromShelf: item.fromShelf };
+  removeTeam(item) {
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))),
+          request: defer(() => this.teamsService.toggleTeamMembership(item, true, item.membershipDoc).pipe(
+            tap(() => this.teamRemoved.emit(item))
+          )),
           onNext: () => {
             this.dialogPrompt.close();
             this.removeMessage(item);
