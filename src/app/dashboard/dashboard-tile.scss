@@ -196,7 +196,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 4px;
-            margin-top: 6px;
+            margin-top: auto;
             max-width: 100%;
 
             &:empty {
@@ -267,7 +267,7 @@
           }
 
           .dashboard-text {
-            margin-top: 8px;
+            margin: auto 0;
             padding: 0 8px;
             font-size: 14px;
             font-weight: 500;
@@ -282,6 +282,7 @@
 
           .tile-chips + .dashboard-text {
             margin-top: 4px;
+            margin-bottom: auto;
           }
 
           .dashboard-course-cover {
@@ -398,7 +399,7 @@
               }
 
               .tile-chips {
-                margin-top: 0;
+                margin: 0;
                 margin-inline-start: auto;
                 margin-inline-end: 0.5rem;
                 flex-shrink: 0;
@@ -407,8 +408,12 @@
               .dashboard-text {
                 width: auto;
                 flex: 1;
-                margin-top: 0;
+                margin: 0;
                 padding: 0;
+              }
+
+              .tile-chips + .dashboard-text {
+                margin: 0;
               }
 
               .delete-item {
