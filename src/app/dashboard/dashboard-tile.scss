@@ -1,26 +1,5 @@
-@use '@angular/material' as mat;
 @use '../mixins' as m;
 @use '../variables' as v;
-
-$library-accent: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 500);
-$library-lighter: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 100);
-$library-dark: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 700);
-$library-text: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 900);
-
-$courses-accent: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 500);
-$courses-lighter: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 100);
-$courses-dark: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 800);
-$courses-text: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 900);
-
-$teams-accent: mat.m2-get-color-from-palette(mat.$m2-green-palette, 500);
-$teams-lighter: mat.m2-get-color-from-palette(mat.$m2-green-palette, 100);
-$teams-dark: mat.m2-get-color-from-palette(mat.$m2-green-palette, 700);
-$teams-text: mat.m2-get-color-from-palette(mat.$m2-green-palette, 900);
-
-$life-accent: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 500);
-$life-lighter: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 100);
-$life-dark: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 700);
-$life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
 
 :host {
 
@@ -29,27 +8,27 @@ $life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
   min-width: 0;
 
   &.planet-library-theme {
-    .tile-band { background: $library-lighter; }
-    .tile-avatar .tile-icon { color: $library-dark; }
-    .tile-chip { background: $library-lighter; color: $library-text; }
+    .tile-band { background: v.$shelf-library-lighter; }
+    .tile-avatar .tile-icon { color: v.$shelf-library-dark; }
+    .tile-chip { background: v.$shelf-library-lighter; color: v.$shelf-library-text; }
   }
 
   &.planet-courses-theme {
-    .tile-band { background: $courses-lighter; }
-    .tile-avatar .tile-icon { color: $courses-dark; }
-    .tile-chip { background: $courses-lighter; color: $courses-text; }
+    .tile-band { background: v.$shelf-courses-lighter; }
+    .tile-avatar .tile-icon { color: v.$shelf-courses-dark; }
+    .tile-chip { background: v.$shelf-courses-lighter; color: v.$shelf-courses-text; }
   }
 
   &.planet-teams-theme {
-    .tile-band { background: $teams-lighter; }
-    .tile-avatar .tile-icon { color: $teams-dark; }
-    .tile-chip { background: $teams-lighter; color: $teams-text; }
+    .tile-band { background: v.$shelf-teams-lighter; }
+    .tile-avatar .tile-icon { color: v.$shelf-teams-dark; }
+    .tile-chip { background: v.$shelf-teams-lighter; color: v.$shelf-teams-text; }
   }
 
   &.planet-meetups-theme {
-    .tile-band { background: $life-lighter; }
-    .tile-avatar .tile-icon { color: $life-dark; }
-    .tile-chip { background: $life-lighter; color: $life-text; }
+    .tile-band { background: v.$shelf-life-lighter; }
+    .tile-avatar .tile-icon { color: v.$shelf-life-dark; }
+    .tile-chip { background: v.$shelf-life-lighter; color: v.$shelf-life-text; }
   }
 
   .dashboard-card {
@@ -146,19 +125,19 @@ $life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
             background: v.$primary-lighter;
 
             &.band-myLibrary {
-              background: $library-lighter;
+              background: v.$shelf-library-lighter;
             }
 
             &.band-myCourses {
-              background: $courses-lighter;
+              background: v.$shelf-courses-lighter;
             }
 
             &.band-myTeams {
-              background: $teams-lighter;
+              background: v.$shelf-teams-lighter;
             }
 
             &.band-myLife {
-              background: $life-lighter;
+              background: v.$shelf-life-lighter;
             }
           }
 
@@ -196,19 +175,19 @@ $life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
             }
 
             &.avatar-myLibrary .tile-icon {
-              color: $library-dark;
+              color: v.$shelf-library-dark;
             }
 
             &.avatar-myCourses .tile-icon {
-              color: $courses-dark;
+              color: v.$shelf-courses-dark;
             }
 
             &.avatar-myTeams .tile-icon {
-              color: $teams-dark;
+              color: v.$shelf-teams-dark;
             }
 
             &.avatar-myLife .tile-icon {
-              color: $life-dark;
+              color: v.$shelf-life-dark;
             }
           }
 
@@ -236,23 +215,23 @@ $life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
             color: v.$primary-lighter-text;
 
             &.chip-myLibrary {
-              background: $library-lighter;
-              color: $library-text;
+              background: v.$shelf-library-lighter;
+              color: v.$shelf-library-text;
             }
 
             &.chip-myCourses {
-              background: $courses-lighter;
-              color: $courses-text;
+              background: v.$shelf-courses-lighter;
+              color: v.$shelf-courses-text;
             }
 
             &.chip-myTeams {
-              background: $teams-lighter;
-              color: $teams-text;
+              background: v.$shelf-teams-lighter;
+              color: v.$shelf-teams-text;
             }
 
             &.chip-myLife {
-              background: $life-lighter;
-              color: $life-text;
+              background: v.$shelf-life-lighter;
+              color: v.$shelf-life-text;
             }
           }
 
@@ -275,7 +254,7 @@ $life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
               width: 16px;
               height: 16px;
               line-height: 16px;
-              color: rgba(0, 0, 0, 0.45);
+              color: v.$grey-text;
             }
 
             &:hover > .mat-icon {
@@ -443,15 +422,27 @@ $life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
       max-height: 300px;
     }
   }
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    .dashboard-card .right-tile .dashboard-items .dashboard-item {
-      transition: none;
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    .dashboard-card {
+      .right-tile {
+        transition: none;
+      }
 
-      &:hover {
-        transform: none;
+      .dashboard-items .dashboard-item {
+        transition: none;
+
+        &:hover {
+          transform: none;
+        }
       }
     }
+  }
+
+  .cdk-drag-animating {
+    transition: none;
   }
 }
 
