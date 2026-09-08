@@ -9,6 +9,8 @@ import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
+import { userPlanetCodeSelector } from '../shared/mangoQueries';
+import { userIdentity } from '../shared/identity.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -207,9 +209,15 @@ export class UsersService {
   }
 
   deleteUserFromTeams(user) {
-    return this.couchService.findAll('teams', { selector: { userId: user._id } }).pipe(
+    const identity = userIdentity(user, this.stateService.configuration.code);
+    return this.couchService.findAll('teams', { selector: {
+      userId: identity.userId,
+      ...userPlanetCodeSelector(identity.userPlanetCode)
+    } }).pipe(
       switchMap(teams => {
-        const docsWithUser = teams.map((doc: any) => ({ ...doc, _deleted: true }));
+        const docsWithUser = teams
+          .filter((doc: any) => (doc.userPlanetCode || doc.teamPlanetCode) === identity.userPlanetCode)
+          .map((doc: any) => ({ ...doc, _deleted: true }));
         return this.couchService.bulkDocs('teams', docsWithUser);
       })
     );

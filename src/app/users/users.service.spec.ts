@@ -3,17 +3,33 @@ import { vi } from 'vitest';
 import { UsersService } from './users.service';
 
 describe('UsersService notifications', () => {
-  it('routes role notifications through the recipient planet and stable CouchDB ID', () => {
-    const notificationsService = {
-      sendNotificationToUser: vi.fn().mockReturnValue(of({}))
+  const createService = ({ couch = {}, tasks = {}, notifications = {} }: any = {}) => {
+    const couchService = {
+      datePlaceholder: 'now',
+      get: vi.fn().mockReturnValue(of({ _rev: '1-shelf' })),
+      delete: vi.fn().mockReturnValue(of({})),
+      findAll: vi.fn().mockReturnValue(of([])),
+      bulkDocs: vi.fn().mockReturnValue(of([])),
+      ...couch
     };
-    const service = new UsersService(
-      { datePlaceholder: 'now' } as any,
-      {} as any,
-      { couchStateListener: () => NEVER } as any,
-      {} as any,
-      notificationsService as any
-    );
+    const tasksService = { removeAssigneeFromTasks: vi.fn().mockReturnValue(of([])), ...tasks };
+    const notificationsService = { sendNotificationToUser: vi.fn().mockReturnValue(of({})), ...notifications };
+    return {
+      couchService,
+      tasksService,
+      notificationsService,
+      service: new UsersService(
+        couchService as any,
+        {} as any,
+        { configuration: { code: 'planet-a' }, couchStateListener: () => NEVER } as any,
+        tasksService as any,
+        notificationsService as any
+      )
+    };
+  };
+
+  it('routes role notifications through the recipient planet and stable CouchDB ID', () => {
+    const { service, notificationsService } = createService();
 
     service.sendNotifications({
       _id: 'alex@community-c',
@@ -34,21 +50,7 @@ describe('UsersService notifications', () => {
   });
 
   it('cleans associated and code-less task identities when deleting users', () => {
-    const couchService = {
-      datePlaceholder: 'now',
-      get: vi.fn().mockReturnValue(of({ _rev: '1-shelf' })),
-      delete: vi.fn().mockReturnValue(of({})),
-      findAll: vi.fn().mockReturnValue(of([])),
-      bulkDocs: vi.fn().mockReturnValue(of([]))
-    };
-    const tasksService = { removeAssigneeFromTasks: vi.fn().mockReturnValue(of([])) };
-    const service = new UsersService(
-      couchService as any,
-      {} as any,
-      { configuration: { code: 'planet-a' }, couchStateListener: () => NEVER } as any,
-      tasksService as any,
-      {} as any
-    );
+    const { service, tasksService } = createService();
 
     service.deleteUser({
       _id: 'org.couchdb.user:alex@planet-b',
@@ -75,5 +77,91 @@ describe('UsersService notifications', () => {
       'org.couchdb.user:legacy',
       undefined
     );
+  });
+
+  it('scopes team membership deletion to the user planet', () => {
+    const { service, couchService } = createService();
+
+    service.deleteUserFromTeams({ _id: 'org.couchdb.user:alex', planetCode: 'planet-b' }).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalledWith('teams', {
+      selector: {
+        userId: 'org.couchdb.user:alex',
+        $or: [
+          { userPlanetCode: 'planet-b' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      }
+    });
+  });
+
+  it('falls back to the local planet when the user carries no planet code', () => {
+    const { service, couchService } = createService();
+
+    service.deleteUserFromTeams({ _id: 'org.couchdb.user:alex' }).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalledWith('teams', {
+      selector: {
+        userId: 'org.couchdb.user:alex',
+        $or: [
+          { userPlanetCode: 'planet-a' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      }
+    });
+  });
+
+  it('deletes a replicated user by the canonical id membership documents use', () => {
+    const { service, couchService } = createService();
+
+    service.deleteUserFromTeams({
+      _id: 'org.couchdb.user:alex@planet-b',
+      couchId: 'org.couchdb.user:alex',
+      planetCode: 'planet-b'
+    }).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalledWith('teams', {
+      selector: {
+        userId: 'org.couchdb.user:alex',
+        $or: [
+          { userPlanetCode: 'planet-b' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      }
+    });
+  });
+
+  it('filters code-less team rows by team origin and preserves same-named local accounts', () => {
+    const matchingExplicit = {
+      _id: 'foreign-explicit', userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b'
+    };
+    const matchingCodeless = {
+      _id: 'foreign-codeless', userId: 'org.couchdb.user:alex', userPlanetCode: '', teamPlanetCode: 'planet-b'
+    };
+    const sameNamedLocal = {
+      _id: 'local-explicit', userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a'
+    };
+    const localCodeless = {
+      _id: 'local-codeless', userId: 'org.couchdb.user:alex', teamPlanetCode: 'planet-a'
+    };
+    const unknownOrigin = { _id: 'unknown', userId: 'org.couchdb.user:alex' };
+    const findAll = vi.fn().mockReturnValue(of([
+      matchingExplicit, matchingCodeless, sameNamedLocal, localCodeless, unknownOrigin
+    ]));
+    const { service, couchService } = createService({ couch: { findAll } });
+
+    service.deleteUserFromTeams({
+      _id: 'org.couchdb.user:alex@planet-b',
+      couchId: 'org.couchdb.user:alex',
+      planetCode: 'planet-b'
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [
+      { ...matchingExplicit, _deleted: true },
+      { ...matchingCodeless, _deleted: true }
+    ]);
   });
 });
