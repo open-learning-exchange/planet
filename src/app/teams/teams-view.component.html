@@ -179,9 +179,9 @@
                 [member]="member"
                 [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
                 [actionMenu]="[]
-                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
-                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
-                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
+                  .concat(!sameMember(member, currentUserIdentity) && isUserLeader ? [ 'remove' ] : [])
+                  .concat(!sameMember(member, leader) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                  .concat(sameMember(member, currentUserIdentity) || isUserLeader ? [ 'title' ] : [])"
                 [visits]="visits[member?.name]"
                 [userStatus]="userStatus"
                 [teamLeader]="leader"

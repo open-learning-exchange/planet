@@ -177,6 +177,27 @@ describe('TeamsMemberComponent', () => {
 
       expect(component.isSelf).toBe(false);
     });
+
+    it('uses the associated account explicit origin when deciding self', () => {
+      const associated = {
+        _id: 'org.couchdb.user:ann@community',
+        name: 'ann@community',
+        planetCode: 'community',
+        requestId: 'request-1'
+      };
+      component = new TeamsMemberComponent(
+        { get: () => associated } as any as UserService,
+        { configuration: { code: planetCode } } as any as StateService,
+        {} as any as TasksService,
+        usersProfileDialogService as any as UsersProfileDialogService
+      );
+
+      component.member = { userId: currentUser._id, userPlanetCode: 'community' };
+      expect(component.isSelf).toBe(true);
+
+      component.member = { userId: currentUser._id, userPlanetCode: planetCode };
+      expect(component.isSelf).toBe(false);
+    });
   });
 
   describe('member type', () => {

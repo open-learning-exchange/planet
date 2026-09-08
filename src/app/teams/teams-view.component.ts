@@ -23,7 +23,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
+import { enterpriseJoinAgreement, memberCompare, memberPlanetCode, memberSort, requestDateCompare } from './teams.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -46,7 +46,8 @@ import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
-import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
+import { assigneeIdentityCandidates, isTaskAssignedTo } from '../tasks/tasks.utils';
+import { userIdentity } from '../shared/identity.utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -101,7 +102,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   userStatus = 'unrelated';
   isUserLeader = false;
   onDestroy$ = new Subject<void>();
-  currentUserId = this.userService.get()._id;
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   user = this.userService.get();
   news: any[] = [];
@@ -302,7 +302,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.teamDataLoading = true;
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
-        const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
+        const { attachmentDoc, userId, userDoc } = member;
+        const userPlanetCode = memberPlanetCode(member);
         if (member.attachmentDoc) {
           return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
         }
@@ -312,8 +313,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         return 'assets/image.png';
       };
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
-      this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
-      this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
+      this.leader = docsWithName.find(mem => mem.isLeader) || {
+        userId: this.team.createdBy,
+        userPlanetCode: this.team.createdByPlanetCode || this.team.teamPlanetCode
+      };
+      this.members = docsWithName.filter(mem => mem.docType === 'membership')
+        .sort((a, b) => memberSort(a, b, this.leader, this.team.teamPlanetCode));
       this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(requestDateCompare);
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
@@ -329,14 +334,19 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
       ...member,
-      tasks: this.tasksService.sortedTasks(tasks.filter(task => isTaskAssignedTo(task, member, this.planetCode)), member.tasks)
+      tasks: this.tasksService.sortedTasks(tasks.filter(task => {
+        const identities = this.matchesCurrentUser(member) ?
+          this.currentUserTaskIdentities() :
+          [ { userId: member.userId, userPlanetCode: memberPlanetCode(member) } ];
+        return identities.some(identity => isTaskAssignedTo(task, identity, this.planetCode));
+      }), member.tasks)
     }));
     if (this.userStatus === 'member') {
-      const currentMember = this.members.find(member => assigneeMatches(member, {
-        userId: this.user._id,
-        userPlanetCode: this.planetCode
-      }, this.planetCode));
-      const tasksForCount = this.isUserLeader ? tasks : currentMember?.tasks || [];
+      const tasksForCount = this.isUserLeader ?
+        tasks :
+        tasks.filter(task => this.currentUserTaskIdentities().some(
+          identity => isTaskAssignedTo(task, identity, this.planetCode)
+        ));
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
   }
@@ -356,7 +366,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
     this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
-    this.isUserLeader = !!leader && memberCompare(leader, { userId: user._id, userPlanetCode: user.planetCode });
+    this.isUserLeader = !!leader && this.matchesCurrentUser(leader, user);
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
@@ -372,17 +382,32 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
+  get currentUserIdentity() {
+    return userIdentity(this.user, this.planetCode);
+  }
+
+  currentUserTaskIdentities() {
+    return assigneeIdentityCandidates(this.user, this.planetCode);
+  }
+
+  // Explicit account origin distinguishes a native user from an associated same-named account.
+  // The current server is only the fallback for native/legacy user objects without their own origin.
+  private matchesCurrentUser(doc, user = this.user) {
+    return memberCompare(doc, userIdentity(user, this.planetCode), this.team?.teamPlanetCode || this.planetCode);
+  }
+
+  sameMember(member1, member2) {
+    return memberCompare(member1, member2, this.team?.teamPlanetCode || this.planetCode);
+  }
+
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => assigneeMatches(memberDoc, {
-      userId: user._id,
-      userPlanetCode: this.planetCode
-    }, this.planetCode));
+    return memberDocs.some((memberDoc: any) => this.matchesCurrentUser(memberDoc, user));
   }
 
   toggleMembership(team, leaveTeam) {
     return () => this.teamsService.toggleTeamMembership(
       team, leaveTeam,
-      this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
+      this.members.find(doc => this.matchesCurrentUser(doc)) || this.currentUserIdentity
     ).pipe(
       catchError(error => this.refreshMembersOnError(error)),
       switchMap((newTeam) => {
@@ -480,7 +505,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ?
-          this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
+          this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberPlanetCode(memberDoc), { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
@@ -537,9 +562,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       request: this.teamsService.cancelJoinRequest(this.team),
       onNext: () => {
         this.cancelDialog.close();
-        this.requests = this.requests.filter(request =>
-          request.userId !== this.user._id || request.userPlanetCode !== this.planetCode
-        );
+        this.requests = this.requests.filter(request => !this.matchesCurrentUser(request));
         this.setStatus(this.team, this.leader, this.userService.get());
         const msg = this.mode === 'enterprise'
           ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
@@ -585,7 +608,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         });
       case 'added':
         return ({
-          obs: this.teamsService.toggleTeamMembership(this.team, false, { ...memberDoc, docType: 'membership' }),
+          obs: this.teamsService.toggleTeamMembership(this.team, false, {
+            ...memberDoc,
+            userPlanetCode: memberPlanetCode(memberDoc) || this.team.teamPlanetCode || this.planetCode,
+            docType: 'membership'
+          }),
           message: $localize`Accepted: ${memberName}`
         });
       case 'rejected':
@@ -597,7 +624,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
+    this.teamsService.addTeamDialog(this.user, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
       this.planetMessageService.showMessage(
         (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
@@ -611,7 +638,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxHeight: '90vh',
       data: {
         okClick: (selected: any[]) => this.addMembers(selected),
-        excludeIds: this.members.map(user => user.userId),
+        excludeIds: [ ...new Set(this.members.flatMap(member => [
+          member.userId,
+          member.userDoc?._id,
+          member.userDoc?.doc?._id
+        ]).filter(Boolean)) ],
         hideChildren: true,
         mode: 'users'
       }
@@ -748,7 +779,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const currentLeader = this.members.find(mem => memberCompare(mem, this.leader)) || {};
+    const currentLeader = this.members.find(mem => this.leader?._id && mem._id === this.leader._id) ||
+      this.members.find(mem => memberCompare(
+        mem, this.leader, this.team?.teamPlanetCode || this.planetCode
+      )) || {};
     return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(
       catchError(error => this.refreshMembersOnError(error)),
       switchMap(() => this.getMembers())

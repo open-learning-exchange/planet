@@ -10,6 +10,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelectionList, MatSelectionListChange, MatListOption, MatListItemTitle } from '@angular/material/list';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
+import { userIdentity } from '../shared/identity.utils';
+import { memberCompare, memberPlanetCode } from './teams.utils';
 
 const defaultAvatar = 'assets/image.png';
 // Must match the length of $initials-palette in _variables.scss, which owns the colors.
@@ -66,12 +68,21 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   ) {}
 
   get isTeamLeader() {
-    return !!this.teamLeader && this.member?.userId === this.teamLeader.userId &&
-      this.member?.userPlanetCode === this.teamLeader.userPlanetCode;
+    return !!this.teamLeader && memberCompare(
+      this.member, this.teamLeader, this.member?.teamPlanetCode || this.planetCode
+    );
   }
 
   get isSelf() {
-    return this.member?.userId === this.user._id && this.member?.userPlanetCode === this.planetCode;
+    return memberCompare(
+      this.member,
+      userIdentity(this.user, this.planetCode),
+      this.member?.teamPlanetCode || this.planetCode
+    );
+  }
+
+  get memberPlanetCode() {
+    return memberPlanetCode(this.member);
   }
 
   ngOnInit() {
@@ -108,7 +119,9 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   }
 
   openMemberDialog(member) {
-    this.usersProfileDialogService.open({ member });
+    this.usersProfileDialogService.open({
+      member: { ...member, userPlanetCode: memberPlanetCode(member) }
+    });
   }
 
   toggleTask(event: MatSelectionListChange) {
