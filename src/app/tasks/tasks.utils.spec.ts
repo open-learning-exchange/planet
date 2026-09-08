@@ -45,11 +45,40 @@ describe('task assignee utilities', () => {
     }, 'planet-a')).toEqual([ { userId: 'alex', userPlanetCode: 'planet-b' } ]);
   });
 
+  it('removes an associated-account routing suffix from its stable identity', () => {
+    expect(assigneeIdentityCandidates({
+      _id: 'org.couchdb.user:alex@planet-b',
+      name: 'alex@planet-b',
+      planetCode: 'planet-b',
+      requestId: 'request-1'
+    }, 'planet-a')).toEqual([
+      { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b' },
+      { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' }
+    ]);
+  });
+
   it('stores only portable display metadata', () => {
     expect(storedAssignee({
       ...local,
       attachmentDoc: { _attachments: { img: {} } },
       userDoc: { fullName: 'Alex Example', doc: { salt: 'private' } }
     })).toEqual({ ...local, userDoc: { fullName: 'Alex Example' } });
+  });
+
+  it('uses a derived member origin for task matching and persistence without changing the member row', () => {
+    const codelessMember = {
+      userId: 'alex',
+      resolvedUserPlanetCode: 'planet-b',
+      name: 'Alex'
+    };
+
+    expect(assigneeMatches(codelessMember, remote, 'planet-a')).toBe(true);
+    expect(storedAssignee(codelessMember, 'planet-a')).toEqual({
+      userId: 'alex',
+      userPlanetCode: 'planet-b',
+      name: 'Alex',
+      userDoc: undefined
+    });
+    expect(codelessMember).not.toHaveProperty('userPlanetCode');
   });
 });

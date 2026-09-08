@@ -6,6 +6,7 @@ import { StateService } from '../shared/state.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
+import { canonicalUserId } from '../shared/identity.utils';
 
 /**
  * Supports raw or replicated user docs and team-member rows. Callers holding a
@@ -13,12 +14,8 @@ import { of, Observable } from 'rxjs';
  */
 export const notificationRecipient = (user: any, legacyPlanetCode?: string) => {
   const userPlanetCode = user.userPlanetCode || user.planetCode || legacyPlanetCode;
-  const storedUserId = user.couchId || user.userId || user._id;
-  const associatedSuffix = userPlanetCode ? `@${userPlanetCode}` : '';
-  const isAssociatedAccount = !!((user.requestId || user.sync) && associatedSuffix &&
-    user.name?.endsWith(associatedSuffix) && storedUserId?.endsWith(associatedSuffix));
   return {
-    user: isAssociatedAccount ? storedUserId.slice(0, -associatedSuffix.length) : storedUserId,
+    user: canonicalUserId(user, userPlanetCode),
     ...(userPlanetCode ? { userPlanetCode } : {})
   };
 };

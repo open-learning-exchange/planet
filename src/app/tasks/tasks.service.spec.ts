@@ -48,6 +48,12 @@ describe('TasksService assignee cleanup', () => {
     expect(query.selector.$or).toContainEqual({
       assignees: { $elemMatch: { userId: 'alex', userPlanetCode: 'planet-a' } }
     });
+    expect(query.selector.$or).toContainEqual({
+      'assignee.userId': 'alex', 'assignee.userPlanetCode': ''
+    });
+    expect(query.selector.$or).toContainEqual({
+      assignees: { $elemMatch: { userId: 'alex', userPlanetCode: '' } }
+    });
   });
 
   it('removes only the matching planet and skips unchanged documents', () => {

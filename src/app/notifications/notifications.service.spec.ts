@@ -47,6 +47,17 @@ describe('NotificationsService', () => {
     });
   });
 
+  it('uses the legacy planet when normalizing an associated account without its own planet field', () => {
+    expect(notificationRecipient({
+      _id: 'org.couchdb.user:alex@community-c',
+      name: 'alex@community-c',
+      requestId: 'community-registration-request-1'
+    }, 'community-c')).toEqual({
+      user: 'org.couchdb.user:alex',
+      userPlanetCode: 'community-c'
+    });
+  });
+
   it('keeps origin-less legacy recipients planet-less', () => {
     expect(notificationRecipient({ _id: 'org.couchdb.user:alex' })).toEqual({
       user: 'org.couchdb.user:alex'

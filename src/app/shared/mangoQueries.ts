@@ -15,3 +15,14 @@ export const findDocuments = (selectors, fields: any = 0, sort: any = 0, limit =
 
 // Returns a selector to get all docs with a field matching one of the array or all docs if array is empty
 export const inSelector = (array = []) => array.length > 0 ? { $in: array } : { $gt: null };
+
+// Undefined codes must be dropped: JSON.stringify removes an undefined value, leaving a
+// bare {} inside $or. Blank stored codes are legacy planet-less values and must be matched
+// explicitly because $exists: false does not include them.
+export const userPlanetCodeSelector = (...codes: (string | undefined)[]) => ({
+  $or: [
+    ...[ ...new Set(codes.filter((code): code is string => !!code)) ].map(userPlanetCode => ({ userPlanetCode })),
+    { userPlanetCode: '' },
+    { userPlanetCode: { $exists: false } }
+  ]
+});

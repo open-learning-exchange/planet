@@ -135,7 +135,9 @@ export class TasksService {
       assignees: { $elemMatch: code ? { userId, userPlanetCode: code } : { userId } }
     }));
     if (planetCodes.includes(localPlanetCode)) {
+      legacySelectors.push({ 'assignee.userId': userId, 'assignee.userPlanetCode': '' });
       legacySelectors.push({ 'assignee.userId': userId, 'assignee.userPlanetCode': { $exists: false } });
+      arraySelectors.push({ assignees: { $elemMatch: { userId, userPlanetCode: '' } } });
       arraySelectors.push({ assignees: { $elemMatch: { userId, userPlanetCode: { $exists: false } } } });
     }
     const selector: any = {
