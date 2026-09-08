@@ -38,7 +38,7 @@ export const loadChart = async (keys: RegisterableKey[] = []): Promise<ChartJsMo
   return module;
 };
 
-export const createChartCanvas = (width = 300, height = 400): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D | null } => {
+export const createChartCanvas = (width = 300, height = 400): { canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D | null } => {
   const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
   const canvas = document.createElement('canvas');
   canvas.width = width * dpr;

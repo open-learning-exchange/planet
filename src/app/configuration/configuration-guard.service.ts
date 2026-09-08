@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class ConfigurationGuard {
 
-  constructor (
+  constructor(
     private router: Router,
     private couchService: CouchService
   ) {}
