@@ -14,6 +14,7 @@ describe('SurveysComponent', () => {
   let route: any;
   let stateService: any;
   let dialogsFormService: any;
+  let linkCopyService: any;
   let component: SurveysComponent;
 
   const createComponent = () => new SurveysComponent(
@@ -30,7 +31,8 @@ describe('SurveysComponent', () => {
     { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
     {} as any,
     new FormBuilder().nonNullable,
-    { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any
+    { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any,
+    linkCopyService
   );
 
   beforeEach(() => {
@@ -60,6 +62,7 @@ describe('SurveysComponent', () => {
       openDialogsForm: vi.fn(),
       closeDialogsForm: vi.fn()
     };
+    linkCopyService = { copyLink: vi.fn() };
     component = createComponent();
   });
 
@@ -78,6 +81,20 @@ describe('SurveysComponent', () => {
       'survey',
       {},
       { _id: 'team-2', name: 'teams/team-2', type: 'team' }
+    );
+  });
+
+  it('delegates public survey links to the shared copy service', () => {
+    component.teamId = 'team-1';
+
+    component.copyPublicSurveyLink({ _id: 'survey-1', publicAccess: true });
+
+    expect(linkCopyService.copyLink).toHaveBeenCalledWith(
+      [ '/survey', 'team-1', 'survey-1' ],
+      {
+        success: 'Public survey link copied',
+        failure: 'Failed to copy public survey link'
+      }
     );
   });
 
