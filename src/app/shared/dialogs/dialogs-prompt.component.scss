@@ -1,5 +1,3 @@
-@use '../../variables' as v;
-
 .break-word {
   word-wrap: break-word;
   white-space: normal;
@@ -13,6 +11,6 @@
 // Supplementary notes, consequences, agreements, and metadata sit below the dialog's
 // primary question, warning, or instructions in the visual hierarchy.
 .extra-message-supplementary {
-  font-size: v.$font-size-supplementary;
+  font-size: 0.875rem;
   font-style: italic;
 }

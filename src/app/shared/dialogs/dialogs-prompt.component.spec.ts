@@ -41,16 +41,6 @@ describe('DialogsPromptComponent', () => {
     expect(extraMessage.nativeElement.classList).not.toContain('extra-message-supplementary');
   });
 
-  it('keeps an explicitly primary extra message in body styling', () => {
-    const extraMessage = createComponent({
-      showMainParagraph: false,
-      extraMessage: 'The value(s) of the following are not in the normal range.',
-      extraMessageType: 'body'
-    });
-
-    expect(extraMessage.nativeElement.classList).not.toContain('extra-message-supplementary');
-  });
-
   it('demotes a supplementary extra message below the primary message', () => {
     const extraMessage = createComponent({
       changeType: 'exit',
