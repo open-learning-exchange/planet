@@ -161,7 +161,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
     this.usersTable.filterPredicate = this.filterPredicate();
-    this.usersTable.connect().subscribe(data => {
+    this.usersTable.connect().pipe(takeUntil(this.onDestroy$)).subscribe(data => {
       this.renderedData = data;
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);

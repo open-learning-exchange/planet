@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { isAllVisibleSelected, toggleVisibleSelection } from './table-helpers';
+import { isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection } from './table-helpers';
 
 describe('table-helpers select-all', () => {
   const page = [ { _id: 'a' }, { _id: 'b' } ];
@@ -54,5 +54,16 @@ describe('table-helpers select-all', () => {
     const rows = [ { _id: 'a', planetCode: 'x' } ];
     toggleVisibleSelection(selection, rows, { selectValue: (row: any) => row._id + row.planetCode });
     expect(selection.selected).toEqual([ 'ax' ]);
+  });
+
+  it('removes selections filtered out after rendered rows update', async () => {
+    let renderedRows = page;
+    selection.select('a', 'b', 'offPage');
+
+    removeFilteredFromSelection(selection, () => renderedRows);
+    renderedRows = [ page[0] ];
+    await Promise.resolve();
+
+    expect(selection.selected).toEqual([ 'a' ]);
   });
 });

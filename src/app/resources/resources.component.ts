@@ -20,7 +20,7 @@ import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
   createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
-  isAllVisibleSelected, toggleVisibleSelection
+  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -159,7 +159,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -248,7 +248,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
@@ -270,14 +270,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     });
   }
-
-  removeFilteredFromSelection() {
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
-  }
-
 
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
@@ -410,7 +402,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           okClick: {
             request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
             onNext: () => {
-              this.removeFilteredFromSelection();
+              removeFilteredFromSelection(this.selection, () => this.renderedRows);
               this.onSelectionChange(this.selection.selected);
               dialogRef.close();
             },
@@ -421,7 +413,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -448,7 +440,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   toggleFiltersRow() {

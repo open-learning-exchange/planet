@@ -14,7 +14,8 @@ import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators'
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import {
-  filterSpecificFields, sortNumberOrString, createDeleteArray, isAllVisibleSelected, toggleVisibleSelection
+  filterSpecificFields, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
+  removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -305,10 +306,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
     this.surveys.filter = filterValue;
-    queueMicrotask(() => {
-      const visibleSelection = new Set(this.renderedRows.map(row => row._id));
-      this.selection.deselect(...this.selection.selected.filter(selectedId => !visibleSelection.has(selectedId)));
-    });
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   isAllSelected() {

@@ -90,8 +90,15 @@ describe('DialogsListComponent select all', () => {
     component.masterToggle();
 
     expect(component.selection.selected).toEqual(firstPage);
-    expect(component.selectedNames).toEqual([ 'name-0', 'name-1', 'name-2', 'name-3', 'name-4' ]);
     expect(component.tooltipText).toBe('name-0, name-1, name-2, name-3, name-4');
+  });
+
+  it('drops initial selections whose rows no longer exist', async () => {
+    await createComponent([ 'missing-id', 'id-0' ]);
+
+    expect(component.selection.selected).toEqual([ 'id-0' ]);
+    expect(component.selectedRows()).toEqual([ tableData[0] ]);
+    expect(component.tooltipText).toBe('name-0');
   });
 
   it('does not report an initial selection from a later page as all selected', async () => {
@@ -99,5 +106,18 @@ describe('DialogsListComponent select all', () => {
     expect(component.isAllSelected()).toBe('no');
     await goToNextPage();
     expect(component.isAllSelected()).toBe('no');
+  });
+
+  it('returns to the first page before applying a filter', async () => {
+    await createComponent();
+    await goToNextPage();
+
+    component.applyFilter('name-0');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.paginator.pageIndex).toBe(0);
+    component.masterToggle();
+    expect(component.selection.selected).toEqual([ 'id-0' ]);
   });
 });

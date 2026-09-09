@@ -3,7 +3,7 @@
  *  list, rendered as a Material table
  */
 
-import { Component, Inject, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import {
@@ -65,7 +65,7 @@ import { fullName } from '../utils';
     MatTooltip
   ]
 })
-export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DialogsListComponent implements AfterViewInit, OnDestroy {
 
   tableData = new MatTableDataSource();
   tableColumns: string[] = [];
@@ -76,10 +76,9 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
   dropdownOptions: any;
   dropdownFilter: any = {};
   dropdownField: string;
-  selectedElements: any[];
-  selectedNames: string[] = [];
   tooltipText = '';
   @ViewChild('paginator') paginator: MatPaginator;
+  private rowsByIdentifier = new Map<string, any>();
   private renderedRows: any[] = [];
   private onDestroy$ = new Subject<void>();
 
@@ -101,7 +100,10 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
     const tableData = hasFullName ?
       this.appendFullName(this.data.tableData) :
       this.data.tableData;
-    this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
+    this.rowsByIdentifier = new Map(tableData.map((row: any): [ string, any ] => [ this.selectIdentifier(row), row ]));
+    // Saved selections can outlive their rows (deleted docs, resources that lost their attachment), so drop the stale ids
+    const initialSelection = (this.data.initialSelection || []).filter(id => this.rowsByIdentifier.has(id));
+    this.selection = new SelectionModel(this.data.allowMulti || false, initialSelection);
     this.tableData.data = tableData;
     this.tableColumns = this.data.columns;
     this.disableRowClick = this.data.disableSelection || false;
@@ -110,15 +112,12 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
     this.setDropdownFilter(this.data.dropdownSettings, this.data.labels);
-    this.updateSelectedNames();
-  }
-
-  ngOnInit() {
-    this.tableData.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.updateTooltip();
   }
 
   ngAfterViewInit() {
     this.tableData.paginator = this.paginator;
+    this.tableData.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
   }
 
   ngOnDestroy() {
@@ -131,7 +130,14 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
+    this.resetPage();
     this.tableData.filter = filterValue || ' ';
+  }
+
+  private resetPage() {
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
   }
 
   appendFullName(data: any[]) {
@@ -141,7 +147,7 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    if (this.renderedRows.length === 0) {
+    if (this.tableData.filteredData.length === 0) {
       return 'hidden';
     }
     return isAllVisibleSelected(this.selection, this.renderedRows, {
@@ -151,27 +157,26 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   masterToggle() {
     toggleVisibleSelection(this.selection, this.renderedRows, { selectValue: row => this.selectIdentifier(row) });
-    this.updateSelectedNames();
+    this.updateTooltip();
   }
 
   rowClick(row: any) {
     if (!this.disableRowClick) {
       this.selection.toggle(this.selectIdentifier(row));
-      this.updateSelectedNames();
+      this.updateTooltip();
     }
   }
 
   selectedRows() {
-    return this.selection.selected.map(id => this.tableData.data.find((row: any) => this.selectIdentifier(row) === id));
+    return this.selection.selected.map(id => this.rowsByIdentifier.get(id)).filter(row => row !== undefined);
   }
 
   selectIdentifier(row: any) {
     return row._id + (row.planetCode === undefined ? '' : row.planetCode);
   }
 
-  updateSelectedNames() {
-    this.selectedNames = [ ...new Set(this.selectedRows().map(row => row[this.data.nameProperty])) ];
-    this.tooltipText = this.selectedNames.join(', ');
+  updateTooltip() {
+    this.tooltipText = [ ...new Set(this.selectedRows().map(row => row[this.data.nameProperty])) ].join(', ');
   }
 
   allowSubmit() {
@@ -209,6 +214,7 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onFilterChange(filterValue: string, field: string) {
     this.dropdownFilter[field] = filterValue === 'All' ? '' : filterValue;
+    this.resetPage();
     // Force filter to update by setting it to a space if empty
     this.tableData.filter = this.tableData.filter ? this.tableData.filter : ' ';
   }

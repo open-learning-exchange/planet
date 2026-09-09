@@ -8,7 +8,8 @@ import {
 } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterSpecificFieldsByWord, isAllVisibleSelected, toggleVisibleSelection
+  filterSpecificFields, composeFilterFunctions, filterSpecificFieldsByWord, isAllVisibleSelected,
+  removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -160,10 +161,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.meetups.filter = filterValue;
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   ngOnDestroy() {
