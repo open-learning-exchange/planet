@@ -18,7 +18,8 @@ import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { UserService } from './user.service';
-import { finalize } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 const taskEventColors = {
   completed: {
@@ -108,6 +109,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
     },
     eventClick: this.eventClick.bind(this),
+    eventDurationEditable: false,
     eventDrop: this.eventDrop.bind(this)
   };
 
@@ -153,7 +155,11 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   getMeetups() {
-    this.couchService.findAll(this.dbName, findDocuments({ link: this.link })).subscribe((meetups: any[]) => {
+    this.fetchMeetups().subscribe();
+  }
+
+  private fetchMeetups() {
+    return this.couchService.findAll(this.dbName, findDocuments({ link: this.link })).pipe(tap((meetups: any[]) => {
       this.meetups = meetups.map(meetup => {
         switch (meetup.recurring) {
           case 'daily':
@@ -167,18 +173,22 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       }).flat();
       this.events = [ ...this.meetups, ...this.tasks ];
       this.calendarOptions.events = this.events;
-    });
+    }));
   }
 
   getTasks() {
-    this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
+    this.fetchTasks().subscribe();
+  }
+
+  private fetchTasks() {
+    return this.couchService.findAll('tasks', findDocuments({ link: this.link })).pipe(tap((tasks: any[]) => {
       this.tasks = tasks.filter(task => task.status !== 'archived').map(task => {
         const taskColors = task.completed ? taskEventColors.completed : taskEventColors.uncompleted;
         return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
       this.events = [ ...this.meetups, ...this.tasks ];
       this.calendarOptions.events = this.events;
-    });
+    }));
   }
 
   canEditMeetup(meetup: any): boolean {
@@ -220,6 +230,13 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       extendedProps: { meetup },
       ...otherProps
     };
+  }
+
+  // Shifts a stored date by FullCalendar's calendar-day delta so day spans survive daylight saving changes
+  private shiftStoredDate(dateValue, delta: any): number {
+    const date = new Date(dateValue);
+    date.setDate(date.getDate() + (delta?.days || 0));
+    return date.getTime() + (delta?.milliseconds || 0);
   }
 
   private dateAtTime(dateValue, time?: string): Date {
@@ -357,7 +374,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
 
   eventDrop(info: any) {
     const eventData = info.event?.extendedProps?.meetup;
-    if (!eventData) {
+    if (!eventData || !info.event?.start) {
       info.revert();
       return;
     }
@@ -368,17 +385,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         this.planetMessageService.showAlert($localize`You are not authorized to edit this task`);
         return;
       }
-      const newDeadline = info.event.start ? info.event.start.getTime() : eventData.deadline;
       const { isTask, ...taskDoc } = eventData;
-      const updatedTask = { ...taskDoc, deadline: newDeadline };
+      const updatedTask = { ...taskDoc, deadline: info.event.start.getTime() };
 
       this.dialogsLoadingService.start();
-      this.couchService.updateDocument('tasks', updatedTask).pipe(
+      this.tasksService.addTask(updatedTask).pipe(
+        tap((res: any) => info.event.setExtendedProp('meetup', { ...res.doc, isTask: true })),
+        switchMap(() => this.fetchTasks().pipe(catchError(() => of([])))),
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe({
         next: () => {
           this.planetMessageService.showMessage($localize`Task rescheduled successfully`);
-          this.getTasks();
         },
         error: (err) => {
           console.error(err);
@@ -389,7 +406,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       return;
     }
 
-    if (!this.canEditMeetup(eventData)) {
+    if (!this.editable || !this.canEditMeetup(eventData)) {
       info.revert();
       this.planetMessageService.showAlert($localize`You are not authorized to edit this meetup`);
       return;
@@ -401,10 +418,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       return;
     }
 
-    const originalStartDate = this.dateAtTime(eventData.startDate, eventData.startTime);
-    const deltaMs = (info.event.start ? info.event.start.getTime() : 0) - originalStartDate.getTime();
-    const newStartDate = Number(eventData.startDate) + deltaMs;
-    const newEndDate = eventData.endDate ? Number(eventData.endDate) + deltaMs : newStartDate;
+    const newStartDate = this.shiftStoredDate(eventData.startDate, info.delta);
+    const newEndDate = eventData.endDate ? this.shiftStoredDate(eventData.endDate, info.delta) : newStartDate;
 
     const updatedMeetup = {
       ...eventData,
@@ -414,11 +429,12 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
 
     this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, updatedMeetup).pipe(
+      tap((res: any) => info.event.setExtendedProp('meetup', res.doc)),
+      switchMap(() => this.fetchMeetups().pipe(catchError(() => of([])))),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe({
       next: () => {
         this.planetMessageService.showMessage($localize`Event rescheduled: ${eventData.title}`);
-        this.getMeetups();
       },
       error: (err) => {
         console.error(err);
