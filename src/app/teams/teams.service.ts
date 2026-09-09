@@ -156,25 +156,39 @@ export class TeamsService {
   }
 
   removeFromRequests(team, memberInfo) {
-    const { userId, userPlanetCode } = memberIdentity(memberInfo, team);
-    if (!userId) {
+    const identity = memberIdentity(memberInfo, team);
+    return this.removeRequestsForIdentities(team, [ identity ]);
+  }
+
+  private removeRequestsForIdentities(team, identities, requireMatch = false) {
+    const validIdentities = identities.filter(identity => identity?.userId);
+    if (validIdentities.length === 0) {
       return throwError(new Error('Request user ID is required.'));
     }
+    const userIds = [ ...new Set(validIdentities.map(identity => identity.userId)) ];
     return this.couchService.findAll(this.dbName, findDocuments({
       teamId: team._id,
       docType: 'request',
-      userId,
-      ...userPlanetCodeSelector(userPlanetCode)
+      userId: userIds.length === 1 ? userIds[0] : { $in: userIds },
+      ...userPlanetCodeSelector(...validIdentities.map(identity => identity.userPlanetCode))
     })).pipe(
-      switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs
-        .filter(doc => memberCompare(doc, { userId, userPlanetCode }, team.teamPlanetCode))
-        .map(doc => ({ ...doc, _deleted: true }))))
+      map((docs: any[]) => docs.filter(doc => validIdentities.some(identity =>
+        memberCompare(doc, identity, team.teamPlanetCode)
+      ))),
+      switchMap((docs: any[]) => docs.length === 0 ?
+        requireMatch ? throwError(new Error('Join request not found.')) : of([]) :
+        this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true })))
+      )
     );
   }
 
   cancelJoinRequest(team) {
     const user = this.userService.get();
-    return this.removeFromRequests(team, userIdentity(user, this.stateService.configuration.code));
+    return this.removeRequestsForIdentities(
+      team,
+      userIdentityCandidates(user, this.stateService.configuration.code),
+      true
+    );
   }
 
   toggleTeamMembership(team, leaveTeam, memberInfo) {
@@ -203,9 +217,7 @@ export class TeamsService {
       return throwError(new Error('Membership user ID is required.'));
     }
     const deleted = leaveTeam ? { _deleted: true } : {};
-    const expectsExistingMembership = leaveTeam || Boolean(
-      (memberInfo._id || memberInfo._rev) && memberInfo.docType !== 'request'
-    );
+    const isExistingEdit = !leaveTeam && memberInfo.docType !== 'request' && Boolean(memberInfo._id || memberInfo._rev);
     const persistedMemberInfo = { ...memberInfo };
     delete persistedMemberInfo._id;
     delete persistedMemberInfo._rev;
@@ -219,15 +231,19 @@ export class TeamsService {
       ...userPlanetCodeSelector(identity.userPlanetCode)
     };
     return this.couchService.findAll(this.dbName, findDocuments(lookupSelector)).pipe(
-      map((docs) => docs.filter(doc => memberCompare(
-        doc, identity, team.teamPlanetCode
-      ))),
-      switchMap((docs) => expectsExistingMembership && docs.length === 0 ?
-        throwError(new Error('Membership document not found.')) :
-        of(docs.length === 0 ? [ membershipProps ] : docs)
+      map((docs: any[]) => docs
+        .filter(doc => memberCompare(doc, identity, team.teamPlanetCode))
+        .filter(doc => !isExistingEdit || doc._id === memberInfo._id)
       ),
-      switchMap((membershipDocs: any[]) => this.writeMembershipDocs(
-        membershipDocs.map(membershipDoc => this.membershipWriteDoc(
+      switchMap((docs: any[]) => {
+        if ((leaveTeam || isExistingEdit) && docs.length === 0) {
+          return throwError(new Error('Membership document not found.'));
+        }
+        if (!leaveTeam && !isExistingEdit && docs.length > 0) {
+          return of({});
+        }
+        const membershipDocs = docs.length === 0 ? [ membershipProps ] : docs;
+        return this.writeMembershipDocs(membershipDocs.map(membershipDoc => this.membershipWriteDoc(
           {
             ...membershipDoc,
             ...persistedMemberInfo,
@@ -237,23 +253,24 @@ export class TeamsService {
             ...(membershipDoc._rev ? { _id: membershipDoc._id, _rev: membershipDoc._rev } : {})
           },
           deleted
-        ))
-      ))
+        )));
+      })
     );
   }
 
   addMembers(team, selected, requests) {
-    const selectedIdentities = selected.map(user => userIdentity(
+    const selectedIdentityCandidates = selected.map(user => userIdentityCandidates(
       user, team.teamPlanetCode || this.stateService.configuration.code
     ));
-    if (selectedIdentities.some(identity => !identity.userId)) {
+    if (selectedIdentityCandidates.some(identities => identities.length === 0)) {
       return throwError(new Error('Membership user ID is required.'));
     }
+    const selectedIdentities = selectedIdentityCandidates.map(identities => identities[0]);
     const newMembershipDocs = selectedIdentities.map(identity =>
       this.membershipProps(team, identity, 'membership')
     );
-    const requestsToDelete = requests.filter(request => selectedIdentities.some(identity =>
-      memberCompare(request, identity, team.teamPlanetCode)
+    const requestsToDelete = requests.filter(request => selectedIdentityCandidates.some(identities =>
+      identities.some(identity => memberCompare(request, identity, team.teamPlanetCode))
     ))
       .map(({ _id, _rev }) => ({ _id, _rev, _deleted: true }));
     return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
@@ -281,7 +298,7 @@ export class TeamsService {
         this.membershipWriteDoc(freshNewLeader, { isLeader: true })
       ])),
       switchMap(promotionResponse => shouldDemoteOldLeader ?
-        this.freshMembershipDoc(oldLeader).pipe(
+        this.freshMembershipDoc(oldLeader, false).pipe(
           switchMap(freshOldLeader => this.writeMembershipDocs([
             this.membershipWriteDoc(freshOldLeader, { isLeader: false })
           ])),
@@ -331,11 +348,14 @@ export class TeamsService {
     );
   }
 
-  private freshMembershipDoc(member) {
-    if (!member?.userId) {
+  private freshMembershipDoc(member, requireUserId = true) {
+    if (requireUserId && !member?.userId) {
       return throwError(new Error('Membership user ID is required.'));
     }
-    return member._id ?
+    if (!member?._id && !member?.userId) {
+      return throwError(new Error('Membership document identity is required.'));
+    }
+    return member?._id ?
       this.couchService.get(`${this.dbName}/${member._id}`).pipe(map(doc => ({ ...member, ...doc }))) :
       of(member);
   }
