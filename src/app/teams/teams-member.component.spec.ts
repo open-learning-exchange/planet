@@ -197,6 +197,9 @@ describe('TeamsMemberComponent', () => {
 
       component.member = { userId: currentUser._id, userPlanetCode: planetCode };
       expect(component.isSelf).toBe(false);
+
+      component.member = { userId: associated._id, userPlanetCode: planetCode };
+      expect(component.isSelf).toBe(true);
     });
   });
 

@@ -348,6 +348,26 @@ describe('TeamsViewComponent identity', () => {
         userId: 'org.couchdb.user:ann@community', userPlanetCode: serverPlanet
       } ], component.user)).toBe(true);
     });
+
+    it('uses the materialized user document for member names and local avatar URLs', () => {
+      const component = build();
+      const materializedId = 'org.couchdb.user:ann@community';
+      component.team = { _id: 'team-1', teamPlanetCode: 'community' };
+      teamsService.getTeamMembers.mockReturnValue(of([ {
+        userId: 'org.couchdb.user:ann',
+        userPlanetCode: 'community',
+        docType: 'membership',
+        userDoc: {
+          _id: materializedId,
+          doc: { _id: materializedId, name: 'ann@community', _attachments: { img: {} } }
+        }
+      } ]));
+
+      component.getMembers().subscribe();
+
+      expect(component.members[0].name).toBe('ann@community');
+      expect(component.members[0].avatar).toContain(`/_users/${materializedId}/img`);
+    });
   });
 
   describe('label management', () => {

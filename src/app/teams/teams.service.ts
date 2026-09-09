@@ -405,22 +405,28 @@ export class TeamsService {
       this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, users, attachments ]: any[]) => {
-      const usersWithIdentities = users.map(user => ({
-        user,
-        identities: userIdentityCandidates(user, this.stateService.configuration.code)
+      const usersByIdentity = new Map<string, any>();
+      users.forEach(user => userIdentityCandidates(user, this.stateService.configuration.code).forEach(identity => {
+        const key = `${identity.userId}\u0000${identity.userPlanetCode || ''}`;
+        if (!usersByIdentity.has(key)) {
+          usersByIdentity.set(key, user);
+        }
       }));
+      const attachmentsById = new Map(attachments.map(attachment => [ attachment._id, attachment ]));
       return membershipDocs.map(doc => {
         if (doc.docType !== 'membership' && doc.docType !== 'request') {
           return doc;
         }
         const identity = memberIdentity(doc, team);
+        const userDoc = usersByIdentity.get(`${identity.userId}\u0000${identity.userPlanetCode || ''}`);
+        const userSource = userDoc?.doc || userDoc;
+        const attachmentUserId = userSource?._id || userDoc?._id || identity.userId;
+        const attachmentPlanetCode = userSource?.planetCode || identity.userPlanetCode;
         return {
           ...doc,
           resolvedUserPlanetCode: identity.userPlanetCode,
-          userDoc: usersWithIdentities.find(({ identities }) => identities.some(
-            candidate => memberCompare(candidate, identity, team.teamPlanetCode)
-          ))?.user,
-          attachmentDoc: attachments.find(attachment => attachment._id === `${identity.userId}@${identity.userPlanetCode}`)
+          userDoc,
+          attachmentDoc: attachmentsById.get(`${attachmentUserId}@${attachmentPlanetCode}`)
         };
       });
     }));

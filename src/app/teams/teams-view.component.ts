@@ -303,16 +303,23 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
         const { attachmentDoc, userId, userDoc } = member;
-        const userPlanetCode = memberPlanetCode(member);
-        if (member.attachmentDoc) {
-          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
+        const materializedUserId = userDoc?.doc?._id || userDoc?._id || userId;
+        if (attachmentDoc) {
+          return `${environment.couchAddress}/attachments/${attachmentDoc._id}/${Object.keys(attachmentDoc._attachments)[0]}`;
         }
-        if (member.userDoc && member.userDoc.doc._attachments) {
-          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
+        if (userDoc?.doc?._attachments) {
+          return `${environment.couchAddress}/_users/${materializedUserId}/${Object.keys(userDoc.doc._attachments)[0]}`;
         }
         return 'assets/image.png';
       };
-      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
+      const docsWithName = docs.map(mem => {
+        const userSource = mem.userDoc?.doc || mem.userDoc;
+        return {
+          ...mem,
+          name: userSource?.name || mem.name || (mem.userId && mem.userId.split(':')[1]),
+          avatar: src(mem)
+        };
+      });
       this.leader = docsWithName.find(mem => mem.isLeader) || {
         userId: this.team.createdBy,
         userPlanetCode: this.team.createdByPlanetCode || this.team.teamPlanetCode
@@ -332,19 +339,22 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   setTasks(tasks = []) {
-    this.members = this.members.map(member => ({
-      ...member,
-      tasks: this.tasksService.sortedTasks(tasks.filter(task => {
-        const identities = this.matchesCurrentUser(member) ?
-          this.currentUserTaskIdentities() :
-          [ { userId: member.userId, userPlanetCode: memberPlanetCode(member) } ];
-        return identities.some(identity => isTaskAssignedTo(task, identity, this.planetCode));
-      }), member.tasks)
-    }));
+    const currentUserTaskIdentities = this.currentUserTaskIdentities();
+    this.members = this.members.map(member => {
+      const identities = this.matchesCurrentUser(member) ?
+        currentUserTaskIdentities :
+        [ { userId: member.userId, userPlanetCode: memberPlanetCode(member) } ];
+      return {
+        ...member,
+        tasks: this.tasksService.sortedTasks(tasks.filter(task => identities.some(
+          identity => isTaskAssignedTo(task, identity, this.planetCode)
+        )), member.tasks)
+      };
+    });
     if (this.userStatus === 'member') {
       const tasksForCount = this.isUserLeader ?
         tasks :
-        tasks.filter(task => this.currentUserTaskIdentities().some(
+        tasks.filter(task => currentUserTaskIdentities.some(
           identity => isTaskAssignedTo(task, identity, this.planetCode)
         ));
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
@@ -392,7 +402,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   // Explicit account origin distinguishes a native user from an associated same-named account.
   // The current server is only the fallback for native/legacy user objects without their own origin.
-  private matchesCurrentUser(doc, user = this.user) {
+  matchesCurrentUser(doc, user = this.user) {
     return userIdentityCandidates(user, this.planetCode).some(identity => memberCompare(
       doc, identity, this.team?.teamPlanetCode || this.planetCode
     ));

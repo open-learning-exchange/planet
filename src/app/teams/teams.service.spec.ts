@@ -172,14 +172,21 @@ describe('TeamsService membership writes', () => {
         requestId: 'request-1'
       }
     };
+    const attachmentDoc = {
+      _id: 'org.couchdb.user:alex@community@community',
+      _attachments: { img: { digest: 'md5-image' } }
+    };
     const { service } = createService({
-      findAll: vi.fn().mockImplementation((db: string) => of(db === 'teams' ? [ historical ] : []))
+      findAll: vi.fn().mockImplementation((db: string) => of(
+        db === 'teams' ? [ historical ] : db === 'attachments' ? [ attachmentDoc ] : []
+      ))
     }, { users: [ userDoc ] });
     let members: any[];
 
     service.getTeamMembers(team).subscribe(result => members = result);
 
     expect(members[0].userDoc).toBe(userDoc);
+    expect(members[0].attachmentDoc).toBe(attachmentDoc);
   });
 
   it('rejects a join request by composite identity', () => {

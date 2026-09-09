@@ -10,7 +10,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelectionList, MatSelectionListChange, MatListOption, MatListItemTitle } from '@angular/material/list';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
-import { userIdentity } from '../shared/identity.utils';
+import { userIdentityCandidates } from '../shared/identity.utils';
 import { memberCompare, memberPlanetCode } from './teams.utils';
 
 const defaultAvatar = 'assets/image.png';
@@ -74,11 +74,9 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   }
 
   get isSelf() {
-    return memberCompare(
-      this.member,
-      userIdentity(this.user, this.planetCode),
-      this.member?.teamPlanetCode || this.planetCode
-    );
+    return userIdentityCandidates(this.user, this.planetCode).some(identity => memberCompare(
+      this.member, identity, this.member?.teamPlanetCode || this.planetCode
+    ));
   }
 
   get memberPlanetCode() {

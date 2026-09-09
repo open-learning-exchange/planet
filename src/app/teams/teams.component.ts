@@ -207,9 +207,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamList(teamRes) {
     const noVisit = { visitCount: 0, lastVisit: undefined };
+    const identities = userIdentityCandidates(this.user, this.planetCode);
     return teamRes.map((res: any) => {
       const doc = res.doc || res;
-      const identities = userIdentityCandidates(this.user, this.planetCode);
       const matchingRows = teamIdentityDocs(this.userMembership, doc, identities, this.planetCode);
       const membershipDoc = matchingRows.find(req => req.docType === 'membership') ||
         matchingRows.find(req => req.docType === 'request') || {};
