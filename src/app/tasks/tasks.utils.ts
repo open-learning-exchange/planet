@@ -1,4 +1,4 @@
-import { identityMatches, identityPlanetCode, userIdentity } from '../shared/identity.utils';
+import { identityMatches, identityPlanetCode, userIdentity, userIdentityCandidates } from '../shared/identity.utils';
 
 export interface AssigneeIdentity {
   userId: string;
@@ -11,14 +11,7 @@ export const assigneeIdentityCandidates = (user: any, localPlanetCode?: string):
   if (!identity.userId) {
     return [];
   }
-  const candidates = [ identity ];
-  if ((source.requestId || source.sync) && source._id && source._id !== identity.userId) {
-    candidates.push({ ...identity, userId: source._id });
-    if (localPlanetCode && localPlanetCode !== identity.userPlanetCode) {
-      candidates.push({ userId: source._id, userPlanetCode: localPlanetCode });
-    }
-  }
-  return candidates;
+  return source.requestId || source.sync ? userIdentityCandidates(source, localPlanetCode) : [ identity ];
 };
 
 export const assigneeKey = (

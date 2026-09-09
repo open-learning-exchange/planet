@@ -207,6 +207,9 @@ export class UsersService {
 
   deleteUserFromTeams(user) {
     const identities = userIdentityCandidates(user, this.stateService.configuration.code);
+    if (identities.length === 0) {
+      return throwError(new Error('User ID is required for team cleanup.'));
+    }
     const identity = identities[0];
     const userIds = [ ...new Set(identities.map(candidate => candidate.userId)) ];
     return this.couchService.findAll('teams', { selector: {
@@ -216,7 +219,7 @@ export class UsersService {
       switchMap(teams => {
         // Missing stored and team origins cannot be attributed safely, so destructive cleanup skips them.
         const docsWithUser = teams
-          .filter((doc: any) => identities.some(candidate => identityMatches(
+          .filter((doc: any) => Boolean(doc?.userId) && identities.some(candidate => identityMatches(
             doc, candidate, doc.teamPlanetCode
           )))
           .map((doc: any) => ({ ...doc, _deleted: true }));

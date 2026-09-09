@@ -30,6 +30,9 @@ export const userIdentity = (user: object, fallbackPlanetCode?: string) => {
 export const userIdentityCandidates = (user: object, fallbackPlanetCode?: string) => {
   const source = identitySource(user);
   const identity = userIdentity(source, fallbackPlanetCode);
+  if (!identity.userId) {
+    return [];
+  }
   const candidates = [ identity ];
   if (source?._id && source._id !== identity.userId) {
     candidates.push({ ...identity, userId: source._id });

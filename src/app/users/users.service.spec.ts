@@ -96,6 +96,19 @@ describe('UsersService notifications', () => {
     });
   });
 
+  it('rejects identity-less team cleanup before querying', () => {
+    const { service, couchService } = createService();
+    const error = vi.fn();
+
+    service.deleteUserFromTeams({ planetCode: 'planet-a' }).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'User ID is required for team cleanup.'
+    }));
+    expect(couchService.findAll).not.toHaveBeenCalled();
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
+  });
+
   it('filters code-less team rows by team origin and preserves same-named local accounts', () => {
     const matchingExplicit = {
       _id: 'foreign-explicit', userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b'

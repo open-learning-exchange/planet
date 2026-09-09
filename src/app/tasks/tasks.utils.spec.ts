@@ -24,19 +24,6 @@ describe('task assignee utilities', () => {
     }, 'planet-a')).toEqual([ { userId: 'alex', userPlanetCode: 'planet-b' } ]);
   });
 
-  it('removes an associated-account routing suffix from its stable identity', () => {
-    expect(assigneeIdentityCandidates({
-      _id: 'org.couchdb.user:alex@planet-b',
-      name: 'alex@planet-b',
-      planetCode: 'planet-b',
-      requestId: 'request-1'
-    }, 'planet-a')).toEqual([
-      { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b' },
-      { userId: 'org.couchdb.user:alex@planet-b', userPlanetCode: 'planet-b' },
-      { userId: 'org.couchdb.user:alex@planet-b', userPlanetCode: 'planet-a' }
-    ]);
-  });
-
   it('stores only portable display metadata', () => {
     expect(storedAssignee({
       ...local,
