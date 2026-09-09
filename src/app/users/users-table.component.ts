@@ -286,7 +286,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
         type: 'user',
         displayName: user.name,
         extraMessage,
-        // Callers pass the consequence of the change; the main paragraph asks the question
         extraMessageType: 'supplementary'
       }
     });
