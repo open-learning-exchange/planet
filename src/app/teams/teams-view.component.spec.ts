@@ -101,17 +101,6 @@ describe('TeamsViewComponent identity', () => {
       expect(component.isUserInMemberDocs([ { userId: 'org.couchdb.user:ann' } ], component.user)).toBe(true);
     });
 
-    it('does not grant leadership from an unrelated planet leader row', () => {
-      const component = build({ user: { _id: 'org.couchdb.user:ann', planetCode: 'community' } });
-      component.requests = [];
-      component.members = [];
-      component.route.snapshot.params = {};
-
-      component.setStatus({}, { userId: 'org.couchdb.user:ann', userPlanetCode: 'elsewhere' }, component.user);
-
-      expect(component.isUserLeader).toBe(false);
-    });
-
     it('resolves a code-less leader through the synchronized team origin', () => {
       const component = build({ user: { _id: 'org.couchdb.user:ann', planetCode: 'community' } });
       component.team = { _id: 'team-1', teamPlanetCode: 'community' };
@@ -124,24 +113,14 @@ describe('TeamsViewComponent identity', () => {
       expect(component.isUserLeader).toBe(true);
     });
 
-    it('grants leadership when the leader row belongs to the viewed server', () => {
+    it('does not treat another planet\'s member or leader document as this user', () => {
       const component = build();
       component.requests = [];
-      component.members = [];
+      const foreignRow = { userId: 'org.couchdb.user:ann', userPlanetCode: 'community', isLeader: true };
+      component.members = [ foreignRow ];
       component.route.snapshot.params = {};
 
-      component.setStatus({}, { userId: 'org.couchdb.user:ann', userPlanetCode: serverPlanet }, component.user);
-
-      expect(component.isUserLeader).toBe(true);
-    });
-
-    it('does not treat another planet\'s member document as this user', () => {
-      const component = build();
-      component.requests = [];
-      component.members = [ { userId: 'org.couchdb.user:ann', userPlanetCode: 'community', isLeader: true } ];
-      component.route.snapshot.params = {};
-
-      component.setStatus({}, { userId: 'org.couchdb.user:other', userPlanetCode: serverPlanet }, component.user);
+      component.setStatus({}, foreignRow, component.user);
 
       expect(component.userStatus).toBe('unrelated');
       expect(component.isUserLeader).toBe(false);
@@ -175,7 +154,7 @@ describe('TeamsViewComponent identity', () => {
       );
     });
 
-    it('preserves an explicit foreign request origin when accepting it', () => {
+    it('accepts only request identity fields while preserving an explicit foreign origin', () => {
       const component = build();
       const team = { _id: 'team-1', teamPlanetCode: 'community' };
       const request = {
@@ -183,7 +162,10 @@ describe('TeamsViewComponent identity', () => {
         _rev: '1-request',
         userId: 'org.couchdb.user:bob',
         userPlanetCode: 'community',
-        docType: 'request'
+        docType: 'request',
+        isLeader: true,
+        role: 'admin',
+        description: 'Untrusted request metadata'
       };
       component.team = team;
 
@@ -276,12 +258,12 @@ describe('TeamsViewComponent identity', () => {
       expect(teamsService.changeTeamLeadership).toHaveBeenCalledWith(undefined, { userId: 'org.couchdb.user:bob' });
     });
 
-    it('uses the sole persisted leader when the synthesized identity does not match', () => {
+    it('uses the sole persisted leader even when the displayed leader matches a different member', () => {
       const component = build();
       const persistedLeader = { _id: 'leader-1', userId: '', isLeader: true };
       const promoted = { _id: 'member-1', userId: 'org.couchdb.user:bob' };
       component.members = [ persistedLeader, promoted ];
-      component.leader = { userId: 'org.couchdb.user:missing', userPlanetCode: serverPlanet };
+      component.leader = { ...promoted };
       component.team = { _id: 'team-1' };
 
       component.makeLeader(promoted)().subscribe();
@@ -439,17 +421,23 @@ describe('TeamsViewComponent identity', () => {
       expect(component.taskCount).toBe(1);
     });
 
-    it('counts tasks under every identity the user is assigned by', () => {
-      // An associated account can hold assignments stamped with either its home or the server code;
-      // My Tasks filters across both, so the badge must too.
-      const component = build({ user: { _id: 'org.couchdb.user:alex', planetCode: 'community', sync: true } });
+    it('counts safe historical task identities without counting a same-named native user', () => {
+      const component = build({ user: {
+        _id: 'org.couchdb.user:alex@community',
+        name: 'alex@community',
+        planetCode: 'community',
+        sync: true
+      } });
       component.members = [ local, remote ];
       component.userStatus = 'member';
       component.isUserLeader = false;
 
       component.setTasks([
-        { _id: 'server-stamped', assignees: [ local ], completed: false },
+        { _id: 'materialized-server-stamped', assignees: [ {
+          userId: 'org.couchdb.user:alex@community', userPlanetCode: serverPlanet
+        } ], completed: false },
         { _id: 'home-stamped', assignees: [ remote ], completed: false },
+        { _id: 'same-named-native', assignees: [ local ], completed: false },
         { _id: 'someone-else', assignees: [ other ], completed: false }
       ]);
 

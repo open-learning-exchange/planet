@@ -609,13 +609,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           message: $localize`Removed: ${memberName}`
         });
       case 'added': {
-        const requestMember = { ...memberDoc };
-        delete requestMember._id;
-        delete requestMember._rev;
-        delete requestMember.docType;
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, {
-            ...requestMember,
+            userId: memberDoc.userId,
             userPlanetCode: memberPlanetCode(memberDoc) || this.team.teamPlanetCode || this.planetCode,
             docType: 'membership'
           }),
@@ -785,10 +781,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   makeLeader(member) {
     const persistedLeaders = this.members.filter(mem => mem.isLeader);
-    const currentLeader = this.members.find(mem => this.leader?._id && mem._id === this.leader._id) ||
+    const currentLeader = persistedLeaders[0] ||
+      this.members.find(mem => this.leader?._id && mem._id === this.leader._id) ||
       this.members.find(mem => memberCompare(
         mem, this.leader, this.team?.teamPlanetCode || this.planetCode
-      )) || persistedLeaders[0];
+      ));
     return () => (persistedLeaders.length > 1 ?
       throwError(new Error('Multiple persisted team leaders must be resolved before promotion.')) :
       this.teamsService.changeTeamLeadership(currentLeader, member)

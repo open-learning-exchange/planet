@@ -14,6 +14,7 @@ describe('TeamsService membership writes', () => {
       findAll: vi.fn().mockReturnValue(of([])),
       get: vi.fn().mockReturnValue(of({})),
       bulkDocs: vi.fn().mockReturnValue(of(successfulBulkResponse)),
+      updateDocument: vi.fn().mockReturnValue(of({ ok: true })),
       ...couchOverrides
     };
     const usersService = {
@@ -312,30 +313,23 @@ describe('TeamsService membership writes', () => {
     }));
   });
 
-  it('does not reuse a supplied id or revision when no persisted membership document is found', () => {
+  it('rejects a stale membership update when the persisted document has been removed', () => {
     const supplied = {
       _id: 'membership-supplied',
       _rev: '1-supplied',
       teamId: team._id,
-      userId: 'org.couchdb.user:supplied'
+      userId: 'org.couchdb.user:supplied',
+      docType: 'membership'
     };
-    const { service, couchService } = createService({
-      bulkDocs: vi.fn().mockReturnValue(of({
-        res: [ { id: supplied._id, error: 'conflict', reason: 'Document update conflict.' } ]
-      }))
-    });
+    const { service, couchService } = createService();
     const error = vi.fn();
 
     service.updateMembershipDoc(team, false, supplied).subscribe({ error });
 
-    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
-      teamId: team._id,
-      userId: supplied.userId,
-      teamPlanetCode: team.teamPlanetCode,
-      teamType: team.teamType,
-      docType: 'membership'
-    } ]);
-    expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Membership document not found.'
+    }));
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
   });
 
   it('preserves persisted leadership when the member update omits isLeader', () => {
@@ -806,6 +800,7 @@ describe('TeamsService membership writes', () => {
       message: 'Membership document not found.'
     }));
     expect(couchService.bulkDocs).not.toHaveBeenCalled();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
   });
 
   it('rejects a membership update without a user ID before querying or writing', () => {
@@ -823,6 +818,7 @@ describe('TeamsService membership writes', () => {
 
   it('rejects an unexpected wrapped bulk response', () => {
     const { service } = createService({
+      findAll: vi.fn().mockReturnValue(of([ membership ])),
       bulkDocs: vi.fn().mockReturnValue(of({ ok: true }))
     });
     const error = vi.fn();
@@ -855,6 +851,7 @@ describe('TeamsService membership writes', () => {
 
   it('accepts a successful result with an id and revision when ok is omitted', () => {
     const { service } = createService({
+      findAll: vi.fn().mockReturnValue(of([ membership ])),
       bulkDocs: vi.fn().mockReturnValue(of({
         res: [ { id: 'membership-1', rev: '2-membership' } ]
       }))

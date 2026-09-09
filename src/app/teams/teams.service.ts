@@ -203,6 +203,9 @@ export class TeamsService {
       return throwError(new Error('Membership user ID is required.'));
     }
     const deleted = leaveTeam ? { _deleted: true } : {};
+    const expectsExistingMembership = leaveTeam || Boolean(
+      (memberInfo._id || memberInfo._rev) && memberInfo.docType !== 'request'
+    );
     const persistedMemberInfo = { ...memberInfo };
     delete persistedMemberInfo._id;
     delete persistedMemberInfo._rev;
@@ -219,7 +222,7 @@ export class TeamsService {
       map((docs) => docs.filter(doc => memberCompare(
         doc, identity, team.teamPlanetCode
       ))),
-      switchMap((docs) => leaveTeam && docs.length === 0 ?
+      switchMap((docs) => expectsExistingMembership && docs.length === 0 ?
         throwError(new Error('Membership document not found.')) :
         of(docs.length === 0 ? [ membershipProps ] : docs)
       ),
