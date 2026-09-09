@@ -238,10 +238,16 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   removeTeam(item) {
+    const membershipDoc = item.membershipDoc;
+    const team = { ...item };
+    delete team.membershipDoc;
+    delete team.canRemove;
+    delete team.title;
+    delete team.link;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: defer(() => this.teamsService.toggleTeamMembership(item, true, item.membershipDoc).pipe(
+          request: defer(() => this.teamsService.toggleTeamMembership(team, true, membershipDoc).pipe(
             tap(() => this.teamRemoved.emit(item))
           )),
           onNext: () => {

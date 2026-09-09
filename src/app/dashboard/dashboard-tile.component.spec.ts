@@ -170,8 +170,6 @@ describe('DashboardTileComponent', () => {
     dialog.open.mock.calls[0][1].data.okClick.request.subscribe();
 
     // Fabricating an identity here would lose the exact persisted _id/_rev and origin semantics.
-    expect(teamsService.toggleTeamMembership).toHaveBeenCalledWith(
-      expect.objectContaining({ _id: 'team-1' }), true, membershipDoc
-    );
+    expect(teamsService.toggleTeamMembership).toHaveBeenCalledWith({ _id: 'team-1' }, true, membershipDoc);
   });
 });
