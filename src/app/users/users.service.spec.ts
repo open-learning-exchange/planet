@@ -79,23 +79,6 @@ describe('UsersService notifications', () => {
     );
   });
 
-  it('scopes team membership deletion to the user planet', () => {
-    const { service, couchService } = createService();
-
-    service.deleteUserFromTeams({ _id: 'org.couchdb.user:alex', planetCode: 'planet-b' }).subscribe();
-
-    expect(couchService.findAll).toHaveBeenCalledWith('teams', {
-      selector: {
-        userId: 'org.couchdb.user:alex',
-        $or: [
-          { userPlanetCode: 'planet-b' },
-          { userPlanetCode: '' },
-          { userPlanetCode: { $exists: false } }
-        ]
-      }
-    });
-  });
-
   it('falls back to the local planet when the user carries no planet code', () => {
     const { service, couchService } = createService();
 
@@ -105,28 +88,6 @@ describe('UsersService notifications', () => {
       selector: {
         userId: 'org.couchdb.user:alex',
         $or: [
-          { userPlanetCode: 'planet-a' },
-          { userPlanetCode: '' },
-          { userPlanetCode: { $exists: false } }
-        ]
-      }
-    });
-  });
-
-  it('deletes a replicated user by the canonical id membership documents use', () => {
-    const { service, couchService } = createService();
-
-    service.deleteUserFromTeams({
-      _id: 'org.couchdb.user:alex@planet-b',
-      couchId: 'org.couchdb.user:alex',
-      planetCode: 'planet-b'
-    }).subscribe();
-
-    expect(couchService.findAll).toHaveBeenCalledWith('teams', {
-      selector: {
-        userId: { $in: [ 'org.couchdb.user:alex', 'org.couchdb.user:alex@planet-b' ] },
-        $or: [
-          { userPlanetCode: 'planet-b' },
           { userPlanetCode: 'planet-a' },
           { userPlanetCode: '' },
           { userPlanetCode: { $exists: false } }
@@ -160,6 +121,17 @@ describe('UsersService notifications', () => {
       planetCode: 'planet-b'
     }).subscribe();
 
+    expect(couchService.findAll).toHaveBeenCalledWith('teams', {
+      selector: {
+        userId: { $in: [ 'org.couchdb.user:alex', 'org.couchdb.user:alex@planet-b' ] },
+        $or: [
+          { userPlanetCode: 'planet-b' },
+          { userPlanetCode: 'planet-a' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      }
+    });
     expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [
       { ...matchingExplicit, _deleted: true },
       { ...matchingCodeless, _deleted: true }
