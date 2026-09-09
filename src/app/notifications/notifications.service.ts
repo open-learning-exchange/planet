@@ -24,14 +24,18 @@ export const notificationUserFilter = (user: any) => {
   const source = { ...user, _id: user._id || `org.couchdb.user:${user.name}` };
   const recipient = notificationRecipient(source);
   // Notifications stored before ID normalization address the materialized @planet ID, and writers
-  // outside notificationRecipient still use it, so the reader accepts both forms of the own account ID.
-  const recipientIds = [ ...new Set([ recipient.user, source._id ]) ];
-  const userFilters = recipientIds.flatMap(recipientId => recipient.userPlanetCode ?
-    [
-      { user: recipientId, userPlanetCode: recipient.userPlanetCode },
-      { user: recipientId, userPlanetCode: { $exists: false } }
-    ] :
-    [ { user: recipientId } ]);
+  // outside notificationRecipient still use it. Only that actual account ID may match unscoped rows;
+  // the canonical alias requires its explicit origin so it cannot match a same-named native account.
+  const hasMaterializedAlias = source._id !== recipient.user;
+  const userFilters = recipient.userPlanetCode ? [
+    { user: recipient.user, userPlanetCode: recipient.userPlanetCode },
+    ...(hasMaterializedAlias ? [
+      { user: source._id, userPlanetCode: recipient.userPlanetCode },
+      { user: source._id, userPlanetCode: { $exists: false } }
+    ] : [
+      { user: recipient.user, userPlanetCode: { $exists: false } }
+    ])
+  ] : [ { user: recipient.user } ];
   return user.isUserAdmin ? [ ...userFilters, { user: 'SYSTEM' } ] : userFilters;
 };
 

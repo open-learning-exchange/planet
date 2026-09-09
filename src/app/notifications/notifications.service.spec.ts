@@ -91,7 +91,6 @@ describe('NotificationsService', () => {
       requestId: 'request-1'
     })).toEqual([
       { user: 'org.couchdb.user:alex', userPlanetCode: 'community-c' },
-      { user: 'org.couchdb.user:alex', userPlanetCode: { $exists: false } },
       { user: 'org.couchdb.user:alex@community-c', userPlanetCode: 'community-c' },
       { user: 'org.couchdb.user:alex@community-c', userPlanetCode: { $exists: false } }
     ]);
