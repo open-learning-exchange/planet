@@ -10,8 +10,8 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { dedupeShelfReduce } from '../shared/utils';
 import { trackById } from '../shared/table-helpers';
+import { dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
 
 import { MatButton } from '@angular/material/button';
 import { NewsListItemComponent } from './news-list-item.component';
@@ -32,8 +32,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   @Input() editable = true;
+  @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
+  @Input() customLabels: string[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
   @ViewChild('anchor', { static: false }) anchor: any;
@@ -209,6 +211,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   openUpdateDialog(
     { title, placeholder, initialValue = '', news = {} }: { title: string, placeholder: string, initialValue?: string, news?: any }
   ) {
+    if (this.readOnly) {
+      return;
+    }
     const fields = [ {
       type: 'markdown',
       name: 'message',
@@ -231,6 +236,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   postNews(oldNews, newNews) {
+    if (this.readOnly) {
+      return;
+    }
     this.newsService.postNews(
       { ...oldNews, ...newNews },
       oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`
@@ -241,6 +249,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   openDeleteDialog(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteNews(news),
@@ -277,6 +288,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   shareNews({ news, local }: { news: any, local: boolean }) {
+    if (this.readOnly) {
+      return;
+    }
     if (local) {
       this.newsService.shareNews(news).subscribe(() => {
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
@@ -295,12 +309,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
     this.changeLabelsFilter.emit({ label, action });
-    if (action === 'select') {
+    if (action === 'select' || this.readOnly) {
       return;
     }
     const labels = action === 'remove' ?
-      news.labels.filter(existingLabel => existingLabel !== label) :
-      [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
+      (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
+      dedupeVoiceLabels([ ...(news.labels || []), label ]);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 
