@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
-import { localizedGender } from './reports.utils';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -191,30 +190,33 @@ export class ReportsService {
     });
   }
 
-  userOfActivity(item: any) {
-    const user = this.users.find((u: any) => (u.doc || u).name === item.user);
-    return user ? (user.doc || user) : {};
+  // Child planet users arrive wrapped in a doc property, local ones do not.
+  usersByName() {
+    return this.users.reduce((users: Map<string, any>, user: any) => {
+      const doc = user.doc || user;
+      return doc.name ? users.set(doc.name, doc) : users;
+    }, new Map());
   }
 
-  appendGender(array) {
+  appendGender(array, users = this.usersByName()) {
     return array.map((item: any) => ({
       ...item,
-      gender: item.gender || this.userOfActivity(item).gender
+      gender: users.get(item.user)?.gender
     }));
   }
 
-  // Adds the demographics decision makers ask for to exported rows. Records which store their own
-  // demographics (health examinations) keep theirs, the rest are matched to their user profile.
+  // Records which store their own age (health examinations) keep it, the rest are matched to the
+  // birth date on their user profile.
+  appendAge(array, time: number | Date, users = this.usersByName()) {
+    return array.map((item: any) => ({
+      ...item,
+      age: item.age ?? ageFromBirthDate(time, users.get(item.user)?.birthDate) ?? ''
+    }));
+  }
+
   appendUserDemographics(array, time: number | Date) {
-    return array.map((item: any) => {
-      const user = this.userOfActivity(item);
-      const age = item.age ?? ageFromBirthDate(time, user.birthDate);
-      return ({
-        ...item,
-        age: age ?? '',
-        gender: localizedGender(item.gender || user.gender)
-      });
-    });
+    const users = this.usersByName();
+    return this.appendAge(this.appendGender(array, users), time, users);
   }
 
   timeFilter(field, time) {

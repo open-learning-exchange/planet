@@ -363,6 +363,15 @@ ${'\t'.repeat(18)}
       expect(ageFromBirthDate(now, new Date('unparseable'))).toBeNull();
     });
 
+    it('reads the ISO strings CouchDB stores', () => {
+      expect(ageFromBirthDate(now, '1998-09-04T00:00:00.000Z')).toBe(28);
+    });
+
+    it('reads timestamps, including the epoch', () => {
+      expect(ageFromBirthDate(now, new Date(1998, 8, 4).valueOf())).toBe(28);
+      expect(ageFromBirthDate(now, 0)).toBe(56);
+    });
+
   });
 
 });

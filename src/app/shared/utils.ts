@@ -232,9 +232,12 @@ export const stringToHex = (string: string) => string.split('').map(char => char
 export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
 export const ageFromBirthDate = (currentTime: number | Date, birthDate: string | number | Date) => {
+  if (birthDate === undefined || birthDate === null || birthDate === '') {
+    return null;
+  }
   const now = new Date(currentTime);
   const birth = new Date(birthDate);
-  if (!birthDate || isNaN(now.getTime()) || isNaN(birth.getTime())) {
+  if (isNaN(now.getTime()) || isNaN(birth.getTime())) {
     return null;
   }
   const yearDiff = now.getFullYear() - birth.getFullYear();

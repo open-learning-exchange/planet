@@ -1,5 +1,5 @@
 import { millisecondsToDay } from '../../meetups/constants';
-import { CsvService } from '../../shared/csv.service';
+import type { CsvService } from '../../shared/csv.service';
 import { toProperCase } from '../../shared/utils';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
@@ -98,14 +98,14 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
   { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
 );
 
-export const localizedGender = (gender?: string, fallback = '') => {
+export const localizedGender = (gender?: unknown, fallback = '') => {
   switch (gender) {
     case 'male':
       return $localize`Male`;
     case 'female':
       return $localize`Female`;
     default:
-      return gender ? toProperCase(gender) : fallback;
+      return typeof gender === 'string' && gender ? toProperCase(gender) : fallback;
   }
 };
 

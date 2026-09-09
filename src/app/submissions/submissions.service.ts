@@ -291,6 +291,12 @@ export class SubmissionsService {
     return $localize`N/A`;
   }
 
+  // A stored age of '' means the submission never carried one, an age of 0 is a real answer.
+  private userAge(time, user) {
+    const age = ageFromBirthDate(time, user.birthDate) ?? user.age;
+    return age === undefined || age === null || age === '' ? null : age;
+  }
+
   private localizedGender(gender?: string) {
     return localizedGender(gender, this.notAvailable());
   }
@@ -337,8 +343,7 @@ export class SubmissionsService {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
             [$localize`Gender`]: this.localizedGender(submission.user.gender),
-            [$localize`Age (years)`]:
-              ageFromBirthDate(time, submission.user.birthDate) ?? submission.user.age ?? this.notAvailable(),
+            [$localize`Age (years)`]: this.userAge(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
@@ -574,7 +579,7 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
-      const userAge = ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) ?? submission.user.age;
+      const userAge = this.userAge(submission.lastUpdateTime, submission.user);
       const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
       const communityOrNation = submission.planetName;
       const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
@@ -589,7 +594,7 @@ export class SubmissionsService {
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
-        userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
+        userAge !== null ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
         '</ul>',
         '<hr>'
       ].filter(Boolean).join('\n');

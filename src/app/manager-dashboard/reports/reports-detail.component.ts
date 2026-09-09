@@ -19,7 +19,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
-  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, localizedGender
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -778,6 +778,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members), this.today
         ).map(activity => ({
           ...activity,
+          gender: localizedGender(activity.gender),
           androidId: activity.androidId || '',
           deviceName: activity.deviceName || '',
           customDeviceName: activity.customDeviceName || ''
@@ -816,7 +817,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }
     const exportData = this.activityService.appendUserDemographics(data, this.today).map(activity => ({
       [$localize`User`]: activity.user || '',
-      [$localize`Gender`]: activity.gender,
+      [$localize`Gender`]: localizedGender(activity.gender),
       [$localize`Age (years)`]: activity.age,
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
@@ -895,20 +896,24 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
+    const activities = filterByMember(
+      filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members
+    ).map(activity => {
+      const baseActivity = {
+        ...activity,
+        androidId: activity.androidId || '',
+        deviceName: activity.deviceName || ''
+      };
+      if (reportType === 'health' && activity.updatedDate) {
+        baseActivity.updatedDate = fullLabel(activity.updatedDate, this.localeId);
+      }
+      return baseActivity;
+    });
+    const activitiesWithDemographics = reportType === 'health' ?
+      this.activityService.appendAge(activities, this.today) :
+      this.activityService.appendUserDemographics(activities, this.today);
     this.csvService.exportCSV({
-      data: this.activityService.appendUserDemographics(
-        filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(activity => {
-          const baseActivity = {
-            ...activity,
-            androidId: activity.androidId || '',
-            deviceName: activity.deviceName || ''
-          };
-          if (reportType === 'health' && activity.updatedDate) {
-            baseActivity.updatedDate = fullLabel(activity.updatedDate, this.localeId);
-          }
-          return baseActivity;
-        }),
+      data: activitiesWithDemographics.map(activity => ({ ...activity, gender: localizedGender(activity.gender) })),
       title
     });
   }
