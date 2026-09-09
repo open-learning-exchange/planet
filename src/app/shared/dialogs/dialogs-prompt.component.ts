@@ -30,7 +30,20 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
-  styleUrls: [ './dialogs-prompt.component.scss' ],
+  styles: [`
+    .break-word {
+      word-wrap: break-word;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .enterprise-rules {
+      margin-top: 12px;
+    }
+    .extra-message-supplementary {
+      font-size: 0.875rem;
+      font-style: italic;
+    }
+  `],
   imports: [
     CdkScrollable,
     MatDialogContent,
