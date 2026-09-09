@@ -144,7 +144,9 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.renderedRows.length === 0) {
       return 'hidden';
     }
-    return isAllVisibleSelected(this.selection, this.renderedRows, row => this.selectIdentifier(row)) ? 'yes' : 'no';
+    return isAllVisibleSelected(this.selection, this.renderedRows, {
+      selectValue: row => this.selectIdentifier(row)
+    }) ? 'yes' : 'no';
   }
 
   masterToggle() {

@@ -190,7 +190,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedData, (row: any) => row.doc);
+    return isAllVisibleSelected(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
   }
 
   onlyManagerSelected() {

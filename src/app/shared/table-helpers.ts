@@ -193,11 +193,18 @@ const selectableVisibleValues = <T, S>(
   visibleRows: T[], selectValue: (row: T) => S, isSelectable: (row: T) => boolean
 ) => visibleRows.filter(row => isSelectable(row)).map(row => selectValue(row));
 
+interface VisibleSelectionOptions<T, S> {
+  selectValue?: (row: T) => S,
+  isSelectable?: (row: T) => boolean
+}
+
 export const isAllVisibleSelected = <T, S>(
   selection: SelectionModel<S>,
   visibleRows: T[],
-  selectValue: (row: T) => S = (row: any) => row._id,
-  isSelectable: (row: T) => boolean = () => true
+  {
+    selectValue = (row: any) => row._id,
+    isSelectable = () => true
+  }: VisibleSelectionOptions<T, S> = {}
 ) => {
   const values = selectableVisibleValues(visibleRows, selectValue, isSelectable);
   return values.length > 0 && values.every(value => selection.isSelected(value));
@@ -206,9 +213,7 @@ export const isAllVisibleSelected = <T, S>(
 export const toggleVisibleSelection = <T, S>(
   selection: SelectionModel<S>,
   visibleRows: T[],
-  options: {
-    selectValue?: (row: T) => S,
-    isSelectable?: (row: T) => boolean,
+  options: VisibleSelectionOptions<T, S> & {
     clearAllOnDeselect?: boolean
   } = {}
 ) => {
@@ -218,7 +223,7 @@ export const toggleVisibleSelection = <T, S>(
     clearAllOnDeselect = false
   } = options;
   const values = selectableVisibleValues(visibleRows, selectValue, isSelectable);
-  if (isAllVisibleSelected(selection, visibleRows, selectValue, isSelectable)) {
+  if (isAllVisibleSelected(selection, visibleRows, options)) {
     if (clearAllOnDeselect) {
       selection.clear();
     } else {

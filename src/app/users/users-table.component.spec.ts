@@ -59,7 +59,6 @@ describe('UsersTableComponent', () => {
 
     fixture = TestBed.createComponent(UsersTableComponent);
     component = fixture.componentInstance;
-    component.tableState = new TableState();
     fixture.detectChanges();
   });
 
@@ -71,25 +70,24 @@ describe('UsersTableComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('preserves selections while toggling users across pages', () => {
-    const firstPageUsers = [
-      { ...mockUser, _id: 'user-1', name: 'user-1' },
-      { ...mockUser, _id: 'user-2', name: 'user-2' }
-    ];
-    const secondPageUsers = [
-      { ...mockUser, _id: 'user-3', name: 'user-3' },
-      { ...mockUser, _id: 'user-4', name: 'user-4' }
-    ];
+  it('preserves selected users when the paginator changes page', async () => {
+    const users = Array.from({ length: 51 }, (unused, index) => ({
+      doc: { ...mockUser, _id: `user-${index}`, name: `user-${index}` }
+    }));
+    component.tableState = new TableState();
+    fixture.componentRef.setInput('users', users);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    component.renderedData = firstPageUsers.map(doc => ({ doc }));
+    expect(component.renderedData).toEqual(users.slice(0, 50));
     component.masterToggle();
-    component.renderedData = secondPageUsers.map(doc => ({ doc }));
-    component.masterToggle();
+    component.paginator.nextPage();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    expect(component.selection.selected).toEqual([ ...firstPageUsers, ...secondPageUsers ]);
-
-    component.masterToggle();
-    expect(component.selection.selected).toEqual(firstPageUsers);
+    expect(component.paginator.pageIndex).toBe(1);
+    expect(component.renderedData).toEqual(users.slice(50));
+    expect(component.selection.selected).toEqual(users.slice(0, 50).map(row => row.doc));
   });
 
   it('should open DialogsPromptComponent with deactivate configuration when deactivateClick is called', () => {

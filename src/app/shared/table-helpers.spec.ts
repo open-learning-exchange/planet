@@ -47,7 +47,7 @@ describe('table-helpers select-all', () => {
     const isSelectable = (row: any) => row.parent !== true;
     toggleVisibleSelection(selection, rows, { selectValue: (row: any) => row._id, isSelectable });
     expect(selection.selected).toEqual([ 'a' ]);
-    expect(isAllVisibleSelected(selection, rows, (row: any) => row._id, isSelectable)).toBe(true);
+    expect(isAllVisibleSelected(selection, rows, { selectValue: (row: any) => row._id, isSelectable })).toBe(true);
   });
 
   it('honors a custom select value', () => {

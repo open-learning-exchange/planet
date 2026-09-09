@@ -312,7 +312,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedRows, row => row._id, row => this.isRowSelectable(row));
+    return isAllVisibleSelected(this.selection, this.renderedRows, {
+      selectValue: row => row._id,
+      isSelectable: row => this.isRowSelectable(row)
+    });
   }
 
   isRowSelectable(row: any): boolean {
