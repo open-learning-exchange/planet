@@ -12,12 +12,12 @@ describe('DialogsListComponent select all', () => {
   const firstPage = [ 'id-0', 'id-1', 'id-2', 'id-3', 'id-4' ];
 
   // MatTableDataSource sets the paginator length in a microtask, so flush before paging
-  const createComponent = async (initialSelection: any[] = []) => {
+  const createComponent = async (initialSelection: any[] = [], rows = tableData) => {
     TestBed.configureTestingModule({
       imports: [ DialogsListComponent, NoopAnimationsModule ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: {
-          tableData,
+          tableData: rows,
           columns: [ 'name' ],
           itemDescription: 'members',
           nameProperty: 'name',
@@ -79,6 +79,19 @@ describe('DialogsListComponent select all', () => {
     expect(component.tooltipText).toBe('name-0, name-1, name-2, name-3, name-4');
     component.masterToggle();
     expect(component.tooltipText).toBe('');
+  });
+
+  it('keeps a shared name when a selected row on another page still has it', async () => {
+    const rows = tableData.map((row, index) => index === 5 ? { ...row, name: 'name-0' } : row);
+    await createComponent([], rows);
+    component.masterToggle();
+    await goToNextPage();
+    component.masterToggle();
+    component.masterToggle();
+
+    expect(component.selection.selected).toEqual(firstPage);
+    expect(component.selectedNames).toEqual([ 'name-0', 'name-1', 'name-2', 'name-3', 'name-4' ]);
+    expect(component.tooltipText).toBe('name-0, name-1, name-2, name-3, name-4');
   });
 
   it('does not report an initial selection from a later page as all selected', async () => {

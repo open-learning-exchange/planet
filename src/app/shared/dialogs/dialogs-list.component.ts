@@ -110,7 +110,7 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
     this.setDropdownFilter(this.data.dropdownSettings, this.data.labels);
-    this.initializeTooltip();
+    this.updateSelectedNames();
   }
 
   ngOnInit() {
@@ -151,14 +151,13 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   masterToggle() {
     toggleVisibleSelection(this.selection, this.renderedRows, { selectValue: row => this.selectIdentifier(row) });
-    this.renderedRows.forEach((row: any) => this.setSelectedNames(row[this.data.nameProperty], this.selectIdentifier(row)));
+    this.updateSelectedNames();
   }
 
   rowClick(row: any) {
     if (!this.disableRowClick) {
-      const selectIdentifier = this.selectIdentifier(row);
-      this.selection.toggle(selectIdentifier);
-      this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
+      this.selection.toggle(this.selectIdentifier(row));
+      this.updateSelectedNames();
     }
   }
 
@@ -166,34 +165,13 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.selection.selected.map(id => this.tableData.data.find((row: any) => this.selectIdentifier(row) === id));
   }
 
-  initializeTooltip() {
-    this.selectedRows().forEach((row: any) => this.setSelectedNames(row[this.data.nameProperty], this.selectIdentifier(row)));
-  }
-
   selectIdentifier(row: any) {
     return row._id + (row.planetCode === undefined ? '' : row.planetCode);
   }
 
-  setSelectedNames(name, selectIdentifier) {
-    if (this.selection.isSelected(selectIdentifier)) {
-      this.addToSelectedNames(name);
-    } else {
-      this.removeFromSelectedNames(name);
-    }
+  updateSelectedNames() {
+    this.selectedNames = [ ...new Set(this.selectedRows().map(row => row[this.data.nameProperty])) ];
     this.tooltipText = this.selectedNames.join(', ');
-  }
-
-  addToSelectedNames(name) {
-    if (this.selectedNames.indexOf(name) === -1) {
-      this.selectedNames.push(name);
-    }
-  }
-
-  removeFromSelectedNames(name) {
-    const index = this.selectedNames.indexOf(name);
-    if (index !== -1) {
-      this.selectedNames.splice(index, 1);
-    }
   }
 
   allowSubmit() {
