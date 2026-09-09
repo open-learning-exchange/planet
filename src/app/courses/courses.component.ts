@@ -414,14 +414,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }, (error) => ((error)));
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows);
+    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   countSelectNotEnrolled(selected: any) {

@@ -318,7 +318,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, row => row._id, row => this.isRowSelectable(row));
+    toggleVisibleSelection(this.selection, this.renderedRows, {
+      selectValue: row => row._id,
+      isSelectable: row => this.isRowSelectable(row),
+      clearAllOnDeselect: true
+    });
   }
 
   deleteSelected() {

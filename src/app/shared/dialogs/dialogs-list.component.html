@@ -11,7 +11,7 @@
     <div class="search-bar">
       @if (data.allowMulti && isAllSelected()!=='hidden') {
         <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3">
-        {isAllSelected(), select, yes {Deselect} no {Select}} all
+        {isAllSelected(), select, yes {Deselect} no {Select}} page
       </button>
       }
       @if (dropdownField && dropdownOptions.length > 1) {

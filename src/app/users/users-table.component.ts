@@ -2,7 +2,7 @@ import {
   Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
@@ -197,13 +197,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
-  /** Selects every row on the current page, or deselects them when they are all already selected. */
   masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedData, (row: any) => row.doc);
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
+    toggleVisibleSelection(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
   }
 
   gotoProfileView(userName: string, event?: Event) {

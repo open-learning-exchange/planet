@@ -155,7 +155,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows);
+    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   applyFilter(filterValue: string) {

@@ -140,8 +140,6 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  // Reports on the rows of the current page only, so the button never acts on rows the user cannot see.
-  // 'hidden' when there is nothing rendered to act on, otherwise the ICU label picks Select vs Deselect.
   isAllSelected() {
     if (this.renderedRows.length === 0) {
       return 'hidden';
@@ -150,7 +148,7 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, row => this.selectIdentifier(row));
+    toggleVisibleSelection(this.selection, this.renderedRows, { selectValue: row => this.selectIdentifier(row) });
     this.renderedRows.forEach((row: any) => this.setSelectedNames(row[this.data.nameProperty], this.selectIdentifier(row)));
   }
 
@@ -192,7 +190,10 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeFromSelectedNames(name) {
-    this.selectedNames.splice(this.selectedNames.indexOf(name), 1);
+    const index = this.selectedNames.indexOf(name);
+    if (index !== -1) {
+      this.selectedNames.splice(index, 1);
+    }
   }
 
   allowSubmit() {

@@ -36,17 +36,23 @@ describe('table-helpers select-all', () => {
     expect(selection.selected).toEqual([ 'offPage' ]);
   });
 
+  it('clears the whole selection when configured to do so', () => {
+    selection.select('a', 'b', 'offPage');
+    toggleVisibleSelection(selection, page, { clearAllOnDeselect: true });
+    expect(selection.isEmpty()).toBe(true);
+  });
+
   it('skips rows that are not selectable', () => {
     const rows = [ { _id: 'a' }, { _id: 'b', parent: true } ];
     const isSelectable = (row: any) => row.parent !== true;
-    toggleVisibleSelection(selection, rows, (row: any) => row._id, isSelectable);
+    toggleVisibleSelection(selection, rows, { selectValue: (row: any) => row._id, isSelectable });
     expect(selection.selected).toEqual([ 'a' ]);
     expect(isAllVisibleSelected(selection, rows, (row: any) => row._id, isSelectable)).toBe(true);
   });
 
   it('honors a custom select value', () => {
     const rows = [ { _id: 'a', planetCode: 'x' } ];
-    toggleVisibleSelection(selection, rows, (row: any) => row._id + row.planetCode);
+    toggleVisibleSelection(selection, rows, { selectValue: (row: any) => row._id + row.planetCode });
     expect(selection.selected).toEqual([ 'ax' ]);
   });
 });

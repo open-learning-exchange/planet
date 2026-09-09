@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { UsersTableComponent } from './users-table.component';
+import { TableState, UsersTableComponent } from './users-table.component';
 import { UserService } from '../shared/user.service';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -59,6 +59,7 @@ describe('UsersTableComponent', () => {
 
     fixture = TestBed.createComponent(UsersTableComponent);
     component = fixture.componentInstance;
+    component.tableState = new TableState();
     fixture.detectChanges();
   });
 
@@ -68,6 +69,27 @@ describe('UsersTableComponent', () => {
 
   it('should create UsersTableComponent', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('preserves selections while toggling users across pages', () => {
+    const firstPageUsers = [
+      { ...mockUser, _id: 'user-1', name: 'user-1' },
+      { ...mockUser, _id: 'user-2', name: 'user-2' }
+    ];
+    const secondPageUsers = [
+      { ...mockUser, _id: 'user-3', name: 'user-3' },
+      { ...mockUser, _id: 'user-4', name: 'user-4' }
+    ];
+
+    component.renderedData = firstPageUsers.map(doc => ({ doc }));
+    component.masterToggle();
+    component.renderedData = secondPageUsers.map(doc => ({ doc }));
+    component.masterToggle();
+
+    expect(component.selection.selected).toEqual([ ...firstPageUsers, ...secondPageUsers ]);
+
+    component.masterToggle();
+    expect(component.selection.selected).toEqual(firstPageUsers);
   });
 
   it('should open DialogsPromptComponent with deactivate configuration when deactivateClick is called', () => {
