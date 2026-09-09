@@ -16,7 +16,6 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
 import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { sortNumberOrString } from '../shared/table-helpers';
 import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -91,10 +90,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
   @Input() editable = true;
   @Input() isLoading = false;
   @Output() financesChanged = new EventEmitter<void>();
-  @ViewChild(MatSort) set sort(sort: MatSort) {
-    if (sort) {
-      this.table.sort = sort;
-    }
+  @ViewChild(MatSort) set sort(sort: MatSort | undefined) {
+    this.table.sort = sort ?? null;
   }
   allTransactions: any[] = [];
   table = new MatTableDataSource<any>();
@@ -133,20 +130,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
     private teamsService: TeamsService,
     private teamsAttachmentsService: TeamsAttachmentsService,
     @Inject(LOCALE_ID) private localeId: string
-  ) {
-    this.table.sortingDataAccessor = (item: any, property: string) => {
-      switch (property) {
-        case 'date':
-          return typeof item.date === 'number' ? item.date : (item.date ? new Date(item.date).getTime() : 0);
-        case 'credit':
-          return Number(item.credit) || 0;
-        case 'debit':
-          return Number(item.debit) || 0;
-        default:
-          return sortNumberOrString(item, property);
-      }
-    };
-  }
+  ) {}
 
   ngOnChanges() {
     if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
@@ -320,14 +304,18 @@ export class TeamsViewFinancesComponent implements OnChanges {
     this.updateTotals();
   }
 
+  private get sortedData(): any[] {
+    const rows = [ ...this.table.filteredData ];
+    return this.table.sort ? this.table.sortData(rows, this.table.sort) : rows;
+  }
+
   exportTableData() {
-    const sortedData = this.table.sort ? this.table.sortData(this.table.filteredData, this.table.sort) : this.table.data;
-    const { data, title } = this.financeExportData(sortedData);
+    const { data, title } = this.financeExportData(this.sortedData);
     this.csvService.exportCSV({ data, title });
   }
 
   exportTablePdf() {
-    const sortedData = this.table.sort ? this.table.sortData(this.table.filteredData, this.table.sort) : this.table.data;
+    const sortedData = this.sortedData;
     const { data, title, titleName } = this.financeExportData(sortedData);
     this.dialogsLoadingService.start();
     this.receiptImageSections(sortedData)
@@ -350,7 +338,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
       }));
   }
 
-  private financeExportData(sourceData = this.table.data) {
+  private financeExportData(sourceData: any[]) {
     const data = sourceData.map(row => ({
       [$localize`date`]: fullLabel(row.date, this.localeId),
       [$localize`description`]: row.description,

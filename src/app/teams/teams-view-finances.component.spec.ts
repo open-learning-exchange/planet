@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { By } from '@angular/platform-browser';
+import { MatSortHeader } from '@angular/material/sort';
 import { LOCALE_ID } from '@angular/core';
 import { vi } from 'vitest';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
@@ -21,6 +22,8 @@ describe('TeamsViewFinancesComponent', () => {
   let component: TeamsViewFinancesComponent;
   let fixture: ComponentFixture<TeamsViewFinancesComponent>;
   let csvService: CsvService;
+  let pdfExportService: TeamsTablePdfExportService;
+  let dialogsLoadingService: DialogsLoadingService;
 
   const mockFinances = [
     {
@@ -73,12 +76,28 @@ describe('TeamsViewFinancesComponent', () => {
     });
 
     csvService = TestBed.inject(CsvService);
+    pdfExportService = TestBed.inject(TeamsTablePdfExportService);
+    dialogsLoadingService = TestBed.inject(DialogsLoadingService);
     fixture = TestBed.createComponent(TeamsViewFinancesComponent);
     component = fixture.componentInstance;
     component.finances = mockFinances;
     component.ngOnChanges();
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const sortBy = (id: string, start: 'asc' | 'desc') => {
+    component.table.sort.sort({ id, start, disableClear: true });
+    fixture.detectChanges();
+  };
+
+  const exportedDescriptions = (exportOptions: any) => exportOptions.data.map((row: any) => row['description']);
+
+  const renderedDescriptions = () => fixture.debugElement.queryAll(By.css('.km-description'))
+    .map(cell => cell.nativeElement.textContent.trim());
 
   it('should create TeamsViewFinancesComponent', () => {
     expect(component).toBeTruthy();
@@ -89,47 +108,63 @@ describe('TeamsViewFinancesComponent', () => {
   });
 
   it('should render sort headers only for date, credit, and debit', () => {
-    const sortHeaders = fixture.debugElement.queryAll(By.css('mat-header-cell[mat-sort-header]'));
-    const sortHeaderIds = sortHeaders.map(sh => sh.attributes['mat-sort-header']);
+    const sortHeaderIds = fixture.debugElement.queryAll(By.directive(MatSortHeader))
+      .map(header => header.injector.get(MatSortHeader).id);
 
-    expect(sortHeaderIds).toContain('date');
-    expect(sortHeaderIds).toContain('credit');
-    expect(sortHeaderIds).toContain('debit');
-    expect(sortHeaderIds).not.toContain('description');
-    expect(sortHeaderIds).not.toContain('balance');
+    expect(sortHeaderIds).toEqual([ 'date', 'credit', 'debit' ]);
   });
 
-  it('should sort date correctly via sortingDataAccessor for both timestamps and Date objects', () => {
-    const item1 = { date: 100, credit: 50, debit: 0 };
-    const item2 = { date: new Date('2026-07-10T10:00:00Z'), credit: 10, debit: 0 };
-    const emptyItem = { credit: 10 };
-
-    expect(component.table.sortingDataAccessor(item1, 'date')).toBe(100);
-    expect(component.table.sortingDataAccessor(item2, 'date')).toBe(new Date('2026-07-10T10:00:00Z').getTime());
-    expect(component.table.sortingDataAccessor(emptyItem, 'date')).toBe(0);
-  });
-
-  it('should sort credit and debit numbers correctly via sortingDataAccessor', () => {
-    const creditItem = { date: 100, credit: 500, debit: 0 };
-    const debitItem = { date: 100, credit: 0, debit: 150 };
-    const emptyItem = { date: 100 };
-
-    expect(component.table.sortingDataAccessor(creditItem, 'credit')).toBe(500);
-    expect(component.table.sortingDataAccessor(emptyItem, 'credit')).toBe(0);
-
-    expect(component.table.sortingDataAccessor(debitItem, 'debit')).toBe(150);
-    expect(component.table.sortingDataAccessor(emptyItem, 'debit')).toBe(0);
+  it('should start sorted by date descending', () => {
+    expect(component.table.sort.active).toBe('date');
+    expect(component.table.sort.direction).toBe('desc');
   });
 
   it('should export CSV using current sorted table order', () => {
     const exportCsvSpy = vi.spyOn(csvService, 'exportCSV').mockImplementation(() => {});
+    sortBy('credit', 'asc');
     component.exportTableData();
 
     expect(exportCsvSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.any(Array),
-        title: expect.stringContaining('Financial Transactions')
-      })
+      expect.objectContaining({ title: expect.stringContaining('Financial Transactions') })
     );
+    expect(exportedDescriptions(exportCsvSpy.mock.calls[0][0]))
+      .toEqual([ 'Hardware Supplies', 'Grant Funding', 'Initial Deposit' ]);
+  });
+
+  it('should export PDF using current sorted table order', () => {
+    const exportPdfSpy = vi.spyOn(pdfExportService, 'exportTable').mockImplementation(() => {});
+    vi.spyOn(dialogsLoadingService, 'start').mockImplementation(() => {});
+    vi.spyOn(dialogsLoadingService, 'stop').mockImplementation(() => {});
+    sortBy('credit', 'desc');
+    component.exportTablePdf();
+
+    expect(exportedDescriptions(exportPdfSpy.mock.calls[0][0]))
+      .toEqual([ 'Initial Deposit', 'Grant Funding', 'Hardware Supplies' ]);
+  });
+
+  it('should keep the active sort when a date filter empties the table', () => {
+    sortBy('credit', 'asc');
+    expect(renderedDescriptions()).toEqual([ 'Hardware Supplies', 'Grant Funding', 'Initial Deposit' ]);
+
+    component.startDate = new Date('2027-01-01T00:00:00Z');
+    component.transactionFilter();
+    fixture.detectChanges();
+    expect(component.emptyTable).toBe(true);
+
+    component.resetDateFilter();
+    fixture.detectChanges();
+
+    expect(component.table.sort.active).toBe('credit');
+    expect(component.table.sort.direction).toBe('asc');
+    expect(renderedDescriptions()).toEqual([ 'Hardware Supplies', 'Grant Funding', 'Initial Deposit' ]);
+  });
+
+  it('should not reorder the table data source when exporting', () => {
+    vi.spyOn(csvService, 'exportCSV').mockImplementation(() => {});
+    sortBy('credit', 'asc');
+    component.exportTableData();
+
+    expect(component.table.data.map(row => row.description))
+      .toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
   });
 });
