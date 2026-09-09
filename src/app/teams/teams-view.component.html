@@ -116,6 +116,9 @@
         @if (team?.description && mode === 'enterprise') {
           <div class="mat-headline-6" i18n>What is your enterprise's Mission?</div>
         }
+        @if (team?.description && mode === 'team') {
+          <div class="mat-headline-6" i18n>What is your team's Plan?</div>
+        }
         <planet-markdown [content]="team.description"></planet-markdown>
         @if (team?.services) {
           <div class="mat-headline-6" i18n>What are the Services your enterprise provides?</div>
@@ -133,8 +136,8 @@
           </button>
         }
       }
-      @if (mode!=='services') {
-        <p><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
+      @if (mode!=='services' && team?.createdDate) {
+        <p><ng-container i18n>{ mode, select, enterprise {Enterprise Created} other {Team Created} }</ng-container> {{ team?.createdDate | date:'medium' }}</p>
       }
       @if (team?.description && mode === 'services') {
         <button mat-raised-button color="accent" (click)="updateTeam()" i18n>Edit Services</button>
