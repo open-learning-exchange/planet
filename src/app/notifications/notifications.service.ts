@@ -6,17 +6,14 @@ import { StateService } from '../shared/state.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
-import { canonicalUserId } from '../shared/identity.utils';
+import { userIdentity } from '../shared/identity.utils';
 
-/**
- * Supports raw or replicated user docs and team-member rows. Callers holding a
- * fullUserDoc wrapper must pass its `doc` value.
- */
+/** Supports raw user docs, replicated fullUserDoc wrappers, and team-member rows. */
 export const notificationRecipient = (user: any, legacyPlanetCode?: string) => {
-  const userPlanetCode = user.userPlanetCode || user.planetCode || legacyPlanetCode;
+  const identity = userIdentity(user, legacyPlanetCode);
   return {
-    user: canonicalUserId(user, userPlanetCode),
-    ...(userPlanetCode ? { userPlanetCode } : {})
+    user: identity.userId,
+    ...(identity.userPlanetCode ? { userPlanetCode: identity.userPlanetCode } : {})
   };
 };
 

@@ -5,9 +5,13 @@ import { NotificationsService, notificationRecipient, notificationUserFilter } f
 describe('NotificationsService', () => {
   it('uses the stable CouchDB ID and origin planet for a synchronized recipient', () => {
     expect(notificationRecipient({
-      _id: 'alex@community-c',
-      couchId: 'org.couchdb.user:alex',
-      planetCode: 'community-c'
+      _id: 'wrapper-id',
+      planetCode: 'wrong-outer-origin',
+      doc: {
+        _id: 'alex@community-c',
+        couchId: 'org.couchdb.user:alex',
+        planetCode: 'community-c'
+      }
     })).toEqual({
       user: 'org.couchdb.user:alex',
       userPlanetCode: 'community-c'
