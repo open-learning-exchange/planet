@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { NewsListItemComponent } from './news-list-item.component';
@@ -16,11 +15,12 @@ import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { AuthService } from '../shared/auth-guard.service';
+import { LinkCopyService } from '../shared/link-copy.service';
 
 describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {
     const authService = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
-    const clipboard = { copy: vi.fn() };
+    const linkCopyService = { copyLink: vi.fn() };
     const component = new NewsListItemComponent(
       {} as any,
       { get: vi.fn(() => ({ _id: 'user', name: 'user' })), userChange$: of(undefined) } as any,
@@ -30,13 +30,13 @@ describe('NewsListItemComponent read-only behavior', () => {
       { configuration: { code: 'local', planetType: 'nation' } } as any,
       {} as any,
       authService as any,
-      clipboard as any,
+      linkCopyService as any,
       { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
 
-    return { authService, component };
+    return { authService, component, linkCopyService };
   };
 
   it('blocks every mutating action while retaining label filtering', () => {
@@ -62,6 +62,20 @@ describe('NewsListItemComponent read-only behavior', () => {
     expect(labelSpy).toHaveBeenCalledOnce();
   });
 
+  it('delegates Voice links to the shared copy service', () => {
+    const { component, linkCopyService } = createComponent();
+
+    component.copyLink({ _id: 'voice-id' });
+
+    expect(linkCopyService.copyLink).toHaveBeenCalledWith(
+      [ '/voices', 'voice-id' ],
+      {
+        success: 'Voice link copied to clipboard',
+        failure: 'Failed to copy voice link'
+      }
+    );
+  });
+
 });
 
 describe('NewsListItemComponent read-only template', () => {
@@ -77,7 +91,7 @@ describe('NewsListItemComponent read-only template', () => {
         { provide: StateService, useValue: { configuration: { code: 'local', planetType: 'nation' } } },
         { provide: MatDialog, useValue: {} },
         { provide: AuthService, useValue: {} },
-        { provide: Clipboard, useValue: { copy: vi.fn() } },
+        { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
         { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(deviceType) } },
         provideNoopAnimations()
       ]
