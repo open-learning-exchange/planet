@@ -61,13 +61,11 @@
         }
         <!-- Star Rating -->
         @if (field.type === 'rating') {
-          <mat-form-field class="rating">
-            <mat-label>{{field.placeholder}}</mat-label>
+          <div class="rating-input">
             <planet-rating-stars [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating-stars>
             <button
               type="button"
               mat-icon-button
-              matIconSuffix
               class="km-clear-rating"
               [disabled]="modalForm.controls[field.name].value === 0"
               (click)="clearRating(field.name)"
@@ -77,8 +75,7 @@
               i18n-aria-label>
               <mat-icon>close</mat-icon>
             </button>
-            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-          </mat-form-field>
+          </div>
         }
         <!-- Textarea -->
         @if (field.type === 'textarea') {

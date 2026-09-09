@@ -1,5 +1,6 @@
 import { FormBuilder } from '@angular/forms';
 import { Observable, of, Subject, throwError } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { describe, expect, it, vi } from 'vitest';
 import { PlanetRatingComponent } from './planet-rating.component';
 
@@ -37,7 +38,7 @@ const createComponent = (
     updateDocument: vi.fn().mockReturnValue(updateResponse)
   };
   const planetMessage = { showMessage: vi.fn(), showAlert: vi.fn() };
-  const dialogsForm = { confirm: vi.fn().mockReturnValue(dialogClosed.asObservable()) };
+  const dialogsForm = { confirm: vi.fn(() => dialogClosed.pipe(take(1))) };
   const dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
   const ratingService = { newRatings: vi.fn() };
   const component = new PlanetRatingComponent(
@@ -60,7 +61,7 @@ const createComponent = (
   return { component, couchService, dialogClosed, dialogsForm, dialogsLoadingService, planetMessage, ratingService };
 };
 
-describe('PlanetRatingComponent rating clearing', () => {
+describe('PlanetRatingComponent', () => {
   it('keeps an auto-saved rating when the dialog is cancelled after clearing', () => {
     const { component, couchService, dialogClosed } = createComponent();
     component.rateForm.setValue({ rate: 4 });
@@ -74,6 +75,21 @@ describe('PlanetRatingComponent rating clearing', () => {
     expect(component.isPopupOpen).toBe(false);
     expect(component.rateForm.value).toEqual({ rate: 4 });
     expect(component.popupForm.value).toEqual({ rate: 4, comment: 'Original comment' });
+  });
+
+  it('opens the comment dialog again after the previous dialog is dismissed', () => {
+    const { component, couchService, dialogClosed, dialogsForm, planetMessage } = createComponent();
+    component.rateForm.setValue({ rate: 4 });
+
+    component.onStarClick();
+    dialogClosed.next(undefined);
+    component.rateForm.setValue({ rate: 3 });
+    component.onStarClick();
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(2);
+    expect(dialogsForm.confirm).toHaveBeenCalledTimes(2);
+    expect(planetMessage.showMessage).toHaveBeenCalledTimes(2);
+    expect(component.isPopupOpen).toBe(true);
   });
 
   it('auto-saves an inline rating and does not resubmit an unchanged dialog', () => {

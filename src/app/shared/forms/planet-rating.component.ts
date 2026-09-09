@@ -18,7 +18,6 @@ const popupFormFields = [
     label: $localize`Rate`,
     type: 'rating',
     name: 'rate',
-    placeholder: $localize`Your Rating`,
     required: false
   },
   {
@@ -221,7 +220,7 @@ export class PlanetRatingComponent implements OnChanges {
           this.resetRatingState();
           return;
         }
-        if (res.rate === 0) {
+        if (this.popupForm.controls.rate.value === 0) {
           if (!this.rating.userRating?._id) {
             this.resetRatingState();
             return;

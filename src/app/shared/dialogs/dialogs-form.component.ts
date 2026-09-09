@@ -44,6 +44,18 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
     .ng-touched.ng-valid {
       border: none;
     }
+
+    .rating-input {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .rating-input planet-rating-stars {
+      display: block;
+      height: 24px;
+    }
   `],
   imports: [
     FormsModule,
