@@ -1,5 +1,5 @@
 <mat-toolbar>
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (!isTabletOrSmaller) {
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
       <span class="toolbar-fill margin-lr-10"></span>
@@ -10,10 +10,10 @@
       <mat-toolbar-row>
         <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
         <span class="toolbar-fill"></span>
-        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+        <button mat-icon-button (click)="toggleFiltersRow()" aria-label="Toggle filter controls" i18n-aria-label><mat-icon>filter_list</mat-icon></button>
       </mat-toolbar-row>
       @if (showFiltersRow) {
-        <mat-toolbar-row>
+        <mat-toolbar-row class="filter-row">
           <ng-container *ngTemplateOutlet="filterRow"></ng-container>
         </mat-toolbar-row>
       }
@@ -21,9 +21,9 @@
   }
 
 
-  @if (showFilters) {
+  @if (showInlineFilters) {
     <mat-toolbar-row class="search-bar">
-      <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
+      <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
     </mat-toolbar-row>
   }
 </mat-toolbar>
@@ -41,11 +41,11 @@
 </ng-template>
 
 <ng-template #filterRow>
-  <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
+  <span class="font-size-1 margin-lr-4 search-by-label" i18n>Search by:</span>
   @if (myView !== 'myPersonals') {
-    <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters">Filter</button>
+    <button mat-stroked-button i18n (click)="toggleFilters()">Filter</button>
   }
-  <mat-form-field class="font-size-1 margin-lr-4 mdc-toolbar-input">
+  <mat-form-field subscriptSizing="dynamic" class="font-size-1 search-title-input">
     <mat-label i18n>Title</mat-label>
     <input matInput [(ngModel)]="titleSearch">
     <button type="button" mat-icon-button matSuffix (click)="titleSearch = ''" [style.visibility]="titleSearch ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
@@ -53,6 +53,20 @@
     </button>
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection.isEmpty"><span i18n>Clear filters</span></button>
+</ng-template>
+
+<ng-template #searchFilters>
+  <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
+</ng-template>
+
+<ng-template #filterDialog>
+  <h2 mat-dialog-title i18n>Filter</h2>
+  <mat-dialog-content>
+    <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" mat-dialog-close i18n>Close</button>
+  </mat-dialog-actions>
 </ng-template>
 
 <div class="space-container primary-link-hover">
@@ -77,7 +91,7 @@
               </button>
             </span>
           }
-          @if (!parent && isTablet) {
+          @if (!parent && isTabletOrSmaller) {
             <span>
               @if (!isDialog) {
                 <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
@@ -89,7 +103,7 @@
               </mat-menu>
             </span>
           }
-          @if (!parent && !isTablet) {
+          @if (!parent && !isTabletOrSmaller) {
             <span>
               <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
             </span>
@@ -105,19 +119,19 @@
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>
-    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
+    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller }" [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
       <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
       @if (selectedNotAdded > 0) {
         <span> ({{selectedNotAdded}})</span>
       }
     </button>
-    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
+    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller }" [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
       <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
       @if (selectedAdded > 0) {
         <span> ({{selectedAdded}})</span>
       }
     </button>
-    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
     <mat-menu #managerMenu="matMenu">
       @if (planetConfiguration.registrationRequest === 'accepted') {
         <button mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
@@ -146,7 +160,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search': showFilters, 'my-personals-view': myView === 'myPersonals'}">
+  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search': showInlineFilters, 'my-personals-view': myView === 'myPersonals'}">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>

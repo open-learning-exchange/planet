@@ -164,10 +164,10 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
 
   myPlanetRequest(hubId) {
     const { planetCode, domain } = getDomainParams(this.configuration, hubId !== undefined);
-    return (hubId ? this.couchService.findAll('hubs', findDocuments({ 'planetId': hubId }), { domain }) : of([])).pipe(
+    return (hubId ? this.couchService.findAll('hubs', findDocuments({ planetId: hubId }), { domain }) : of([])).pipe(
       switchMap((hubs: any) => {
         this.hub = hubs[0] || { spokes: [] };
-        const selector = findDocuments({ 'createdOn': { '$in': this.hub.spokes } });
+        const selector = findDocuments({ createdOn: { $in: this.hub.spokes } });
         return forkJoin([
           this.managerService.getChildPlanets(true, planetCode, domain),
           this.couchService.findAll('myplanet_activities'),

@@ -84,7 +84,7 @@ export class AppComponent {
         this.stateService.requestData('configurations', 'local');
       }
       if (event instanceof NavigationEnd) {
-        gtag('config', 'UA-118745384-1', { 'page_path': event.urlAfterRedirects });
+        gtag('config', 'UA-118745384-1', { page_path: event.urlAfterRedirects });
       }
     });
   }

@@ -161,9 +161,7 @@ export class DialogsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectedRows() {
-    return this.selection.selected.map(id => this.tableData.data.find((row: any) => {
-      return this.selectIdentifier(row) === id;
-    }));
+    return this.selection.selected.map(id => this.tableData.data.find((row: any) => this.selectIdentifier(row) === id));
   }
 
   initializeTooltip() {

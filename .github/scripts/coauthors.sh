@@ -17,11 +17,18 @@ lower() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
 
 noreply_for() { printf '%s <%s@users.noreply.github.com>' "$1" "$1"; }
 
+declare -A collaborators=()
+
 # Needs push access; failing here beats crediting nobody.
-collaborators=$(
+collab_raw=$(
     gh api "repos/$REPO/collaborators?per_page=100" --paginate \
-        --jq '.[] | select(.type == "User") | .login' | tr '[:upper:]' '[:lower:]' | sort -u
+        --jq '.[] | select(.type == "User") | .login' | tr '[:upper:]' '[:lower:]'
 )
+while IFS= read -r col; do
+    if [ -n "$col" ]; then
+        collaborators["$col"]=1
+    fi
+done <<<"$collab_raw"
 
 pr_json=$(gh pr view "$PR" --repo "$REPO" --json author,body)
 author_login=$(jq -r '.author.login // ""' <<<"$pr_json")
@@ -63,7 +70,7 @@ author_l=$(lower "$author_login")
 owner_l=$(lower "$OWNER_LOGIN")
 
 body=""
-seen=""
+declare -A seen=()
 
 while IFS= read -r login; do
     if [ -z "$login" ]; then
@@ -80,14 +87,14 @@ while IFS= read -r login; do
     if [ "$l" = "$owner_l" ]; then
         continue                       # appended at the end instead
     fi
-    if printf '%s' "$seen" | grep -qxF "$l"; then
+    if [[ -n "${seen["$l"]:-}" ]]; then
         continue
     fi
-    if ! printf '%s' "$collaborators" | grep -qxF "$l"; then
+    if [[ -z "${collaborators["$l"]:-}" ]]; then
         continue
     fi
 
-    seen+="$l"$'\n'
+    seen["$l"]=1
     body+="Co-authored-by: $(noreply_for "$login")"$'\n'
 done <<<"$candidates"
 

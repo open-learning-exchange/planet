@@ -31,7 +31,6 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
     `,
   selector: 'planet-courses-search-list',
-  styleUrls: ['./courses-search.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [MatSelectionList, MatListOption, MatListItemTitle]
 })
@@ -75,7 +74,6 @@ export class CoursesSearchListComponent {
       </planet-courses-search-list>
     }
     `,
-  styleUrls: ['./courses-search.scss'],
   selector: 'planet-courses-search',
   encapsulation: ViewEncapsulation.None,
   imports: [CoursesSearchListComponent]
@@ -89,9 +87,9 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   trackByFn = trackByCategory;
 
   categories = [
-    { 'label': 'languageOfInstruction', 'options': languages },
-    { 'label': 'gradeLevel', 'options': constants.gradeLevels },
-    { 'label': 'subjectLevel', 'options': constants.subjectLevels },
+    { label: 'languageOfInstruction', options: languages },
+    { label: 'gradeLevel', options: constants.gradeLevels },
+    { label: 'subjectLevel', options: constants.subjectLevels },
   ];
 
   searchLists = [];
@@ -102,9 +100,7 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.searchLists = this.categories.reduce((lists, category) => {
-      return lists.concat(this.createSearchList(category, this.filteredData));
-    }, []);
+    this.searchLists = this.categories.reduce((lists, category) => lists.concat(this.createSearchList(category, this.filteredData)), []);
   }
 
   reset({ startingSelection = {}, isInit = false } = {}) {

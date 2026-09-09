@@ -54,7 +54,7 @@
                   </div>
                 }
                 @if (item.firstLine || item.badge) {
-                  <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
+                  <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before" [matBadgeDescription]="badgeDescription(item)">
                     {{item.firstLine}}
                   </p>
                 }

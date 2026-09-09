@@ -111,8 +111,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     { text: FEEDBACK_STATUS_OPTIONS[2].label, value: FEEDBACK_STATUS_OPTIONS[2].value }
   ];
   filter = {
-    'type': '',
-    'status': ''
+    type: '',
+    status: ''
   };
   #titleSearch = '';
   get titleSearch(): string {
@@ -190,8 +190,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getFeedback() {
-    const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
+    const selector = !this.user.isUserAdmin ? { owner: this.user.name } : { _id: { $gt: null } };
+    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { openTime: 'desc' } ])).subscribe((feedbackData: any[]) => {
       this.feedback.data = feedbackData.map(feedback => {
         const normalizedType = normalizeFeedbackType(feedback.type);
         const normalizedPriority = normalizeFeedbackPriority(feedback.priority);

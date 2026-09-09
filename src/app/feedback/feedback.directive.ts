@@ -35,24 +35,24 @@ export class Feedback {
 
 const dialogFieldOptions = [
   {
-    'label': $localize`Is your feedback Urgent?`,
-    'type': 'radio',
-    'name': 'priority',
-    'options': FEEDBACK_PRIORITY_OPTIONS.map(option => ({ name: option.label, value: option.value })),
-    'required': true
+    label: $localize`Is your feedback Urgent?`,
+    type: 'radio',
+    name: 'priority',
+    options: FEEDBACK_PRIORITY_OPTIONS.map(option => ({ name: option.label, value: option.value })),
+    required: true
   },
   {
-    'label': $localize`Feedback Type:`,
-    'type': 'radio',
-    'name': 'type',
-    'options': FEEDBACK_TYPE_OPTIONS.map(option => ({ name: option.label, value: option.value })),
-    'required': true
+    label: $localize`Feedback Type:`,
+    type: 'radio',
+    name: 'type',
+    options: FEEDBACK_TYPE_OPTIONS.map(option => ({ name: option.label, value: option.value })),
+    required: true
   },
   {
-    'type': 'textarea',
-    'name': 'message',
-    'placeholder': $localize`Your Feedback`,
-    'required': true
+    type: 'textarea',
+    name: 'message',
+    placeholder: $localize`Your Feedback`,
+    required: true
   }
 ];
 
