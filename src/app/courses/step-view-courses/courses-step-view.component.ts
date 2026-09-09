@@ -15,7 +15,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
@@ -31,7 +31,6 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
   styleUrls: ['./courses-step-view.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     MatButton,
     MatIconButton,

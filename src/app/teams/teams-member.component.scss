@@ -1,0 +1,223 @@
+@use 'sass:list';
+@use '../variables' as v;
+
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // Grid items default to min-width: auto, which lets a wide chip push the tile
+  // past its track. min-width: 0 keeps the tile inside the column.
+  min-width: 0;
+  background: v.$white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px v.$shadow;
+  overflow: hidden;
+  padding-bottom: 16px;
+  min-height: 176px;
+  transition: transform .15s, box-shadow .15s;
+}
+
+:host(:not(.request-tile)):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px v.$shadow;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+
+  :host(:not(.request-tile)):hover {
+    transform: none;
+  }
+}
+
+.tile-band {
+  height: 48px;
+  width: 100%;
+  background: v.$primary-lighter;
+
+  &.band-leader {
+    background: v.$accent-lighter;
+  }
+
+  &.band-request {
+    background: v.$light-grey;
+  }
+}
+
+.tile-avatar {
+  position: relative;
+  margin-top: -28px;
+  padding: 0;
+  border: 3px solid v.$white;
+  border-radius: 50%;
+  background: v.$white;
+  color: inherit;
+  font: inherit;
+
+  img,
+  .tile-initials {
+    display: block;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .tile-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: list.nth(v.$initials-palette, 1);
+    color: v.$white;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    user-select: none;
+
+    // The component picks an index; the palette owns the colors.
+    @for $i from 1 through list.length(v.$initials-palette) {
+      &.initials-#{$i - 1} {
+        background-color: list.nth(v.$initials-palette, $i);
+      }
+    }
+  }
+}
+
+.leader-badge {
+  position: absolute;
+  bottom: -2px;
+  inset-inline-end: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: v.$accent;
+  border: 2px solid v.$white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    color: v.$accent-lighter-text;
+  }
+}
+
+.tile-name,
+.tile-add-title {
+  background: none;
+  border: 0;
+  font-family: inherit;
+  color: inherit;
+}
+
+.tile-name {
+  margin-top: 8px;
+  padding: 0 12px;
+  max-width: 100%;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.tile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+  max-width: 100%;
+  padding: 0 12px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.tile-chip {
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.chip-primary {
+    background: v.$primary-lighter;
+    color: v.$primary-lighter-text;
+  }
+
+  &.chip-leader {
+    background: v.$accent-lighter;
+    color: v.$accent-lighter-text;
+  }
+}
+
+.tile-add-title {
+  margin-top: 6px;
+  padding: 0;
+  font-size: 12px;
+  color: v.$grey-text;
+}
+
+.tile-muted {
+  margin-top: 4px;
+  font-size: 12px;
+  color: v.$grey-text;
+}
+
+.tile-menu {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  color: v.$grey-text;
+}
+
+.tile-tasks {
+  width: 100%;
+  padding: 8px 12px 0;
+  box-sizing: border-box;
+  text-align: start;
+
+  .mat-caption {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  mat-selection-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .mat-mdc-list-item-disabled {
+    background-color: v.$white;
+  }
+}
+
+.tile-actions {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tile-avatar:focus-visible,
+.tile-name:focus-visible,
+.tile-add-title:focus-visible {
+  outline: 2px solid v.$primary;
+  outline-offset: 2px;
+  border-radius: 4px;
+}

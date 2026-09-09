@@ -1,0 +1,47 @@
+name: Planet labels
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'pull request number to (re)label'
+        required: true
+        type: string
+      dry_run:
+        description: '🧪 dry run — change nothing'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: labels-${{ inputs.pr || github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  PKG_FILE: package.json
+  EXCLUDE_PATHS: src/i18n/messages.*.xlf package-lock.json
+
+jobs:
+  size:
+    name: planet labels
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ github.event.action != 'edited' || github.event.changes.base }}
+    steps:
+      - name: label the pull request by size
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ inputs.pr || github.event.pull_request.number }}
+          DRY_RUN: ${{ inputs.dry_run || false }}
+        run: |
+          # Read from the default branch, never the PR's copy: pull_request_target
+          # runs with a write token and the head is untrusted.
+          gh api "repos/$REPO/contents/.github/scripts/labels.sh" -H "Accept: application/vnd.github.v3.raw" | bash

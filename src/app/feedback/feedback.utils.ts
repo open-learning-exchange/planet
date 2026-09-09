@@ -33,9 +33,9 @@ const normalizeFeedbackValue = (value: unknown, allowedValues: readonly string[]
   return allowedValues.includes(normalizedValue) ? normalizedValue : fallback;
 };
 
-const getLabelFromOptions = (value: string, options: readonly FeedbackOption[]) => {
-  return options.find(option => option.value === value)?.label || value;
-};
+const getLabelFromOptions = (value: string, options: readonly FeedbackOption[]) => (
+  options.find(option => option.value === value)?.label || value
+);
 
 export const normalizeFeedbackType = (value: unknown) =>
   normalizeFeedbackValue(value, FEEDBACK_TYPE_OPTIONS.map(option => option.value), 'question');

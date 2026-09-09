@@ -25,7 +25,7 @@ export class PouchService {
     // we will have to create corresponding documents in couchdb and we can sync
     // we can decide that when the user is being created for the first time?
     this.authDB = new PouchDB(this.baseUrl + 'test', {
-      fetch(url, opts) {
+      fetch: (url, opts) => {
         opts.credentials = 'include';
         return (PouchDB as any).fetch(url, opts);
       }
@@ -87,7 +87,7 @@ export class PouchService {
 
   saveDocEditing(doc, db, id = 'new') {
     this.getDocEditing(db, id).subscribe((oldDoc: any) => {
-      this.docEditingDB(db, id).put({ ...doc, '_id': id, '_rev': oldDoc && oldDoc._rev });
+      this.docEditingDB(db, id).put({ ...doc, _id: id, _rev: oldDoc && oldDoc._rev });
     });
   }
 

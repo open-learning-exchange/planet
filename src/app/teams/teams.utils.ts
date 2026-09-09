@@ -9,6 +9,10 @@ export const memberCompare = (member1, member2) => member1.userId === member2.us
 export const requestDateCompare = (request1, request2) =>
   (request1.createdDate || 0) - (request2.createdDate || 0) ||  (request1.userId || '').localeCompare(request2.userId || '');
 
+export const enterpriseJoinAgreement = () =>
+  $localize`By requesting to join, you agree to follow this \
+enterprise's rules and guidelines.`;
+
 export const memberSort = (member1, member2, leader) => memberCompare(member1, leader) ?
   -1 :
   memberCompare(member2, leader) ?

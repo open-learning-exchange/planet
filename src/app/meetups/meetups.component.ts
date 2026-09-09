@@ -24,7 +24,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { NgClass, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 
@@ -68,7 +68,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     MatCellDef,
     MatCell,
     MatSortHeader,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
@@ -213,7 +213,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+    if (this.parent) {
+      this.router.navigate([ '/manager' ]);
+    } else {
+      this.router.navigate([ '/' ]);
+    }
   }
 
   upcomingMeetups(ids: any) {

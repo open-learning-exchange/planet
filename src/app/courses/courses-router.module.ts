@@ -9,6 +9,7 @@ import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
+import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
@@ -19,7 +20,7 @@ const routes: Routes = [
   { path: 'exam', component: ExamsAddComponent },
   { path: 'survey', component: ExamsAddComponent },
   { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent, },
-  { path: 'view/:id/step/:stepNum/exam', component: ExamsViewComponent },
+  { path: 'view/:id/step/:stepNum/exam', component: ExamsViewComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'update/exam/:id', component: ExamsAddComponent },
   { path: 'update/survey/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },

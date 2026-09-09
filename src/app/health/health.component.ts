@@ -20,10 +20,11 @@ import { MatIcon } from '@angular/material/icon';
 import { NgClass, DatePipe } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatDivider } from '@angular/material/list';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { LabelComponent } from '../shared/label.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { FullNamePipe } from '../shared/full-name.pipe';
 
 @Component({
   templateUrl: './health.component.html',
@@ -36,7 +37,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     RouterLink,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     MatTable,
     MatColumnDef,
     MatHeaderCellDef,
@@ -51,7 +52,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatRowDef,
     MatRow,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    FullNamePipe
   ]
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {

@@ -4,7 +4,7 @@ import { PlanetMessageService } from './planet-message.service';
 let pdfMakePromise: Promise<any> | null = null;
 let htmlToPdfmakePromise: Promise<any> | null = null;
 
-function loadPdfMake(): Promise<any> {
+const loadPdfMake = (): Promise<any> => {
   if (!pdfMakePromise) {
     pdfMakePromise = Promise.all([
       import('pdfmake/build/pdfmake'),
@@ -19,7 +19,7 @@ function loadPdfMake(): Promise<any> {
     });
   }
   return pdfMakePromise;
-}
+};
 
 @Injectable({
   providedIn: 'root'

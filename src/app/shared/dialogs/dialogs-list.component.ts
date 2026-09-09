@@ -21,6 +21,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
+import { fullName } from '../utils';
 
 @Component({
   templateUrl: './dialogs-list.component.html',
@@ -122,16 +123,16 @@ export class DialogsListComponent implements AfterViewInit {
 
   appendFullName(data: any[]) {
     return data.map(row => ({
-      ...row, 'Full Name': (row.firstName || '') && `${row.firstName} ${row.middleName || ''} ${row.lastName}`
+      ...row, 'Full Name': fullName(row)
     }));
   }
 
   isAllSelected() {
     // Finds first instance that a filtered row id is not selected, and undefined if all are selected
     // Convert to boolean with ! (true = all selected, false = not all selected)
-    const allShownSelected = !this.tableData.filteredData.find((row: any) => {
-      return this.selection.selected.indexOf(this.selectIdentifier(row)) === -1;
-    });
+    const allShownSelected = !this.tableData.filteredData.find(
+      (row: any) => this.selection.selected.indexOf(this.selectIdentifier(row)) === -1
+    );
 
     if (this.tableData.filteredData.length === 0) {
       return 'hidden';
@@ -162,9 +163,7 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   selectedRows() {
-    return this.selection.selected.map(id => this.tableData.data.find((row: any) => {
-      return this.selectIdentifier(row) === id;
-    }));
+    return this.selection.selected.map(id => this.tableData.data.find((row: any) => this.selectIdentifier(row) === id));
   }
 
   initializeTooltip() {

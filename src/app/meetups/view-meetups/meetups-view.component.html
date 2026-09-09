@@ -13,13 +13,15 @@
         @if (editable === true) {
           @if ((canManage && !meetupDetail.isTask) || meetupDetail.isTask) {
             <button mat-stroked-button
-              (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button">
+              (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button"
+              i18n-aria-label aria-label="Edit" matTooltip="Edit" i18n-matTooltip>
               <mat-icon>edit</mat-icon>
             </button>
           }
           @if ((canManage && !meetupDetail.isTask) || meetupDetail.isTask) {
             <button mat-stroked-button
-              (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button">
+              (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button"
+              i18n-aria-label aria-label="Delete" matTooltip="Delete" i18n-matTooltip>
               <mat-icon>delete</mat-icon>
             </button>
           }
@@ -44,14 +46,14 @@
       <div class="meetup-detail" [ngClass]="{'left-tile':!isDialog}">
         @if (meetupDetail?.createdBy) {
           <p>
-            <b i18n>Created By:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode)">{{' ' + meetupDetail?.createdBy}}</a>
+            <b i18n>Created By:</b><a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openCreatorProfile($event)" (keydown.space)="openCreatorProfile($event)" (click)="openCreatorProfile($event)">{{' ' + meetupDetail?.createdBy}}</a>
           </p>
         }
         @if (meetupDetail?.category) {
           <p><b i18n>Category:</b> {{meetupDetail?.category}}</p>
         }
         @if (meetupDetail?.startDate || meetupDetail?.endDate) {
-          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && (meetupDetail?.endDate | date: 'fullDate') !== (meetupDetail?.startDate | date: 'fullDate') ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
         }
         @if (meetupDetail?.deadline) {
           <p><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}} {{meetupDetail?.deadline | date: 'shortTime'}}</p>
@@ -76,12 +78,23 @@
       @if (meetupDetail?.meetupLink) {
         <p><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener noreferrer">{{meetupDetail?.meetupLink}}</a></p>
       }
-      @if (meetupDetail?.assignee) {
-        <p><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
+      @let meetupAssignees = effectiveAssignees(meetupDetail);
+      @if (meetupAssignees.length > 0) {
+        <p><b i18n>Assigned to:</b>{{' '}}
+          @for (assignee of meetupAssignees; track assigneeTrackKey(assignee); let isLast = $last) {
+            <a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openProfile(assignee.name, assignee.userPlanetCode, $event)"
+              (keydown.space)="openProfile(assignee.name, assignee.userPlanetCode, $event)"
+              (click)="openProfile(assignee.name, assignee.userPlanetCode, $event)">{{assigneeName(assignee)}}</a>{{isLast ? '' : ', '}}
+          }
+        </p>
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>
-        }<td-markdown [content]="meetupDetail?.description"></td-markdown>
+        <planet-markdown
+          [content]="meetupDetail?.description"
+          [imageSource]="parent ? 'parent' : 'local'">
+        </planet-markdown>
+      }
       </div>
       @if (!isDialog) {
         <div class="right-tile">

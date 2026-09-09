@@ -5,7 +5,7 @@ type RegisterableKey = 'ArcElement' | 'BarController' | 'BarElement' | 'Category
 let chartJsPromise: Promise<ChartJsModule> | null = null;
 const registeredKeys = new Set<RegisterableKey>();
 
-function registerOnce(module: ChartJsModule, keys: RegisterableKey[]): void {
+const registerOnce = (module: ChartJsModule, keys: RegisterableKey[]): void => {
   const pending = keys.filter((key) => {
     if (registeredKeys.has(key)) {
       return false;
@@ -21,9 +21,9 @@ function registerOnce(module: ChartJsModule, keys: RegisterableKey[]): void {
   if (pending.length) {
     module.Chart.register(...pending);
   }
-}
+};
 
-export async function loadChart(keys: RegisterableKey[] = []): Promise<ChartJsModule> {
+export const loadChart = async (keys: RegisterableKey[] = []): Promise<ChartJsModule> => {
   if (!chartJsPromise) {
     chartJsPromise = import('chart.js').catch((error) => {
       chartJsPromise = null;
@@ -36,9 +36,9 @@ export async function loadChart(keys: RegisterableKey[] = []): Promise<ChartJsMo
     registerOnce(module, keys);
   }
   return module;
-}
+};
 
-export function createChartCanvas(width = 300, height = 400): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D | null } {
+export const createChartCanvas = (width = 300, height = 400): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D | null } => {
   const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
   const canvas = document.createElement('canvas');
   canvas.width = width * dpr;
@@ -50,16 +50,20 @@ export function createChartCanvas(width = 300, height = 400): { canvas: HTMLCanv
     ctx.scale(dpr, dpr);
   }
   return { canvas, ctx };
-}
+};
 
-export function renderNoDataPlaceholder(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, message = 'No data available'): string {
+export const renderNoDataPlaceholder = (
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  message = 'No data available'
+): string => {
   ctx.fillStyle = '#666666';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = '16px sans-serif';
   ctx.fillText(message, canvas.width / 2, canvas.height / 2);
   return canvas.toDataURL('image/png');
-}
+};
 
 export const CHART_COLORS = [
   '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',

@@ -1,0 +1,21 @@
+@use '../../mixins' as m;
+
+.mat-column-name {
+  @include m.table-column-grow;
+}
+
+.mat-column-code {
+  @include m.table-column-fixed(8rem);
+}
+
+.mat-column-localDomain {
+  @include m.table-column-fixed(16rem);
+}
+
+.mat-column-createdDate {
+  @include m.table-column-fixed(10rem);
+}
+
+.mat-column-action {
+  @include m.table-column-fixed(18rem);
+}

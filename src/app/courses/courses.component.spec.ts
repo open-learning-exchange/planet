@@ -33,6 +33,16 @@ describe('CoursesComponent', () => {
   let coursedata2;
   let coursearray;
 
+  const coursesServiceMock = {
+    requestCourses: vi.fn(),
+    coursesListener$: vi.fn().mockReturnValue(of([])),
+    courseAdmissionMany: vi.fn().mockReturnValue(of({})),
+    courseResignAdmission: vi.fn().mockReturnValue(of({})),
+    getCourseNameFromId: vi.fn((id) => `Course ${id}`)
+  };
+  const dialogRefMock = { close: vi.fn() };
+  const dialogMock = { open: vi.fn().mockReturnValue(dialogRefMock) };
+
   const dialogsListServiceMock = {
     getListAndColumns: vi.fn().mockReturnValue(of({ tableData: [], columns: [] }))
   };
@@ -57,6 +67,8 @@ describe('CoursesComponent', () => {
   };
 
   beforeEach(() => {
+    vi.clearAllMocks();
+    userServiceMock.shelf = { courseIds: [ '1' ] };
     TestBed.configureTestingModule({
       imports: [
         CoursesComponent, FormErrorMessagesComponent
@@ -65,13 +77,7 @@ describe('CoursesComponent', () => {
         CouchService,
         { provide: DialogsListService, useValue: dialogsListServiceMock },
         { provide: DialogsFormService, useValue: dialogsFormServiceMock },
-        {
-          provide: CoursesService,
-          useValue: {
-            requestCourses: vi.fn(),
-            coursesListener$: vi.fn().mockReturnValue(of([])),
-          }
-        },
+        { provide: CoursesService, useValue: coursesServiceMock },
         PlanetMessageService,
         { provide: UserService, useValue: userServiceMock },
         { provide: SyncService, useValue: { getReplicationState: vi.fn().mockReturnValue(of({})) } },
@@ -82,7 +88,7 @@ describe('CoursesComponent', () => {
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
         FuzzySearchService,
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: MatDialog, useValue: dialogMock },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -109,6 +115,58 @@ describe('CoursesComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('creates a single-course leave request only after confirmation', () => {
+    component.courseToggle('1', 'resign');
+
+    const dialogData = dialogMock.open.mock.calls[0][1].data;
+    expect(dialogData.displayName).toBe('Course 1');
+    expect(coursesServiceMock.getCourseNameFromId).toHaveBeenCalledWith('1', component.parent);
+    expect(coursesServiceMock.courseResignAdmission).not.toHaveBeenCalled();
+
+    dialogData.okClick.request.subscribe();
+
+    expect(coursesServiceMock.courseResignAdmission).toHaveBeenCalledWith('1', 'resign', 'Course 1');
+  });
+
+  it('confirms bulk removal for enrolled selections only', () => {
+    component.courses.data = [
+      { _id: '1', doc: { steps: [] } },
+      { _id: '2', doc: { steps: [ {} ] } }
+    ];
+
+    component.enrollLeaveToggle([ '1', '2' ], 'remove');
+
+    const dialogData = dialogMock.open.mock.calls[0][1].data;
+    expect(dialogData.amount).toBe('single');
+    expect(dialogData.count).toBe(1);
+    expect(dialogData.displayName).toBe('Course 1');
+    expect(coursesServiceMock.courseAdmissionMany).not.toHaveBeenCalled();
+
+    dialogData.okClick.request.subscribe();
+
+    expect(coursesServiceMock.courseAdmissionMany).toHaveBeenCalledWith([ '1' ], 'remove', component.parent);
+  });
+
+  it('uses the parent catalog when enrolling in a parent course', () => {
+    component.parent = true;
+    component.courses.data = [ { _id: '1', doc: { steps: [ {} ] } } ];
+
+    component.enrollLeaveToggle([ '1' ], 'add');
+
+    expect(coursesServiceMock.courseAdmissionMany).toHaveBeenCalledWith([ '1' ], 'add', true);
+  });
+
+  it('reassigns the course table when the shelf changes', () => {
+    component.courses.data = [ { _id: '1', doc: {} } ];
+    const previousData = component.courses.data;
+
+    userServiceMock.shelf = { courseIds: [ '1' ] };
+    userServiceMock.shelfChange$.next(userServiceMock.shelf);
+
+    expect(component.courses.data).not.toBe(previousData);
+    expect(component.courses.data[0].admission).toBe(true);
   });
 
   // TODO: Update tests to use vitest spies

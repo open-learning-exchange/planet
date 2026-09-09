@@ -28,6 +28,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
 import { deepEqual } from '../utils';
+import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -120,6 +121,33 @@ export class DialogsFormComponent {
           this.modalForm.get(field.name)?.disable({ emitEvent: false });
         }
       });
+    }
+    if (this.data && this.data.confirmUnsavedChanges) {
+      this.dialogRef.disableClose = true;
+      this.dialogRef.backdropClick().subscribe(() => {
+        this.checkUnsavedChangesAndClose();
+      });
+      this.dialogRef.keydownEvents().subscribe((event) => {
+        if (event.key === 'Escape') {
+          this.checkUnsavedChangesAndClose();
+        }
+      });
+    }
+  }
+
+  onCancel() {
+    this.checkUnsavedChangesAndClose();
+  }
+
+  checkUnsavedChangesAndClose() {
+    if (this.data && this.data.confirmUnsavedChanges && this.isDirty()) {
+      UnsavedChangesPromptComponent.open(this.dialog).subscribe(confirmed => {
+        if (confirmed) {
+          this.dialogRef.close();
+        }
+      });
+    } else {
+      this.dialogRef.close();
     }
   }
 

@@ -14,18 +14,18 @@ import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 
 const popupFormFields = [
   {
-    'label': $localize`Rate`,
-    'type': 'rating',
-    'name': 'rate',
-    'placeholder': $localize`Your Rating`,
-    'required': false
+    label: $localize`Rate`,
+    type: 'rating',
+    name: 'rate',
+    placeholder: $localize`Your Rating`,
+    required: false
   },
   {
-    'label': $localize`Comment`,
-    'type': 'textarea',
-    'name': 'comment',
-    'placeholder': $localize`Would you like to leave a comment?`,
-    'required': false
+    label: $localize`Comment`,
+    type: 'textarea',
+    name: 'comment',
+    placeholder: $localize`Would you like to leave a comment?`,
+    required: false
   }
 ];
 

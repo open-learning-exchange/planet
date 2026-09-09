@@ -13,6 +13,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'planet-myplanet-toolbar',
@@ -37,7 +38,8 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
     MatSuffix,
     MatDatepicker,
     MatError,
-    MatButton
+    MatButton,
+    MatTooltip
   ]
 })
 export class MyPlanetToolbarComponent {

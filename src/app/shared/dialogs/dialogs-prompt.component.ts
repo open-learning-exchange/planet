@@ -8,11 +8,12 @@
  * message - Optional.  Error message that is displayed when value is truthy.
  * displayName - Optional. If deleteItem does not have a 'name' property, set this to
  *  display to the user what is being deleted.
- * okClick - Optional.  Function to call when user clicks OK.
+ * okClick - Optional.  { request, onNext, onError } run when user clicks OK.  Defaults to closing
+ *  the dialog with true, or false if the request errors.
  */
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { timer, throwError } from 'rxjs';
+import { timer, throwError, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
@@ -20,6 +21,7 @@ import { LabelComponent } from '../label.component';
 import { MatButton } from '@angular/material/button';
 import { SubmitDirective } from '../submit.directive';
 import { TruncateTextPipe } from '../truncate-text.pipe';
+import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
@@ -28,6 +30,9 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
       word-wrap: break-word;
       white-space: normal;
       word-break: break-word;
+    }
+    .enterprise-rules {
+      margin-top: 12px;
     }
   `],
   imports: [
@@ -39,7 +44,8 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
     MatDialogClose,
     SubmitDirective,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    TdMarkdownComponent
   ]
 })
 export class DialogsPromptComponent {
@@ -59,7 +65,11 @@ export class DialogsPromptComponent {
     this.data.amount = this.setDefault(this.data.amount, 'single');
     this.showMainParagraph = this.setDefault(this.data.showMainParagraph, true);
     this.cancelable = this.setDefault(this.data.cancelable, true);
-    this.data.okClick = this.setDefault(this.data.okClick, this.close.bind(this));
+    this.data.okClick = this.setDefault(this.data.okClick, {
+      request: of(true),
+      onNext: () => this.dialogRef.close(true),
+      onError: () => this.dialogRef.close(false)
+    });
     this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
     this.labels = this.data.showLabels;
     this.isDateUtc = this.data.isDateUtc;

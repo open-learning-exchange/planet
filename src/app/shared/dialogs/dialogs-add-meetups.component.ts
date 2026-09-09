@@ -72,7 +72,9 @@ export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   }
 
   meetupsChange() {
-    this.data.onMeetupsChange();
+    if (typeof this.data?.onMeetupsChange === 'function') {
+      this.data.onMeetupsChange();
+    }
     this.dialogsLoadingService.stop();
     this.dialogRef.close();
   }
