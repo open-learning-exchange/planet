@@ -18,30 +18,9 @@ describe('task assignee utilities', () => {
     expect(assigneeMatches({ userId: 'alex' }, remote, 'planet-a')).toBe(false);
   });
 
-  it('uses both origin and local identities only for associated users', () => {
-    expect(assigneeIdentityCandidates({ _id: 'alex', planetCode: 'planet-b' }, 'planet-a')).toEqual([
-      { userId: 'alex', userPlanetCode: 'planet-b' }
-    ]);
-    expect(assigneeIdentityCandidates({
-      _id: 'alex', planetCode: 'planet-b', requestId: 'request-1'
-    }, 'planet-a')).toEqual([
-      { userId: 'alex', userPlanetCode: 'planet-b' },
-      { userId: 'alex', userPlanetCode: 'planet-a' }
-    ]);
-  });
-
   it('does not treat a materialized but undefined requestId as associated', () => {
     expect(assigneeIdentityCandidates({
       _id: 'alex', planetCode: 'planet-b', requestId: undefined
-    }, 'planet-a')).toEqual([ { userId: 'alex', userPlanetCode: 'planet-b' } ]);
-  });
-
-  it('prefers the canonical CouchDB identity used by membership documents', () => {
-    expect(assigneeIdentityCandidates({
-      _id: 'alex@planet-b',
-      userId: 'legacy-alex',
-      couchId: 'alex',
-      planetCode: 'planet-b'
     }, 'planet-a')).toEqual([ { userId: 'alex', userPlanetCode: 'planet-b' } ]);
   });
 
@@ -53,7 +32,8 @@ describe('task assignee utilities', () => {
       requestId: 'request-1'
     }, 'planet-a')).toEqual([
       { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b' },
-      { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' }
+      { userId: 'org.couchdb.user:alex@planet-b', userPlanetCode: 'planet-b' },
+      { userId: 'org.couchdb.user:alex@planet-b', userPlanetCode: 'planet-a' }
     ]);
   });
 

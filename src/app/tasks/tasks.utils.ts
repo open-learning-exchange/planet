@@ -1,4 +1,4 @@
-import { canonicalUserId, identityMatches, identityPlanetCode } from '../shared/identity.utils';
+import { identityMatches, identityPlanetCode, userIdentity } from '../shared/identity.utils';
 
 export interface AssigneeIdentity {
   userId: string;
@@ -7,15 +7,18 @@ export interface AssigneeIdentity {
 
 export const assigneeIdentityCandidates = (user: any, localPlanetCode?: string): AssigneeIdentity[] => {
   const source = user?.doc ? { ...user.doc, _id: user.doc._id || user._id } : user;
-  const userId = canonicalUserId(source);
-  if (!userId) {
+  const identity = userIdentity(source, localPlanetCode);
+  if (!identity.userId) {
     return [];
   }
-  const planetCodes = new Set<string | undefined>([ identityPlanetCode(source) ]);
-  if ((source.requestId || source.sync) && localPlanetCode) {
-    planetCodes.add(localPlanetCode);
+  const candidates = [ identity ];
+  if ((source.requestId || source.sync) && source._id && source._id !== identity.userId) {
+    candidates.push({ ...identity, userId: source._id });
+    if (localPlanetCode && localPlanetCode !== identity.userPlanetCode) {
+      candidates.push({ userId: source._id, userPlanetCode: localPlanetCode });
+    }
   }
-  return [ ...planetCodes ].map(userPlanetCode => ({ userId, userPlanetCode }));
+  return candidates;
 };
 
 export const assigneeKey = (
