@@ -1,7 +1,39 @@
 @use '../mixins' as m;
+@use '../variables' as v;
 
 planet-courses {
   @include m.search-toolbar;
+
+  .mat-toolbar.primary-color {
+    @media (max-width: v.$screen-sm) {
+      height: auto;
+      flex-wrap: wrap;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      row-gap: 8px;
+    }
+  }
+
+  .enrollment-toggle-group {
+    height: 36px;
+    align-self: center;
+
+    .mat-button-toggle-button {
+      height: 36px;
+      line-height: 36px;
+      padding: 0 10px;
+    }
+
+    .mat-button-toggle-label-content {
+      line-height: 36px;
+      font-size: 13px;
+    }
+
+    .mat-button-toggle-checked {
+      background-color: rgba(0, 0, 0, 0.08);
+      font-weight: 500;
+    }
+  }
 
   .column {
     display: flex;

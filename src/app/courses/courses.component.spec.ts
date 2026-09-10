@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -84,10 +84,11 @@ describe('CoursesComponent', () => {
         { provide: StateService, useValue: stateServiceMock },
         { provide: DialogsLoadingService, useValue: { start: vi.fn(), stop: vi.fn() } },
         { provide: DialogGuardService, useValue: { open: vi.fn() } },
-        { provide: TagsService, useValue: { updateManyTags: vi.fn().mockReturnValue(of({})) } },
+        { provide: TagsService, useValue: { updateManyTags: vi.fn().mockReturnValue(of({})), getTags: vi.fn().mockReturnValue(of([])) } },
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
         FuzzySearchService,
+        { provide: Router, useValue: { navigate: vi.fn(), url: '/courses' } },
         { provide: MatDialog, useValue: dialogMock },
         {
           provide: ActivatedRoute,
@@ -167,6 +168,91 @@ describe('CoursesComponent', () => {
 
     expect(component.courses.data).not.toBe(previousData);
     expect(component.courses.data[0].admission).toBe(true);
+    expect(component.enrolledCount).toBe(1);
+    expect(component.availableCount).toBe(0);
+  });
+
+  describe('enrollment filter toggle', () => {
+    it('defaults enrollmentFilterState to all when myCourses route data is false', () => {
+      expect(component.enrollmentFilterState.value).toBe('all');
+    });
+
+    it('updates enrollmentFilterState and triggers filter when onEnrollmentFilterChange is called', () => {
+      component.onEnrollmentFilterChange('enrolled');
+      expect(component.enrollmentFilterState.value).toBe('enrolled');
+      expect(component.courses.filter).toBe(' ');
+
+      component.onEnrollmentFilterChange('available');
+      expect(component.enrollmentFilterState.value).toBe('available');
+      expect(component.courses.filter).toBe(' ');
+
+      component.onEnrollmentFilterChange('all');
+      expect(component.enrollmentFilterState.value).toBe('all');
+      expect(component.courses.filter).toBe('');
+    });
+
+    it('correctly filters rows according to enrollment status in filterPredicate', () => {
+      const enrolledCourse = { _id: '1', admission: true, tags: [], doc: { courseTitle: 'Math 101' } };
+      const availableCourse = { _id: '2', admission: false, tags: [], doc: { courseTitle: 'Science 101' } };
+
+      component.enrollmentFilterState.value = 'all';
+      expect(component.filterPredicate(enrolledCourse, '')).toBe(true);
+      expect(component.filterPredicate(availableCourse, '')).toBe(true);
+
+      component.enrollmentFilterState.value = 'enrolled';
+      expect(component.filterPredicate(enrolledCourse, ' ')).toBe(true);
+      expect(component.filterPredicate(availableCourse, ' ')).toBe(false);
+
+      component.enrollmentFilterState.value = 'available';
+      expect(component.filterPredicate(enrolledCourse, ' ')).toBe(false);
+      expect(component.filterPredicate(availableCourse, ' ')).toBe(true);
+    });
+
+    it('updates enrolledCount and availableCount dynamically', () => {
+      component.courses.data = [
+        { _id: '1', admission: true, doc: {} },
+        { _id: '2', admission: false, doc: {} },
+        { _id: '3', admission: true, doc: {} },
+        { _id: '4', admission: false, doc: {} },
+        { _id: '5', admission: false, doc: {} }
+      ];
+
+      component.updateEnrollmentCounts();
+
+      expect(component.enrolledCount).toBe(2);
+      expect(component.availableCount).toBe(3);
+    });
+
+    it('resets enrollmentFilterState to all when resetFilter is called on standard courses view', () => {
+      component.enrollmentFilterState.value = 'enrolled';
+      component.resetFilter();
+
+      expect(component.enrollmentFilterState.value).toBe('all');
+    });
+
+    it('preserves enrolled filter state on resetFilter when on myCourses route', () => {
+      component['route'].snapshot.data.myCourses = true;
+      component.enrollmentFilterState.value = 'enrolled';
+
+      component.resetFilter();
+
+      expect(component.enrollmentFilterState.value).toBe('enrolled');
+    });
+
+    it('clears unmatching selections when switching enrollment filter', async () => {
+      component.courses.data = [
+        { _id: '1', admission: true, doc: {} },
+        { _id: '2', admission: false, doc: {} }
+      ];
+      component.selection.select('1');
+      component.selection.select('2');
+      expect(component.selection.selected).toEqual([ '1', '2' ]);
+
+      component.onEnrollmentFilterChange('enrolled');
+
+      await new Promise(resolve => queueMicrotask(resolve));
+      expect(component.enrollmentFilterState.value).toBe('enrolled');
+    });
   });
 
   // TODO: Update tests to use vitest spies

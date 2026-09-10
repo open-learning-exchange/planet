@@ -16,8 +16,10 @@ import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
+  filterEnrollment
 } from '../shared/table-helpers';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import * as constants from './constants';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
@@ -82,6 +84,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     NgTemplateOutlet,
     CoursesSearchComponent,
     MatButton,
+    MatButtonToggleGroup,
+    MatButtonToggle,
     MatLabel,
     MatInput,
     NgClass,
@@ -162,6 +166,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   };
   filterIds = { ids: [] };
   readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myCourses === true ? 'on' : 'off' };
+  enrollmentFilterState: { value: 'all' | 'enrolled' | 'available' } = {
+    value: this.route.snapshot.data.myCourses === true ? 'enrolled' : 'all'
+  };
+  enrolledCount = 0;
+  availableCount = 0;
   #titleSearch = '';
   get titleSearch(): string {
     return this.#titleSearch;
@@ -185,7 +194,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
     filterSpecificFieldsHybrid([ 'doc.courseTitle' ], this.fuzzySearchService),
-    filterShelf(this.myCoursesFilter, 'admission'),
+    filterEnrollment(this.enrollmentFilterState),
     filterIds(this.filterIds)
   ]);
   trackById = trackById;
@@ -225,6 +234,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       .subscribe((shelf: any) => {
         this.userShelf = this.userService.shelf;
         this.courses.data = this.setupList(this.courses.data, shelf.courseIds);
+        this.updateEnrollmentCounts();
       });
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -257,6 +267,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+      this.updateEnrollmentCounts();
       this.isLoading = false;
       this.dialogsLoadingService.stop();
     }, () => {
@@ -366,6 +377,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.selection.deselect(course._id);
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
+        this.updateEnrollmentCounts();
         this.getCourses();
         this.deleteDialog.close();
         this.planetMessageService.showMessage($localize`Course deleted: ${course.courseTitle}`);
@@ -412,6 +424,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
             onNext: () => {
               this.userShelf = this.userService.shelf;
               this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+              this.updateEnrollmentCounts();
               this.countSelectNotEnrolled(this.selection.selected);
               dialogRef.close();
             },
@@ -425,6 +438,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.coursesService.courseAdmissionMany(validIds, type, this.parent).subscribe((res) => {
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.updateEnrollmentCounts();
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -513,7 +527,30 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (this.searchComponent) {
       this.searchComponent.reset();
     }
+    if (!this.route.snapshot.data.myCourses) {
+      this.enrollmentFilterState.value = 'all';
+    }
     this.titleSearch = '';
+  }
+
+  onEnrollmentFilterChange(filterValue: 'all' | 'enrolled' | 'available') {
+    this.enrollmentFilterState.value = filterValue;
+    this.titleSearch = this.titleSearch;
+    this.removeFilteredFromSelection();
+  }
+
+  updateEnrollmentCounts() {
+    let enrolled = 0;
+    let available = 0;
+    for (const course of (this.courses.data as any[] || [])) {
+      if (course.admission) {
+        enrolled++;
+      } else {
+        available++;
+      }
+    }
+    this.enrolledCount = enrolled;
+    this.availableCount = available;
   }
 
   recordSearch(complete = false) {
@@ -531,7 +568,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
       Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
-      this.myCoursesFilter.value === 'on' ||
+      this.enrollmentFilterState.value !== 'all' ||
       this.includeIds.length > 0 ?
       ' ' : '';
   }
@@ -540,7 +577,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.shelf = newShelf;
-      this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.updateEnrollmentCounts();
       this.planetMessageService.showMessage($localize`${message} myCourses`);
     }, (error) => (error));
   }
@@ -570,6 +608,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
             onNext: () => {
               this.userShelf = this.userService.shelf;
               this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+              this.updateEnrollmentCounts();
               this.countSelectNotEnrolled(this.selection.selected);
               dialogRef.close();
             },
@@ -582,6 +621,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.updateEnrollmentCounts();
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }

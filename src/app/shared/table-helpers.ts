@@ -107,7 +107,7 @@ const filterArrayField = (filterField: string, filterItems: string[]) => (data: 
 };
 
 export const filterTags = (filterControl: FormControl) => (data: any, filter: string) => (
-  filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter)
+  filterArrayField('tags', filterControl.value)({ tags: data.tags ? data.tags.map((tag: any) => tag._id) : [] }, filter)
 );
 
 export const filterAdvancedSearch = (searchObj: any) => (data: any, filter: string) => Object.entries(searchObj).reduce(
@@ -121,6 +121,17 @@ export const filterAdvancedSearch = (searchObj: any) => (data: any, filter: stri
 export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: string) => (data: any, filter: string) => (
   filterOnOff.value === 'off' || data[filterField] === true
 );
+
+// state must be an object so it references a variable on component & changes with component changes
+export const filterEnrollment = (state: { value: 'all' | 'enrolled' | 'available' }, filterField: string = 'admission') => (data: any) => {
+  if (state.value === 'enrolled') {
+    return data[filterField] === true;
+  }
+  if (state.value === 'available') {
+    return !data[filterField];
+  }
+  return true;
+};
 
 // Special filter for showing members that are admins
 export const filterAdmin = (data, filter) => data.doc.isUserAdmin && data.doc.roles.length === 0;
