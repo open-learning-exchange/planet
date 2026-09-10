@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Opti
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { map, takeUntil } from 'rxjs/operators';
-import { MeetupService } from '../meetups.service';
+import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
@@ -50,11 +50,17 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   @Input() meetupDetail: any;
   @Input() isDialog = false;
   @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
   get canManage(): boolean {
-    const user = this.userService.get();
-    return !!user?._id && (user.isUserAdmin || user.name === this.meetupDetail?.createdBy);
+    return this.meetupService.canEditMeetup(this.meetupDetail, this.authorizationContext);
+  }
+  private get authorizationContext(): MeetupAuthorizationContext {
+    return {
+      leaderOfTeamId: this.leaderOfTeamId,
+      readOnly: this.parent || !this.editable
+    };
   }
   members = [];
   parent = this.route.snapshot.data.parent;
@@ -201,7 +207,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         this.switchView.emit('close');
       }
     };
-    this.meetupService.openDeleteDialog(this.meetupDetail, callback);
+    this.meetupService.openDeleteDialog(this.meetupDetail, callback, this.authorizationContext);
   }
 
   openCreatorProfile(event?: Event) {

@@ -4,10 +4,10 @@ import { PlanetCalendarComponent } from './calendar.component';
 import { styleVariables } from './utils';
 
 describe('PlanetCalendarComponent', () => {
-  const createComponent = (couchService: any = {}) => new PlanetCalendarComponent(
+  const createComponent = (couchService: any = {}, dialog: any = {}) => new PlanetCalendarComponent(
     document,
     'en',
-    {} as any,
+    dialog,
     couchService,
     {} as any,
     {} as any,
@@ -80,5 +80,18 @@ describe('PlanetCalendarComponent', () => {
     expect(component.tasks[1].backgroundColor).toBe(component.eventLegend[2].color);
     expect(component.tasks[0].textColor).toBe(styleVariables.accentText);
     expect(component.tasks[1].textColor).toBe(styleVariables.accentText);
+  });
+
+  it('passes matching team-leader context into the meetup dialog', () => {
+    const dialog = { open: vi.fn() };
+    const component = createComponent({}, dialog);
+    component.leaderOfTeamId = 'team-1';
+    const meetup = { _id: 'm1', link: { teams: 'team-1' } };
+
+    component.eventClick({ event: { extendedProps: { meetup } } });
+
+    expect(dialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ leaderOfTeamId: 'team-1', meetup })
+    }));
   });
 });
