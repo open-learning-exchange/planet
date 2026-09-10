@@ -241,7 +241,13 @@ export class TeamsService {
   }
 
   updateTeam(team: any) {
-    return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => of({ ...team, _rev: res.rev, _id: res.id })));
+    return this.couchService.updateDocument(this.dbName, team).pipe(
+      switchMap((res: any) => of({
+        ...team,
+        _id: res._id || res.id || team._id,
+        _rev: res._rev || res.rev || team._rev
+      }))
+    );
   }
 
   requestToJoinTeam(team, user) {

@@ -664,5 +664,51 @@ describe('TeamsService cover image handling', () => {
     expect(result.coverFileName).toBeDefined();
     expect(result._attachments).toBeDefined();
   });
+
+  it('creates a new team when updateDocument returns CouchDB-style {_id, _rev} response', async () => {
+    let callCount = 0;
+    const updateDocument = vi.fn((db, doc) => {
+      callCount++;
+      if (callCount === 1) {
+        return of({ _id: 'couchdb-team-id', _rev: '1-couchdbrev' });
+      }
+      return of({ _id: doc._id, _rev: '2-couchdbrev' });
+    });
+    const putAttachment = vi.fn().mockReturnValue(of({ ok: true }));
+    const get = vi.fn(() => of({
+      _id: 'couchdb-team-id',
+      _rev: '1-attached',
+      createdDate: '2026-09-10T18:00:00.000Z',
+      _attachments: { 'cover.png': { content_type: 'image/png', length: 1234, stub: true } }
+    }));
+    const { service } = createService({ updateDocument, putAttachment, get });
+
+    const newTeamData = { name: 'CouchDB Team', type: 'team' };
+    const coverState = {
+      added: [ { file: new File([ 'data' ], 'cover.png', { type: 'image/png' }) } ],
+      retained: [],
+      removed: []
+    };
+
+    let result: any;
+    await new Promise<void>((resolve) => {
+      service.saveTeamWithCover(newTeamData, coverState, {}).subscribe((res) => {
+        result = res;
+        resolve();
+      });
+    });
+
+    expect(putAttachment).toHaveBeenCalledWith(
+      expect.stringContaining('teams/couchdb-team-id/'),
+      expect.anything(),
+      expect.anything()
+    );
+    expect(putAttachment).toHaveBeenCalledWith(
+      expect.stringContaining('?rev=1-couchdbrev'),
+      expect.anything(),
+      expect.anything()
+    );
+    expect(result._id).toBe('couchdb-team-id');
+  });
 });
 
