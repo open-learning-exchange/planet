@@ -107,7 +107,7 @@
         <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
       }
       @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-        <button mat-button type="button" (click)="showReplies(item)">
+        <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
           <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
         </button>
       }
@@ -144,7 +144,7 @@
     <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
   }
   @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-    <button mat-button type="button" (click)="showReplies(item)">
+    <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
       <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
     </button>
   }

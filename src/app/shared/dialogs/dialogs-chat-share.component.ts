@@ -114,7 +114,7 @@ export class DialogsChatShareComponent implements OnInit {
     this.getTeams();
   }
 
-  teamSelect({ teamId, teamType }: { teamId: string; teamType: string }) {
+  teamSelect({ teamId, teamType }: { teamId: string, teamType: string }) {
     this.teamForm.controls.linkId.setValue(teamId);
     this.teamForm.controls.teamType.setValue(teamType);
     this.linkStepper.selected.completed = true;

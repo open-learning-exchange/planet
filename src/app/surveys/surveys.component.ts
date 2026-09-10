@@ -202,7 +202,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const targetTeamId = this.teamId || this.routeTeamId;
 
-      const submissionsBySurvey: Record<string, Array<{ status: string; teamId: string | null; parent?: any }>> = {};
+      const submissionsBySurvey: Record<string, Array<{ status: string, teamId: string | null, parent?: any }>> = {};
       submissions.forEach(row => {
         const [baseSurveyId] = row.key;
         (submissionsBySurvey[baseSurveyId] ||= []).push(row.value);

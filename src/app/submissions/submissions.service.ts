@@ -49,7 +49,7 @@ export class SubmissionsService {
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest, surveyId, type }: {
-    onlyBest?: boolean, opts?: any, query?: any, surveyId?: string, type?: 'exam' | 'survey'
+    onlyBest?: boolean; opts?: any; query?: any; surveyId?: string; type?: 'exam' | 'survey';
   } = {}) {
     const submissionsObs = surveyId && type
       ? this.getSubmissionsIncludingDerived(surveyId, type, 'complete')

@@ -27,17 +27,17 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface NewReportForm {
-  _id?: string,
-  _rev?: string,
-  beginningBalance: string,
-  description: string,
-  endDate: Date,
-  otherExpenses: number,
-  otherIncome: number,
-  receiptImages?: AttachmentInputState,
-  sales: number,
-  startDate: Date,
-  wages: string
+  _id?: string;
+  _rev?: string;
+  beginningBalance: string;
+  description: string;
+  endDate: Date;
+  otherExpenses: number;
+  otherIncome: number;
+  receiptImages?: AttachmentInputState;
+  sales: number;
+  startDate: Date;
+  wages: string;
 }
 
 @Component({
