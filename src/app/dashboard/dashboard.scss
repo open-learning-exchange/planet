@@ -1,7 +1,6 @@
 @use '../variables' as v;
 
-$card-width: calc(106px + 2rem);
-$top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
+$top-row-height: 130px;
 
 :host {
   height: calc(#{v.$dashboard-height} + 32px);
@@ -38,7 +37,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
     margin: 0 2px;
 
     img {
-      width: calc(#{v.$dashboard-tile-width} - 0.5rem);
+      width: 120px;
       max-width: 15vh;
       max-height: 15vh;
       border-radius: 50%;

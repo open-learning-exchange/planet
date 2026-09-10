@@ -30,12 +30,11 @@
       [cdkDropListOrientation]="isAccordionMode ? 'vertical' : 'horizontal'"
       (cdkDropListDropped)="drop($event)">
       @if (!isLoading) {
-        @for (item of itemData; track item; let even = $even) {
+        @for (item of itemData; track item) {
           <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
             <div
               class="dashboard-item"
               [ngClass]="{
-                'bg-grey': even,
                 'accordion-item': isAccordionMode,
                 'has-course-cover': cardType === 'myCourses' && item.coverFileName
               }"
@@ -48,18 +47,23 @@
                 [routerLink]="recentlyDragged ? null : item.link"
                 [state]="item.returnState ? { returnState: item.returnState } : undefined"
                 [matTooltip]="item.tooltip">
-                @if (cardType === 'myCourses' && item.coverFileName) {
-                  <div class="dashboard-course-cover">
+                <div class="tile-band band-{{cardType}}"></div>
+                <div class="tile-avatar avatar-{{cardType}}" [class.dashboard-course-cover]="cardType === 'myCourses' && item.coverFileName">
+                  @if (cardType === 'myCourses' && item.coverFileName) {
                     <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt>
+                  } @else {
+                    <mat-icon class="tile-icon">{{ getItemIcon(item) }}</mat-icon>
+                  }
+                </div>
+                @if (item.badge) {
+                  <div class="tile-chips">
+                    <span class="tile-chip chip-{{cardType}}" [matTooltip]="badgeDescription(item)" [attr.aria-label]="badgeDescription(item)">
+                      {{item.badge}}
+                    </span>
                   </div>
                 }
-                @if (item.firstLine || item.badge) {
-                  <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before" [matBadgeDescription]="badgeDescription(item)">
-                    {{item.firstLine}}
-                  </p>
-                }
                 <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': dashboardTextLines(item),'word-wrap': 'break-word' }">
-                  {{(cardType === 'myLife' && isAccordionMode) ? '' : (item.title | truncateText:50)}}
+                  {{item.title | truncateText:50}}
                 </p>
               </a>
               @if (cardType!=='myLife' && !item?.canRemove) {

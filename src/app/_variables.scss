@@ -51,6 +51,24 @@ $planet-green-dark: mat.m2-get-color-from-palette($planet-app-green, $dark-hue);
 $primary-lighter-text: mat.m2-get-color-from-palette($planet-app-primary, 900);
 $accent-lighter-text: color.adjust($accent, $lightness: -30%);
 
+// Dashboard shelf theme tokens (library / courses / teams / life)
+$shelf-library-accent: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 500);
+$shelf-library-lighter: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 100);
+$shelf-library-dark: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 700);
+$shelf-library-text: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 900);
+$shelf-courses-accent: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 500);
+$shelf-courses-lighter: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 100);
+$shelf-courses-dark: mat.m2-get-color-from-palette(mat.$m2-orange-palette, 800);
+$shelf-courses-text: mat.m2-get-contrast-color-from-palette(mat.$m2-orange-palette, 100);
+$shelf-teams-accent: mat.m2-get-color-from-palette(mat.$m2-green-palette, 500);
+$shelf-teams-lighter: mat.m2-get-color-from-palette(mat.$m2-green-palette, 100);
+$shelf-teams-dark: mat.m2-get-color-from-palette(mat.$m2-green-palette, 700);
+$shelf-teams-text: mat.m2-get-color-from-palette(mat.$m2-green-palette, 900);
+$shelf-life-accent: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 500);
+$shelf-life-lighter: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 100);
+$shelf-life-dark: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 700);
+$shelf-life-text: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 900);
+
 // Backgrounds for generated member initials, picked by hashing the name. A fixed set
 // rather than a computed hue, so every option is theme-derived and verified: each
 // clears WCAG AA against white text, the blue at 4.6:1 being the tightest.
@@ -94,7 +112,7 @@ $search-filters-height: 25vh;
 // Height of dashboard
 $dashboard-height: calc(100vh - 128px);
 $dashboard-tile-height: calc((#{$dashboard-height} - 3rem) / 4);
-$dashboard-tile-width: 125px;
+$dashboard-tile-width: 148px;
 // Widths for forms fitting 1, 2, or 3 mat-input-fields horizontally
 $form-width-3: 550px;
 $form-width-2: 365px;

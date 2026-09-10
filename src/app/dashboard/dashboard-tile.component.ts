@@ -19,12 +19,12 @@ import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { environment } from '../../environments/environment';
 import { couchAttachmentUrl } from '../shared/utils';
+import { resolveResourceIconInfo } from '../resources/resources-icon.component';
 
 @Component({
   selector: 'planet-dashboard-tile-title',
@@ -57,7 +57,6 @@ export class DashboardTileTitleComponent {
     AuthorizedRolesDirective,
     CdkDrag,
     MatTooltip,
-    MatBadge,
     NgStyle,
     MatIconButton,
     PlanetLoadingSpinnerComponent,
@@ -152,7 +151,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const itemStyle = window.getComputedStyle(item);
     const padding = this.cssPixels(itemStyle.paddingTop) + this.cssPixels(itemStyle.paddingBottom);
     const reservedHeight = Array.from(item.children)
-      .filter(element => element.matches('.dashboard-course-cover, p:not(.dashboard-text)'))
+      .filter(element => element.matches('.dashboard-course-cover, .tile-band, .tile-avatar, .tile-chips, p:not(.dashboard-text)'))
       .reduce((height, element) => height + this.elementOuterHeight(element as HTMLElement), 0);
     const fontSize = this.cssPixels(itemStyle.fontSize) || 16;
     // line-height: normal varies by browser, but should be between 1-1.2
@@ -306,5 +305,44 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
 
   coverImageUrl(item: any): string {
     return couchAttachmentUrl(environment.couchAddress, 'courses', item._id, item.coverFileName);
+  }
+
+  getItemIcon(item: any): string {
+    if (this.cardType === 'myCourses') {
+      return 'school';
+    }
+    if (this.cardType === 'myLibrary') {
+      const resourceIcon = resolveResourceIconInfo(item).icon;
+      return resourceIcon || 'insert_drive_file';
+    }
+    if (this.cardType === 'myTeams') {
+      return 'group';
+    }
+    if (this.cardType === 'myLife') {
+      const link = item?.link || '';
+      if (link.includes('submissions')) {
+        return 'assignment';
+      }
+      if (link.includes('chat')) {
+        return 'chat';
+      }
+      if (link.includes('Progress')) {
+        return 'equalizer';
+      }
+      if (link.includes('Personals')) {
+        return 'folder';
+      }
+      if (link.includes('Achievements')) {
+        return 'star';
+      }
+      if (link.includes('Surveys')) {
+        return 'poll';
+      }
+      if (link.includes('Health')) {
+        return 'favorite';
+      }
+      return 'star';
+    }
+    return 'category';
   }
 }

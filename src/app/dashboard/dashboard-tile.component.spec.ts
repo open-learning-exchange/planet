@@ -133,4 +133,28 @@ describe('DashboardTileComponent', () => {
     expect(dialogRef.close).toHaveBeenCalled();
     expect(messageService.showMessage).toHaveBeenCalled();
   });
+
+  it('resolves library item icons according to resource file type standards', () => {
+    TestBed.configureTestingModule({
+      imports: [ DashboardTileComponent ],
+      providers: [
+        { provide: CoursesService, useValue: {} },
+        { provide: DeviceInfoService, useValue: { watchDeviceType: vi.fn().mockReturnValue(of(undefined)) } },
+        { provide: MatDialog, useValue: {} },
+        { provide: PlanetMessageService, useValue: {} },
+        { provide: TeamsService, useValue: {} },
+        { provide: UserService, useValue: { get: vi.fn().mockReturnValue({}) } }
+      ]
+    });
+    const component = TestBed.createComponent(DashboardTileComponent).componentInstance;
+    component.cardType = 'myLibrary';
+
+    expect(component.getItemIcon({ filename: 'book.pdf' })).toBe('picture_as_pdf');
+    expect(component.getItemIcon({ filename: 'video.mp4' })).toBe('videocam');
+    expect(component.getItemIcon({ filename: 'audio.mp3' })).toBe('audiotrack');
+    expect(component.getItemIcon({ filename: 'data.csv' })).toBe('grid_on');
+    expect(component.getItemIcon({ filename: 'photo.png' })).toBe('image');
+    expect(component.getItemIcon({ filename: 'doc.docx' })).toBe('description');
+    expect(component.getItemIcon({})).toBe('insert_drive_file');
+  });
 });
