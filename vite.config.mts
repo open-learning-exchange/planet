@@ -20,13 +20,10 @@ export default defineConfig(({ mode }) => ({
     exclude: [
       // TODO: Update tests in these files and remove from exclusion list
       'src/**/form-error-messages.component.spec.ts',
-      'src/**/meetups-view.component.spec.ts',
       'src/**/courses-view.component.spec.ts',
       'src/**/notifications.component.spec.ts',
       'src/**/login.component.spec.ts',
       'src/**/resources.component.spec.ts',
-      'src/**/meetups.component.spec.ts',
-      'src/**/meetups-add.component.spec.ts',
     ],
     reporters: ['default'],
     server: {

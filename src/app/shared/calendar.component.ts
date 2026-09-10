@@ -57,6 +57,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Input() type = '';
 
   @Input() header?: any = {
@@ -291,7 +292,14 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
         endDate: today,
       };
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
+      data: {
+        meetup,
+        link: this.link,
+        sync: this.sync,
+        onMeetupsChange: this.onMeetupsChange.bind(this),
+        editable: this.editable,
+        leaderOfTeamId: this.leaderOfTeamId
+      },
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh'
     });
@@ -318,6 +326,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
           link: this.link,
           sync: this.sync,
           editable: this.editable,
+          leaderOfTeamId: this.leaderOfTeamId,
           onMeetupsChange: this.onMeetupsChange.bind(this)
         }
       });
