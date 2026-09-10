@@ -102,7 +102,7 @@ export class CsvService {
     return monthData.reduce((total, item) => total + (item.count || 0), 0);
   }
 
-  private buildSummaryTable(sections: Array<{ title: string; data: any[]; countUnique: boolean }>): any[] {
+  private buildSummaryTable(sections: Array<{ title: string, data: any[], countUnique: boolean }>): any[] {
     const allMonths = new Set<string>();
     sections.forEach(section => {
       section.data.forEach(item => allMonths.add(item.date));

@@ -112,7 +112,7 @@
         </button>
       }
       @if (!readOnly) {
-        <button class="km-copy-voice" mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
+        <button class="km-copy-voice" mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip aria-label="Copy Voice Link" i18n-aria-label (click)="copyLink(item.doc)">
           <mat-icon>link</mat-icon>
         </button>
       }
@@ -149,8 +149,8 @@
     </button>
   }
   @if (!readOnly) {
-    <button class="km-copy-voice" mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
-      <mat-icon>link</mat-icon>
+    <button class="km-copy-voice" mat-menu-item type="button" (click)="copyLink(item.doc)">
+      <mat-icon>link</mat-icon><span i18n>Copy Voice Link</span>
     </button>
   }
   @if (canModifyNews) {

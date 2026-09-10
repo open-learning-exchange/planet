@@ -19,7 +19,7 @@ export interface PublicSurvey {
 
 export interface PublicSurveyResponse {
   survey: PublicSurvey;
-  team: { _id: string; name: string; type: string };
+  team: { _id: string, name: string, type: string };
 }
 
 @Injectable({

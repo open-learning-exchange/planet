@@ -1,6 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
@@ -25,6 +24,7 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
 import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
 import { FullNamePipe } from '../shared/full-name.pipe';
+import { LinkCopyService } from '../shared/link-copy.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -94,7 +94,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private stateService: StateService,
     private usersProfileDialogService: UsersProfileDialogService,
     private authService: AuthService,
-    private clipboard: Clipboard,
+    private linkCopyService: LinkCopyService,
     private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -282,7 +282,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   copyLink(voice) {
-    const link = `${window.location.origin}/voices/${voice._id}`;
-    this.clipboard.copy(link);
+    this.linkCopyService.copyLink(
+      [ '/voices', voice._id ],
+      {
+        success: $localize`Voice link copied to clipboard`,
+        failure: $localize`Failed to copy voice link`
+      }
+    );
   }
 }

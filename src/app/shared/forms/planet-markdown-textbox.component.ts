@@ -11,8 +11,8 @@ import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
 import { TdTextEditorComponent } from '@covalent/text-editor';
 import { NgClass } from '@angular/common';
 
-interface ImageInfo { resourceId: string; filename: string; markdown: string; }
-interface ValueWithImages { text: string; images: ImageInfo[]; }
+interface ImageInfo { resourceId: string, filename: string, markdown: string }
+interface ValueWithImages { text: string, images: ImageInfo[] }
 interface FullscreenState {
   owner: HTMLElement;
   actions: HTMLElement;
