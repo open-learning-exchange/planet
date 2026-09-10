@@ -328,8 +328,6 @@ export class ReportsService {
         startDate = new Date(now);
         startDate.setDate(now.getDate() - 7);
         break;
-      // The month ranges pin their start to the top of the day so it does not drift with
-      // the clock; the end stays 'now', and the day and hour ranges stay rolling.
       case '1m':
         startDate = startOfDay(subtractMonthsClamped(now, 1));
         break;
