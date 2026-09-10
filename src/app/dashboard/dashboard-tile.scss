@@ -54,6 +54,10 @@
         grid-auto-columns: v.$dashboard-tile-width;
         transition: transform 0.5s;
 
+        &.cdk-drop-list-dragging .dashboard-item:not(.cdk-drag-placeholder) {
+          transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+        }
+
         .dashboard-item {
           grid-column-end: span 1;
           grid-row-end: 1;
@@ -65,6 +69,14 @@
           padding: 0;
           position: relative;
           word-break: break-word;
+
+          &.cdk-drag-placeholder {
+            opacity: 0.3;
+          }
+
+          &.cdk-drag-animating {
+            transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+          }
 
           > .dashboard-item-link {
             display: flex;
