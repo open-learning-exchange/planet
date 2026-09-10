@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import {
-  ageFromBirthDate, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
-  hasMarkdownImages, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
+  ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
+  hasMarkdownImages, localizedGender, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -370,6 +370,46 @@ ${'\t'.repeat(18)}
     it('reads timestamps, including the epoch', () => {
       expect(ageFromBirthDate(now, new Date(1998, 8, 4).valueOf())).toBe(28);
       expect(ageFromBirthDate(now, 0)).toBe(56);
+    });
+
+  });
+
+  describe('ageFromUser', () => {
+
+    const now = new Date(2026, 8, 4);
+
+    it('prefers an age calculated from a valid birth date', () => {
+      expect(ageFromUser(now, { birthDate: new Date(1998, 8, 4), age: 12 })).toBe(28);
+    });
+
+    it('falls back to a stored age, including zero', () => {
+      expect(ageFromUser(now, { age: 20 })).toBe(20);
+      expect(ageFromUser(now, { age: 0 })).toBe(0);
+    });
+
+    it('returns null when no age is available', () => {
+      expect(ageFromUser(now, {})).toBeNull();
+      expect(ageFromUser(now)).toBeNull();
+    });
+
+  });
+
+  describe('localizedGender', () => {
+
+    it('translates known genders case-insensitively', () => {
+      expect(localizedGender('male')).toBe('Male');
+      expect(localizedGender('FEMALE')).toBe('Female');
+    });
+
+    it('capitalizes other strings', () => {
+      expect(localizedGender('nonbinary')).toBe('Nonbinary');
+    });
+
+    it('falls back for missing or non-string values', () => {
+      expect(localizedGender(undefined)).toBe('');
+      expect(localizedGender('', 'N/A')).toBe('N/A');
+      expect(localizedGender(1, 'N/A')).toBe('N/A');
+      expect(localizedGender({}, 'N/A')).toBe('N/A');
     });
 
   });

@@ -1,6 +1,6 @@
 import { millisecondsToDay } from '../../meetups/constants';
 import type { CsvService } from '../../shared/csv.service';
-import { toProperCase } from '../../shared/utils';
+import { localizedGender } from '../../shared/utils';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -98,16 +98,16 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
   { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
 );
 
-export const localizedGender = (gender?: unknown, fallback = '') => {
-  switch (gender) {
-    case 'male':
-      return $localize`Male`;
-    case 'female':
-      return $localize`Female`;
-    default:
-      return typeof gender === 'string' && gender ? toProperCase(gender) : fallback;
-  }
-};
+export const formatDemographicsForCsv = (data: any) => Object.fromEntries([
+  ...Object.entries(data).map(([ key, value ]) => {
+    if (key === 'gender') {
+      return [ $localize`Gender`, localizedGender(value) ];
+    }
+    return key === 'age' ? [ $localize`Age (years)`, value ] : [ key, value ];
+  }),
+  ...('gender' in data ? [] : [ [ $localize`Gender`, '' ] ]),
+  ...('age' in data ? [] : [ [ $localize`Age (years)`, '' ] ])
+]);
 
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),

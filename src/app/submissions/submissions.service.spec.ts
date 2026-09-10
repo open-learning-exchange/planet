@@ -111,4 +111,16 @@ describe('SubmissionsService survey exports', () => {
     });
 
   });
+
+  it('preserves an age of zero in the AI analysis payload', async () => {
+    const getPrompt = vi.fn().mockReturnValue(of({ chat: 'Analysis' }));
+    (service as any).chatService = { getPrompt };
+
+    await service.analyseResponses(
+      { ...exam, type: 'survey', description: '', questions: [ { body: 'Question', type: 'text' } ] },
+      [ { ...submissionWithEmbeddedTeam, user: { age: 0 } } ]
+    );
+
+    expect(getPrompt.mock.calls[0][0].content).toContain('"age": 0');
+  });
 });

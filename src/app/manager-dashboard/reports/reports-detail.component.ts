@@ -10,7 +10,7 @@ import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
 import { loadChart } from '../../shared/chart-utils';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
-import { styleVariables, formatDate } from '../../shared/utils';
+import { styleVariables, formatDate, localizedGender } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
@@ -19,7 +19,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
-  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, localizedGender
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, formatDemographicsForCsv
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -777,8 +777,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         let data = this.activityService.appendUserDemographics(
           filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members), this.today
         ).map(activity => ({
-          ...activity,
-          gender: localizedGender(activity.gender),
+          ...formatDemographicsForCsv(activity),
           androidId: activity.androidId || '',
           deviceName: activity.deviceName || '',
           customDeviceName: activity.customDeviceName || ''
@@ -913,7 +912,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.activityService.appendAge(activities, this.today) :
       this.activityService.appendUserDemographics(activities, this.today);
     this.csvService.exportCSV({
-      data: activitiesWithDemographics.map(activity => ({ ...activity, gender: localizedGender(activity.gender) })),
+      data: activitiesWithDemographics.map(formatDemographicsForCsv),
       title
     });
   }

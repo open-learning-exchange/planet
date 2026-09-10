@@ -17,10 +17,16 @@ describe('ReportsService', () => {
       expect(service.appendGender([ { user: 'ada', gender: 'Female' } ])).toEqual([ { user: 'ada', gender: 'female' } ]);
     });
 
-    it('finds users of child planets, which are nested in a doc property', () => {
-      service.users = [ { doc: { name: 'grace', gender: 'male' } } ];
+    it('finds users loaded from a child planet', () => {
+      service.users = [ { name: 'grace', gender: 'male', planetCode: 'child' } ];
 
       expect(service.appendGender([ { user: 'grace' } ])).toEqual([ { user: 'grace', gender: 'male' } ]);
+    });
+
+    it('preserves the first matching profile when names are duplicated', () => {
+      service.users = [ { name: 'ada', gender: 'female' }, { name: 'ada', gender: 'male' } ];
+
+      expect(service.appendGender([ { user: 'ada' } ])).toEqual([ { user: 'ada', gender: 'female' } ]);
     });
 
     it('leaves the gender unset for records with no matching user', () => {
@@ -44,6 +50,12 @@ describe('ReportsService', () => {
 
     it('keeps the age health examinations store for their anonymous profiles', () => {
       expect(service.appendAge([ { profileId: 'abc', age: 42 } ], time)).toEqual([ { profileId: 'abc', age: 42 } ]);
+    });
+
+    it('uses the stored age when the user profile has no birth date', () => {
+      service.users = [ { name: 'ada', birthYear: 1998, age: 28 } ];
+
+      expect(service.appendAge([ { user: 'ada' } ], time)).toEqual([ { user: 'ada', age: 28 } ]);
     });
 
     it('leaves the age blank when the user or their birth date is unknown', () => {

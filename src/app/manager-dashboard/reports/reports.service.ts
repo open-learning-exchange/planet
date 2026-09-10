@@ -3,7 +3,7 @@ import { forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
-import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
+import { dedupeShelfReduce, ageFromUser } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
@@ -115,7 +115,7 @@ export class ReportsService {
     return ({
       count: users.length,
       byGender: users.reduce((usersByGender: any, user: any) => {
-        usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
+        usersByGender[user.gender || 'didNotSpecify'] += 1;
         return usersByGender;
       }, { male: 0, female: 0, didNotSpecify: 0 }),
       byMonth: this.groupByMonth(users, 'joinDate')
@@ -190,33 +190,46 @@ export class ReportsService {
     });
   }
 
-  // Child planet users arrive wrapped in a doc property, local ones do not.
   usersByName() {
     return this.users.reduce((users: Map<string, any>, user: any) => {
-      const doc = user.doc || user;
-      return doc.name ? users.set(doc.name, doc) : users;
+      if (user.name && !users.has(user.name)) {
+        users.set(user.name, user);
+      }
+      return users;
     }, new Map());
+  }
+
+  private genderOfActivity(item: any, users: Map<string, any>) {
+    return users.get(item.user)?.gender;
+  }
+
+  private ageOfActivity(item: any, time: number | Date, users: Map<string, any>) {
+    return item.age ?? ageFromUser(time, users.get(item.user)) ?? '';
   }
 
   appendGender(array, users = this.usersByName()) {
     return array.map((item: any) => ({
       ...item,
-      gender: users.get(item.user)?.gender
+      gender: this.genderOfActivity(item, users)
     }));
   }
 
   // Records which store their own age (health examinations) keep it, the rest are matched to the
-  // birth date on their user profile.
+  // birth date on their user profile, falling back to the age a birth year only signup calculated.
   appendAge(array, time: number | Date, users = this.usersByName()) {
     return array.map((item: any) => ({
       ...item,
-      age: item.age ?? ageFromBirthDate(time, users.get(item.user)?.birthDate) ?? ''
+      age: this.ageOfActivity(item, time, users)
     }));
   }
 
   appendUserDemographics(array, time: number | Date) {
     const users = this.usersByName();
-    return this.appendAge(this.appendGender(array, users), time, users);
+    return array.map((item: any) => ({
+      ...item,
+      age: this.ageOfActivity(item, time, users),
+      gender: this.genderOfActivity(item, users)
+    }));
   }
 
   timeFilter(field, time) {

@@ -7,12 +7,12 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, converter } from '../shared/utils';
+import { ageFromUser, converter, dedupeShelfReduce, localizedGender, markdownToPlainText, toProperCase } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { attachNamesToPlanets, codeToPlanetName, fullLabel, localizedGender } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
@@ -291,12 +291,6 @@ export class SubmissionsService {
     return $localize`N/A`;
   }
 
-  // A stored age of '' means the submission never carried one, an age of 0 is a real answer.
-  private userAge(time, user) {
-    const age = ageFromBirthDate(time, user.birthDate) ?? user.age;
-    return age === undefined || age === null || age === '' ? null : age;
-  }
-
   private localizedGender(gender?: string) {
     return localizedGender(gender, this.notAvailable());
   }
@@ -343,7 +337,7 @@ export class SubmissionsService {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
             [$localize`Gender`]: this.localizedGender(submission.user.gender),
-            [$localize`Age (years)`]: this.userAge(time, submission.user) ?? this.notAvailable(),
+            [$localize`Age (years)`]: ageFromUser(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
@@ -579,7 +573,7 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
-      const userAge = this.userAge(submission.lastUpdateTime, submission.user);
+      const userAge = ageFromUser(submission.lastUpdateTime, submission.user);
       const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
       const communityOrNation = submission.planetName;
       const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
@@ -803,7 +797,7 @@ export class SubmissionsService {
   async analyseResponses(exam: any, submissions: any) {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
-        age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+        age: ageFromUser(submission.lastUpdateTime, submission.user),
         gender: submission.user.gender
       },
       answers: submission.answers

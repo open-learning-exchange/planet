@@ -1,27 +1,27 @@
-import { localizedGender } from './reports.utils';
+import { formatDemographicsForCsv } from './reports.utils';
 
 describe('reports utils', () => {
 
-  describe('localizedGender', () => {
+  describe('formatDemographicsForCsv', () => {
 
-    it('translates the genders profiles offer', () => {
-      expect(localizedGender('male')).toBe('Male');
-      expect(localizedGender('female')).toBe('Female');
+    it('replaces raw demographic keys with localized headers and values', () => {
+      const formatted = formatDemographicsForCsv({ user: 'ada', gender: 'female', source: 'health', age: 28, time: 1 });
+
+      expect(formatted).toEqual({
+        user: 'ada',
+        Gender: 'Female',
+        source: 'health',
+        'Age (years)': 28,
+        time: 1
+      });
+      expect(Object.keys(formatted)).toEqual([ 'user', 'Gender', 'source', 'Age (years)', 'time' ]);
     });
 
-    it('capitalizes anything else a profile stores', () => {
-      expect(localizedGender('nonbinary')).toBe('Nonbinary');
-    });
+    it('adds the columns a record never stored, so the headers taken from the first row are complete', () => {
+      const formatted = formatDemographicsForCsv({ user: 'ada', time: 1 });
 
-    it('falls back when there is no gender', () => {
-      expect(localizedGender(undefined)).toBe('');
-      expect(localizedGender('')).toBe('');
-      expect(localizedGender(undefined, 'N/A')).toBe('N/A');
-    });
-
-    it('falls back for values synced in as something other than a string', () => {
-      expect(localizedGender(1)).toBe('');
-      expect(localizedGender({}, 'N/A')).toBe('N/A');
+      expect(formatted).toEqual({ user: 'ada', time: 1, Gender: '', 'Age (years)': '' });
+      expect(Object.keys(formatted)).toEqual([ 'user', 'time', 'Gender', 'Age (years)' ]);
     });
 
   });
