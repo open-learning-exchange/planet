@@ -5,6 +5,10 @@
 }
 
 .manager-reports-detail {
+  .app-source-toggle {
+    flex-wrap: wrap;
+  }
+
   .comparison-toolbar mat-form-field {
     margin-top: 10px;
 

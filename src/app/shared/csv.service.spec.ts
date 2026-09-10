@@ -108,4 +108,40 @@ describe('CsvService', () => {
       { responseType: 'text', domain: undefined }
     );
   });
+
+  describe('exportMyPlanet', () => {
+    const mapFn = (children: any[], planetName?: string) => children.map(child => ({ ...child, planetName }));
+
+    it('maps one planet\'s children with the name it was given', () => {
+      const exportCSV = vi.spyOn(service, 'exportCSV').mockImplementation(() => {});
+      const spiedMapFn = vi.fn(mapFn);
+
+      service.exportMyPlanet([ { id: 1 }, { id: 2 } ], 'Community A', spiedMapFn, 'myPlanet Reports');
+
+      expect(spiedMapFn).toHaveBeenCalledWith([ { id: 1 }, { id: 2 } ], 'Community A');
+      expect(exportCSV).toHaveBeenCalledWith({
+        data: [ { id: 1, planetName: 'Community A' }, { id: 2, planetName: 'Community A' } ],
+        title: 'myPlanet Reports'
+      });
+    });
+
+    it('flattens every planet\'s mapped children when no planet name is given', () => {
+      const exportCSV = vi.spyOn(service, 'exportCSV').mockImplementation(() => {});
+      const planets = [
+        { name: 'Community A', children: [ { id: 1 } ] },
+        { name: 'Community B', children: [ { id: 2 }, { id: 3 } ] }
+      ];
+
+      service.exportMyPlanet(planets, undefined, mapFn, 'myPlanet Reports');
+
+      expect(exportCSV).toHaveBeenCalledWith({
+        data: [
+          { id: 1, planetName: 'Community A' },
+          { id: 2, planetName: 'Community B' },
+          { id: 3, planetName: 'Community B' }
+        ],
+        title: 'myPlanet Reports'
+      });
+    });
+  });
 });
