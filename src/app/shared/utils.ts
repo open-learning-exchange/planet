@@ -231,16 +231,57 @@ export const stringToHex = (string: string) => string.split('').map(char => char
 
 export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
-export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
+const calendarDate = (date: string | number | Date) => {
+  const parsed = new Date(date);
+  const parts = typeof date === 'string' ? date.match(/^(\d{4})-(\d{2})-(\d{2})/) : null;
+  if (!parts || isNaN(parsed.getTime())) {
+    return parsed;
+  }
+  const [ year, month, day ] = parts.slice(1).map(Number);
+  const calendar = new Date(year, month - 1, day);
+  return calendar.getMonth() === month - 1 && calendar.getDate() === day ? calendar : new Date(NaN);
+};
+
+export const ageFromBirthDate = (currentTime: number | Date, birthDate: string | number | Date) => {
+  if (birthDate === undefined || birthDate === null || birthDate === '') {
+    return null;
+  }
   const now = new Date(currentTime);
-  const birth = new Date(birthDate);
+  const birth = calendarDate(birthDate);
+  if (isNaN(now.getTime()) || isNaN(birth.getTime())) {
+    return null;
+  }
   const yearDiff = now.getFullYear() - birth.getFullYear();
-  const afterBirthDay = now.getMonth() < birth.getMonth() ?
-    false :
-    now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
-      false :
-      true;
+  const afterBirthDay = now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
   return yearDiff - (afterBirthDay ? 0 : 1);
+};
+
+export const ageFromUser = (
+  currentTime: number | Date,
+  user?: { age?: number | '' | null, birthDate?: string | number | Date | null }
+) => {
+  const age = ageFromBirthDate(currentTime, user?.birthDate) ?? user?.age;
+  return age === undefined || age === null || age === '' ? null : age;
+};
+
+export const genderBucket = (gender?: unknown) => {
+  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
+  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
+};
+
+export const localizedGender = (gender?: unknown, fallback = '') => {
+  if (typeof gender !== 'string' || !gender) {
+    return fallback;
+  }
+  switch (gender.toLowerCase()) {
+    case 'male':
+      return $localize`Male`;
+    case 'female':
+      return $localize`Female`;
+    default:
+      return toProperCase(gender);
+  }
 };
 
 export const formatStringDate = (date: string) =>

@@ -1,5 +1,6 @@
 import { millisecondsToDay } from '../../meetups/constants';
-import { CsvService } from '../../shared/csv.service';
+import type { CsvService } from '../../shared/csv.service';
+import { localizedGender } from '../../shared/utils';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -96,6 +97,26 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
   locale,
   { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
 );
+
+export const demographicsForCsv = (data: any) => ({
+  [$localize`Gender`]: localizedGender(data?.gender),
+  [$localize`Age (years)`]: data?.age ?? ''
+});
+
+export const formatDemographicsForCsv = (data: any) => {
+  const demographics = demographicsForCsv(data);
+  const [ genderColumn, ageColumn ] = Object.keys(demographics);
+  return Object.fromEntries([
+    ...Object.entries(data).map(([ key, value ]) => {
+      if (key === 'gender') {
+        return [ genderColumn, demographics[genderColumn] ];
+      }
+      return key === 'age' ? [ ageColumn, demographics[ageColumn] ] : [ key, value ];
+    }),
+    ...('gender' in data ? [] : [ [ genderColumn, demographics[genderColumn] ] ]),
+    ...('age' in data ? [] : [ [ ageColumn, demographics[ageColumn] ] ])
+  ]);
+};
 
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),
