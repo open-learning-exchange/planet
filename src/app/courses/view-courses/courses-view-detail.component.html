@@ -21,5 +21,15 @@
 @if (courseDetail?.sourcePlanet !== planetConfiguration.code && courseDetail?.sourcePlanet) {
   <p><b i18n>Source:</b> {{courseDetail?.sourcePlanet}}</p>
 }
+@if (courseDetail?.tags?.length > 0) {
+  <p>
+    <b i18n>Collections:</b>
+    @for (tag of courseDetail.tags; track tag._id; let isLast = $last) {
+      <span> {{ tag.name }}@if (!isLast) {
+        <span>,</span>
+      }</span>
+    }
+  </p>
+}
 <p><b i18n>Description:</b></p>
 <planet-markdown [content]="courseDetail?.description" [imageSource]="imageSource" class="img-resize"></planet-markdown>

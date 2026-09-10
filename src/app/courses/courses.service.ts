@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map, filter, take } from 'rxjs/operators';
+import { switchMap, map, filter, take, defaultIfEmpty } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -124,12 +124,21 @@ export class CoursesService {
     }
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
     obs.push(this.usersService.usersListener(true).pipe(take(1)));
-    forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
+    // Tags are stored as link docs in the tags database rather than on the course itself, so they must be joined here
+    obs.push(this.stateService.getCouchState('tags', parent ? 'parent' : 'local').pipe(defaultIfEmpty([])));
+    forkJoin(obs).subscribe(([ progress, course, ratings, users, tags ]: [ any[], any, any, any[], any[] ]) => {
       this.progress = progress;
       course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
-      this.updateCourse({ progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
+      this.updateCourse({
+        progress,
+        course: { ...this.ratingService.createItemList([ course ], ratings)[0], tags: this.courseTags(course, tags) }
+      });
     });
     this.usersService.requestUserData();
+  }
+
+  private courseTags(course: any, tags: any[] = []) {
+    return this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags.map(this.tagsService.fillSubTags))[0].tags;
   }
 
   reset() {
