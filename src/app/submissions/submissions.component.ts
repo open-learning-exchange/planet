@@ -6,6 +6,7 @@ import {
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
+import { appSourceLabel } from '../shared/app-source';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
@@ -182,7 +183,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.submissions.data = submissions.map(submission => ({
         ...submission,
         submittedBy: this.submissionsService.submissionName(submission.user),
-        docSource: submission.androidId ? 'myPlanet' : 'planet'
+        docSource: appSourceLabel(submission)
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');

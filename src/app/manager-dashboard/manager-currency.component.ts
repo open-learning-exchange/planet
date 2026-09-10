@@ -25,7 +25,7 @@ import { SubmitDirective } from '../shared/submit.directive';
   ]
 })
 export class ManagerCurrencyComponent implements OnInit {
-  form: FormGroup<{ code: FormControl<string>; symbol: FormControl<string> }>;
+  form: FormGroup<{ code: FormControl<string>, symbol: FormControl<string> }>;
   configuration: any = {};
   spinnerOn = true;
 

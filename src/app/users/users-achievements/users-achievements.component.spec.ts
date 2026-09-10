@@ -13,6 +13,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { PdfService } from '../../shared/pdf.service';
+import { LinkCopyService } from '../../shared/link-copy.service';
 
 describe('UsersAchievementsComponent', () => {
   let component: UsersAchievementsComponent;
@@ -23,6 +24,10 @@ describe('UsersAchievementsComponent', () => {
     get: vi.fn().mockReturnValue(of({}))
   };
 
+  const linkCopyServiceMock = {
+    copyLink: vi.fn()
+  };
+
   const defaultConfiguration = { code: 'local_code', parentCode: 'parent_code' };
   const stateServiceMock: { configuration: { code: string, parentCode?: string } } = {
     configuration: { code: 'local_code', parentCode: 'parent_code' }
@@ -31,6 +36,7 @@ describe('UsersAchievementsComponent', () => {
   beforeEach(() => {
     stateServiceMock.configuration = { ...defaultConfiguration };
     couchServiceMock.get.mockClear();
+    linkCopyServiceMock.copyLink.mockReset();
     TestBed.configureTestingModule({
       imports: [ UsersAchievementsComponent ],
       providers: [
@@ -45,6 +51,7 @@ describe('UsersAchievementsComponent', () => {
         } },
         { provide: CertificationsService, useValue: { getCertifications: vi.fn().mockReturnValue(of([])), isCourseCompleted: vi.fn() } },
         { provide: PdfService, useValue: { download: vi.fn() } },
+        { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: PlanetMessageService, useValue: { showAlert: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: ActivatedRoute, useValue: { snapshot: { data: {} }, paramMap: of({ get: () => null }) } },
@@ -58,6 +65,20 @@ describe('UsersAchievementsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('delegates achievement links to the shared copy service', () => {
+    component.user = { name: 'learner' };
+
+    component.copyLink();
+
+    expect(linkCopyServiceMock.copyLink).toHaveBeenCalledWith(
+      [ '/profile', 'learner', 'achievements', { planet: 'local_code' } ],
+      {
+        success: 'Achievements link copied to clipboard',
+        failure: 'Failed to copy achievements link'
+      }
+    );
   });
 
   describe('initUser', () => {

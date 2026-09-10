@@ -1,3 +1,6 @@
+import { of } from 'rxjs';
+import { vi } from 'vitest';
+import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { TeamsViewComponent } from './teams-view.component';
 
 describe('TeamsViewComponent task projections', () => {
@@ -30,5 +33,34 @@ describe('TeamsViewComponent task projections', () => {
     expect(component.isUserInMemberDocs([ { userId: 'alex', userPlanetCode: 'planet-a' } ], user)).toBe(true);
     expect(component.isUserInMemberDocs([ { userId: 'alex' } ], user)).toBe(true);
     expect(component.isUserInMemberDocs([ { userId: 'alex', userPlanetCode: 'planet-b' } ], user)).toBe(false);
+  });
+
+  it('uses one spinner owner when adding a member from the dialog', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    const dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
+    const dialogRef = { close: vi.fn() };
+    let dialogCfg: any;
+    component.dialog = { open: vi.fn((_, cfg) => (dialogCfg = cfg, dialogRef)) };
+    component.dialogsLoadingService = dialogsLoadingService;
+    component.members = [];
+    component.planetMessageService = { showMessage: vi.fn() };
+    component.teamsService = { addMembers: () => of({ ok: true }), sendNotifications: () => of({}) };
+    component.router = { url: '/teams/t1' };
+    component.team = { _id: 't1' };
+    component.requests = [];
+    component.getMembers = () => of([]);
+
+    component.openInviteMemberDialog();
+    const selected = { _id: 'u1' };
+    const addTable = new DialogsAddTableComponent(dialogRef as any, dialogCfg.data, dialogsLoadingService as any);
+    addTable.usersComponent = {
+      usersTable: { tableData: { data: [ selected ] }, selection: { selected: [ selected ] } }
+    } as any;
+    addTable.ok();
+
+    expect(dialogCfg.data.noSpinner).toBe(true);
+    expect(dialogsLoadingService.start).toHaveBeenCalledTimes(1);
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
+    expect(dialogRef.close).toHaveBeenCalled();
   });
 });

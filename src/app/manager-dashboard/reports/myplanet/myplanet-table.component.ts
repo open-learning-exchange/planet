@@ -42,7 +42,7 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
     if (this.dataType === 'logs') {
       this.displayedColumns = [ ...this.displayedColumns, ...[ 'type', 'time', 'versionName', 'detail' ] ];
     } else {
-      this.displayedColumns = [ ...this.displayedColumns, ...[ 'last_synced', 'versionName', 'count', 'usagetime' ] ];
+      this.displayedColumns = [ ...this.displayedColumns, ...[ 'source', 'last_synced', 'versionName', 'count', 'usagetime' ] ];
     }
   }
 

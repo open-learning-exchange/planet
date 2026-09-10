@@ -240,7 +240,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
         ? /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value)
         : true;
     }
-    const fieldLimit = limits[field] as { min: number; max: number };
+    const fieldLimit = limits[field] as { min: number, max: number };
     return (value as number) >= fieldLimit.min && (value as number) <= fieldLimit.max;
   }
 

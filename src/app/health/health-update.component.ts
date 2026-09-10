@@ -82,7 +82,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   profileForm: FormGroup<ProfileFormGroup>;
   healthForm: FormGroup<HealthFormGroup>;
-  existingData: { _id?: string; _rev?: string; profile?: HealthFormValue } = {};
+  existingData: { _id?: string, _rev?: string, profile?: HealthFormValue } = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
   initialFormValues: string;

@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 
 interface UserStatusValue {
-  status: boolean,
-  amount: number
+  status: boolean;
+  amount: number;
 }
 
 interface UserStatus {
-  joinedCourse: UserStatusValue,
-  surveyComplete: UserStatusValue,
-  hasPost: UserStatusValue,
-  userPosts: number
+  joinedCourse: UserStatusValue;
+  surveyComplete: UserStatusValue;
+  hasPost: UserStatusValue;
+  userPosts: number;
 }
 
 @Injectable({
