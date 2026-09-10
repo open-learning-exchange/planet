@@ -1085,6 +1085,59 @@ body {
     text-decoration: underline;
   }
 
+  // Dashboard drag & drop preview styles
+  .cdk-drag-preview.dashboard-item {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: v.$white;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    word-break: break-word;
+
+    &.bg-grey {
+      background-color: v.$grey;
+    }
+
+    > .dashboard-item-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0.5rem;
+    }
+
+    &.has-course-cover > .dashboard-item-link {
+      padding: 0.5rem;
+    }
+
+    .dashboard-course-cover img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid v.$grey;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .dashboard-text {
+      display: -webkit-box;
+      width: calc(#{v.$dashboard-tile-width} - 1rem);
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .delete-item {
+      display: none;
+    }
+  }
+
   /* Custom scrollbar styles */
   ::-webkit-scrollbar {
     width: 13px;

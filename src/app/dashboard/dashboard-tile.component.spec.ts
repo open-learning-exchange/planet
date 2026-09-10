@@ -1,5 +1,6 @@
 import { ElementRef, EnvironmentInjector, runInInjectionContext } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
@@ -132,5 +133,38 @@ describe('DashboardTileComponent', () => {
     expect(coursesService.courseResignAdmission).toHaveBeenCalledWith('course-1', 'resign', 'Course 1');
     expect(dialogRef.close).toHaveBeenCalled();
     expect(messageService.showMessage).toHaveBeenCalled();
+  });
+
+  it('renders cover image and binds has-course-cover class for course cards with coverFileName', () => {
+    TestBed.configureTestingModule({
+      imports: [ DashboardTileComponent ],
+      providers: [
+        provideRouter([]),
+        { provide: CoursesService, useValue: {} },
+        { provide: DeviceInfoService, useValue: { watchDeviceType: vi.fn().mockReturnValue(of(undefined)) } },
+        { provide: MatDialog, useValue: {} },
+        { provide: PlanetMessageService, useValue: {} },
+        { provide: TeamsService, useValue: {} },
+        { provide: UserService, useValue: { get: vi.fn().mockReturnValue({ roles: [] }), shelf: { courseIds: [] }, userChange$: of({}) } }
+      ]
+    });
+    const fixture = TestBed.createComponent(DashboardTileComponent);
+    const component = fixture.componentInstance;
+    component.cardType = 'myCourses';
+    component.isLoading = false;
+    component.itemData = [
+      { _id: 'c1', title: 'Course with cover', coverFileName: 'cover.png' },
+      { _id: 'c2', title: 'Course without cover' }
+    ];
+    fixture.detectChanges();
+
+    const items = fixture.nativeElement.querySelectorAll('.dashboard-item');
+    expect(items.length).toBe(2);
+    expect(items[0].classList.contains('has-course-cover')).toBe(true);
+    expect(items[1].classList.contains('has-course-cover')).toBe(false);
+
+    const coverImg = items[0].querySelector('.dashboard-course-cover img');
+    expect(coverImg).toBeTruthy();
+    expect(coverImg.getAttribute('src')).toContain('/courses/c1/cover.png');
   });
 });
