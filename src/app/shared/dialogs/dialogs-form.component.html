@@ -126,6 +126,7 @@
               [hint]="field.fileUpload?.hint || ''"
               [imagePreview]="!!field.fileUpload?.imagePreview"
               [maxFiles]="field.fileUpload?.maxFiles || 1"
+              [maxFileSize]="field.fileUpload?.maxFileSize"
               [multiple]="!!field.fileUpload?.multiple"
               [typePills]="field.fileUpload?.typePills || []"
               (stateChange)="updateFileUploadState(field.name, $event)">

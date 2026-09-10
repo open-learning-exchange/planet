@@ -30,6 +30,7 @@ export interface DialogField<TName extends string = string> {
     hint?: string;
     imagePreview?: boolean;
     maxFiles?: number;
+    maxFileSize?: number;
     multiple?: boolean;
     typePills?: string[];
   };

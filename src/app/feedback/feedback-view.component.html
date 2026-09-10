@@ -67,7 +67,18 @@
             </div>
             <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
               <mat-card-content>
-                <planet-markdown [content]="message.message"></planet-markdown>
+                <div class="feedback-message-text km-feedback-message-text">{{message.message}}</div>
+                @let attachments = messageAttachments(message);
+                @if (attachments.length) {
+                  <div class="feedback-attachments">
+                    @for (attachment of attachments; track attachment.name) {
+                      <a class="feedback-attachment km-feedback-attachment" [href]="attachment.url" target="_blank" rel="noopener noreferrer">
+                        <img [src]="attachment.url" [alt]="attachment.name" loading="lazy">
+                        <span>{{attachment.name}}</span>
+                      </a>
+                    }
+                  </div>
+                }
               </mat-card-content>
             </mat-card>
           </div>

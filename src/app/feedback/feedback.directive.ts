@@ -9,6 +9,9 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { AuthService } from '../shared/auth-guard.service';
+import { finalize, switchMap } from 'rxjs/operators';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { FEEDBACK_IMAGE_TYPES, FEEDBACK_MAX_IMAGES, FEEDBACK_MAX_IMAGE_SIZE, prepareFeedbackAttachments } from './feedback-attachments';
 import {
   FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
   normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
@@ -18,6 +21,7 @@ export class Message {
   message: string;
   user: string;
   time: any;
+  attachments?: string[];
 }
 export class Feedback {
   type: string;
@@ -49,11 +53,24 @@ const dialogFieldOptions = [
     'required': true
   },
   {
-    'type': 'markdown',
+    'type': 'textarea',
     'name': 'message',
     'placeholder': $localize`Your Feedback`,
-    'imageGroup': 'community',
     'required': true
+  },
+  {
+    type: 'file-upload',
+    name: 'attachments',
+    placeholder: $localize`Screenshots (optional)`,
+    fileUpload: {
+      accept: FEEDBACK_IMAGE_TYPES.join(','),
+      multiple: true,
+      maxFiles: FEEDBACK_MAX_IMAGES,
+      maxFileSize: FEEDBACK_MAX_IMAGE_SIZE,
+      imagePreview: true,
+      hint: $localize`Up to three images, no larger than 2 MB each. Images are saved only when you submit feedback.`,
+      typePills: [ 'PNG', 'JPEG', 'GIF', 'WebP' ]
+    }
   }
 ];
 
@@ -63,6 +80,7 @@ export class FeedbackDirective {
   @Input() message = '';
   @Input() type = '';
   @Input() priority = '';
+  private isSubmitting = false;
 
   constructor(
     private userService: UserService,
@@ -72,10 +90,16 @@ export class FeedbackDirective {
     private feedbackService: FeedbackService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   addFeedback(post: any) {
+    if (this.isSubmitting) {
+      return;
+    }
+    this.isSubmitting = true;
+    this.dialogsFormService.showErrorMessage('');
     const date = new Date();
     const user = this.userService.get().name;
     const feedbackUrl = this.router.url || '/';
@@ -83,13 +107,8 @@ export class FeedbackDirective {
     const urlParts = navigationUrl.split('/');
     const firstPart = urlParts[1] || 'home';
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
-    const rawMessage = post.message;
-    const messageContent = typeof rawMessage === 'string' ? rawMessage : (rawMessage?.text || '');
-    const messageImages = typeof rawMessage === 'object' && Array.isArray(rawMessage?.images) ? rawMessage.images : [];
     const feedback: any = {
       ...post,
-      message: messageContent,
-      images: messageImages,
       routerLink: null,
       state: firstPart,
       titleContext: null,
@@ -123,6 +142,10 @@ export class FeedbackDirective {
           this.updateFeedback(feedback, date, user, feedbackUrl);
         }
       );
+    } else {
+      feedback.titleContext = { kind: 'path', path: urlParts.slice(1) };
+      feedback.routerLink = [ '/', ...urlParts.slice(1) ];
+      this.updateFeedback(feedback, date, user, feedbackUrl);
     }
   }
 
@@ -132,10 +155,11 @@ export class FeedbackDirective {
   }
 
   private updateFeedback(feedback: any, date: Date, user: string, url: string) {
+    const { attachments, ...feedbackValues } = feedback;
     const startingMessage: Message = { message: feedback.message, time: date, user };
     const newFeedback: Feedback = {
       owner: user,
-      ...feedback,
+      ...feedbackValues,
       openTime: date,
       status: normalizeFeedbackStatus('open'),
       type: normalizeFeedbackType(feedback.type),
@@ -146,13 +170,26 @@ export class FeedbackDirective {
       parentCode: this.stateService.configuration.parentCode,
       ...this.feedbackOf,
     };
-    this.couchService.updateDocument('feedback', newFeedback).subscribe(
+    prepareFeedbackAttachments(attachments?.added).pipe(
+      switchMap(imageAttachments => this.couchService.updateDocument('feedback', {
+        ...newFeedback,
+        _attachments: imageAttachments,
+        messages: [ { ...startingMessage, attachments: Object.keys(imageAttachments) } ]
+      })),
+      finalize(() => {
+        this.isSubmitting = false;
+        this.dialogsLoadingService.stop();
+      })
+    ).subscribe(
       () => {
+        this.dialogsFormService.closeDialogsForm();
         this.feedbackService.setFeedback();
         this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
       },
       () => {
-        this.planetMessageService.showAlert($localize`Error, your feedback cannot be submitted`);
+        this.dialogsFormService.showErrorMessage(
+          $localize`Your feedback could not be submitted. Your text and images are still here. Please try again.`
+        );
       }
     );
   }
@@ -168,15 +205,21 @@ export class FeedbackDirective {
     const formGroup = {
       priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : '', Validators.required ],
       type: [ this.type ? normalizeFeedbackType(this.type) : '', Validators.required ],
-      message: [ this.message, CustomValidators.required ]
+      message: [ this.message, CustomValidators.required ],
+      attachments: [ { retained: [], removed: [], added: [] } ]
     };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup, false, true)
-      .subscribe((response) => {
-        if (response !== undefined) {
-          this.addFeedback(response);
+    this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
+      closeOnSubmit: false,
+      confirmUnsavedChanges: true,
+      disableIfInvalid: true,
+      onSubmit: response => {
+        if (this.isSubmitting) {
+          this.dialogsLoadingService.stop();
+          return;
         }
-      });
+        this.addFeedback(response);
+      }
+    });
   }
 
 }

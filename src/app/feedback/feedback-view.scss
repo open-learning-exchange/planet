@@ -35,33 +35,48 @@
   mat-card {
     max-width: 90%;
     margin-top: 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid v.$medium-grey;
     border-radius: 12px;
-    background-color: #fafafa;
+    background-color: v.$light-grey;
 
     &.primary-color {
       background-color: v.$primary;
       color: v.$primary-text;
       border-color: v.$primary;
     }
-
-    img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-
-    p:first-child {
-      margin-top: 0;
-    }
-
-    p:last-child {
-      margin-bottom: 0;
-    }
   }
 
   &:not(:last-child) {
     margin-bottom: 1.5rem;
+  }
+}
+
+.feedback-message-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.feedback-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.feedback-attachment {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 220px;
+  max-width: 100%;
+  color: inherit;
+  overflow-wrap: anywhere;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
   }
 }
 

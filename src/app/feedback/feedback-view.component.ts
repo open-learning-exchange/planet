@@ -9,7 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { urlToParamObject } from '../shared/utils';
+import { couchAttachmentUrl, urlToParamObject } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { trackById } from '../shared/table-helpers';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -24,7 +24,9 @@ import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { environment } from '../../environments/environment';
+import { FEEDBACK_IMAGE_TYPES } from './feedback-attachments';
+import { ExistingAttachment } from '../shared/forms/file-upload.component';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -46,7 +48,6 @@ import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
     MatAnchor,
     MatCard,
     MatCardContent,
-    PlanetMarkdownComponent,
     NgClass,
     DatePipe,
     KeyValuePipe,
@@ -128,6 +129,15 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   getFeedback(id) {
     return this.couchService.post(this.dbName + '/_find', findDocuments({ '_id': id }));
+  }
+
+  messageAttachments(message: { attachments?: string[] }): ExistingAttachment[] {
+    return (message.attachments || []).filter(name =>
+      FEEDBACK_IMAGE_TYPES.includes(this.feedback._attachments?.[name]?.content_type)
+    ).map(name => ({
+      name,
+      url: couchAttachmentUrl(environment.couchAddress, this.dbName, this.feedback._id, name)
+    }));
   }
 
   postMessage() {
