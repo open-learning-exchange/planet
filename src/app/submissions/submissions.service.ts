@@ -315,6 +315,12 @@ export class SubmissionsService {
     }
   }
 
+  private filterSurveySubmissionsByTeam(submissions: any[], teamId?: string) {
+    return teamId ? submissions.filter(submission =>
+      (submission.team?._id ?? submission.parent?.teamId ?? null) === teamId
+    ) : submissions;
+  }
+
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
     return this.getSubmissionsExport(exam, type).pipe(
       map(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
@@ -325,7 +331,7 @@ export class SubmissionsService {
             questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
           }
         }));
-        const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
+        const filteredSubmissions = this.filterSurveySubmissionsByTeam(normalizedSubmissions, team);
         const submissionsWithTeamInfo = filteredSubmissions.map(submission => ({
           ...submission,
           teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
@@ -511,7 +517,7 @@ export class SubmissionsService {
               questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
             }
           }));
-          const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
+          const filteredSubmissions = this.filterSurveySubmissionsByTeam(normalizedSubmissions, team);
           if (!filteredSubmissions.length) {
             this.dialogsLoadingService.stop();
             this.planetMessageService.showMessage($localize`There is no survey response`);

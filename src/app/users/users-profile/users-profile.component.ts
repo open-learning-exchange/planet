@@ -20,6 +20,7 @@ import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } f
 import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
 import { FullNamePipe } from '../../shared/full-name.pipe';
@@ -53,7 +54,8 @@ import { FullNamePipe } from '../../shared/full-name.pipe';
     DatePipe,
     TruncateTextPipe,
     AvatarComponent,
-    FullNamePipe
+    FullNamePipe,
+    MatTooltip
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {

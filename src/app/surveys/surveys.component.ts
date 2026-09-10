@@ -38,6 +38,12 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { LinkCopyService } from '../shared/link-copy.service';
+
+type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
+
+const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'record', 'public', 'revoke' ];
+const questionBlockedActions: SurveyAction[] = [ 'send', 'record', 'public', 'submissions' ];
 
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
@@ -108,7 +114,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   isAuthorized = false;
-  currentFilter = { viewMode: 'team' };
+  currentFilter: { viewMode: 'team' | 'adopt' } = { viewMode: 'team' };
   allSurveys: any[] = [];
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
@@ -141,7 +147,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private chatService: ChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private linkCopyService: LinkCopyService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -260,16 +267,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   private applyViewModeFilter() {
     const targetTeamId = this.routeTeamId || this.teamId;
     this.surveys.data = this.allSurveys.filter(survey => {
-      if (this.currentFilter.viewMode === 'team') {
-        // team surveys: created by team, sent or adopted
-        return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
-      } else if (this.currentFilter.viewMode === 'adopt') {
+      if (this.currentFilter.viewMode === 'adopt') {
         // active, shareable community surveys the team has not already adopted
         return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
           !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
-      // manager view: no team adopted/sent survey
-      return !survey.teamId && !survey.sourceSurveyId;
+      // without a target team, include surveys that are original rather than derived copies
+      return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
   }
 
@@ -554,12 +558,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const link = `${window.location.origin}/survey/${targetTeamId}/${survey._id}`;
-    navigator.clipboard.writeText(link).then(() => {
-      this.planetMessageService.showMessage($localize`Public survey link copied`);
-    }).catch(() => {
-      this.planetMessageService.showAlert($localize`Failed to copy public survey link`);
-    });
+    this.linkCopyService.copyLink(
+      [ '/survey', targetTeamId, survey._id ],
+      {
+        success: $localize`Public survey link copied`,
+        failure: $localize`Failed to copy public survey link`
+      }
+    );
   }
 
   exportCSV(survey) {
@@ -571,7 +576,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    const hasChartableData = survey.questions.some(
+    const questions = Array.isArray(survey.questions) ? survey.questions : [];
+    const hasChartableData = questions.some(
       (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
@@ -683,15 +689,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.data = this.surveys.data.map(item => item._id === surveyId ? { ...item, ...changes } : item);
   }
 
-  getActionTooltip(
-    survey: any,
-    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt'
-  ): string {
+  getActionTooltip(survey: any, action: SurveyAction): string {
     if (survey.isArchived) {
       if (action === 'archive') {
         return $localize`Survey is already archived`;
       }
-      return $localize`Survey is archived and cannot accept new actions`;
+      if (archiveBlockedActions.includes(action)) {
+        return $localize`Survey is archived and cannot accept new actions`;
+      }
+    }
+
+    if (survey.teamId && this.isManagerRoute) {
+      if (action === 'send') {
+        return $localize`Team surveys cannot be sent from here`;
+      }
+      if (action === 'record') {
+        return $localize`Team surveys cannot be recorded from here`;
+      }
     }
 
     if (!survey.taken) {
@@ -715,10 +729,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return $localize`Adopt Survey`;
     }
 
-    if (!survey.questions?.length) {
-      if (action !== 'edit' && action !== 'archive') {
-        return $localize`Survey has no questions`;
-      }
+    if (questionBlockedActions.includes(action) && !survey.questions?.length) {
+      return $localize`Survey has no questions`;
     }
 
     if (action === 'record') {

@@ -1,6 +1,6 @@
 @if (!isForm) {
   <mat-toolbar>
-    @if (deviceType === deviceTypes.TABLET || deviceType === deviceTypes.DESKTOP) {
+    @if (!isMobile) {
       <mat-toolbar-row>
         @if (!isDialog) {
           <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
@@ -22,26 +22,26 @@
           <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
         </mat-form-field>
         <span class="toolbar-fill"></span>
-        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+        <button mat-icon-button (click)="toggleFiltersRow()" aria-label="Toggle filter controls" i18n-aria-label><mat-icon>filter_list</mat-icon></button>
       </mat-toolbar-row>
       @if (showFiltersRow) {
-        <mat-toolbar-row>
+        <mat-toolbar-row class="filter-row">
           <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
         </mat-toolbar-row>
       }
     }
-    @if (showFilters) {
+    @if (showInlineFilters) {
       <mat-toolbar-row class="search-bar">
-        <planet-courses-search [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
+        <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
       </mat-toolbar-row>
     }
   </mat-toolbar>
 }
 
 <ng-template #filterOptions>
-  <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
-  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters">Filter</button>
-  <mat-form-field class="font-size-1 margin-lr-4 mdc-toolbar-input">
+  <span class="font-size-1 margin-lr-4 search-by-label" i18n>Search by:</span>
+  <button mat-stroked-button i18n (click)="toggleFilters()">Filter</button>
+  <mat-form-field subscriptSizing="dynamic" class="font-size-1 search-title-input">
     <mat-label i18n>Title</mat-label>
     <input matInput [(ngModel)]="titleSearch">
     <button type="button" mat-icon-button matSuffix (click)="titleSearch = ''" [style.visibility]="titleSearch ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
@@ -68,7 +68,7 @@
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
           </button>
         }
-        @if (!parent && deviceType !== deviceTypes.DESKTOP) {
+        @if (!parent && isTabletOrSmaller) {
           <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
@@ -76,7 +76,7 @@
             <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
           </mat-menu>
         }
-        @if (!parent && deviceType === deviceTypes.DESKTOP) {
+        @if (!parent && !isTabletOrSmaller) {
           <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
         }
       }
@@ -133,7 +133,7 @@
     }
   </ng-template>
 
-  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm, 'view-with-search': showFilters && !isForm }">
+  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm, 'view-with-search': showInlineFilters && !isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -317,3 +317,17 @@
     </mat-paginator>
   </div>
 </div>
+
+<ng-template #searchFilters>
+  <planet-courses-search [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
+</ng-template>
+
+<ng-template #filterDialog>
+  <h2 mat-dialog-title i18n>Filter</h2>
+  <mat-dialog-content>
+    <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" mat-dialog-close i18n>Close</button>
+  </mat-dialog-actions>
+</ng-template>
