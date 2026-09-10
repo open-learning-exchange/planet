@@ -514,3 +514,105 @@ describe('TeamsService membership writes', () => {
     expect(error).not.toHaveBeenCalled();
   });
 });
+
+describe('TeamsService cover image handling', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const createService = (couchOverrides: any = {}) => {
+    const couchService = {
+      findAll: vi.fn().mockReturnValue(of([])),
+      get: vi.fn().mockReturnValue(of({})),
+      updateDocument: vi.fn((db, doc) => of({ id: doc._id || 'new-id', rev: '1-rev' })),
+      putAttachment: vi.fn().mockReturnValue(of({ ok: true })),
+      ...couchOverrides
+    };
+    const service = new TeamsService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any
+    );
+    return { service, couchService };
+  };
+
+  it('extracts existing cover attachments properly', () => {
+    const { service } = createService();
+    const teamWithCover = {
+      _id: 'team-1',
+      coverFileName: 'cover.jpg',
+      _attachments: { 'cover.jpg': { content_type: 'image/jpeg', length: 5000 } }
+    };
+    const attachments = service.existingCoverAttachments(teamWithCover);
+    expect(attachments).toHaveLength(1);
+    expect(attachments[0].name).toBe('cover.jpg');
+    expect(attachments[0].contentType).toBe('image/jpeg');
+    expect(attachments[0].size).toBe(5000);
+
+    expect(service.existingCoverAttachments({})).toEqual([]);
+  });
+
+  it('initializes coverAttachmentState with retained attachment', () => {
+    const { service } = createService();
+    const teamWithCover = {
+      _id: 'team-1',
+      coverFileName: 'cover.jpg',
+      _attachments: { 'cover.jpg': { content_type: 'image/jpeg', length: 5000 } }
+    };
+    const state = service.coverAttachmentState(teamWithCover);
+    expect(state.retained).toHaveLength(1);
+    expect(state.removed).toEqual([]);
+    expect(state.added).toEqual([]);
+  });
+
+  it('includes coverImage field in addTeamFields', () => {
+    const { service } = createService();
+    const fields = service.addTeamFields({ planetType: 'community' }, 'team');
+    const coverField = fields.find((f: any) => f.name === 'coverImage');
+    expect(coverField).toBeDefined();
+    expect(coverField.type).toBe('file-upload');
+  });
+
+  it('retains existing cover image when unchanged', () => {
+    const updateDocument = vi.fn((db, doc) => of({ id: doc._id, rev: '2-rev' }));
+    const { service } = createService({ updateDocument });
+    const originalTeam = {
+      _id: 'team-1',
+      coverFileName: 'original.png',
+      _attachments: { 'original.png': { content_type: 'image/png', length: 1234 } }
+    };
+    const coverState = {
+      retained: [ { name: 'original.png', contentType: 'image/png', url: '', size: 1234 } ],
+      removed: [],
+      added: []
+    };
+
+    service.saveTeamWithCover({ _id: 'team-1', name: 'Team' }, coverState, originalTeam).subscribe();
+
+    expect(updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
+      _id: 'team-1',
+      name: 'Team',
+      coverFileName: 'original.png',
+      _attachments: { 'original.png': { content_type: 'image/png', length: 1234 } }
+    }));
+  });
+
+  it('removes coverFileName and attachment when cover is removed', () => {
+    const updateDocument = vi.fn((db, doc) => of({ id: doc._id, rev: '2-rev' }));
+    const { service } = createService({ updateDocument });
+    const originalTeam = {
+      _id: 'team-1',
+      coverFileName: 'original.png',
+      _attachments: { 'original.png': { content_type: 'image/png', length: 1234 } }
+    };
+    const coverState = { retained: [], removed: [], added: [] };
+
+    service.saveTeamWithCover({ _id: 'team-1', name: 'Team' }, coverState, originalTeam).subscribe();
+
+    const savedDoc = updateDocument.mock.calls[0][1];
+    expect(savedDoc.coverFileName).toBeUndefined();
+    expect(savedDoc._attachments).toBeUndefined();
+  });
+});
+

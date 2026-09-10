@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin, throwError } from 'rxjs';
+import { of, empty, forkJoin, throwError, from } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsFormService, DialogField } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { fullName, truncateText } from '../shared/utils';
+import { fullName, truncateText, normalizeImage, NormalizedImage, couchAttachmentUrl } from '../shared/utils';
+import { AttachmentInputState, ExistingAttachment } from '../shared/forms/file-upload.component';
+import { environment } from '../../environments/environment';
 
 const nameField = {
   type: 'textbox',
@@ -83,6 +85,7 @@ export class TeamsService {
     } : {};
     const formGroup = {
       ...nameControl,
+      coverImage: [ this.coverAttachmentState(team) ],
       description: team.description || '',
       services: team.services || '',
       rules: team.rules || '',
@@ -90,15 +93,20 @@ export class TeamsService {
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
     };
-    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
+    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type, team), formGroup, true)
       .pipe(
-        switchMap((response: any) => response !== undefined ?
-          this.updateTeam(
-            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
-          ) :
-          empty()
-        ),
+        switchMap((response: any) => {
+          if (response === undefined) {
+            return empty();
+          }
+          const coverState: AttachmentInputState = response.coverImage || { retained: [], removed: [], added: [] };
+          delete response.coverImage;
+          const teamData = {
+            limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
+            parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type
+          };
+          return this.saveTeamWithCover(teamData, coverState, team);
+        }),
         switchMap((response) => !team._id ?
           this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
           of(response)
@@ -106,8 +114,8 @@ export class TeamsService {
       );
   }
 
-  addTeamFields(configuration, type) {
-    const typeField = {
+  addTeamFields(configuration, type, team: any = {}) {
+    const typeField: DialogField = {
       type: 'selectbox',
       name: 'teamType',
       placeholder: $localize`Team Type`,
@@ -119,12 +127,112 @@ export class TeamsService {
         { value: 'local', name: $localize`Local team` }
       ]
     };
+    const coverField: DialogField = {
+      type: 'file-upload',
+      name: 'coverImage',
+      placeholder: $localize`Cover image`,
+      fileUpload: {
+        accept: 'image/*',
+        existingAttachments: this.existingCoverAttachments(team),
+        hint: $localize`Recommended: a square image. Covers are cropped to fit.`,
+        imagePreview: true,
+        maxFiles: 1,
+        multiple: false,
+        typePills: [ 'IMG' ]
+      }
+    };
     return [
       type === 'services' ? [] : nameField,
       type === 'enterprise' ? enterpriseDescField : descriptionField,
+      coverField,
       type === 'team' ? typeField : [],
       publicField
     ].flat();
+  }
+
+  existingCoverAttachments(team: any): ExistingAttachment[] {
+    const fileName = team?.coverFileName;
+    const attachment = team?._attachments?.[fileName];
+    return fileName && attachment ? [ {
+      name: fileName,
+      contentType: attachment.content_type,
+      url: couchAttachmentUrl(environment.couchAddress, this.dbName, team._id, fileName),
+      size: attachment.length
+    } ] : [];
+  }
+
+  coverAttachmentState(team: any): AttachmentInputState {
+    return {
+      retained: this.existingCoverAttachments(team),
+      removed: [],
+      added: []
+    };
+  }
+
+  saveTeamWithCover(team: any, coverState: AttachmentInputState, originalTeam: any = {}) {
+    const addedCover = coverState?.added?.[0];
+    const retainedCover = coverState?.retained?.[0];
+    const existingAttachmentNames = Object.keys(originalTeam?._attachments || {});
+
+    return (addedCover ? from(normalizeImage(addedCover.file, { usedNames: existingAttachmentNames })) : of(null)).pipe(
+      switchMap((normalizedCover: NormalizedImage | null) => {
+        if (normalizedCover) {
+          return this.saveTeamWithNewCover(team, normalizedCover, originalTeam);
+        }
+        const teamDoc = { ...team };
+        if (retainedCover && originalTeam?._attachments?.[retainedCover.name]) {
+          teamDoc.coverFileName = retainedCover.name;
+          teamDoc._attachments = { ...originalTeam._attachments };
+        } else {
+          const attachments = { ...(originalTeam?._attachments || {}) };
+          if (originalTeam?.coverFileName) {
+            delete attachments[originalTeam.coverFileName];
+          }
+          delete teamDoc.coverFileName;
+          if (Object.keys(attachments).length) {
+            teamDoc._attachments = attachments;
+          } else {
+            delete teamDoc._attachments;
+          }
+        }
+        return this.updateTeam(teamDoc);
+      })
+    );
+  }
+
+  private saveTeamWithNewCover(team: any, normalizedCover: NormalizedImage, originalTeam: any = {}) {
+    const existingTeamId = originalTeam._id || team._id;
+    const existingTeamRev = originalTeam._rev || team._rev;
+    const teamWithoutCover = { ...team };
+    delete teamWithoutCover.coverFileName;
+
+    const upload$ = existingTeamId && existingTeamRev ?
+      this.couchService.putAttachment(
+        `${this.dbName}/${existingTeamId}/${normalizedCover.fileName}?rev=${existingTeamRev}`,
+        normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+      ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${existingTeamId}`))) :
+      this.updateTeam(teamWithoutCover).pipe(
+        switchMap((res: any) => this.couchService.putAttachment(
+          `${this.dbName}/${res.id}/${normalizedCover.fileName}?rev=${res.rev}`,
+          normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+        ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${res.id}`))))
+      );
+
+    return upload$.pipe(
+      switchMap((uploadedDoc: any) => {
+        const attachments = { ...(uploadedDoc._attachments || {}) };
+        if (originalTeam?.coverFileName && originalTeam.coverFileName !== normalizedCover.fileName) {
+          delete attachments[originalTeam.coverFileName];
+        }
+        return this.updateTeam({
+          ...team,
+          _id: uploadedDoc._id,
+          _rev: uploadedDoc._rev,
+          coverFileName: normalizedCover.fileName,
+          _attachments: attachments
+        });
+      })
+    );
   }
 
   updateTeam(team: any) {

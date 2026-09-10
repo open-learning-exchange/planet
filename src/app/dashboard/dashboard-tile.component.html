@@ -37,7 +37,7 @@
               [ngClass]="{
                 'bg-grey': even,
                 'accordion-item': isAccordionMode,
-                'has-course-cover': cardType === 'myCourses' && item.coverFileName
+                'has-course-cover': (cardType === 'myCourses' || cardType === 'myTeams') && item.coverFileName
               }"
               cdkDrag
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
@@ -51,6 +51,11 @@
                 @if (cardType === 'myCourses' && item.coverFileName) {
                   <div class="dashboard-course-cover">
                     <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt>
+                  </div>
+                }
+                @if (cardType === 'myTeams' && item.coverFileName) {
+                  <div class="dashboard-course-cover">
+                    <img [src]="coverImageUrl(item)" alt="Team cover" i18n-alt>
                   </div>
                 }
                 @if (item.firstLine || item.badge) {
