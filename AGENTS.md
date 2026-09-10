@@ -9,7 +9,7 @@ Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be
 ### Angular app (root)
 
 - `npm install` — install dependencies.
-- `npm run install-hooks` — copy `git-hooks/*` into `.git/hooks`. The `pre-push` hook runs `npm run lint` in both the root and `gateway/`.
+- `npm run install-hooks` — copy `git-hooks/*` into `.git/hooks`. The `pre-push` hook runs `npm run lint:eol`, then `npm run lint` in both the root and `gateway/`.
 - `npm start` / `ng serve` — dev server on port 3000 (host `0.0.0.0`). If 3000 is taken, use `ng serve --port 3001`.
 - `npm run dev` — runs `scripts/dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when chatapi or CouchDB are on non-default ports.
 - `npm run build` — production build via `ng-high-memory` (`--max_old_space_size=4096`); large builds OOM without it.
@@ -17,6 +17,7 @@ Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be
 - Single spec: `ng test --include src/app/path/to/file.spec.ts` (or temporarily use `fdescribe` / `fit`).
 - `npm run lint` — ESLint over `src/**/*.{ts,html}` via `@angular-eslint/builder`. `ng lint --fix` auto-fixes.
 - `npm run lint-all` — sass-lint + `ng lint --type-check` + htmlhint. Heavier than the pre-push hook.
+- `npm run lint:eol` — `scripts/check-line-endings.mjs`, which fails on files that mix LF and CRLF. A file may be all LF or all CRLF (neither `.editorconfig` nor `.gitattributes` can express that), but never both. Only files the branch changes are inspected — measured against `origin/master` — so the mixed files already in the tree stay put until someone edits one, at which point that file has to be normalized. `node scripts/check-line-endings.mjs --all` audits the whole tree; `--base <ref>` compares against something other than master. Runs in CI (`Planet Builder` → `Tests`, before `npm ci`) and in the `pre-push` hook — the hook for fast local feedback, CI as the gate that actually binds, since hooks are opt-in, `--no-verify`-able, and absent entirely for agents that push through the API. Fork PRs are the one gap: their pushes do not trigger this repo's workflows.
 - Locales (en, so, fr, ne, ar, es): `ng serve --configuration <spa|fra|nep|ara|som>` or `LNG=es npm start`. Locale configs, base hrefs, and xlf sources are defined in `angular.json` under `projects.planet-app.i18n`.
 
 ### gateway (`gateway/`)
@@ -64,7 +65,7 @@ From `Style-Guide.md` (read it before making UI changes):
 
 ### Git workflow
 
-Develop on feature branches off `master`; the project asks for two positive reviews before merging. Install hooks (`npm run install-hooks`) so `pre-push` enforces lint in both `./` and `gateway/`.
+Develop on feature branches off `master`; the project asks for two positive reviews before merging. Install hooks (`npm run install-hooks`) so `pre-push` enforces lint in both `./` and `gateway/` plus the mixed line ending check on changed files.
 
 PR titles follow the house style `scope: smoother thing doing (fixes #N)` (see the log; the `merge-prepping` skill below automates this). `(fixes #N)` goes in the **title** — the squash commit message is the PR title, so that's what auto-closes the issue on merge.
 
