@@ -85,6 +85,19 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "@angular-eslint/no-outputs-metadata-property": "error",
         "@angular-eslint/use-lifecycle-interface": "error",
         "@angular-eslint/use-pipe-transform-interface": "error",
+        "@stylistic/member-delimiter-style": [
+          "error",
+          {
+            "multiline": {
+              "delimiter": "semi",
+              "requireLast": true
+            },
+            "singleline": {
+              "delimiter": "comma",
+              "requireLast": false
+            }
+          }
+        ],
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
@@ -266,6 +279,14 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
         "quote-props": ["error", "as-needed"],
+        "space-before-function-paren": [
+          "error",
+          {
+            "anonymous": "never",
+            "asyncArrow": "always",
+            "named": "never"
+          }
+        ],
         "no-var": "error",
         "object-shorthand": ["error", "always"],
         quotes: "off",

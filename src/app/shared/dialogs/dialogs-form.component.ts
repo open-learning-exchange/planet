@@ -231,11 +231,11 @@ export class DialogsFormComponent {
     return this.modalForm.dirty;
   }
 
-  getRadioOptionLabel(option: { name: string; value?: unknown } | string) {
+  getRadioOptionLabel(option: { name: string, value?: unknown } | string) {
     return typeof option === 'string' ? option : option.name;
   }
 
-  getRadioOptionValue(option: { name: string; value?: unknown } | string) {
+  getRadioOptionValue(option: { name: string, value?: unknown } | string) {
     return typeof option === 'string' ? option : option.value;
   }
 
