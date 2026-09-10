@@ -4,7 +4,7 @@ export type AppSourceFilter = AppSource | '';
 export const appSources: { value: AppSource, label: string }[] = [
   { value: 'planet', label: $localize`Planet` },
   { value: 'myplanet', label: $localize`myPlanet` },
-  { value: 'myplanet-lite', label: $localize`myPlanet lite` }
+  { value: 'myplanet-lite', label: $localize`myPlanet Lite` }
 ];
 
 const normalizeAppSource = (value: any): AppSource | undefined => {
