@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
+import { startOfDay, subtractMonthsClamped } from './reports.utils';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -26,6 +27,7 @@ export class ReportsService {
     { value: '24h', label: $localize`Last 24 Hours` },
     { value: '7d', label: $localize`Last 7 Days` },
     { value: '1m', label: $localize`Last Month` },
+    { value: '3m', label: $localize`Last 3 Months` },
     { value: '6m', label: $localize`Last 6 Months` },
     { value: '12m', label: $localize`Last 12 Months` },
     { value: 'all', label: $localize`All Time` },
@@ -327,16 +329,16 @@ export class ReportsService {
         startDate.setDate(now.getDate() - 7);
         break;
       case '1m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 1);
+        startDate = startOfDay(subtractMonthsClamped(now, 1));
+        break;
+      case '3m':
+        startDate = startOfDay(subtractMonthsClamped(now, 3));
         break;
       case '6m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 6);
+        startDate = startOfDay(subtractMonthsClamped(now, 6));
         break;
       case '12m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 12);
+        startDate = startOfDay(subtractMonthsClamped(now, 12));
         break;
       case 'all':
         startDate = minDate;
