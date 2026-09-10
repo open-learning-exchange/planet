@@ -6,7 +6,7 @@ import { CouchService } from '../../../shared/couchdb.service';
 import { StateService } from '../../../shared/state.service';
 import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
-import { filterSpecificFields } from '../../../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
 import { CsvService } from '../../../shared/csv.service';
 import { ReportsService } from '../reports.service';
@@ -142,7 +142,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
 
   applyFilters() {
     this.apklogs = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name', 'doc.code' ])(planet, this.searchValue))
       .map(planet => ({
         ...planet,
         children: this.filterLogs(planet.children)

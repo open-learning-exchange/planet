@@ -10,6 +10,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-share.component';
 import { SearchService } from '../../shared/forms/search.service';
+import { fuzzyWordMatch } from '../../shared/fuzzy-search';
 import { showFormErrors, trackById } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
@@ -275,7 +276,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   filterByTitle(conversation: Conversation): boolean {
-    return this.matchesSearchTerm(conversation.title, this.titleSearch);
+    return fuzzyWordMatch(this.titleSearch, conversation.title ?? '');
   }
 
   filterByFullText(conversation: Conversation): boolean {

@@ -10,7 +10,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
-import { filterSpecificFields } from '../../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
@@ -142,7 +142,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
           return this.dialog.open(DialogsListComponent, {
             data: {
               okClick: this.sendInvitations.bind(this),
-              filterPredicate: filterSpecificFields([ 'name' ]),
+              filterPredicate: filterSpecificFieldsHybrid([ 'name' ]),
               allowMulti: true,
               itemDescription: 'members',
               nameProperty: 'name',

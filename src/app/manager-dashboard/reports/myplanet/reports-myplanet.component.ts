@@ -12,7 +12,7 @@ import { CouchService } from '../../../shared/couchdb.service';
 import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv, endOfDay } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
-import { filterSpecificFields } from '../../../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../../../shared/table-helpers';
 import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
@@ -119,7 +119,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
 
   applyFilters() {
     this.planets = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name', 'doc.code' ])(planet, this.searchValue))
       .map(planet => ({
         ...planet,
         children: this.filterMyPlanetData(planet.children)

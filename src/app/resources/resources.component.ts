@@ -16,9 +16,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
+  composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
   createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
@@ -171,7 +170,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     [
       filterAdvancedSearch(this.searchSelection),
       filterTags(this.tagFilter),
-      filterSpecificFieldsHybrid([ 'doc.title' ], this.fuzzySearchService),
+      filterSpecificFieldsHybrid([ 'doc.title' ]),
       filterShelf({ value: this.myView === 'myLibrary' ? 'on' : 'off' }, 'libraryInfo')
     ]
   );
@@ -204,8 +203,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.isMobile = isMobileOrSmaller(deviceType);
@@ -520,7 +518,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendResource().bind(this),
-            filterPredicate: filterSpecificFields([ 'name' ]),
+            filterPredicate: filterSpecificFieldsHybrid([ 'name' ]),
             allowMulti: true,
             ...planet
           },

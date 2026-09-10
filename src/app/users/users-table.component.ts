@@ -13,7 +13,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
+  filterSpecificFieldsHybrid, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
 } from '../shared/table-helpers';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
@@ -230,7 +230,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return (data, filter) => composeFilterFunctions([
       filterDropdowns({ ...this.filter, 'doc.roles': this.filter['doc.roles'] === 'admin' ? '' : this.filter['doc.roles'] }),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFieldsByWord([ 'fullName' , 'doc.name' ]),
+      filterSpecificFieldsHybrid([ 'fullName' , 'doc.name' ]),
       () => this.filter['doc.roles'] === 'admin' ? filterAdmin(data, filter) : true
     ])(data, filter);
   }

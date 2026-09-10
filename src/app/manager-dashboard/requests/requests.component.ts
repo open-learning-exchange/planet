@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields } from '../../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -105,7 +105,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
 
   filterData(search = this.searchValue) {
     const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { name: planet.nameDoc.name } : {}) });
-    const filterFunction = filterSpecificFields([ 'code', 'name' ]);
+    const filterFunction = filterSpecificFieldsHybrid([ 'code', 'name' ]);
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
     );

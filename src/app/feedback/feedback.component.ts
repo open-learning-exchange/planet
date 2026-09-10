@@ -12,7 +12,9 @@ import {
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
+import {
+  filterDropdowns, filterSpecificFieldsHybrid, composeFilterFunctions, sortNumberOrString, dropdownsFill
+} from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -165,7 +167,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.usersService.requestUsers();
     this.feedbackService.setFeedback();
     this.feedback.filterPredicate =
-      composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'displayTitle' ]) ]);
+      composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFieldsHybrid([ 'owner', 'displayTitle' ]) ]);
     this.feedback.sortingDataAccessor = (item: any, property: string) => {
       const displayField = this.displaySortFieldMap[property as keyof typeof this.displaySortFieldMap];
       if (displayField) {

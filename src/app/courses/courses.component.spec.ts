@@ -19,7 +19,6 @@ import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService } from '../shared/device-info.service';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 describe('CoursesComponent', () => {
@@ -87,7 +86,6 @@ describe('CoursesComponent', () => {
         { provide: TagsService, useValue: { updateManyTags: vi.fn().mockReturnValue(of({})) } },
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
-        FuzzySearchService,
         { provide: MatDialog, useValue: dialogMock },
         {
           provide: ActivatedRoute,
