@@ -212,10 +212,14 @@ export class TeamsService {
         normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
       ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${existingTeamId}`))) :
       this.updateTeam(teamWithoutCover).pipe(
-        switchMap((res: any) => this.couchService.putAttachment(
-          `${this.dbName}/${res.id}/${normalizedCover.fileName}?rev=${res.rev}`,
-          normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
-        ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${res.id}`))))
+        switchMap((res: any) => {
+          const teamId = res._id || res.id;
+          const teamRev = res._rev || res.rev;
+          return this.couchService.putAttachment(
+            `${this.dbName}/${teamId}/${normalizedCover.fileName}?rev=${teamRev}`,
+            normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+          ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${teamId}`)));
+        })
       );
 
     return upload$.pipe(
@@ -228,6 +232,7 @@ export class TeamsService {
           ...team,
           _id: uploadedDoc._id,
           _rev: uploadedDoc._rev,
+          ...(uploadedDoc.createdDate ? { createdDate: uploadedDoc.createdDate } : {}),
           coverFileName: normalizedCover.fileName,
           _attachments: attachments
         });

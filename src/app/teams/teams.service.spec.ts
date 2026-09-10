@@ -614,5 +614,55 @@ describe('TeamsService cover image handling', () => {
     expect(savedDoc.coverFileName).toBeUndefined();
     expect(savedDoc._attachments).toBeUndefined();
   });
+
+  it('creates a new team with an uploaded cover image, resolves new id/rev, and uploads attachment', async () => {
+    let callCount = 0;
+    const updateDocument = vi.fn((db, doc) => {
+      callCount++;
+      if (callCount === 1) {
+        return of({ id: 'brand-new-team-id', rev: '1-init' });
+      }
+      return of({ id: doc._id, rev: '2-final' });
+    });
+    const putAttachment = vi.fn().mockReturnValue(of({ ok: true }));
+    const get = vi.fn(() => of({
+      _id: 'brand-new-team-id',
+      _rev: '1-attached',
+      createdDate: '2026-09-10T18:00:00.000Z',
+      _attachments: { 'cover.png': { content_type: 'image/png', length: 1234, stub: true } }
+    }));
+    const { service } = createService({ updateDocument, putAttachment, get });
+
+    const newTeamData = { name: 'Brand New Team', type: 'team' };
+    const coverState = {
+      added: [ { file: new File([ 'data' ], 'cover.png', { type: 'image/png' }) } ],
+      retained: [],
+      removed: []
+    };
+
+    let result: any;
+    await new Promise<void>((resolve) => {
+      service.saveTeamWithCover(newTeamData, coverState, {}).subscribe((res) => {
+        result = res;
+        resolve();
+      });
+    });
+
+    expect(putAttachment).toHaveBeenCalledWith(
+      expect.stringContaining('teams/brand-new-team-id/'),
+      expect.anything(),
+      expect.anything()
+    );
+    expect(putAttachment).toHaveBeenCalledWith(
+      expect.stringContaining('?rev=1-init'),
+      expect.anything(),
+      expect.anything()
+    );
+    expect(get).toHaveBeenCalledWith('teams/brand-new-team-id');
+    expect(updateDocument).toHaveBeenCalledTimes(2);
+    expect(result._id).toBe('brand-new-team-id');
+    expect(result.coverFileName).toBeDefined();
+    expect(result._attachments).toBeDefined();
+  });
 });
 
