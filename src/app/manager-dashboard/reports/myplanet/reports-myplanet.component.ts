@@ -22,6 +22,7 @@ import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
 import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
+import { appSourceLabel, appSourceOf } from '../../../shared/app-source';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
@@ -80,7 +81,12 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.allPlanets = planets.map(planet => ({
       ...planet,
       children: this.filterMyPlanetData(
-        this.myPlanetGroups(planet, myPlanets).map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max }))
+        this.myPlanetGroups(planet, myPlanets).map((child: any) => ({
+          count: child.count,
+          totalUsedTime: child.sum,
+          ...child.max,
+          source: appSourceLabel({ app: child.appSource })
+        }))
       )
     }));
   };
@@ -131,9 +137,14 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     return this.reportsService.groupBy(
       myPlanets
         .filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code)
-        .map(myPlanet => (myPlanet.type === 'usages' || (myPlanet.usages || []) > 0) ? myPlanet.usages : myPlanet)
-        .flat(),
-      [ 'androidId' ],
+        .flatMap(myPlanet => {
+          const activities = myPlanet.type === 'usages' ? myPlanet.usages || [] : [ myPlanet ];
+          return activities.map(activity => {
+            const app = activity.app === undefined ? myPlanet.app : activity.app;
+            return { ...activity, appSource: appSourceOf({ ...activity, app }) };
+          });
+        }),
+      [ 'androidId', 'appSource' ],
       { maxField: 'time', sumField: 'totalUsed' }
     );
   }
@@ -185,8 +196,9 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
       ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
-      [$localize`ID`]: data.androidId.toString() || data.uniqueAndroidId.toString(),
+      [$localize`ID`]: (data.androidId || data.uniqueAndroidId || '').toString(),
       [$localize`Name`]: data.deviceName || data.customDeviceName,
+      [$localize`Source`]: data.source,
       [$localize`Last Synced`]: data.time && data.time !== 0 ?
         formatDate(data.time, 'mediumDate', this.localeId) :
         data.last_synced && data.last_synced !== 0 ?
