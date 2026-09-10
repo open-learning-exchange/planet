@@ -1,6 +1,23 @@
-import { formatDemographicsForCsv } from './reports.utils';
+import { demographicsForCsv, formatDemographicsForCsv } from './reports.utils';
 
 describe('reports utils', () => {
+
+  describe('demographicsForCsv', () => {
+
+    it('localizes the gender and keeps the age under the shared headers', () => {
+      expect(demographicsForCsv({ gender: 'FEMALE', age: 28 })).toEqual({ Gender: 'Female', 'Age (years)': 28 });
+    });
+
+    it('renders both columns blank when the record has no matching profile', () => {
+      expect(demographicsForCsv({})).toEqual({ Gender: '', 'Age (years)': '' });
+      expect(demographicsForCsv(undefined)).toEqual({ Gender: '', 'Age (years)': '' });
+    });
+
+    it('keeps a zero age', () => {
+      expect(demographicsForCsv({ age: 0 })['Age (years)']).toBe(0);
+    });
+
+  });
 
   describe('formatDemographicsForCsv', () => {
 

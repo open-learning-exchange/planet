@@ -231,12 +231,23 @@ export const stringToHex = (string: string) => string.split('').map(char => char
 
 export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
+const calendarDate = (date: string | number | Date) => {
+  const parsed = new Date(date);
+  const parts = typeof date === 'string' ? date.match(/^(\d{4})-(\d{2})-(\d{2})/) : null;
+  if (!parts || isNaN(parsed.getTime())) {
+    return parsed;
+  }
+  const [ year, month, day ] = parts.slice(1).map(Number);
+  const calendar = new Date(year, month - 1, day);
+  return calendar.getMonth() === month - 1 && calendar.getDate() === day ? calendar : new Date(NaN);
+};
+
 export const ageFromBirthDate = (currentTime: number | Date, birthDate: string | number | Date) => {
   if (birthDate === undefined || birthDate === null || birthDate === '') {
     return null;
   }
   const now = new Date(currentTime);
-  const birth = new Date(birthDate);
+  const birth = calendarDate(birthDate);
   if (isNaN(now.getTime()) || isNaN(birth.getTime())) {
     return null;
   }
@@ -252,6 +263,11 @@ export const ageFromUser = (
 ) => {
   const age = ageFromBirthDate(currentTime, user?.birthDate) ?? user?.age;
   return age === undefined || age === null || age === '' ? null : age;
+};
+
+export const genderBucket = (gender?: unknown) => {
+  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
+  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
 };
 
 export const localizedGender = (gender?: unknown, fallback = '') => {

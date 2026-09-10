@@ -81,4 +81,43 @@ describe('ReportsService', () => {
 
   });
 
+  describe('demographicsFor', () => {
+
+    it('reads one record at a time without copying it', () => {
+      service.users = [ { name: 'ada', gender: 'female', birthDate: new Date(1998, 8, 4) } ];
+
+      const demographics = service.demographicsFor(time);
+
+      expect(demographics({ user: 'ada', conversations: [ 'unrelated' ] })).toEqual({ age: 28, gender: 'female' });
+    });
+
+  });
+
+  describe('groupUsers', () => {
+
+    it('counts genders on the raw user docs', () => {
+      const grouped = service.groupUsers([ { gender: 'male' }, { gender: 'female' }, {} ]);
+
+      expect(grouped.count).toBe(3);
+      expect(grouped.byGender).toEqual({ male: 1, female: 1, didNotSpecify: 1 });
+    });
+
+    it('counts genders on the { doc: user } shape the members list passes', () => {
+      const grouped = service.groupUsers([
+        { _id: 'a', doc: { gender: 'male' } },
+        { _id: 'b', doc: { gender: 'female' } },
+        { _id: 'c', doc: { gender: 'female' } }
+      ]);
+
+      expect(grouped.byGender).toEqual({ male: 1, female: 2, didNotSpecify: 0 });
+    });
+
+    it('keeps the totals numeric for genders the chart has no bucket for', () => {
+      const grouped = service.groupUsers([ { gender: 'nonbinary' }, { gender: 'Male' } ]);
+
+      expect(grouped.byGender).toEqual({ male: 1, female: 0, didNotSpecify: 1 });
+    });
+
+  });
+
 });

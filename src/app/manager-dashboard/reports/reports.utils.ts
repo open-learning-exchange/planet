@@ -98,16 +98,25 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
   { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
 );
 
-export const formatDemographicsForCsv = (data: any) => Object.fromEntries([
-  ...Object.entries(data).map(([ key, value ]) => {
-    if (key === 'gender') {
-      return [ $localize`Gender`, localizedGender(value) ];
-    }
-    return key === 'age' ? [ $localize`Age (years)`, value ] : [ key, value ];
-  }),
-  ...('gender' in data ? [] : [ [ $localize`Gender`, '' ] ]),
-  ...('age' in data ? [] : [ [ $localize`Age (years)`, '' ] ])
-]);
+export const demographicsForCsv = (data: any) => ({
+  [$localize`Gender`]: localizedGender(data?.gender),
+  [$localize`Age (years)`]: data?.age ?? ''
+});
+
+export const formatDemographicsForCsv = (data: any) => {
+  const demographics = demographicsForCsv(data);
+  const [ genderColumn, ageColumn ] = Object.keys(demographics);
+  return Object.fromEntries([
+    ...Object.entries(data).map(([ key, value ]) => {
+      if (key === 'gender') {
+        return [ genderColumn, demographics[genderColumn] ];
+      }
+      return key === 'age' ? [ ageColumn, demographics[ageColumn] ] : [ key, value ];
+    }),
+    ...('gender' in data ? [] : [ [ genderColumn, demographics[genderColumn] ] ]),
+    ...('age' in data ? [] : [ [ ageColumn, demographics[ageColumn] ] ])
+  ]);
+};
 
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),

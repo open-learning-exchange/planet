@@ -10,7 +10,7 @@ import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
 import { loadChart } from '../../shared/chart-utils';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
-import { styleVariables, formatDate, localizedGender } from '../../shared/utils';
+import { styleVariables, formatDate } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
@@ -19,7 +19,8 @@ import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
-  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, formatDemographicsForCsv
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, formatDemographicsForCsv,
+  demographicsForCsv
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -758,14 +759,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (field === 'username') {
       field = 'user';
     }
+    const dateValue = (value: any) => {
+      const time = new Date(value).getTime();
+      return isNaN(time) ? 0 : time;
+    };
     return data.sort((a, b) => {
+      const [ valueA, valueB ] = [ a[field], b[field] ];
       let comparison = 0;
-      if ([ 'loginTime', 'logoutTime', 'time' ].includes(field)) {
-        const dateA = new Date(a[field]).getTime();
-        const dateB = new Date(b[field]).getTime();
-        comparison = dateA - dateB;
+      if ([ 'loginTime', 'logoutTime', 'time', 'createdDate' ].includes(field)) {
+        comparison = dateValue(valueA) - dateValue(valueB);
+      } else if (typeof valueA === 'number' || typeof valueB === 'number') {
+        comparison = (Number(valueA) || 0) - (Number(valueB) || 0);
       } else {
-        comparison = a[field].localeCompare(b[field]);
+        comparison = `${valueA ?? ''}`.localeCompare(`${valueB ?? ''}`);
       }
       return comparison * order;
     });
@@ -814,10 +820,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
-    const exportData = this.activityService.appendUserDemographics(data, this.today).map(activity => ({
+    const demographics = this.activityService.demographicsFor(this.today);
+    const exportData = data.map(activity => ({
       [$localize`User`]: activity.user || '',
-      [$localize`Gender`]: localizedGender(activity.gender),
-      [$localize`Age (years)`]: activity.age,
+      ...demographicsForCsv(demographics(activity)),
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,

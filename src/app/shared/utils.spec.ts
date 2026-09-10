@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import {
   ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
-  hasMarkdownImages, localizedGender, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
+  genderBucket, hasMarkdownImages, localizedGender, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -363,8 +363,33 @@ ${'\t'.repeat(18)}
       expect(ageFromBirthDate(now, new Date('unparseable'))).toBeNull();
     });
 
+    it('rejects strings which only start out like a date', () => {
+      expect(ageFromBirthDate(now, '1998-09-04garbage')).toBeNull();
+      expect(ageFromBirthDate(now, '1998-09-04Tgarbage')).toBeNull();
+      expect(ageFromBirthDate(now, '1998-13-45')).toBeNull();
+      expect(ageFromBirthDate(now, '1998-02-30')).toBeNull();
+    });
+
     it('reads the ISO strings CouchDB stores', () => {
       expect(ageFromBirthDate(now, '1998-09-04T00:00:00.000Z')).toBe(28);
+    });
+
+    it('treats a date only birth date as a calendar date in negative UTC offsets', () => {
+      const timezone = process.env.TZ;
+      process.env.TZ = 'America/New_York';
+      try {
+        // UTC midnight on the 4th reads back as the 3rd here, which used to age the member a day early.
+        expect(ageFromBirthDate(new Date(2026, 8, 3), '1998-09-04')).toBe(27);
+        expect(ageFromBirthDate(new Date(2026, 8, 3), '1998-09-04T00:00:00.000Z')).toBe(27);
+        expect(ageFromBirthDate(new Date(2026, 8, 4), '1998-09-04')).toBe(28);
+        expect(ageFromBirthDate(new Date(2026, 11, 31), '1998-01-01')).toBe(28);
+      } finally {
+        if (timezone === undefined) {
+          delete process.env.TZ;
+        } else {
+          process.env.TZ = timezone;
+        }
+      }
     });
 
     it('reads timestamps, including the epoch', () => {
@@ -410,6 +435,23 @@ ${'\t'.repeat(18)}
       expect(localizedGender('', 'N/A')).toBe('N/A');
       expect(localizedGender(1, 'N/A')).toBe('N/A');
       expect(localizedGender({}, 'N/A')).toBe('N/A');
+    });
+
+  });
+
+  describe('genderBucket', () => {
+
+    it('matches the casing localizedGender accepts', () => {
+      expect(genderBucket('male')).toBe('male');
+      expect(genderBucket('Male')).toBe('male');
+      expect(genderBucket('FEMALE')).toBe('female');
+    });
+
+    it('counts anything the charts have no bucket for as unspecified', () => {
+      expect(genderBucket('nonbinary')).toBe('didNotSpecify');
+      expect(genderBucket(undefined)).toBe('didNotSpecify');
+      expect(genderBucket('')).toBe('didNotSpecify');
+      expect(genderBucket(1)).toBe('didNotSpecify');
     });
 
   });
