@@ -12,7 +12,7 @@ import { ResourcesMenuComponent } from '../resources/view-resources/resources-me
 import { AuthorizedRolesDirective } from './authorized-roles.directive';
 import { PlanetBetaDirective } from './beta.directive';
 import { FilteredAmountComponent } from './planet-filtered-amount.component';
-import { TasksComponent, FilterAssigneePipe, AssigneeNamePipe } from '../tasks/tasks.component';
+import { TasksComponent, AssigneeNamePipe } from '../tasks/tasks.component';
 import { PlanetRoleComponent } from './planet-role.component';
 import { PlanetMarkdownComponent } from './planet-markdown.component';
 import { CommunityListComponent } from '../community/community-list.component';
@@ -41,7 +41,6 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     PlanetBetaDirective,
     FilteredAmountComponent,
     TasksComponent,
-    FilterAssigneePipe,
     AssigneeNamePipe,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
@@ -68,7 +67,6 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     PlanetBetaDirective,
     FilteredAmountComponent,
     TasksComponent,
-    FilterAssigneePipe,
     AssigneeNamePipe,
     PlanetRoleComponent,
     PlanetMarkdownComponent,

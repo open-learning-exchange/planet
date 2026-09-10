@@ -158,7 +158,9 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
             },
         }],
 
+        "@typescript-eslint/no-unused-expressions": "error",
         "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
 

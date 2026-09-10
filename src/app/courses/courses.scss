@@ -1,7 +1,8 @@
-@use '../variables' as v;
-@use './courses-shared' as c;
+@use '../mixins' as m;
 
 planet-courses {
+  @include m.search-toolbar;
+
   .column {
     display: flex;
     flex-direction: column;
@@ -19,15 +20,15 @@ planet-courses {
     text-align: center;
   }
 
-  .search-bar {
-    height: c.$toolbar-height;
-  }
-
   .break-word {
     word-break: break-word;
   }
 
-  .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{c.$toolbar-height});
+  planet-courses-search {
+    @include m.search-filters('planet-courses-search-list');
   }
+}
+
+.filter-dialog planet-courses-search {
+  @include m.search-filters-stacked('planet-courses-search-list');
 }
