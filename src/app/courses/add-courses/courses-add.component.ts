@@ -79,7 +79,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   draftExists: boolean;
   deleteDialog: MatDialogRef<DialogsPromptComponent> | null = null;
   courseForm: FormGroup<CourseFormModel>;
-  documentInfo = { '_rev': undefined, '_id': undefined };
+  documentInfo = { _rev: undefined, _id: undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
   isFormExpanded = true;
@@ -192,7 +192,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       courseTitle: this.fb.control('', {
         validators: CustomValidators.required,
         asyncValidators: ac => this.validatorService.isUnique$(
-          this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
+          this.dbName, 'courseTitle', ac, { selectors: { _id: { $ne: this.documentInfo._id || '' } } }
         )
       }),
       description: this.fb.control('', { validators: CustomValidators.requiredMarkdown }),
@@ -218,7 +218,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   setDocumentInfo(doc) {
-    this.documentInfo = { '_id': doc._id, '_rev': doc._rev };
+    this.documentInfo = { _id: doc._id, _rev: doc._rev };
     this.courseForm.controls.courseTitle.updateValueAndValidity();
   }
 

@@ -17,10 +17,10 @@ import { MatButton } from '@angular/material/button';
 import { MatChip, MatChipRemove, MatChipSet } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 
-interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
+interface SelectedDialogTag { tagId: string, indeterminate: boolean }
 type DialogStartingTag = string | SelectedDialogTag;
-interface TagWithId extends Record<string, unknown> { _id: string; }
-interface FilteredDataItem { _id: string; tags?: TagWithId[]; }
+interface TagWithId extends Record<string, unknown> { _id: string }
+interface FilteredDataItem { _id: string, tags?: TagWithId[] }
 interface PlanetTagDialogData {
   tagUpdate: (tag: string, isSelected: boolean, tagOne?: boolean) => void;
   initTags: (editedId?: string) => void;
@@ -33,10 +33,10 @@ interface PlanetTagDialogData {
 }
 
 @Component({
-  'selector': 'planet-tag-input',
-  'templateUrl': './planet-tag-input.component.html',
-  'styleUrls': ['planet-tag-input.scss'],
-  'providers': [
+  selector: 'planet-tag-input',
+  templateUrl: './planet-tag-input.component.html',
+  styleUrls: ['planet-tag-input.scss'],
+  providers: [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ],
   imports: [

@@ -87,13 +87,13 @@ export class LoginTasksService {
     return obsArr;
   }
 
-  private createParentSession({ name, password }: { name: string; password: string }) {
+  private createParentSession({ name, password }: { name: string, password: string }) {
     return this.couchService.post('_session',
       { name, password },
       { withCredentials: true, domain: this.stateService.configuration.parentDomain });
   }
 
-  private getConfigurationSyncDown(configuration: { code: string }, credentials: { name: string; password: string }) {
+  private getConfigurationSyncDown(configuration: { code: string }, credentials: { name: string, password: string }) {
     return this.syncService.sync({
       dbSource: 'communityregistrationrequests',
       dbTarget: 'configurations',
@@ -105,13 +105,13 @@ export class LoginTasksService {
 
   private sendNotifications(userName: string, addedMember: string) {
     return this.couchService.updateDocument('notifications', {
-      'user': 'org.couchdb.user:' + userName,
-      'message': $localize`New member <b>${addedMember}</b> has joined.`,
-      'link': '/manager/users/profile/' + addedMember,
-      'type': 'new user',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      user: 'org.couchdb.user:' + userName,
+      message: $localize`New member <b>${addedMember}</b> has joined.`,
+      link: '/manager/users/profile/' + addedMember,
+      type: 'new user',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     });
   }
 

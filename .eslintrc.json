@@ -75,7 +75,6 @@
         "@angular-eslint/contextual-lifecycle": "error",
         "@angular-eslint/directive-class-suffix": "error",
         "@angular-eslint/no-conflicting-lifecycle": "error",
-        // "@angular-eslint/no-host-metadata-property": "error",
         "@angular-eslint/no-input-rename": "error",
         "@angular-eslint/no-inputs-metadata-property": "error",
         "@angular-eslint/no-output-native": "error",
@@ -88,19 +87,19 @@
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
         // "@typescript-eslint/member-ordering": "error",
-        // "@typescript-eslint/naming-convention": [
-        //   "error",
-        //
-        //   Not transferring over the default case, it triggers on object properties which can
-        //   often come from external sources not fitting our naming conventions.
-        //   {
-        //     "selector": "default",
-        //     "format": [ "camelCase" ],
-        //     "leadingUnderscore": "allowSingleOrDouble",
-        //     "trailingUnderscore": "allowSingleOrDouble"
-        //   },
+        "@typescript-eslint/naming-convention": [
+          "error",
+        
+          // Not transferring over the default case, it triggers on object properties which can
+          // often come from external sources not fitting our naming conventions.
+          {
+            "selector": "default",
+            "format": [ "camelCase" ],
+            "leadingUnderscore": "allowSingleOrDouble",
+            "trailingUnderscore": "allowSingleOrDouble"
+          },
 
-        // ],
+        ],
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-empty-interface": "error",
         "@typescript-eslint/no-explicit-any": "off",
@@ -139,9 +138,9 @@
             }
           }
         ],
-        // "@typescript-eslint/no-unused-expressions": "error",
+        "@typescript-eslint/no-unused-expressions": "error",
         "@typescript-eslint/no-var-requires": "off",
-        // "@typescript-eslint/prefer-for-of": "error",
+        "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
         "@typescript-eslint/triple-slash-reference": [
@@ -230,8 +229,8 @@
         ],
         "no-unsafe-finally": "error",
         "no-unused-labels": "error",
-        // "no-var": "error",
-        // "object-shorthand": "error",
+        "no-var": "error",
+        "object-shorthand": "error",
         "one-var": ["error", "never"],
         "prefer-arrow/prefer-arrow-functions": "error",
         "prefer-const": "error",
@@ -241,7 +240,7 @@
 
         // From ng-cli-compat-formatting-add-on
 
-        // "arrow-body-style": "error",
+        "arrow-body-style": "error",
         "arrow-parens": "off",
         "comma-dangle": "off",
         "curly": "error",
@@ -256,29 +255,29 @@
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
-        // "quote-props": ["error", "as-needed"],
-        // "space-before-function-paren": [
-        //   "error",
-        //   {
-        //     "anonymous": "never",
-        //     "asyncArrow": "always",
-        //     "named": "never"
-        //   }
-        // ],
+        "quote-props": ["error", "as-needed"],
+        "space-before-function-paren": [
+          "error",
+          {
+            "anonymous": "never",
+            "asyncArrow": "always",
+            "named": "never"
+          }
+        ],
 
-        // "@typescript-eslint/member-delimiter-style": [
-        //   "error",
-        //   {
-        //     "multiline": {
-        //       "delimiter": "semi",
-        //       "requireLast": true
-        //     },
-        //     "singleline": {
-        //       "delimiter": "semi",
-        //       "requireLast": false
-        //     }
-        //   }
-        // ],
+        "@typescript-eslint/member-delimiter-style": [
+          "error",
+          {
+            "multiline": {
+              "delimiter": "semi",
+              "requireLast": true
+            },
+            "singleline": {
+              "delimiter": "semi",
+              "requireLast": false
+            }
+          }
+        ],
         "quotes": "off",
         "@stylistic/quotes": [
           "error",

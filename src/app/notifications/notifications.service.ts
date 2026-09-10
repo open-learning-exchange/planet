@@ -28,7 +28,7 @@ export const notificationUserFilter = (user: any) => {
   const userFilters = user.planetCode ?
     [
       { user: userId, userPlanetCode: user.planetCode },
-      { user: userId, userPlanetCode: { '$exists': false } }
+      { user: userId, userPlanetCode: { $exists: false } }
     ] :
     [ { user: userId } ];
   return user.isUserAdmin ? [ ...userFilters, { user: 'SYSTEM' } ] : userFilters;
@@ -58,9 +58,9 @@ export class NotificationsService {
     const serverPlanetCode = this.stateService.configuration.code;
     const planetSelector = notifications.userPlanetCode && notifications.userPlanetCode === serverPlanetCode ?
       {
-        '$or': [
+        $or: [
           { userPlanetCode: serverPlanetCode },
-          { userPlanetCode: { '$exists': false } }
+          { userPlanetCode: { $exists: false } }
         ]
       } :
       notifications.userPlanetCode ? { userPlanetCode: notifications.userPlanetCode } : {};

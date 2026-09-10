@@ -142,7 +142,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   }
 
   clearChoices() {
-    this.questionForm.patchValue({ 'correctChoice': '' });
+    this.questionForm.patchValue({ correctChoice: '' });
     while (this.choices.length !== 0) {
       this.removeChoice(0);
     }

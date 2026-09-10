@@ -280,19 +280,16 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
-      '_id': this.id,
-      '_rev': this.revision,
-      'startDate': this.parseDateValue(meetupInfo.startDate),
-      'endDate': this.parseDateValue(meetupInfo.endDate)
-    }).pipe(switchMap(() => {
-      return this.couchService.post('shelf/_find', findDocuments({
-        'meetupIds': { '$in': [ this.id ] }
-      }, [ '_id' ], 0));
-    }),
-    switchMap(data => {
-      return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
-    })
-    ).subscribe((res) => {
+      _id: this.id,
+      _rev: this.revision,
+      startDate: this.parseDateValue(meetupInfo.startDate),
+      endDate: this.parseDateValue(meetupInfo.endDate)
+    }).pipe(switchMap(() => this.couchService.post('shelf/_find', findDocuments({
+      meetupIds: { $in: [ this.id ] }
+    }, [ '_id' ], 0))),
+    switchMap(data => this.couchService.updateDocument(
+      'notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id)
+    ))).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
     }, (err) => {
@@ -304,8 +301,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   addMeetup(meetupInfo) {
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
-      'startDate': this.parseDateValue(meetupInfo.startDate),
-      'endDate': this.parseDateValue(meetupInfo.endDate),
+      startDate: this.parseDateValue(meetupInfo.startDate),
+      endDate: this.parseDateValue(meetupInfo.endDate),
     }).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize` Added event: ${meetupInfo.title}`);
@@ -382,14 +379,14 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({
-      'user': user._id,
-      'message': $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
-      'link': '/meetups/view/' + meetupId,
-      'item': meetupId,
-      'type': 'meetup',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      user: user._id,
+      message: $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
+      link: '/meetups/view/' + meetupId,
+      item: meetupId,
+      type: 'meetup',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     })) };
   }
 

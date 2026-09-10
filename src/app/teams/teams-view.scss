@@ -5,7 +5,7 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     grid-auto-rows: 180px;
     &.member-cards {
-      grid-auto-rows: 320px;
+      grid-auto-rows: auto;
     }
     mat-card-content {
       max-height: 200px;
@@ -20,13 +20,6 @@
 
     mat-card {
       position: relative;
-
-      mat-card-actions {
-        margin-top: auto;
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-      }
     }
 
     .visibility-badge {
@@ -36,10 +29,6 @@
       user-select: none;
       pointer-events: none;
     }
-  }
-
-  mat-card-subtitle p {
-    margin: 0;
   }
 
   .mat-subtitle-1 {

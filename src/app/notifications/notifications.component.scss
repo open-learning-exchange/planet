@@ -13,6 +13,40 @@
   justify-content: flex-end;
 }
 
+.notification-row-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+
+  .unread-indicator-container {
+    display: flex;
+    justify-content: center;
+    flex: 0 0 12px;
+
+    .unread-dot {
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: v.$primary;
+    }
+  }
+
+  .notification-text-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &.unread {
+    color: v.$primary;
+
+    .notification-message {
+      font-weight: 600;
+    }
+  }
+}
+
 @media (max-width: v.$screen-sm) {
   .responsive-toolbar {
     display: flex;

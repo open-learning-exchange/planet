@@ -3,7 +3,7 @@
 }
 
 @if (helperText && mode === 'add' && value.length > 0) {
-  <mat-chip-set aria-label="Selected collections" i18n-aria-label>
+  <mat-chip-set class="tags-list tags-list-wrap" aria-label="Selected collections" i18n-aria-label>
     @for (tagId of value; track tagId) {
       <mat-chip [removable]="!disabled" (removed)="removeTag(tagId)">
         {{ tagName(tagId) }}
