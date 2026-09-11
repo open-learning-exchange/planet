@@ -51,7 +51,7 @@
     </div>
   }
   @if (data.extraMessage) {
-    <p [innerHTML]="data.extraMessage"></p>
+    <p class="km-extra-message" [class.extra-message-supplementary]="extraMessageType === 'supplementary'" [innerHTML]="data.extraMessage"></p>
   }
   @if (data.displayDates) {
     <b>{{data.displayDates.startDate | date : 'mediumDate' : isDateUtc ? '+0000' : undefined }} - {{data.displayDates.endDate | date: 'mediumDate' : isDateUtc ? '+0000' : undefined }}</b>
