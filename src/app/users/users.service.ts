@@ -131,7 +131,7 @@ export class UsersService {
 
   promoteToAdmin(user) {
     const { name, password_scheme, derived_key, salt, iterations } = user;
-    const { code, _id: requestId, parentDomain: domain } = this.stateService.configuration;
+    const { code, _id: requestId, parentDomain: domain, planetType } = this.stateService.configuration;
     const adminName = name + '@' + code;
     const adminId = `org.couchdb.user:${adminName}`;
     const parentUser = {
@@ -145,14 +145,38 @@ export class UsersService {
       _attachments: undefined,
       _rev: undefined
     };
+    return forkJoin([
+      this.addAdminToParent(adminId, parentUser, domain, planetType),
+      this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
+      this.setRoles({ ...user, isUserAdmin: true }, []),
+      this.removeFromTabletUsers(user)
+    ]).pipe(map(([ parentSyncFailed ]) => ({ parentSyncFailed })));
+  }
+
+  // The user is an admin of this planet as soon as the local changes go through, so a parent that is unreachable
+  // (or absent, as on a center or an unconnected community) is reported back rather than failing the promotion.
+  private addAdminToParent(adminId: string, parentUser: any, domain: string, planetType: string) {
+    if (!domain || planetType === 'center') {
+      return of(false);
+    }
     return this.couchService.get(this.dbName + '/' + adminId, { domain }).pipe(
       catchError(() => of(null)),
-      switchMap(oldDoc => forkJoin([
-        oldDoc ? of({}) : this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false }),
-        this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
-        this.setRoles({ ...user, isUserAdmin: true }, []),
-        this.removeFromTabletUsers(user)
-      ]))
+      switchMap(oldDoc => oldDoc ? of(false) : this.createParentAdmin(parentUser, domain)),
+      catchError(() => of(true))
+    );
+  }
+
+  // The parent's _users validation only lets an unauthenticated request set 'learner' while the parent is
+  // accepting new members, so fall back to a role-less account it can unlock rather than leaving the user
+  // without any account to log into the parent with.
+  private createParentAdmin(parentUser: any, domain: string) {
+    const opts = { domain, withCredentials: false };
+    return this.couchService.updateDocument(this.dbName, parentUser, opts).pipe(
+      catchError((error) => error.status === 403 ?
+        this.couchService.updateDocument(this.dbName, { ...parentUser, roles: [] }, opts) :
+        throwError(error)
+      ),
+      map(() => false)
     );
   }
 
@@ -175,9 +199,11 @@ export class UsersService {
   }
 
   removeFromTabletUsers(user) {
-    return this.couchService.delete('tablet_users/' + user._id + '?rev=' + user._rev).pipe(catchError((error) =>
-      error.status === 404 ? of({}) : throwError(error)
-    ));
+    // The tablet_users copy keeps its own revision, so the _users rev cannot be used to delete it
+    return this.couchService.get('tablet_users/' + user._id).pipe(
+      switchMap((tabletUser: any) => this.couchService.delete('tablet_users/' + tabletUser._id + '?rev=' + tabletUser._rev)),
+      catchError((error) => error.status === 404 ? of({}) : throwError(error))
+    );
   }
 
   userLoginActivities(user: any, loginActivities: any[]) {

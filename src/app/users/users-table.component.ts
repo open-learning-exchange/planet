@@ -302,9 +302,13 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.usersService.toggleAdminStatus(user) :
       this.usersService.toggleManagerStatus(user);
     request.subscribe(
-      () => {
+      (response: any) => {
         this.usersService.requestUsers(true);
-        this.planetMessageService.showMessage($localize`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+        if (response?.parentSyncFailed) {
+          this.planetMessageService.showAlert($localize`${user.name} promoted to ${type}, but could not be added to the nation`);
+        } else {
+          this.planetMessageService.showMessage($localize`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+        }
       },
       () => this.planetMessageService.showAlert($localize`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
     );
