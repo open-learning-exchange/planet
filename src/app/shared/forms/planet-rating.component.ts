@@ -1,46 +1,18 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { UserService } from '../user.service';
-import { finalize, tap } from 'rxjs/operators';
-import { DialogFormValueMap, DialogsFormService } from '../dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
-import { RatingService } from './rating.service';
-import { StateService } from '../state.service';
+import { tap } from 'rxjs/operators';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { RatingInfo, RatingService, RatingType } from './rating.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
-
-const popupFormFields = [
-  {
-    label: $localize`Rate`,
-    type: 'rating',
-    name: 'rate',
-    required: false
-  },
-  {
-    label: $localize`Comment`,
-    type: 'textarea',
-    name: 'comment',
-    placeholder: $localize`Would you like to leave a comment?`,
-    required: false
-  }
-];
+import { ratingFormFields, RatingFormModel, RatingFormValue } from './rating-form';
 
 interface RateFormModel {
   rate: FormControl<number>;
-}
-
-interface PopupFormModel {
-  rate: FormControl<number>;
-  comment: FormControl<string>;
-}
-
-interface PopupFormValue extends DialogFormValueMap {
-  rate: number;
-  comment: string;
 }
 
 @Component({
@@ -56,11 +28,11 @@ export class PlanetRatingComponent implements OnChanges {
   @Input() rating: any = { userRating: {} };
   @Input() item: any;
   @Input() parent;
-  @Input() ratingType = '';
+  @Input() ratingType: RatingType = 'resource';
   @Input() disabled = false;
 
   rateForm: FormGroup<RateFormModel>;
-  popupForm: FormGroup<PopupFormModel>;
+  popupForm: FormGroup<RatingFormModel>;
   isPopupOpen = false;
   stackedBarData = [];
   get rateFormField() {
@@ -70,17 +42,12 @@ export class PlanetRatingComponent implements OnChanges {
     return { comment: this.rating.userRating.comment || '' };
   }
 
-  private dbName = 'ratings';
-
   constructor(
     private fb: NonNullableFormBuilder,
-    private couchService: CouchService,
     private planetMessage: PlanetMessageService,
     private userService: UserService,
     private dialogsForm: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private ratingService: RatingService,
-    private stateService: StateService
+    private ratingService: RatingService
   ) {
     this.rateForm = this.fb.group({ rate: 0 });
     this.popupForm = this.fb.group({ rate: 0, comment: '' });
@@ -88,26 +55,14 @@ export class PlanetRatingComponent implements OnChanges {
 
   ngOnChanges() {
     // After any changes to ratings ensures all properties are set
-    this.rating = Object.assign({
-      rateSum: 0,
-      totalRating: 0,
-      maleRating: 0,
-      femaleRating: 0,
-      userRating: {},
-      allRatings: []
-    }, this.rating);
-    this.rating.allRatings = this.rating.allRatings || [];
-    this.recalculateRating();
+    this.rating = this.ratingService.normalizeRatingInfo(this.rating);
+    this.updateStackedBarData();
     if (!this.isPopupOpen) {
       this.resetRatingState();
     }
   }
 
-  private recalculateRating() {
-    this.rating.rateSum = this.rating.allRatings.reduce((sum, rating) => sum + (rating.rate || 0), 0);
-    this.rating.totalRating = this.rating.allRatings.length;
-    this.rating.maleRating = this.rating.allRatings.filter(rating => rating.user?.gender === 'male').length;
-    this.rating.femaleRating = this.rating.allRatings.filter(rating => rating.user?.gender === 'female').length;
+  private updateStackedBarData() {
     this.stackedBarData = [
       { class: 'primary-color', amount: this.rating.maleRating },
       { class: 'primary-light-color',
@@ -160,48 +115,27 @@ export class PlanetRatingComponent implements OnChanges {
 
   deleteRating() {
     const deletedRating = this.rating.userRating;
-    const { _id, _rev } = deletedRating;
-    this.dialogsLoadingService.start();
-    return this.couchService.delete(`${this.dbName}/${_id}?rev=${_rev}`).pipe(
-      tap(() => {
-        this.rating.allRatings = this.rating.allRatings.filter(rating => rating._id !== deletedRating._id);
-        this.rating.userRating = {};
-        this.recalculateRating();
+    return this.ratingService.deleteRating(deletedRating, {
+      ...this.rating,
+      allRatings: [ ...this.rating.allRatings ]
+    }).pipe(
+      tap(ratingInfo => {
+        this.applyRatingInfo(ratingInfo);
         this.resetRatingState();
-        this.ratingService.newRatings(false);
-      }),
-      finalize(() => this.dialogsLoadingService.stop())
+      })
     );
   }
 
-  updateRating(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel>) {
-    // Later parameters of Object.assign will overwrite values from previous objects
-    const configuration = this.stateService.configuration;
-    const previousRating = this.rating.userRating;
-    const newRating = {
+  updateRating(form: FormGroup<RateFormModel> | FormGroup<RatingFormModel>) {
+    const value = form.getRawValue();
+    return this.ratingService.saveRating({
+      item: this.item,
       type: this.ratingType,
-      item: this.item._id,
-      title: this.item.title || this.item.courseTitle,
-      createdTime: this.couchService.datePlaceholder,
-      ...this.rating.userRating,
-      ...form.value,
-      time: this.couchService.datePlaceholder,
-      user: this.userService.get(),
-      createdOn: configuration.code,
-      parentCode: configuration.parentCode
-    };
-    this.dialogsLoadingService.start();
-    return this.couchService.updateDocument(this.dbName, newRating).pipe(tap((res: any) => {
-      newRating._rev = res.rev;
-      newRating._id = res.id;
-      const previousIndex = this.rating.allRatings.findIndex(rating => rating._id === previousRating?._id);
-      this.rating.allRatings = previousIndex === -1 ?
-        [ ...this.rating.allRatings, newRating ] :
-        this.rating.allRatings.map((rating, index) => index === previousIndex ? newRating : rating);
-      this.rating.userRating = newRating;
-      this.recalculateRating();
-      this.ratingService.newRatings(false);
-    }), finalize(() => this.dialogsLoadingService.stop()));
+      rate: value.rate,
+      comment: 'comment' in value ? value.comment : this.rating.userRating.comment || '',
+      existingRating: this.rating.userRating,
+      ratingInfo: this.rating
+    }).pipe(tap(ratingInfo => this.applyRatingInfo(ratingInfo)));
   }
 
   openDialog() {
@@ -214,7 +148,7 @@ export class PlanetRatingComponent implements OnChanges {
     });
     this.isPopupOpen = true;
     this.dialogsForm
-      .confirm<PopupFormValue>($localize`Rating`, popupFormFields, this.popupForm)
+      .confirm<RatingFormValue>($localize`Rating`, ratingFormFields, this.popupForm)
       .subscribe((res) => {
         if (!res) {
           this.resetRatingState();
@@ -252,8 +186,12 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   ratingError() {
-    this.planetMessage.showAlert($localize`There was an issue updating your rating`);
     this.resetRatingState();
+  }
+
+  private applyRatingInfo(ratingInfo: RatingInfo) {
+    Object.assign(this.rating, ratingInfo);
+    this.updateStackedBarData();
   }
 
   private resetRatingState() {
