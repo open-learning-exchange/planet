@@ -107,6 +107,30 @@ const config = {
     expect(fixture.nativeElement.querySelector('.markdown-content a')?.getAttribute('href')).toBe(`#${heading.id}`);
   });
 
+  it('does not rebuild code-block controls when an unrelated input changes', () => {
+    // The runner has no clipboard API, and the copy button is only built when one exists.
+    const clipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: vi.fn() }, configurable: true });
+
+    try {
+      const fixture = render({ content: '```ts\nconst a = 1;\n```', profile: 'chat' });
+
+      expect(fixture.nativeElement.querySelectorAll('.copy-btn').length).toBe(1);
+
+      fixture.componentRef.setInput('limit', 200);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelectorAll('.code-block-wrap').length).toBe(1);
+      expect(fixture.nativeElement.querySelectorAll('.copy-btn').length).toBe(1);
+    } finally {
+      if (clipboard) {
+        Object.defineProperty(navigator, 'clipboard', clipboard);
+      } else {
+        delete (navigator as any).clipboard;
+      }
+    }
+  });
+
   it('passes the chat profile through to the renderer', () => {
     const chat = render({ content: 'one\ntwo', profile: 'chat' });
     const standard = render({ content: 'one\ntwo' });

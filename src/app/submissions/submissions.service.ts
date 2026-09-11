@@ -475,7 +475,7 @@ export class SubmissionsService {
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
-      stack: htmlToPdfmake(this.markdownRenderer.render(analysisPayload.chat)),
+      stack: htmlToPdfmake(this.markdownRenderer.render(analysisPayload.chat, '', 'chat')),
       margin: [ 0, 10, 0, 10 ]
     });
   }

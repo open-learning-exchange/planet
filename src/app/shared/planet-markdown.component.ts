@@ -16,7 +16,7 @@ import { MarkdownProfile, MarkdownRenderService } from './markdown-render.servic
     @if (previewMode && images?.length) {
       <div class="image-gallery">
         @for (image of images; track image) {
-          <img [src]="image" class="minified-image" alt="Preview Image" />
+          <img [src]="image" class="minified-image" alt="Preview Image" i18n-alt />
         }
       </div>
     }
@@ -119,11 +119,17 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked, OnD
   // The button sits in a wrapper rather than inside the <pre>, so "Copy" stays out of the
   // code block's own text.
   private addCopyButtons() {
+    const container = this.markdownContent.nativeElement;
     if (!navigator.clipboard) {
       return;
     }
+    // An input change that leaves the rendered HTML identical does not rewrite the DOM, so the
+    // existing wrappers and their listeners are still live and must not be built a second time.
+    if (container.querySelector('.code-block-wrap')) {
+      return;
+    }
     this.clearCopyListeners();
-    this.markdownContent.nativeElement.querySelectorAll('pre').forEach(codeBlock => {
+    container.querySelectorAll('pre').forEach(codeBlock => {
       const wrapper = this.renderer.createElement('div');
       this.renderer.addClass(wrapper, 'code-block-wrap');
       this.renderer.insertBefore(codeBlock.parentNode, wrapper, codeBlock);

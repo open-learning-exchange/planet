@@ -1031,7 +1031,7 @@ body {
     padding: 8px;
     border-radius: 5px;
     background-color: #{v.$primary};
-    color: white;
+    color: v.$white;
   }
 
   .conversation-response {
@@ -1044,7 +1044,7 @@ body {
   }
 
   planet-markdown.conversation-query .markdown-content a[href] {
-    color: white;
+    color: v.$white;
   }
 
   planet-markdown.conversation-query .markdown-content > :last-child,
