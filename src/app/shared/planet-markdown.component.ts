@@ -81,8 +81,6 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked, OnD
     return extractMarkdownImageUrls(content).map(url => this.markdownRenderer.resolveHostedUrl(url, this.couchAddress));
   }
 
-  // The sanitizer strips ids, so they are reapplied here. They stay canonical rather than
-  // instance-scoped so that a link from another document still resolves.
   private applyFragmentIds() {
     const container = this.markdownContent.nativeElement;
     container.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6').forEach(heading => {
@@ -99,8 +97,6 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked, OnD
     });
   }
 
-  // Scoped to this instance because several cards can repeat a heading id, and handling the
-  // scroll here keeps an in-page fragment out of the router's history.
   @HostListener('click', [ '$event' ])
   scrollToFragment(event: MouseEvent) {
     const link = (event.target as HTMLElement)?.closest?.('a[href^="#"]') as HTMLAnchorElement;
@@ -116,16 +112,9 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked, OnD
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // The button sits in a wrapper rather than inside the <pre>, so "Copy" stays out of the
-  // code block's own text.
   private addCopyButtons() {
     const container = this.markdownContent.nativeElement;
-    if (!navigator.clipboard) {
-      return;
-    }
-    // An input change that leaves the rendered HTML identical does not rewrite the DOM, so the
-    // existing wrappers and their listeners are still live and must not be built a second time.
-    if (container.querySelector('.code-block-wrap')) {
+    if (!navigator.clipboard || container.querySelector('.code-block-wrap')) {
       return;
     }
     this.clearCopyListeners();

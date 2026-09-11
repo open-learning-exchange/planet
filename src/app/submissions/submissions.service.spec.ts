@@ -82,8 +82,6 @@ describe('SubmissionsService survey exports', () => {
     expect(planetMessageService.showMessage).not.toHaveBeenCalledWith('There is no survey response');
   });
 
-  // preparePDF assembles HTML rather than Markdown, so what reaches html-to-pdfmake has to be
-  // HTML throughout — a stray "###" heading used to be rendered by a second pass that is gone.
   const capturePdfHtml = async (exportOptions: { includeAnswers: boolean, includeQuestions: boolean }) => {
     const htmlToPdfmake = vi.fn().mockReturnValue([]);
     pdfService.getHtmlConverter = vi.fn().mockResolvedValue(htmlToPdfmake);

@@ -1,13 +1,10 @@
 @use '../variables' as v;
 
-// An unknown element is inline by default, and consumers style the host directly with
-// overflow and max-height, which do not apply to an inline box.
 planet-markdown.planet-markdown-renderer {
   display: block;
 }
 
 planet-markdown.planet-markdown-renderer .markdown-content {
-  display: block;
   overflow-x: auto;
   overflow-wrap: break-word;
 
@@ -57,8 +54,6 @@ planet-markdown.planet-markdown-renderer .markdown-content {
   }
 
   table {
-    display: table;
-    width: auto;
     max-width: 100%;
     border-collapse: collapse;
   }
@@ -68,8 +63,6 @@ planet-markdown.planet-markdown-renderer .markdown-content {
     border: 1px solid v.$grey;
   }
 
-  // The sanitizer strips the inline text-align showdown emits, so the renderer converts it to
-  // these classes, which the PDF export maps to pdfmake styles.
   .markdown-align-left {
     text-align: left;
   }
@@ -97,10 +90,6 @@ planet-markdown.planet-markdown-renderer .markdown-content {
     color: v.$primary-dark;
     text-decoration: underline;
     text-underline-offset: 2px;
-  }
-
-  a[href][target='_blank'] {
-    display: inline;
   }
 }
 

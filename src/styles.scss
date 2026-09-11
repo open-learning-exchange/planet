@@ -1025,7 +1025,6 @@ body {
     max-width: none;
   }
 
-  // Chat conversation output, rendered through planet-markdown
   .conversation-query {
     text-align: left;
     padding: 8px;
@@ -1056,6 +1055,10 @@ body {
   planet-markdown.conversation-response .markdown-content {
     pre, :not(pre) > code {
       background: v.$code-block-background;
+      color: v.$code-block-text;
+    }
+
+    .code-block-wrap .copy-btn {
       color: v.$code-block-text;
     }
   }

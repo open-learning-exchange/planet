@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { MarkdownRenderService } from './markdown-render.service';
 
-// Reads back what a browser would actually act on, rather than trusting the HTML string.
 const inspect = (html: string) => {
   const elements = Array.from(new DOMParser().parseFromString(html, 'text/html').body.querySelectorAll('*'));
   return {
@@ -127,7 +126,6 @@ describe('MarkdownRenderService', () => {
     });
 
     it('leaves unbalanced, nested and placeholder-like container text alone', () => {
-      // Container marking is not balance-aware, so these are the shapes that could mangle.
       expect(rendered('<div>\n\n<div>**inner**</div>\n\n</div>').querySelectorAll('div strong').length).toBe(1);
       expect(rendered('text with a stray <div> and no close').textContent).toContain('text with a stray');
       expect(rendered('`code` and literal planetmd0 text').textContent).toContain('planetmd0');
@@ -162,7 +160,6 @@ describe('MarkdownRenderService', () => {
   });
 
   describe('toPlainText', () => {
-    // Shares the page's Markdown dialect, which the separate converter it replaced did not.
     it('strips formatting while keeping the text the page shows', () => {
       expect(service.toPlainText('# Title\n\n**bold** text')).toBe('Title\nbold text');
       expect(service.toPlainText('- [x] done\n- [ ] todo')).toBe('☑ done\n☐ todo');

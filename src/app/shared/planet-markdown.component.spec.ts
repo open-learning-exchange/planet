@@ -3,8 +3,6 @@ import { PlanetMarkdownComponent } from './planet-markdown.component';
 import { StateService } from './state.service';
 import { MarkdownRenderService } from './markdown-render.service';
 
-// The Markdown-to-DOM corpus lives in markdown-render.service.spec.ts; these cover what the
-// component adds on top of it.
 describe('PlanetMarkdownComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -67,8 +65,6 @@ describe('PlanetMarkdownComponent', () => {
 
     expect(fixture.nativeElement.querySelector('table')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('pre')).toBeFalsy();
-    // The paired `.markdown-align-right` rule lives in planet-markdown.scss. The runner does not
-    // apply component stylesheets, so the computed alignment is not assertable here.
     expect(fixture.nativeElement.querySelector('td.markdown-align-right')).toBeTruthy();
   });
 
@@ -108,7 +104,6 @@ const config = {
   });
 
   it('does not rebuild code-block controls when an unrelated input changes', () => {
-    // The runner has no clipboard API, and the copy button is only built when one exists.
     const clipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
     Object.defineProperty(navigator, 'clipboard', { value: { writeText: vi.fn() }, configurable: true });
 

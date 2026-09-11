@@ -4,7 +4,6 @@ import * as showdown from 'showdown';
 
 export type MarkdownProfile = 'default' | 'chat';
 
-// Heading ids are skipped because the sanitizer strips them; the component reapplies them.
 const PLANET_MARKDOWN_OPTIONS = Object.freeze({
   disableForced4SpacesIndentedSublists: true,
   emoji: true,
@@ -24,10 +23,8 @@ const CHAT_MARKDOWN_OPTIONS = Object.freeze({
   simplifiedAutoLink: true
 });
 
-// Dropped, not left as "unsafe:", which browsers hand to an external protocol handler.
 const safeLinkProtocols = [ 'http:', 'https:', 'mailto:', 'tel:' ];
 const safeMediaProtocols = [ 'http:', 'https:' ];
-// Angular's sanitizer keeps these elements, so their URLs need the same treatment as images.
 const mediaUrlAttributes: [ string, string ][] = [
   [ 'img[src]', 'src' ],
   [ 'video[src]', 'src' ],
@@ -35,10 +32,8 @@ const mediaUrlAttributes: [ string, string ][] = [
   [ 'audio[src]', 'src' ],
   [ 'source[src]', 'src' ]
 ];
-// The set Angular's own image sanitizer allows. data: stays closed for links.
 const safeImageDataUrl = /^data:image\/(bmp|gif|jpeg|jpg|png|tiff|webp);/i;
 
-// Showdown parses Markdown inside a block tag only when the tag carries a markdown attribute.
 const markdownContainerRegex = /<(div|section|article|aside|header|footer|nav|blockquote|figure)(\s[^>]*)?>/gi;
 const codeSpanRegex = /(`+)[\s\S]*?\1/g;
 
@@ -55,17 +50,13 @@ export class MarkdownRenderService {
     const parsed = this.parseMarkdown(markdown, profile);
     this.normalizeForDisplay(parsed, hostedUrl);
 
-    // Must stay the final transformation: anything applied after it can reintroduce capability.
-    return this.sanitizer.sanitize(SecurityContext.HTML, parsed.body.innerHTML) || '';
+    return this.sanitizeHtml(parsed.body.innerHTML);
   }
 
-  // A DOMParser document has no browsing context, so images never load and handlers never run.
-  // Building this through a live element's innerHTML fires <img onerror> from stored content.
   toPlainText(markdown: any) {
     if (typeof markdown !== 'string') {
       return markdown;
     }
-    // Block markup pads textContent with blank lines, which reads badly in a CSV cell.
     return (this.parseMarkdown(markdown, 'default').body.textContent || '')
       .replace(/[ \t]+\n/g, '\n')
       .replace(/\n{2,}/g, '\n')
@@ -102,24 +93,21 @@ export class MarkdownRenderService {
     return converter;
   }
 
-  // hashHTMLBlocks runs after fenced code is hashed out but before inline code spans are parsed,
-  // so those are set aside by hand. Injecting on the raw source corrupts both.
   private markContainersAsMarkdown(text: string) {
     const codeSpans: string[] = [];
-    let token = 'planetmd';
-    while (text.includes(token)) {
-      token += 'x';
+    let placeholder = 'planetmd';
+    while (text.includes(placeholder)) {
+      placeholder += 'x';
     }
     return text
-      .replace(codeSpanRegex, match => `${token}${codeSpans.push(match) - 1}`)
+      .replace(codeSpanRegex, match => `${placeholder}${codeSpans.push(match) - 1}`)
       .replace(markdownContainerRegex, (match, tag, attributes = '') =>
         /\bmarkdown\s*=/i.test(attributes) ? match : `<${tag}${attributes} markdown="1">`)
-      .replace(new RegExp(`${token}(\\d+)`, 'g'), (match, index) => codeSpans[Number(index)] ?? match);
+      .replace(new RegExp(`${placeholder}(\\d+)`, 'g'), (match, index) => codeSpans[Number(index)] ?? match);
   }
 
   private parseMarkdown(markdown: any, profile: MarkdownProfile): Document {
-    // A rating answer reaches the export path as a bare number.
-    const source = markdown === null || markdown === undefined ? '' : String(markdown);
+    const source = String(markdown ?? '');
     const document = new DOMParser().parseFromString(this.converters[profile].makeHtml(source), 'text/html');
 
     this.replaceTaskListInputs(document);
@@ -139,7 +127,6 @@ export class MarkdownRenderService {
       marker.setAttribute('aria-checked', input.checked.toString());
       marker.setAttribute('aria-disabled', 'true');
       marker.setAttribute('role', 'checkbox');
-      // Text, not a pseudo-element, so the state survives PDF export, copy/paste and plain text.
       marker.textContent = input.checked ? '☑' : '☐';
       input.closest('li')?.removeAttribute('style');
       input.replaceWith(marker);
@@ -167,7 +154,6 @@ export class MarkdownRenderService {
         link.setAttribute('href', this.resolveHostedMarkdownUrl(originalHref, hostedUrl));
       }
 
-      // getAttribute is entity-decoded, so this is the protocol the browser would act on.
       const url = this.parseUrl(link.getAttribute('href') || '');
       if (!url || !safeLinkProtocols.includes(url.protocol)) {
         link.removeAttribute('href');

@@ -309,7 +309,6 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "prefer-const": "error",
     },
 }, {
-    // The one place allowed to reach the Markdown library directly.
     files: ["src/app/shared/markdown-render.service.ts"],
     rules: {
         "no-restricted-imports": "off",

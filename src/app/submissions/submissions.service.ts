@@ -482,8 +482,6 @@ export class SubmissionsService {
 
   async buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
     const htmlToPdfmake = await this.pdfService.getHtmlConverter();
-    // preparePDF assembles HTML from already-rendered Markdown and stored fields, so it is
-    // sanitized rather than rendered again — rendering re-parsed the HTML as Markdown.
     const submissionHtml = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
     const submissionContents = submissionHtml.map((html, index) => {
       const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
@@ -570,8 +568,6 @@ export class SubmissionsService {
                 bold: true,
                 alignment: 'center'
               },
-              // html-to-pdfmake maps CSS classes to pdfmake style names; the sanitizer drops
-              // the inline text-align these came from.
               'markdown-align-left': { alignment: 'left' },
               'markdown-align-center': { alignment: 'center' },
               'markdown-align-right': { alignment: 'right' }
@@ -618,7 +614,6 @@ export class SubmissionsService {
         '<hr>'
       ].filter(Boolean).join('\n');
     } else {
-      // HTML, like the branch above: preparePDF's output is assembled, not rendered again.
       return `<h3>${exam.name} ${$localize`Questions`}</h3>`;
     }
   }
@@ -628,8 +623,6 @@ export class SubmissionsService {
       const alignment = label === 'Response' ? 'right' : 'left';
       const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
       const renderedText = this.markdownRenderer.render(text);
-      // A class rather than an inline style, because the assembled document is sanitized and
-      // the sanitizer drops style attributes. pdfmake resolves the class through its styles map.
       return `<div class="markdown-align-${alignment}"><strong>${localizedLabel} ${index + 1}:</strong><br>${renderedText}</div>`;
     };
     return (question, questionIndex) =>
