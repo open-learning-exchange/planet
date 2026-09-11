@@ -1,7 +1,4 @@
-import * as showdown from 'showdown';
 import mime from 'mime';
-showdown.setOption('strikethrough', true);
-export const converter = new showdown.Converter();
 
 // File.type can be empty for some browsers / file sources; fall back to the
 // filename extension via the mime package so callers don't reject valid files.
@@ -260,15 +257,6 @@ export const deepEqual = (item1: any, item2: any) => {
     return Object.keys({ ...item1, ...item2 }).every((key) => deepEqual(item1[key], item2[key])) ;
   }
   return item1 === item2;
-};
-
-export const markdownToPlainText = (markdown: any) => {
-  if (typeof markdown !== 'string') {
-    return markdown;
-  }
-  const html = document.createElement('div');
-  html.innerHTML = converter.makeHtml(markdown);
-  return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
 };
 
 export const fullName = (user: any) =>

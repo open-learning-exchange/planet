@@ -1,7 +1,9 @@
 import * as papa from 'papaparse';
 import { of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
 
 import { CSV_PREVIEW_MAX_ROWS, CsvService } from './csv.service';
+import { MarkdownRenderService } from './markdown-render.service';
 
 describe('CsvService', () => {
   let service: CsvService;
@@ -9,7 +11,13 @@ describe('CsvService', () => {
 
   beforeEach(() => {
     couchService = { get: vi.fn() };
-    service = new CsvService(couchService as any, {} as any, {} as any, 'en-US');
+    service = new CsvService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      TestBed.inject(MarkdownRenderService),
+      'en-US'
+    );
   });
 
   const parseCsv = (csv: string) => (service as any).parseCsv(papa, csv);
