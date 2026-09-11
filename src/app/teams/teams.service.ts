@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin, throwError } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
+import { Observable, of, empty, forkJoin, throwError } from 'rxjs';
+import { switchMap, map, take, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
@@ -61,7 +62,8 @@ export class TeamsService {
     private userService: UserService,
     private usersService: UsersService,
     private stateService: StateService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
@@ -335,27 +337,54 @@ export class TeamsService {
     };
   }
 
-  getTeamMembers(team, withAllLinks = false) {
+  // Authoritative membership read.  Every source that can hold a membership is queried strictly, so a team
+  // only looks empty when all of the queries succeeded and none of them returned a member.
+  getActiveTeamMembershipRecords(team) {
+    return this.getActiveTeamRecords(team, false);
+  }
+
+  private getActiveTeamRecords(team, withAllLinks: boolean) {
     const selector = {
       teamId: team._id,
       teamPlanetCode: team.teamPlanetCode,
       status: { $or: [ { $exists: false }, { $ne: 'archived' } ] },
       ...(withAllLinks ? {} : { docType: 'membership' })
     };
-    this.usersService.requestUserData();
     return forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selector)),
-      this.couchService.findAll('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0)),
-      this.usersService.usersListener(true).pipe(take(1)),
-      this.couchService.findAll('attachments')
-    ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
-      ...membershipDocs.map(doc => ({
-        ...doc,
-        userDoc: users.find(user => (user.doc.couchId || user._id) === doc.userId && user.doc.planetCode === doc.userPlanetCode),
-        attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
-      })),
+      this.couchService.findAllStrict(this.dbName, findDocuments(selector)),
+      this.couchService.findAllStrict('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0))
+    ]).pipe(map(([ teamDocs, shelves ]: any[]) => [
+      ...teamDocs,
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));
+  }
+
+  getTeamMembers(team, withAllLinks = false) {
+    return this.getActiveTeamRecords(team, withAllLinks).pipe(
+      switchMap((records: any[]) => this.enrichTeamRecords(records))
+    );
+  }
+
+  // Display enrichment only.  It runs on records which are already loaded, so a failed user or attachment read
+  // degrades the view instead of dropping members, and the partial failure is reported rather than swallowed.
+  private enrichTeamRecords(records: any[]) {
+    this.usersService.requestUserData();
+    const optional = (enrichment: Observable<any[]>) => enrichment.pipe(catchError(() => of(null)));
+    return forkJoin([
+      optional(this.usersService.usersListener(true).pipe(take(1))),
+      optional(this.couchService.findAllStrict('attachments'))
+    ]).pipe(map(([ users, attachments ]: any[]) => {
+      if (users === null || attachments === null) {
+        this.planetMessageService.showAlert($localize`Some team member details could not be loaded.`);
+      }
+      return records.map((record: any) => record.fromShelf === true ? record : ({
+        ...record,
+        userDoc: (users || []).find(
+          user => (user.doc.couchId || user._id) === record.userId && user.doc.planetCode === record.userPlanetCode
+        ),
+        attachmentDoc: (attachments || []).find(attachment => attachment._id === `${record.userId}@${record.userPlanetCode}`)
+      }));
+    }));
   }
 
   getTeamResources(linkDocs: any[]) {
@@ -370,7 +399,7 @@ export class TeamsService {
   }
 
   isTeamEmpty(team) {
-    return this.getTeamMembers(team).pipe(map((docs) => docs.length === 0));
+    return this.getActiveTeamMembershipRecords(team).pipe(map((records: any[]) => records.length === 0));
   }
 
   sendNotifications(type, members, notificationParams) {
