@@ -229,8 +229,16 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "no-new-wrappers": "error",
 
         "no-restricted-imports": ["error", {
-            name: "rxjs/Rx",
-            message: "Please import directly from 'rxjs' instead",
+            paths: [{
+                name: "rxjs/Rx",
+                message: "Please import directly from 'rxjs' instead",
+            }, {
+                name: "showdown",
+                message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
+            }, {
+                name: "@covalent/markdown",
+                message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
+            }],
         }],
 
         "@typescript-eslint/no-shadow": ["error", {
@@ -299,6 +307,12 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "@stylistic/type-annotation-spacing": "error",
         "prefer-arrow/prefer-arrow-functions": "error",
         "prefer-const": "error",
+    },
+}, {
+    // The one place allowed to reach the Markdown library directly.
+    files: ["src/app/shared/markdown-render.service.ts"],
+    rules: {
+        "no-restricted-imports": "off",
     },
 }, {
     files: ["**/*.html"],
