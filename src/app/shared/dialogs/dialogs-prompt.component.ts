@@ -21,7 +21,7 @@ import { LabelComponent } from '../label.component';
 import { MatButton } from '@angular/material/button';
 import { SubmitDirective } from '../submit.directive';
 import { TruncateTextPipe } from '../truncate-text.pipe';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../planet-markdown.component';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
@@ -45,7 +45,7 @@ import { TdMarkdownComponent } from '@covalent/markdown';
     SubmitDirective,
     DatePipe,
     TruncateTextPipe,
-    TdMarkdownComponent
+    PlanetMarkdownComponent
   ]
 })
 export class DialogsPromptComponent {

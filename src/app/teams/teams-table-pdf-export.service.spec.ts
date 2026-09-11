@@ -1,6 +1,8 @@
 import { vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { PdfService } from '../shared/pdf.service';
+import { MarkdownRenderService } from '../shared/markdown-render.service';
 import { TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 describe('TeamsTablePdfExportService', () => {
@@ -13,7 +15,8 @@ describe('TeamsTablePdfExportService', () => {
     pdfService = { download: vi.fn() };
     service = new TeamsTablePdfExportService(
       pdfService as any as PdfService,
-      messageService as any as PlanetMessageService
+      messageService as any as PlanetMessageService,
+      TestBed.inject(MarkdownRenderService)
     );
   });
 

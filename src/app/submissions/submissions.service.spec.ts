@@ -1,13 +1,15 @@
 import { of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
 
 import { SubmissionsService } from './submissions.service';
+import { MarkdownRenderService } from '../shared/markdown-render.service';
 
 describe('SubmissionsService survey exports', () => {
   let service: SubmissionsService;
   let csvService: { exportCSV: ReturnType<typeof vi.fn> };
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
-  let pdfService: { download: ReturnType<typeof vi.fn> };
+  let pdfService: { download: ReturnType<typeof vi.fn>, getHtmlConverter?: ReturnType<typeof vi.fn> };
 
   const exam = {
     _id: 'team-survey-1',
@@ -41,6 +43,7 @@ describe('SubmissionsService survey exports', () => {
       { getChildPlanets: vi.fn().mockReturnValue(of([])) } as any,
       {} as any,
       pdfService as any,
+      TestBed.inject(MarkdownRenderService),
       'en-US'
     );
     vi.spyOn(service, 'getSubmissionsExport').mockReturnValue(of([
@@ -77,5 +80,28 @@ describe('SubmissionsService survey exports', () => {
     ));
     expect(pdfService.download).toHaveBeenCalled();
     expect(planetMessageService.showMessage).not.toHaveBeenCalledWith('There is no survey response');
+  });
+
+  const capturePdfHtml = async (exportOptions: { includeAnswers: boolean, includeQuestions: boolean }) => {
+    const htmlToPdfmake = vi.fn().mockReturnValue([]);
+    pdfService.getHtmlConverter = vi.fn().mockResolvedValue(htmlToPdfmake);
+    await service.buildInitialSubmissionPDF(exam, [ submissionWithEmbeddedTeam ], [ 'Question' ], exportOptions);
+    return htmlToPdfmake.mock.calls.map(call => call[0]).join('\n');
+  };
+
+  it('assembles questions-only PDF content as HTML', async () => {
+    const html = await capturePdfHtml({ includeQuestions: true, includeAnswers: false });
+
+    expect(html).toContain('<h3>');
+    expect(html).not.toContain('###');
+    expect(html).toContain('markdown-align-left');
+  });
+
+  it('assembles response PDF content as sanitized HTML with alignment classes', async () => {
+    const html = await capturePdfHtml({ includeQuestions: true, includeAnswers: true });
+
+    expect(html).toContain('markdown-align-right');
+    expect(html).not.toContain('style="text-align');
+    expect(html).not.toContain('###');
   });
 });
