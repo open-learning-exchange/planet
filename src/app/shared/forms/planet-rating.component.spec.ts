@@ -53,8 +53,19 @@ const createComponent = (
       if (saveResponse) {
         return saveResponse;
       }
-      const savedRating = { ...existingRating, _id: 'r-1', _rev: '2-b', item: 'item-1', rate, comment };
-      const allRatings = ratingInfo.allRatings.map(rating => rating._id === savedRating._id ? savedRating : rating);
+      const savedRating = {
+        user: { name: 'learner', gender: 'female' },
+        ...existingRating,
+        _id: 'r-1',
+        _rev: '2-b',
+        item: 'item-1',
+        rate,
+        comment
+      };
+      const previousIndex = ratingInfo.allRatings.findIndex(rating => rating._id === savedRating._id);
+      const allRatings = previousIndex === -1 ?
+        [ ...ratingInfo.allRatings, savedRating ] :
+        ratingInfo.allRatings.map((rating, index) => index === previousIndex ? savedRating : rating);
       return of(normalizeRatingInfo({ userRating: savedRating, allRatings }));
     }),
     deleteRating: vi.fn().mockImplementation((rating, ratingInfo) => deleteResponse || of(normalizeRatingInfo({
@@ -123,6 +134,24 @@ describe('PlanetRatingComponent', () => {
     expect(component.rating.totalRating).toBe(2);
     dialogClosed.next({ rate: 4, comment: 'Original comment' });
     expect(ratingService.saveRating).toHaveBeenCalledTimes(1);
+  });
+
+  it('adds a first rating to the displayed aggregates', () => {
+    const { component } = createComponent();
+    component.rating = { userRating: {}, allRatings: [] };
+    component.ngOnChanges();
+    component.rateForm.setValue({ rate: 4 });
+
+    component.onStarClick();
+
+    expect(component.rating).toMatchObject({
+      rateSum: 4,
+      totalRating: 1,
+      maleRating: 0,
+      femaleRating: 1,
+      userRating: expect.objectContaining({ rate: 4 })
+    });
+    expect(component.rating.allRatings).toHaveLength(1);
   });
 
   it('uses the shared save operation for a changed comment', () => {
