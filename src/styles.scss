@@ -1025,20 +1025,13 @@ body {
     max-width: none;
   }
 
-  // Styles for the chat-output directive
+  // Chat conversation output, rendered through planet-markdown
   .conversation-query {
     text-align: left;
     padding: 8px;
     border-radius: 5px;
     background-color: #{v.$primary};
     color: white;
-  }
-
-  .chat-link {
-    color: white !important;
-    &:visited {
-      color: white !important;
-    }
   }
 
   .conversation-response {
@@ -1050,39 +1043,21 @@ body {
     font-style: italic;
   }
 
-  .code-block {
-    position: relative;
-    background-color: #2d2d2d;
-    color: #f8f8f2;
-    padding: 10px;
-    border-radius: 5px;
-    overflow-x: auto;
-    font-family: 'Courier New', Courier, monospace;
+  planet-markdown.conversation-query .markdown-content a[href] {
+    color: white;
   }
 
-  .copy-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: transparent;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-    color: #f8f8f2;
-    transition: color 0.3s;
+  planet-markdown.conversation-query .markdown-content > :last-child,
+  planet-markdown.conversation-response .markdown-content > :last-child {
+    margin-bottom: 0;
   }
 
-  .copy-btn.copied {
-    color: v.$primary;
-  }
-
-  .chat-link {
-    color: #1e88e5 !important;
-    text-decoration: none;
-  }
-
-  .chat-link:hover {
-    text-decoration: underline;
+  planet-markdown.conversation-query .markdown-content,
+  planet-markdown.conversation-response .markdown-content {
+    pre, :not(pre) > code {
+      background: v.$code-block-background;
+      color: v.$code-block-text;
+    }
   }
 
   /* Custom scrollbar styles */

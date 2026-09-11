@@ -18,7 +18,6 @@ import { MatIcon } from '@angular/material/icon';
 import { LabelComponent } from '../shared/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { ChatOutputDirective } from '../shared/chat-output.directive';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
@@ -42,7 +41,6 @@ import { LinkCopyService } from '../shared/link-copy.service';
     MatTooltip,
     MatCardContent,
     PlanetMarkdownComponent,
-    ChatOutputDirective,
     NgClass,
     MatIconButton,
     MatCardActions,
