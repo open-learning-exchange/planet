@@ -13,7 +13,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
+  isAllVisibleSelected, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
@@ -160,7 +161,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
     this.usersTable.filterPredicate = this.filterPredicate();
-    this.usersTable.connect().subscribe(data => {
+    this.usersTable.connect().pipe(takeUntil(this.onDestroy$)).subscribe(data => {
       this.renderedData = data;
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
@@ -189,24 +190,15 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   isAllSelected() {
-    return this.renderedData.length > 0 && this.renderedData.every((row: any) => this.selection.isSelected(row.doc));
+    return isAllVisibleSelected(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
   }
 
   onlyManagerSelected() {
     return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.renderedData.forEach((row: any) => this.selection.deselect(row.doc));
-    } else {
-      this.renderedData.forEach((row: any) => {
-        if (!this.selection.isSelected(row.doc)) {
-          this.selection.select(row.doc);
-        }
-      });
-    }
+    toggleVisibleSelection(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
   }
 
   gotoProfileView(userName: string, event?: Event) {
