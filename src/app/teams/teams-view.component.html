@@ -5,6 +5,9 @@
 <div class="space-container teams-view">
   <mat-toolbar class="primary-color font-size-1">
     @if (team !== undefined) {
+      @if (team?.coverFileName) {
+        <img class="team-toolbar-cover" [src]="coverImageUrl()" alt="Team cover" i18n-alt />
+      }
       <h3 class="margin-lr-3 ellipsis-title">
         {{team.name}} @if (mode==='enterprise') {
         <ng-container i18n>Office</ng-container>
@@ -112,6 +115,9 @@
       <ng-template mat-tab-label i18n>
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
         </ng-template>
+      @if (team?.coverFileName) {
+        <img class="team-cover" [src]="coverImageUrl()" alt="Team cover" i18n-alt />
+      }
       @if ((team?.description || team?.services || team?.rules)) {
         @if (team?.description && mode === 'enterprise') {
           <div class="mat-headline-6" i18n>What is your enterprise's Mission?</div>
