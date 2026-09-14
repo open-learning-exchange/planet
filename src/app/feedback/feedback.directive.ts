@@ -9,11 +9,13 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { AuthService } from '../shared/auth-guard.service';
-import { finalize, switchMap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { catchError, concatMap, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { FEEDBACK_IMAGE_TYPES, FEEDBACK_MAX_IMAGES, FEEDBACK_MAX_IMAGE_SIZE, prepareFeedbackAttachments } from './feedback-attachments';
+import { PendingAttachment } from '../shared/forms/file-upload.component';
+import { couchAttachmentPath, NormalizedImage, normalizeImage } from '../shared/utils';
 import {
-  FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
+  FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_SCREENSHOT_TYPES, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
   normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
 } from './feedback.utils';
 
@@ -63,13 +65,12 @@ const dialogFieldOptions = [
     name: 'attachments',
     placeholder: $localize`Screenshots (optional)`,
     fileUpload: {
-      accept: FEEDBACK_IMAGE_TYPES.join(','),
+      accept: FEEDBACK_SCREENSHOT_TYPES.join(','),
       multiple: true,
-      maxFiles: FEEDBACK_MAX_IMAGES,
-      maxFileSize: FEEDBACK_MAX_IMAGE_SIZE,
+      maxFiles: 3,
       imagePreview: true,
-      hint: $localize`Up to three images, no larger than 2 MB each. Other users may see them, so leave out private information.`,
-      typePills: [ 'PNG', 'JPEG', 'GIF', 'WebP' ]
+      hint: $localize`Up to three images. Other users may see them, so leave out private information.`,
+      typePills: [ 'PNG', 'JPEG', 'WebP' ]
     }
   }
 ];
@@ -94,10 +95,7 @@ export class FeedbackDirective {
     private dialogsLoadingService: DialogsLoadingService
   ) {}
 
-  addFeedback(post: any, feedbackId = this.newFeedbackId(), isRetry = false) {
-    if (this.isSubmitting) {
-      return;
-    }
+  addFeedback(post: any) {
     this.isSubmitting = true;
     this.dialogsFormService.showErrorMessage('');
     const date = new Date();
@@ -109,7 +107,6 @@ export class FeedbackDirective {
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
     const feedback: any = {
       ...post,
-      _id: feedbackId,
       routerLink: null,
       state: firstPart,
       titleContext: null,
@@ -117,15 +114,15 @@ export class FeedbackDirective {
     if (firstPart === 'home') {
       feedback.titleContext = { kind: 'home' };
       feedback.routerLink = [ '/home' ];
-      this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
+      this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (this.feedbackOf?.name) {
       feedback.titleContext = { kind: 'item', state: firstPart, name: this.feedbackOf.name };
       feedback.routerLink = [ '/', firstPart, 'view', this.feedbackOf.item ];
-      this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
+      this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (urlParts.length === 2) {
       feedback.titleContext = { kind: 'section', state: firstPart };
       feedback.routerLink = [ '/', firstPart ];
-      this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
+      this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (lastPart) {
       const fallbackPath = urlParts.slice(1);
       this.couchService.getDocumentByID(firstPart, lastPart).subscribe(
@@ -135,12 +132,12 @@ export class FeedbackDirective {
             : document?.title || document?.courseTitle || document?.name || lastPart;
           feedback.titleContext = { kind: 'item', state: firstPart, name: resourceName };
           feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
-          this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
+          this.updateFeedback(feedback, date, user, feedbackUrl);
         },
         (error) => {
           feedback.titleContext = { kind: 'path', path: fallbackPath };
           feedback.routerLink = [ '/', ...fallbackPath ];
-          this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
+          this.updateFeedback(feedback, date, user, feedbackUrl);
         }
       );
     }
@@ -151,11 +148,7 @@ export class FeedbackDirective {
     return path.split('/').map(part => part.split(';')[0]).join('/');
   }
 
-  private newFeedbackId() {
-    return Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
-  }
-
-  private updateFeedback(feedback: any, date: Date, user: string, url: string, isRetry: boolean) {
+  private updateFeedback(feedback: any, date: Date, user: string, url: string) {
     const { attachments, ...feedbackValues } = feedback;
     const startingMessage: Message = { message: feedback.message, time: date, user };
     const newFeedback: Feedback = {
@@ -171,36 +164,55 @@ export class FeedbackDirective {
       parentCode: this.stateService.configuration.parentCode,
       ...this.feedbackOf,
     };
-    prepareFeedbackAttachments(attachments?.added).pipe(
-      switchMap(imageAttachments => this.couchService.updateDocument('feedback', {
-        ...newFeedback,
-        _attachments: imageAttachments,
-        messages: [ { ...startingMessage, attachments: Object.keys(imageAttachments) } ]
-      })),
+    this.normalizeScreenshots(attachments?.added).pipe(
+      switchMap(screenshots => {
+        if (screenshots.length) {
+          startingMessage.attachments = screenshots.map(({ fileName }) => fileName);
+        }
+        return this.couchService.updateDocument('feedback', newFeedback).pipe(
+          switchMap(({ id, rev }) => this.uploadScreenshots(id, rev, screenshots))
+        );
+      }),
       finalize(() => {
         this.isSubmitting = false;
         this.dialogsLoadingService.stop();
       })
     ).subscribe(
-      () => {
+      (failedUploads) => {
         this.dialogsFormService.closeDialogsForm();
         this.feedbackService.setFeedback();
-        this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
-      },
-      (error) => {
-        if (isRetry && error?.status === 409) {
-          this.dialogsFormService.closeDialogsForm();
-          this.feedbackService.setFeedback();
-          this.planetMessageService.showAlert(
-            $localize`An earlier version of this feedback was already submitted. Changes made before retrying may not have been saved.`
-          );
-          return;
+        if (failedUploads) {
+          this.planetMessageService.showAlert($localize`Feedback submitted, but some screenshots could not be uploaded.`);
+        } else {
+          this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
         }
+      },
+      () => {
         this.dialogsFormService.showErrorMessage(
           $localize`Your feedback could not be submitted. Your text and images are still here. Please try again.`
         );
       }
     );
+  }
+
+  private normalizeScreenshots(screenshots: PendingAttachment[] = []): Observable<NormalizedImage[]> {
+    const usedNames: string[] = [];
+    return from(screenshots).pipe(
+      concatMap(({ file }) => normalizeImage(file, { maxDimension: 1920, usedNames })),
+      tap(({ fileName }) => usedNames.push(fileName)),
+      toArray()
+    );
+  }
+
+  private uploadScreenshots(id: string, rev: string, screenshots: NormalizedImage[]): Observable<number> {
+    return screenshots.reduce((upload$, { file, fileName, contentType }) => upload$.pipe(
+      switchMap(result => this.couchService.putAttachment(
+        `feedback/${couchAttachmentPath(id, fileName)}?rev=${result.rev}`, file, { headers: { 'Content-Type': contentType } }
+      ).pipe(
+        map((response: any) => ({ ...result, rev: response.rev })),
+        catchError(() => of({ ...result, failed: result.failed + 1 }))
+      ))
+    ), of({ rev, failed: 0 })).pipe(map(({ failed }) => failed));
   }
 
   @HostListener('click')
@@ -217,8 +229,6 @@ export class FeedbackDirective {
       message: [ this.message, CustomValidators.required ],
       attachments: [ { retained: [], removed: [], added: [] } ]
     };
-    const feedbackId = this.newFeedbackId();
-    let hasSubmitted = false;
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       closeOnSubmit: false,
       confirmUnsavedChanges: true,
@@ -227,8 +237,7 @@ export class FeedbackDirective {
           this.dialogsLoadingService.stop();
           return;
         }
-        this.addFeedback(response, feedbackId, hasSubmitted);
-        hasSubmitted = true;
+        this.addFeedback(response);
       }
     });
   }

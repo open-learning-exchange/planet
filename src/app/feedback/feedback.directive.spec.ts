@@ -16,11 +16,13 @@ describe('FeedbackDirective', () => {
     priority: 'yes',
     type: 'bug'
   };
+  const screenshot = (name = 'screen shot.png') => ({ file: new File([ 'image' ], name, { type: 'image/png' }) });
 
   beforeEach(() => {
     couchService = {
       getDocumentByID: vi.fn().mockReturnValue(throwError(() => ({ status: 404 }))),
-      updateDocument: vi.fn().mockReturnValue(of({}))
+      updateDocument: vi.fn().mockReturnValue(of({})),
+      putAttachment: vi.fn()
     };
     router = { url: '/' };
     dialogsFormService = { openDialogsForm: vi.fn(), closeDialogsForm: vi.fn(), showErrorMessage: vi.fn() };
@@ -125,86 +127,40 @@ describe('FeedbackDirective', () => {
     expect(feedback.titleContext).toEqual({ kind: 'section', state: 'users' });
   });
 
-  it('configures feedback for up to three 2 MB image attachments', () => {
-    directive.openFeedback();
+  it('saves the feedback, then uploads each screenshot against the latest revision', async () => {
+    couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
+    couchService.putAttachment.mockReturnValueOnce(of({ rev: '2-b' })).mockReturnValueOnce(of({ rev: '3-c' }));
 
-    const [ , fields ] = dialogsFormService.openDialogsForm.mock.calls[0];
-    expect(fields.find(field => field.name === 'attachments')?.fileUpload).toMatchObject({
-      maxFiles: 3, maxFileSize: 2 * 1024 * 1024, multiple: true, imagePreview: true
-    });
-  });
+    directive.addFeedback({ ...post, attachments: { retained: [], removed: [], added: [ screenshot(), screenshot() ] } });
+    await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
 
-  it('saves image bytes and text in one feedback write without persisting temporary upload state', async () => {
-    const attachments = {
-      retained: [], removed: [],
-      added: [ { file: new File([ 'image-bytes' ], 'screen shot.png', { type: 'image/png' }) } ]
-    };
-
-    directive.addFeedback({ ...post, attachments });
-    await vi.waitFor(() => expect(couchService.updateDocument).toHaveBeenCalledOnce());
-
-    const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
-    expect(couchService.updateDocument.mock.calls[0][0]).toBe('feedback');
-    expect(feedback.message).toBe(post.message);
-    expect(feedback._attachments).toEqual({
-      'screenshot-screen_shot.png': { content_type: 'image/png', data: btoa('image-bytes') }
-    });
-    expect(feedback.messages[0]).toMatchObject({ message: post.message, attachments: [ 'screenshot-screen_shot.png' ] });
+    const feedback = couchService.updateDocument.mock.calls[0][1];
     expect(feedback.attachments).toBeUndefined();
-    expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce();
-    expect(dialogsLoadingService.stop).toHaveBeenCalledOnce();
+    expect(feedback.messages[0].attachments).toEqual([ 'screen_shot.png', 'screen_shot-1.png' ]);
+    expect(couchService.putAttachment.mock.calls.map(([ path ]) => path)).toEqual([
+      'feedback/feedback-1/screen_shot.png?rev=1-a',
+      'feedback/feedback-1/screen_shot-1.png?rev=2-b'
+    ]);
   });
 
-  it('keeps the dialog open after a failed write and retries with the same document id', () => {
-    couchService.updateDocument.mockReturnValueOnce(throwError(new Error('offline')));
-    directive.openFeedback();
-    const { onSubmit } = dialogsFormService.openDialogsForm.mock.calls[0][3];
+  it('warns when the feedback is saved but a screenshot upload fails', async () => {
+    couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
+    couchService.putAttachment.mockReturnValueOnce(throwError(new Error('offline'))).mockReturnValueOnce(of({ rev: '2-b' }));
 
-    onSubmit(post);
-    expect(dialogsFormService.closeDialogsForm).not.toHaveBeenCalled();
-    expect(dialogsFormService.showErrorMessage.mock.calls.at(-1)[0]).toContain('still here');
+    directive.addFeedback({ ...post, attachments: { added: [ screenshot('a.png'), screenshot('b.png') ] } });
+    await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
 
-    onSubmit(post);
-    const [ firstId, retryId ] = couchService.updateDocument.mock.calls.map(([ , doc ]) => doc._id);
-    expect(firstId).toMatch(/^[0-9a-f]{32}$/);
-    expect(retryId).toBe(firstId);
-    expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce();
+    expect(couchService.putAttachment.mock.calls[1][0]).toBe('feedback/feedback-1/b.png?rev=1-a');
+    expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be uploaded'));
   });
 
-  it('reports a conflict after a failed attempt as an earlier saved submission', () => {
-    couchService.updateDocument
-      .mockReturnValueOnce(throwError(new Error('offline')))
-      .mockReturnValueOnce(throwError({ status: 409 }));
-    directive.openFeedback();
-    const { onSubmit } = dialogsFormService.openDialogsForm.mock.calls[0][3];
-
-    onSubmit(post);
-    onSubmit(post);
-
-    expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce();
-    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(2);
-    expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('earlier version'));
-  });
-
-  it('does not mistake a first-attempt conflict for a successful retry', () => {
-    couchService.updateDocument.mockReturnValueOnce(throwError({ status: 409 }));
+  it('keeps the dialog open with an error when the feedback cannot be saved', () => {
+    couchService.updateDocument.mockReturnValue(throwError(new Error('offline')));
 
     directive.addFeedback(post);
 
     expect(dialogsFormService.closeDialogsForm).not.toHaveBeenCalled();
-    expect(dialogsFormService.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('could not be submitted'));
-  });
-
-  it('ignores a second submission while the first write is in flight', () => {
-    const result = new Subject();
-    couchService.updateDocument.mockReturnValue(result);
-
-    directive.addFeedback(post);
-    directive.addFeedback(post);
-
-    expect(couchService.updateDocument).toHaveBeenCalledOnce();
-    result.next({});
-    result.complete();
+    expect(dialogsFormService.showErrorMessage).toHaveBeenLastCalledWith(expect.stringContaining('could not be submitted'));
     expect(dialogsLoadingService.stop).toHaveBeenCalledOnce();
   });
 

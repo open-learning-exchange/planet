@@ -67,7 +67,7 @@
             </div>
             <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
               <mat-card-content>
-                <div class="feedback-message-text km-feedback-message-text">{{message.message}}</div>
+                <div class="feedback-message-text">{{message.message}}</div>
                 @let attachments = messageAttachments(message);
                 @if (attachments.length) {
                   <div class="feedback-attachments">

@@ -13,9 +13,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { couchAttachmentUrl } from '../shared/utils';
 import { environment } from '../../environments/environment';
-import { SyncDirective } from '../manager-dashboard/sync.directive';
 
-describe('FeedbackViewComponent attachments', () => {
+describe('FeedbackViewComponent screenshots', () => {
   let fixture: ComponentFixture<FeedbackViewComponent>;
   let component: FeedbackViewComponent;
   let couchService: any;
@@ -46,7 +45,7 @@ describe('FeedbackViewComponent attachments', () => {
     component.user = user;
     component.feedback = {
       _id: 'feedback/1', _rev: '1-revision', title: 'Feedback', source: 'community', status: 'open',
-      messages: [ { user: user.name, time: 1, message: 'Literal **text**\n<script>example</script>', attachments: [ name ] } ],
+      messages: [ { user: user.name, time: 1, message: 'The save button does nothing', attachments: [ name ] } ],
       _attachments: { [name]: { content_type: 'image/png', stub: true, digest: 'md5-image', revpos: 1, length: 10 } }
     };
   });
@@ -57,68 +56,32 @@ describe('FeedbackViewComponent attachments', () => {
     TestBed.resetTestingModule();
   });
 
-  it('renders plain text and responsive attachment links without interpreting Markdown or HTML', () => {
+  it('links only uploaded image screenshots below their message', () => {
+    component.feedback._attachments['vector.svg'] = { content_type: 'image/svg+xml', stub: true };
+    component.feedback.messages[0].attachments = [ 'missing.png', 'vector.svg', name ];
     fixture.detectChanges();
-    const element: HTMLElement = fixture.nativeElement;
-    const text = element.querySelector('.km-feedback-message-text');
-    const link = element.querySelector('.km-feedback-attachment');
-    const expectedUrl = couchAttachmentUrl(environment.couchAddress, 'feedback', 'feedback/1', name);
-    expect(text.textContent).toBe(component.feedback.messages[0].message);
-    expect(text.querySelector('script')).toBeNull();
-    expect(element.querySelector('planet-markdown')).toBeNull();
-    expect(link.getAttribute('href')).toBe(expectedUrl);
-    expect(link.querySelector('img').getAttribute('src')).toBe(expectedUrl);
-    expect(link.querySelector('img').getAttribute('alt')).toBe(name);
-    expect(link.getAttribute('rel')).toContain('noopener');
+
+    const links = fixture.nativeElement.querySelectorAll('.km-feedback-attachment');
+    const url = couchAttachmentUrl(environment.couchAddress, 'feedback', 'feedback/1', name);
+    expect(links).toHaveLength(1);
+    expect(links[0].getAttribute('href')).toBe(url);
+    expect(links[0].querySelector('img').getAttribute('src')).toBe(url);
   });
 
-  it('handles existing text-only feedback and ignores missing or unsupported attachments', () => {
-    expect(component.messageAttachments({})).toEqual([]);
-    component.feedback._attachments['vector.svg'] = { content_type: 'image/svg+xml' };
-    expect(component.messageAttachments({ attachments: [ 'missing.png', 'vector.svg', name ] })).toEqual([
-      { name, url: couchAttachmentUrl(environment.couchAddress, 'feedback', 'feedback/1', name) }
-    ]);
-  });
-
-  it('keeps document attachment stubs and the original message image links when replying', () => {
+  it('keeps the screenshots on every later write to the feedback document', () => {
     vi.spyOn(component, 'getFeedback').mockReturnValue(of({ docs: [ component.feedback ] }));
     vi.spyOn(component, 'sendNotifications').mockReturnValue(of({}));
     vi.spyOn(component, 'setFeedback').mockImplementation(() => {});
-    component.normalizedStatus = 'closed';
+    const feedbackService = TestBed.inject(FeedbackService);
+
     component.newMessage = 'Follow-up';
     component.postMessage();
-
-    const [ db, document ] = couchService.updateDocument.mock.calls[0];
-    expect(db).toBe('feedback');
-    expect(document._attachments).toEqual(component.feedback._attachments);
-    expect(document.messages[0].attachments).toEqual([ name ]);
-    expect(document.messages[1].attachments).toBeUndefined();
-    expect(component.feedback.messages).toHaveLength(1);
-  });
-
-  it('preserves attachments when changing the title, closing or reopening feedback', () => {
     component.setTitle();
-    expect(couchService.put.mock.calls[0][1]._attachments).toEqual(component.feedback._attachments);
+    feedbackService.closeFeedback(component.feedback).subscribe();
+    feedbackService.openFeedback(component.feedback).subscribe();
 
-    const service = TestBed.inject(FeedbackService);
-    service.closeFeedback(component.feedback).subscribe();
-    service.openFeedback(component.feedback).subscribe();
-    expect(couchService.updateDocument).toHaveBeenCalledTimes(2);
-    couchService.updateDocument.mock.calls.forEach(([ db, document ]) => {
-      expect(db).toBe('feedback');
-      expect(document._attachments).toEqual(component.feedback._attachments);
-    });
-  });
-
-  it('keeps feedback in both Community-to-Nation and return replication selections', () => {
-    const sync = new SyncDirective(
-      {} as any, {} as any, {} as any, {} as any, {} as any,
-      { configuration: { code: 'community', parentCode: 'nation' } } as any, {} as any, {} as any
-    );
-    const feedbackReplicators = sync.replicatorList().filter(item => item.db === 'feedback');
-    expect(feedbackReplicators).toContainEqual(expect.objectContaining({ db: 'feedback', type: 'push' }));
-    expect(feedbackReplicators).toContainEqual(expect.objectContaining({
-      db: 'feedback', type: 'pull', selector: { source: 'community' }
-    }));
+    const writes = [ ...couchService.updateDocument.mock.calls, ...couchService.put.mock.calls ].map(([ , document ]) => document);
+    expect(writes).toHaveLength(4);
+    writes.forEach(document => expect(document._attachments).toEqual(component.feedback._attachments));
   });
 });

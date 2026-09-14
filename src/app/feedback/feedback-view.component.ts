@@ -21,10 +21,11 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
+import {
+  FEEDBACK_SCREENSHOT_TYPES, getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType
+} from './feedback.utils';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { environment } from '../../environments/environment';
-import { FEEDBACK_IMAGE_TYPES } from './feedback-attachments';
 import { ExistingAttachment } from '../shared/forms/file-upload.component';
 
 @Component({
@@ -131,7 +132,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   messageAttachments(message: { attachments?: string[] }): ExistingAttachment[] {
     return (message.attachments || []).filter(name =>
-      FEEDBACK_IMAGE_TYPES.includes(this.feedback._attachments?.[name]?.content_type)
+      FEEDBACK_SCREENSHOT_TYPES.includes(this.feedback._attachments?.[name]?.content_type)
     ).map(name => ({
       name,
       url: couchAttachmentUrl(environment.couchAddress, this.dbName, this.feedback._id, name)

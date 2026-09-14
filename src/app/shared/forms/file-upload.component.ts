@@ -43,7 +43,6 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   @Input() typePills: string[] = [ 'PDF', 'EPUB', 'ZIP', 'MP3', 'MP4', 'IMG' ];
   @Input() multiple = false;
   @Input() maxFiles = 1;
-  @Input() maxFileSize?: number;
   @Input() imagePreview = false;
   @Input() existingAttachments: ExistingAttachment[] = [];
   @Output() fileSelected = new EventEmitter<File>();
@@ -181,11 +180,6 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     candidateFiles.forEach(file => {
       if (!isAcceptableFile(file, this.accept)) {
         this.errorMessage = $localize`File type not allowed`;
-        this.fileRejected.emit(file);
-        return;
-      }
-      if (this.maxFileSize !== undefined && (file.size === 0 || file.size > this.maxFileSize)) {
-        this.errorMessage = $localize`File is empty or exceeds the size limit: ${this.formattedSize(this.maxFileSize)}.`;
         this.fileRejected.emit(file);
         return;
       }
