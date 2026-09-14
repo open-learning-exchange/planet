@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { configurationDB } from '../../../config/couch.config';
 import { ModelsDocument } from '../../chatapi/models/chat.model';
 
