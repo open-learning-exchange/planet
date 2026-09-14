@@ -223,7 +223,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     }
     if (this.courseId) {
       const escapedCourseId = this.courseId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      return { query: findDocuments({ parentId: { '$regex': `@${escapedCourseId}$` } }) };
+      return { query: findDocuments({ parentId: { $regex: `@${escapedCourseId}$` } }) };
     }
     switch (this.mode) {
       case 'survey':
