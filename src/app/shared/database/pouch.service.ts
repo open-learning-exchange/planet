@@ -42,14 +42,10 @@ export class PouchService {
   }
 
   deconfigureDBs() {
-    const databaseCleanup = Array.from(this.localDBs.values(), pouchDB => pouchDB.destroy());
-    // Feedback was mirrored before attachments were supported, but no feature reads the local copy.
-    const legacyDatabaseCleanup = Array.from(this.legacyDatabases, db => new PouchDB(`local-${db}`).destroy().catch(error => {
-      console.error(`Unable to remove legacy local-${db} database`, error);
-      return { ok: false };
-    }));
-    this.localDBs.clear();
-    return [ ...databaseCleanup, ...legacyDatabaseCleanup ];
+    this.legacyDatabases.forEach(db => new PouchDB(`local-${db}`).destroy().catch(error =>
+      console.error(`Unable to remove legacy local-${db} database`, error)
+    ));
+    return Array.from(this.localDBs.values(), pouchDB => pouchDB.destroy());
   }
 
   // @TODO: handle edge cases like offline, duplicate, duplications
