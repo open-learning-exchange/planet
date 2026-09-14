@@ -60,7 +60,7 @@ describe('NotificationsService', () => {
       isUserAdmin: true
     })).toEqual([
       { user: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' },
-      { user: 'org.couchdb.user:alex', userPlanetCode: { '$exists': false } },
+      { user: 'org.couchdb.user:alex', userPlanetCode: { $exists: false } },
       { user: 'SYSTEM' }
     ]);
   });
@@ -68,7 +68,7 @@ describe('NotificationsService', () => {
   it('does not include system notifications for non-admin users', () => {
     expect(notificationUserFilter({ name: 'alex', planetCode: 'planet-a' })).toEqual([
       { user: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' },
-      { user: 'org.couchdb.user:alex', userPlanetCode: { '$exists': false } }
+      { user: 'org.couchdb.user:alex', userPlanetCode: { $exists: false } }
     ]);
   });
 
@@ -133,9 +133,9 @@ describe('NotificationsService', () => {
 
     expect(couchService.findAll.mock.calls[0][1].selector).toEqual({
       user: 'org.couchdb.user:alex',
-      '$or': [
+      $or: [
         { userPlanetCode: 'nation-n' },
-        { userPlanetCode: { '$exists': false } }
+        { userPlanetCode: { $exists: false } }
       ],
       link: '/teams/view/team-1',
       type: 'newTask',

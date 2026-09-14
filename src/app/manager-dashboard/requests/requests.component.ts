@@ -104,7 +104,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   }
 
   filterData(search = this.searchValue) {
-    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) });
+    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { name: planet.nameDoc.name } : {}) });
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
@@ -137,7 +137,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
       [
         { placeholder: $localize`Name`, name: 'name', required: true, type: 'textbox' },
         { type: 'selectbox', name: 'planetId', placeholder: $localize`Planet`, required: false,
-          'options': [
+          options: [
             { name: $localize`Select Planet`, value: '' },
             ...this.sandboxPlanets.map(p => ({ name: p.nameDoc ? p.nameDoc.name : p.doc.name, value: p.doc._id }))
           ]

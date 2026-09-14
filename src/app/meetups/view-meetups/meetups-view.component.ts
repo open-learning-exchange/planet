@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Opti
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { map, takeUntil } from 'rxjs/operators';
-import { MeetupService } from '../meetups.service';
+import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
@@ -21,6 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
+import { assigneeKey, assigneeName, effectiveAssignees } from '../../tasks/tasks.utils';
 
 @Component({
   selector: 'planet-meetups-view',
@@ -50,9 +51,18 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   @Input() meetupDetail: any;
   @Input() isDialog = false;
   @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
-  canManage = false;
+  get canManage(): boolean {
+    return this.meetupService.canEditMeetup(this.meetupDetail, this.authorizationContext);
+  }
+  private get authorizationContext(): MeetupAuthorizationContext {
+    return {
+      leaderOfTeamId: this.leaderOfTeamId,
+      readOnly: this.parent || !this.editable
+    };
+  }
   members = [];
   parent = this.route.snapshot.data.parent;
   listDialogRef: MatDialogRef<DialogsListComponent>;
@@ -78,7 +88,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.canManage = this.userService.get()?._id;
     this.getEnrolledUsers();
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
@@ -110,11 +119,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   getEnrolledUsers() {
     // find meetupId on User shelf
     return this.couchService.post('shelf/_find', findDocuments({
-      'meetupIds': { '$in': [ this.route.snapshot.paramMap.get('id') ] }
+      meetupIds: { $in: [ this.route.snapshot.paramMap.get('id') ] }
     }, 0)). subscribe((data) => {
-      this.members = data.docs.map((res) => {
-        return res._id.split(':')[1];
-      });
+      this.members = data.docs.map((res) => res._id.split(':')[1]);
     });
   }
 
@@ -159,9 +166,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   sendInvitations(selected: string[]) {
-    const invites = selected.map((user: any) => {
-      return this.inviteNotification(user._id, this.meetupDetail);
-    });
+    const invites = selected.map((user: any) => this.inviteNotification(user._id, this.meetupDetail));
     this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
       this.listDialogRef.close();
       this.planetMessageService.showMessage($localize`Invitation${(invites.length > 1 ? 's' : '')} sent successfully`);
@@ -170,15 +175,15 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   inviteNotification(userId, meetupDetail) {
     return {
-      'user': userId,
-      'message': $localize`<b>${this.userService.get().name}</b> would like you to join <b>"${meetupDetail.title}"</b> meetup
+      user: userId,
+      message: $localize`<b>${this.userService.get().name}</b> would like you to join <b>"${meetupDetail.title}"</b> meetup
         ${(meetupDetail.meetupLocation ? ' at ' + meetupDetail.meetupLocation : '')}`,
-      'link': this.router.url,
-      'item': meetupDetail._id,
-      'type': 'meetup',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      link: this.router.url,
+      item: meetupDetail._id,
+      type: 'meetup',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
   }
 
@@ -199,15 +204,11 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         this.switchView.emit('close');
       }
     };
-    this.meetupService.openDeleteDialog(this.meetupDetail, callback);
+    this.meetupService.openDeleteDialog(this.meetupDetail, callback, this.authorizationContext);
   }
 
   openCreatorProfile(event?: Event) {
     this.openProfile(this.meetupDetail?.createdBy, this.meetupDetail?.sourcePlanet || this.meetupDetail?.sync?.planetCode, event);
-  }
-
-  openAssigneeProfile(event?: Event) {
-    this.openProfile(this.meetupDetail?.assignee?.name, this.meetupDetail?.assignee?.userPlanetCode, event);
   }
 
   openProfile(username, planetCode, event?: Event) {
@@ -222,6 +223,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       member: { name: username, userPlanetCode: planetCode },
       dialogRef: this.dialogRef
     });
+  }
+
+  effectiveAssignees = effectiveAssignees;
+  assigneeName = assigneeName;
+
+  assigneeTrackKey(assignee): string {
+    return assigneeKey(assignee, this.stateService.configuration?.code);
   }
 
   editTask() {

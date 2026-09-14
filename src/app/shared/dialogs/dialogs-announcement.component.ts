@@ -132,9 +132,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       this.fetchCourseAndNews();
       this.newsService.requestNews({
         selectors: {
-          '$or': [
+          $or: [
             { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
-            { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+            { viewIn: { $elemMatch: { _id: this.teamId, section: 'community' } } }
           ]
         },
         viewId: this.teamId

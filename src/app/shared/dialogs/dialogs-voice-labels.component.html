@@ -1,0 +1,59 @@
+<h2 mat-dialog-title i18n>Manage labels</h2>
+<mat-dialog-content>
+  <div class="labels-dialog-section">
+    <h3 class="labels-section-heading" i18n>System labels</h3>
+    <mat-chip-set aria-label="System Labels" i18n-aria-label>
+      @for (label of systemLabels; track label) {
+        <mat-chip class="planet-chip-label chip-outline-primary">
+          <planet-label [label]="label"></planet-label>
+        </mat-chip>
+      }
+    </mat-chip-set>
+  </div>
+
+  <div class="labels-dialog-section">
+    <h3 class="labels-section-heading">{{ sectionHeader }}</h3>
+    @if (customLabels.length === 0) {
+      <p class="labels-empty" i18n>No custom labels created yet.</p>
+    } @else {
+      <mat-chip-set aria-label="Custom Labels" i18n-aria-label>
+        @for (label of customLabels; track label) {
+          <mat-chip class="planet-chip-label chip-outline-primary">
+            <planet-label [label]="label"></planet-label>
+            <button matChipRemove aria-label="Remove label option" i18n-aria-label
+              [disabled]="isSaving" (click)="removeLabel(label)">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </mat-chip>
+        }
+      </mat-chip-set>
+    }
+  </div>
+
+  <div class="labels-dialog-section labels-add-section">
+    <div class="add-label-row">
+      <mat-form-field class="labels-input">
+        <mat-label i18n>New label</mat-label>
+        <input
+          matInput
+          [(ngModel)]="newLabelInput"
+          (keyup.enter)="addLabel()"
+          [disabled]="isSaving"
+          placeholder="e.g. announcement, event..."
+          i18n-placeholder
+        />
+      </mat-form-field>
+      <button mat-stroked-button color="primary" class="add-btn" type="button"
+        [disabled]="isSaving" (click)="addLabel()" i18n>Add</button>
+    </div>
+    @if (errorMessage) {
+      <div class="mat-caption warn-text-color" role="alert">{{ errorMessage }}</div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" [disabled]="isSaving" (click)="requestClose()" i18n>Cancel</button>
+  <button mat-raised-button color="primary" type="button" (click)="save()"
+    [disabled]="isSaving || !hasUnsavedChanges" i18n>Save</button>
+</mat-dialog-actions>

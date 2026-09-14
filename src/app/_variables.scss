@@ -90,6 +90,7 @@ $screen-xs: 480px;
 // Maximum full height of view container (avoiding vertical overflow)
 $view-container-height: calc(100vh - 216px);
 $view-container-height-no-toolbar: calc(#{$view-container-height} + 64px);
+$search-filters-height: 25vh;
 // Height of dashboard
 $dashboard-height: calc(100vh - 128px);
 $dashboard-tile-height: calc((#{$dashboard-height} - 3rem) / 4);

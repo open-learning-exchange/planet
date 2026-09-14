@@ -15,7 +15,7 @@ export const FEEDBACK_STATUS_OPTIONS = [
   { label: $localize`Closed`, value: 'closed' }
 ] as const;
 
-interface FeedbackOption { label: string; value: string }
+interface FeedbackOption { label: string, value: string }
 
 export interface FeedbackTitleContext {
   kind: 'home' | 'section' | 'item' | 'path';
@@ -33,9 +33,9 @@ const normalizeFeedbackValue = (value: unknown, allowedValues: readonly string[]
   return allowedValues.includes(normalizedValue) ? normalizedValue : fallback;
 };
 
-const getLabelFromOptions = (value: string, options: readonly FeedbackOption[]) => {
-  return options.find(option => option.value === value)?.label || value;
-};
+const getLabelFromOptions = (value: string, options: readonly FeedbackOption[]) => (
+  options.find(option => option.value === value)?.label || value
+);
 
 export const normalizeFeedbackType = (value: unknown) =>
   normalizeFeedbackValue(value, FEEDBACK_TYPE_OPTIONS.map(option => option.value), 'question');
@@ -66,7 +66,7 @@ export const getFeedbackTypeIcon = (value: unknown) => {
   }
 };
 
-export const getFeedbackDisplayTitle = (feedback: { title?: string; titleContext?: FeedbackTitleContext; type?: string; url?: string }) => {
+export const getFeedbackDisplayTitle = (feedback: { title?: string, titleContext?: FeedbackTitleContext, type?: string, url?: string }) => {
   // Keep explicit (manually edited) titles untouched. Older auto-generated titles also remain as saved;
   if (feedback.title?.trim()) {
     return feedback.title;

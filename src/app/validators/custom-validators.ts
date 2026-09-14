@@ -2,9 +2,7 @@ import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, 
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-const isStringEdgeCase = (string: string) => {
-  return string.trim() === '' || string.trim() !== string;
-};
+const isStringEdgeCase = (string: string) => string.trim() === '' || string.trim() !== string;
 
 export class CustomValidators {
 
@@ -67,9 +65,7 @@ export class CustomValidators {
 
   // Allows us to supply a different errorType for specific patterns
   static pattern(pattern: string | RegExp, errorType = 'pattern') {
-    return (ac: AbstractControl<string | null>): ValidationErrors | null => {
-      return Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
-    };
+    return (ac: AbstractControl<string | null>): ValidationErrors | null => Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
   }
 
   // for validating whether end date comes before start date or not
@@ -250,7 +246,7 @@ export class CustomValidators {
 
   static required(ac: AbstractControl<string | null>): ValidationErrors | null {
     const value = ac.value ?? '';
-    return /\S/.test(value) ? null : { 'required': true };
+    return /\S/.test(value) ? null : { required: true };
   }
 
   static requiredMarkdown(ac: AbstractControl<string | { text: string } | null>): ValidationErrors | null {
@@ -263,7 +259,7 @@ export class CustomValidators {
 
   static fileMatch(ac: AbstractControl<string | null>, fileList: string[]): ValidationErrors | null {
     if (fileList.length > 1 && ac.value !== '' && !fileList.includes(ac.value)) {
-      return { 'notFileMatch': true };
+      return { notFileMatch: true };
     }
     return null;
   }
@@ -275,17 +271,17 @@ export class CustomValidators {
       } else {
         const trimmedValue = ac.value.trim();
         if (/\s/.test(trimmedValue)) {
-          resolve({ 'invalidLink': true });
+          resolve({ invalidLink: true });
         } else {
           const domainRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*(\/.*)?$/;
           if (!domainRegex.test(trimmedValue)) {
-            resolve({ 'invalidLink': true });
+            resolve({ invalidLink: true });
           } else {
             try {
               const url = new URL(trimmedValue);
               resolve(null);
             } catch (_) {
-              resolve({ 'invalidLink': true });
+              resolve({ invalidLink: true });
             }
           }
         }

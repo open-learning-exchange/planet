@@ -1,5 +1,4 @@
 import { millisecondsToDay } from '../../meetups/constants';
-import { CsvService } from '../../shared/csv.service';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -9,6 +8,16 @@ export const attachNamesToPlanets = (planetDocs: any[]) => {
 export const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
 
 export const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+
+export const subtractMonthsClamped = (date: Date, months: number) => {
+  const result = new Date(date);
+  const day = result.getDate();
+  result.setDate(1);
+  result.setMonth(result.getMonth() - months);
+  const lastDayOfMonth = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
+  result.setDate(Math.min(day, lastDayOfMonth));
+  return result;
+};
 
 export const codeToPlanetName = (code: string, configuration: any, childPlanets: any[]) => {
   const planet = childPlanets.find((childPlanet: any) => childPlanet.doc.code === code);
@@ -78,9 +87,7 @@ export const setMonths = (dateRange) => {
   return months;
 };
 
-export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPlanet? } => {
-  return { planetCode, filterAdmin: true };
-};
+export const activityParams = (planetCode): { planetCode, filterAdmin? } => ({ planetCode, filterAdmin: true });
 
 export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);
 
@@ -131,7 +138,7 @@ export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }
 };
 
 export const sortingOptionsMap = {
-  'logins': [
+  logins: [
     { name: $localize`Login Time Ascending`, value: 'loginTimeAsc' },
     { name: $localize`Login Time Descending`, value: 'loginTimeDesc' },
     { name: $localize`Logout Time Ascending`, value: 'logoutTimeAsc' },
@@ -139,7 +146,7 @@ export const sortingOptionsMap = {
     { name: $localize`User Ascending`, value: 'userAsc' },
     { name: $localize`User Descending`, value: 'userDesc' },
   ],
-  'resourceViews': [
+  resourceViews: [
     { name: $localize`Username Ascending`, value: 'userAsc' },
     { name: $localize`Username Descending`, value: 'userDesc' },
     { name: $localize`Time Ascending`, value: 'timeAsc' },
@@ -147,7 +154,7 @@ export const sortingOptionsMap = {
     { name: $localize`Title Ascending`, value: 'titleAsc' },
     { name: $localize`Title Descending`, value: 'titleDesc' },
   ],
-  'courseViews': [
+  courseViews: [
     { name: $localize`Username Ascending`, value: 'userAsc' },
     { name: $localize`Username Descending`, value: 'userDesc' },
     { name: $localize`Time Ascending`, value: 'timeAsc' },
@@ -155,7 +162,7 @@ export const sortingOptionsMap = {
     { name: $localize`Title Ascending`, value: 'titleAsc' },
     { name: $localize`Title Descending`, value: 'titleDesc' },
   ],
-  'stepCompletions': [
+  stepCompletions: [
     { name: $localize`Username Ascending`, value: 'userAsc' },
     { name: $localize`Username Descending`, value: 'userDesc' },
     { name: $localize`Time Ascending`, value: 'timeAsc' },
@@ -163,11 +170,11 @@ export const sortingOptionsMap = {
     { name: $localize`Title Ascending`, value: 'titleAsc' },
     { name: $localize`Title Descending`, value: 'titleDesc' },
   ],
-  'summary': [
+  summary: [
     { name: $localize`Month/Year Ascending`, value: 'monthYearAsc' },
     { name: $localize`Month/Year Descending`, value: 'monthYearDesc' },
   ],
-  'chat': [
+  chat: [
     { name: $localize`User (A-Z)`, value: 'userAsc' },
     { name: $localize`User (Z-A)`, value: 'userDesc' },
     { name: $localize`Date (Oldest first)`, value: 'createdDateAsc' },
@@ -189,14 +196,4 @@ export const thursdayWeekRangeFromEnd = (endDate: Date) => {
   const start = new Date(end);
   start.setDate(start.getDate() - 6);
   return { startDate: startOfDay(start), endDate: end };
-};
-
-export const exportMyPlanetCsv = (csvService: CsvService) => (
-  children: any[],
-  planetName: string | undefined,
-  mapFn: (children: any[], planetName?: string) => any[],
-  title: string
-): void => {
-  const csvData = planetName ? mapFn(children, planetName) : children.flatMap((planet: any) => mapFn(planet.children, planet.name));
-  csvService.exportCSV({ data: csvData, title });
 };

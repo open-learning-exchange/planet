@@ -72,7 +72,7 @@ export interface NormalizedImage {
   fileName: string;
 }
 
-export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number; height: number } => {
+export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number, height: number } => {
   const scale = Math.min(1, maxDimension / Math.max(width, height));
   return {
     width: Math.max(1, Math.round(width * scale)),
@@ -166,17 +166,13 @@ export const dedupeShelfReduce = (ids, id) => {
   return ids.concat(id);
 };
 
-export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => {
-  return array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index;
-});
+export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => (
+  array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index)
+);
 
-export const removeFromArray = (startArray = [], removeArray = []) => {
-  return startArray.filter(item => removeArray.indexOf(item) === -1);
-};
+export const removeFromArray = (startArray = [], removeArray = []) => startArray.filter(item => removeArray.indexOf(item) === -1);
 
-export const addToArray = (startArray = [], addArray = []) => {
-  return startArray.concat(addArray).reduce(dedupeShelfReduce, []);
-};
+export const addToArray = (startArray = [], addArray = []) => startArray.concat(addArray).reduce(dedupeShelfReduce, []);
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
 

@@ -12,11 +12,11 @@ import { UserService } from './user.service';
 
 const passwordFormFields = [
   {
-    'label': $localize`Password`,
-    'type': 'password',
-    'name': 'password',
-    'placeholder': $localize`Password`,
-    'required': true
+    label: $localize`Password`,
+    type: 'password',
+    name: 'password',
+    placeholder: $localize`Password`,
+    required: true
   }
 ];
 
@@ -71,7 +71,7 @@ export class SyncService {
     return forkJoin([
       this.couchService.post('_session', { name: this.userService.get().name, password }),
       this.couchService.post('_session',
-        { 'name': this.userService.get().name + '@' + this.stateService.configuration.code, password },
+        { name: this.userService.get().name + '@' + this.stateService.configuration.code, password },
         { withCredentials: true, domain: this.stateService.configuration.parentDomain })
     ]).pipe(switchMap(([ localSession, parentSession ]) => {
       if (!localSession.ok || !parentSession.ok) {
@@ -82,9 +82,9 @@ export class SyncService {
   }
 
   confirmPasswordAndRunReplicators(replicators) {
-    return this.openPasswordConfirmation().pipe(switchMap((credentials) => {
-      return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
-    }));
+    return this.openPasswordConfirmation().pipe(
+      switchMap((credentials) => forkJoin(replicators.map((replicator) => this.sync(replicator, credentials))))
+    );
   }
 
   sync(replicator, credentials) {
@@ -106,13 +106,13 @@ export class SyncService {
     }
     return {
       // Name the id always after the local database
-      '_id': this.replicatorId(replicator, type),
-      'source': this.dbObj(dbSource, credentials, type === 'pull' && type !== 'internal'),
-      'target': this.dbObj(dbTarget, credentials, type !== 'pull' && type !== 'internal'),
-      'selector': replicator.selector,
-      'create_target': false,
-      'owner': credentials.name,
-      'continuous': replicator.continuous
+      _id: this.replicatorId(replicator, type),
+      source: this.dbObj(dbSource, credentials, type === 'pull' && type !== 'internal'),
+      target: this.dbObj(dbTarget, credentials, type !== 'pull' && type !== 'internal'),
+      selector: replicator.selector,
+      create_target: false,
+      owner: credentials.name,
+      continuous: replicator.continuous
     };
   }
 
@@ -121,7 +121,7 @@ export class SyncService {
   }
 
   private itemSelector(items) {
-    return { '$or': items.map((res) => ({ _id: res._id, _rev: res._rev })) };
+    return { $or: items.map((res) => ({ _id: res._id, _rev: res._rev })) };
   }
 
   private dbObj(dbName, credentials, parent: boolean) {
@@ -129,10 +129,10 @@ export class SyncService {
     const domain = parent ? this.parentDomain + '/' : environment.syncAddress + '/';
     const protocol = parent ? this.parentProtocol + '://' : '';
     return {
-      'headers': {
-        'Authorization': 'Basic ' + btoa(username + ':' + credentials.password)
+      headers: {
+        Authorization: 'Basic ' + btoa(username + ':' + credentials.password)
       },
-      'url': protocol + domain + dbName
+      url: protocol + domain + dbName
     };
   }
 
@@ -174,7 +174,7 @@ export class SyncService {
 
   combineReplicatorObject(item, doc, syncObject) {
     if (item.selector) {
-      return { ...syncObject, selector: { '$or': [ ...syncObject.selector.$or, ...item.selector.$or ] } };
+      return { ...syncObject, selector: { $or: [ ...syncObject.selector.$or, ...item.selector.$or ] } };
     }
     return { ...syncObject, items: [ ...syncObject.items, doc ] };
   }
@@ -220,7 +220,7 @@ export class SyncService {
       db: 'tags',
       type,
       date: true,
-      selector: { '$or': [ ...tagIds, { linkId: tags[0].tagLink.linkId, db: tags[0].tagLink.db } ] }
+      selector: { $or: [ ...tagIds, { linkId: tags[0].tagLink.linkId, db: tags[0].tagLink.db } ] }
     });
   }
 

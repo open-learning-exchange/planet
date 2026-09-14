@@ -25,7 +25,7 @@ describe('feedback document attachments', () => {
   });
 
   it('propagates read failures instead of producing a partial attachment set', async () => {
-    vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function () {
+    vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function() {
       this.onerror(new ProgressEvent('error'));
     });
     await expect(prepareFeedbackAttachments([ image() ]).toPromise()).rejects.toThrow('Could not read');

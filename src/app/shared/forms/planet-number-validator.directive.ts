@@ -12,7 +12,7 @@ export class PlanetNumberValidatorDirective implements AfterViewInit {
 
     const control = this.controlName.control as FormControl<number | null>;
     const numberValidator: ValidatorFn = (_control: AbstractControl<number | null>) =>
-      !this.elementRef.nativeElement.validity.valid ? { 'invalidInt': true } : null;
+      !this.elementRef.nativeElement.validity.valid ? { invalidInt: true } : null;
 
     control.addValidators(numberValidator);
     setTimeout(() => control.updateValueAndValidity(), 0);

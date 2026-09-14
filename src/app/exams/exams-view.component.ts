@@ -228,7 +228,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
       this.comment = undefined;
-      this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
+      this.submissionsService.openSubmission({ submissionId, status: params.get('status') });
     }
   }
 
