@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
-
-const currencyApiKey = process.env.CURRENCY_API_KEY;
+import { key } from '../config/currency-provider.config';
 
 export const getCurrencyRate = async (req: Request, res: Response) => {
 
   try {
-    const apiResponse = await fetch(`https://v6.exchangerate-api.com/v6/${currencyApiKey}/pair/USD/GTQ`);
+    const apiResponse = await fetch(`https://v6.exchangerate-api.com/v6/${key}/pair/USD/GTQ`);
     const data = await apiResponse.json();
     return res.status(201).json({
       'status': 'Success',
