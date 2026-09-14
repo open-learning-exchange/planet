@@ -3,11 +3,21 @@ import { FileUploadComponent } from './file-upload.component';
 
 describe('FileUploadComponent staged attachments', () => {
   let component: FileUploadComponent;
+  const createObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'createObjectURL');
+  const revokeObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'revokeObjectURL');
   const file = (name = 'screen.png', type = 'image/png') => new File([ 'image' ], name, { type });
   const select = (files: File[]) => component.onInputChange({ target: { files } } as unknown as Event);
 
+  beforeAll(() => {
+    Object.defineProperties(URL, {
+      createObjectURL: { configurable: true, value: () => '' },
+      revokeObjectURL: { configurable: true, value: () => undefined }
+    });
+  });
+
   beforeEach(() => {
-    vi.stubGlobal('URL', { createObjectURL: vi.fn().mockReturnValue('blob:preview'), revokeObjectURL: vi.fn() });
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:preview');
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
     component = new FileUploadComponent();
     component.multiple = true;
     component.maxFiles = 3;
@@ -18,7 +28,20 @@ describe('FileUploadComponent staged attachments', () => {
 
   afterEach(() => {
     component.ngOnDestroy();
-    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  afterAll(() => {
+    if (createObjectURLDescriptor) {
+      Object.defineProperty(URL, 'createObjectURL', createObjectURLDescriptor);
+    } else {
+      Reflect.deleteProperty(URL, 'createObjectURL');
+    }
+    if (revokeObjectURLDescriptor) {
+      Object.defineProperty(URL, 'revokeObjectURL', revokeObjectURLDescriptor);
+    } else {
+      Reflect.deleteProperty(URL, 'revokeObjectURL');
+    }
   });
 
   it('caps multi-select at three files and reports the excess', () => {

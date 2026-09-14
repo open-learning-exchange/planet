@@ -59,7 +59,7 @@
       </mat-card>
     }
     <div class="chat-list" #chatList>
-      @for (message of feedback.messages; track trackById($index, message)) {
+      @for (message of feedback.messages; track $index) {
         <div class="chat-list-item">
           <div class="chat-list-user">
             <span [matTooltip]="users[message.user] || message.user">{{(users[message.user] || message.user) | truncateText:80}}</span>

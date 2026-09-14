@@ -31,21 +31,6 @@
       color: v.$grey-text;
     }
   }
-
-  mat-card {
-    max-width: 90%;
-    margin-top: 0.5rem;
-    border: 1px solid v.$medium-grey;
-    border-radius: 12px;
-    background-color: v.$light-grey;
-
-    &.primary-color {
-      background-color: v.$primary;
-      color: v.$primary-text;
-      border-color: v.$primary;
-    }
-  }
-
   &:not(:last-child) {
     margin-bottom: 1.5rem;
   }

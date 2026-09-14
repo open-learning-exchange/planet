@@ -22,7 +22,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
 import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
-import { AttachmentInputState, FileUploadComponent } from '../forms/file-upload.component';
+import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '../forms/file-upload.component';
 import { AuthorizedRolesDirective } from '../authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -87,6 +87,7 @@ export class DialogsFormComponent {
   passwordVisibility = new Map<string, boolean>();
   isSpinnerOk = true;
   errorMessage = '';
+  readonly emptyAttachments: ExistingAttachment[] = [];
   dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
 

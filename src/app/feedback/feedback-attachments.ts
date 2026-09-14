@@ -1,4 +1,4 @@
-import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PendingAttachment } from '../shared/forms/file-upload.component';
 import { normalizedContentType, safeAttachmentName } from '../shared/utils';
@@ -16,12 +16,6 @@ export interface FeedbackImageAttachment {
 export const prepareFeedbackAttachments = (
   images: PendingAttachment[] = []
 ): Observable<Record<string, FeedbackImageAttachment>> => {
-  if (images.length > FEEDBACK_MAX_IMAGES || images.some(({ file }) =>
-    !file || file.size === 0 || file.size > FEEDBACK_MAX_IMAGE_SIZE ||
-    !FEEDBACK_IMAGE_TYPES.includes(normalizedContentType(file).toLowerCase())
-  )) {
-    return throwError(new Error($localize`Choose up to three PNG, JPEG, GIF or WebP images, no larger than 2 MB each.`));
-  }
   if (!images.length) {
     return of({});
   }

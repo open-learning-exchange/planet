@@ -11,7 +11,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { couchAttachmentUrl, urlToParamObject } from '../shared/utils';
 import { UsersService } from '../users/users.service';
-import { trackById } from '../shared/table-helpers';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -78,7 +77,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   showParams = 'off';
   showParamsButton = false;
   users = {};
-  trackById = trackById;
   normalizedType = '';
   normalizedStatus = '';
 

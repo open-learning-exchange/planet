@@ -68,7 +68,7 @@ const dialogFieldOptions = [
       maxFiles: FEEDBACK_MAX_IMAGES,
       maxFileSize: FEEDBACK_MAX_IMAGE_SIZE,
       imagePreview: true,
-      hint: $localize`Up to three images, no larger than 2 MB each. Images are saved only when you submit feedback.`,
+      hint: $localize`Up to three images, no larger than 2 MB each. Other users may see them, so leave out private information.`,
       typePills: [ 'PNG', 'JPEG', 'GIF', 'WebP' ]
     }
   }
@@ -94,7 +94,7 @@ export class FeedbackDirective {
     private dialogsLoadingService: DialogsLoadingService
   ) {}
 
-  addFeedback(post: any) {
+  addFeedback(post: any, feedbackId = this.newFeedbackId(), isRetry = false) {
     if (this.isSubmitting) {
       return;
     }
@@ -103,12 +103,13 @@ export class FeedbackDirective {
     const date = new Date();
     const user = this.userService.get().name;
     const feedbackUrl = this.router.url || '/';
-    const navigationUrl = feedbackUrl !== '/' ? this.removeNavigationParams(feedbackUrl) : '/';
+    const navigationUrl = feedbackUrl !== '/' ? this.removeNavigationParams(feedbackUrl).replace(/\/+$/, '') : '/';
     const urlParts = navigationUrl.split('/');
     const firstPart = urlParts[1] || 'home';
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
     const feedback: any = {
       ...post,
+      _id: feedbackId,
       routerLink: null,
       state: firstPart,
       titleContext: null,
@@ -116,15 +117,15 @@ export class FeedbackDirective {
     if (firstPart === 'home') {
       feedback.titleContext = { kind: 'home' };
       feedback.routerLink = [ '/home' ];
-      this.updateFeedback(feedback, date, user, feedbackUrl);
+      this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
     } else if (this.feedbackOf?.name) {
       feedback.titleContext = { kind: 'item', state: firstPart, name: this.feedbackOf.name };
       feedback.routerLink = [ '/', firstPart, 'view', this.feedbackOf.item ];
-      this.updateFeedback(feedback, date, user, feedbackUrl);
+      this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
     } else if (urlParts.length === 2) {
       feedback.titleContext = { kind: 'section', state: firstPart };
       feedback.routerLink = [ '/', firstPart ];
-      this.updateFeedback(feedback, date, user, feedbackUrl);
+      this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
     } else if (lastPart) {
       const fallbackPath = urlParts.slice(1);
       this.couchService.getDocumentByID(firstPart, lastPart).subscribe(
@@ -134,18 +135,14 @@ export class FeedbackDirective {
             : document?.title || document?.courseTitle || document?.name || lastPart;
           feedback.titleContext = { kind: 'item', state: firstPart, name: resourceName };
           feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
-          this.updateFeedback(feedback, date, user, feedbackUrl);
+          this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
         },
         (error) => {
           feedback.titleContext = { kind: 'path', path: fallbackPath };
           feedback.routerLink = [ '/', ...fallbackPath ];
-          this.updateFeedback(feedback, date, user, feedbackUrl);
+          this.updateFeedback(feedback, date, user, feedbackUrl, isRetry);
         }
       );
-    } else {
-      feedback.titleContext = { kind: 'path', path: urlParts.slice(1) };
-      feedback.routerLink = [ '/', ...urlParts.slice(1) ];
-      this.updateFeedback(feedback, date, user, feedbackUrl);
     }
   }
 
@@ -154,7 +151,11 @@ export class FeedbackDirective {
     return path.split('/').map(part => part.split(';')[0]).join('/');
   }
 
-  private updateFeedback(feedback: any, date: Date, user: string, url: string) {
+  private newFeedbackId() {
+    return Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  private updateFeedback(feedback: any, date: Date, user: string, url: string, isRetry: boolean) {
     const { attachments, ...feedbackValues } = feedback;
     const startingMessage: Message = { message: feedback.message, time: date, user };
     const newFeedback: Feedback = {
@@ -186,7 +187,15 @@ export class FeedbackDirective {
         this.feedbackService.setFeedback();
         this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
       },
-      () => {
+      (error) => {
+        if (isRetry && error?.status === 409) {
+          this.dialogsFormService.closeDialogsForm();
+          this.feedbackService.setFeedback();
+          this.planetMessageService.showAlert(
+            $localize`An earlier version of this feedback was already submitted. Changes made before retrying may not have been saved.`
+          );
+          return;
+        }
         this.dialogsFormService.showErrorMessage(
           $localize`Your feedback could not be submitted. Your text and images are still here. Please try again.`
         );
@@ -208,16 +217,18 @@ export class FeedbackDirective {
       message: [ this.message, CustomValidators.required ],
       attachments: [ { retained: [], removed: [], added: [] } ]
     };
+    const feedbackId = this.newFeedbackId();
+    let hasSubmitted = false;
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       closeOnSubmit: false,
       confirmUnsavedChanges: true,
-      disableIfInvalid: true,
       onSubmit: response => {
         if (this.isSubmitting) {
           this.dialogsLoadingService.stop();
           return;
         }
-        this.addFeedback(response);
+        this.addFeedback(response, feedbackId, hasSubmitted);
+        hasSubmitted = true;
       }
     });
   }
