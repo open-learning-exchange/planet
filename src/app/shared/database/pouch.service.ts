@@ -16,7 +16,8 @@ export class PouchService {
   private baseUrl = environment.couchAddress + '/';
   private localDBs = new Map<string, PouchDB.Database>();
   private authDB: PouchDB.Database;
-  private databases = new Set<string>([ 'feedback' ]);
+  private databases = new Set<string>();
+  private legacyDatabases = new Set<string>([ 'feedback' ]);
 
   constructor() {
     // test is a placeholder temp databases
@@ -41,7 +42,14 @@ export class PouchService {
   }
 
   deconfigureDBs() {
-    return Array.from(this.localDBs.values(), pouchDB => pouchDB.destroy());
+    const databaseCleanup = Array.from(this.localDBs.values(), pouchDB => pouchDB.destroy());
+    // Feedback was mirrored before attachments were supported, but no feature reads the local copy.
+    const legacyDatabaseCleanup = Array.from(this.legacyDatabases, db => new PouchDB(`local-${db}`).destroy().catch(error => {
+      console.error(`Unable to remove legacy local-${db} database`, error);
+      return { ok: false };
+    }));
+    this.localDBs.clear();
+    return [ ...databaseCleanup, ...legacyDatabaseCleanup ];
   }
 
   // @TODO: handle edge cases like offline, duplicate, duplications
