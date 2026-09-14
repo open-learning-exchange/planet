@@ -9,7 +9,6 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { trackByIndex } from '../../shared/table-helpers';
-import { canManageCourse } from '../courses.utils';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -106,8 +105,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
-        this.canManage = !this.parent &&
-          canManageCourse(this.courseDetail, this.currentUser, this.stateService.configuration.code);
+        this.canManage = this.coursesService.canManageCourse(this.courseDetail, { readOnly: this.parent });
         return this.stateService.getCouchState('exams', 'local');
       }),
       takeUntil(this.onDestroy$)
