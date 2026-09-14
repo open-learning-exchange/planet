@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
@@ -9,8 +9,9 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { trackByIndex } from '../../shared/table-helpers';
+import { canManageCourse } from '../courses.utils';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
@@ -51,6 +52,8 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     PlanetMarkdownComponent,
     MatExpansionPanelActionRow,
     ResourcesMenuComponent,
+    MatAnchor,
+    RouterLink,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
   ]
@@ -103,9 +106,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
-        this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
-          this.courseDetail.creator !== undefined &&
-          (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
+        this.canManage = !this.parent &&
+          canManageCourse(this.courseDetail, this.currentUser, this.stateService.configuration.code);
         return this.stateService.getCouchState('exams', 'local');
       }),
       takeUntil(this.onDestroy$)

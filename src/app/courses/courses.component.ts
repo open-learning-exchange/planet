@@ -19,6 +19,7 @@ import {
   commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/table-helpers';
 import * as constants from './constants';
+import { canManageCourse } from './courses.utils';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -291,8 +292,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   setupList(courseRes, myCourses) {
     return courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
-      course.canManage = this.user.isUserAdmin ||
-        (course.doc.creator === this.user.name + '@' + this.planetConfiguration.code);
+      course.canManage = canManageCourse(course.doc, this.user, this.planetConfiguration.code);
       course.admission = myCourseIndex > -1;
       return course;
     });

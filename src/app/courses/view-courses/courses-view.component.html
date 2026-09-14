@@ -43,7 +43,7 @@
   </ng-template>
 
   <ng-template #actionButtons>
-    @if (canManage) {
+    @if (canManage && !parent) {
       <a mat-raised-button color="primary" [routerLink]="['/courses/submissions', courseDetail._id]" class="margin-lr-3 km-course-submissions-btn" i18n>
         Submissions & Grading
       </a>

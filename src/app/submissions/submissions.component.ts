@@ -29,7 +29,6 @@ import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -62,7 +61,6 @@ const columnsByFilterAndMode = {
     MatInput,
     FormsModule,
     MatTooltip,
-    TruncateTextPipe,
     NgClass,
     MatTable,
     MatSort,
@@ -90,7 +88,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @Input() parentId: string;
   @Input() courseId: string;
   @Input() courseTitle: string;
-  @Input() hideHeader = false;
+  @Input() showCourseHeader = false;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
   @Output() backClick = new EventEmitter<void>();
@@ -284,7 +282,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
-    if (this.backClick.observers.length > 0) {
+    // A host that scopes the list to a course owns the route it came from.
+    if (this.courseId) {
       this.backClick.emit();
       return;
     }

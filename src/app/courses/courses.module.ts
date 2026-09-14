@@ -23,7 +23,6 @@ import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.
 import { CoursesViewDetailModule } from './view-courses/courses-view-detail.module';
 import { CoursesSearchComponent, CoursesSearchListComponent } from './search-courses/courses-search.component';
 import { ChatModule } from '../chat/chat.module';
-import { CoursesSubmissionsComponent } from './submissions-courses/courses-submissions.component';
 
 @NgModule({
   imports: [
@@ -51,8 +50,7 @@ import { CoursesSubmissionsComponent } from './submissions-courses/courses-submi
     CoursesSearchComponent,
     CoursesSearchListComponent,
     CoursesEnrollComponent,
-    CoursesIconComponent,
-    CoursesSubmissionsComponent
+    CoursesIconComponent
   ],
   exports: [CoursesComponent]
 })

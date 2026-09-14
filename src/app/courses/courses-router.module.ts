@@ -11,6 +11,7 @@ import { CoursesProgressLeaderComponent } from './progress-courses/courses-progr
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 import { CoursesSubmissionsComponent } from './submissions-courses/courses-submissions.component';
+import { courseSubmissionsResolver, courseSubmissionsRerun } from './submissions-courses/courses-submissions.resolver';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
@@ -26,8 +27,11 @@ const routes: Routes = [
   { path: 'update/survey/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },
   { path: 'enrolled/:id', component: CoursesEnrollComponent },
-  { path: 'submissions/:id', component: CoursesSubmissionsComponent },
-  { path: 'submissions/:id/exam', component: ExamsViewComponent }
+  { path: 'submissions/:id', component: CoursesSubmissionsComponent, resolve: { course: courseSubmissionsResolver } },
+  {
+    path: 'submissions/:id/exam', component: ExamsViewComponent,
+    resolve: { course: courseSubmissionsResolver }, runGuardsAndResolvers: courseSubmissionsRerun
+  }
 ];
 
 @NgModule({
