@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { PlanetMessageService } from './planet-message.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { map, switchMap, filter, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -12,6 +13,8 @@ export class StateService {
   state: any = { local: {}, parent: {} };
   private stateUpdated = new Subject<any>();
   private inProgress = { local: new Map(), parent: new Map() };
+  // Tracks which planets already alerted the user, so one outage does not stack a snackbar per database
+  private errorNotified = new Set<string>();
 
   get configuration(): any {
     const config = this.state.local.configurations?.docs[0] || {};
@@ -24,7 +27,8 @@ export class StateService {
   }
 
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   requestBaseData() {
@@ -37,6 +41,7 @@ export class StateService {
   }
 
   requestData(db: string, planetField: string, sort?: { [key: string]: 'asc' | 'desc' }) {
+    this.inProgress[planetField] = this.inProgress[planetField] || new Map();
     if (this.inProgress[planetField].get(db) !== true) {
       this.inProgress[planetField].set(db, true);
       this.getCouchState(db, planetField, sort).subscribe(() => {});
@@ -56,14 +61,32 @@ export class StateService {
         const inProgress = isInitialFind && changes.length > 0;
         this.state[planetField][db].docs = newData;
         this.stateUpdated.next({ newData, db, planetField, inProgress });
-        this.inProgress[planetField].set(db, inProgress);
+        this.setInProgress(db, planetField, inProgress);
+        this.errorNotified.delete(planetField);
         return newData;
       }),
       catchError(() => {
-        this.inProgress[planetField].set(db, false);
-        return [];
+        // Always notify listeners, otherwise views waiting on this database keep their loading spinner forever
+        const docs = this.state[planetField][db].docs;
+        this.setInProgress(db, planetField, false);
+        this.stateUpdated.next({ newData: docs, db, planetField, inProgress: false, error: true });
+        this.notifyError(planetField);
+        return of(docs);
       })
     );
+  }
+
+  private setInProgress(db: string, planetField: string, inProgress: boolean) {
+    this.inProgress[planetField] = this.inProgress[planetField] || new Map();
+    this.inProgress[planetField].set(db, inProgress);
+  }
+
+  private notifyError(planetField: string) {
+    if (this.errorNotified.has(planetField)) {
+      return;
+    }
+    this.errorNotified.add(planetField);
+    this.planetMessageService.showAlert($localize`There was an error connecting to Planet`);
   }
 
   optsFromPlanetField(planetField: string) {
@@ -90,12 +113,14 @@ export class StateService {
       db + '/_changes?include_docs=true&since=' + (this.state[planetField][db].lastSeq || 'now'), opts
     ).pipe(map((res: any) => {
       this.state[planetField][db].lastSeq = res.last_seq;
-      return res.results.filter((r: any) => r.doc._id.indexOf('_design') === -1).map((r: any) => r.doc);
+      return (res.results || [])
+        .filter((r: any) => r.doc !== undefined && r.doc !== null && r.doc._id.indexOf('_design') === -1)
+        .map((r: any) => r.doc);
     }));
   }
 
   couchStateListener(db: string) {
-    return this.stateUpdated.pipe(filter((stateObj: { newData, db, planetField, inProgress }) => db === stateObj.db));
+    return this.stateUpdated.pipe(filter((stateObj: { newData, db, planetField, inProgress, error? }) => db === stateObj.db));
   }
 
   combineChanges(docs: any[], changesDocs: any[], sort) {
