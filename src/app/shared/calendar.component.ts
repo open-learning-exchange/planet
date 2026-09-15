@@ -17,6 +17,7 @@ import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { MatTooltip } from '@angular/material/tooltip';
 
 const taskEventColors = {
   completed: {
@@ -38,9 +39,21 @@ const taskEventColors = {
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     @if (showLegend) {
       <div class="calendar-legend">
-        @for (legend of eventLegend; track legend) {
+        @for (legend of eventLegend; track legend.key) {
           @if (!legend.type || legend.type === type) {
-            <div class="legend-item">
+            <div class="legend-item"
+                 #tooltip="matTooltip"
+                 [class.legend-toggle]="type === 'team'"
+                 [class.legend-item-disabled]="type === 'team' && !isFilterActive(legend.key)"
+                 [matTooltip]="getFilterTooltip(legend)"
+                 [matTooltipDisabled]="type !== 'team'"
+                 (click)="toggleFilter(legend.key, undefined, tooltip)"
+                 (keydown.enter)="toggleFilter(legend.key, undefined, tooltip)"
+                 (keydown.space)="toggleFilter(legend.key, $event, tooltip)"
+                 [attr.role]="type === 'team' ? 'button' : null"
+                 [attr.tabindex]="type === 'team' ? 0 : null"
+                 [attr.aria-pressed]="type === 'team' ? isFilterActive(legend.key) : null"
+                 [attr.aria-label]="type === 'team' ? getFilterTooltip(legend) : null">
               <div class="legend-color" [style.backgroundColor]="legend.color"></div>
               <span>{{ legend.label }}</span>
             </div>
@@ -49,7 +62,7 @@ const taskEventColors = {
       </div>
     }
     `,
-  imports: [FullCalendarModule]
+  imports: [FullCalendarModule, MatTooltip]
 })
 export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -81,10 +94,31 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
   meetups: any[] = [];
   tasks: any[] = [];
   showLegend = true;
+  activeFilters: Set<string> = new Set(['event', 'uncompleted', 'completed']);
   eventLegend = [
-    { color: styleVariables.primary, label: $localize`Event` },
-    { color: taskEventColors.uncompleted.backgroundColor, label: $localize`Uncompleted Task`, type: 'team' },
-    { color: taskEventColors.completed.backgroundColor, label: $localize`Completed Task`, type: 'team' }
+    {
+      key: 'event',
+      color: styleVariables.primary,
+      label: $localize`Event`,
+      showTooltip: $localize`Show Events`,
+      hideTooltip: $localize`Hide Events`
+    },
+    {
+      key: 'uncompleted',
+      color: taskEventColors.uncompleted.backgroundColor,
+      label: $localize`Uncompleted Task`,
+      type: 'team',
+      showTooltip: $localize`Show Uncompleted Tasks`,
+      hideTooltip: $localize`Hide Uncompleted Tasks`
+    },
+    {
+      key: 'completed',
+      color: taskEventColors.completed.backgroundColor,
+      label: $localize`Completed Task`,
+      type: 'team',
+      showTooltip: $localize`Show Completed Tasks`,
+      hideTooltip: $localize`Hide Completed Tasks`
+    }
   ];
 
   calendarOptions: CalendarOptions = {
@@ -183,6 +217,61 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
+  isFilterActive(key: string): boolean {
+    return this.activeFilters.has(key);
+  }
+
+  getFilterTooltip(legend: any): string {
+    if (this.type !== 'team') {
+      return '';
+    }
+    return this.isFilterActive(legend.key) ? legend.hideTooltip : legend.showTooltip;
+  }
+
+  toggleFilter(key: string, event?: Event, tooltip?: MatTooltip): void {
+    if (this.type !== 'team') {
+      return;
+    }
+    if (event) {
+      event.preventDefault();
+    }
+    if (this.activeFilters.has(key)) {
+      this.activeFilters.delete(key);
+    } else {
+      this.activeFilters.add(key);
+    }
+    this.updateVisibleEvents();
+    if (tooltip) {
+      const legend = this.eventLegend.find(l => l.key === key);
+      if (legend) {
+        tooltip.message = this.getFilterTooltip(legend);
+      }
+      tooltip.hide(0);
+      setTimeout(() => {
+        if (!tooltip.disabled) {
+          tooltip.show(0);
+        }
+      }, 50);
+    }
+  }
+
+  updateVisibleEvents() {
+    const visible: any[] = [];
+    if (this.type !== 'team' || this.activeFilters.has('event')) {
+      visible.push(...this.meetups);
+    }
+    if (this.type === 'team') {
+      if (this.activeFilters.has('uncompleted')) {
+        visible.push(...this.tasks.filter(t => !t.extendedProps?.meetup?.completed));
+      }
+      if (this.activeFilters.has('completed')) {
+        visible.push(...this.tasks.filter(t => t.extendedProps?.meetup?.completed));
+      }
+    }
+    this.events = visible.length > 0 ? visible : [ {} ];
+    this.calendarOptions.events = this.events;
+  }
+
   getMeetups() {
     this.couchService.findAll(this.dbName, findDocuments({ link: this.link })).subscribe((meetups: any[]) => {
       this.meetups = meetups.map(meetup => {
@@ -196,8 +285,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
             return this.eventObject(meetup);
         }
       }).flat();
-      this.events = [ ...this.meetups, ...this.tasks ];
-      this.calendarOptions.events = this.events;
+      this.updateVisibleEvents();
     });
   }
 
@@ -207,8 +295,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
         const taskColors = task.completed ? taskEventColors.completed : taskEventColors.uncompleted;
         return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
-      this.events = [ ...this.meetups, ...this.tasks ];
-      this.calendarOptions.events = this.events;
+      this.updateVisibleEvents();
     });
   }
 

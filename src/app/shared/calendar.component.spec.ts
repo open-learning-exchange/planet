@@ -226,4 +226,63 @@ describe('PlanetCalendarComponent', () => {
       data: expect.objectContaining({ leaderOfTeamId: 'team-1', meetup })
     }));
   });
+
+  describe('Event filtering on team calendars', () => {
+    it('filters events and dynamically updates tooltips when toggled', () => {
+      const couchService = {
+        findAll: (db: string) => of(db === 'meetups'
+          ? [{ title: 'Meeting', startDate: 1, endDate: 1, recurring: 'none' }]
+          : [{ title: 'Open Task', deadline: 1, completed: false }, { title: 'Done Task', deadline: 1, completed: true }])
+      };
+      const component = createComponent(couchService);
+      component.type = 'team';
+      component.getMeetups();
+      component.getTasks();
+
+      expect(component.calendarOptions.events.length).toBe(3);
+      expect(component.getFilterTooltip(component.eventLegend[0])).toBe('Hide Events');
+
+      component.toggleFilter('uncompleted');
+      expect(component.calendarOptions.events.some((e: any) => e.title === 'Open Task')).toBe(false);
+      expect(component.getFilterTooltip(component.eventLegend[1])).toBe('Show Uncompleted Tasks');
+
+      component.toggleFilter('completed');
+      component.toggleFilter('event');
+      expect(component.calendarOptions.events).toEqual([ {} ]);
+
+      component.toggleFilter('event');
+      expect(component.calendarOptions.events.length).toBe(1);
+      expect(component.calendarOptions.events[0].title).toBe('Meeting');
+    });
+
+    it('refreshes tooltips on click and prevents default on space key', () => {
+      vi.useFakeTimers();
+      const component = createComponent();
+      component.type = 'team';
+      const event = { preventDefault: vi.fn() } as unknown as Event;
+      const tooltip = { message: '', disabled: false, hide: vi.fn(), show: vi.fn() } as any;
+
+      component.toggleFilter('event', event, tooltip);
+
+      expect(event.preventDefault).toHaveBeenCalledOnce();
+      expect(tooltip.message).toBe('Show Events');
+      expect(tooltip.hide).toHaveBeenCalledWith(0);
+      vi.advanceTimersByTime(50);
+      expect(tooltip.show).toHaveBeenCalledWith(0);
+      vi.useRealTimers();
+    });
+
+    it('does not toggle filters or show tooltips on non-team calendars', () => {
+      const couchService = { findAll: () => of([{ title: 'Event', startDate: 1, endDate: 1, recurring: 'none' }]) };
+      const component = createComponent(couchService);
+      component.type = 'community';
+      component.getMeetups();
+
+      component.toggleFilter('event');
+
+      expect(component.isFilterActive('event')).toBe(true);
+      expect(component.calendarOptions.events.length).toBe(1);
+      expect(component.getFilterTooltip(component.eventLegend[0])).toBe('');
+    });
+  });
 });
