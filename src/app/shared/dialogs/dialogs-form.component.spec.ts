@@ -141,6 +141,19 @@ describe('DialogsFormComponent', () => {
     expect(errors[1].nativeElement.textContent).toContain('This field is required');
   });
 
+  it('scrolls the first invalid field into view when submitting an invalid form', () => {
+    createComponent();
+
+    const firstInvalidEl = fixture.nativeElement.querySelector('.ng-invalid:not(form)');
+    const scrollSpy = vi.fn();
+    firstInvalidEl.scrollIntoView = scrollSpy;
+
+    const form = fixture.debugElement.query(By.css('form'));
+    form.triggerEventHandler('ngSubmit', null);
+
+    expect(scrollSpy).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' });
+  });
+
   it('submits successfully and closes the dialog when the form is valid', () => {
     createComponent();
 

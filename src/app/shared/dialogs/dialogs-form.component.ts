@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
@@ -128,7 +128,8 @@ export class DialogsFormComponent {
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsListService: DialogsListService,
     private userService: UserService,
-    private dialogGuard: DialogGuardService
+    private dialogGuard: DialogGuardService,
+    private elementRef?: ElementRef<HTMLElement>
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.createModalForm(this.data.formGroup);
@@ -174,6 +175,7 @@ export class DialogsFormComponent {
   onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {
     if (!mForm.valid) {
       this.markFormAsTouched(mForm);
+      this.scrollToFirstInvalidField();
       return;
     }
     if (this.data && this.data.onSubmit) {
@@ -183,6 +185,15 @@ export class DialogsFormComponent {
     if (!this.data || this.data.closeOnSubmit === true) {
       this.dialogsLoadingService.stop();
       dialog.close(mForm.value);
+    }
+  }
+
+  private scrollToFirstInvalidField(): void {
+    const invalidElement = this.elementRef?.nativeElement?.querySelector(
+      '.ng-invalid:not(form), mat-radio-group.ng-invalid, mat-form-field.ng-invalid, [aria-invalid="true"]'
+    );
+    if (invalidElement && typeof (invalidElement as HTMLElement).scrollIntoView === 'function') {
+      (invalidElement as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 
