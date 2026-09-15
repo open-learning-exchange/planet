@@ -50,13 +50,22 @@
         <!-- radio button -->
         @if (field.type === 'radio') {
           <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}">
-            <mat-label>{{field.label}}</mat-label><br>
+            <mat-label class="planet-radio-label">
+              {{field.label}}
+              @if (field.required) {
+                <span class="mat-form-field-required-marker" aria-hidden="true">*</span>
+              }
+            </mat-label><br>
             @for (option of field.options; track option) {
               <mat-radio-button class="planet-radio-button" [value]="getRadioOptionValue(option)">
                 {{getRadioOptionLabel(option)}}
               </mat-radio-button>
             }
-            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+            @if (modalForm.controls[field.name].invalid && modalForm.controls[field.name].touched) {
+              <mat-error>
+                <planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages>
+              </mat-error>
+            }
           </mat-radio-group>
         }
         <!-- Star Rating -->

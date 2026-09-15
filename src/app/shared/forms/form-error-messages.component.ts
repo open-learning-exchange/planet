@@ -6,10 +6,11 @@
  * Message will need update if used for other situations
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'planet-form-error-messages',
@@ -55,37 +56,61 @@ import { MatTooltip } from '@angular/material/tooltip';
     `,
   imports: [MatTooltip, DatePipe]
 })
-export class FormErrorMessagesComponent implements OnInit {
+export class FormErrorMessagesComponent implements OnInit, OnDestroy {
 
-  @Input() private control: AbstractControlDirective | AbstractControl;
+  @Input() set control(ctrl: AbstractControlDirective | AbstractControl | undefined) {
+    if (this.targetControl === ctrl) {
+      return;
+    }
+    this.statusSubscription?.unsubscribe();
+    this.targetControl = ctrl;
+    this.updateError();
+    if (this.targetControl?.statusChanges) {
+      this.statusSubscription = this.targetControl.statusChanges.subscribe(() => {
+        this.updateError();
+      });
+    }
+  }
+  get control(): AbstractControlDirective | AbstractControl | undefined {
+    return this.targetControl;
+  }
+
+  @Input() set formControl(ctrl: AbstractControlDirective | AbstractControl | undefined) {
+    this.control = ctrl;
+  }
+
+  private targetControl?: AbstractControlDirective | AbstractControl;
+  private statusSubscription?: Subscription;
 
   error = '';
   number: number;
   date: Date;
 
   ngOnInit() {
-    this.control.statusChanges.subscribe(() => {
-      this.updateError();
-    });
+    this.updateError();
+  }
+
+  ngOnDestroy() {
+    this.statusSubscription?.unsubscribe();
   }
 
   shouldShowError(): boolean {
-    return (
-      this.control &&
-      this.control.errors &&
-      (this.control.dirty || this.control.touched)
+    return !!(
+      this.targetControl &&
+      this.targetControl.errors &&
+      (this.targetControl.dirty || this.targetControl.touched)
     );
   }
 
   // Show one error at a time
   updateError() {
-    if (!this.control.errors) {
+    if (!this.targetControl?.errors) {
       this.error = '';
       return;
     }
-    const errorType = Object.keys(this.control.errors)[0];
-    const number = this.control.errors[errorType].min !== undefined || this.control.errors[errorType].max !== undefined ?
-      this.control.errors[errorType].min || this.control.errors[errorType].max || 0 :
+    const errorType = Object.keys(this.targetControl.errors)[0];
+    const number = this.targetControl.errors[errorType]?.min !== undefined || this.targetControl.errors[errorType]?.max !== undefined ?
+      this.targetControl.errors[errorType].min || this.targetControl.errors[errorType].max || 0 :
       undefined;
     if (errorType.indexOf('Datepicker') > -1) {
       this.date = new Date(number);
