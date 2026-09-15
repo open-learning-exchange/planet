@@ -64,7 +64,8 @@ export class FormErrorMessagesComponent implements OnInit {
   date: Date;
 
   ngOnInit() {
-    this.control.statusChanges.subscribe(() => {
+    this.updateError();
+    this.control?.statusChanges?.subscribe(() => {
       this.updateError();
     });
   }

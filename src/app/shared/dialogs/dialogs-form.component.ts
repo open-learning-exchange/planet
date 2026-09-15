@@ -37,12 +37,20 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
       margin: 0 0 20px 0;
     }
 
-    .mat-mdc-radio-group.ng-touched.ng-invalid label {
-      border-bottom: 2px solid red;
+    mat-radio-group {
+      display: block;
+      margin-bottom: 16px;
     }
 
-    .ng-touched.ng-valid {
-      border: none;
+    .planet-radio-label .mat-form-field-required-marker {
+      color: var(--mdc-theme-error, #f44336);
+    }
+
+    mat-radio-group mat-error {
+      color: var(--mdc-theme-error, #f44336);
+      display: block;
+      font-size: 0.75rem;
+      margin-top: 4px;
     }
 
     .rating-input {
