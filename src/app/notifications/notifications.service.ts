@@ -6,31 +6,30 @@ import { StateService } from '../shared/state.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
+import { userIdentity } from '../shared/identity.utils';
 
-/**
- * Supports raw or replicated user docs and team-member rows. Callers holding a
- * fullUserDoc wrapper must pass its `doc` value.
- */
+/** Supports raw user docs, replicated fullUserDoc wrappers, and team-member rows. */
 export const notificationRecipient = (user: any, legacyPlanetCode?: string) => {
-  const userPlanetCode = user.userPlanetCode || user.planetCode || legacyPlanetCode;
-  const storedUserId = user.couchId || user.userId || user._id;
-  const associatedSuffix = userPlanetCode ? `@${userPlanetCode}` : '';
-  const isAssociatedAccount = !!((user.requestId || user.sync) && associatedSuffix &&
-    user.name?.endsWith(associatedSuffix) && storedUserId?.endsWith(associatedSuffix));
+  const identity = userIdentity(user, legacyPlanetCode);
   return {
-    user: isAssociatedAccount ? storedUserId.slice(0, -associatedSuffix.length) : storedUserId,
-    ...(userPlanetCode ? { userPlanetCode } : {})
+    user: identity.userId,
+    ...(identity.userPlanetCode ? { userPlanetCode: identity.userPlanetCode } : {})
   };
 };
 
 export const notificationUserFilter = (user: any) => {
-  const userId = `org.couchdb.user:${user.name}`;
-  const userFilters = user.planetCode ?
-    [
-      { user: userId, userPlanetCode: user.planetCode },
-      { user: userId, userPlanetCode: { $exists: false } }
-    ] :
-    [ { user: userId } ];
+  const source = { ...user, _id: user._id || `org.couchdb.user:${user.name}` };
+  const recipient = notificationRecipient(source);
+  // The materialized ID is unique to this account under any code; the canonical ID is shared with a same-named native account.
+  const hasMaterializedAlias = source._id !== recipient.user;
+  const userFilters = recipient.userPlanetCode ? [
+    { user: recipient.user, userPlanetCode: recipient.userPlanetCode },
+    ...(hasMaterializedAlias ? [
+      { user: source._id }
+    ] : [
+      { user: recipient.user, userPlanetCode: { $exists: false } }
+    ])
+  ] : [ { user: recipient.user } ];
   return user.isUserAdmin ? [ ...userFilters, { user: 'SYSTEM' } ] : userFilters;
 };
 
