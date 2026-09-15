@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map, filter, take, defaultIfEmpty } from 'rxjs/operators';
+import { switchMap, map, filter, take } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -19,16 +19,17 @@ import { UsersService } from '../users/users.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  #course: any = {};
+  private activeCourse: any = {};
   get course() {
-    return this.#course;
+    return this.activeCourse;
   }
   set course(newCourse: any) {
-    this.#course = { ...this.#course, ...newCourse };
+    this.activeCourse = { ...this.activeCourse, ...newCourse };
   }
   progress: any;
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
+  private courseTagsUpdated = new Subject<{ courseId: string, planetField: string, tags: any[] }>();
   private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
   private progressUpdated = new Subject<{ parent: boolean, planetField: string, progress: any[] }>();
   progressUpdateInProgress = false;
@@ -37,6 +38,7 @@ export class CoursesService {
   local = { courses: [], ratings: [], tags: [], courses_progress: [] };
   parent = { courses: [], ratings: [], tags: [], courses_progress: [] };
   isReady = { local: false, parent: false };
+  private tagsLoaded = { local: false, parent: false };
 
   constructor(
     private couchService: CouchService,
@@ -62,7 +64,17 @@ export class CoursesService {
         this.mergeData(this[planetField], planetField, res.parent);
       }
     });
-    this.stateService.couchStateListener('tags').subscribe((res: any) => handleStateRes(res, 'tags'));
+    this.stateService.couchStateListener('tags').subscribe((res: any) => {
+      handleStateRes(res, 'tags');
+      if (res !== undefined) {
+        this.tagsLoaded[res.planetField] = true;
+        if (this.activeCourse._id) {
+          this.courseTagsUpdated.next({
+            courseId: this.activeCourse._id, planetField: res.planetField, tags: this.courseTags(this.activeCourse, res.newData)
+          });
+        }
+      }
+    });
     this.stateService.couchStateListener(this.dbName).subscribe((res: any) => handleStateRes(res, this.dbName));
     this.stateService.couchStateListener(this.progressDb).subscribe((res: any) => handleStateRes(res, this.progressDb));
   }
@@ -82,7 +94,7 @@ export class CoursesService {
       _rev: course._rev,
       progress: courses_progress.filter((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || [],
       rating: this.ratingService.createItemList([ course ], ratings)[0].rating,
-      tags: this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags
+      tags: this.courseTags(course, tags)
     }));
     this.coursesUpdated.next({ courses: data, planetField, parent });
     this.progressUpdated.next({ progress: courses_progress, planetField, parent });
@@ -97,6 +109,10 @@ export class CoursesService {
 
   progressListener$(reqParent = false) {
     return this.progressUpdated.pipe(filter(res => res.parent === reqParent), map(res => res.progress));
+  }
+
+  courseTagsListener$(reqParent = false) {
+    return this.courseTagsUpdated.pipe(filter(res => res.planetField === (reqParent ? 'parent' : 'local')));
   }
 
   progressLearnerListener$(parent = false) {
@@ -115,6 +131,7 @@ export class CoursesService {
   // Or will get new version if forceLatest set to true
   // Always queries CouchDB for the latest progress by the logged in user
   requestCourse({ courseId, forceLatest = false, parent = false }, opts: any = {}) {
+    const planetField = parent ? 'parent' : 'local';
     opts = { ...opts, domain: parent ? this.stateService.configuration.parentDomain : '' };
     const obs = [ parent ? of([]) : this.findOneCourseProgress(courseId) ];
     if (!forceLatest && courseId === this.course._id) {
@@ -124,25 +141,26 @@ export class CoursesService {
     }
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
     obs.push(this.usersService.usersListener(true).pipe(take(1)));
-    // Tags are stored as link docs in the tags database rather than on the course itself, so they must be joined here
-    obs.push(this.stateService.getCouchState('tags', parent ? 'parent' : 'local').pipe(defaultIfEmpty([])));
-    forkJoin(obs).subscribe(([ progress, course, ratings, users, tags ]: [ any[], any, any, any[], any[] ]) => {
+    forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
       this.progress = progress;
       course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
       this.updateCourse({
         progress,
-        course: { ...this.ratingService.createItemList([ course ], ratings)[0], tags: this.courseTags(course, tags) }
+        course: { ...this.ratingService.createItemList([ course ], ratings)[0], tags: this.courseTags(course, this[planetField].tags) }
       });
     });
+    if (!this.tagsLoaded[planetField]) {
+      this.stateService.requestData('tags', planetField);
+    }
     this.usersService.requestUserData();
   }
 
-  private courseTags(course: any, tags: any[] = []) {
-    return this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags.map(this.tagsService.fillSubTags))[0].tags;
+  private courseTags(course: any, tags: any[]) {
+    return this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags;
   }
 
   reset() {
-    this.#course = {};
+    this.activeCourse = {};
     this.stepIndex = -1;
     this.returnUrl = '';
   }

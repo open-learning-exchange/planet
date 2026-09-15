@@ -24,7 +24,7 @@
 @if (courseDetail?.tags?.length > 0) {
   <p>
     <b i18n>Collections:</b>
-    @for (tag of courseDetail.tags; track tag._id; let isLast = $last) {
+    @for (tag of courseDetail.tags; track tag.tagLink._id; let isLast = $last) {
       <span> {{ tag.name }}@if (!isLast) {
         <span>,</span>
       }</span>

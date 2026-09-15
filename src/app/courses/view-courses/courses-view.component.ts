@@ -113,6 +113,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
       this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
     }, () => this.isLoading = false);
+    this.coursesService.courseTagsListener$(this.parent).pipe(
+      filter(({ courseId }) => courseId === this.courseDetail._id),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
