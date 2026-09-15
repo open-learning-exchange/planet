@@ -153,6 +153,16 @@ describe('NewsListComponent filtering', () => {
     expect(component.filteredItems.map(item => item._id)).toEqual([ 'root-1', 'reply-1', 'reply-2' ]);
   });
 
+  it('restores the feed as soon as the search is cleared', () => {
+    const component = createComponent(thread());
+    component.messageSearch = 'sprint';
+    component.applyFilters();
+
+    component.clearSearch();
+
+    expect(component.filteredItems.length).toBe(3);
+  });
+
   it('leaves the searched posts unchanged', () => {
     const items = thread();
     const component = createComponent(items);

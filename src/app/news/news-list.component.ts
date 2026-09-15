@@ -436,6 +436,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   clearSearch() {
     this.messageSearch = '';
     this.messageSearch$.next('');
+    this.applyFilters();
   }
 
   getAvailableLabels(items: any[]): string[] {
