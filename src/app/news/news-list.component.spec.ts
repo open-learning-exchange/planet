@@ -6,6 +6,7 @@ const createComponent = (items: any[] = []) => {
   const component = Object.create(NewsListComponent.prototype) as any;
   component.items = items;
   component.filteredItems = items;
+  component.itemsById = new Map<string, any>(items.map(item => [ item._id, item ]));
   component.availableLabels = [];
   component.selectedLabel = '';
   component.messageSearch = '';
@@ -137,6 +138,19 @@ describe('NewsListComponent filtering', () => {
     component.applyFilters();
 
     expect(component.filteredItems.map(item => item._id)).toEqual([ 'root-1', 'reply-1' ]);
+  });
+
+  it('climbs nested replies to keep the whole conversation', () => {
+    const component = createComponent([
+      { _id: 'root-1', doc: { message: 'Weekly sprint planning' } },
+      { _id: 'reply-1', doc: { message: 'Notes attached', replyTo: 'root-1' } },
+      { _id: 'reply-2', doc: { message: 'the budget line is wrong', replyTo: 'reply-1' } }
+    ]);
+    component.messageSearch = 'budget';
+
+    component.applyFilters();
+
+    expect(component.filteredItems.map(item => item._id)).toEqual([ 'root-1', 'reply-1', 'reply-2' ]);
   });
 
   it('leaves the searched posts unchanged', () => {

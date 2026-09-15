@@ -81,6 +81,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   selectedLabel = '';
   pinned = false;
   private viewLabelNames = new Set<string>();
+  private itemsById = new Map<string, any>();
   private searchSubscription: Subscription;
   replyObject: any = {};
   isMainPostShared = true;
@@ -160,6 +161,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (changes.viewableId && !changes.viewableId.firstChange) {
       this.resetFilters();
     }
+    this.itemsById = new Map<string, any>(this.items.map(item => [ item._id, item ]));
     this.availableLabels = this.getAvailableLabels(this.items);
     this.applyFilters();
   }
@@ -276,7 +278,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   private getThreadRootId(news: any): string {
     let current = news;
     while (current.doc && current.doc.replyTo) {
-      const parent = this.items.find(item => item._id === current.doc.replyTo);
+      const parent = this.itemsById.get(current.doc.replyTo);
       if (!parent) {
         break;
       }
