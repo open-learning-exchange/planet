@@ -109,7 +109,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
-  isRoot = true;
   visits: any = {};
   leader: any = {};
   planetCode: string;
@@ -343,10 +342,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   resetData() {
     this.getMembers().subscribe();
-  }
-
-  toggleAdd(data) {
-    this.isRoot = data._id === 'root';
   }
 
   setStatus(team, leader, user) {
