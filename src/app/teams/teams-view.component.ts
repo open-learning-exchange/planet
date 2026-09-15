@@ -23,7 +23,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
+import { enterpriseJoinAgreement, memberCompare, memberPlanetCode, memberSort, requestDateCompare } from './teams.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -583,11 +583,16 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
           message: $localize`Removed: ${memberName}`
         });
-      case 'added':
+      case 'added': {
         return ({
-          obs: this.teamsService.toggleTeamMembership(this.team, false, { ...memberDoc, docType: 'membership' }),
+          obs: this.teamsService.toggleTeamMembership(this.team, false, {
+            userId: memberDoc.userId,
+            userPlanetCode: memberPlanetCode(memberDoc) || this.team.teamPlanetCode || this.planetCode,
+            docType: 'membership'
+          }),
           message: $localize`Accepted: ${memberName}`
         });
+      }
       case 'rejected':
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
@@ -597,7 +602,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
+    this.teamsService.addTeamDialog(this.user, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
       this.planetMessageService.showMessage(
         (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
@@ -749,8 +754,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const currentLeader = this.members.find(mem => memberCompare(mem, this.leader)) || {};
-    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(
+    const persistedLeaders = this.members.filter(mem => mem.isLeader);
+    return () => this.teamsService.changeTeamLeadership(persistedLeaders, member).pipe(
       catchError(error => this.refreshMembersOnError(error)),
       switchMap(() => this.getMembers())
     );

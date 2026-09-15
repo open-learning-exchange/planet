@@ -10,6 +10,10 @@ import { CouchService } from '../../shared/couchdb.service';
 import { NewsService } from '../../news/news.service';
 import { TeamsService } from '../../teams/teams.service';
 import { UserService } from '../../shared/user.service';
+import { StateService } from '../../shared/state.service';
+import { userIdentitySelector } from '../../shared/mangoQueries';
+import { userIdentityCandidates } from '../../shared/identity.utils';
+import { teamIdentityDocs } from '../../teams/teams.utils';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
 import { ChallengesService } from '../challenges/challenges.service';
@@ -98,6 +102,7 @@ export class DialogsChatShareComponent implements OnInit {
     private dialog: MatDialog,
     private userStatusService: UserChallengeStatusService,
     private challengesService: ChallengesService,
+    private stateService: StateService,
   ) {
     this.conversation = data || this.conversation;
   }
@@ -142,18 +147,18 @@ export class DialogsChatShareComponent implements OnInit {
   }
 
   getTeams() {
+    const identities = userIdentityCandidates(this.user, this.stateService.configuration.code);
     const allTeams$ = this.couchService.findAll('teams', { selector: { status: 'active' } });
-    const userTeams$ = this.couchService.findAll('teams', {
-      selector: { userId: this.user._id, userPlanetCode: this.user.planetCode }
-    });
+    const userTeams$ = this.couchService.findAll('teams', { selector: userIdentitySelector(identities) });
 
     forkJoin([ allTeams$, userTeams$ ]).pipe(
-      map(([ allTeams, userTeams ]) => this.compareTeams(allTeams, userTeams))
+      map(([ allTeams, userTeams ]) => this.compareTeams(allTeams, userTeams, identities))
     ).subscribe();
   }
 
-  compareTeams(allTeams, userTeams) {
-    const difference = allTeams.filter(team => !userTeams.some(userTeam => userTeam.teamId === team._id));
+  compareTeams(allTeams, userTeams, identities) {
+    const serverPlanetCode = this.stateService.configuration.code;
+    const difference = allTeams.filter(team => teamIdentityDocs(userTeams, team, identities, serverPlanetCode).length === 0);
     this.excludeIds = [ ...this.excludeIds, ...difference.map(team => team._id) ];
   }
 
