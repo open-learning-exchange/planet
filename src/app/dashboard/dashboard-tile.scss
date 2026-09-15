@@ -1,6 +1,81 @@
 @use '../mixins' as m;
 @use '../variables' as v;
 
+.dashboard-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0;
+  position: relative;
+  word-break: break-word;
+
+  > .dashboard-item-link {
+    display: flex;
+    flex: 1 1 auto;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    padding: 1rem 0.5rem;
+
+    &:focus-visible {
+      outline: 2px solid v.$primary;
+      outline-offset: -2px;
+    }
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .dashboard-text {
+    display: -webkit-box;
+    width: calc(#{v.$dashboard-tile-width} - 1rem);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &.has-course-cover {
+    > .dashboard-item-link {
+      padding: 0.5rem;
+    }
+  }
+
+  .dashboard-course-cover {
+    display: flex;
+    margin-bottom: 0.25rem;
+
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid v.$grey;
+    }
+  }
+
+  &.cdk-drag-preview {
+    background-color: v.$white;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &.bg-grey {
+      background-color: v.$grey;
+    }
+
+    &.cdk-drag-animating {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    .delete-item {
+      display: none;
+    }
+  }
+}
+
 :host {
 
   @include m.left-right-grid-areas;
@@ -61,37 +136,9 @@
         .dashboard-item {
           grid-column-end: span 1;
           grid-row-end: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          padding: 0;
-          position: relative;
-          word-break: break-word;
 
           &.cdk-drag-placeholder {
             opacity: 0.3;
-          }
-
-          &.cdk-drag-animating {
-            transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-          }
-
-          > .dashboard-item-link {
-            display: flex;
-            flex: 1 1 auto;
-            align-self: stretch;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-width: 0;
-            padding: 1rem 0.5rem;
-
-            &:focus-visible {
-              outline: 2px solid v.$primary;
-              outline-offset: -2px;
-            }
           }
 
           &:nth-child(even):last-child {
@@ -105,35 +152,6 @@
             --mat-icon-button-state-layer-color: transparent;
             > .mat-icon {
               width: auto;
-            }
-          }
-          p {
-            margin: 0;
-          }
-
-          .dashboard-text {
-            display: -webkit-box;
-            width: calc(#{v.$dashboard-tile-width} - 1rem);
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
-
-          &.has-course-cover {
-            > .dashboard-item-link {
-              padding: 0.5rem;
-            }
-          }
-
-          .dashboard-course-cover {
-            display: flex;
-            margin-bottom: 0.25rem;
-
-            img {
-              width: 48px;
-              height: 48px;
-              object-fit: cover;
-              border-radius: 4px;
-              border: 1px solid v.$grey;
             }
           }
         }
