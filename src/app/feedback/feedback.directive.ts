@@ -42,7 +42,7 @@ const dialogFieldOptions = [
     required: true
   },
   {
-    label: $localize`Feedback Type`,
+    label: $localize`Feedback Type:`,
     type: 'radio',
     name: 'type',
     options: FEEDBACK_TYPE_OPTIONS.map(option => ({ name: option.label, value: option.value })),

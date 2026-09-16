@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
@@ -42,12 +42,7 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
       margin-bottom: 16px;
     }
 
-    .planet-radio-label .mat-form-field-required-marker {
-      color: var(--mdc-theme-error, #f44336);
-    }
-
     mat-radio-group mat-error {
-      color: var(--mdc-theme-error, #f44336);
       display: block;
       font-size: 0.75rem;
       margin-top: 4px;
@@ -110,16 +105,6 @@ export class DialogsFormComponent {
   dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
 
-  private markFormAsTouched(control: FormGroup | FormArray<AbstractControl>) {
-    const controls = control instanceof FormGroup ? Object.values(control.controls) : control.controls;
-    controls.forEach(innerControl => {
-      innerControl.markAsTouched();
-      if (innerControl instanceof FormGroup || innerControl instanceof FormArray) {
-        this.markFormAsTouched(innerControl);
-      }
-    });
-  }
-
   constructor(
     public dialogRef: MatDialogRef<DialogsFormComponent>,
     private dialog: MatDialog,
@@ -129,7 +114,7 @@ export class DialogsFormComponent {
     private dialogsListService: DialogsListService,
     private userService: UserService,
     private dialogGuard: DialogGuardService,
-    private elementRef?: ElementRef<HTMLElement>
+    private elementRef: ElementRef<HTMLElement>
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.createModalForm(this.data.formGroup);
@@ -174,7 +159,7 @@ export class DialogsFormComponent {
 
   onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {
     if (!mForm.valid) {
-      this.markFormAsTouched(mForm);
+      mForm.markAllAsTouched();
       this.scrollToFirstInvalidField();
       return;
     }
@@ -189,12 +174,8 @@ export class DialogsFormComponent {
   }
 
   private scrollToFirstInvalidField(): void {
-    const invalidElement = this.elementRef?.nativeElement?.querySelector(
-      '.ng-invalid:not(form), mat-radio-group.ng-invalid, mat-form-field.ng-invalid, [aria-invalid="true"]'
-    );
-    if (invalidElement && typeof (invalidElement as HTMLElement).scrollIntoView === 'function') {
-      (invalidElement as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    const invalidElement = this.elementRef.nativeElement.querySelector<HTMLElement>('.ng-invalid:not(form)');
+    invalidElement?.scrollIntoView({ block: 'center' });
   }
 
   togglePasswordVisibility(fieldName: string) {

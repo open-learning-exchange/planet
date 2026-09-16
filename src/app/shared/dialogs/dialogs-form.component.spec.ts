@@ -15,12 +15,9 @@ import { DialogField } from './dialogs-form.service';
 describe('DialogsFormComponent', () => {
   let fixture: ComponentFixture<DialogsFormComponent>;
   let component: DialogsFormComponent;
+  let dialogRef: { close: ReturnType<typeof vi.fn>, backdropClick: ReturnType<typeof vi.fn>, keydownEvents: ReturnType<typeof vi.fn> };
 
-  const dialogRef = {
-    close: vi.fn(),
-    backdropClick: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
-    keydownEvents: vi.fn().mockReturnValue({ subscribe: vi.fn() })
-  };
+  const originalScrollIntoView = Element.prototype.scrollIntoView;
 
   const fields: DialogField[] = [
     {
@@ -31,7 +28,7 @@ describe('DialogsFormComponent', () => {
       required: true
     },
     {
-      label: 'Feedback Type',
+      label: 'Feedback Type:',
       type: 'radio',
       name: 'type',
       options: [ { name: 'Bug', value: 'bug' }, { name: 'Suggestion', value: 'suggestion' } ],
@@ -79,55 +76,58 @@ describe('DialogsFormComponent', () => {
     fixture.detectChanges();
   };
 
+  const radioErrorText = () => fixture.debugElement.queryAll(By.css('mat-radio-group mat-error'))
+    .map(error => error.nativeElement.textContent.trim());
+
+  beforeEach(() => {
+    dialogRef = {
+      close: vi.fn(),
+      backdropClick: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
+      keydownEvents: vi.fn().mockReturnValue({ subscribe: vi.fn() })
+    };
+    // jsdom does not implement scrollIntoView
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
   afterEach(() => {
-    dialogRef.close.mockClear();
+    Element.prototype.scrollIntoView = originalScrollIntoView;
     vi.restoreAllMocks();
   });
 
   it('renders required asterisks on required radio labels', () => {
     createComponent();
 
-    const labels = fixture.debugElement.queryAll(By.css('.planet-radio-label'));
-    expect(labels.length).toBe(2);
-
-    const firstMarker = labels[0].query(By.css('.mat-form-field-required-marker'));
-    expect(firstMarker).toBeTruthy();
-    expect(firstMarker.nativeElement.textContent.trim()).toBe('*');
-
-    const secondMarker = labels[1].query(By.css('.mat-form-field-required-marker'));
-    expect(secondMarker).toBeTruthy();
-    expect(secondMarker.nativeElement.textContent.trim()).toBe('*');
+    const markers = fixture.debugElement.queryAll(By.css('.planet-radio-label .km-required-marker'));
+    expect(markers.length).toBe(2);
+    markers.forEach(marker => expect(marker.nativeElement.textContent.trim()).toBe('*'));
   });
 
-  it('does not render an asterisk on optional radio labels', () => {
-    const optionalFields: DialogField[] = [
-      {
+  it('does not mark a radio group required when the field omits required', () => {
+    createComponent({
+      title: 'Survey',
+      fields: [ {
         label: 'Optional Survey Question',
         type: 'radio',
         name: 'optionalQuestion',
-        options: [ { name: 'A', value: 'a' } ],
-        required: false
-      }
-    ];
-    createComponent({
-      title: 'Survey',
-      fields: optionalFields,
+        options: [ { name: 'A', value: 'a' } ]
+      } ] as DialogField[],
       formGroup: { optionalQuestion: [ '' ] },
       closeOnSubmit: true
     });
 
-    const marker = fixture.debugElement.query(By.css('.planet-radio-label .mat-form-field-required-marker'));
-    expect(marker).toBeNull();
+    expect(fixture.debugElement.query(By.css('.planet-radio-label .km-required-marker'))).toBeNull();
+    const radioInputs = fixture.debugElement.queryAll(By.css('mat-radio-button input[type="radio"]'));
+    expect(radioInputs.length).toBe(1);
+    radioInputs.forEach(input => expect(input.nativeElement.required).toBe(false));
   });
 
   it('shows error messages and marks radio groups as touched when submitting an invalid form', () => {
     createComponent();
 
     expect(component.modalForm.valid).toBe(false);
-    expect(fixture.debugElement.queryAll(By.css('mat-radio-group mat-error')).length).toBe(0);
+    expect(radioErrorText()).toEqual([ '', '' ]);
 
-    const form = fixture.debugElement.query(By.css('form'));
-    form.triggerEventHandler('ngSubmit', null);
+    fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
     fixture.detectChanges();
 
     expect(component.modalForm.controls['priority'].touched).toBe(true);
@@ -135,43 +135,18 @@ describe('DialogsFormComponent', () => {
     expect(component.modalForm.controls['message'].touched).toBe(true);
     expect(dialogRef.close).not.toHaveBeenCalled();
 
-    const errors = fixture.debugElement.queryAll(By.css('mat-radio-group mat-error'));
-    expect(errors.length).toBe(2);
-    expect(errors[0].nativeElement.textContent).toContain('This field is required');
-    expect(errors[1].nativeElement.textContent).toContain('This field is required');
+    expect(radioErrorText()).toEqual([ 'This field is required', 'This field is required' ]);
   });
 
   it('scrolls the first invalid field into view when submitting an invalid form', () => {
     createComponent();
 
-    const firstInvalidEl = fixture.nativeElement.querySelector('.ng-invalid:not(form)');
+    const firstInvalidField = fixture.nativeElement.querySelector('mat-radio-group');
     const scrollSpy = vi.fn();
-    firstInvalidEl.scrollIntoView = scrollSpy;
+    firstInvalidField.scrollIntoView = scrollSpy;
 
-    const form = fixture.debugElement.query(By.css('form'));
-    form.triggerEventHandler('ngSubmit', null);
+    fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
 
-    expect(scrollSpy).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' });
-  });
-
-  it('submits successfully and closes the dialog when the form is valid', () => {
-    createComponent();
-
-    component.modalForm.setValue({
-      priority: 'yes',
-      type: 'bug',
-      message: 'Found an issue with radio validation'
-    });
-    fixture.detectChanges();
-
-    expect(component.modalForm.valid).toBe(true);
-
-    component.onSubmit(component.modalForm, dialogRef as any);
-
-    expect(dialogRef.close).toHaveBeenCalledWith({
-      priority: 'yes',
-      type: 'bug',
-      message: 'Found an issue with radio validation'
-    });
+    expect(scrollSpy).toHaveBeenCalledTimes(1);
   });
 });

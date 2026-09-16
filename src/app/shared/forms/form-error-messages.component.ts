@@ -6,8 +6,8 @@
  * Message will need update if used for other situations
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, AbstractControlDirective } from '@angular/forms';
+import { Component, Input, OnDestroy, Optional } from '@angular/core';
+import { AbstractControl, AbstractControlDirective, FormGroupDirective, NgForm } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'planet-form-error-messages',
   template: `
-    @if (error) {
+    @if (error && shouldShowError()) {
       <span [matTooltip]="tooltipText()" i18n>{error, select,
       required {This field is required}
       min {The number cannot be below}
@@ -48,15 +48,15 @@ import { Subscription } from 'rxjs';
       bp {Blood Pressure should be systolic/diastolic}
       notFileMatch {File not found in list}
       invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/}
-    }</span>
-      }{{number === undefined ? '' : ' ' + number}}
+    }</span>{{number === undefined ? '' : ' ' + number}}
       @if (error === 'matDatepickerMin' || error === 'matDatepickerMax') {
         {{date === undefined ? '' : ' ' + (date | date)}}
       }
+    }
     `,
   imports: [MatTooltip, DatePipe]
 })
-export class FormErrorMessagesComponent implements OnInit, OnDestroy {
+export class FormErrorMessagesComponent implements OnDestroy {
 
   @Input() set control(ctrl: AbstractControlDirective | AbstractControl | undefined) {
     if (this.targetControl === ctrl) {
@@ -75,35 +75,35 @@ export class FormErrorMessagesComponent implements OnInit, OnDestroy {
     return this.targetControl;
   }
 
-  @Input() set formControl(ctrl: AbstractControlDirective | AbstractControl | undefined) {
-    this.control = ctrl;
-  }
-
   private targetControl?: AbstractControlDirective | AbstractControl;
   private statusSubscription?: Subscription;
 
   error = '';
-  number: number;
-  date: Date;
+  number?: number;
+  date?: Date;
 
-  ngOnInit() {
-    this.updateError();
-  }
+  constructor(
+    @Optional() private parentForm: NgForm | null,
+    @Optional() private parentFormGroup: FormGroupDirective | null
+  ) {}
 
   ngOnDestroy() {
     this.statusSubscription?.unsubscribe();
   }
 
+  // Matches the error state Material shows on the surrounding field
   shouldShowError(): boolean {
+    const form = this.parentFormGroup || this.parentForm;
     return !!(
-      this.targetControl &&
-      this.targetControl.errors &&
-      (this.targetControl.dirty || this.targetControl.touched)
+      this.targetControl?.errors &&
+      (this.targetControl.dirty || this.targetControl.touched || form?.submitted)
     );
   }
 
   // Show one error at a time
   updateError() {
+    this.number = undefined;
+    this.date = undefined;
     if (!this.targetControl?.errors) {
       this.error = '';
       return;

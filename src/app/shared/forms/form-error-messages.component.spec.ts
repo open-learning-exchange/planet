@@ -1,16 +1,18 @@
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroupDirective, Validators } from '@angular/forms';
 
 import { FormErrorMessagesComponent } from './form-error-messages.component';
 
 describe('FormErrorMessagesComponent', () => {
   let component: FormErrorMessagesComponent;
+  let parentFormGroup: { submitted: boolean };
 
   beforeEach(() => {
-    component = new FormErrorMessagesComponent();
+    parentFormGroup = { submitted: false };
+    component = new FormErrorMessagesComponent(null, parentFormGroup as FormGroupDirective);
   });
 
-  it('safely initializes when control is undefined', () => {
-    expect(() => component.ngOnInit()).not.toThrow();
+  it('stays quiet when no control is bound', () => {
+    component.control = undefined;
     expect(component.error).toBe('');
     expect(component.shouldShowError()).toBe(false);
   });
@@ -30,15 +32,16 @@ describe('FormErrorMessagesComponent', () => {
     expect(component.shouldShowError()).toBe(false);
   });
 
-  it('supports the formControl alias input', () => {
+  it('shows the error once the surrounding form is submitted', () => {
     const control = new FormControl('', Validators.required);
-    component.formControl = control;
+    component.control = control;
+    expect(component.shouldShowError()).toBe(false);
 
-    expect(component.control).toBe(control);
-    expect(component.error).toBe('required');
+    parentFormGroup.submitted = true;
+    expect(component.shouldShowError()).toBe(true);
   });
 
-  it('extracts min / max error limits and datepicker values', () => {
+  it('carries an error limit only as long as that error lasts', () => {
     const minControl = new FormControl(2, Validators.min(5));
     component.control = minControl;
     expect(component.error).toBe('min');
@@ -48,5 +51,11 @@ describe('FormErrorMessagesComponent', () => {
     component.control = dateControl;
     expect(component.error).toBe('matDatepickerMin');
     expect(component.date).toEqual(new Date(1700000000000));
+    expect(component.number).toBeUndefined();
+
+    const intControl = new FormControl('abc', () => ({ invalidInt: true }));
+    component.control = intControl;
+    expect(component.error).toBe('invalidInt');
+    expect(component.date).toBeUndefined();
   });
 });
