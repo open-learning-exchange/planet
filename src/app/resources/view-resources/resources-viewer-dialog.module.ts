@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { ResourcesModule } from '../resources.module';
 import { ResourcesViewerDialogComponent } from './resources-viewer-dialog.component';
 
-
 @NgModule({
   imports: [
     CommonModule,
