@@ -48,7 +48,7 @@ Planet Learning is an Angular 20 + CouchDB learning platform. There are two tier
   - `export/` — CSV and PDF generation. `forms/` — inputs and validation directives, with `tags/` for the tag inputs.
   - `language/`, `markdown/`, `platform/` (device, configuration and Android-app surfaces), `tables/`, `text/` (formatting pipes), `ui/` (display primitives and `planet-message.service.ts`), `unsaved-changes/`.
   - Only `utils.ts`, `state.service.ts`, `material.module.ts` and `shared-components.module.ts` stay at the root.
-  - Per `Style-Guide.md`, keep each bucket under ~9 distinct concerns; split it rather than letting it sprawl. `scripts/reorg-shared.mjs` rewrites imports for branches predating the regrouping.
+  - Per `Style-Guide.md`, keep each bucket under ~9 distinct concerns; split it rather than letting it sprawl.
 - `src/app/manager-dashboard/` — admin surfaces (sync, fetch, AI configuration, reports, requests, certifications). AI provider keys/models are read from the CouchDB `configurations` database; do not hardcode them.
 - `gateway/` — standalone Express + WebSocket gateway with internal `chatapi` and `public` modules. It serves chat on the existing `/ml/` namespace and scoped public operations on `/api/`. Credentials/models come from the CouchDB `configurations` doc, not env vars.
 - `design/` — CouchDB design documents (map/reduce views). Edit the per-db `.js` files and re-run `couchdb-setup.sh` to upload.
