@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/auth/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
-import { DialogsSubmissionsComponent } from './dialogs-submissions.component';
+import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/ai/chat.service';
 import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
@@ -275,7 +275,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   openReviewDialog() {
-    this.dialog.open(DialogsSubmissionsComponent, {
+    this.dialog.open(CoursesStepAttemptsDialogComponent, {
       minWidth: '500px',
       maxWidth: '90vw',
       maxHeight: '90vh',

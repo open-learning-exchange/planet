@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { dedupeObjectArray } from '../shared/utils';
+import { dedupeObjectArray } from '../utils';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MarkdownService {
+export class MarkdownImagesService {
 
   createImagesArray(formValue, markdown, field: 'message' | 'description') {
     return dedupeObjectArray([

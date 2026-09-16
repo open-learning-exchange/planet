@@ -6,8 +6,8 @@ import { TeamsComponent } from './teams.component';
 import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
-import { DialogsAddResourcesModule } from '../shared/dialogs/pickers/dialogs-add-resources.module';
-import { DialogsResourcesViewerModule } from '../shared/dialogs/pickers/dialogs-resources-viewer.module';
+import { ResourcesPickerDialogModule } from '../resources/resources-picker-dialog.module';
+import { ResourcesViewerDialogModule } from '../resources/view-resources/resources-viewer-dialog.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar/calendar.module';
@@ -26,8 +26,8 @@ import { SurveysModule } from '../surveys/surveys.module';
     MaterialModule,
     PlanetDialogsModule,
     NewsModule,
-    DialogsAddResourcesModule,
-    DialogsResourcesViewerModule,
+    ResourcesPickerDialogModule,
+    ResourcesViewerDialogModule,
     SharedComponentsModule,
     PlanetCalendarModule,
     FormsModule,

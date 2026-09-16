@@ -38,7 +38,7 @@ interface CommunityForm {
 }
 
 @Component({
-  templateUrl: './dialogs-chat-share.component.html',
+  templateUrl: './chat-share-dialog.component.html',
   styles: [`
     .mat-expansion-panel {
       box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
@@ -70,7 +70,7 @@ interface CommunityForm {
     MatDialogActions
   ]
 })
-export class DialogsChatShareComponent implements OnInit {
+export class ChatShareDialogComponent implements OnInit {
   user = this.userService.get();
   conversation: any;
   teamInfo: any;
@@ -88,7 +88,7 @@ export class DialogsChatShareComponent implements OnInit {
   ];
 
   constructor(
-    public dialogRef: MatDialogRef<DialogsChatShareComponent>,
+    public dialogRef: MatDialogRef<ChatShareDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private couchService: CouchService,
     private fb: NonNullableFormBuilder,

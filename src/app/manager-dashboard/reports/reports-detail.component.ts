@@ -21,7 +21,7 @@ import {
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
   sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
 } from './reports.utils';
-import { DialogsResourcesViewerComponent } from '../../shared/dialogs/pickers/dialogs-resources-viewer.component';
+import { ResourcesViewerDialogComponent } from '../../resources/view-resources/resources-viewer-dialog.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
@@ -916,7 +916,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   openResourceView(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
+    this.dialog.open(ResourcesViewerDialogComponent, { data: { resourceId }, autoFocus: false });
   }
 
   openMemberView(user, event?: Event) {

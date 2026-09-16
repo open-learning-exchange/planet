@@ -2,7 +2,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { ResourcesViewerComponent } from '../../../resources/view-resources/resources-viewer.component';
+import { ResourcesViewerComponent } from './resources-viewer.component';
 import { MatButton } from '@angular/material/button';
 
 @Component({
@@ -17,11 +17,11 @@ import { MatButton } from '@angular/material/button';
   `,
   imports: [CdkScrollable, MatDialogContent, ResourcesViewerComponent, MatDialogActions, MatButton, MatDialogClose]
 })
-export class DialogsResourcesViewerComponent {
+export class ResourcesViewerDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<DialogsResourcesViewerComponent>,
+    private dialogRef: MatDialogRef<ResourcesViewerDialogComponent>,
     private router: Router,
     private route: ActivatedRoute
   ) {}

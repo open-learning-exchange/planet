@@ -43,8 +43,8 @@ Planet Learning is an Angular 20 + CouchDB learning platform. There are two tier
   - `ai/` — gateway chat transport, prompt constants, chat output rendering.
   - `auth/` — route guards, `user.service.ts`, role/beta directives, password change.
   - `calendar/`, `challenges/`, `charts/`, `ratings/`, `search/`, `voices/` — one capability each, dialogs included.
-  - `database/` — `couchdb.service.ts` (HTTP wrapper; every request goes through `setOpts` / `couchDBReq`, which injects `withCredentials` and surfaces 403s via `PlanetMessageService` — prefer it over raw `HttpClient`), `mangoQueries.ts`, `sync.service.ts`, and the PouchDB mirror `pouch.service.ts` + `pouch-auth.service.ts` for offline-capable data (currently seeded with `feedback`; register new offline databases in the `databases` Set so `configureDBs()` creates the local mirror).
-  - `dialogs/` — the generic dialog framework (form, prompt, view, list, loading) plus `pickers/` for entity-selection dialogs. Feature-specific dialogs live with the capability they serve, not here.
+  - `database/` — `couchdb.service.ts` (HTTP wrapper; every request goes through `setOpts` / `couchDBReq`, which injects `withCredentials` and surfaces 403s via `PlanetMessageService` — prefer it over raw `HttpClient`), `mango-queries.ts`, `sync.service.ts`, and the PouchDB mirror `pouch.service.ts` + `pouch-auth.service.ts` for offline-capable data (currently seeded with `feedback`; register new offline databases in the `databases` Set so `configureDBs()` creates the local mirror).
+  - `dialogs/` — the generic dialog framework (form, prompt, view, list, loading). Put a dialog tied to a capability in that capability's folder, even when other features open it.
   - `export/` — CSV and PDF generation. `forms/` — inputs and validation directives, with `tags/` for the tag inputs.
   - `language/`, `markdown/`, `platform/` (device, configuration and Android-app surfaces), `tables/`, `text/` (formatting pipes), `ui/` (display primitives and `planet-message.service.ts`), `unsaved-changes/`.
   - Only `utils.ts`, `state.service.ts`, `material.module.ts` and `shared-components.module.ts` stay at the root.

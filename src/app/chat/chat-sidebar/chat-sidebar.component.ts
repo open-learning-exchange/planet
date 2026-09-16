@@ -8,7 +8,7 @@ import { Conversation, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/ai/chat.service';
 import { CouchService } from '../../shared/database/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
-import { DialogsChatShareComponent } from '../dialogs-chat-share.component';
+import { ChatShareDialogComponent } from '../chat-share-dialog.component';
 import { SearchService } from '../../shared/search/search.service';
 import { showFormErrors, trackById } from '../../shared/tables/table.helpers';
 import { UserService } from '../../shared/auth/user.service';
@@ -305,7 +305,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   openShareDialog(conversation) {
-    const dialogRef = this.dialog.open(DialogsChatShareComponent, {
+    const dialogRef = this.dialog.open(ChatShareDialogComponent, {
       width: '50vw',
       maxHeight: '90vh',
       data: {

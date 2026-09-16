@@ -42,7 +42,7 @@ import { MatButton } from '@angular/material/button';
     MatDialogClose
   ]
 })
-export class DialogsSubmissionsComponent {
+export class CoursesStepAttemptsDialogComponent {
 
   view: 'list' | 'submission' = 'list';
   submission: any;

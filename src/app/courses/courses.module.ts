@@ -15,11 +15,11 @@ import { ResourcesModule } from '../resources/resources.module';
 import { ExamsModule } from '../exams/exams.module';
 import { CoursesProgressModule } from './progress-courses/courses-progress.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { DialogsAddResourcesModule } from '../shared/dialogs/pickers/dialogs-add-resources.module';
+import { ResourcesPickerDialogModule } from '../resources/resources-picker-dialog.module';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 import { UsersModule } from '../users/users.module';
 import { CoursesIconComponent } from './courses-icon.component';
-import { DialogsSubmissionsModule } from './step-view-courses/dialogs-submissions.module';
+import { CoursesStepAttemptsDialogModule } from './step-view-courses/courses-step-attempts-dialog.module';
 import { CoursesViewDetailModule } from './view-courses/courses-view-detail.module';
 import { CoursesSearchComponent, CoursesSearchListComponent } from './search-courses/courses-search.component';
 import { ChatModule } from '../chat/chat.module';
@@ -36,8 +36,8 @@ import { ChatModule } from '../chat/chat.module';
     ResourcesModule,
     ExamsModule,
     SharedComponentsModule,
-    DialogsAddResourcesModule,
-    DialogsSubmissionsModule,
+    ResourcesPickerDialogModule,
+    CoursesStepAttemptsDialogModule,
     UsersModule,
     CoursesViewDetailModule,
     ChatModule,

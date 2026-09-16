@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
-import { DialogsAddMeetupsComponent } from '../shared/dialogs/pickers/dialogs-add-meetups.component';
+import { MeetupsAddDialogComponent } from '../meetups/meetups-add-dialog.component';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { StateService } from '../shared/state.service';
 import {
@@ -352,7 +352,7 @@ export class TasksComponent implements OnInit {
   }
 
   openTaskDetail(task) {
-    this.dialog.open(DialogsAddMeetupsComponent, {
+    this.dialog.open(MeetupsAddDialogComponent, {
       data: {
         meetup: task,
         view: 'view',

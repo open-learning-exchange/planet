@@ -2,7 +2,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { environment } from '../../../environments/environment';
-import { DialogsResourcesViewerComponent } from '../../shared/dialogs/pickers/dialogs-resources-viewer.component';
+import { ResourcesViewerDialogComponent } from './resources-viewer-dialog.component';
 import { couchAttachmentUrl } from '../../shared/utils';
 import { MatButton } from '@angular/material/button';
 
@@ -43,7 +43,7 @@ export class ResourcesMenuComponent {
   }
 
   openResource(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
+    this.dialog.open(ResourcesViewerDialogComponent, { data: { resourceId }, autoFocus: false });
   }
 
   buttonClick(resources) {

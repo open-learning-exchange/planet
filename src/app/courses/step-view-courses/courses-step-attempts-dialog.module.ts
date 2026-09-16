@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubmissionsModule } from '../../submissions/submissions.module';
 import { ExamsModule } from '../../exams/exams.module';
-import { DialogsSubmissionsComponent } from './dialogs-submissions.component';
+import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
 
 
 @NgModule({
@@ -12,10 +12,10 @@ import { DialogsSubmissionsComponent } from './dialogs-submissions.component';
     MaterialModule,
     SubmissionsModule,
     ExamsModule,
-    DialogsSubmissionsComponent
+    CoursesStepAttemptsDialogComponent
   ],
   exports: [
-    DialogsSubmissionsComponent
+    CoursesStepAttemptsDialogComponent
   ]
 })
-export class DialogsSubmissionsModule {}
+export class CoursesStepAttemptsDialogModule {}

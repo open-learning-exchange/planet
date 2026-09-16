@@ -15,11 +15,11 @@ import { NewsService } from '../news/news.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
-import { DialogsAddResourcesComponent } from '../shared/dialogs/pickers/dialogs-add-resources.component';
+import { ResourcesPickerDialogComponent } from '../resources/resources-picker-dialog.component';
 import { DialogsAddTableComponent } from '../shared/tables/dialogs-add-table.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
-import { DialogsResourcesViewerComponent } from '../shared/dialogs/pickers/dialogs-resources-viewer.component';
+import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
@@ -720,7 +720,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openResourcesDialog(resource?) {
-    const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+    const dialogRef = this.dialog.open(ResourcesPickerDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -791,7 +791,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openResource(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, {
+    this.dialog.open(ResourcesViewerDialogComponent, {
       data: {
         resourceId,
         returnState: { route: `${this.mode}s/view/${this.teamId}` }

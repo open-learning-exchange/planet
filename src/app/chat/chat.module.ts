@@ -10,7 +10,7 @@ import { TeamsModule } from '../teams/teams.module';
 import { ChatComponent } from './chat.component';
 import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
-import { DialogsChatShareComponent } from './dialogs-chat-share.component';
+import { ChatShareDialogComponent } from './chat-share-dialog.component';
 
 @NgModule({
   imports: [
@@ -25,7 +25,7 @@ import { DialogsChatShareComponent } from './dialogs-chat-share.component';
     ChatComponent,
     ChatSidebarComponent,
     ChatWindowComponent,
-    DialogsChatShareComponent
+    ChatShareDialogComponent
   ],
   exports: [ChatWindowComponent, ChatComponent]
 })

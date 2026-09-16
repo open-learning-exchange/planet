@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
-import { DialogsAddResourcesComponent } from '../../shared/dialogs/pickers/dialogs-add-resources.component';
+import { ResourcesPickerDialogComponent } from '../../resources/resources-picker-dialog.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import {
   PlanetStepListComponent,
@@ -50,7 +50,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepEditorOpenChange = new EventEmitter<boolean>();
 
   stepForm: FormGroup<CoursesStepForm>;
-  dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
+  dialogRef: MatDialogRef<ResourcesPickerDialogComponent>;
   activeStep: any;
   activeStepIndex = -1;
   courseIcons = courseIcons;
@@ -98,7 +98,7 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   addResources() {
-    this.dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+    this.dialogRef = this.dialog.open(ResourcesPickerDialogComponent, {
       width: '80vw',
       data: {
         okClick: this.resourcsDialogOkClick.bind(this),

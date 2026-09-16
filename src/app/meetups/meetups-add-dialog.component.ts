@@ -1,11 +1,11 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { DialogsLoadingService } from '../dialogs-loading.service';
-import { MeetupsAddComponent } from '../../../meetups/add-meetups/meetups-add.component';
-import { CanComponentDeactivate } from '../../unsaved-changes/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../../unsaved-changes/unsaved-changes.component';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { MeetupsAddComponent } from './add-meetups/meetups-add.component';
+import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes.component';
 
-import { MeetupsViewComponent } from '../../../meetups/view-meetups/meetups-view.component';
+import { MeetupsViewComponent } from './view-meetups/meetups-view.component';
 
 @Component({
   template: `
@@ -27,7 +27,7 @@ import { MeetupsViewComponent } from '../../../meetups/view-meetups/meetups-view
 `,
   imports: [MeetupsAddComponent, MeetupsViewComponent]
 })
-export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
+export class MeetupsAddDialogComponent implements CanComponentDeactivate {
   @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;
 
   link: any = {};
@@ -37,7 +37,7 @@ export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   editable = true;
 
   constructor(
-    public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
+    public dialogRef: MatDialogRef<MeetupsAddDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog

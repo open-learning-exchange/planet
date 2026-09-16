@@ -9,7 +9,7 @@ import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
-import { MarkdownService } from './markdown.service';
+import { MarkdownImagesService } from '../shared/markdown/markdown-images.service';
 import { UsersService } from '../users/users.service';
 
 // Service for updating and storing active course for single course views.
@@ -45,7 +45,7 @@ export class CoursesService {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private tagsService: TagsService,
-    private markdownService: MarkdownService,
+    private markdownImagesService: MarkdownImagesService,
     private usersService: UsersService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
@@ -262,7 +262,8 @@ export class CoursesService {
 
   storeMarkdownImages(course) {
     const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
-    const imagesArray = (item: { description: any }) => this.markdownService.createImagesArray(item, markdownText(item), 'description');
+    const imagesArray = (item: { description: any }) =>
+      this.markdownImagesService.createImagesArray(item, markdownText(item), 'description');
     const images = dedupeObjectArray(
       [ course.images || [], imagesArray(course), course.steps.map(step => imagesArray(step)) ].flat(2),
       [ 'resourceId' ]
@@ -271,7 +272,9 @@ export class CoursesService {
       ...course,
       description: markdownText(course),
       steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
-      images: this.markdownService.filterMissingImages([ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images)
+      images: this.markdownImagesService.filterMissingImages(
+        [ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images
+      )
     };
   }
 

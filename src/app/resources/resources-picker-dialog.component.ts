@@ -1,14 +1,14 @@
 import { Component, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { ResourcesComponent } from '../../../resources/resources.component';
-import { ResourcesAddComponent } from '../../../resources/resources-add.component';
-import { DialogsLoadingService } from '../dialogs-loading.service';
+import { ResourcesComponent } from './resources.component';
+import { ResourcesAddComponent } from './resources-add.component';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 
 import { MatButton } from '@angular/material/button';
 
 @Component({
-  templateUrl: 'dialogs-add-resources.component.html',
+  templateUrl: 'resources-picker-dialog.component.html',
   imports: [
     CdkScrollable,
     MatDialogContent,
@@ -19,7 +19,7 @@ import { MatButton } from '@angular/material/button';
     MatDialogClose
   ]
 })
-export class DialogsAddResourcesComponent implements AfterViewInit {
+export class ResourcesPickerDialogComponent implements AfterViewInit {
 
   @ViewChild(ResourcesComponent) resourcesComponent: ResourcesComponent;
   @ViewChild(ResourcesAddComponent) resourcesAddComponent: ResourcesAddComponent;
@@ -31,7 +31,7 @@ export class DialogsAddResourcesComponent implements AfterViewInit {
   isSubmitting = false;
 
   constructor(
-    public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
+    public dialogRef: MatDialogRef<ResourcesPickerDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService,
     private cdr: ChangeDetectorRef

@@ -4,8 +4,8 @@ import { By } from '@angular/platform-browser';
 import { EMPTY } from 'rxjs';
 import { vi } from 'vitest';
 
-import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
-import { DialogsLoadingService } from '../dialogs-loading.service';
+import { MeetupsAddDialogComponent } from './meetups-add-dialog.component';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -38,9 +38,9 @@ class MeetupsViewStubComponent {
   @Output() switchView = new EventEmitter<any>();
 }
 
-describe('DialogsAddMeetupsComponent', () => {
-  let component: DialogsAddMeetupsComponent;
-  let fixture: ComponentFixture<DialogsAddMeetupsComponent>;
+describe('MeetupsAddDialogComponent', () => {
+  let component: MeetupsAddDialogComponent;
+  let fixture: ComponentFixture<MeetupsAddDialogComponent>;
   let data: any;
   let dialogRef: any;
   let dialogsLoadingService: any;
@@ -59,7 +59,7 @@ describe('DialogsAddMeetupsComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [DialogsAddMeetupsComponent],
+      imports: [MeetupsAddDialogComponent],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: dialogRef },
@@ -67,12 +67,12 @@ describe('DialogsAddMeetupsComponent', () => {
         { provide: DialogsLoadingService, useValue: dialogsLoadingService }
       ]
     });
-    TestBed.overrideComponent(DialogsAddMeetupsComponent, {
+    TestBed.overrideComponent(MeetupsAddDialogComponent, {
       set: {
         imports: [MeetupsAddStubComponent, MeetupsViewStubComponent]
       }
     });
-    fixture = TestBed.createComponent(DialogsAddMeetupsComponent);
+    fixture = TestBed.createComponent(MeetupsAddDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

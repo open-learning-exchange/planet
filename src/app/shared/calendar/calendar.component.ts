@@ -5,7 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsAddMeetupsComponent } from '../dialogs/pickers/dialogs-add-meetups.component';
+import { MeetupsAddDialogComponent } from '../../meetups/meetups-add-dialog.component';
 import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
 import { days, millisecondsToDay } from '../../meetups/constants';
 import { CouchService } from '../database/couchdb.service';
@@ -290,7 +290,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
         startDate: today,
         endDate: today,
       };
-    this.dialog.open(DialogsAddMeetupsComponent, {
+    this.dialog.open(MeetupsAddDialogComponent, {
       data: { meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh'
@@ -311,7 +311,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     if (eventData.isTask) {
       this.openTaskDialog(eventData);
     } else {
-      this.dialog.open(DialogsAddMeetupsComponent, {
+      this.dialog.open(MeetupsAddDialogComponent, {
         data: {
           meetup: eventData,
           view: 'view',
@@ -325,7 +325,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   openTaskDialog(task) {
-    this.dialog.open(DialogsAddMeetupsComponent, {
+    this.dialog.open(MeetupsAddDialogComponent, {
       data: {
         meetup: task,
         view: 'view',
