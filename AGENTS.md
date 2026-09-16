@@ -39,7 +39,7 @@ Planet Learning is an Angular 20 + CouchDB learning platform. There are two tier
 ### Repository layout
 
 - `src/app/` — feature-per-directory Angular app. Each feature owns its own `*-router.module.ts` and is lazy-loaded from `src/app/app-router.module.ts`, which mounts `HomeModule` at `''` (guarded by `UserGuard` + `UnsavedChangesGuard`) and `LoginModule` at `/login` (guarded by `AuthService`). Unknown routes fall through to `PageNotFoundComponent`.
-- `src/app/shared/` — cross-feature code, grouped by the capability each file serves rather than by file kind. Put a new shared file in the bucket matching what it *achieves*; there is deliberately no `services/`, `directives/`, or `constants/` bucket. Imports from outside a bucket use the `@shared/*` path alias (`tsconfig.json`), so a file can be regrouped later without touching its consumers; within a bucket, keep imports relative (`./sibling`).
+- `src/app/shared/` — cross-feature code, grouped by the capability each file serves rather than by file kind. Put a new shared file in the bucket matching what it *achieves*; there is deliberately no `services/`, `directives/`, or `constants/` bucket. Use relative imports between and within buckets.
   - `ai/` — gateway chat transport, prompt constants, chat output rendering.
   - `auth/` — route guards, `user.service.ts`, role/beta directives, password change.
   - `calendar/`, `challenges/`, `charts/`, `ratings/`, `search/`, `voices/` — one capability each, dialogs included.

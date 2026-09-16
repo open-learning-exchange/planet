@@ -1,5 +1,5 @@
 import { FormControl, AbstractControl } from '@angular/forms';
-import { FuzzySearchService } from '@shared/search/fuzzy-search.service';
+import { FuzzySearchService } from '../search/fuzzy-search.service';
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.

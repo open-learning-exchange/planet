@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PlanetMarkdownComponent } from './planet-markdown.component';
-import { StateService } from '@shared/state.service';
+import { StateService } from '../state.service';
 
 describe('PlanetMarkdownComponent', () => {
   beforeEach(async () => {

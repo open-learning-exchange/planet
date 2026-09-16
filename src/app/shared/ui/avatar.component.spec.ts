@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 import { AvatarComponent } from './avatar.component';
-import { couchAttachmentUrl } from '@shared/utils';
+import { couchAttachmentUrl } from '../utils';
 
 describe('AvatarComponent', () => {
   let component: AvatarComponent;

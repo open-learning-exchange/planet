@@ -3,26 +3,26 @@ import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 
-import { PlanetLocalStatusComponent } from '@shared/platform/planet-local-status.component';
+import { PlanetLocalStatusComponent } from './platform/planet-local-status.component';
 import { MaterialModule } from './material.module';
-import { SubmitDirective } from '@shared/dialogs/submit.directive';
-import { LowercaseDirective } from '@shared/text/lowercase.directive';
-import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
-import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
-import { PlanetBetaDirective } from '@shared/auth/beta.directive';
-import { FilteredAmountComponent } from '@shared/tables/planet-filtered-amount.component';
-import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
-import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
-import { LabelComponent } from '@shared/ui/label.component';
-import { AvatarComponent } from '@shared/ui/avatar.component';
-import { LanguageLabelComponent } from '@shared/language/language-label.component';
-import { RestrictDiacriticsDirective } from '@shared/language/restrict-diacritics.directive';
-import { ChatOutputDirective } from '@shared/ai/chat-output.directive';
-import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
-import { FullNamePipe } from '@shared/text/full-name.pipe';
-import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
-import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
-import { PreviewOverflowDirective } from '@shared/ui/preview-overflow.directive';
+import { SubmitDirective } from './dialogs/submit.directive';
+import { LowercaseDirective } from './text/lowercase.directive';
+import { PlanetLanguageComponent } from './language/planet-language.component';
+import { AuthorizedRolesDirective } from './auth/authorized-roles.directive';
+import { PlanetBetaDirective } from './auth/beta.directive';
+import { FilteredAmountComponent } from './tables/planet-filtered-amount.component';
+import { PlanetRoleComponent } from './auth/planet-role.component';
+import { PlanetMarkdownComponent } from './markdown/planet-markdown.component';
+import { LabelComponent } from './ui/label.component';
+import { AvatarComponent } from './ui/avatar.component';
+import { LanguageLabelComponent } from './language/language-label.component';
+import { RestrictDiacriticsDirective } from './language/restrict-diacritics.directive';
+import { ChatOutputDirective } from './ai/chat-output.directive';
+import { TruncateTextPipe } from './text/truncate-text.pipe';
+import { FullNamePipe } from './text/full-name.pipe';
+import { TimeAgoPipe } from './text/time-ago.pipe';
+import { PlanetLoadingSpinnerComponent } from './ui/planet-loading-spinner.component';
+import { PreviewOverflowDirective } from './ui/preview-overflow.directive';
 
 @NgModule({
   imports: [

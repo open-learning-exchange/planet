@@ -1,9 +1,9 @@
 import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { StateService } from '@shared/state.service';
+import { StateService } from '../state.service';
 import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewText,
   markdownImageRegex, normalizeMarkdownWhitespace, truncateText
-} from '@shared/utils';
+} from '../utils';
 
 import { TdMarkdownComponent } from '@covalent/markdown';
 

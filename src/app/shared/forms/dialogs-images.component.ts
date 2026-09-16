@@ -4,10 +4,10 @@ import {
 } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../../resources/resources.service';
-import { UserService } from '@shared/auth/user.service';
-import { StateService } from '@shared/state.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { deepEqual, normalizedContentType } from '@shared/utils';
+import { UserService } from '../auth/user.service';
+import { StateService } from '../state.service';
+import { PlanetMessageService } from '../ui/planet-message.service';
+import { deepEqual, normalizedContentType } from '../utils';
 
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatIcon } from '@angular/material/icon';

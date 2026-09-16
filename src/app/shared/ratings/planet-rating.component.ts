@@ -1,15 +1,15 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CouchService } from '@shared/database/couchdb.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '../database/couchdb.service';
+import { PlanetMessageService } from '../ui/planet-message.service';
+import { UserService } from '../auth/user.service';
 import { map } from 'rxjs/operators';
-import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { RatingService } from './rating.service';
-import { StateService } from '@shared/state.service';
+import { StateService } from '../state.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetStackedBarComponent } from '@shared/charts/planet-stacked-bar.component';
+import { PlanetStackedBarComponent } from '../charts/planet-stacked-bar.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 
 const popupFormFields = [

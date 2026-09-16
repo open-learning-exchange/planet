@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mango-queries';
-import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '../database/couchdb.service';
+import { findDocuments } from '../database/mango-queries';
+import { UserService } from '../auth/user.service';
 import { of, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { StateService } from '@shared/state.service';
+import { StateService } from '../state.service';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [] };
 

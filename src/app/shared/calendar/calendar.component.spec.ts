@@ -3,7 +3,7 @@ import { ElementRef } from '@angular/core';
 import { of } from 'rxjs';
 
 import { PlanetCalendarComponent } from './calendar.component';
-import { styleVariables } from '@shared/utils';
+import { styleVariables } from '../utils';
 
 describe('PlanetCalendarComponent read-only behavior', () => {
   const createComponent = () => {

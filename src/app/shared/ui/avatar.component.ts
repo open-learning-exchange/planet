@@ -3,8 +3,8 @@ import { environment } from '../../../environments/environment';
 import { NgClass } from '@angular/common';
 import { Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
-import { StateService } from '@shared/state.service';
-import { couchAttachmentUrl } from '@shared/utils';
+import { StateService } from '../state.service';
+import { couchAttachmentUrl } from '../utils';
 
 interface AvatarSource {
   db: '_users' | 'attachments';

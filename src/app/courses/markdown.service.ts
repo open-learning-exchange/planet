@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { dedupeObjectArray } from '@shared/utils';
+import { dedupeObjectArray } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'

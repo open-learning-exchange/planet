@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { CouchService } from '@shared/database/couchdb.service';
+import { CouchService } from '../database/couchdb.service';
 import { of } from 'rxjs';
 import { tap, switchMap, catchError, map } from 'rxjs/operators';
 

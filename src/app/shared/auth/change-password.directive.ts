@@ -2,14 +2,14 @@ import { Directive, HostListener, Input, OnChanges } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, catchError, finalize } from 'rxjs/operators';
 import { UserService } from './user.service';
-import { CouchService } from '@shared/database/couchdb.service';
+import { CouchService } from '../database/couchdb.service';
 import { Validators } from '@angular/forms';
-import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { PlanetMessageService } from '../ui/planet-message.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { StateService } from '@shared/state.service';
-import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '../state.service';
+import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
 import { ManagerService } from '../../manager-dashboard/manager.service';
 
 const changePasswordFields = [

@@ -4,11 +4,11 @@ import { CouchService } from './couchdb.service';
 import { forkJoin, Observable, throwError, of } from 'rxjs';
 import { switchMap, map, takeWhile, catchError, take } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { StateService } from '@shared/state.service';
-import { TagsService } from '@shared/forms/tags/tags.service';
-import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '../state.service';
+import { TagsService } from '../forms/tags/tags.service';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { ValidatorService } from '../../validators/validator.service';
-import { UserService } from '@shared/auth/user.service';
+import { UserService } from '../auth/user.service';
 
 const passwordFormFields = [
   {

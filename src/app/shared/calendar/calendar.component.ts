@@ -5,17 +5,17 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsAddMeetupsComponent } from '@shared/dialogs/pickers/dialogs-add-meetups.component';
-import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsAddMeetupsComponent } from '../dialogs/pickers/dialogs-add-meetups.component';
+import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
 import { days, millisecondsToDay } from '../../meetups/constants';
-import { CouchService } from '@shared/database/couchdb.service';
-import { findDocuments } from '@shared/database/mango-queries';
-import { styleVariables } from '@shared/utils';
-import { AuthService } from '@shared/auth/auth-guard.service';
+import { CouchService } from '../database/couchdb.service';
+import { findDocuments } from '../database/mango-queries';
+import { styleVariables } from '../utils';
+import { AuthService } from '../auth/auth-guard.service';
 import { TasksService } from '../../tasks/tasks.service';
-import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { PlanetMessageService } from '../ui/planet-message.service';
+import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 
 const taskEventColors = {

@@ -6,13 +6,13 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogContent, MatDialogCl
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { CouchService } from '@shared/database/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { NewsService } from '../news/news.service';
 import { TeamsService } from '../teams/teams.service';
-import { UserService } from '@shared/auth/user.service';
-import { UserChallengeStatusService } from '@shared/challenges/user-challenge-status.service';
-import { DialogsAnnouncementSuccessComponent } from '@shared/challenges/dialogs-announcement.component';
-import { ChallengesService } from '@shared/challenges/challenges.service';
+import { UserService } from '../shared/auth/user.service';
+import { UserChallengeStatusService } from '../shared/challenges/user-challenge-status.service';
+import { DialogsAnnouncementSuccessComponent } from '../shared/challenges/dialogs-announcement.component';
+import { ChallengesService } from '../shared/challenges/challenges.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
@@ -25,7 +25,7 @@ import { MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { TeamsComponent } from '../teams/teams.component';
-import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 
 interface TeamForm {
   message: FormControl<string>;

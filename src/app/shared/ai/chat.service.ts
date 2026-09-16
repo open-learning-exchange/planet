@@ -4,8 +4,8 @@ import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { findDocuments, inSelector } from '@shared/database/mango-queries';
-import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments, inSelector } from '../database/mango-queries';
+import { CouchService } from '../database/couchdb.service';
 import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
 @Injectable({

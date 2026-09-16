@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '@shared/database/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { Subject, forkJoin, of } from 'rxjs';
-import { UserService } from '@shared/auth/user.service';
-import { findDocuments, inSelector } from '@shared/database/mango-queries';
+import { UserService } from '../shared/auth/user.service';
+import { findDocuments, inSelector } from '../shared/database/mango-queries';
 import { switchMap, map, filter, take } from 'rxjs/operators';
-import { RatingService } from '@shared/ratings/rating.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { StateService } from '@shared/state.service';
-import { TagsService } from '@shared/forms/tags/tags.service';
-import { dedupeObjectArray } from '@shared/utils';
+import { RatingService } from '../shared/ratings/rating.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { StateService } from '../shared/state.service';
+import { TagsService } from '../shared/forms/tags/tags.service';
+import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from './markdown.service';
 import { UsersService } from '../users/users.service';
 

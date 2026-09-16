@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { DialogsImagesComponent } from '@shared/forms/dialogs-images.component';
+import { DialogsImagesComponent } from '../forms/dialogs-images.component';
 import { TdTextEditorComponent } from '@covalent/text-editor';
 import { NgClass } from '@angular/common';
 

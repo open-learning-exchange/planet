@@ -1,9 +1,9 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsLoadingService } from '../dialogs-loading.service';
 import { MeetupsAddComponent } from '../../../meetups/add-meetups/meetups-add.component';
-import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes.component';
+import { CanComponentDeactivate } from '../../unsaved-changes/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '../../unsaved-changes/unsaved-changes.component';
 
 import { MeetupsViewComponent } from '../../../meetups/view-meetups/meetups-view.component';
 

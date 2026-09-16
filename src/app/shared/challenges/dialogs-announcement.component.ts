@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { Subject, of, Observable, forkJoin } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
 
-import { findDocuments } from '@shared/database/mango-queries';
-import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '../database/mango-queries';
+import { CouchService } from '../database/couchdb.service';
 import { CoursesService } from '../../courses/courses.service';
 import { NewsService } from '../../news/news.service';
-import { StateService } from '@shared/state.service';
+import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { UserService } from '@shared/auth/user.service';
+import { UserService } from '../auth/user.service';
 import { UserChallengeStatusService } from './user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 import { CdkScrollable } from '@angular/cdk/scrolling';

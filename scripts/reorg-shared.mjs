@@ -9,8 +9,7 @@
  * that already happened and reads like current documentation.
  *
  * The shared directory was regrouped by what each file achieves rather than by
- * file kind, and a `@shared/*` path alias was introduced so future moves do not
- * touch every consumer again.
+ * file kind. Imports remain relative to keep this change limited to the moves.
  *
  * Usage:
  *   node scripts/reorg-shared.mjs                       # rewrite stale imports only
@@ -27,7 +26,6 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { dirname, join, posix, relative, resolve } from 'node:path';
 
 const repoRoot = resolve(dirname(new URL(import.meta.url).pathname), '..');
-const sharedPrefix = 'src/app/shared/';
 const doMove = process.argv.includes('--move');
 const manifestArg = process.argv.find(arg => arg.startsWith('--manifest='));
 const manifest = manifestArg
@@ -68,16 +66,9 @@ const exists = modulePath => existsSync(join(repoRoot, `${modulePath}.ts`)) ||
   existsSync(join(repoRoot, modulePath, 'index.ts')) ||
   existsSync(join(repoRoot, modulePath));
 
-// A specifier is either relative to the importing file or aliased, in which
-// case it names a path under shared directly and the directory is irrelevant.
-const toModulePath = (dir, specifier) => specifier.startsWith('@shared/')
-  ? `${sharedPrefix}${specifier.slice('@shared/'.length)}`
-  : posix.normalize(posix.join(dir, specifier));
+const toModulePath = (dir, specifier) => posix.normalize(posix.join(dir, specifier));
 
 const specifierFor = (fromDir, target) => {
-  if (target.startsWith(sharedPrefix) && dirname(target) !== fromDir) {
-    return `@shared/${target.slice(sharedPrefix.length)}`;
-  }
   const rel = relative(fromDir, target).split(/[\\/]/).join('/');
   return rel.startsWith('.') ? rel : `./${rel}`;
 };
@@ -116,7 +107,7 @@ const rewriteImports = () => {
     const filePath = relative(repoRoot, abs).split(/[\\/]/).join('/');
     const original = readFileSync(abs, 'utf8');
     const updated = original.replace(
-      /(\bfrom\s*|\bimport\s*\()(['"])((?:\.|@shared\/)[^'"]*)\2/g,
+      /(\bfrom\s*|\bimport\s*\()(['"])(\.[^'"]*)\2/g,
       (match, prefix, quote, specifier) => {
         const target = resolveTarget(filePath, specifier);
         if (!target) {

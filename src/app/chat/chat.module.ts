@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { MaterialModule } from '@shared/material.module';
-import { PlanetFormsModule } from '@shared/forms/planet-forms.module';
-import { SharedComponentsModule } from '@shared/shared-components.module';
+import { MaterialModule } from '../shared/material.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ChatRouterModule } from './chat-routing.module';
 import { TeamsModule } from '../teams/teams.module';
 import { ChatComponent } from './chat.component';

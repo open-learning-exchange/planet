@@ -1,6 +1,6 @@
 import { NEVER, of } from 'rxjs';
 import { vi } from 'vitest';
-import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes.component';
+import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes.component';
 import { DialogsVoiceLabelsComponent } from './dialogs-voice-labels.component';
 
 describe('DialogsVoiceLabelsComponent', () => {

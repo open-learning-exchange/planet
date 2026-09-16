@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { fullName } from '@shared/utils';
+import { fullName } from '../utils';
 
 @Pipe({ name: 'fullName' })
 export class FullNamePipe implements PipeTransform {

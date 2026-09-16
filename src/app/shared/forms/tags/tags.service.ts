@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '@shared/database/couchdb.service';
+import { CouchService } from '../../database/couchdb.service';
 import { of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { StateService } from '@shared/state.service';
-import { findDocuments } from '@shared/database/mango-queries';
-import { createDeleteArray } from '@shared/tables/table.helpers';
+import { StateService } from '../../state.service';
+import { findDocuments } from '../../database/mango-queries';
+import { createDeleteArray } from '../../tables/table.helpers';
 
 @Injectable({
   providedIn: 'root'

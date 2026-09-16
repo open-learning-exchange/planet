@@ -10,7 +10,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
-import { dedupeShelfReduce } from '@shared/utils';
+import { dedupeShelfReduce } from '../../utils';
 import { NgClass } from '@angular/common';
 import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
 import { MatButton } from '@angular/material/button';

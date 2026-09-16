@@ -1,7 +1,7 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { CoursesComponent } from '../../courses/courses.component';
-import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
 import { UsersComponent } from '../../users/users.component';
 import { TeamsComponent } from '../../teams/teams.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';

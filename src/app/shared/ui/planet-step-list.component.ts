@@ -4,14 +4,14 @@ import { Component, Input, EventEmitter, Output, Directive, ContentChildren, Vie
 import { of, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
-import { uniqueId } from '@shared/utils';
+import { uniqueId } from '../utils';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
 
 export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
