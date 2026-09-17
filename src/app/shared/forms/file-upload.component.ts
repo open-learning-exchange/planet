@@ -168,6 +168,9 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     }
     const availableSlots = Math.max(0, this.maxFiles - this.retained.length - this.added.length);
     const candidateFiles = (this.multiple ? files : files.slice(0, 1)).slice(0, availableSlots);
+    if (this.multiple && files.length > availableSlots) {
+      this.errorMessage = $localize`Maximum file count reached`;
+    }
     if (!candidateFiles.length) {
       this.errorMessage = $localize`Maximum file count reached`;
       this.resetInputValue();

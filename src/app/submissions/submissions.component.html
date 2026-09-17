@@ -4,7 +4,11 @@
       <button mat-icon-button (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
+      @if (showCourseHeader) {
+        <span i18n>Course Submissions & Grading</span>
+      } @else {
+        <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
+      }
       <span class="toolbar-fill"></span>
       @if (!isMobile && !surveyId) {
         <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
@@ -29,6 +33,11 @@
       </mat-toolbar-row>
     }
   </mat-toolbar>
+  @if (showCourseHeader) {
+    <mat-toolbar class="primary-color font-size-1">
+      <h3 class="ellipsis-title margin-lr-3">{{ courseTitle }}</h3>
+    </mat-toolbar>
+  }
 }
 
 <ng-template #filterDropdown>
@@ -69,7 +78,7 @@
 </ng-template>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
-  <div class="view-container view-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }">
+  <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog, 'no-toolbar': !isDialog && !showCourseHeader }">
     <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog"
       [class.no-name-column]="!displayedColumns.includes('name')" [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
