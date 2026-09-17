@@ -198,8 +198,8 @@ const allValuesSelected = <S>(selection: SelectionModel<S>, values: S[]) => (
 );
 
 interface VisibleSelectionOptions<T, S> {
-  selectValue?: (row: T) => S,
-  isSelectable?: (row: T) => boolean
+  selectValue?: (row: T) => S;
+  isSelectable?: (row: T) => boolean;
 }
 
 export const isAllVisibleSelected = <T, S>(
@@ -227,7 +227,7 @@ export const toggleVisibleSelection = <T, S>(
   selection: SelectionModel<S>,
   visibleRows: T[],
   options: VisibleSelectionOptions<T, S> & {
-    clearAllOnDeselect?: boolean
+    clearAllOnDeselect?: boolean;
   } = {}
 ) => {
   const {
