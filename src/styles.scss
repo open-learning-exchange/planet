@@ -2,6 +2,25 @@
 @use 'app/mixins' as m;
 @use 'planet-mat-theme';
 
+// Visible viewport height: dvh keeps a mobile browser's URL bar from covering the bottom of
+// the screen, and 100vh remains for WebViews without dynamic viewport units
+:root {
+  --planet-vh: 100vh;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --planet-vh: 100dvh;
+  }
+}
+
+@media #{v.$short-viewport} {
+  .mat-toolbar {
+    --mat-toolbar-standard-height: #{v.$toolbar-row-short};
+    --mat-toolbar-mobile-height: #{v.$toolbar-row-short};
+  }
+}
+
 body {
   font-family: v.$font-family;
   margin: 0;
@@ -436,6 +455,40 @@ body {
     // Use the parent's bounds when the view is inside an already-sized container.
     &.fill-parent {
       height: 100%;
+    }
+  }
+
+  // A routed page with a full-height view is a column filling the screen below the app header:
+  // its toolbars keep their natural height and the view takes the rest, so no page budgets for
+  // its own chrome. The view sits in the page, its .space-container, or one component inside
+  // that (users-table). Embedded views (dialogs, forms, tabs) and browsers without :has() keep
+  // the fixed height above.
+  mat-sidenav-content > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    // Material gives multi-row toolbars an explicit min-height, which would otherwise let them
+    // shrink over the view; the page scrolls instead once chrome and view no longer fit
+    > mat-toolbar,
+    > .space-container > mat-toolbar,
+    > .space-container > * > mat-toolbar {
+      flex-shrink: 0;
+    }
+
+    > .space-container:has(> .view-full-height, > * > .view-full-height),
+    > .space-container > :has(> .view-full-height) {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0;
+      min-height: 0;
+    }
+
+    > .view-full-height,
+    > .space-container > .view-full-height,
+    > .space-container > * > .view-full-height {
+      flex: 1 1 0;
+      min-height: v.$view-container-min-height;
     }
   }
 

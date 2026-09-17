@@ -6,7 +6,7 @@
   grid-template-columns: auto;
   grid-template-rows: 64px 1fr;
   grid-template-areas: "header" "main";
-  height: 100vh;
+  height: var(--planet-vh);
 
   @keyframes pulsate {
     100% { transform: scale(1.1) }
@@ -118,6 +118,13 @@
   }
 }
 
+// Landscape phones get the shorter toolbar row styles.scss sets at this height
+@media #{v.$short-viewport} {
+  :host {
+    grid-template-rows: v.$toolbar-row-short 1fr;
+  }
+}
+
 .main-sidenav {
 
   display: grid;
@@ -204,6 +211,22 @@
   .bottom-nav {
     grid-area: btm;
     margin-bottom: 16px;
+  }
+
+  // A landscape phone can't fit every nav item, so the nav scrolls instead of clipping them
+  @media #{v.$short-viewport} {
+    grid-template-rows: auto auto;
+    grid-template-areas: "tp" "btm";
+    height: auto;
+    min-height: 100%;
+
+    .top-nav, .bottom-nav {
+      overflow: visible;
+    }
+
+    .bottom-nav {
+      margin-bottom: 0;
+    }
   }
 
 }

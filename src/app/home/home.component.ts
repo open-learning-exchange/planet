@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy, Injector, afterNextRender } from '@angular/core';
 import {
   Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
 } from '@angular/router';
@@ -12,7 +12,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '../shared/device-info.service';
 import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
@@ -73,6 +73,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   deviceType: DeviceType;
   isAndroid: boolean;
   isMobile: boolean;
+  isShortViewport: boolean;
   showBanner = true;
   readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
@@ -90,6 +91,11 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
 
+  // A landscape phone is wide enough to read as a tablet but too short for a pinned sidenav
+  get usesOverlayNav(): boolean {
+    return this.isMobile || this.isShortViewport;
+  }
+
   get notificationsLabel(): string {
     return $localize`Notifications: ${this.notifications.length}:count:`;
   }
@@ -103,7 +109,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private notificationsService: NotificationsService,
-    private challengesService: ChallengesService
+    private challengesService: ChallengesService,
+    private injector: Injector
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -112,9 +119,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+    this.deviceInfoService.watchViewport().pipe(takeUntil(this.onDestroy$)).subscribe(({ deviceType, isShortViewport }) => {
+      const usedOverlayNav = this.usesOverlayNav;
       this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      this.isMobile = isMobileOrSmaller(deviceType);
+      this.isShortViewport = isShortViewport;
+      if (this.usesOverlayNav !== usedOverlayNav) {
+        this.resetContentMargins();
+      }
     });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
@@ -141,7 +153,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       ),
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
-      if (this.isMobile) {
+      if (this.usesOverlayNav) {
         this.mobileSidenav?.close();
       }
     });
@@ -176,10 +188,16 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   syncToolbarLayout() {
-    const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
-    if (this.forceModern !== isScreenTooNarrow) {
-      this.forceModern = isScreenTooNarrow;
+    const needsModern = window.innerWidth < this.classicToolbarWidth || this.isShortViewport;
+    if (this.forceModern !== needsModern) {
+      this.forceModern = needsModern;
     }
+  }
+
+  // Material re-measures content margins only while a drawer is open, so swapping the pinned nav for
+  // the closed overlay nav would leave the pinned nav's width behind as a blank strip
+  private resetContentMargins() {
+    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
   }
 
   openLanguageSelector(): void {
@@ -276,7 +294,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   toggleNav() {
-    if (this.isMobile) {
+    if (this.usesOverlayNav) {
       this.mobileSidenav?.toggle();
       return;
     }
