@@ -1,4 +1,4 @@
-import { Component, Inject, Input, LOCALE_ID, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, Input, LOCALE_ID, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -17,7 +17,7 @@ import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { UserService } from './user.service';
+import { MeetupService } from '../meetups/meetups.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -55,13 +55,13 @@ const taskEventColors = {
     `,
   imports: [FullCalendarModule]
 })
-export class PlanetCalendarComponent implements OnInit, OnChanges {
+export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('calendar') calendar: any;
-  @Input() resizeCalendar: boolean;
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Input() type = '';
 
   @Input() header?: any = {
@@ -107,12 +107,19 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     dayMaxEventRows: 2,
     selectable: true,
     select: (arg) => {
+      if (!this.editable) {
+        return;
+      }
       this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
     },
     eventClick: this.eventClick.bind(this),
     eventDurationEditable: false,
     eventDrop: this.eventDrop.bind(this)
   };
+
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeFrameId: number | null = null;
+  private calendarWidth: number;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -124,7 +131,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private userService: UserService,
+    private elementRef: ElementRef<HTMLElement>,
+    private ngZone: NgZone,
+    private meetupService: MeetupService,
     private notificationsService: NotificationsService
   ) {}
 
@@ -137,6 +146,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         addEventButton: {
           text: $localize`Add Event`,
           click: (arg) => {
+            if (!this.editable) {
+              return;
+            }
             this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
           }
         }
@@ -148,12 +160,35 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.events = [ ...this.events ];
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
-      this.calendar.getApi().updateSize();
-      this.resizeCalendar = false;
+  ngAfterViewInit() {
+    if (typeof ResizeObserver === 'undefined') {
+      return;
     }
-    this.calendarOptions.events = [ ...this.events ];
+    this.ngZone.runOutsideAngular(() => {
+      this.resizeObserver = new ResizeObserver(entries => this.onCalendarResize(entries[0]?.contentRect.width));
+      this.resizeObserver.observe(this.elementRef.nativeElement);
+    });
+  }
+
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
+    if (this.resizeFrameId !== null) {
+      cancelAnimationFrame(this.resizeFrameId);
+    }
+  }
+
+  private onCalendarResize(width?: number) {
+    if (!width || width === this.calendarWidth) {
+      return;
+    }
+    this.calendarWidth = width;
+    if (this.resizeFrameId !== null) {
+      cancelAnimationFrame(this.resizeFrameId);
+    }
+    this.resizeFrameId = requestAnimationFrame(() => {
+      this.calendar?.getApi()?.updateSize();
+      this.resizeFrameId = null;
+    });
   }
 
   getMeetups() {
@@ -194,8 +229,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   canEditMeetup(meetup: any): boolean {
-    const user = this.userService.get();
-    return !!user?._id && (user.isUserAdmin || user.name === meetup?.createdBy);
+    return this.meetupService.canEditMeetup(meetup, { leaderOfTeamId: this.leaderOfTeamId, readOnly: !this.editable });
   }
 
   eventObject(
@@ -221,7 +255,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     const isRecurring = meetup.recurring && meetup.recurring !== 'none';
     const editable = meetup.isTask
       ? this.editable
-      : (this.canEditMeetup(meetup) && !isRecurring && this.editable);
+      : (this.canEditMeetup(meetup) && !isRecurring);
 
     return {
       title: meetup.title,
@@ -276,6 +310,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openAddEventDialog(event) {
+    if (!this.editable) {
+      return;
+    }
     const today = new Date();
     const meetup = event?.start
       ? {
@@ -287,7 +324,14 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         endDate: today,
       };
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
+      data: {
+        meetup,
+        link: this.link,
+        sync: this.sync,
+        onMeetupsChange: this.onMeetupsChange.bind(this),
+        editable: this.editable,
+        leaderOfTeamId: this.leaderOfTeamId
+      },
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh'
     });
@@ -314,6 +358,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
           link: this.link,
           sync: this.sync,
           editable: this.editable,
+          leaderOfTeamId: this.leaderOfTeamId,
           onMeetupsChange: this.onMeetupsChange.bind(this)
         }
       });
@@ -337,6 +382,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openTaskEditDialog(task) {
+    if (!this.editable) {
+      return;
+    }
     const { fields, formGroup } = this.tasksService.addDialogForm(task);
     this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
       onSubmit: (newTask) => {
@@ -353,6 +401,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openTaskDeleteDialog(task) {
+    if (!this.editable) {
+      return;
+    }
     const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -408,7 +459,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       return;
     }
 
-    if (!this.editable || !this.canEditMeetup(eventData)) {
+    if (!this.canEditMeetup(eventData)) {
       info.revert();
       this.planetMessageService.showAlert($localize`You are not authorized to edit this meetup`);
       return;

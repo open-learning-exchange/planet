@@ -39,8 +39,8 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => (data: any, filter: string) => {
   const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  for (let i = 0; i < filterFields.length; i++) {
-    const fieldValue = getProperty(data, filterFields[i]);
+  for (const filterField of filterFields) {
+    const fieldValue = getProperty(data, filterField);
     if (typeof fieldValue === 'string' &&
           fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(normalizedFilter) > -1) {
       return true;
@@ -88,8 +88,8 @@ export const filterDropdowns = (filterObj: any) => (data: any, filter: string) =
 // Takes array of field names and if trueIfExists is true, return true if field exists
 // if false return true if it does not exist
 export const filterFieldExists = (filterFields: string[], trueIfExists: boolean): any => (data: any, filter: string) => {
-  for (let i = 0; i < filterFields.length; i++) {
-    return trueIfExists === (getProperty(data, filterFields[i]) !== undefined);
+  for (const filterField of filterFields) {
+    return trueIfExists === (getProperty(data, filterField) !== undefined);
   }
   return true;
 };

@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
-import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
-import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
+import { EMPTY, Subject, Subscription, forkJoin, iif, of } from 'rxjs';
+import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take, filter } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -44,9 +44,11 @@ import {
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
+import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports.component';
 import { PlanetCalendarComponent } from '../shared/calendar.component';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voice-labels';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -98,6 +100,7 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
+  customVoiceLabels: string[] = this.configuration.customVoiceLabels || [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -112,11 +115,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   showNewsButton = true;
   deleteMode = false;
   onDestroy$ = new Subject<void>();
+  communityDataRequest$ = new Subject<void>();
+  newsRequestSubscription?: Subscription;
   isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
-  planetCode: string | null;
+  planetCode = this.route.snapshot.paramMap.get('code');
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   newsLoading = true;
@@ -127,9 +131,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
   voiceSearch = '';
   voiceSearch$ = new Subject<string>();
   availableLabels: string[] = [];
+  private viewLabelNames = new Set<string>();
   selectedLabel = '';
   pinned = false;
   attachmentMap: Record<string, any> = {};
+
+  get isRemoteExchange(): boolean {
+    return this.planetCode !== null;
+  }
 
   get localLinks(): any[] {
     return (this.links || []).filter(link => link.teamType !== 'social');
@@ -148,7 +157,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   localLinkTooltip(link: any): string {
-    return link.teamType === 'sync' || !this.planetCode
+    return link.teamType === 'sync' || !this.isRemoteExchange
       ? ''
       : $localize`${link.title}:linkTitle: is only available on ${this.configuration.name}:planetName:`;
   }
@@ -178,7 +187,38 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.configurationCheckService.checkConfiguration().subscribe();
+    this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();
+    this.communityDataRequest$.pipe(
+      tap(() => {
+        this.teamLoading = true;
+        this.newsLoading = true;
+        this.communityDataLoading = true;
+        this.activeReplyId = null;
+        this.news = [];
+        this.filteredNews = [];
+        this.links = [];
+        this.finances = [];
+        this.reports = [];
+        this.councillors = [];
+        this.newsRequestSubscription?.unsubscribe();
+      }),
+      switchMap(() => this.loadCommunityData()),
+      takeUntil(this.onDestroy$)
+    ).subscribe(team => {
+      this.team = team;
+      this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
+      this.teamLoading = false;
+    });
+    // planetCode is seeded from the route snapshot; the configuration listener below performs the initial load.
+    // This subscription only reloads data when Angular reuses the component for a different community code.
+    this.route.paramMap.pipe(
+      map(params => params.get('code')),
+      filter(planetCode => planetCode !== this.planetCode),
+      takeUntil(this.onDestroy$)
+    ).subscribe(planetCode => {
+      this.planetCode = planetCode;
+      this.getCommunityData();
+    });
     this.voiceSearch$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -196,12 +236,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.applyFilters();
     }, () => this.newsLoading = false);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
-      if (!this.planetCode) {
+      if (!this.isRemoteExchange) {
         this.setCouncillors(users);
       }
     });
     this.stateService.couchStateListener('child_users').pipe(takeUntil(this.onDestroy$)).subscribe(childUsers => {
-      if (this.planetCode && childUsers) {
+      if (this.isRemoteExchange && childUsers) {
         const users = childUsers.newData.filter(user => user.planetCode === this.planetCode).map(user => ({ ...user, doc: user }));
         this.setCouncillors(users);
       }
@@ -211,7 +251,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       () => this.stateService.configuration?._id !== undefined,
       of(this.stateService.configuration),
       this.stateService.couchStateListener('configurations')
-    ).subscribe(() => {
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getCommunityData();
     });
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
@@ -223,6 +263,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.newsRequestSubscription?.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -233,9 +274,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       return;
     }
     const dialogRef = this.challengesService.openChallengeDialog(this.dialog, challenge);
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       if (!this.userStatusService.getCompleteChallenge()) {
-        this.sendChallengeNotification(this.user, challenge).subscribe();
+        this.sendChallengeNotification(this.user, challenge).pipe(takeUntil(this.onDestroy$)).subscribe();
       }
     });
   }
@@ -246,41 +287,55 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getCommunityData() {
-    this.teamLoading = true;
-    const setShareTarget = (type) => type === 'center' ? 'nation' : type === 'nation' ? 'community' : undefined;
-    this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.planetCode = params.get('code');
-        this.shareTarget = this.planetCode ? undefined : setShareTarget(this.stateService.configuration.planetType);
-        return this.planetCode ?
-          this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } }) :
-          of([ this.stateService.configuration ]);
-      }),
+    this.communityDataRequest$.next();
+  }
+
+  private loadCommunityData() {
+    const planetCode = this.planetCode;
+    const localConfiguration = this.stateService.configuration || {};
+    const childPlanetType = this.getChildPlanetType(localConfiguration.planetType);
+    const requestedTeam = this.teamObject(planetCode);
+    this.shareTarget = this.isRemoteExchange ? undefined : childPlanetType;
+    const configurationRequest = this.isRemoteExchange ?
+      this.couchService.findAll('communityregistrationrequests', { selector: { code: planetCode } }) :
+      of([ localConfiguration ]);
+    return configurationRequest.pipe(
       switchMap(configurations => {
         // Configuration is for planet that is being viewed, not planet the user is on
-        this.configuration = configurations[0];
-        this.team = this.teamObject(this.planetCode);
+        this.configuration = configurations[0] || {
+          code: planetCode,
+          name: planetCode,
+          planetType: childPlanetType || 'community'
+        };
+        this.customVoiceLabels = this.configuration.customVoiceLabels || [];
+        this.team = requestedTeam;
         this.teamId = this.team._id;
-        this.requestNewsAndUsers(this.planetCode);
+        this.requestNewsAndUsers(planetCode);
         this.communityDataLoading = true;
-        return this.getLinks(this.planetCode);
+        return this.getLinks(planetCode);
       }),
       switchMap((res) => {
         this.setLinksAndFinances(res);
-        return this.couchService.get(`teams/${this.teamId}`);
+        return this.couchService.get(`teams/${requestedTeam._id}`);
       }),
-      catchError(err => err.statusText === 'Object Not Found' ? of(this.team) : throwError(err))
-    ).subscribe(team => {
-      this.team = team;
-      this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
-      this.teamLoading = false;
-    }, () => {
-      this.teamLoading = false;
-    });
+      catchError(err => {
+        if (err.statusText === 'Object Not Found') {
+          return of(requestedTeam);
+        }
+        this.teamLoading = false;
+        this.communityDataLoading = false;
+        this.newsLoading = false;
+        return EMPTY;
+      })
+    );
+  }
+
+  private getChildPlanetType(planetType: string): 'community' | 'nation' | undefined {
+    return planetType === 'center' ? 'nation' : planetType === 'nation' ? 'community' : undefined;
   }
 
   requestNewsAndUsers(planetCode?: string) {
-    this.newsService.requestNews({
+    this.newsRequestSubscription = this.newsService.requestNews({
       selectors: {
         $or: [
           { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
@@ -297,6 +352,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openAddMessageDialog(message = '') {
+    if (this.isRemoteExchange) {
+      return;
+    }
     this.dialogsFormService.openDialogsForm(
       $localize`Add Voice`,
       [ { name: 'message', placeholder: $localize`Your Voice`, type: 'markdown', required: true, imageGroup: 'community' } ],
@@ -306,6 +364,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   postMessage(message) {
+    if (this.isRemoteExchange) {
+      return;
+    }
     this.newsService.postNews({
       viewIn: [ { _id: this.teamId, section: 'community' } ],
       messageType: 'sync',
@@ -324,7 +385,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         )).map(user => this.sendNotifications(user._id, this.user._id));
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
-      finalize(() => this.dialogsLoadingService.stop())
+      finalize(() => this.dialogsLoadingService.stop()),
+      takeUntil(this.onDestroy$)
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
       const challenge = this.challengesService.getActiveChallenge();
@@ -433,6 +495,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openAddLinkDialog() {
+    if (this.isRemoteExchange) {
+      return;
+    }
     this.dialog.open(CommunityLinkDialogComponent, {
       width: '50vw',
       maxHeight: '90vh',
@@ -444,6 +509,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openDeleteLinkDialog(link) {
+    if (this.isRemoteExchange) {
+      return;
+    }
     const deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -463,6 +531,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   confirmDeleteDescription() {
+    if (this.isRemoteExchange) {
+      return;
+    }
     const deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -494,10 +565,16 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleDeleteMode() {
+    if (this.isRemoteExchange) {
+      return;
+    }
     this.deleteMode = !this.deleteMode;
   }
 
   openChangeTitleDialog({ member: councillor }) {
+    if (this.isRemoteExchange) {
+      return;
+    }
     this.dialogsFormService.openDialogsForm(
       councillor.doc.leadershipTitle ? $localize`Change Leader Title` : $localize`Add Leader Title`,
       [ { name: 'leadershipTitle', placeholder: $localize`Title`, type: 'textbox' } ],
@@ -529,6 +606,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openDescriptionDialog() {
+    if (this.isRemoteExchange) {
+      return;
+    }
     const formGroup: FormGroup<CommunityDescriptionForm> = this.fb.group({
       description: this.fb.control(this.team.description || '', { validators: [ CustomValidators.requiredMarkdown ] })
     });
@@ -574,16 +654,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }: { index: number }) {
-    // stash reply only on voices tab change
-    if (this.currentTab === 0 && index !== 0) {
+    if (this.currentTab === 0 && index !== 0 && !this.isRemoteExchange) {
       this.lastReplyId = this.activeReplyId;
     }
-    if (index === 0) {
-      this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
-    } else {
-      this.router.navigate([ '' ]);
+    if (index === 0 && this.isRemoteExchange) {
+      this.activeReplyId = null;
     }
-    this.resizeCalendar = (index === 5);
+    if (!this.isRemoteExchange) {
+      if (index === 0) {
+        this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
+      } else {
+        this.router.navigate([ '' ]);
+      }
+    }
     this.currentTab = index;
   }
 
@@ -595,9 +678,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     let filtered = this.news;
     if (this.selectedLabel) {
-      filtered = filtered.filter(item => (item.doc.labels || []).includes(this.selectedLabel)
-          || (item.doc.viewIn || []).some(view => view.name === this.selectedLabel)
-          || (this.selectedLabel === 'shared chat' && item.doc.chat === true));
+      filtered = filtered.filter(item =>
+        (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel))
+          || (item.doc.viewIn || []).some(view => view.name && voiceLabelsEqual(view.name, this.selectedLabel))
+          || (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true));
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
@@ -612,30 +696,54 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getAvailableLabels(news: any[]): string[] {
-    const labelSet = new Set<string>();
+    const labels: string[] = [];
+    this.viewLabelNames = new Set<string>();
     news.forEach(item => {
-      (item.doc.labels || []).forEach(label => labelSet.add(label));
+      labels.push(...(item.doc.labels || []));
       (item.doc.viewIn || []).forEach(view => {
         if (view.name) {
-          labelSet.add(view.name);
+          labels.push(view.name);
+          this.viewLabelNames.add(normalizeVoiceLabel(view.name));
         }
       });
       if (item.doc.chat === true) {
-        labelSet.add('shared chat');
+        labels.push(SHARED_CHAT_LABEL);
       }
     });
 
-    return Array.from(labelSet);
+    return dedupeVoiceLabels(labels);
   }
 
   getLabelIcon(label: string): string {
-    return label === 'shared chat' ? 'question_answer'
-      : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
+    return voiceLabelsEqual(label, SHARED_CHAT_LABEL) ? 'question_answer'
+      : this.viewLabelNames.has(normalizeVoiceLabel(label)) ? 'groups'
       : 'label_important';
   }
 
+  get canManageLabels(): boolean {
+    return !this.planetCode &&
+      (this.isCommunityLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
+  }
+
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
-    this.selectedLabel = action === 'select' ? label : '';
+    this.selectedLabel = action === 'select' ?
+      this.availableLabels.find(availableLabel => voiceLabelsEqual(availableLabel, label)) || label : '';
     this.applyFilters();
+  }
+
+  openManageLabelsDialog() {
+    if (this.planetCode) {
+      return;
+    }
+    this.dialog.open(DialogsVoiceLabelsComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: { target: 'community', customLabels: this.customVoiceLabels }
+    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+      if (updatedLabels) {
+        this.customVoiceLabels = updatedLabels;
+        this.configuration = { ...this.configuration, customVoiceLabels: updatedLabels };
+      }
+    });
   }
 }

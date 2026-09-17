@@ -1,6 +1,5 @@
 import { Component, Inject, LOCALE_ID, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -25,6 +24,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
 import { fullName } from '../../shared/utils';
 import { FullNamePipe } from '../../shared/full-name.pipe';
+import { LinkCopyService } from '../../shared/link-copy.service';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -77,7 +77,7 @@ export class UsersAchievementsComponent implements OnInit {
     private stateService: StateService,
     private coursesService: CoursesService,
     private certificationsService: CertificationsService,
-    private clipboard: Clipboard,
+    private linkCopyService: LinkCopyService,
     private pdfService: PdfService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }
@@ -140,11 +140,19 @@ export class UsersAchievementsComponent implements OnInit {
     });
   }
 
-  initUser(name, planetCode) {
-    const isLocal = this.stateService.configuration.code === planetCode;
-    const db = isLocal ? '_users' : 'child_users';
-    const id = isLocal ? 'org.couchdb.user:' + name : name + '@' + planetCode;
+  initUser(name: string, planetCode?: string | null): void {
+    const relationship = this.userRelationship(planetCode);
+    const db = relationship === 'local' ? '_users' : relationship + '_users';
+    const id = relationship === 'child' ? name + '@' + planetCode : 'org.couchdb.user:' + name;
     this.couchService.get(db + '/' + id).subscribe((user) => this.user = user);
+  }
+
+  userRelationship(planetCode?: string | null): 'local' | 'parent' | 'child' {
+    const { code, parentCode } = this.stateService.configuration;
+    if (!planetCode || planetCode === code) {
+      return 'local';
+    }
+    return planetCode === parentCode ? 'parent' : 'child';
   }
 
   goBack() {
@@ -184,8 +192,13 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   copyLink() {
-    const link = `${window.location.origin}/profile/${this.user.name}/achievements;planet=${this.stateService.configuration.code}`;
-    this.clipboard.copy(link);
+    this.linkCopyService.copyLink(
+      [ '/profile', this.user.name, 'achievements', { planet: this.stateService.configuration.code } ],
+      {
+        success: $localize`Achievements link copied to clipboard`,
+        failure: $localize`Failed to copy achievements link`
+      }
+    );
   }
 
   generatePDF() {

@@ -84,6 +84,8 @@ jobs:
             "${cacheargs[@]}" \
             --load \
             -t $repo .
+          actual_arch="$(docker image inspect "$repo" --format '{{.Architecture}}')"
+          [ "$actual_arch" = '${{ matrix.arch }}' ] || { echo "architecture mismatch: expected ${{ matrix.arch }}, got ${actual_arch:-<none>}"; exit 1; }
           docker images
           docker tag $repo $branchrepo
           docker push $repo
