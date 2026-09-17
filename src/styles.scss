@@ -1031,14 +1031,7 @@ body {
     padding: 8px;
     border-radius: 5px;
     background-color: #{v.$primary};
-    color: white;
-  }
-
-  .chat-link {
-    color: white !important;
-    &:visited {
-      color: white !important;
-    }
+    color: v.$white;
   }
 
   .conversation-response {
@@ -1050,39 +1043,25 @@ body {
     font-style: italic;
   }
 
-  .code-block {
-    position: relative;
-    background-color: #2d2d2d;
-    color: #f8f8f2;
-    padding: 10px;
-    border-radius: 5px;
-    overflow-x: auto;
-    font-family: 'Courier New', Courier, monospace;
+  planet-markdown.conversation-query .markdown-content a[href] {
+    color: v.$white;
   }
 
-  .copy-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: transparent;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-    color: #f8f8f2;
-    transition: color 0.3s;
+  planet-markdown.conversation-query .markdown-content > :last-child,
+  planet-markdown.conversation-response .markdown-content > :last-child {
+    margin-bottom: 0;
   }
 
-  .copy-btn.copied {
-    color: v.$primary;
-  }
+  planet-markdown.conversation-query .markdown-content,
+  planet-markdown.conversation-response .markdown-content {
+    pre, :not(pre) > code {
+      background: v.$code-block-background;
+      color: v.$code-block-text;
+    }
 
-  .chat-link {
-    color: #1e88e5 !important;
-    text-decoration: none;
-  }
-
-  .chat-link:hover {
-    text-decoration: underline;
+    .code-block-wrap .copy-btn {
+      color: v.$code-block-text;
+    }
   }
 
   /* Custom scrollbar styles */

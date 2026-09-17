@@ -8,7 +8,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { ageFromUser, converter, dedupeShelfReduce, localizedGender, markdownToPlainText, toProperCase } from '../shared/utils';
+import { ageFromUser, dedupeShelfReduce, localizedGender, toProperCase } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -18,6 +18,7 @@ import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
 import { PdfService } from '../shared/pdf.service';
+import { MarkdownRenderService } from '../shared/markdown-render.service';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,7 @@ export class SubmissionsService {
     private managerService: ManagerService,
     private chatService: ChatService,
     private pdfService: PdfService,
+    private markdownRenderer: MarkdownRenderService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }
 
@@ -346,7 +348,7 @@ export class SubmissionsService {
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"${$localize`Question`} ${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+              [`"${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text).replace(/"/g, '""')}"`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };
@@ -398,7 +400,11 @@ export class SubmissionsService {
         continue;
       }
       question.index = i;
-      docContent.push({ stack: htmlToPdfmake(`<strong>${$localize`Question `} ${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
+      docContent.push({
+        stack: htmlToPdfmake(
+          `<strong>${$localize`Question `} ${i + 1}:</strong> ${this.markdownRenderer.render(question.body)}`
+        )
+      });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
@@ -460,19 +466,19 @@ export class SubmissionsService {
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
-      stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
+      stack: htmlToPdfmake(this.markdownRenderer.render(analysisPayload.chat, '', 'chat')),
       margin: [ 0, 10, 0, 10 ]
     });
   }
 
   async buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
     const htmlToPdfmake = await this.pdfService.getHtmlConverter();
-    const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
-    const submissionContents = markdownSubmissions.map((markdown, index) => {
+    const submissionHtml = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+    const submissionContents = submissionHtml.map((html, index) => {
       const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
       return {
         ...pageBreak,
-        stack: htmlToPdfmake(converter.makeHtml(markdown))
+        stack: htmlToPdfmake(this.markdownRenderer.sanitizeHtml(html))
       };
     });
     return [
@@ -552,7 +558,10 @@ export class SubmissionsService {
                 fontSize: 12,
                 bold: true,
                 alignment: 'center'
-              }
+              },
+              'markdown-align-left': { alignment: 'left' },
+              'markdown-align-center': { alignment: 'center' },
+              'markdown-align-right': { alignment: 'right' }
             }
           }, `${this.localizedSubmissionType(type)} - ${exam.name}.pdf`);
         } catch {
@@ -594,7 +603,7 @@ export class SubmissionsService {
         '<hr>'
       ].filter(Boolean).join('\n');
     } else {
-      return `### ${exam.name} ${$localize`Questions`} \n`;
+      return `<h3>${exam.name} ${$localize`Questions`}</h3>`;
     }
   }
 
@@ -602,7 +611,8 @@ export class SubmissionsService {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
       const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
-      return `<div style="text-align: ${alignment};"><strong>${localizedLabel} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;
+      const renderedText = this.markdownRenderer.render(text);
+      return `<div class="markdown-align-${alignment}"><strong>${localizedLabel} ${index + 1}:</strong><br>${renderedText}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +

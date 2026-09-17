@@ -35,6 +35,8 @@ $light-grey: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 100);
 $medium-grey: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 300);
 $grey: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 400);
 $grey-text: map.get(mat.$m2-light-theme-foreground-palette, 'secondary-text');
+$code-block-background: rgb(45, 45, 45);
+$code-block-text: rgb(248, 248, 242);
 $primary-lighter: mat.m2-get-color-from-palette($planet-app-primary, 100);
 $primary-light: mat.m2-get-color-from-palette($planet-app-primary, 300);
 $accent-lighter: mat.m2-get-color-from-palette($planet-app-accent, 100);
