@@ -80,7 +80,7 @@ $font-family: Roboto, sans-serif;
 $screen-md: 1000px;
 $screen-sm: 780px;
 $screen-xs: 480px;
-// Mirrors SHORT_VIEWPORT_QUERY in device-info.service.ts
+// Keep this query in sync with SHORT_VIEWPORT_QUERY in device-info.service.ts.
 $short-viewport: '(max-height: 500px) and (pointer: coarse)';
 $toolbar-row-short: 48px;
 

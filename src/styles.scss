@@ -2,7 +2,6 @@
 @use 'app/mixins' as m;
 @use 'planet-mat-theme';
 
-// dvh keeps a mobile browser's URL bar off the bottom; 100vh covers WebViews without it
 :root {
   --planet-vh: 100vh;
 }
@@ -455,14 +454,12 @@ body {
     }
   }
 
-  // A routed page fills the frame as a column, so no page budgets for its own chrome. Embedded
-  // views (dialogs, forms, tabs) and browsers without :has() keep the fixed height above.
+  // Keep this path bounded so nested dialog and tab views retain their own sizing.
   mat-sidenav-content > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height) {
     display: flex;
     flex-direction: column;
     height: 100%;
 
-    // Material gives multi-row toolbars an explicit min-height, so they would shrink over the view
     > mat-toolbar,
     > .space-container > mat-toolbar,
     > .space-container > * > mat-toolbar {

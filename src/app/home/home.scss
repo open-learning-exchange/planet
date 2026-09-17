@@ -211,7 +211,6 @@
     margin-bottom: 16px;
   }
 
-  // Too short for every nav item, so the nav scrolls instead of clipping them
   @media #{v.$short-viewport} {
     grid-template-rows: auto auto;
     grid-template-areas: "tp" "btm";

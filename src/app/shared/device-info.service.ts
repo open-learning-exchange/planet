@@ -28,7 +28,7 @@ export const DEFAULT_DEVICE_BREAKPOINTS: Required<DeviceBreakpoints> = {
   smallMobile: 480
 };
 
-// DeviceType is width-only, so a landscape phone reads as a tablet; touch-only keeps short desktop windows out
+// Landscape phones may be tablet-width; coarse pointer excludes short desktop windows.
 export const SHORT_VIEWPORT_QUERY = '(max-height: 500px) and (pointer: coarse)';
 
 export interface ViewportState {
@@ -81,7 +81,6 @@ export class DeviceInfoService {
     return deviceType$;
   }
 
-  // Width and height in one stream, so rotating a device lands as a single change
   public watchViewport(): Observable<ViewportState> {
     const breakpoints = this.resolveBreakpoints({});
     return this.breakpointObserver.observe([

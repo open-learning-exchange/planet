@@ -192,7 +192,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
-  // Material re-measures margins only for an open drawer, so the pinned nav's width would linger
+  // Material can retain the side drawer's content margin after switching to overlay.
   private resetContentMargins() {
     afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
   }
