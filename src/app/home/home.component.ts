@@ -85,13 +85,11 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       this.mainContent._changeDetectorRef.markForCheck();
     })
   );
-  // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
 
-  // A landscape phone is wide enough to read as a tablet but too short for a pinned sidenav
   get usesOverlayNav(): boolean {
     return this.isMobile || this.isShortViewport;
   }
@@ -194,8 +192,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
-  // Material re-measures content margins only while a drawer is open, so swapping the pinned nav for
-  // the closed overlay nav would leave the pinned nav's width behind as a blank strip
+  // Material re-measures margins only for an open drawer, so the pinned nav's width would linger
   private resetContentMargins() {
     afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
   }

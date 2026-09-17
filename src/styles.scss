@@ -2,8 +2,7 @@
 @use 'app/mixins' as m;
 @use 'planet-mat-theme';
 
-// Visible viewport height: dvh keeps a mobile browser's URL bar from covering the bottom of
-// the screen, and 100vh remains for WebViews without dynamic viewport units
+// dvh keeps a mobile browser's URL bar off the bottom; 100vh covers WebViews without it
 :root {
   --planet-vh: 100vh;
 }
@@ -444,8 +443,6 @@ body {
     padding: 1rem;
   }
 
-  // Style to make the view-container fill the available screen space
-  // 352px = 5 * 64px toolbars + 32px of padding
   // Overflow must be set on children
   .view-container.view-full-height {
     height: v.$view-container-height;
@@ -458,18 +455,14 @@ body {
     }
   }
 
-  // A routed page with a full-height view is a column filling the screen below the app header:
-  // its toolbars keep their natural height and the view takes the rest, so no page budgets for
-  // its own chrome. The view sits in the page, its .space-container, or one component inside
-  // that (users-table). Embedded views (dialogs, forms, tabs) and browsers without :has() keep
-  // the fixed height above.
+  // A routed page fills the frame as a column, so no page budgets for its own chrome. Embedded
+  // views (dialogs, forms, tabs) and browsers without :has() keep the fixed height above.
   mat-sidenav-content > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height) {
     display: flex;
     flex-direction: column;
     height: 100%;
 
-    // Material gives multi-row toolbars an explicit min-height, which would otherwise let them
-    // shrink over the view; the page scrolls instead once chrome and view no longer fit
+    // Material gives multi-row toolbars an explicit min-height, so they would shrink over the view
     > mat-toolbar,
     > .space-container > mat-toolbar,
     > .space-container > * > mat-toolbar {

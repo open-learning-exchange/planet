@@ -80,8 +80,7 @@ $font-family: Roboto, sans-serif;
 $screen-md: 1000px;
 $screen-sm: 780px;
 $screen-xs: 480px;
-// Landscape phones, too short for stacked toolbars at their usual height.
-// Mirrors SHORT_VIEWPORT_QUERY in device-info.service.ts.
+// Mirrors SHORT_VIEWPORT_QUERY in device-info.service.ts
 $short-viewport: '(max-height: 500px) and (pointer: coarse)';
 $toolbar-row-short: 48px;
 
@@ -94,7 +93,6 @@ $toolbar-row-short: 48px;
 // Maximum full height of view container (avoiding vertical overflow)
 $view-container-height: calc(var(--planet-vh) - 216px);
 $view-container-height-no-toolbar: calc(#{$view-container-height} + 64px);
-// Smallest height a full-height view keeps before its page scrolls instead
 $view-container-min-height: 40vh;
 $search-filters-height: 25vh;
 // Height of dashboard

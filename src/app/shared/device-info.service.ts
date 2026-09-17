@@ -28,8 +28,7 @@ export const DEFAULT_DEVICE_BREAKPOINTS: Required<DeviceBreakpoints> = {
   smallMobile: 480
 };
 
-// DeviceType is width-only, so a landscape phone (~800x360) reads as a tablet. Touch only, so a
-// short desktop window keeps its layout. Mirrors $short-viewport in _variables.scss.
+// DeviceType is width-only, so a landscape phone reads as a tablet; touch-only keeps short desktop windows out
 export const SHORT_VIEWPORT_QUERY = '(max-height: 500px) and (pointer: coarse)';
 
 export interface ViewportState {

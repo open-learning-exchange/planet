@@ -16,7 +16,6 @@
     grid-area: header;
     position: relative;
     z-index: 10;
-    //box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12)
     display: grid;
     grid-template-areas: "left center right";
     width: 100%;
@@ -118,7 +117,6 @@
   }
 }
 
-// Landscape phones get the shorter toolbar row styles.scss sets at this height
 @media #{v.$short-viewport} {
   :host {
     grid-template-rows: v.$toolbar-row-short 1fr;
@@ -213,7 +211,7 @@
     margin-bottom: 16px;
   }
 
-  // A landscape phone can't fit every nav item, so the nav scrolls instead of clipping them
+  // Too short for every nav item, so the nav scrolls instead of clipping them
   @media #{v.$short-viewport} {
     grid-template-rows: auto auto;
     grid-template-areas: "tp" "btm";
