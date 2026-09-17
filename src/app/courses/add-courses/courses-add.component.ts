@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
+import { Subject, forkJoin, of, combineLatest, race, interval, from, throwError } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -36,6 +36,8 @@ import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionP
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
+const unprocessableCoverError = 'unprocessable-cover';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -306,6 +308,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     const existingAttachmentNames = Object.keys(this.savedCourse?._attachments || {});
     (addedCover ? from(normalizeImage(addedCover.file, { usedNames: existingAttachmentNames })) : of(null)).pipe(
       switchMap(normalizedCover => {
+        if (addedCover && !normalizedCover) {
+          return throwError(() => new Error(unprocessableCoverError));
+        }
         if (normalizedCover) {
           return this.saveCourseWithNewCover(newCourse, normalizedCover);
         }
@@ -330,7 +335,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.preserveCoverStateUntilSubmit = false;
     }, (err) => {
       this.preserveCoverStateUntilSubmit = false;
-      this.planetMessageService.showAlert($localize`There was an error saving this course`);
+      this.planetMessageService.showAlert(
+        err?.message === unprocessableCoverError ?
+          $localize`Cover image could not be processed. Please choose a JPEG or PNG image.` :
+          $localize`There was an error saving this course`
+      );
     });
   }
 

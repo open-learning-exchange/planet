@@ -43,6 +43,8 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   @Input() typePills: string[] = [ 'PDF', 'EPUB', 'ZIP', 'MP3', 'MP4', 'IMG' ];
   @Input() multiple = false;
   @Input() maxFiles = 1;
+  // Zero leaves the component's advertised limit unenforced, matching callers that validate size themselves.
+  @Input() maxSizeMb = 0;
   @Input() imagePreview = false;
   @Input() existingAttachments: ExistingAttachment[] = [];
   @Output() fileSelected = new EventEmitter<File>();
@@ -177,6 +179,11 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     candidateFiles.forEach(file => {
       if (!isAcceptableFile(file, this.accept)) {
         this.errorMessage = $localize`File type not allowed`;
+        this.fileRejected.emit(file);
+        return;
+      }
+      if (this.maxSizeMb > 0 && file.size / 1024 / 1024 > this.maxSizeMb) {
+        this.errorMessage = $localize`File is larger than ${this.maxSizeMb} MB`;
         this.fileRejected.emit(file);
         return;
       }
