@@ -2,6 +2,23 @@
 @use 'app/mixins' as m;
 @use 'planet-mat-theme';
 
+:root {
+  --planet-vh: 100vh;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --planet-vh: 100dvh;
+  }
+}
+
+@media #{v.$short-viewport} {
+  .mat-toolbar {
+    --mat-toolbar-standard-height: #{v.$toolbar-row-short};
+    --mat-toolbar-mobile-height: #{v.$toolbar-row-short};
+  }
+}
+
 body {
   font-family: v.$font-family;
   margin: 0;
@@ -425,8 +442,6 @@ body {
     padding: 1rem;
   }
 
-  // Style to make the view-container fill the available screen space
-  // 352px = 5 * 64px toolbars + 32px of padding
   // Overflow must be set on children
   .view-container.view-full-height {
     height: v.$view-container-height;
@@ -436,6 +451,34 @@ body {
     // Use the parent's bounds when the view is inside an already-sized container.
     &.fill-parent {
       height: 100%;
+    }
+  }
+
+  // Keep this path bounded so nested dialog and tab views retain their own sizing.
+  mat-sidenav-content > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    > mat-toolbar,
+    > .space-container > mat-toolbar,
+    > .space-container > * > mat-toolbar {
+      flex-shrink: 0;
+    }
+
+    > .space-container:has(> .view-full-height, > * > .view-full-height),
+    > .space-container > :has(> .view-full-height) {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0;
+      min-height: 0;
+    }
+
+    > .view-full-height,
+    > .space-container > .view-full-height,
+    > .space-container > * > .view-full-height {
+      flex: 1 1 0;
+      min-height: v.$view-container-min-height;
     }
   }
 
