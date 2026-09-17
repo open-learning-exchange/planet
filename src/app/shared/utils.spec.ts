@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import {
-  couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName, hasMarkdownImages,
-  normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
+  ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
+  genderBucket, hasMarkdownImages, localizedGender, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -337,6 +337,121 @@ ${'\t'.repeat(18)}
       expect(formatBytes(2516582)).toBe('2.4 MB');
       expect(formatBytes(1073741824)).toBe('1 GB');
       expect(formatBytes(1048575)).toBe('1 MB');
+    });
+
+  });
+
+  describe('ageFromBirthDate', () => {
+
+    const now = new Date(2026, 8, 4);
+
+    it('counts full years lived', () => {
+      expect(ageFromBirthDate(now, new Date(1998, 8, 4))).toBe(28);
+      expect(ageFromBirthDate(now, new Date(1998, 7, 30))).toBe(28);
+      expect(ageFromBirthDate(now, new Date(1998, 8, 30))).toBe(27);
+      expect(ageFromBirthDate(now, new Date(1998, 9, 4))).toBe(27);
+    });
+
+    it('does not count a birthday later in the same month', () => {
+      expect(ageFromBirthDate(now, new Date(1998, 8, 5))).toBe(27);
+    });
+
+    it('returns null when there is no usable birth date', () => {
+      expect(ageFromBirthDate(now, undefined)).toBeNull();
+      expect(ageFromBirthDate(now, null)).toBeNull();
+      expect(ageFromBirthDate(now, '')).toBeNull();
+      expect(ageFromBirthDate(now, new Date('unparseable'))).toBeNull();
+    });
+
+    it('rejects strings which only start out like a date', () => {
+      expect(ageFromBirthDate(now, '1998-09-04garbage')).toBeNull();
+      expect(ageFromBirthDate(now, '1998-09-04Tgarbage')).toBeNull();
+      expect(ageFromBirthDate(now, '1998-13-45')).toBeNull();
+      expect(ageFromBirthDate(now, '1998-02-30')).toBeNull();
+    });
+
+    it('reads the ISO strings CouchDB stores', () => {
+      expect(ageFromBirthDate(now, '1998-09-04T00:00:00.000Z')).toBe(28);
+    });
+
+    it('treats a date only birth date as a calendar date in negative UTC offsets', () => {
+      const timezone = process.env.TZ;
+      process.env.TZ = 'America/New_York';
+      try {
+        // UTC midnight on the 4th reads back as the 3rd here, which used to age the member a day early.
+        expect(ageFromBirthDate(new Date(2026, 8, 3), '1998-09-04')).toBe(27);
+        expect(ageFromBirthDate(new Date(2026, 8, 3), '1998-09-04T00:00:00.000Z')).toBe(27);
+        expect(ageFromBirthDate(new Date(2026, 8, 4), '1998-09-04')).toBe(28);
+        expect(ageFromBirthDate(new Date(2026, 11, 31), '1998-01-01')).toBe(28);
+      } finally {
+        if (timezone === undefined) {
+          delete process.env.TZ;
+        } else {
+          process.env.TZ = timezone;
+        }
+      }
+    });
+
+    it('reads timestamps, including the epoch', () => {
+      expect(ageFromBirthDate(now, new Date(1998, 8, 4).valueOf())).toBe(28);
+      expect(ageFromBirthDate(now, 0)).toBe(56);
+    });
+
+  });
+
+  describe('ageFromUser', () => {
+
+    const now = new Date(2026, 8, 4);
+
+    it('prefers an age calculated from a valid birth date', () => {
+      expect(ageFromUser(now, { birthDate: new Date(1998, 8, 4), age: 12 })).toBe(28);
+    });
+
+    it('falls back to a stored age, including zero', () => {
+      expect(ageFromUser(now, { age: 20 })).toBe(20);
+      expect(ageFromUser(now, { age: 0 })).toBe(0);
+    });
+
+    it('returns null when no age is available', () => {
+      expect(ageFromUser(now, {})).toBeNull();
+      expect(ageFromUser(now)).toBeNull();
+    });
+
+  });
+
+  describe('localizedGender', () => {
+
+    it('translates known genders case-insensitively', () => {
+      expect(localizedGender('male')).toBe('Male');
+      expect(localizedGender('FEMALE')).toBe('Female');
+    });
+
+    it('capitalizes other strings', () => {
+      expect(localizedGender('nonbinary')).toBe('Nonbinary');
+    });
+
+    it('falls back for missing or non-string values', () => {
+      expect(localizedGender(undefined)).toBe('');
+      expect(localizedGender('', 'N/A')).toBe('N/A');
+      expect(localizedGender(1, 'N/A')).toBe('N/A');
+      expect(localizedGender({}, 'N/A')).toBe('N/A');
+    });
+
+  });
+
+  describe('genderBucket', () => {
+
+    it('matches the casing localizedGender accepts', () => {
+      expect(genderBucket('male')).toBe('male');
+      expect(genderBucket('Male')).toBe('male');
+      expect(genderBucket('FEMALE')).toBe('female');
+    });
+
+    it('counts anything the charts have no bucket for as unspecified', () => {
+      expect(genderBucket('nonbinary')).toBe('didNotSpecify');
+      expect(genderBucket(undefined)).toBe('didNotSpecify');
+      expect(genderBucket('')).toBe('didNotSpecify');
+      expect(genderBucket(1)).toBe('didNotSpecify');
     });
 
   });
