@@ -24,6 +24,7 @@ import {
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
+import { AppSourceFilter, appSourceLabel, appSources } from '../../shared/app-source';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
@@ -117,6 +118,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   users: any[] = [];
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
+  appSources = appSources;
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
@@ -141,7 +143,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
-  selectedTimeFilter = '12m';
+  selectedTimeFilter = '3m';
   showCustomDateFields = false;
   resourcesLoading = true;
   coursesLoading = true;
@@ -244,7 +246,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.charts = [];
   }
 
-  onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
+  onFilterChange(filterValue: AppSourceFilter) {
     this.filter.app = filterValue;
     this.filterData();
   }
@@ -344,7 +346,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-          ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
+          ? this.dateQueryParams.startDate : this.defaultStartDate()
       );
       this.setLoginActivities();
     });
@@ -782,8 +784,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'logins':
         let data = this.activityService.appendUserDemographics(
           filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members), this.today
-        ).map(activity => ({
+        ).map(({ app, ...activity }) => ({
           ...formatDemographicsForCsv(activity),
+          [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId }),
           androidId: activity.androidId || '',
           deviceName: activity.deviceName || '',
           customDeviceName: activity.customDeviceName || ''
@@ -903,14 +906,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }
     const activities = filterByMember(
       filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members
-    ).map(activity => {
+    ).map(({ app, ...activity }) => {
       const baseActivity = {
         ...activity,
+        ...(reportType === 'health' ? {} : {
+          [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId })
+        }),
         androidId: activity.androidId || '',
         deviceName: activity.deviceName || ''
       };
       if (reportType === 'health' && activity.updatedDate) {
-        baseActivity.updatedDate = fullLabel(activity.updatedDate, this.localeId);
+        return { ...baseActivity, updatedDate: fullLabel(activity.updatedDate, this.localeId) };
       }
       return baseActivity;
     });
@@ -955,14 +961,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }, { emitEvent: true });
   }
 
+  private defaultStartDate() {
+    return this.selectedTimeFilter === 'custom' ?
+      this.filter.startDate :
+      this.activityService.getDateRange(this.selectedTimeFilter, this.minDate).startDate;
+  }
+
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
     const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
     this.showCustomDateFields = showCustomDateFields;
 
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date();
-      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentStartDate = this.defaultStartDate();
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
@@ -980,7 +991,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.filter.app = '';
     this.selectedTeam = 'All';
     this.filter.members = [];
-    this.onTimeFilterChange('12m');
+    this.onTimeFilterChange('3m');
   }
 
   onHealthLoadingChange(loading: boolean) {

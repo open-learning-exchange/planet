@@ -11,6 +11,16 @@ export const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d
 
 export const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
 
+export const subtractMonthsClamped = (date: Date, months: number) => {
+  const result = new Date(date);
+  const day = result.getDate();
+  result.setDate(1);
+  result.setMonth(result.getMonth() - months);
+  const lastDayOfMonth = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
+  result.setDate(Math.min(day, lastDayOfMonth));
+  return result;
+};
+
 export const codeToPlanetName = (code: string, configuration: any, childPlanets: any[]) => {
   const planet = childPlanets.find((childPlanet: any) => childPlanet.doc.code === code);
   return planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : configuration.name;
@@ -79,7 +89,7 @@ export const setMonths = (dateRange) => {
   return months;
 };
 
-export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPlanet? } => ({ planetCode, filterAdmin: true });
+export const activityParams = (planetCode): { planetCode, filterAdmin? } => ({ planetCode, filterAdmin: true });
 
 export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);
 
@@ -208,14 +218,4 @@ export const thursdayWeekRangeFromEnd = (endDate: Date) => {
   const start = new Date(end);
   start.setDate(start.getDate() - 6);
   return { startDate: startOfDay(start), endDate: end };
-};
-
-export const exportMyPlanetCsv = (csvService: CsvService) => (
-  children: any[],
-  planetName: string | undefined,
-  mapFn: (children: any[], planetName?: string) => any[],
-  title: string
-): void => {
-  const csvData = planetName ? mapFn(children, planetName) : children.flatMap((planet: any) => mapFn(planet.children, planet.name));
-  csvService.exportCSV({ data: csvData, title });
 };

@@ -1,83 +1,139 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CouchService } from '../../shared/couchdb.service';
+import { FormBuilder } from '@angular/forms';
+import { of, throwError } from 'rxjs';
+
 import { MeetupsAddComponent } from './meetups-add.component';
-import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '../../shared/material.module';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/observable/throw';
 
+describe('MeetupsAddComponent authorization', () => {
+  const creator = { _id: 'org.couchdb.user:ann', name: 'ann', isUserAdmin: false };
+  const admin = { _id: 'org.couchdb.user:admin', name: 'admin', isUserAdmin: true };
+  const unrelated = { _id: 'org.couchdb.user:bob', name: 'bob', isUserAdmin: false };
 
-describe('MeetupsAddComponent', () => {
-  /*
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpClientModule, MaterialModule, NoopAnimationsModule ],
-      declarations: [ MeetupsAddComponent ],
-      providers: [ CouchService ]
-    })
-    .compileComponents();
-  }));
+  const createComponent = (user: any, options: { path?: string, storedMeetup?: any, loadError?: boolean } = {}) => {
+    let activeUser = user;
+    const couchService = {
+      datePlaceholder: {},
+      get: vi.fn(() => options.loadError ? throwError(new Error('offline')) : of(options.storedMeetup)),
+      updateDocument: vi.fn(() => of({})),
+      post: vi.fn(() => of({ docs: [] }))
+    };
+    const planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
+    const router = { navigate: vi.fn() };
+    const meetupService = {
+      canEditMeetup: vi.fn((meetup: any, context: any = {}) =>
+        !!activeUser?._id && !context.readOnly && (
+          activeUser.isUserAdmin ||
+          activeUser.roles?.includes('leader') ||
+          (context.leaderOfTeamId && context.leaderOfTeamId === meetup?.link?.teams) ||
+          activeUser.name === meetup?.createdBy
+        ))
+    };
+    const component = new MeetupsAddComponent(
+      couchService as any,
+      planetMessageService as any,
+      router as any,
+      { snapshot: { data: {}, url: [ { path: options.path || 'add' } ], paramMap: { get: () => 'm1' } } } as any,
+      new FormBuilder().nonNullable,
+      { get: vi.fn(() => activeUser) } as any,
+      { configuration: { code: 'planet' } } as any,
+      meetupService as any
+    );
+    const setMeetupData = vi.spyOn(component, 'setMeetupData');
+    const goBack = vi.spyOn(component, 'goBack').mockImplementation(() => {});
+    return {
+      component,
+      couchService,
+      planetMessageService,
+      router,
+      meetupService,
+      setMeetupData,
+      goBack,
+      setUser: (newUser: any) => activeUser = newUser
+    };
+  };
 
-  let component: MeetupsAddComponent;
-  let fixture;
-  let spy: any;
-  let couchService;
-  let testModel: any;
-  let de;
-  let statusElement;
-  let compiled;
+  it('leaves the dialog without loading a meetup the user cannot edit', () => {
+    const { component, planetMessageService, setMeetupData, goBack } = createComponent(unrelated);
+    component.isDialog = true;
+    component.meetup = { _id: 'm1', createdBy: 'ann' };
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(MeetupsAddComponent);
-    component = fixture.debugElement.componentInstance;
-    couchService = fixture.debugElement.injector.get(CouchService);
-    testModel = { title: 'hangout', description: 'once a week' };
-    de = fixture.debugElement;
-    compiled = fixture.debugElement.nativeElement;
-    statusElement = de.nativeElement.querySelector('p');
+    component.ngOnInit();
+
+    expect(planetMessageService.showAlert).toHaveBeenCalled();
+    expect(goBack).toHaveBeenCalled();
+    expect(setMeetupData).not.toHaveBeenCalled();
   });
 
-  it('should be created', () => {
-    expect(component).toBeTruthy();
+  it('loads the meetup in the dialog for its creator', () => {
+    const { component, planetMessageService, setMeetupData, goBack } = createComponent(creator);
+    component.isDialog = true;
+    component.meetup = { _id: 'm1', createdBy: 'ann' };
+
+    component.ngOnInit();
+
+    expect(setMeetupData).toHaveBeenCalledWith(expect.objectContaining({ _id: 'm1' }));
+    expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+    expect(goBack).not.toHaveBeenCalled();
   });
 
+  it('loads a linked meetup for the leader of that team', () => {
+    const { component, setMeetupData, goBack } = createComponent(unrelated);
+    component.isDialog = true;
+    component.leaderOfTeamId = 'team-1';
+    component.meetup = { _id: 'm1', createdBy: 'ann', link: { teams: 'team-1' } };
 
-  it('should make a post request to couchService', () => {
-    spy = spyOn(couchService, 'post').and.returnValue(of(testModel));
-    component.onSubmit();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(spy).toHaveBeenCalled();
+    component.ngOnInit();
+
+    expect(setMeetupData).toHaveBeenCalled();
+    expect(goBack).not.toHaveBeenCalled();
+  });
+
+  it('redirects away from the update route after loading a meetup the user cannot edit', () => {
+    const { component, planetMessageService, router, setMeetupData } = createComponent(unrelated, {
+      path: 'update',
+      storedMeetup: { _id: 'm1', createdBy: 'ann' }
     });
+
+    component.ngOnInit();
+
+    expect(planetMessageService.showAlert).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith([ '/meetups' ]);
+    expect(setMeetupData).not.toHaveBeenCalled();
   });
 
-  it('should show meetup created: title correctly', () => {
-    spy = spyOn(couchService, 'post').and.returnValue(of(testModel.title));
-    component.onSubmit();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement.textContent).toBe('Meetup created: ' + testModel.title);
+  it('loads the meetup from the update route for an administrator', () => {
+    const { component, planetMessageService, router, setMeetupData } = createComponent(admin, {
+      path: 'update',
+      storedMeetup: { _id: 'm1', createdBy: 'ann' }
     });
+
+    component.ngOnInit();
+
+    expect(setMeetupData).toHaveBeenCalledWith(expect.objectContaining({ _id: 'm1' }));
+    expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should message Please complete the form', () => {
-    testModel.title = '';
-    testModel.description = '';
-    component.onSubmit();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement.textContent).toBe('Please complete the form');
+  it('leaves the update route when loading the meetup fails', () => {
+    const { component, planetMessageService, router, setMeetupData } = createComponent(creator, {
+      path: 'update',
+      loadError: true
     });
+
+    component.ngOnInit();
+
+    expect(planetMessageService.showAlert).toHaveBeenCalledWith('There was a problem loading this meetup');
+    expect(router.navigate).toHaveBeenCalledWith([ '/meetups' ]);
+    expect(setMeetupData).not.toHaveBeenCalled();
   });
 
-  it('should message There was a problem creating the meetup', () => {
-    spy = spyOn(couchService, 'post').and.returnValue(Rx.Observable.throw({ Error }));
-    component.onSubmit();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement.textContent).toBe('There was a problem creating the meetup');
-    });
+  it('rechecks authorization against the loaded meetup before persisting', () => {
+    const { component, couchService, planetMessageService, setUser } = createComponent(creator);
+    component.setMeetupData({ _id: 'm1', _rev: '1-a', createdBy: 'ann' });
+    setUser(unrelated);
+
+    component.updateMeetup({ title: 'Changed meetup', startDate: null, endDate: null });
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(planetMessageService.showAlert).toHaveBeenCalledWith('You are not authorized to edit this meetup');
   });
-  */
 });
