@@ -8,7 +8,8 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
-import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
+import { userIdentitySelector } from '../shared/mangoQueries';
+import { identityMatches, userIdentityCandidates } from '../shared/identity.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -189,9 +190,8 @@ export class UsersService {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    const taskIdentities = assigneeIdentityCandidates(user, this.stateService.configuration.code);
-    const taskPlanetCodes = taskIdentities.map(({ userPlanetCode }) => userPlanetCode)
-      .filter((code): code is string => !!code);
+    const [ canonical, ...materialized ] = userIdentityCandidates(user, this.stateService.configuration.code);
+    const taskIdentities = materialized.length > 0 ? materialized : [ canonical ];
     return this.couchService.get('shelf/' + userId).pipe(
       switchMap(shelfUser => forkJoin([
         this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
@@ -199,7 +199,7 @@ export class UsersService {
         this.deleteUserFromTeams(user),
         this.tasksService.removeAssigneeFromTasks(
           taskIdentities[0]?.userId || user._id,
-          taskPlanetCodes.length > 0 ? taskPlanetCodes : undefined
+          taskIdentities.map(identity => identity?.userPlanetCode)
         )
       ])),
       map(() => this.requestUsers(true))
@@ -207,11 +207,21 @@ export class UsersService {
   }
 
   deleteUserFromTeams(user) {
-    return this.couchService.findAll('teams', { selector: { userId: user._id } }).pipe(
-      switchMap(teams => {
-        const docsWithUser = teams.map((doc: any) => ({ ...doc, _deleted: true }));
-        return this.couchService.bulkDocs('teams', docsWithUser);
-      })
+    const planetCode = this.stateService.configuration.code;
+    const [ canonical, ...materialized ] = userIdentityCandidates(user, planetCode);
+    if (!canonical) {
+      return throwError(new Error('User ID is required for team cleanup.'));
+    }
+    const matches = (doc: any, identity) => Boolean(doc?.userId) && identityMatches(doc, identity, doc.teamPlanetCode);
+    // An associated account's canonical ID belongs to its home planet's native account on synchronized teams.
+    const belongsToDeletedUser = (doc: any) => materialized.length === 0 ?
+      matches(doc, canonical) :
+      materialized.some(identity => matches(doc, identity)) || (doc.teamPlanetCode === planetCode && matches(doc, canonical));
+    return this.couchService.findAll('teams', { selector: userIdentitySelector([ canonical, ...materialized ]) }).pipe(
+      switchMap(teams => this.couchService.bulkDocs('teams', teams
+        .filter(belongsToDeletedUser)
+        .map((doc: any) => ({ ...doc, _deleted: true }))
+      ))
     );
   }
 

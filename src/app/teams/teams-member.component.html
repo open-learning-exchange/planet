@@ -26,8 +26,8 @@
 @if (memberType === 'community' && !member?.doc?.leadershipTitle && !member?.doc?.isUserAdmin && actionMenu.indexOf('title') > -1) {
   <button type="button" class="tile-add-title cursor-pointer" (click)="openDialog({ member: member, change: 'title' })" i18n>+ Add title</button>
 }
-@if (member?.userPlanetCode !== planetCode) {
-  <span class="tile-muted"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</span>
+@if (memberPlanetCode !== planetCode) {
+  <span class="tile-muted"><ng-container i18n>Member of Planet</ng-container> {{memberPlanetCode}}</span>
 }
 @if (isSelf) {
   <span class="tile-muted" i18n>You</span>

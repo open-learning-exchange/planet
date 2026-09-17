@@ -33,7 +33,11 @@ describe('DashboardComponent', () => {
     firstName: 'John',
     lastName: 'Doe',
     roles: [ 'admin', 'learner' ],
-    planetCode: 'planet_1'
+    planetCode: 'earth_code'
+  };
+
+  const associatedUser = {
+    _id: 'org.couchdb.user:alex@community', name: 'alex@community', planetCode: 'community', requestId: 'request-1'
   };
 
   const defaultShelf = {
@@ -140,7 +144,7 @@ describe('DashboardComponent', () => {
     expect(warnSpy).toHaveBeenCalledWith('Error fetching login activities');
   });
 
-  it('loads and maps dashboard items from the shelf', () => {
+  it('loads non-team dashboard items from the shelf without treating shelf order as membership', () => {
     couchServiceMock.bulkGet.mockImplementation((db: string) => ({
       resources: of([ { _id: 'res_1', title: 'Resource 1' } ]),
       courses: of([ { _id: 'course_1', courseTitle: 'Course 1' } ]),
@@ -153,7 +157,7 @@ describe('DashboardComponent', () => {
     expect(component.data.resources[0]).toMatchObject({ title: 'Resource 1', link: '/resources/view/res_1' });
     expect(component.data.courses[0]).toMatchObject({ title: 'Course 1', link: '/courses/view/course_1' });
     expect(component.data.meetups[0]).toMatchObject({ title: 'Meetup 1', link: '/meetups/view/meetup_1' });
-    expect(component.data.myTeams[0]).toMatchObject({ title: 'Team 1', link: '/teams/view/team_1' });
+    expect(component.data.myTeams).toEqual([]);
     expect(component.isLoading).toBe(false);
   });
 
@@ -247,8 +251,8 @@ describe('DashboardComponent', () => {
 
   it('sets canRemove only for team leaders', () => {
     couchServiceMock.findAll.mockReturnValue(of([
-      { teamId: 'leader-team', isLeader: true },
-      { teamId: 'member-team', isLeader: false }
+      { teamId: 'leader-team', userId: mockUser._id, isLeader: true },
+      { teamId: 'member-team', userId: mockUser._id, isLeader: false }
     ]));
     couchServiceMock.bulkGet.mockReturnValue(of([
       { _id: 'leader-team', name: 'Leader Team' },
@@ -265,7 +269,78 @@ describe('DashboardComponent', () => {
     ]));
   });
 
+  it('queries associated memberships under their canonical id and explicit origin', () => {
+    const historical = {
+      _id: 'membership-historical', teamId: 'team-1', userId: associatedUser._id, userPlanetCode: 'earth_code', docType: 'membership'
+    };
+    couchServiceMock.findAll.mockReturnValue(of([ historical ]));
+    couchServiceMock.bulkGet.mockReturnValue(of([ { _id: 'team-1', name: 'Nation Team', teamPlanetCode: 'earth_code' } ]));
+    createComponent(associatedUser);
+    let teams: any[];
+
+    component.getTeamMembership().subscribe(result => teams = result);
+
+    expect(couchServiceMock.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({
+      selector: {
+        userId: { $in: [ 'org.couchdb.user:alex', 'org.couchdb.user:alex@community' ] },
+        docType: 'membership',
+        $or: [
+          { userPlanetCode: 'community' },
+          { userPlanetCode: 'earth_code' },
+          { userPlanetCode: '' },
+          { userPlanetCode: { $exists: false } }
+        ]
+      }
+    }));
+    expect(teams[0].membershipDoc).toBe(historical);
+  });
+
+  it('accepts code-less memberships only when the team origin matches the account origin', () => {
+    couchServiceMock.findAll.mockReturnValue(of([
+      { _id: 'membership-community', teamId: 'community-team', userId: 'org.couchdb.user:alex' },
+      { _id: 'membership-nation', teamId: 'nation-team', userId: 'org.couchdb.user:alex' }
+    ]));
+    couchServiceMock.bulkGet.mockReturnValue(of([
+      { _id: 'community-team', name: 'Community Team', teamPlanetCode: 'community' },
+      { _id: 'nation-team', name: 'Nation Team', teamPlanetCode: 'earth_code' }
+    ]));
+    createComponent(associatedUser);
+    let teams: any[];
+
+    component.getTeamMembership().subscribe(result => teams = result);
+
+    expect(teams.map(team => team._id)).toEqual([ 'community-team' ]);
+    expect(teams[0].membershipDoc._id).toBe('membership-community');
+  });
+
+  it('preserves the explicit membership document when a code-less duplicate also survives', () => {
+    const explicit = {
+      _id: 'membership-explicit', teamId: 'team-1', userId: 'org.couchdb.user:alex',
+      userPlanetCode: 'community', isLeader: false
+    };
+    couchServiceMock.findAll.mockReturnValue(of([
+      { _id: 'membership-codeless', teamId: 'team-1', userId: 'org.couchdb.user:alex', isLeader: true },
+      explicit
+    ]));
+    couchServiceMock.bulkGet.mockReturnValue(of([
+      { _id: 'team-1', name: 'Community Team', teamPlanetCode: 'community' }
+    ]));
+    createComponent(associatedUser);
+    let teams: any[];
+
+    component.getTeamMembership().subscribe(result => teams = result);
+
+    expect(teams[0].membershipDoc).toBe(explicit);
+    expect(teams[0].canRemove).toBe(true);
+  });
+
   it('filters archived teams from the dashboard', () => {
+    couchServiceMock.findAll.mockImplementation((db: string) =>
+      db === 'teams' ? of([
+        { teamId: 'team_active', userId: mockUser._id, isLeader: false },
+        { teamId: 'team_archived', userId: mockUser._id, isLeader: false }
+      ]) : of([])
+    );
     couchServiceMock.bulkGet.mockImplementation((db: string, ids: string[]) =>
       db === 'teams' && ids.length > 0 ? of([
         { _id: 'team_active', name: 'Active Team', status: 'active' },
@@ -276,6 +351,24 @@ describe('DashboardComponent', () => {
     createComponent().detectChanges();
 
     expect(component.data.myTeams.map(team => team._id)).toEqual([ 'team_active' ]);
+  });
+
+  it('orders my teams by the saved tile order and appends teams missing from it', () => {
+    createComponent();
+
+    expect(component.sortByShelfOrder(
+      [ { _id: 'c' }, { _id: 'a' }, { _id: 'new' }, { _id: 'b' } ],
+      [ 'a', 'b', 'c' ]
+    ).map(team => team._id)).toEqual([ 'a', 'b', 'c', 'new' ]);
+  });
+
+  it('does not treat saved team ordering as dashboard content', () => {
+    createComponent();
+    component.data = { resources: [], courses: [], meetups: [], myTeams: [] };
+
+    expect(component.isEmptyShelf({
+      resourceIds: [], courseIds: [], meetupIds: [], myTeamIds: [ 'old-team-order' ]
+    })).toBe(true);
   });
 
   it('opens the course dialog with its expected configuration', () => {

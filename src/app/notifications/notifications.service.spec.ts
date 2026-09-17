@@ -5,9 +5,13 @@ import { NotificationsService, notificationRecipient, notificationUserFilter } f
 describe('NotificationsService', () => {
   it('uses the stable CouchDB ID and origin planet for a synchronized recipient', () => {
     expect(notificationRecipient({
-      _id: 'alex@community-c',
-      couchId: 'org.couchdb.user:alex',
-      planetCode: 'community-c'
+      _id: 'wrapper-id',
+      planetCode: 'wrong-outer-origin',
+      doc: {
+        _id: 'alex@community-c',
+        couchId: 'org.couchdb.user:alex',
+        planetCode: 'community-c'
+      }
     })).toEqual({
       user: 'org.couchdb.user:alex',
       userPlanetCode: 'community-c'
@@ -69,6 +73,18 @@ describe('NotificationsService', () => {
     expect(notificationUserFilter({ name: 'alex', planetCode: 'planet-a' })).toEqual([
       { user: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' },
       { user: 'org.couchdb.user:alex', userPlanetCode: { $exists: false } }
+    ]);
+  });
+
+  it('queries canonical and historical notifications for an associated account', () => {
+    expect(notificationUserFilter({
+      _id: 'org.couchdb.user:alex@community-c',
+      name: 'alex@community-c',
+      planetCode: 'community-c',
+      requestId: 'request-1'
+    })).toEqual([
+      { user: 'org.couchdb.user:alex', userPlanetCode: 'community-c' },
+      { user: 'org.couchdb.user:alex@community-c' }
     ]);
   });
 
