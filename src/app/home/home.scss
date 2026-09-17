@@ -23,11 +23,15 @@
     align-items: center;
 
     h1 {
-      display: inline;
+      display: block;
       font-size: 1.5rem;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       @media (max-width: #{v.$screen-xs}) {
-        font-size: clamp(0.5rem, calc(0.1rem + 3vw), 1.5rem);
+        font-size: clamp(1rem, calc(0.75rem + 1.75vw), 1.5rem);
       }
     }
 
@@ -36,6 +40,7 @@
     }
 
     .ole-logo {
+      flex: 0 0 auto;
       margin-right: 10px;
     }
 
@@ -52,9 +57,11 @@
   .navbar-left {
     grid-area: left;
     display: flex;
+    min-width: 0;
     a {
       display: flex;
       align-items: center;
+      min-width: 0;
     }
   }
 
