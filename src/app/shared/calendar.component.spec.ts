@@ -9,7 +9,8 @@ describe('PlanetCalendarComponent', () => {
     userService: any = { get: () => ({ name: 'admin', isUserAdmin: true, _id: 'org.couchdb.user:admin' }) },
     messageService: any = { showMessage: vi.fn(), showAlert: vi.fn() },
     loadingService: any = { start: vi.fn(), stop: vi.fn() },
-    tasksService: any = {}
+    tasksService: any = {},
+    notificationsService: any = { notifyMeetupChange: vi.fn(() => of({ ok: true })) }
   ) => new PlanetCalendarComponent(
     document,
     'en',
@@ -20,7 +21,8 @@ describe('PlanetCalendarComponent', () => {
     {} as any,
     messageService,
     loadingService,
-    userService
+    userService,
+    notificationsService
   );
 
   const adminUser = { get: () => ({ name: 'admin', isUserAdmin: true, _id: 'admin' }) };
@@ -215,10 +217,58 @@ describe('PlanetCalendarComponent', () => {
   it('reports success even if the refetch after a write fails', () => {
     const couchService = {
       updateDocument: vi.fn((db: string, doc: any) => of({ ok: true, rev: '2-new', doc })),
-      findAll: vi.fn(() => throwError(() => new Error('offline')))
+      findAll: vi.fn(() => throwError(new Error('offline')))
     };
     const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
     const component = createComponent(couchService, adminUser, messageService);
+    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
+
+    component.eventDrop(info);
+
+    expect(messageService.showMessage).toHaveBeenCalled();
+    expect(info.revert).not.toHaveBeenCalled();
+    expect(messageService.showAlert).not.toHaveBeenCalled();
+  });
+
+  it('leaves a meetup without an end date without one', () => {
+    const couchService = writingCouchService();
+    const component = createComponent(couchService, adminUser);
+    const { endDate, ...openEnded } = meetup;
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: openEnded } }));
+
+    expect(couchService.updateDocument.mock.calls[0][1]).not.toHaveProperty('endDate');
+  });
+
+  it('notifies shelf users once after a successful reschedule', () => {
+    const couchService = writingCouchService();
+    const notificationsService = { notifyMeetupChange: vi.fn(() => of({ ok: true })) };
+    const component = createComponent(couchService, adminUser, undefined, undefined, undefined, notificationsService);
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } }));
+
+    expect(notificationsService.notifyMeetupChange).toHaveBeenCalledTimes(1);
+    expect(notificationsService.notifyMeetupChange).toHaveBeenCalledWith(
+      expect.objectContaining({ _id: 'm1', startDate: new Date(2026, 7, 12).getTime() }),
+      'm1'
+    );
+  });
+
+  it('does not notify when the meetup write fails', () => {
+    const couchService = { updateDocument: vi.fn(() => throwError(new Error('conflict'))), findAll: vi.fn(() => of([])) };
+    const notificationsService = { notifyMeetupChange: vi.fn(() => of({ ok: true })) };
+    const component = createComponent(couchService, adminUser, undefined, undefined, undefined, notificationsService);
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } }));
+
+    expect(notificationsService.notifyMeetupChange).not.toHaveBeenCalled();
+  });
+
+  it('keeps a stored reschedule when notifying fails', () => {
+    const couchService = writingCouchService();
+    const notificationsService = { notifyMeetupChange: vi.fn(() => throwError(new Error('offline'))) };
+    const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const component = createComponent(couchService, adminUser, messageService, undefined, undefined, notificationsService);
     const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
 
     component.eventDrop(info);
@@ -265,7 +315,7 @@ describe('PlanetCalendarComponent', () => {
   });
 
   it('reverts and alerts when persisting a meetup drop fails', () => {
-    const couchService = { updateDocument: vi.fn(() => throwError(() => new Error('conflict'))), findAll: vi.fn(() => of([])) };
+    const couchService = { updateDocument: vi.fn(() => throwError(new Error('conflict'))), findAll: vi.fn(() => of([])) };
     const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
     const loadingService = { start: vi.fn(), stop: vi.fn() };
     const component = createComponent(couchService, adminUser, messageService, loadingService);
@@ -280,7 +330,7 @@ describe('PlanetCalendarComponent', () => {
   });
 
   it('reverts and alerts when persisting a task drop fails', () => {
-    const tasksService = { addTask: vi.fn(() => throwError(() => new Error('conflict'))) };
+    const tasksService = { addTask: vi.fn(() => throwError(new Error('conflict'))) };
     const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
     const component = createComponent({ findAll: vi.fn(() => of([])) }, adminUser, messageService, undefined, tasksService);
     const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: { _id: 't1', isTask: true } } });

@@ -18,6 +18,7 @@ import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { UserService } from './user.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -123,7 +124,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private userService: UserService
+    private userService: UserService,
+    private notificationsService: NotificationsService
   ) {}
 
   ngOnInit() {
@@ -418,18 +420,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       return;
     }
 
-    const newStartDate = this.shiftStoredDate(eventData.startDate, info.delta);
-    const newEndDate = eventData.endDate ? this.shiftStoredDate(eventData.endDate, info.delta) : newStartDate;
-
     const updatedMeetup = {
       ...eventData,
-      startDate: newStartDate,
-      endDate: newEndDate
+      startDate: this.shiftStoredDate(eventData.startDate, info.delta),
+      ...(eventData.endDate ? { endDate: this.shiftStoredDate(eventData.endDate, info.delta) } : {})
     };
 
     this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, updatedMeetup).pipe(
       tap((res: any) => info.event.setExtendedProp('meetup', res.doc)),
+      // The date change is already stored, so announcing it must not be able to undo it
+      switchMap(() => this.notificationsService.notifyMeetupChange(updatedMeetup, updatedMeetup._id).pipe(catchError(() => of(null)))),
       switchMap(() => this.fetchMeetups().pipe(catchError(() => of([])))),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe({
