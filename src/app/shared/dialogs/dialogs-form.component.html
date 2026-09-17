@@ -25,7 +25,7 @@
         @if (field.type === 'password') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput type="{{passwordVisibility.get(field.name) ? 'text' : 'password'}}" formControlName="{{field.name}}" required="{{field.required}}">
+            <input matInput type="{{passwordVisibility.get(field.name) ? 'text' : 'password'}}" formControlName="{{field.name}}" [required]="!!field.required">
             <button type="button" mat-icon-button matIconSuffix (click)="togglePasswordVisibility(field.name)" tabindex="-1">
               <mat-icon>{{passwordVisibility.get(field.name) ? 'visibility' : 'visibility_off'}}</mat-icon>
             </button>
@@ -36,7 +36,7 @@
         @if (field.type === 'selectbox') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <mat-select formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple">
+            <mat-select formControlName="{{field.name}}" [required]="!!field.required" [multiple]="field.multiple">
               @if (field.reset) {
                 <mat-option i18n>None</mat-option>
               }
@@ -49,8 +49,13 @@
         }
         <!-- radio button -->
         @if (field.type === 'radio') {
-          <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}">
-            <mat-label>{{field.label}}</mat-label><br>
+          <mat-radio-group formControlName="{{field.name}}" [required]="!!field.required">
+            <mat-label class="planet-radio-label">
+              {{field.label}}
+              @if (field.required) {
+                <span class="warn-text-color km-required-marker" aria-hidden="true">*</span>
+              }
+            </mat-label><br>
             @for (option of field.options; track option) {
               <mat-radio-button class="planet-radio-button" [value]="getRadioOptionValue(option)">
                 {{getRadioOptionLabel(option)}}
@@ -62,7 +67,7 @@
         <!-- Star Rating -->
         @if (field.type === 'rating') {
           <div class="rating-input">
-            <planet-rating-stars [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating-stars>
+            <planet-rating-stars [formControl]="modalForm.controls[field.name]" [required]="!!field.required"></planet-rating-stars>
             <button
               type="button"
               mat-icon-button
@@ -81,7 +86,7 @@
         @if (field.type === 'textarea') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <textarea matInput formControlName="{{field.name}}" required="{{field.required}}"></textarea>
+            <textarea matInput formControlName="{{field.name}}" [required]="!!field.required"></textarea>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
         }
@@ -103,7 +108,7 @@
         @if (field.type === 'date') {
           <mat-form-field class="full-width" (click)="dp.open()">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput [matDatepicker]="dp" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
+            <input matInput [matDatepicker]="dp" [formControl]="modalForm.controls[field.name]" [required]="!!field.required" [min]="field.min" [max]="field.max">
             <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
             <mat-datepicker #dp></mat-datepicker>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
