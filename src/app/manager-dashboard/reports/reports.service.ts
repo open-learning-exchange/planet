@@ -3,7 +3,7 @@ import { forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
-import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
+import { dedupeShelfReduce, ageFromUser, genderBucket } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
@@ -112,13 +112,14 @@ export class ReportsService {
   }
 
   groupUsers(users: any[]) {
+    const profiles = users.map((user: any) => user.doc || user);
     return ({
-      count: users.length,
-      byGender: users.reduce((usersByGender: any, user: any) => {
-        usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
+      count: profiles.length,
+      byGender: profiles.reduce((usersByGender: any, user: any) => {
+        usersByGender[genderBucket(user.gender)] += 1;
         return usersByGender;
       }, { male: 0, female: 0, didNotSpecify: 0 }),
-      byMonth: this.groupByMonth(users, 'joinDate')
+      byMonth: this.groupByMonth(profiles, 'joinDate')
     });
   }
 
@@ -190,24 +191,50 @@ export class ReportsService {
     });
   }
 
-  appendGender(array) {
-    return array.map((item: any) => {
-      const user = this.users.find((u: any) => u.name === item.user) || {};
-      return ({
-        ...item,
-        gender: user.gender
-      });
+  private usersByName() {
+    return this.users.reduce((users: Map<string, any>, user: any) => {
+      if (user.name && !users.has(user.name)) {
+        users.set(user.name, user);
+      }
+      return users;
+    }, new Map());
+  }
+
+  private genderOfActivity(item: any, users: Map<string, any>) {
+    return users.get(item.user)?.gender;
+  }
+
+  private ageOfActivity(item: any, time: number | Date, users: Map<string, any>) {
+    return item.age ?? ageFromUser(time, users.get(item.user)) ?? '';
+  }
+
+  demographicsFor(time: number | Date) {
+    const users = this.usersByName();
+    return (item: any) => ({
+      age: this.ageOfActivity(item, time, users),
+      gender: this.genderOfActivity(item, users)
     });
   }
 
-  appendAge(array, time) {
-    return array.map((item: any) => {
-      const user = this.users.find((u: any) => u.name === item.user) || {};
-      return ({
-        ...item,
-        age: ageFromBirthDate(time, user.birthDate)
-      });
-    });
+  appendGender(array) {
+    const users = this.usersByName();
+    return array.map((item: any) => ({
+      ...item,
+      gender: this.genderOfActivity(item, users)
+    }));
+  }
+
+  appendAge(array, time: number | Date) {
+    const users = this.usersByName();
+    return array.map((item: any) => ({
+      ...item,
+      age: this.ageOfActivity(item, time, users)
+    }));
+  }
+
+  appendUserDemographics(array, time: number | Date) {
+    const demographics = this.demographicsFor(time);
+    return array.map((item: any) => ({ ...item, ...demographics(item) }));
   }
 
   timeFilter(field, time) {

@@ -109,7 +109,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
-  isRoot = true;
   visits: any = {};
   leader: any = {};
   planetCode: string;
@@ -345,10 +344,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.getMembers().subscribe();
   }
 
-  toggleAdd(data) {
-    this.isRoot = data._id === 'root';
-  }
-
   setStatus(team, leader, user) {
     this.userStatus = 'unrelated';
     if (team === undefined) {
@@ -516,7 +511,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           type: 'enterprise',
           displayName: this.team.name,
           rules: this.team.rules,
-          extraMessage: enterpriseJoinAgreement()
+          extraMessage: enterpriseJoinAgreement(),
+          extraMessageType: 'supplementary'
         }
       });
       return;
