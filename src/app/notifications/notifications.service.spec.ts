@@ -3,6 +3,18 @@ import { vi } from 'vitest';
 import { NotificationsService, notificationRecipient, notificationUserFilter } from './notifications.service';
 
 describe('NotificationsService', () => {
+  it('skips the bulk write when no users have the meetup shelved', () => {
+    const couchService = {
+      post: vi.fn(() => of({ docs: [] })),
+      updateDocument: vi.fn()
+    };
+    const service = new NotificationsService({} as any, couchService as any, {} as any, {} as any);
+
+    service.notifyMeetupChange({ title: 'Meetup' }, 'm1').subscribe();
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
   it('uses the stable CouchDB ID and origin planet for a synchronized recipient', () => {
     expect(notificationRecipient({
       _id: 'alex@community-c',

@@ -20,7 +20,9 @@ describe('PlanetCalendarComponent read-only behavior', () => {
       {} as any,
       {} as any,
       new ElementRef(document.createElement('div')),
-      { runOutsideAngular: (fn: () => void) => fn() } as any
+      { runOutsideAngular: (fn: () => void) => fn() } as any,
+      { canEditMeetup: () => false } as any,
+      {} as any
     );
     component.editable = false;
 
@@ -105,7 +107,6 @@ describe('PlanetCalendarComponent', () => {
     delta,
     revert: vi.fn()
   });
-  // Echoes back what CouchDB returns for a write: the stored doc carrying the new revision
   const writingCouchService = () => ({
     updateDocument: vi.fn((db: string, doc: any) => of({ ok: true, rev: '2-new', doc: { ...doc, _rev: '2-new' } })),
     findAll: vi.fn(() => of([]))
@@ -241,50 +242,32 @@ describe('PlanetCalendarComponent', () => {
     expect(component.tasks[1].textColor).toBe(styleVariables.accentText);
   });
 
-  it('sets editable from the shared authorization and recurring status', () => {
-    const allowed = createComponent({}, { canEditMeetup: () => true });
-    const denied = createComponent({}, { canEditMeetup: () => false });
-
-    expect(allowed.eventObject({ title: 'Event', createdBy: 'other', recurring: 'none' }, new Date()).editable).toBe(true);
-    expect(denied.eventObject({ title: 'Event', createdBy: 'other', recurring: 'none' }, new Date()).editable).toBe(false);
-    expect(allowed.eventObject({ title: 'Event', createdBy: 'admin', recurring: 'daily' }, new Date()).editable).toBe(false);
-  });
-
-  it('asks the shared predicate with this calendar team and read-only context', () => {
+  it('asks the shared predicate with this calendar context and blocks recurring meetups', () => {
     const meetupService = { canEditMeetup: vi.fn(() => true) };
     const component = createComponent({}, meetupService);
     component.leaderOfTeamId = 'team-1';
     component.editable = false;
     const teamMeetup = { title: 'Event', recurring: 'none', link: { teams: 'team-1' } };
 
-    component.eventObject(teamMeetup, new Date());
-
+    expect(component.eventObject(teamMeetup, new Date()).startEditable).toBe(true);
     expect(meetupService.canEditMeetup).toHaveBeenCalledWith(teamMeetup, { leaderOfTeamId: 'team-1', readOnly: true });
+    expect(component.eventObject({ ...teamMeetup, recurring: 'daily' }, new Date()).startEditable).toBe(false);
+    expect(createComponent({}, { canEditMeetup: () => false })
+      .eventObject(teamMeetup, new Date()).startEditable).toBe(false);
   });
 
   it('disables event resizing, which the drop handler cannot persist', () => {
-    expect(createComponent().calendarOptions.eventDurationEditable).toBe(false);
+    const component = createComponent();
+
+    expect(component.calendarOptions.eventDurationEditable).toBe(false);
+    expect(component.eventObject({ title: 'Event', recurring: 'none' }, new Date()).durationEditable).toBe(false);
+    expect(component.eventObject({ title: 'Task', isTask: true }, new Date()).durationEditable).toBe(false);
   });
 
-  it('shifts both meetup dates by whole calendar days', () => {
-    const couchService = writingCouchService();
-    const component = createComponent(couchService, authorized);
-
-    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } }));
-
-    expect(couchService.updateDocument).toHaveBeenCalledWith('meetups', expect.objectContaining({
-      _id: 'm1',
-      startDate: new Date(2026, 7, 12).getTime(),
-      endDate: new Date(2026, 7, 12).getTime()
-    }));
-  });
-
-  // Diverges from millisecond arithmetic only when the suite runs in a timezone that observes the
-  // transition these dates cross, e.g. TZ=America/New_York npx vitest run
+  // Use a DST-observing timezone so this four-day drag crosses the fall transition
   it('preserves a multi-day span dragged across a daylight saving change', () => {
     const couchService = writingCouchService();
     const component = createComponent(couchService, authorized);
-    // Nov 3 - Nov 7 2026 sits after the US fall transition, so a 4 day drag back crosses it
     const startDate = new Date(2026, 10, 3);
     const endDate = new Date(2026, 10, 7);
     const expectedStart = new Date(2026, 10, 3);
@@ -322,20 +305,6 @@ describe('PlanetCalendarComponent', () => {
     expect(info.event.setExtendedProp).toHaveBeenCalledWith('meetup', expect.objectContaining({ _rev: '2-new', isTask: true }));
   });
 
-  it('carries the stored revision back onto the event so a second drag does not conflict', () => {
-    const couchService = writingCouchService();
-    const component = createComponent(couchService, authorized);
-    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: { ...meetup, _rev: '1-old' } } });
-
-    component.eventDrop(info);
-
-    expect(info.event.setExtendedProp).toHaveBeenCalledWith('meetup', expect.objectContaining({
-      _id: 'm1',
-      _rev: '2-new',
-      startDate: new Date(2026, 7, 12).getTime()
-    }));
-  });
-
   it('keeps the loading indicator up until the refetch settles', () => {
     const meetupSubject = new Subject<any[]>();
     const couchService = {
@@ -356,13 +325,14 @@ describe('PlanetCalendarComponent', () => {
     expect(loadingService.stop).toHaveBeenCalled();
   });
 
-  it('reports success even if the refetch after a write fails', () => {
-    const couchService = {
-      updateDocument: vi.fn((db: string, doc: any) => of({ ok: true, rev: '2-new', doc })),
-      findAll: vi.fn(() => throwError(new Error('offline')))
-    };
+  // findAll swallows a first-page failure, but the bookmark request it chains after it does not
+  it('reports success and keeps the stored document when the refetch after a write fails', () => {
+    const couchService = writingCouchService();
     const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
     const component = createComponent(couchService, authorized, messageService);
+    component.meetups = [ component.eventObject(meetup) ];
+    component.tasks = [];
+    couchService.findAll = vi.fn(() => throwError(new Error('offline')));
     const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
 
     component.eventDrop(info);
@@ -370,6 +340,24 @@ describe('PlanetCalendarComponent', () => {
     expect(messageService.showMessage).toHaveBeenCalled();
     expect(info.revert).not.toHaveBeenCalled();
     expect(messageService.showAlert).not.toHaveBeenCalled();
+    expect(info.event.setExtendedProp).toHaveBeenCalledWith('meetup', expect.objectContaining({ _rev: '2-new' }));
+    expect(component.meetups[0].extendedProps.meetup.startDate).toBe(new Date(2026, 7, 12).getTime());
+    expect(component.meetups[0].extendedProps.meetup._rev).toBe('2-new');
+  });
+
+  it('keeps a stored task reschedule when the refetch after a write fails', () => {
+    const tasksService = { addTask: vi.fn((doc: any) => of({ ok: true, doc: { ...doc, _rev: '2-new' } })) };
+    const component = createComponent(
+      { findAll: vi.fn(() => throwError(new Error('offline'))) }, authorized, undefined, undefined, tasksService
+    );
+    const task = { _id: 't1', title: 'Task', isTask: true, deadline: new Date(2026, 7, 10).getTime() };
+    component.tasks = [ component.eventObject(task, task.deadline, task.deadline) ];
+    component.meetups = [];
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: task } }));
+
+    expect(component.tasks[0].extendedProps.meetup.deadline).toBe(new Date(2026, 7, 12).getTime());
+    expect(component.tasks[0].extendedProps.meetup._rev).toBe('2-new');
   });
 
   it('leaves a meetup without an end date without one', () => {
@@ -394,16 +382,6 @@ describe('PlanetCalendarComponent', () => {
       expect.objectContaining({ _id: 'm1', startDate: new Date(2026, 7, 12).getTime() }),
       'm1'
     );
-  });
-
-  it('does not notify when the meetup write fails', () => {
-    const couchService = { updateDocument: vi.fn(() => throwError(new Error('conflict'))), findAll: vi.fn(() => of([])) };
-    const notificationsService = { notifyMeetupChange: vi.fn(() => of({ ok: true })) };
-    const component = createComponent(couchService, authorized, undefined, undefined, undefined, notificationsService);
-
-    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } }));
-
-    expect(notificationsService.notifyMeetupChange).not.toHaveBeenCalled();
   });
 
   it('keeps a stored reschedule when notifying fails', () => {
@@ -460,7 +438,8 @@ describe('PlanetCalendarComponent', () => {
     const couchService = { updateDocument: vi.fn(() => throwError(new Error('conflict'))), findAll: vi.fn(() => of([])) };
     const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
     const loadingService = { start: vi.fn(), stop: vi.fn() };
-    const component = createComponent(couchService, authorized, messageService, loadingService);
+    const notificationsService = { notifyMeetupChange: vi.fn(() => of({ ok: true })) };
+    const component = createComponent(couchService, authorized, messageService, loadingService, undefined, notificationsService);
     const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
 
     component.eventDrop(info);
@@ -468,6 +447,7 @@ describe('PlanetCalendarComponent', () => {
     expect(info.revert).toHaveBeenCalled();
     expect(messageService.showAlert).toHaveBeenCalled();
     expect(messageService.showMessage).not.toHaveBeenCalled();
+    expect(notificationsService.notifyMeetupChange).not.toHaveBeenCalled();
     expect(loadingService.stop).toHaveBeenCalled();
   });
 
@@ -482,6 +462,7 @@ describe('PlanetCalendarComponent', () => {
     expect(info.revert).toHaveBeenCalled();
     expect(messageService.showAlert).toHaveBeenCalled();
   });
+
   it('passes matching team-leader context into the meetup dialog', () => {
     const dialog = { open: vi.fn() };
     const component = createComponent({}, undefined, undefined, undefined, undefined, undefined, dialog);

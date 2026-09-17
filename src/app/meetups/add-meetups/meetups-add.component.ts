@@ -2,7 +2,7 @@ import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@a
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { interval, of, race } from 'rxjs';
-import { debounce, switchMap } from 'rxjs/operators';
+import { catchError, debounce, map, switchMap } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -286,7 +286,9 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       startDate: this.parseDateValue(meetupInfo.startDate),
       endDate: this.parseDateValue(meetupInfo.endDate)
     }).pipe(
-      switchMap(() => this.notificationsService.notifyMeetupChange(meetupInfo, this.id))
+      switchMap((res) => this.notificationsService.notifyMeetupChange(meetupInfo, this.id).pipe(
+        catchError(() => of(null)), map(() => res)
+      ))
     ).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);

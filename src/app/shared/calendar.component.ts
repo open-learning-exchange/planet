@@ -262,13 +262,15 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
       start,
       ...(end ? { end } : {}),
       allDay,
-      editable,
+      startEditable: editable,
+      // A bare editable would expand to durationEditable too, and resizing has no persistence path
+      durationEditable: false,
       extendedProps: { meetup },
       ...otherProps
     };
   }
 
-  // Shifts a stored date by FullCalendar's calendar-day delta so day spans survive daylight saving changes
+  // Whole calendar days, not milliseconds, so a span survives a daylight saving transition
   private shiftStoredDate(dateValue, delta: any): number {
     const date = new Date(dateValue);
     date.setDate(date.getDate() + (delta?.days || 0));
@@ -425,6 +427,16 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
+  // A failed refetch leaves these caches in place and the next refresh rebuilds the calendar from them
+  private replaceCachedEvent(info: any, event: any) {
+    const { meetup } = event.extendedProps;
+    info.event.setExtendedProp('meetup', meetup);
+    const replace = (cache: any[]) => cache.map(cached => cached.extendedProps?.meetup?._id === meetup._id ? event : cached);
+    this.meetups = meetup.isTask ? this.meetups : replace(this.meetups);
+    this.tasks = meetup.isTask ? replace(this.tasks) : this.tasks;
+    this.events = [ ...this.meetups, ...this.tasks ];
+  }
+
   eventDrop(info: any) {
     const eventData = info.event?.extendedProps?.meetup;
     if (!eventData || !info.event?.start) {
@@ -443,7 +455,11 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
 
       this.dialogsLoadingService.start();
       this.tasksService.addTask(updatedTask).pipe(
-        tap((res: any) => info.event.setExtendedProp('meetup', { ...res.doc, isTask: true })),
+        tap((res: any) => {
+          const storedTask = { ...res.doc, isTask: true };
+          const taskColors = storedTask.completed ? taskEventColors.completed : taskEventColors.uncompleted;
+          this.replaceCachedEvent(info, this.eventObject(storedTask, storedTask.deadline, storedTask.deadline, taskColors));
+        }),
         switchMap(() => this.fetchTasks().pipe(catchError(() => of([])))),
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe({
@@ -479,8 +495,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, updatedMeetup).pipe(
-      tap((res: any) => info.event.setExtendedProp('meetup', res.doc)),
-      // The date change is already stored, so announcing it must not be able to undo it
+      tap((res: any) => this.replaceCachedEvent(info, this.eventObject(res.doc))),
       switchMap(() => this.notificationsService.notifyMeetupChange(updatedMeetup, updatedMeetup._id).pipe(catchError(() => of(null)))),
       switchMap(() => this.fetchMeetups().pipe(catchError(() => of([])))),
       finalize(() => this.dialogsLoadingService.stop())

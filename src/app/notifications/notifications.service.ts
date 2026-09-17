@@ -54,12 +54,11 @@ export class NotificationsService {
     }, (err) => this.planetMessageService.showAlert($localize`There was a problem marking all as read`));
   }
 
-  // Shared by the meetup edit form and calendar rescheduling so both announce a change the same way
   notifyMeetupChange(meetupInfo: any, meetupId: string): Observable<any> {
     return this.couchService.post('shelf/_find', findDocuments({
       meetupIds: { $in: [ meetupId ] }
     }, [ '_id' ], 0)).pipe(
-      switchMap((data: any) => this.couchService.updateDocument('notifications/_bulk_docs', {
+      switchMap((data: any) => data.docs.length === 0 ? of(null) : this.couchService.updateDocument('notifications/_bulk_docs', {
         docs: data.docs.map((user: any) => ({
           user: user._id,
           message: $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
