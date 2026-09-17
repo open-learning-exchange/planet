@@ -32,6 +32,16 @@
     margin-bottom: 15px;
   }
 
+  .visibility-section {
+    margin-top: 15px;
+
+    .visibility-options {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 1.5rem;
+    }
+  }
+
   a[mat-raised-button] mat-icon {
     vertical-align: middle;
   }

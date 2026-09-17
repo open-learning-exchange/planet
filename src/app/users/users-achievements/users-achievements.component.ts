@@ -11,7 +11,7 @@ import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { PdfService } from '../../shared/pdf.service';
-import { NgClass, DatePipe, formatDate } from '@angular/common';
+import { NgClass, NgTemplateOutlet, DatePipe, formatDate } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -25,6 +25,7 @@ import { AvatarComponent } from '../../shared/avatar.component';
 import { fullName } from '../../shared/utils';
 import { FullNamePipe } from '../../shared/full-name.pipe';
 import { LinkCopyService } from '../../shared/link-copy.service';
+import { AchievementSection, achievementVisibility, AchievementVisibility } from './users-achievements.constants';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -46,6 +47,7 @@ import { LinkCopyService } from '../../shared/link-copy.service';
     MatListItemTitle,
     MatListItemMeta,
     NgClass,
+    NgTemplateOutlet,
     MatListItemLine,
     DatePipe,
     TruncateTextPipe,
@@ -64,6 +66,7 @@ export class UsersAchievementsComponent implements OnInit {
   ownAchievements = false;
   openAchievementIndex = -1;
   certifications: any[] = [];
+  visibility: AchievementVisibility = achievementVisibility();
   publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
   isLoading = true;
 
@@ -124,6 +127,7 @@ export class UsersAchievementsComponent implements OnInit {
         this.achievementNotFound = true;
       } else {
         this.achievements = achievements;
+        this.visibility = achievementVisibility(achievements.visibility);
       }
       if (this.publicView) {
         this.isLoading = false;
@@ -163,6 +167,16 @@ export class UsersAchievementsComponent implements OnInit {
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
+  // Learners always see their full achievements page; everyone else only sees the sections
+  // the learner chose to share, which is the same set that goes into the printed PDF.
+  isSectionVisible(section: AchievementSection): boolean {
+    return this.ownAchievements || this.visibility[section];
+  }
+
+  isSectionHidden(section: AchievementSection): boolean {
+    return this.ownAchievements && !this.visibility[section];
+  }
+
   isClickable(achievement): boolean {
     return (!!achievement.description && achievement.description.length > 0) || (!!achievement.link && achievement.link.length > 0);
   }
@@ -176,7 +190,8 @@ export class UsersAchievementsComponent implements OnInit {
 
 
   get resumeUrl() {
-    if (!this.achievements?._attachments?.[this.resumeAttachmentKey] || !this.achievements?._id) {
+    if (!this.achievements?._attachments?.[this.resumeAttachmentKey] || !this.achievements?._id ||
+      !this.isSectionVisible('resume')) {
       return '';
     }
     return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
@@ -204,6 +219,7 @@ export class UsersAchievementsComponent implements OnInit {
   generatePDF() {
     const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate, 'mediumDate', this.localeId) : '';
     const formattedMemberSince = this.user.joinDate ? formatDate(this.user.joinDate, 'mediumDate', this.localeId) : '';
+    const showPersonalInfo = this.visibility.personalInfo;
     let contentArray = [
       {
         text: $localize`${this.user.firstName}'s achievements`,
@@ -213,9 +229,9 @@ export class UsersAchievementsComponent implements OnInit {
       {
         text: `
           ${fullName(this.user) || this.user.name}
-          ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
-          ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
-          ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
+          ${showPersonalInfo && formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
+          ${showPersonalInfo && this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
+          ${showPersonalInfo && formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
           `,
         alignment: 'center',
       },
@@ -224,7 +240,7 @@ export class UsersAchievementsComponent implements OnInit {
     const optionals = [];
     const sectionSpacer = { text: '', margin: [ 0, 10 ] };
 
-    if (this.achievements.purpose) {
+    if (this.visibility.purpose && this.achievements.purpose) {
       optionals.push(
         { text: $localize`My Purpose`, style: 'subHeader', alignment: 'center' },
         { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] },
@@ -232,7 +248,7 @@ export class UsersAchievementsComponent implements OnInit {
       );
     }
 
-    if (this.achievements.goals) {
+    if (this.visibility.goals && this.achievements.goals) {
       optionals.push(
         { text: $localize`My Goals`, style: 'subHeader', alignment: 'center' },
         { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] },
@@ -240,7 +256,7 @@ export class UsersAchievementsComponent implements OnInit {
       );
     }
 
-    if (this.certifications && this.certifications.length > 0) {
+    if (this.visibility.certifications && this.certifications && this.certifications.length > 0) {
       optionals.push(
         { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
         ...this.certifications.map((certification) => [
@@ -250,7 +266,7 @@ export class UsersAchievementsComponent implements OnInit {
       );
     }
 
-    if (this.achievements.achievements && this.achievements.achievements.length > 0) {
+    if (this.visibility.achievements && this.achievements.achievements && this.achievements.achievements.length > 0) {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
@@ -266,7 +282,7 @@ export class UsersAchievementsComponent implements OnInit {
       );
     }
 
-    if (this.achievements.links && this.achievements.links.length > 0) {
+    if (this.visibility.links && this.achievements.links && this.achievements.links.length > 0) {
       optionals.push(
         { text: $localize`My Links`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.links.map((achievement) => [
@@ -277,7 +293,7 @@ export class UsersAchievementsComponent implements OnInit {
       );
     }
 
-    if (this.achievements.references && this.achievements.references.length > 0) {
+    if (this.visibility.references && this.achievements.references && this.achievements.references.length > 0) {
       optionals.push(
         { text: $localize`My References`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.references.map((achievement) => [

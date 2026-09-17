@@ -135,6 +135,14 @@
             <p class="warn-text-color mat-caption">{{ resumeUploadError }}</p>
           }
         </div>
+        <div class="visibility-section">
+          <p class="mat-hint mat-caption" i18n>Choose which sections to include when you print your achievements or when others view them</p>
+          <div class="visibility-options" formGroupName="visibility">
+            @for (section of sections; track section.key) {
+              <mat-checkbox [formControlName]="section.key">{{ section.label }}</mat-checkbox>
+            }
+          </div>
+        </div>
         <mat-checkbox formControlName="sendToNation" class="full-width achievements-checkbox" i18n>
           Allow your achievements to be shared with the nation
         </mat-checkbox>
