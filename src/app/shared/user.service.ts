@@ -143,6 +143,7 @@ export class UserService {
     return Object.assign({
       user: this.user.name,
       type: 'login',
+      app: 'planet',
       loginTime,
       logoutTime,
       createdOn: this.stateService.configuration.code,

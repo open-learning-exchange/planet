@@ -13,6 +13,7 @@ import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { PdfService } from '../../shared/pdf.service';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { LinkCopyService } from '../../shared/link-copy.service';
 
 // The real spinner keeps nested SCSS in its inline styles, which JSDOM cannot parse
 @Component({ selector: 'planet-loading-spinner', template: '' })
@@ -40,6 +41,7 @@ describe('UsersAchievementsComponent', () => {
   let requests: Map<string, Subject<any>[]>;
   let couchService: { get: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn> };
+  let linkCopyService: { copyLink: ReturnType<typeof vi.fn> };
   let requestCourses: ReturnType<typeof vi.fn>;
   let requestData: ReturnType<typeof vi.fn>;
   let isCourseCompleted: ReturnType<typeof vi.fn>;
@@ -72,6 +74,7 @@ describe('UsersAchievementsComponent', () => {
       })
     };
     planetMessageService = { showAlert: vi.fn() };
+    linkCopyService = { copyLink: vi.fn() };
     const route: any = {
       snapshot: { data: requiresAuth === false ? { requiresAuth: false } : {} },
       paramMap: paramMap$
@@ -112,7 +115,7 @@ describe('UsersAchievementsComponent', () => {
       stateService,
       coursesService,
       certificationsService,
-      { copy: vi.fn() } as any,
+      linkCopyService as any,
       { download: vi.fn() } as any,
       'en-US'
     );
@@ -149,6 +152,20 @@ describe('UsersAchievementsComponent', () => {
   afterEach(() => {
     vi.useRealTimers();
     component.ngOnDestroy();
+  });
+
+  it('delegates achievement links to the shared copy service', () => {
+    component.user = { name: 'learner' };
+
+    component.copyLink();
+
+    expect(linkCopyService.copyLink).toHaveBeenCalledWith(
+      [ '/profile', 'learner', 'achievements', { planet: 'local' } ],
+      {
+        success: 'Achievements link copied to clipboard',
+        failure: 'Failed to copy achievements link'
+      }
+    );
   });
 
   it('shows the user and achievements of the routed user', () => {
@@ -492,6 +509,7 @@ describe('UsersAchievementsComponent template loading', () => {
           useValue: { getCertifications: vi.fn(() => new Subject<any[]>()), isCourseCompleted: vi.fn() }
         },
         { provide: PlanetMessageService, useValue: { showAlert: vi.fn() } },
+        { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
         { provide: PdfService, useValue: { download: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn(), url: '' } },
         { provide: ActivatedRoute, useValue: { snapshot: { data: { requiresAuth: false } }, paramMap: paramMap$ } }
