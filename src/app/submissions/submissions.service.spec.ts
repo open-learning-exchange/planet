@@ -78,4 +78,49 @@ describe('SubmissionsService survey exports', () => {
     expect(pdfService.download).toHaveBeenCalled();
     expect(planetMessageService.showMessage).not.toHaveBeenCalledWith('There is no survey response');
   });
+
+  describe('the exported age', () => {
+
+    const time = new Date(2026, 8, 4).valueOf();
+
+    const exportedAgeOf = async (user: any) => {
+      vi.spyOn(service, 'getSubmissionsExport').mockReturnValue(of([
+        [ { ...submissionWithEmbeddedTeam, user } ],
+        time,
+        [ 'Question' ]
+      ]) as any);
+      await service.exportSubmissionsCsv(exam, 'survey', 'team-1').toPromise();
+      return csvService.exportCSV.mock.lastCall[0].data[0]['Age (years)'];
+    };
+
+    it('counts the years lived when the submission carries a birth date', async () => {
+      expect(await exportedAgeOf({ birthDate: new Date(1998, 8, 4).toJSON(), age: 12 })).toBe(28);
+    });
+
+    it('falls back to the age myPlanet sent when there is no birth date', async () => {
+      expect(await exportedAgeOf({ age: 20 })).toBe(20);
+    });
+
+    it('exports an age of zero rather than calling it unknown', async () => {
+      expect(await exportedAgeOf({ age: 0 })).toBe(0);
+    });
+
+    it('exports N/A when the age is blank or missing', async () => {
+      expect(await exportedAgeOf({ age: '' })).toBe('N/A');
+      expect(await exportedAgeOf({})).toBe('N/A');
+    });
+
+  });
+
+  it('preserves an age of zero in the AI analysis payload', async () => {
+    const getPrompt = vi.fn().mockReturnValue(of({ chat: 'Analysis' }));
+    (service as any).chatService = { getPrompt };
+
+    await service.analyseResponses(
+      { ...exam, type: 'survey', description: '', questions: [ { body: 'Question', type: 'text' } ] },
+      [ { ...submissionWithEmbeddedTeam, user: { age: 0 } } ]
+    );
+
+    expect(getPrompt.mock.calls[0][0].content).toContain('"age": 0');
+  });
 });

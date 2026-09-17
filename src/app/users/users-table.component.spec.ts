@@ -84,6 +84,13 @@ describe('UsersTableComponent', () => {
     });
   });
 
+  it('should mark the deactivation consequence as a supplementary message', () => {
+    const { dialogData } = openDeactivateDialog();
+
+    expect(dialogData.extraMessage).toBe('Deactivating will remove all active roles for this user.');
+    expect(dialogData.extraMessageType).toBe('supplementary');
+  });
+
   it('should not call setRoles while the deactivation is unconfirmed', () => {
     const setRolesSpy = vi.spyOn(usersService, 'setRoles').mockReturnValue(of({ ok: true } as any));
 

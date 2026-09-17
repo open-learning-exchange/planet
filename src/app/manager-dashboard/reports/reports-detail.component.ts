@@ -19,7 +19,8 @@ import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
-  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, formatDemographicsForCsv,
+  demographicsForCsv
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -142,7 +143,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
-  selectedTimeFilter = '12m';
+  selectedTimeFilter = '3m';
   showCustomDateFields = false;
   resourcesLoading = true;
   coursesLoading = true;
@@ -345,7 +346,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-          ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
+          ? this.dateQueryParams.startDate : this.defaultStartDate()
       );
       this.setLoginActivities();
     });
@@ -760,14 +761,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (field === 'username') {
       field = 'user';
     }
+    const dateValue = (value: any) => {
+      const time = new Date(value).getTime();
+      return isNaN(time) ? 0 : time;
+    };
     return data.sort((a, b) => {
+      const [ valueA, valueB ] = [ a[field], b[field] ];
       let comparison = 0;
-      if ([ 'loginTime', 'logoutTime', 'time' ].includes(field)) {
-        const dateA = new Date(a[field]).getTime();
-        const dateB = new Date(b[field]).getTime();
-        comparison = dateA - dateB;
+      if ([ 'loginTime', 'logoutTime', 'time', 'createdDate' ].includes(field)) {
+        comparison = dateValue(valueA) - dateValue(valueB);
+      } else if (typeof valueA === 'number' || typeof valueB === 'number') {
+        comparison = (Number(valueA) || 0) - (Number(valueB) || 0);
       } else {
-        comparison = a[field].localeCompare(b[field]);
+        comparison = `${valueA ?? ''}`.localeCompare(`${valueB ?? ''}`);
       }
       return comparison * order;
     });
@@ -776,14 +782,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[], sortBy: string) {
     switch (reportType) {
       case 'logins':
-        let data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
-          .map(({ app, ...activity }) => ({
-            ...activity,
-            [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId }),
-            androidId: activity.androidId || '',
-            deviceName: activity.deviceName || '',
-            customDeviceName: activity.customDeviceName || ''
-          }));
+        let data = this.activityService.appendUserDemographics(
+          filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members), this.today
+        ).map(({ app, ...activity }) => ({
+          ...formatDemographicsForCsv(activity),
+          [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId }),
+          androidId: activity.androidId || '',
+          deviceName: activity.deviceName || '',
+          customDeviceName: activity.customDeviceName || ''
+        }));
         if (sortBy) {
           data = this.sortData(data, sortBy);
         }
@@ -816,8 +823,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
+    const demographics = this.activityService.demographicsFor(this.today);
     const exportData = data.map(activity => ({
       [$localize`User`]: activity.user || '',
+      ...demographicsForCsv(demographics(activity)),
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,
@@ -895,23 +904,27 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
-    this.csvService.exportCSV({
-      data: this.activityService.appendAge(
-        filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(({ app, ...activity }) => {
-          const baseActivity = {
-            ...activity,
-            ...(reportType === 'health' ? {} : {
-              [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId })
-            }),
-            androidId: activity.androidId || '',
-            deviceName: activity.deviceName || ''
-          };
-          if (reportType === 'health' && activity.updatedDate) {
-            return { ...baseActivity, updatedDate: fullLabel(activity.updatedDate, this.localeId) };
-          }
-          return baseActivity;
+    const activities = filterByMember(
+      filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members
+    ).map(({ app, ...activity }) => {
+      const baseActivity = {
+        ...activity,
+        ...(reportType === 'health' ? {} : {
+          [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId })
         }),
+        androidId: activity.androidId || '',
+        deviceName: activity.deviceName || ''
+      };
+      if (reportType === 'health' && activity.updatedDate) {
+        return { ...baseActivity, updatedDate: fullLabel(activity.updatedDate, this.localeId) };
+      }
+      return baseActivity;
+    });
+    const activitiesWithDemographics = reportType === 'health' ?
+      this.activityService.appendAge(activities, this.today) :
+      this.activityService.appendUserDemographics(activities, this.today);
+    this.csvService.exportCSV({
+      data: activitiesWithDemographics.map(formatDemographicsForCsv),
       title
     });
   }
@@ -948,14 +961,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }, { emitEvent: true });
   }
 
+  private defaultStartDate() {
+    return this.selectedTimeFilter === 'custom' ?
+      this.filter.startDate :
+      this.activityService.getDateRange(this.selectedTimeFilter, this.minDate).startDate;
+  }
+
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
     const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
     this.showCustomDateFields = showCustomDateFields;
 
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date();
-      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentStartDate = this.defaultStartDate();
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
@@ -973,7 +991,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.filter.app = '';
     this.selectedTeam = 'All';
     this.filter.members = [];
-    this.onTimeFilterChange('12m');
+    this.onTimeFilterChange('3m');
   }
 
   onHealthLoadingChange(loading: boolean) {
