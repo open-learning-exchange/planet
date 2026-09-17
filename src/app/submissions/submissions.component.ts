@@ -86,8 +86,12 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
+  @Input() courseId: string;
+  @Input() courseTitle: string;
+  @Input() showCourseHeader = false;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
+  @Output() backClick = new EventEmitter<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
@@ -217,6 +221,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.filter.type = 'survey';
       return { surveyId: this.surveyId, type: 'survey' as const };
     }
+    if (this.courseId) {
+      const escapedCourseId = this.courseId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return { query: findDocuments({ parentId: { $regex: `@${escapedCourseId}$` } }) };
+    }
     switch (this.mode) {
       case 'survey':
         return { query: findDocuments({
@@ -274,6 +282,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
+    // A host that scopes the list to a course owns the route it came from.
+    if (this.courseId) {
+      this.backClick.emit();
+      return;
+    }
     this.router.navigate([ '../' ], { relativeTo: this.route.parent });
   }
 
