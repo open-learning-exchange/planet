@@ -16,6 +16,12 @@ export interface DeviceBreakpoints {
   smallMobile?: number;
 }
 
+export const isMobileOrSmaller = (deviceType: DeviceType): boolean =>
+  deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+
+export const isTabletOrSmaller = (deviceType: DeviceType): boolean =>
+  deviceType !== DeviceType.DESKTOP;
+
 export const DEFAULT_DEVICE_BREAKPOINTS: Required<DeviceBreakpoints> = {
   tablet: 1000,
   mobile: 780,

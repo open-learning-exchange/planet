@@ -85,6 +85,19 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "@angular-eslint/no-outputs-metadata-property": "error",
         "@angular-eslint/use-lifecycle-interface": "error",
         "@angular-eslint/use-pipe-transform-interface": "error",
+        "@stylistic/member-delimiter-style": [
+          "error",
+          {
+            "multiline": {
+              "delimiter": "semi",
+              "requireLast": true
+            },
+            "singleline": {
+              "delimiter": "comma",
+              "requireLast": false
+            }
+          }
+        ],
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
@@ -158,7 +171,9 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
             },
         }],
 
+        "@typescript-eslint/no-unused-expressions": "error",
         "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
 
@@ -249,6 +264,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         radix: "error",
         "use-isnan": "error",
         "valid-typeof": "off",
+        "arrow-body-style": "error",
         "arrow-parens": "off",
         "comma-dangle": "off",
         curly: "error",
@@ -262,6 +278,15 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
+        "quote-props": ["error", "as-needed"],
+        "space-before-function-paren": [
+          "error",
+          {
+            "anonymous": "never",
+            "asyncArrow": "always",
+            "named": "never"
+          }
+        ],
         "no-var": "error",
         "object-shorthand": ["error", "always"],
         quotes: "off",

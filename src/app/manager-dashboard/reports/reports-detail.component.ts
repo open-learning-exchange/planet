@@ -23,10 +23,11 @@ import {
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
+import { AppSourceFilter, appSourceLabel, appSources } from '../../shared/app-source';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -116,6 +117,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   users: any[] = [];
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
+  appSources = appSources;
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
@@ -140,7 +142,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
-  selectedTimeFilter = '12m';
+  selectedTimeFilter = '3m';
   showCustomDateFields = false;
   resourcesLoading = true;
   coursesLoading = true;
@@ -178,6 +180,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService,
@@ -242,7 +245,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.charts = [];
   }
 
-  onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
+  onFilterChange(filterValue: AppSourceFilter) {
     this.filter.app = filterValue;
     this.filterData();
   }
@@ -342,7 +345,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-          ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
+          ? this.dateQueryParams.startDate : this.defaultStartDate()
       );
       this.setLoginActivities();
     });
@@ -449,7 +452,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getTeams() {
-    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any[]) => {
+    this.couchService.findAll('teams', { selector: { status: 'active' } }).subscribe((teams: any[]) => {
       this.teams = teams
         .filter(team => team.teamPlanetCode === this.planetCode && team.name)
         .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
@@ -610,16 +613,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
-      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
+      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
     ];
-    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const teamField = { placeholder: $localize`Team`, name: 'team', options: teamOptions, type: 'selectbox' };
     const sortingOptions = sortingOptionsMap[reportType];
     const fields = [
       ...commonFields,
       ...(reportType === 'health' ? [] : [ teamField ]),
       ...(sortingOptions && sortingOptions.length > 0
-        ? [ { 'placeholder': $localize`Sort By`, 'name': 'sortBy', 'options': sortingOptions, 'type': 'selectbox' } ]
+        ? [ { placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' } ]
         : [])
     ];
     const formGroup = {
@@ -774,8 +777,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     switch (reportType) {
       case 'logins':
         let data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
-          .map(activity => ({
+          .map(({ app, ...activity }) => ({
             ...activity,
+            [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId }),
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || '',
             customDeviceName: activity.customDeviceName || ''
@@ -878,30 +882,33 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   exportDocView(reportType: string, dateRange: any, members: any[], sortBy: string) {
     let data = {
-      'resourceViews': this.resourceActivities.total.data,
-      'courseViews': this.courseActivities.total.data,
-      'stepCompletions': this.progress.steps.data,
-      'health': this.healthComponent && this.healthComponent.examinations
+      resourceViews: this.resourceActivities.total.data,
+      courseViews: this.courseActivities.total.data,
+      stepCompletions: this.progress.steps.data,
+      health: this.healthComponent && this.healthComponent.examinations
     }[reportType];
     const title = {
-      'resourceViews': $localize`Resource Views`,
-      'courseViews': $localize`:@@course-views-single:Course Views`,
-      'health': $localize`Community Health`,
-      'stepCompletions': $localize`Courses Progress` }[reportType];
+      resourceViews: $localize`Resource Views`,
+      courseViews: $localize`:@@course-views-single:Course Views`,
+      health: $localize`Community Health`,
+      stepCompletions: $localize`Courses Progress` }[reportType];
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
     this.csvService.exportCSV({
       data: this.activityService.appendAge(
         filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(activity => {
+        .map(({ app, ...activity }) => {
           const baseActivity = {
             ...activity,
+            ...(reportType === 'health' ? {} : {
+              [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId })
+            }),
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || ''
           };
           if (reportType === 'health' && activity.updatedDate) {
-            baseActivity.updatedDate = fullLabel(activity.updatedDate, this.localeId);
+            return { ...baseActivity, updatedDate: fullLabel(activity.updatedDate, this.localeId) };
           }
           return baseActivity;
         }),
@@ -929,10 +936,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (!user) {
       return;
     }
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { name: user.name, userPlanetCode: user.planetCode } },
-      autoFocus: false
-    });
+    this.usersProfileDialogService.open({ member: { name: user.name, userPlanetCode: user.planetCode } });
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
@@ -944,14 +948,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }, { emitEvent: true });
   }
 
+  private defaultStartDate() {
+    return this.selectedTimeFilter === 'custom' ?
+      this.filter.startDate :
+      this.activityService.getDateRange(this.selectedTimeFilter, this.minDate).startDate;
+  }
+
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
     const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
     this.showCustomDateFields = showCustomDateFields;
 
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date();
-      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentStartDate = this.defaultStartDate();
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
@@ -969,7 +978,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.filter.app = '';
     this.selectedTeam = 'All';
     this.filter.members = [];
-    this.onTimeFilterChange('12m');
+    this.onTimeFilterChange('3m');
   }
 
   onHealthLoadingChange(loading: boolean) {

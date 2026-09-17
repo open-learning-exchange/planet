@@ -16,10 +16,10 @@
       <mat-form-field class="font-size-1 margin-lr-3">
         <mat-label i18n>Search</mat-label>
         <input matInput [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
-      </mat-form-field>
-      <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType" matTooltip="Clear search" i18n-matTooltip [matTooltipDisabled]="!titleSearch && !searchType">
-        <mat-icon>delete</mat-icon>
-      </button><br>
+        <button type="button" mat-icon-button matSuffix (click)="resetFilter()" [style.visibility]="(titleSearch || searchType) ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field><br>
       <div class="full-conversation-row">
         <div class="full-conversation-label-row">
           <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()">

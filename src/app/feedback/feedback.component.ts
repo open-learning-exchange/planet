@@ -25,7 +25,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
@@ -62,6 +62,7 @@ import {
     MatToolbarRow,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatSelect,
     MatOption,
     MatInput,
@@ -110,8 +111,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     { text: FEEDBACK_STATUS_OPTIONS[2].label, value: FEEDBACK_STATUS_OPTIONS[2].value }
   ];
   filter = {
-    'type': '',
-    'status': ''
+    type: '',
+    status: ''
   };
   #titleSearch = '';
   get titleSearch(): string {
@@ -189,8 +190,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getFeedback() {
-    const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
+    const selector = !this.user.isUserAdmin ? { owner: this.user.name } : { _id: { $gt: null } };
+    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { openTime: 'desc' } ])).subscribe((feedbackData: any[]) => {
       this.feedback.data = feedbackData.map(feedback => {
         const normalizedType = normalizeFeedbackType(feedback.type);
         const normalizedPriority = normalizeFeedbackPriority(feedback.priority);

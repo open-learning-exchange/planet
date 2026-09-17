@@ -139,7 +139,7 @@ export class PublicSurveyComponent implements OnInit {
 
   openSignupDialog() {
     this.dialog.open(LoginDialogComponent, {
-      'data': { 'createMode': true }
+      data: { createMode: true }
     });
   }
 

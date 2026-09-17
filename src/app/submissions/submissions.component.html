@@ -4,7 +4,11 @@
       <button mat-icon-button (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
+      @if (showCourseHeader) {
+        <span i18n>Course Submissions & Grading</span>
+      } @else {
+        <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
+      }
       <span class="toolbar-fill"></span>
       @if (!isMobile && !surveyId) {
         <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
@@ -29,6 +33,11 @@
       </mat-toolbar-row>
     }
   </mat-toolbar>
+  @if (showCourseHeader) {
+    <mat-toolbar class="primary-color font-size-1">
+      <h3 class="ellipsis-title margin-lr-3">{{ courseTitle }}</h3>
+    </mat-toolbar>
+  }
 }
 
 <ng-template #filterDropdown>
@@ -61,12 +70,15 @@
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1 mdc-toolbar-input">
     <mat-label i18n>Type name to search...</mat-label>
-    <input matInput (keyup)="applyFilter($event.target.value)">
+    <input matInput [ngModel]="searchValue" (ngModelChange)="applyFilter($event)">
+    <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
 </ng-template>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
-  <div class="view-container view-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }">
+  <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog, 'no-toolbar': !isDialog && !showCourseHeader }">
     <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog"
       [class.no-name-column]="!displayedColumns.includes('name')" [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">

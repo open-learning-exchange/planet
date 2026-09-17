@@ -1,7 +1,10 @@
-import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import {
+  Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy, SimpleChanges
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { forkJoin, of, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -10,20 +13,51 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { dedupeShelfReduce } from '../shared/utils';
 import { trackById } from '../shared/table-helpers';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voice-labels';
 
-import { MatButton } from '@angular/material/button';
+import { NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { NewsListItemComponent } from './news-list-item.component';
 import { MatDivider } from '@angular/material/list';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelect, MatSelectTrigger } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
+import { MatTooltip } from '@angular/material/tooltip';
+import { LabelComponent } from '../shared/label.component';
 
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
   styleUrls: ['./news-list.component.scss'],
-  imports: [MatButton, NewsListItemComponent, MatDivider, MatProgressSpinner, MatPaginator]
+  imports: [
+    MatButton,
+    NewsListItemComponent,
+    MatDivider,
+    MatProgressSpinner,
+    MatPaginator,
+    NgClass,
+    FormsModule,
+    MatToolbar,
+    MatFormField,
+    MatLabel,
+    MatPrefix,
+    MatSuffix,
+    MatInput,
+    MatIcon,
+    MatIconButton,
+    MatSelect,
+    MatSelectTrigger,
+    MatOption,
+    MatTooltip,
+    LabelComponent
+  ]
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
@@ -32,13 +66,23 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   @Input() editable = true;
+  @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
+  @Input() customLabels: string[] = [];
   @Output() viewChange = new EventEmitter<any>();
-  @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
   @ViewChild('anchor', { static: false }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
+  filteredItems: any[] = [];
+  messageSearch = '';
+  messageSearch$ = new Subject<string>();
+  availableLabels: string[] = [];
+  selectedLabel = '';
+  pinned = false;
+  private viewLabelNames = new Set<string>();
+  private itemsById = new Map<string, any>();
+  private searchSubscription: Subscription;
   replyObject: any = {};
   isMainPostShared = true;
   showMainPostShare = false;
@@ -61,6 +105,32 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   totalItems = 0;
   private routerEventsSubscription: Subscription;
 
+  get isTeamsFeed(): boolean {
+    return this.viewableBy === 'teams';
+  }
+
+  get searchLabel(): string {
+    return this.isTeamsFeed ? $localize`Search messages` : $localize`Search voice`;
+  }
+
+  get clearSearchLabel(): string {
+    return this.isTeamsFeed ? $localize`Clear message search` : $localize`Clear voice search`;
+  }
+
+  get pinTooltip(): string {
+    if (this.isTeamsFeed) {
+      return this.pinned ? $localize`Unpin Messages Toolbar` : $localize`Pin Messages Toolbar`;
+    }
+    return this.pinned ? $localize`Unpin Voices Toolbar` : $localize`Pin Voices Toolbar`;
+  }
+
+  get emptyStateLabel(): string {
+    if (this.selectedLabel || this.messageSearch) {
+      return this.isTeamsFeed ? $localize`No messages match your filters.` : $localize`No Voices match your filters.`;
+    }
+    return this.isTeamsFeed ? $localize`No messages available.` : $localize`No Voices available.`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
@@ -76,14 +146,62 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.routerEventsSubscription = this.router.events.subscribe(() => {
       this.initNews();
     });
+    this.searchSubscription = this.messageSearch$.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(searchValue => {
+      this.messageSearch = searchValue;
+      this.applyFilters();
+    });
 
     this.initNews();
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.viewableId && !changes.viewableId.firstChange) {
+      this.resetFilters();
+    }
+    this.itemsById = new Map<string, any>(this.items.map(item => [ item._id, item ]));
+    this.availableLabels = this.getAvailableLabels(this.items);
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    if (!this.selectedLabel && !this.messageSearch) {
+      this.filteredItems = this.items;
+    } else {
+      const search = this.messageSearch.toLowerCase();
+      const rootIds = new Map<string, string>(this.items.map(item => [ item._id, this.getThreadRootId(item) ]));
+      const matchedRoots = new Set<string>(
+        this.items.filter(item => this.itemMatchesFilters(item, search)).map(item => rootIds.get(item._id))
+      );
+      this.filteredItems = this.items.filter(item => matchedRoots.has(rootIds.get(item._id)));
+    }
+    this.groupReplies();
+  }
+
+  private resetFilters() {
+    this.messageSearch = '';
+    this.selectedLabel = '';
+    // cancels a keystroke still inside the debounce window
+    this.messageSearch$.next('');
+  }
+
+  private itemMatchesFilters(item: any, search: string): boolean {
+    const matchesLabel = !this.selectedLabel ||
+      (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel)) ||
+      (item.doc.viewIn || []).some(view => view.name && voiceLabelsEqual(view.name, this.selectedLabel)) ||
+      (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true);
+    return matchesLabel && (item.doc.message || '').toLowerCase().includes(search);
+  }
+
+  private groupReplies() {
     let isLatest = true;
     this.replyObject = {};
     this.items.forEach(item => {
+      item.latestMessage = false;
+    });
+    this.filteredItems.forEach(item => {
       const key = item.doc.replyTo || 'root';
       if (!this.replyObject[key]) {
         this.replyObject[key] = [];
@@ -97,10 +215,14 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.displayedItems = this.replyObject[this.replyViewing._id];
     this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
-      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id) || { _id: 'root' };
+      this.replyViewing = this.filteredItems.find(item => item._id === this.replyViewing._id) || { _id: 'root' };
       if (this.replyViewing._id === 'root') {
         this.displayedItems = this.replyObject.root || [];
         this.loadPagedItems(true);
+        this.viewChange.emit(this.replyViewing);
+        if (this.useReplyRoutes) {
+          this.navigateToReply('root');
+        }
       }
     }
   }
@@ -111,6 +233,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   ngOnDestroy() {
     this.routerEventsSubscription?.unsubscribe();
+    this.searchSubscription?.unsubscribe();
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -155,7 +278,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   private getThreadRootId(news: any): string {
     let current = news;
     while (current.doc && current.doc.replyTo) {
-      const parent = this.items.find(item => item._id === current.doc.replyTo);
+      const parent = this.itemsById.get(current.doc.replyTo);
       if (!parent) {
         break;
       }
@@ -209,11 +332,14 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   openUpdateDialog(
     { title, placeholder, initialValue = '', news = {} }: { title: string, placeholder: string, initialValue?: string, news?: any }
   ) {
+    if (this.readOnly) {
+      return;
+    }
     const fields = [ {
-      'type': 'markdown',
-      'name': 'message',
+      type: 'markdown',
+      name: 'message',
       placeholder,
-      'required': true,
+      required: true,
       imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
     const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
@@ -231,6 +357,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   postNews(oldNews, newNews) {
+    if (this.readOnly) {
+      return;
+    }
     this.newsService.postNews(
       { ...oldNews, ...newNews },
       oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`
@@ -241,6 +370,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   openDeleteDialog(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteNews(news),
@@ -277,6 +409,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   shareNews({ news, local }: { news: any, local: boolean }) {
+    if (this.readOnly) {
+      return;
+    }
     if (local) {
       this.newsService.shareNews(news).subscribe(() => {
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
@@ -293,20 +428,62 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
   }
 
+  onLabelFilterChange(label: string) {
+    this.selectedLabel = label;
+    this.applyFilters();
+  }
+
+  clearSearch() {
+    this.messageSearch = '';
+    this.messageSearch$.next('');
+    this.applyFilters();
+  }
+
+  getAvailableLabels(items: any[]): string[] {
+    const labels: string[] = [];
+    this.viewLabelNames = new Set<string>();
+    items.forEach(item => {
+      labels.push(...(item.doc.labels || []));
+      (item.doc.viewIn || []).forEach(view => {
+        const isOwnFeed = this.viewableId !== undefined && view._id === this.viewableId;
+        if (view.name && !isOwnFeed) {
+          labels.push(view.name);
+          this.viewLabelNames.add(normalizeVoiceLabel(view.name));
+        }
+      });
+      if (item.doc.chat === true) {
+        labels.push(SHARED_CHAT_LABEL);
+      }
+    });
+
+    return dedupeVoiceLabels(labels);
+  }
+
+  getLabelIcon(label: string): string {
+    return voiceLabelsEqual(label, SHARED_CHAT_LABEL) ? 'question_answer'
+      : this.viewLabelNames.has(normalizeVoiceLabel(label)) ? 'groups'
+      : 'label_important';
+  }
+
   changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
-    this.changeLabelsFilter.emit({ label, action });
     if (action === 'select') {
+      this.selectedLabel = this.availableLabels.find(availableLabel => voiceLabelsEqual(availableLabel, label)) || label;
+    } else if (action === 'remove' && voiceLabelsEqual(label, this.selectedLabel)) {
+      this.selectedLabel = '';
+    }
+    this.applyFilters();
+    if (action === 'select' || this.readOnly) {
       return;
     }
     const labels = action === 'remove' ?
-      news.labels.filter(existingLabel => existingLabel !== label) :
-      [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
+      (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
+      dedupeVoiceLabels([ ...(news.labels || []), label ]);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 
   getCurrentItems(): any[] {
     if (this.replyViewing._id === 'root') {
-      return this.items.filter(item => !item.doc.replyTo);
+      return this.filteredItems.filter(item => !item.doc.replyTo);
     }
     return this.replyObject[this.replyViewing._id] || [];
   }

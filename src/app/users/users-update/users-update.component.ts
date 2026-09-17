@@ -258,11 +258,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     // Alter between two possible keys for image element to ensure database updates
     const imgKey: string = this.currentImgKey === 'img' ? 'img_' : 'img';
     attachments[imgKey] = {
-      'content_type': contentType,
+      content_type: contentType,
       data
     };
 
-    return { '_attachments': attachments };
+    return { _attachments: attachments };
   }
 
   goBack() {
@@ -326,9 +326,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   appendToSurvey(user: SubmissionUserPayload) {
     const submissionId = this.route.snapshot.params.id;
-    this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
-      return this.couchService.put('submissions/' + submissionId, { ...submission, user });
-    })).subscribe(() => {
+    this.couchService.get('submissions/' + submissionId).pipe(
+      switchMap((submission) => this.couchService.put('submissions/' + submissionId, { ...submission, user }))
+    ).subscribe(() => {
       this.avatarChanged = false;
       this.initialFormValues = { ...this.editForm.getRawValue() };
       this.hasUnsavedChanges = false;

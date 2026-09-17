@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "sass:map";
 @use '@angular/material' as mat;
 
@@ -44,6 +45,30 @@ $planet-green: mat.m2-get-color-from-palette($planet-app-green, $primary-hue);
 $planet-green-lighter: mat.m2-get-color-from-palette($planet-app-green, 100);
 $planet-green-dark: mat.m2-get-color-from-palette($planet-app-green, $dark-hue);
 
+// Text shades that clear WCAG AA on the matching *-lighter surface. The -lighter
+// shades are the established low-emphasis fill (chips, table highlights, selected
+// states); pair them with these rather than inventing a new tint.
+$primary-lighter-text: mat.m2-get-color-from-palette($planet-app-primary, 900);
+$accent-lighter-text: color.adjust($accent, $lightness: -30%);
+
+// Backgrounds for generated member initials, picked by hashing the name. A fixed set
+// rather than a computed hue, so every option is theme-derived and verified: each
+// clears WCAG AA against white text, the blue at 4.6:1 being the tightest.
+$initials-palette: (
+  mat.m2-get-color-from-palette(mat.$m2-blue-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-deep-purple-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-purple-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-pink-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-red-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-deep-orange-palette, 900),
+  mat.m2-get-color-from-palette(mat.$m2-brown-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-green-palette, 800),
+  mat.m2-get-color-from-palette(mat.$m2-teal-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-cyan-palette, 900),
+  mat.m2-get-color-from-palette(mat.$m2-blue-grey-palette, 700)
+);
+
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
 $disabled-button: map.get(mat.$m2-light-theme-background-palette, 'disabled-button');
@@ -65,6 +90,7 @@ $screen-xs: 480px;
 // Maximum full height of view container (avoiding vertical overflow)
 $view-container-height: calc(100vh - 216px);
 $view-container-height-no-toolbar: calc(#{$view-container-height} + 64px);
+$search-filters-height: 25vh;
 // Height of dashboard
 $dashboard-height: calc(100vh - 128px);
 $dashboard-tile-height: calc((#{$dashboard-height} - 3rem) / 4);

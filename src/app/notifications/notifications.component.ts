@@ -14,7 +14,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-import { NgClass, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
 import { ChallengesService } from '../shared/challenges/challenges.service';
@@ -33,7 +33,6 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     MatColumnDef,
     MatCellDef,
     MatCell,
-    NgClass,
     RouterLink,
     MatRowDef,
     MatRow,
@@ -52,7 +51,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     { value: 'read', label: $localize`Read` },
     { value: 'unread', label: $localize`Unread` }
   ];
-  filter = { 'status': '' };
+  filter = { status: '' };
   anyUnread = true;
 
   constructor(
@@ -79,12 +78,12 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   getNotifications() {
     const userFilter = notificationUserFilter(this.userService.get());
     this.couchService.findAll('notifications/_find', findDocuments(
-      { '$or': userFilter,
+      { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
-        'time': { '$gt': 0 }
+        time: { $gt: 0 }
       },
       0,
-      [ { 'time': 'desc' } ]))
+      [ { time: 'desc' } ]))
       .subscribe(notifications => {
         this.notifications.data = notifications;
         this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
@@ -97,7 +96,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   readNotification(notification) {
-    const updateNotificaton = { ...notification, 'status': 'read' };
+    const updateNotificaton = { ...notification, status: 'read' };
     if (notification.status === 'unread') {
       this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
         this.notifications.data = this.notifications.data.map((n: any) => {

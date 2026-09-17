@@ -9,11 +9,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 responsive-toolbar">
     <div>
-      @if (user?.firstName) {
-        <span>{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
-      } @else {
-        {{ user.name | truncateText:40 }}
-      }
+      <span>{{ ((user | fullName) || user?.name) | truncateText:40 }}</span>
     </div>
     <span class="toolbar-fill"></span>
     <div class="auto-adjust-buttons">
@@ -52,7 +48,7 @@
           <div class="achievements-container">
             <div class="user-info">
               <planet-avatar [username]="userName" [planetCode]="userPlanetCode" imgClass="profile-image"></planet-avatar>
-              <h2>{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</h2>
+              <h2>{{ ((user | fullName) || user?.name) | truncateText:40 }}</h2>
               @if (!publicView) {
                 <div class="birth-info">
                   @if (user.birthDate) {

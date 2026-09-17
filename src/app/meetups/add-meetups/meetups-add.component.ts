@@ -29,6 +29,7 @@ import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { SubmitDirective } from '../../shared/submit.directive';
+import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
 
 type DatePlaceholder = CouchService['datePlaceholder'];
 
@@ -98,6 +99,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   @Input() link: any = {};
   @Input() isDialog = false;
+  @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Input() meetup: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() goBackEvent = new EventEmitter<any>();
@@ -113,6 +116,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   meetupFrequency: string[] = [];
   initialFormValues = '';
   hasUnsavedChanges = false;
+  private meetupBeingEdited: any;
   get dayFormArray(): FormArray<FormControl<string>> {
     return this.meetupForm.controls.day as FormArray<FormControl<string>>;
   }
@@ -124,13 +128,19 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     private route: ActivatedRoute,
     private fb: NonNullableFormBuilder,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    private meetupService: MeetupService
   ) {
     this.createForm();
   }
 
   ngOnInit() {
     if (this.meetup._id) {
+      if (!this.meetupService.canEditMeetup(this.meetup, this.authorizationContext)) {
+        this.showEditDenied();
+        this.goBack();
+        return;
+      }
       this.setMeetupData({ ...this.meetup });
     } else {
       this.createForm();
@@ -138,11 +148,19 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
         data => {
+          if (!this.meetupService.canEditMeetup(data, this.authorizationContext)) {
+            this.showEditDenied();
+            this.navigateToMeetups();
+            return;
+          }
           this.setMeetupData(data);
           this.captureInitialState();
           this.onFormChanges();
         },
-        error => console.error(error)
+        () => {
+          this.planetMessageService.showAlert($localize`There was a problem loading this meetup`);
+          this.navigateToMeetups();
+        }
       );
     } else {
       this.captureInitialState();
@@ -161,6 +179,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   setMeetupData(meetup: any) {
+    this.meetupBeingEdited = { ...meetup };
     this.pageType = 'Update';
     this.revision = meetup._rev;
     this.id = meetup._id;
@@ -255,21 +274,22 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   updateMeetup(meetupInfo) {
+    if (!this.meetupService.canEditMeetup(this.meetupBeingEdited, this.authorizationContext)) {
+      this.showEditDenied();
+      return;
+    }
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
-      '_id': this.id,
-      '_rev': this.revision,
-      'startDate': this.parseDateValue(meetupInfo.startDate),
-      'endDate': this.parseDateValue(meetupInfo.endDate)
-    }).pipe(switchMap(() => {
-      return this.couchService.post('shelf/_find', findDocuments({
-        'meetupIds': { '$in': [ this.id ] }
-      }, [ '_id' ], 0));
-    }),
-    switchMap(data => {
-      return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
-    })
-    ).subscribe((res) => {
+      _id: this.id,
+      _rev: this.revision,
+      startDate: this.parseDateValue(meetupInfo.startDate),
+      endDate: this.parseDateValue(meetupInfo.endDate)
+    }).pipe(switchMap(() => this.couchService.post('shelf/_find', findDocuments({
+      meetupIds: { $in: [ this.id ] }
+    }, [ '_id' ], 0))),
+    switchMap(data => this.couchService.updateDocument(
+      'notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id)
+    ))).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
     }, (err) => {
@@ -281,8 +301,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   addMeetup(meetupInfo) {
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
-      'startDate': this.parseDateValue(meetupInfo.startDate),
-      'endDate': this.parseDateValue(meetupInfo.endDate),
+      startDate: this.parseDateValue(meetupInfo.startDate),
+      endDate: this.parseDateValue(meetupInfo.endDate),
     }).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize` Added event: ${meetupInfo.title}`);
@@ -359,14 +379,14 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({
-      'user': user._id,
-      'message': $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
-      'link': '/meetups/view/' + meetupId,
-      'item': meetupId,
-      'type': 'meetup',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      user: user._id,
+      message: $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
+      link: '/meetups/view/' + meetupId,
+      item: meetupId,
+      type: 'meetup',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     })) };
   }
 
@@ -383,6 +403,21 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     } catch {
       input.focus();
     }
+  }
+
+  private get authorizationContext(): MeetupAuthorizationContext {
+    return {
+      leaderOfTeamId: this.leaderOfTeamId,
+      readOnly: !this.editable || !!this.route.snapshot.data?.parent
+    };
+  }
+
+  private showEditDenied() {
+    this.planetMessageService.showAlert($localize`You are not authorized to edit this meetup`);
+  }
+
+  private navigateToMeetups() {
+    this.router.navigate([ this.route.snapshot.data?.parent ? '/manager/meetups' : '/meetups' ]);
   }
 
 }

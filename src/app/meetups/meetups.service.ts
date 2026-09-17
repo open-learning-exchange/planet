@@ -8,6 +8,11 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
+export interface MeetupAuthorizationContext {
+  leaderOfTeamId?: string;
+  readOnly?: boolean;
+}
+
 @Injectable()
 export class MeetupService {
 
@@ -30,6 +35,16 @@ export class MeetupService {
       });
   }
 
+  canEditMeetup(meetup: any, context: MeetupAuthorizationContext = {}): boolean {
+    const user = this.userService.get();
+    if (!user?._id || !meetup || context.readOnly) {
+      return false;
+    }
+    const isCommunityLeader = user.roles?.includes('leader') === true;
+    const isTeamLeader = !!context.leaderOfTeamId && meetup?.link?.teams === context.leaderOfTeamId;
+    return user.isUserAdmin || isCommunityLeader || isTeamLeader || user.name === meetup?.createdBy;
+  }
+
   updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
     const meetupQuery = meetupIds.length > 0 ?
       this.getMeetups(meetupIds, opts) : this.getAllMeetups(opts);
@@ -40,22 +55,20 @@ export class MeetupService {
   }
 
   getAllMeetups(opts: any) {
-    return this.couchService.findAll('meetups', findDocuments({ '_id': { '$gt': null } }, 0 ), opts);
+    return this.couchService.findAll('meetups', findDocuments({ _id: { $gt: null } }, 0 ), opts);
   }
 
   getMeetups(meetupIds: string[], opts: any) {
     // find meetupId on meetup table
     return this.couchService.post('meetups/_find', findDocuments({
-      '_id': { '$in': meetupIds }
+      _id: { $in: meetupIds }
     }, 0), opts);
   }
 
   meetupList(meetupRes, userMeetupRes) {
     return meetupRes.map((res: any) => {
       const meetup = res.doc || res;
-      const meetupIndex = userMeetupRes.findIndex(meetupIds => {
-        return meetup._id === meetupIds;
-      });
+      const meetupIndex = userMeetupRes.findIndex(meetupIds => meetup._id === meetupIds);
       if (meetupIndex > -1) {
         return { ...meetup, participate: true };
       }
@@ -93,22 +106,27 @@ export class MeetupService {
       }));
   }
 
-  openDeleteDialog(meetups: any[] | any, callback) {
-    const isMany = meetups.length > 1;
-    const displayName = isMany ? '' : (meetups[0] || meetups).title;
+  openDeleteDialog(meetups: any[] | any, callback, context: MeetupAuthorizationContext = {}) {
+    const meetupList = [ meetups ].flat();
+    if (meetupList.length === 0 || meetupList.some(meetup => !this.canEditMeetup(meetup, context))) {
+      this.planetMessageService.showAlert($localize`You are not authorized to delete this meetup`);
+      return;
+    }
+    const isMany = meetupList.length > 1;
+    const displayName = isMany ? '' : meetupList[0].title;
     const recurringInfo =
-      (meetups[0] || meetups).recurring &&
-      (meetups[0] || meetups).recurring !== 'none' &&
-      (meetups[0] || meetups).recurringNumber
-        ? `(Recurs ${(meetups[0] || meetups).recurring} for ${
-          (meetups[0] || meetups).recurringNumber
+      meetupList[0].recurring &&
+      meetupList[0].recurring !== 'none' &&
+      meetupList[0].recurringNumber
+        ? `(Recurs ${meetupList[0].recurring} for ${
+          meetupList[0].recurringNumber
         } ${
-          (meetups[0] || meetups).recurring === 'daily' ? 'days' : 'weeks'
+          meetupList[0].recurring === 'daily' ? 'days' : 'weeks'
         })`
         : '';
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: this.deleteMeetups([ meetups ].flat(), displayName, callback),
+        okClick: this.deleteMeetups(meetupList, displayName, callback),
         changeType: 'delete',
         type: 'event',
         amount: isMany ? 'many' : 'single',

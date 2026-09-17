@@ -1,5 +1,43 @@
 <div class="news-list-content">
-  <ng-content></ng-content>
+  @if (replyViewing._id === 'root') {
+    <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
+      <mat-form-field class="search-form-field mdc-toolbar-input">
+        <mat-label>{{ searchLabel }}</mat-label>
+        <mat-icon matIconPrefix>search</mat-icon>
+        <input matInput [(ngModel)]="messageSearch" (ngModelChange)="messageSearch$.next($event)">
+        <button type="button" mat-icon-button matSuffix (click)="clearSearch()" [style.visibility]="messageSearch ? 'visible' : 'hidden'" [matTooltip]="clearSearchLabel" [attr.aria-label]="clearSearchLabel">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-form-field class="label-filter-field mdc-toolbar-input">
+        <mat-label i18n>Label</mat-label>
+        <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
+          <mat-select-trigger>
+            @if (selectedLabel) {
+              <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
+              <planet-label [label]="selectedLabel"></planet-label>
+            } @else {
+              <span i18n>All</span>
+            }
+          </mat-select-trigger>
+          <mat-option value=""><span i18n>All</span></mat-option>
+          @for (label of availableLabels; track label) {
+            <mat-option [value]="label">
+              <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
+              <planet-label [label]="label"></planet-label>
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <ng-content></ng-content>
+      <button mat-icon-button [matTooltip]="pinTooltip" [attr.aria-label]="pinTooltip" (click)="pinned = !pinned" class="pin-btn">
+        <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
+      </button>
+    </mat-toolbar>
+  }
+  @if (filteredItems.length === 0) {
+    <p>{{ emptyStateLabel }}</p>
+  }
   @if (replyViewing._id!=='root') {
     <div class="action-buttons">
       <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
@@ -13,8 +51,10 @@
       [replyView]="replyViewing._id!=='root'"
       [showRepliesButton]="false"
       [editable]="editable"
+      [readOnly]="readOnly"
       [isMainPostShared]="showMainPostShare"
       [shareTarget]="shareTarget"
+      [customLabels]="customLabels"
       (changeReplyViewing)="showReplies($event)"
       (updateNews)="openUpdateDialog($event)"
       (deleteNews)="openDeleteDialog($event)"
@@ -31,7 +71,9 @@
         [isMainPostShared]="isMainPostShared"
         [replyObject]="replyObject"
         [editable]="editable"
+        [readOnly]="readOnly"
         [shareTarget]="shareTarget"
+        [customLabels]="customLabels"
         (changeReplyViewing)="showReplies($event)"
         (updateNews)="openUpdateDialog($event)"
         (deleteNews)="openDeleteDialog($event)"
