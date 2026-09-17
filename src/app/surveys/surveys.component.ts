@@ -41,6 +41,7 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { LinkCopyService } from '../shared/link-copy.service';
 
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
@@ -149,7 +150,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private chatService: ChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private linkCopyService: LinkCopyService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -203,7 +205,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const targetTeamId = this.teamId || this.routeTeamId;
 
-      const submissionsBySurvey: Record<string, Array<{ status: string; teamId: string | null; parent?: any }>> = {};
+      const submissionsBySurvey: Record<string, Array<{ status: string, teamId: string | null, parent?: any }>> = {};
       submissions.forEach(row => {
         const [baseSurveyId] = row.key;
         (submissionsBySurvey[baseSurveyId] ||= []).push(row.value);
@@ -554,12 +556,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const link = `${window.location.origin}/survey/${targetTeamId}/${survey._id}`;
-    navigator.clipboard.writeText(link).then(() => {
-      this.planetMessageService.showMessage($localize`Public survey link copied`);
-    }).catch(() => {
-      this.planetMessageService.showAlert($localize`Failed to copy public survey link`);
-    });
+    this.linkCopyService.copyLink(
+      [ '/survey', targetTeamId, survey._id ],
+      {
+        success: $localize`Public survey link copied`,
+        failure: $localize`Failed to copy public survey link`
+      }
+    );
   }
 
   exportCSV(survey) {

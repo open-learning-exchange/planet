@@ -83,18 +83,18 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
-    tableData: any[],
-    columns: string[],
-    itemDescription: string,
-    nameProperty: string,
-    okClick: any,
-    dropdownSettings: { field: string, startingValue?: { value: string, text: string } },
-    filterPredicate?: any,
-    allowMulti?: boolean,
-    initialSelection?: any[],
-    disableSelection?: boolean,
-    selectionOptional?: boolean,
-    labels?: any
+    tableData: any[];
+    columns: string[];
+    itemDescription: string;
+    nameProperty: string;
+    okClick: any;
+    dropdownSettings: { field: string, startingValue?: { value: string, text: string } };
+    filterPredicate?: any;
+    allowMulti?: boolean;
+    initialSelection?: any[];
+    disableSelection?: boolean;
+    selectionOptional?: boolean;
+    labels?: any;
   }) {
     const hasFullName = this.data.columns.some(column => column === 'Full Name');
     const tableData = hasFullName ?

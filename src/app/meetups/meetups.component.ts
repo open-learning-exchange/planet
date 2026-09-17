@@ -92,8 +92,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   meetups = new MatTableDataSource();
   private renderedRows: any[] = [];
   message = '';
-  readonly dbName = 'meetups';
-  deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -147,6 +145,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetups.sort = this.sort;
   }
 
+  canEditMeetup(meetup: any): boolean {
+    return this.meetupService.canEditMeetup(meetup, { readOnly: this.parent });
+  }
+
   isAllSelected() {
     return isAllVisibleSelected(this.selection, this.renderedRows);
   }
@@ -180,24 +182,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(meetup) {
-    this.meetupService.openDeleteDialog(meetup, this.deleteCallback());
-  }
-
-  deleteMeetups(meetupIds) {
-    const deleteMeetupArr = meetupIds.map((meetupId) => {
-      const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
-      return { _id: meetup._id, _rev: meetup._rev, _deleted: true };
-    });
-    return {
-      request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr }),
-      onNext: (data) => {
-        this.meetupService.updateMeetups();
-        this.selection.clear();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted selected meetups`);
-      },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting these meetups.`)
-    };
+    this.meetupService.openDeleteDialog(meetup, this.deleteCallback(), { readOnly: this.parent });
   }
 
   deleteSelected() {
@@ -205,7 +190,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
       return { ...meetup, _deleted: true };
     });
-    this.meetupService.openDeleteDialog(meetups, this.deleteCallback());
+    this.meetupService.openDeleteDialog(meetups, this.deleteCallback(), { readOnly: this.parent });
   }
 
   goBack() {

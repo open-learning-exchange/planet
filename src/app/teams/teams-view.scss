@@ -1,5 +1,10 @@
 .teams-view {
 
+  .new-message-btn {
+    flex: 0 0 auto;
+    align-self: center;
+  }
+
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

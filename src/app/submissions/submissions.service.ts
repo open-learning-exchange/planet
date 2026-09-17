@@ -3,11 +3,12 @@ import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
 import { findDocuments } from '../shared/mangoQueries';
+import { appSourceLabel } from '../shared/app-source';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, converter } from '../shared/utils';
+import { ageFromUser, converter, dedupeShelfReduce, localizedGender, markdownToPlainText, toProperCase } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -48,7 +49,7 @@ export class SubmissionsService {
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest, surveyId, type }: {
-    onlyBest?: boolean, opts?: any, query?: any, surveyId?: string, type?: 'exam' | 'survey'
+    onlyBest?: boolean; opts?: any; query?: any; surveyId?: string; type?: 'exam' | 'survey';
   } = {}) {
     const submissionsObs = surveyId && type
       ? this.getSubmissionsIncludingDerived(surveyId, type, 'complete')
@@ -292,14 +293,7 @@ export class SubmissionsService {
   }
 
   private localizedGender(gender?: string) {
-    switch (gender) {
-      case 'male':
-        return $localize`Male`;
-      case 'female':
-        return $localize`Female`;
-      default:
-        return gender || this.notAvailable();
-    }
+    return localizedGender(gender, this.notAvailable());
   }
 
   private localizedGroupType(type?: string) {
@@ -344,11 +338,9 @@ export class SubmissionsService {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
             [$localize`Gender`]: this.localizedGender(submission.user.gender),
-            [$localize`Age (years)`]: submission.user.birthDate ?
-              ageFromBirthDate(time, submission.user.birthDate) :
-              submission.user.age || this.notAvailable(),
+            [$localize`Age (years)`]: ageFromUser(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
-            [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
+            [$localize`Source`]: appSourceLabel(submission),
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
             [$localize`Group`]: submission.teamInfo?.name || this.notAvailable(),
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
@@ -582,12 +574,10 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
-      const userAge = submission.user.birthDate ?
-        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
-        submission.user.age;
+      const userAge = ageFromUser(submission.lastUpdateTime, submission.user);
       const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
       const communityOrNation = submission.planetName;
-      const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
+      const planetSource = appSourceLabel(submission);
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
@@ -599,7 +589,7 @@ export class SubmissionsService {
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
-        userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
+        userAge !== null ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
         '</ul>',
         '<hr>'
       ].filter(Boolean).join('\n');
@@ -808,7 +798,7 @@ export class SubmissionsService {
   async analyseResponses(exam: any, submissions: any) {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
-        age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+        age: ageFromUser(submission.lastUpdateTime, submission.user),
         gender: submission.user.gender
       },
       answers: submission.answers
