@@ -291,8 +291,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   setupList(courseRes, myCourses) {
     return courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
-      course.canManage = this.user.isUserAdmin ||
-        (course.doc.creator === this.user.name + '@' + this.planetConfiguration.code);
+      course.canManage = this.coursesService.canManageCourse(course.doc);
       course.admission = myCourseIndex > -1;
       return course;
     });

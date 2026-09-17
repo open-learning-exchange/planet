@@ -38,7 +38,8 @@ describe('CoursesComponent', () => {
     coursesListener$: vi.fn().mockReturnValue(of([])),
     courseAdmissionMany: vi.fn().mockReturnValue(of({})),
     courseResignAdmission: vi.fn().mockReturnValue(of({})),
-    getCourseNameFromId: vi.fn((id) => `Course ${id}`)
+    getCourseNameFromId: vi.fn((id) => `Course ${id}`),
+    canManageCourse: vi.fn().mockReturnValue(false)
   };
   const dialogRefMock = { close: vi.fn() };
   const dialogMock = { open: vi.fn().mockReturnValue(dialogRefMock) };
