@@ -11,7 +11,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
+import { PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { normalizedContentType } from '../../shared/utils';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
@@ -20,6 +20,9 @@ import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -31,7 +34,9 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { FullNamePipe } from '../../shared/full-name.pipe';
-import { AchievementSection, achievementSectionKeys, achievementSections } from './users-achievements.constants';
+import {
+  AchievementSection, achievementSectionKeys, achievementSections, achievementVisibility
+} from './users-achievements.constants';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -109,6 +114,7 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatListItemMeta,
     MatButton,
     MatCheckbox,
+    MatTooltip,
     SubmitDirective,
     FileUploadComponent,
     TruncateTextPipe,
@@ -159,7 +165,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.createProfileForm();
@@ -178,7 +184,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
           achievementsHeader: achievements.achievementsHeader,
           sendToNation: achievements.sendToNation,
           dateSortOrder: achievements.dateSortOrder || 'none',
-          visibility: this.usersAchievementsService.visibility(achievements)
+          visibility: achievementVisibility(achievements.visibility)
         });
         this.editForm.setControl('achievements', this.buildAchievementsFormArray(achievements.achievements));
         this.editForm.setControl('references', this.buildReferencesFormArray(achievements.references));
@@ -200,10 +206,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.captureInitialState();
         this.onFormChanges();
       });
-
-    this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
-      () => this.editForm.controls.dateSortOrder.setValue('none')
-    );
   }
 
   private captureInitialState() {
@@ -400,6 +402,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.achievements.setValue(this.sortDate(this.achievements.value, sort));
   }
 
+  resetAchievementSort() {
+    this.editForm.controls.dateSortOrder.setValue('none');
+  }
+
   sortDate(achievements: any[], sortOrder: DateSortOrder = 'none') {
     if (sortOrder === 'none') {
       return achievements;
@@ -451,9 +457,24 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   removeExistingResume() {
-    this.resumeMarkedForDeletion = true;
-    this.currentResumeFileName = '';
-    this.clearResumeSelection();
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            dialogRef.close();
+            this.resumeMarkedForDeletion = true;
+            this.currentResumeFileName = '';
+            this.updateUnsavedChangesFlag();
+          },
+          onError: () => {}
+        },
+        showMainParagraph: false,
+        spinnerOn: false,
+        extraMessage: $localize`Are you sure you want to remove the existing CV/Resume?`,
+        displayName: this.currentResumeFileName
+      }
+    });
   }
 
   onSubmit() {

@@ -13,6 +13,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { PdfService } from '../../shared/pdf.service';
+import { LinkCopyService } from '../../shared/link-copy.service';
 import { achievementVisibility } from './users-achievements.constants';
 
 describe('UsersAchievementsComponent', () => {
@@ -26,6 +27,10 @@ describe('UsersAchievementsComponent', () => {
     get: vi.fn().mockReturnValue(of({}))
   };
 
+  const linkCopyServiceMock = {
+    copyLink: vi.fn()
+  };
+
   const defaultConfiguration = { code: 'local_code', parentCode: 'parent_code' };
   const stateServiceMock: { configuration: { code: string, parentCode?: string } } = {
     configuration: { code: 'local_code', parentCode: 'parent_code' }
@@ -34,6 +39,7 @@ describe('UsersAchievementsComponent', () => {
   beforeEach(() => {
     stateServiceMock.configuration = { ...defaultConfiguration };
     couchServiceMock.get.mockClear();
+    linkCopyServiceMock.copyLink.mockReset();
     TestBed.configureTestingModule({
       imports: [ UsersAchievementsComponent ],
       providers: [
@@ -45,8 +51,7 @@ describe('UsersAchievementsComponent', () => {
         } },
         { provide: UsersAchievementsService, useValue: {
           getAchievements: vi.fn().mockReturnValue(of({})),
-          isEmpty: vi.fn(),
-          visibility: vi.fn().mockReturnValue(achievementVisibility())
+          isEmpty: vi.fn()
         } },
         { provide: CoursesService, useValue: {
           coursesListener$: vi.fn().mockReturnValue(of([])),
@@ -55,6 +60,7 @@ describe('UsersAchievementsComponent', () => {
         } },
         { provide: CertificationsService, useValue: { getCertifications: vi.fn().mockReturnValue(of([])), isCourseCompleted: vi.fn() } },
         { provide: PdfService, useValue: { download: vi.fn() } },
+        { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: PlanetMessageService, useValue: { showAlert: vi.fn() } },
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { data: {} }, paramMap: of({ get: () => null }) } },
@@ -70,6 +76,20 @@ describe('UsersAchievementsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('delegates achievement links to the shared copy service', () => {
+    component.user = { name: 'learner' };
+
+    component.copyLink();
+
+    expect(linkCopyServiceMock.copyLink).toHaveBeenCalledWith(
+      [ '/profile', 'learner', 'achievements', { planet: 'local_code' } ],
+      {
+        success: 'Achievements link copied to clipboard',
+        failure: 'Failed to copy achievements link'
+      }
+    );
   });
 
   describe('initUser', () => {
@@ -187,13 +207,13 @@ describe('UsersAchievementsComponent', () => {
       expect(component.resumeUrl).toContain('resume.pdf');
     });
   });
+
   describe('hidden section label', () => {
     const renderAchievements = (visibility) => {
       usersAchievementsService.getAchievements.mockReturnValue(
-        of({ purpose: 'My purpose', goals: 'My goals', achievements: [], references: [], links: [] })
+        of({ purpose: 'My purpose', goals: 'My goals', achievements: [], references: [], links: [], visibility })
       );
       usersAchievementsService.isEmpty.mockReturnValue(false);
-      usersAchievementsService.visibility.mockReturnValue(achievementVisibility(visibility));
       fixture.detectChanges();
       component.isLoading = false;
       fixture.detectChanges();

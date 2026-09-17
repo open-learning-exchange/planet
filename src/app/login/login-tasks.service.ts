@@ -87,13 +87,13 @@ export class LoginTasksService {
     return obsArr;
   }
 
-  private createParentSession({ name, password }: { name: string; password: string }) {
+  private createParentSession({ name, password }: { name: string, password: string }) {
     return this.couchService.post('_session',
       { name, password },
       { withCredentials: true, domain: this.stateService.configuration.parentDomain });
   }
 
-  private getConfigurationSyncDown(configuration: { code: string }, credentials: { name: string; password: string }) {
+  private getConfigurationSyncDown(configuration: { code: string }, credentials: { name: string, password: string }) {
     return this.syncService.sync({
       dbSource: 'communityregistrationrequests',
       dbTarget: 'configurations',

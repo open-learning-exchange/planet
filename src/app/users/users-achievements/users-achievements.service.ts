@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { AchievementVisibility, achievementVisibility } from './users-achievements.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -16,10 +15,6 @@ export class UsersAchievementsService {
 
   getAchievements(id) {
     return this.couchService.get(this.dbName + '/' + id);
-  }
-
-  visibility(achievements: any = {}): AchievementVisibility {
-    return achievementVisibility(achievements?.visibility);
   }
 
   isEmpty(achievement) {

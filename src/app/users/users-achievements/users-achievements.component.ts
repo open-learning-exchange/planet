@@ -1,6 +1,5 @@
 import { Component, Inject, LOCALE_ID, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -25,6 +24,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
 import { fullName } from '../../shared/utils';
 import { FullNamePipe } from '../../shared/full-name.pipe';
+import { LinkCopyService } from '../../shared/link-copy.service';
 import { AchievementSection, achievementVisibility, AchievementVisibility } from './users-achievements.constants';
 
 @Component({
@@ -80,7 +80,7 @@ export class UsersAchievementsComponent implements OnInit {
     private stateService: StateService,
     private coursesService: CoursesService,
     private certificationsService: CertificationsService,
-    private clipboard: Clipboard,
+    private linkCopyService: LinkCopyService,
     private pdfService: PdfService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }
@@ -127,7 +127,7 @@ export class UsersAchievementsComponent implements OnInit {
         this.achievementNotFound = true;
       } else {
         this.achievements = achievements;
-        this.visibility = this.usersAchievementsService.visibility(achievements);
+        this.visibility = achievementVisibility(achievements.visibility);
       }
       if (this.publicView) {
         this.isLoading = false;
@@ -207,8 +207,13 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   copyLink() {
-    const link = `${window.location.origin}/profile/${this.user.name}/achievements;planet=${this.stateService.configuration.code}`;
-    this.clipboard.copy(link);
+    this.linkCopyService.copyLink(
+      [ '/profile', this.user.name, 'achievements', { planet: this.stateService.configuration.code } ],
+      {
+        success: $localize`Achievements link copied to clipboard`,
+        failure: $localize`Failed to copy achievements link`
+      }
+    );
   }
 
   generatePDF() {
