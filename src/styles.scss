@@ -526,6 +526,13 @@ body {
       white-space: nowrap;
     }
 
+    // Narrow screens drop the button labels, leaving the icon alone with the
+    // asymmetric margin Material gives a leading icon: zero it so the glyph
+    // sits in the middle of the button instead of left of it.
+    button[mat-raised-button]:not(:has(label)) .mat-icon {
+      margin: 0;
+    }
+
     @media (max-width: v.$screen-md) {
       gap: 0.75rem;
     }

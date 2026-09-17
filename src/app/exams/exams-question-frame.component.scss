@@ -87,6 +87,36 @@
       align-items: center;
       gap: 4px;
     }
+
+    // A phone is too narrow for `space-between` to read as anything but a gap:
+    // stack the groups full width and let the buttons share each row evenly.
+    @media (max-width: v.$screen-xs) {
+      .action-buttons--split {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .action-buttons__left,
+      .action-buttons__right {
+        width: 100%;
+        margin-left: 0;
+        justify-content: center;
+      }
+
+      .action-buttons__left > button,
+      .action-buttons__right > button {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      // The status / error message that trails the buttons gets its own row.
+      .action-buttons__left > span,
+      .action-buttons__right > span {
+        flex: 1 1 100%;
+        justify-content: center;
+        text-align: center;
+      }
+    }
   }
 
   @keyframes slideInRight {

@@ -92,6 +92,19 @@
       flex-wrap: wrap;
       max-width: 532px;
     }
+
+    // On phones the keypad is much narrower than the question column, so left
+    // aligning it leaves it stranded against the edge. Center it instead.
+    @media (max-width: v.$screen-xs) {
+      &--grid {
+        margin-inline: auto;
+      }
+
+      &--row {
+        justify-content: center;
+        margin-inline: auto;
+      }
+    }
   }
 
   .rating-scale-button {
