@@ -59,6 +59,18 @@ export class CsvService {
     this.generate(formattedData, options);
   }
 
+  exportMyPlanet(
+    children: any[],
+    planetName: string | undefined,
+    mapFn: (children: any[], planetName?: string) => any[],
+    title: string
+  ): void {
+    const csvData = planetName ?
+      mapFn(children, planetName) :
+      children.flatMap((planet: any) => mapFn(planet.children, planet.name));
+    this.exportCSV({ data: csvData, title });
+  }
+
   exportSummaryCSV(
     logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
     chatActivities: any[], voicesActivities: any[], planetName: string, startDate: Date, endDate: Date

@@ -286,7 +286,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
         changeType,
         type: 'user',
         displayName: user.name,
-        extraMessage
+        extraMessage,
+        extraMessageType: 'supplementary'
       }
     });
   }
