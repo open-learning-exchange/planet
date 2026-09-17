@@ -72,7 +72,7 @@ export interface NormalizedImage {
   fileName: string;
 }
 
-export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number; height: number } => {
+export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number, height: number } => {
   const scale = Math.min(1, maxDimension / Math.max(width, height));
   return {
     width: Math.max(1, Math.round(width * scale)),

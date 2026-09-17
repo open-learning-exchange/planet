@@ -22,7 +22,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
 import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
-import { AttachmentInputState, FileUploadComponent } from '../forms/file-upload.component';
+import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '../forms/file-upload.component';
 import { AuthorizedRolesDirective } from '../authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -43,6 +43,18 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 
     .ng-touched.ng-valid {
       border: none;
+    }
+
+    .rating-input {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .rating-input planet-rating-stars {
+      display: block;
+      height: 24px;
     }
   `],
   imports: [
@@ -87,6 +99,7 @@ export class DialogsFormComponent {
   passwordVisibility = new Map<string, boolean>();
   isSpinnerOk = true;
   errorMessage = '';
+  readonly emptyAttachments: ExistingAttachment[] = [];
   dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
 
@@ -171,6 +184,13 @@ export class DialogsFormComponent {
     this.passwordVisibility.set(fieldName, !visibility);
   }
 
+  clearRating(fieldName: string) {
+    const control = this.modalForm.controls[fieldName];
+    control.setValue(0);
+    control.markAsDirty();
+    control.markAsTouched();
+  }
+
   openDialog(field: DialogField) {
     const control = this.modalForm.controls[field.name];
     const currentValue = control.value as Array<{ _id: string }> | null;
@@ -212,11 +232,11 @@ export class DialogsFormComponent {
     return this.modalForm.dirty;
   }
 
-  getRadioOptionLabel(option: { name: string; value?: unknown } | string) {
+  getRadioOptionLabel(option: { name: string, value?: unknown } | string) {
     return typeof option === 'string' ? option : option.name;
   }
 
-  getRadioOptionValue(option: { name: string; value?: unknown } | string) {
+  getRadioOptionValue(option: { name: string, value?: unknown } | string) {
     return typeof option === 'string' ? option : option.value;
   }
 

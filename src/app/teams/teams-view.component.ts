@@ -608,6 +608,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         okClick: (selected: any[]) => this.addMembers(selected),
         excludeIds: this.members.map(user => user.userId),
         hideChildren: true,
+        noSpinner: true,
         mode: 'users'
       }
     });

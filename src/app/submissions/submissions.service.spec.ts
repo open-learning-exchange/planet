@@ -6,7 +6,7 @@ describe('SubmissionsService survey exports', () => {
   let service: SubmissionsService;
   let csvService: { exportCSV: ReturnType<typeof vi.fn> };
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
-  let planetMessageService: { showAlert: ReturnType<typeof vi.fn>; showMessage: ReturnType<typeof vi.fn> };
+  let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
   let pdfService: { download: ReturnType<typeof vi.fn> };
 
   const exam = {

@@ -263,12 +263,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   private openUserPrompt({ user, changeType, extraMessage, request, onSuccess, errorMessage }: {
-    user: any,
-    changeType: string,
-    extraMessage: string,
-    request: () => Observable<any>,
-    onSuccess: () => void,
-    errorMessage: string
+    user: any;
+    changeType: string;
+    extraMessage: string;
+    request: () => Observable<any>;
+    onSuccess: () => void;
+    errorMessage: string;
   }) {
     this.promptDialog = this.dialog.open(DialogsPromptComponent, {
       data: {

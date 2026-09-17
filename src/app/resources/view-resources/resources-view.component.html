@@ -58,6 +58,15 @@
         Remove from myLibrary
       </button>
       }
+      @if (deviceType === deviceTypes.DESKTOP) {
+        <button class="km-copy-resource-link" mat-icon-button type="button" (click)="copyLink()" matTooltip="Copy Resource Link" i18n-matTooltip aria-label="Copy Resource Link" i18n-aria-label>
+          <mat-icon>link</mat-icon>
+        </button>
+      } @else {
+        <button class="km-copy-resource-link" mat-menu-item type="button" (click)="copyLink()">
+          <mat-icon>link</mat-icon><span i18n>Copy Resource Link</span>
+        </button>
+      }
     }
     @if (resource?.doc?.isDownloadable && resourceSrc) {
       <a mat-button [href]="resourceSrc" download>

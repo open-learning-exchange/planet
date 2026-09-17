@@ -12,7 +12,8 @@ import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.co
 @switch (view) {
   @case ('add') {
     <planet-meetups-add #meetupsAdd [isDialog]="true" [link]="link"
-      [sync]="sync" [meetup]="meetup" (goBackEvent)="checkUnsavedChangesAndClose()">
+      [sync]="sync" [meetup]="meetup" [editable]="editable" [leaderOfTeamId]="leaderOfTeamId"
+      (goBackEvent)="checkUnsavedChangesAndClose()">
     </planet-meetups-add>
   }
   @case ('view') {
@@ -20,6 +21,7 @@ import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.co
       [isDialog]="true"
       [meetupDetail]="meetup"
       [editable]="editable"
+      [leaderOfTeamId]="leaderOfTeamId"
       (switchView)="switchView($event)">
     </planet-meetups-view>
   }
@@ -35,6 +37,7 @@ export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   meetup: any = {};
   sync: { type: 'local' | 'sync', planetCode: string };
   editable = true;
+  leaderOfTeamId?: string;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
@@ -47,6 +50,7 @@ export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
     this.view = this.data.view || this.view;
     this.meetup = this.data.meetup || this.meetup;
     this.editable = this.data.editable !== undefined && this.data.editable !== null ? this.data.editable : this.editable;
+    this.leaderOfTeamId = this.data.leaderOfTeamId;
     this.dialogRef.disableClose = true;
     this.dialogRef.backdropClick().subscribe(() => {
       this.checkUnsavedChangesAndClose();
