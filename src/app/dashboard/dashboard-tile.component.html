@@ -40,6 +40,7 @@
                 'has-course-cover': cardType === 'myCourses' && item.coverFileName
               }"
               cdkDrag
+              cdkDragPreviewClass="mat-elevation-z8"
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
               >

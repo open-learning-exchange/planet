@@ -23,4 +23,43 @@ describe('CoursesService', () => {
 
     expect(messageService.showMessage).toHaveBeenCalledWith('Removed from myCourses: Parent title');
   });
+
+  describe('canManageCourse', () => {
+    const createService = (user: any, code = 'ole') => new CoursesService(
+      {} as any,
+      { get: () => user } as any,
+      { ratingsUpdated$: of(undefined) } as any,
+      {} as any,
+      { couchStateListener: vi.fn().mockReturnValue(of(undefined)), configuration: { code } } as any,
+      {} as any,
+      {} as any,
+      {} as any
+    );
+    const admin = { isUserAdmin: true, name: 'admin' };
+    const teacher = { isUserAdmin: false, name: 'teacher' };
+
+    it('allows an admin', () => {
+      expect(createService(admin).canManageCourse({ creator: 'someone@ole' })).toBe(true);
+    });
+
+    it('allows the creator on this planet', () => {
+      expect(createService(teacher).canManageCourse({ creator: 'teacher@ole' })).toBe(true);
+    });
+
+    it('denies the same name from another planet', () => {
+      expect(createService(teacher).canManageCourse({ creator: 'teacher@otherplanet' })).toBe(false);
+    });
+
+    it('denies an unrelated user', () => {
+      expect(createService(teacher).canManageCourse({ creator: 'someone@ole' })).toBe(false);
+    });
+
+    it('denies everyone in read only context', () => {
+      expect(createService(admin).canManageCourse({ creator: 'admin@ole' }, { readOnly: true })).toBe(false);
+    });
+
+    it('denies when there is no course', () => {
+      expect(createService(admin).canManageCourse(undefined)).toBe(false);
+    });
+  });
 });

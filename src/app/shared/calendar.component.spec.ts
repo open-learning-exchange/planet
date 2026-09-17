@@ -226,4 +226,45 @@ describe('PlanetCalendarComponent', () => {
       data: expect.objectContaining({ leaderOfTeamId: 'team-1', meetup })
     }));
   });
+
+  describe('Event filtering', () => {
+    it('filters events by type when legend items are toggled', () => {
+      const couchService = {
+        findAll: (db: string) => of(db === 'meetups'
+          ? [{ title: 'Meeting', startDate: 1, endDate: 1, recurring: 'none' }]
+          : [{ title: 'Open Task', deadline: 1, completed: false }, { title: 'Done Task', deadline: 1, completed: true }])
+      };
+      const component = createComponent(couchService);
+      component.type = 'team';
+      component.getMeetups();
+      component.getTasks();
+
+      expect(component.calendarOptions.events.length).toBe(3);
+
+      component.toggleFilter('uncompleted');
+      expect(component.calendarOptions.events.some((e: any) => e.title === 'Open Task')).toBe(false);
+
+      component.toggleFilter('completed');
+      component.toggleFilter('event');
+      expect(component.calendarOptions.events).toEqual([ {} ]);
+
+      component.toggleFilter('event');
+      expect(component.calendarOptions.events.length).toBe(1);
+      expect(component.calendarOptions.events[0].title).toBe('Meeting');
+    });
+
+    it('shows meetups and tasks on non-team calendars', () => {
+      const couchService = {
+        findAll: (db: string) => of(db === 'meetups'
+          ? [{ title: 'Event', startDate: 1, endDate: 1, recurring: 'none' }]
+          : [{ title: 'Task', deadline: 1, completed: false }])
+      };
+      const component = createComponent(couchService);
+      component.type = 'community';
+      component.getMeetups();
+      component.getTasks();
+
+      expect(component.calendarOptions.events.map((e: any) => e.title)).toEqual([ 'Event', 'Task' ]);
+    });
+  });
 });

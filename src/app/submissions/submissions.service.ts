@@ -8,7 +8,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate } from '../shared/utils';
+import { ageFromUser, dedupeShelfReduce, localizedGender, toProperCase } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -295,14 +295,7 @@ export class SubmissionsService {
   }
 
   private localizedGender(gender?: string) {
-    switch (gender) {
-      case 'male':
-        return $localize`Male`;
-      case 'female':
-        return $localize`Female`;
-      default:
-        return gender || this.notAvailable();
-    }
+    return localizedGender(gender, this.notAvailable());
   }
 
   private localizedGroupType(type?: string) {
@@ -347,9 +340,7 @@ export class SubmissionsService {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
             [$localize`Gender`]: this.localizedGender(submission.user.gender),
-            [$localize`Age (years)`]: submission.user.birthDate ?
-              ageFromBirthDate(time, submission.user.birthDate) :
-              submission.user.age || this.notAvailable(),
+            [$localize`Age (years)`]: ageFromUser(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: appSourceLabel(submission),
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
@@ -592,9 +583,7 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
-      const userAge = submission.user.birthDate ?
-        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
-        submission.user.age;
+      const userAge = ageFromUser(submission.lastUpdateTime, submission.user);
       const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
       const communityOrNation = submission.planetName;
       const planetSource = appSourceLabel(submission);
@@ -609,7 +598,7 @@ export class SubmissionsService {
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
-        userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
+        userAge !== null ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
         '</ul>',
         '<hr>'
       ].filter(Boolean).join('\n');
@@ -819,7 +808,7 @@ export class SubmissionsService {
   async analyseResponses(exam: any, submissions: any) {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
-        age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+        age: ageFromUser(submission.lastUpdateTime, submission.user),
         gender: submission.user.gender
       },
       answers: submission.answers

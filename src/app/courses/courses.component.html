@@ -255,8 +255,12 @@
                 <mat-icon>person</mat-icon>
                 <span i18n>Enroll List</span>
               </a>
-            }
-            @if (element.canManage) {
+              @if (!parent) {
+                <a mat-menu-item [routerLink]="['/courses/submissions', element._id]" class="km-course-submissions-btn">
+                  <mat-icon>assignment_turned_in</mat-icon>
+                  <span i18n>Submissions & Grading</span>
+                </a>
+              }
               <button mat-menu-item (click)="deleteClick(element.doc)">
                 <mat-icon>delete_forever</mat-icon>
                 <span i18n>Delete</span>
