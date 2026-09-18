@@ -123,9 +123,12 @@ export class CouchService {
   }
 
   private findAllRequest(db: string, query: any, opts: any) {
-    return this.post(db + '/_find', query, opts).pipe(
-      catchError(() => of({ docs: [], rows: [] })),
-      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
+    // Each page is guarded so one failed request returns the pages already fetched rather than erroring the whole stream
+    const findRequest = (bookmark?: string) => this.post(
+      db + '/_find', bookmark === undefined ? query : { ...query, bookmark }, opts
+    ).pipe(catchError(() => of({ docs: [], rows: [] })));
+    return findRequest().pipe(
+      expand((res: any) => res.docs.length > 0 ? findRequest(res.bookmark) : empty())
     );
   }
 
