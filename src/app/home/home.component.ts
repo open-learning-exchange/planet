@@ -225,18 +225,18 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       console.log(error);
       return of({});
     };
+    const localAdminName = configuration.adminName?.split('@')[0];
+    const isLocalAdmin = !!localAdminName && localAdminName === this.userService.get().name;
     this.userService.endSessionLog().pipe(
       catchError(errorCatch),
       switchMap(() => this.pouchAuthService.logout()),
-      switchMap(() => {
-        const localAdminName = configuration.adminName.split('@')[0];
-        if (localAdminName === this.userService.get().name) {
-          return this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain });
-        }
-        return of({});
-      }),
       catchError(errorCatch)
-    ).subscribe((response: any) => {
+    ).subscribe(() => {
+      if (isLocalAdmin && configuration.parentDomain) {
+        // Parent cleanup is best-effort and must not delay local logout.
+        this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain })
+          .subscribe({ error: error => console.error('Unable to end parent session', error) });
+      }
       this.userService.unset();
       this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/login' : '/' ], {});
     });
