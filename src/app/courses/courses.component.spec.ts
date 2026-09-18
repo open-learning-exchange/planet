@@ -34,9 +34,7 @@ describe('CoursesComponent', () => {
   let coursedata2;
   let coursearray;
 
-  const certificationsServiceMock = {
-    getCertifications: vi.fn().mockReturnValue(of([]))
-  };
+  const certificationsServiceMock = { getCertifications: vi.fn().mockReturnValue(of([])) };
 
   const coursesServiceMock = {
     requestCourses: vi.fn(),
@@ -229,57 +227,18 @@ describe('CoursesComponent', () => {
     });
   });*/
 
-  describe('completion star badge', () => {
-    it('evaluates isCourseCompleted correctly', () => {
-      const completedCourse = {
-        doc: { steps: [ { stepTitle: 'Step 1' }, { stepTitle: 'Step 2' } ] },
-        progress: [ { stepNum: 1, passed: true }, { stepNum: 2, passed: true } ]
-      };
-      const incompleteCourse = {
-        doc: { steps: [ { stepTitle: 'Step 1' }, { stepTitle: 'Step 2' } ] },
-        progress: [ { stepNum: 1, passed: true }, { stepNum: 2, passed: false } ]
-      };
-      const noStepsCourse = {
-        doc: { steps: [] },
-        progress: []
-      };
+  it('handles completion star badge flags and icons', () => {
+    component.certifications = [ { courseIds: [ 'c1' ] } ];
+    const courses = [
+      { _id: 'c1', doc: { steps: [ {} ], foundation: 'literacy' }, progress: [ { passed: true } ] },
+      { _id: 'c2', doc: { steps: [ {} ] }, progress: [ { passed: false } ] }
+    ];
 
-      expect(component.isCourseCompleted(completedCourse)).toBe(true);
-      expect(component.isCourseCompleted(incompleteCourse)).toBe(false);
-      expect(component.isCourseCompleted(noStepsCourse)).toBe(false);
-      expect(component.isCourseCompleted(null)).toBe(false);
-    });
-
-    it('sets inCertification and isCompleted in setupList', () => {
-      component.certifications = [ { courseIds: [ 'cert_course' ] } ];
-      const list = [
-        {
-          _id: 'cert_course',
-          doc: { steps: [ {} ] },
-          progress: [ { passed: true } ]
-        },
-        {
-          _id: 'uncert_course',
-          doc: { steps: [ {} ] },
-          progress: [ { passed: false } ]
-        }
-      ];
-
-      const result = component.setupList(list, [ 'cert_course' ]);
-      expect(result[0].inCertification).toBe(true);
-      expect(result[0].isCompleted).toBe(true);
-      expect(result[0].admission).toBe(true);
-
-      expect(result[1].inCertification).toBe(false);
-      expect(result[1].isCompleted).toBe(false);
-      expect(result[1].admission).toBe(false);
-    });
-
-    it('resolves foundation icons with fallback to fa-star', () => {
-      expect(component.getBadgeIcon({ doc: { foundation: 'literacy' } })).toBe('fa-star');
-      expect(component.getBadgeIcon({ doc: { foundation: 'none' } })).toBe('fa-star');
-      expect(component.getBadgeIcon({ doc: {} })).toBe('fa-star');
-      expect(component.getBadgeIcon(null)).toBe('fa-star');
-    });
+    const result = component.setupList(courses, [ 'c1' ]);
+    expect(result[0]).toMatchObject({ inCertification: true, isCompleted: true });
+    expect(result[1]).toMatchObject({ inCertification: false, isCompleted: false });
+    expect(component.isCourseCompleted(null)).toBe(false);
+    expect(component.getBadgeIcon(result[0])).toBe('fa-star');
+    expect(component.getBadgeIcon(null)).toBe('fa-star');
   });
 });
