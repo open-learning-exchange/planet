@@ -22,7 +22,6 @@ import { DeviceInfoService } from '../shared/device-info.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -281,17 +280,6 @@ describe('CoursesComponent', () => {
       expect(component.getBadgeIcon({ doc: { foundation: 'none' } })).toBe('fa-star');
       expect(component.getBadgeIcon({ doc: {} })).toBe('fa-star');
       expect(component.getBadgeIcon(null)).toBe('fa-star');
-    });
-
-    it('opens course view detail dialog on openCourseView', () => {
-      component.openCourseView({ _id: 'course_123' });
-      expect(dialogMock.open).toHaveBeenCalledWith(CoursesViewDetailDialogComponent, {
-        data: { courseId: 'course_123', returnState: { route: 'courses' } },
-        minWidth: '50vw',
-        maxWidth: '80vw',
-        maxHeight: '80vh',
-        autoFocus: false
-      });
     });
   });
 });

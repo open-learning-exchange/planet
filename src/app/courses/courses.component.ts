@@ -22,7 +22,6 @@ import {
 import * as constants from './constants';
 import { foundationIcons } from './constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -325,16 +324,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   getBadgeIcon(course: any): string {
     const foundation = course?.doc?.foundation || 'none';
     return this.badgeIcons[foundation] || 'fa-star';
-  }
-
-  openCourseView(course: any) {
-    this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: course._id, returnState: { route: 'courses' } },
-      minWidth: '50vw',
-      maxWidth: '80vw',
-      maxHeight: '80vh',
-      autoFocus: false
-    });
   }
 
   getCourses() {

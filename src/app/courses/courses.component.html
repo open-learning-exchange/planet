@@ -173,15 +173,15 @@
                   }
                 </span>
                 @if (element.isCompleted) {
-                  <span class="cursor-pointer" (click)="openCourseView(element)" i18n-matTooltip matTooltip="Completed">
-                    <mat-icon
-                      class="margin-lr-3"
-                      [ngClass]="{ 'primary-text-color': element.inCertification, 'grey-text-color': !element.inCertification }"
-                      fontSet="fa"
-                      [fontIcon]="getBadgeIcon(element)"
-                      [inline]="true">
-                    </mat-icon>
-                  </span>
+                  <mat-icon
+                    class="margin-lr-3"
+                    [ngClass]="{ 'primary-text-color': element.inCertification, 'grey-text-color': !element.inCertification }"
+                    fontSet="fa"
+                    [fontIcon]="getBadgeIcon(element)"
+                    [inline]="true"
+                    i18n-matTooltip
+                    matTooltip="Completed">
+                  </mat-icon>
                 }
               }
             </ng-template>
