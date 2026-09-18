@@ -21,6 +21,7 @@ import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -32,6 +33,8 @@ describe('CoursesComponent', () => {
   let coursedata1;
   let coursedata2;
   let coursearray;
+
+  const certificationsServiceMock = { getCertifications: vi.fn().mockReturnValue(of([])) };
 
   const coursesServiceMock = {
     requestCourses: vi.fn(),
@@ -89,6 +92,7 @@ describe('CoursesComponent', () => {
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
         FuzzySearchService,
+        { provide: CertificationsService, useValue: certificationsServiceMock },
         { provide: MatDialog, useValue: dialogMock },
         {
           provide: ActivatedRoute,
@@ -222,4 +226,19 @@ describe('CoursesComponent', () => {
       expect(component.deleteDialog.componentInstance.message).toBe('There was a problem deleting this course');
     });
   });*/
+
+  it('handles completion star badge flags and icons', () => {
+    component.certifications = [ { courseIds: [ 'c1' ] } ];
+    const courses = [
+      { _id: 'c1', doc: { steps: [ {} ], foundation: 'literacy' }, progress: [ { passed: true } ] },
+      { _id: 'c2', doc: { steps: [ {} ] }, progress: [ { passed: false } ] }
+    ];
+
+    const result = component.setupList(courses, [ 'c1' ]);
+    expect(result[0]).toMatchObject({ inCertification: true, isCompleted: true });
+    expect(result[1]).toMatchObject({ inCertification: false, isCompleted: false });
+    expect(component.isCourseCompleted(null)).toBe(false);
+    expect(component.getBadgeIcon(result[0])).toBe('fa-star');
+    expect(component.getBadgeIcon(null)).toBe('fa-star');
+  });
 });
