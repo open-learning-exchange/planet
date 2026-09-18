@@ -287,7 +287,11 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       endDate: this.parseDateValue(meetupInfo.endDate)
     }).pipe(
       switchMap((res) => this.notificationsService.notifyMeetupChange(meetupInfo, this.id).pipe(
-        catchError(() => of(null)), map(() => res)
+        catchError((err) => {
+          console.error('Failed to notify meetup participants', err);
+          return of(null);
+        }),
+        map(() => res)
       ))
     ).subscribe((res) => {
       this.goBack(res);

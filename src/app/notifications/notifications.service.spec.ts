@@ -5,14 +5,35 @@ import { NotificationsService, notificationRecipient, notificationUserFilter } f
 describe('NotificationsService', () => {
   it('skips the bulk write when no users have the meetup shelved', () => {
     const couchService = {
-      post: vi.fn(() => of({ docs: [] })),
+      findAll: vi.fn(() => of([])),
       updateDocument: vi.fn()
     };
     const service = new NotificationsService({} as any, couchService as any, {} as any, {} as any);
 
     service.notifyMeetupChange({ title: 'Meetup' }, 'm1').subscribe();
 
+    expect(couchService.findAll).toHaveBeenCalledWith('shelf', expect.objectContaining({
+      selector: { meetupIds: { $in: [ 'm1' ] } },
+      fields: [ '_id' ]
+    }));
     expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('creates a notification for every shelf row returned by the paginated lookup', () => {
+    const users = [ { _id: 'user-1' }, { _id: 'user-2' } ];
+    const couchService = {
+      findAll: vi.fn(() => of(users)),
+      updateDocument: vi.fn(() => of({ ok: true }))
+    };
+    const service = new NotificationsService({} as any, couchService as any, {} as any, {
+      configuration: {}
+    } as any);
+
+    service.notifyMeetupChange({ title: 'Meetup' }, 'm1').subscribe();
+
+    expect(couchService.updateDocument).toHaveBeenCalledWith('notifications/_bulk_docs', {
+      docs: users.map(user => expect.objectContaining({ user: user._id, item: 'm1' }))
+    });
   });
 
   it('uses the stable CouchDB ID and origin planet for a synchronized recipient', () => {

@@ -55,11 +55,11 @@ export class NotificationsService {
   }
 
   notifyMeetupChange(meetupInfo: any, meetupId: string): Observable<any> {
-    return this.couchService.post('shelf/_find', findDocuments({
+    return this.couchService.findAll('shelf', findDocuments({
       meetupIds: { $in: [ meetupId ] }
     }, [ '_id' ], 0)).pipe(
-      switchMap((data: any) => data.docs.length === 0 ? of(null) : this.couchService.updateDocument('notifications/_bulk_docs', {
-        docs: data.docs.map((user: any) => ({
+      switchMap((users: any[]) => users.length === 0 ? of(null) : this.couchService.updateDocument('notifications/_bulk_docs', {
+        docs: users.map((user: any) => ({
           user: user._id,
           message: $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
           link: '/meetups/view/' + meetupId,

@@ -66,7 +66,10 @@ describe('PlanetCalendarComponent read-only behavior', () => {
 });
 
 describe('PlanetCalendarComponent', () => {
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
 
   const createComponent = (
     couchService: any = {},
@@ -264,6 +267,15 @@ describe('PlanetCalendarComponent', () => {
     expect(component.eventObject({ title: 'Task', isTask: true }, new Date()).durationEditable).toBe(false);
   });
 
+  it('shows a pointer cursor for clickable events that cannot be dragged', () => {
+    const component = createComponent({}, { canEditMeetup: () => false });
+
+    expect(component.eventObject({ title: 'Event', recurring: 'none' }, new Date())).toEqual(expect.objectContaining({
+      classNames: [ 'cursor-pointer' ],
+      startEditable: false
+    }));
+  });
+
   // Use a DST-observing timezone so this four-day drag crosses the fall transition
   it('preserves a multi-day span dragged across a daylight saving change', () => {
     const couchService = writingCouchService();
@@ -388,6 +400,7 @@ describe('PlanetCalendarComponent', () => {
     const couchService = writingCouchService();
     const notificationsService = { notifyMeetupChange: vi.fn(() => throwError(new Error('offline'))) };
     const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
     const component = createComponent(couchService, authorized, messageService, undefined, undefined, notificationsService);
     const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
 
@@ -396,6 +409,7 @@ describe('PlanetCalendarComponent', () => {
     expect(messageService.showMessage).toHaveBeenCalled();
     expect(info.revert).not.toHaveBeenCalled();
     expect(messageService.showAlert).not.toHaveBeenCalled();
+    expect(consoleError).toHaveBeenCalledWith('Failed to notify meetup participants', expect.any(Error));
   });
 
   it('reverts a task drop on a calendar the user cannot edit', () => {

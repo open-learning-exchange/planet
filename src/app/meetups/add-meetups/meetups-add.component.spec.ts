@@ -130,6 +130,7 @@ describe('MeetupsAddComponent authorization', () => {
 
   it('finishes the edit when announcing the change fails', () => {
     const { component, couchService, notificationsService, planetMessageService, goBack } = createComponent(creator);
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
     component.setMeetupData({ _id: 'm1', _rev: '1-a', createdBy: 'ann' });
     notificationsService.notifyMeetupChange = vi.fn(() => throwError(new Error('offline')));
 
@@ -138,6 +139,8 @@ describe('MeetupsAddComponent authorization', () => {
     expect(couchService.updateDocument).toHaveBeenCalled();
     expect(goBack).toHaveBeenCalled();
     expect(planetMessageService.showMessage).toHaveBeenCalledWith('Edited event: Changed meetup');
+    expect(consoleError).toHaveBeenCalledWith('Failed to notify meetup participants', expect.any(Error));
+    consoleError.mockRestore();
   });
 
   it('rechecks authorization against the loaded meetup before persisting', () => {

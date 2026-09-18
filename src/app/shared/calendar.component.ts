@@ -313,6 +313,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
       startEditable: editable,
       // A bare editable would expand to durationEditable too, and resizing has no persistence path
       durationEditable: false,
+      classNames: [ 'cursor-pointer' ],
       extendedProps: { meetup },
       ...otherProps
     };
@@ -544,7 +545,10 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, updatedMeetup).pipe(
       tap((res: any) => this.replaceCachedEvent(info, this.eventObject(res.doc))),
-      switchMap(() => this.notificationsService.notifyMeetupChange(updatedMeetup, updatedMeetup._id).pipe(catchError(() => of(null)))),
+      switchMap(() => this.notificationsService.notifyMeetupChange(updatedMeetup, updatedMeetup._id).pipe(catchError((err) => {
+        console.error('Failed to notify meetup participants', err);
+        return of(null);
+      }))),
       switchMap(() => this.fetchMeetups().pipe(catchError(() => of([])))),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe({
