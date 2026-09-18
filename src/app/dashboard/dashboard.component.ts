@@ -47,6 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   displayName: string;
   roles: string[];
   planetName: string;
+  completedCourses: any[] = [];
   badgesCourses: { [key: string]: any[] } = {};
   badgeGroups = [ ...foundations, 'none' ];
   badgeIcons = foundationIcons;
@@ -247,17 +248,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   setBadgesCourses(courses, certifications) {
-    this.badgesCourses = courses
+    const completed = courses
       .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length
         && course.doc.steps.length > 0)
       .map(course => ({
         ...course, inCertification: certifications.some(certification => certification.courseIds.indexOf(course._id) > -1)
       }))
-      .sort((a, b) => a.inCertification ? -1 : b.inCertification ? 1 : 0)
+      .sort((a, b) => a.inCertification ? -1 : b.inCertification ? 1 : 0);
+
+    this.completedCourses = completed;
+    this.badgesCourses = completed
       .reduce((badgesCourses, course) => ({
         ...badgesCourses, [course.doc.foundation || 'none']: [ ...(badgesCourses[course.doc.foundation || 'none'] || []), course ]
       }), { none: [] });
     this.badgeGroups = [ ...foundations, 'none' ].filter(group => this.badgesCourses[group] && this.badgesCourses[group].length);
+  }
+
+  get maxVisibleBadges(): number {
+    return this.isMobile ? 6 : 8;
+  }
+
+  get visibleBadges(): any[] {
+    return this.completedCourses.slice(0, this.maxVisibleBadges);
+  }
+
+  get remainingBadgesCount(): number {
+    return Math.max(0, this.completedCourses.length - this.maxVisibleBadges);
+  }
+
+  get moreBadgesTooltip(): string {
+    return $localize`View all completed courses in My Progress`;
+  }
+
+  getBadgeIcon(course: any): string {
+    const foundation = course?.doc?.foundation || 'none';
+    return this.badgeIcons[foundation] || 'fa-star';
   }
 
   reminderBanner() {

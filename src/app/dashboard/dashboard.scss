@@ -66,6 +66,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       display: flex;
       flex-direction: column;
       align-items: flex-end;
+      min-width: 0;
     }
 
     .date {
@@ -76,23 +77,42 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       width: 100%;
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       justify-content: flex-end;
+      gap: 4px;
       max-width: 100%;
       margin-top: 8px;
-
-      & .badge-group {
-        margin-right: 4px;
-      }
-
-      & .badge-group:last-child {
-        margin: 0;
-      }
 
       & mat-icon.fa {
         font-size: 20px;
         display: inline;
       }
 
+      .more-badges-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 12px;
+        background-color: v.$primary;
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        line-height: 1.2;
+
+        &:hover {
+          background-color: v.$primary-dark;
+          transform: scale(1.05);
+        }
+
+        &:focus-visible {
+          outline: 2px solid v.$primary;
+          outline-offset: 2px;
+        }
+      }
     }
 
     h1, h2, h3 {
