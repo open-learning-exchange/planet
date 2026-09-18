@@ -388,6 +388,24 @@ describe('DashboardComponent', () => {
       expect(component.getBadgeIcon({ doc: { foundation: 'unknown' } })).toBe('fa-star');
       expect(component.getBadgeIcon(null)).toBe('fa-star');
     });
+
+    it('sorts certified courses ahead of uncertified courses while preserving tie order', () => {
+      createComponent();
+      const courses = [
+        createCompletedCourse('non_cert_1'),
+        createCompletedCourse('cert_1'),
+        createCompletedCourse('non_cert_2'),
+        createCompletedCourse('cert_2')
+      ];
+      component.setBadgesCourses(courses, [ { courseIds: [ 'cert_1', 'cert_2' ] } ]);
+
+      expect(component.completedCourses.map(c => c._id)).toEqual([
+        'cert_1',
+        'cert_2',
+        'non_cert_1',
+        'non_cert_2'
+      ]);
+    });
   });
 });
 

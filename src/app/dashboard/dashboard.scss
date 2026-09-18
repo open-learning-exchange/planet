@@ -97,7 +97,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
         padding: 2px 8px;
         border-radius: 12px;
         background-color: v.$primary;
-        color: #fff;
+        color: v.$primary-text;
         text-decoration: none;
         cursor: pointer;
         transition: background-color 0.2s ease, transform 0.1s ease;

@@ -254,7 +254,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .map(course => ({
         ...course, inCertification: certifications.some(certification => certification.courseIds.indexOf(course._id) > -1)
       }))
-      .sort((a, b) => a.inCertification ? -1 : b.inCertification ? 1 : 0);
+      .sort((a, b) => Number(b.inCertification) - Number(a.inCertification));
 
     this.completedCourses = completed;
     this.badgesCourses = completed
