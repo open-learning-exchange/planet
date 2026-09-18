@@ -337,4 +337,75 @@ describe('DashboardComponent', () => {
 
     expect(couchServiceMock.bulkGet).not.toHaveBeenCalled();
   });
+
+  describe('completed courses badges and overflow', () => {
+    const createCompletedCourse = (id: string, foundation?: string, inCertification = false) => ({
+      _id: id,
+      doc: {
+        courseTitle: `Course ${id}`,
+        foundation,
+        steps: [ {} ]
+      },
+      progress: [ { passed: true } ],
+      inCertification
+    });
+
+    it('limits visible badges to 8 on desktop and 6 on mobile', () => {
+      createComponent();
+      const courses = Array.from({ length: 10 }, (_, i) => createCompletedCourse(`c_${i}`));
+      component.setBadgesCourses(courses, []);
+
+      deviceType$.next(DeviceType.DESKTOP);
+      expect(component.isMobile).toBe(false);
+      expect(component.maxVisibleBadges).toBe(8);
+      expect(component.visibleBadges).toHaveLength(8);
+      expect(component.remainingBadgesCount).toBe(2);
+
+      deviceType$.next(DeviceType.MOBILE);
+      expect(component.isMobile).toBe(true);
+      expect(component.maxVisibleBadges).toBe(6);
+      expect(component.visibleBadges).toHaveLength(6);
+      expect(component.remainingBadgesCount).toBe(4);
+    });
+
+    it('returns 0 remaining badges when completed courses do not exceed max', () => {
+      createComponent();
+      const courses = [ createCompletedCourse('c_1'), createCompletedCourse('c_2') ];
+      component.setBadgesCourses(courses, []);
+
+      expect(component.remainingBadgesCount).toBe(0);
+      expect(component.visibleBadges).toHaveLength(2);
+    });
+
+    it('provides the correct tooltip for the more badges chip', () => {
+      createComponent();
+      expect(component.moreBadgesTooltip).toBe('View all completed courses in My Progress');
+    });
+
+    it('resolves the correct badge icon based on foundation', () => {
+      createComponent();
+      expect(component.getBadgeIcon({ doc: { foundation: 'literacy' } })).toBe('fa-star');
+      expect(component.getBadgeIcon({ doc: { foundation: 'unknown' } })).toBe('fa-star');
+      expect(component.getBadgeIcon(null)).toBe('fa-star');
+    });
+
+    it('sorts certified courses ahead of uncertified courses while preserving tie order', () => {
+      createComponent();
+      const courses = [
+        createCompletedCourse('non_cert_1'),
+        createCompletedCourse('cert_1'),
+        createCompletedCourse('non_cert_2'),
+        createCompletedCourse('cert_2')
+      ];
+      component.setBadgesCourses(courses, [ { courseIds: [ 'cert_1', 'cert_2' ] } ]);
+
+      expect(component.completedCourses.map(c => c._id)).toEqual([
+        'cert_1',
+        'cert_2',
+        'non_cert_1',
+        'non_cert_2'
+      ]);
+    });
+  });
 });
+

@@ -33,18 +33,23 @@
     <p>{{dateNow | date:'longDate'}}</p>
   </div>
   <div class="badges">
-    @for (badgeGroup of badgeGroups; track badgeGroup) {
-      <div class="badge-group">
-        @for (course of badgesCourses[badgeGroup]; track course) {
-          <span class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
-            <mat-icon
-              [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
-              fontSet="fa"
-              [fontIcon]="badgeIcons[badgeGroup]">
-            </mat-icon>
-          </span>
-        }
-      </div>
+    @for (course of visibleBadges; track course._id) {
+      <span class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
+        <mat-icon
+          [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
+          fontSet="fa"
+          [fontIcon]="getBadgeIcon(course)">
+        </mat-icon>
+      </span>
+    }
+    @if (remainingBadgesCount > 0) {
+      <a
+        [routerLink]="['myProgress']"
+        class="more-badges-chip"
+        [matTooltip]="moreBadgesTooltip"
+        [attr.aria-label]="moreBadgesTooltip">
+        +{{ remainingBadgesCount }}
+      </a>
     }
   </div>
 </div>
