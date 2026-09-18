@@ -172,6 +172,17 @@
                     <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
                   }
                 </span>
+                @if (element.isCompleted) {
+                  <span class="cursor-pointer" (click)="openCourseView(element)" [matTooltip]="element.doc.courseTitle">
+                    <mat-icon
+                      class="margin-lr-3"
+                      [ngClass]="{ 'primary-text-color': element.inCertification, 'grey-text-color': !element.inCertification }"
+                      fontSet="fa"
+                      [fontIcon]="getBadgeIcon(element)"
+                      [inline]="true">
+                    </mat-icon>
+                  </span>
+                }
               }
             </ng-template>
           </h3>

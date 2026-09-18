@@ -21,6 +21,8 @@ import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
+import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -32,6 +34,10 @@ describe('CoursesComponent', () => {
   let coursedata1;
   let coursedata2;
   let coursearray;
+
+  const certificationsServiceMock = {
+    getCertifications: vi.fn().mockReturnValue(of([]))
+  };
 
   const coursesServiceMock = {
     requestCourses: vi.fn(),
@@ -89,6 +95,7 @@ describe('CoursesComponent', () => {
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
         FuzzySearchService,
+        { provide: CertificationsService, useValue: certificationsServiceMock },
         { provide: MatDialog, useValue: dialogMock },
         {
           provide: ActivatedRoute,
@@ -222,4 +229,69 @@ describe('CoursesComponent', () => {
       expect(component.deleteDialog.componentInstance.message).toBe('There was a problem deleting this course');
     });
   });*/
+
+  describe('completion star badge', () => {
+    it('evaluates isCourseCompleted correctly', () => {
+      const completedCourse = {
+        doc: { steps: [ { stepTitle: 'Step 1' }, { stepTitle: 'Step 2' } ] },
+        progress: [ { stepNum: 1, passed: true }, { stepNum: 2, passed: true } ]
+      };
+      const incompleteCourse = {
+        doc: { steps: [ { stepTitle: 'Step 1' }, { stepTitle: 'Step 2' } ] },
+        progress: [ { stepNum: 1, passed: true }, { stepNum: 2, passed: false } ]
+      };
+      const noStepsCourse = {
+        doc: { steps: [] },
+        progress: []
+      };
+
+      expect(component.isCourseCompleted(completedCourse)).toBe(true);
+      expect(component.isCourseCompleted(incompleteCourse)).toBe(false);
+      expect(component.isCourseCompleted(noStepsCourse)).toBe(false);
+      expect(component.isCourseCompleted(null)).toBe(false);
+    });
+
+    it('sets inCertification and isCompleted in setupList', () => {
+      component.certifications = [ { courseIds: [ 'cert_course' ] } ];
+      const list = [
+        {
+          _id: 'cert_course',
+          doc: { steps: [ {} ] },
+          progress: [ { passed: true } ]
+        },
+        {
+          _id: 'uncert_course',
+          doc: { steps: [ {} ] },
+          progress: [ { passed: false } ]
+        }
+      ];
+
+      const result = component.setupList(list, [ 'cert_course' ]);
+      expect(result[0].inCertification).toBe(true);
+      expect(result[0].isCompleted).toBe(true);
+      expect(result[0].admission).toBe(true);
+
+      expect(result[1].inCertification).toBe(false);
+      expect(result[1].isCompleted).toBe(false);
+      expect(result[1].admission).toBe(false);
+    });
+
+    it('resolves foundation icons with fallback to fa-star', () => {
+      expect(component.getBadgeIcon({ doc: { foundation: 'literacy' } })).toBe('fa-star');
+      expect(component.getBadgeIcon({ doc: { foundation: 'none' } })).toBe('fa-star');
+      expect(component.getBadgeIcon({ doc: {} })).toBe('fa-star');
+      expect(component.getBadgeIcon(null)).toBe('fa-star');
+    });
+
+    it('opens course view detail dialog on openCourseView', () => {
+      component.openCourseView({ _id: 'course_123' });
+      expect(dialogMock.open).toHaveBeenCalledWith(CoursesViewDetailDialogComponent, {
+        data: { courseId: 'course_123', returnState: { route: 'courses' } },
+        minWidth: '50vw',
+        maxWidth: '80vw',
+        maxHeight: '80vh',
+        autoFocus: false
+      });
+    });
+  });
 });
