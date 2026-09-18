@@ -1,14 +1,50 @@
 @use '../variables' as v;
 
-planet-markdown.planet-markdown-renderer td-markdown.td-markdown {
-  & > div {
-    overflow-x: auto;
+planet-markdown.planet-markdown-renderer {
+  display: block;
+}
+
+planet-markdown.planet-markdown-renderer .markdown-content {
+  overflow-x: auto;
+  overflow-wrap: break-word;
+
+  p, blockquote, ul, ol, dl, table, pre {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  ul, ol {
+    padding-left: 2em;
+  }
+
+  img {
+    max-width: 100%;
   }
 
   pre {
     padding: 1rem;
     margin-bottom: 10px;
     background: v.$light-grey;
+  }
+
+  .code-block-wrap {
+    position: relative;
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 8px;
+      border: none;
+      border-radius: 3px;
+      background: transparent;
+      color: v.$primary-dark;
+      cursor: pointer;
+
+      &.copied {
+        color: v.$primary;
+      }
+    }
   }
 
   :not(pre) > code {
@@ -18,8 +54,6 @@ planet-markdown.planet-markdown-renderer td-markdown.td-markdown {
   }
 
   table {
-    display: table;
-    width: auto;
     max-width: 100%;
     border-collapse: collapse;
   }
@@ -29,8 +63,27 @@ planet-markdown.planet-markdown-renderer td-markdown.td-markdown {
     border: 1px solid v.$grey;
   }
 
-  input[type='checkbox'] {
-    accent-color: v.$primary;
+  .markdown-align-left {
+    text-align: left;
+  }
+
+  .markdown-align-center {
+    text-align: center;
+  }
+
+  .markdown-align-right {
+    text-align: right;
+  }
+
+  .task-list-item {
+    list-style-type: none;
+  }
+
+  .markdown-task-checkbox {
+    display: inline-block;
+    margin: 0 0.35em 0.25em -1.6em;
+    color: v.$primary;
+    vertical-align: middle;
   }
 
   a[href] {
@@ -38,23 +91,10 @@ planet-markdown.planet-markdown-renderer td-markdown.td-markdown {
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-
-  // Covalent adds an icon using the Material Symbols font, which Planet does not load.
-  a[href][target='_blank'] {
-    display: inline !important;
-    padding-right: 0 !important;
-
-    &::after {
-      display: none !important;
-      content: none !important;
-    }
-  }
 }
 
-planet-markdown.img-resize td-markdown.td-markdown {
-  & > div {
-    overflow: auto;
-  }
+planet-markdown.img-resize .markdown-content {
+  overflow: auto;
 
   img {
     max-width: 25%;

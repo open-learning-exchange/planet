@@ -12,6 +12,10 @@ import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
 import { UsersService } from '../users/users.service';
 
+export interface CourseAuthorizationContext {
+  readOnly?: boolean;
+}
+
 // Service for updating and storing active course for single course views.
 @Injectable({
   providedIn: 'root'
@@ -65,6 +69,14 @@ export class CoursesService {
     this.stateService.couchStateListener('tags').subscribe((res: any) => handleStateRes(res, 'tags'));
     this.stateService.couchStateListener(this.dbName).subscribe((res: any) => handleStateRes(res, this.dbName));
     this.stateService.couchStateListener(this.progressDb).subscribe((res: any) => handleStateRes(res, this.progressDb));
+  }
+
+  canManageCourse(course: any, context: CourseAuthorizationContext = {}): boolean {
+    if (!course || context.readOnly) {
+      return false;
+    }
+    const user = this.userService.get();
+    return user.isUserAdmin === true || course.creator === `${user.name}@${this.stateService.configuration.code}`;
   }
 
   requestCourses(parent = false) {

@@ -47,11 +47,11 @@
   @if (data.rules) {
     <div class="enterprise-rules">
       <b i18n>Enterprise Rules:</b>
-      <td-markdown [content]="data.rules"></td-markdown>
+      <planet-markdown [content]="data.rules"></planet-markdown>
     </div>
   }
   @if (data.extraMessage) {
-    <p [innerHTML]="data.extraMessage"></p>
+    <p class="km-extra-message" [class.extra-message-supplementary]="extraMessageType === 'supplementary'" [innerHTML]="data.extraMessage"></p>
   }
   @if (data.displayDates) {
     <b>{{data.displayDates.startDate | date : 'mediumDate' : isDateUtc ? '+0000' : undefined }} - {{data.displayDates.endDate | date: 'mediumDate' : isDateUtc ? '+0000' : undefined }}</b>

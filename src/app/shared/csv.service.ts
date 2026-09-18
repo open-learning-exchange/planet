@@ -6,7 +6,8 @@ import { map } from 'rxjs/operators';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
 import { CouchService } from './couchdb.service';
-import { couchAttachmentPath, markdownToPlainText, formatDate } from './utils';
+import { couchAttachmentPath, formatDate } from './utils';
+import { MarkdownRenderService } from './markdown-render.service';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
 export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
@@ -32,6 +33,7 @@ export class CsvService {
     private couchService: CouchService,
     private reportsService: ReportsService,
     private planetMessageService: PlanetMessageService,
+    private markdownRenderer: MarkdownRenderService,
     @Inject(LOCALE_ID) private localeId: string
   ) {}
 
@@ -47,7 +49,8 @@ export class CsvService {
     const formattedData = data.map(
       ({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => (
         Object.entries(dataToDisplay).reduce(
-          (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
+          (object, [ key, value ]: [ string, any ]) =>
+            ({ ...object, [this.markdownRenderer.toPlainText(key)]: this.formatValue(key, value) }),
           {}
         )
       )
@@ -173,7 +176,7 @@ export class CsvService {
       this.formatHealthConditions(value) :
       this.isDateKey(key) ?
         dateString(value) :
-        markdownToPlainText(value);
+        this.markdownRenderer.toPlainText(value);
   }
 
   isDateKey(key: string) {

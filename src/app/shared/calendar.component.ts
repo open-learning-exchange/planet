@@ -21,6 +21,7 @@ import { MeetupService } from '../meetups/meetups.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatTooltip } from '@angular/material/tooltip';
 
 const taskEventColors = {
   completed: {
@@ -42,18 +43,28 @@ const taskEventColors = {
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     @if (showLegend) {
       <div class="calendar-legend">
-        @for (legend of eventLegend; track legend) {
+        @for (legend of eventLegend; track legend.key) {
           @if (!legend.type || legend.type === type) {
-            <div class="legend-item">
-              <div class="legend-color" [style.backgroundColor]="legend.color"></div>
-              <span>{{ legend.label }}</span>
-            </div>
+            @if (type === 'team') {
+              <button type="button" class="legend-item legend-toggle" [class.legend-item-disabled]="!activeFilters.has(legend.key)"
+                [attr.aria-pressed]="activeFilters.has(legend.key)"
+                [matTooltip]="activeFilters.has(legend.key) ? legend.hideTooltip : legend.showTooltip"
+                (click)="toggleFilter(legend.key)">
+                <span class="legend-color" [style.backgroundColor]="legend.color"></span>
+                <span>{{ legend.label }}</span>
+              </button>
+            } @else {
+              <div class="legend-item">
+                <div class="legend-color" [style.backgroundColor]="legend.color"></div>
+                <span>{{ legend.label }}</span>
+              </div>
+            }
           }
         }
       </div>
     }
     `,
-  imports: [FullCalendarModule]
+  imports: [FullCalendarModule, MatTooltip]
 })
 export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -85,10 +96,31 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
   meetups: any[] = [];
   tasks: any[] = [];
   showLegend = true;
+  activeFilters: Set<string> = new Set(['event', 'uncompleted', 'completed']);
   eventLegend = [
-    { color: styleVariables.primary, label: $localize`Event` },
-    { color: taskEventColors.uncompleted.backgroundColor, label: $localize`Uncompleted Task`, type: 'team' },
-    { color: taskEventColors.completed.backgroundColor, label: $localize`Completed Task`, type: 'team' }
+    {
+      key: 'event',
+      color: styleVariables.primary,
+      label: $localize`Event`,
+      showTooltip: $localize`Show Events`,
+      hideTooltip: $localize`Hide Events`
+    },
+    {
+      key: 'uncompleted',
+      color: taskEventColors.uncompleted.backgroundColor,
+      label: $localize`Uncompleted Task`,
+      type: 'team',
+      showTooltip: $localize`Show Uncompleted Tasks`,
+      hideTooltip: $localize`Hide Uncompleted Tasks`
+    },
+    {
+      key: 'completed',
+      color: taskEventColors.completed.backgroundColor,
+      label: $localize`Completed Task`,
+      type: 'team',
+      showTooltip: $localize`Show Completed Tasks`,
+      hideTooltip: $localize`Hide Completed Tasks`
+    }
   ];
 
   calendarOptions: CalendarOptions = {
@@ -191,6 +223,24 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
+  toggleFilter(key: string) {
+    if (this.activeFilters.has(key)) {
+      this.activeFilters.delete(key);
+    } else {
+      this.activeFilters.add(key);
+    }
+    this.updateVisibleEvents();
+  }
+
+  updateVisibleEvents() {
+    const visible = [
+      ...(this.activeFilters.has('event') ? this.meetups : []),
+      ...this.tasks.filter(task => this.activeFilters.has(task.extendedProps.meetup.completed ? 'completed' : 'uncompleted'))
+    ];
+    this.events = visible.length > 0 ? visible : [ {} ];
+    this.calendarOptions.events = this.events;
+  }
+
   getMeetups() {
     this.fetchMeetups().subscribe();
   }
@@ -208,8 +258,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
             return this.eventObject(meetup);
         }
       }).flat();
-      this.events = [ ...this.meetups, ...this.tasks ];
-      this.calendarOptions.events = this.events;
+      this.updateVisibleEvents();
     }));
   }
 
@@ -223,8 +272,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
         const taskColors = task.completed ? taskEventColors.completed : taskEventColors.uncompleted;
         return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
-      this.events = [ ...this.meetups, ...this.tasks ];
-      this.calendarOptions.events = this.events;
+      this.updateVisibleEvents();
     }));
   }
 
@@ -434,7 +482,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     const replace = (cache: any[]) => cache.map(cached => cached.extendedProps?.meetup?._id === meetup._id ? event : cached);
     this.meetups = meetup.isTask ? this.meetups : replace(this.meetups);
     this.tasks = meetup.isTask ? replace(this.tasks) : this.tasks;
-    this.events = [ ...this.meetups, ...this.tasks ];
+    this.updateVisibleEvents();
   }
 
   eventDrop(info: any) {
