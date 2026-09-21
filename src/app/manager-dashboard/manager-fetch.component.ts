@@ -140,7 +140,10 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
       res !== 'no replicators' ?
         this.couchService.post('send_items/_bulk_docs', { docs: deleteItems }, { domain: this.planetConfiguration.parentDomain }) :
         of({})
-    )).subscribe(() => this.planetMessageService.showMessage($localize`Resources/Courses are being fetched`));
+    )).subscribe(
+      () => this.planetMessageService.showMessage($localize`Resources/Courses are being fetched`),
+      error => this.planetMessageService.showMessage(error.error ? error.error.reason : error)
+    );
 
   }
 

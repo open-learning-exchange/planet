@@ -13,6 +13,7 @@ describe('StateService', () => {
     service.requestData('courses', 'parent');
 
     expect(updates).toEqual([ { newData: [], db: 'courses', planetField: 'parent', inProgress: false, error: true } ]);
+    expect(service.isCouchStateComplete('courses', 'parent')).toBe(false);
 
     service.requestData('courses', 'parent');
 
@@ -98,6 +99,7 @@ describe('StateService', () => {
     service.requestData('courses', 'parent');
 
     expect(incompleteStates).toEqual([ true, false ]);
+    expect(service.isCouchStateComplete('courses', 'parent')).toBe(true);
   });
 
   it('starts a fresh authoritative find for each subscription', () => {

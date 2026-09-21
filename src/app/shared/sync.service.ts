@@ -140,7 +140,10 @@ export class SyncService {
   replicatorsArrayWithTags(items, type: 'pull' | 'push', planetField: 'local' | 'parent') {
     return this.stateService.getCouchState('tags', planetField).pipe(
       last(),
-      map(tags => this.createReplicatorsArray(items, type, tags)));
+      switchMap(tags => this.stateService.isCouchStateComplete('tags', planetField) ?
+        of(this.createReplicatorsArray(items, type, tags)) :
+        throwError({ status: 0, error: { reason: $localize`There was an error connecting to Planet` } })
+      ));
   }
 
   createReplicatorsArray(items, type: 'pull' | 'push', allTags: any[] = [], replicators = []) {

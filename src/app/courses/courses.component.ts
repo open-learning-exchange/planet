@@ -586,7 +586,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.syncService.confirmPasswordAndRunReplicators(replicators)
     )).subscribe(() => {
       this.planetMessageService.showMessage($localize`${courses.length} ${this.dbName} queued to ${msg}`);
-    }, () => error => this.planetMessageService.showMessage(error));
+    }, error => this.planetMessageService.showMessage(error.error ? error.error.reason : error));
   }
 
   openSendCourseDialog() {

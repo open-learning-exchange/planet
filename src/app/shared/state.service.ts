@@ -117,6 +117,12 @@ export class StateService {
     return this.stateUpdated.pipe(filter((stateObj: { newData, db, planetField, inProgress, error? }) => db === stateObj.db));
   }
 
+  // Only valid in the same tick getCouchState() completes: last() emits synchronously after the terminal page sets
+  // the flag, so a concurrent subscription on the same db cannot overwrite it in between.
+  isCouchStateComplete(db: string, planetField: string) {
+    return this.state[planetField]?.[db]?.incomplete === false;
+  }
+
   combineChanges(docs: any[], changesDocs: any[], sort) {
     const combinedDocs = docs.reduce((newDocs: any[], doc: any) => {
       const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);

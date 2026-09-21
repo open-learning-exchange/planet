@@ -1,4 +1,4 @@
-import { concat, of, throwError } from 'rxjs';
+import { concat, NEVER, of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { SyncDirective } from './sync.directive';
@@ -85,6 +85,45 @@ describe('SyncDirective parent users', () => {
     expect(planetMessageService.showMessage).toHaveBeenCalledWith('timeout');
   });
 
+  it('keeps existing replicators when replacing parent users fails', () => {
+    const failure = { status: 0, error: { reason: 'parent users write failed' } };
+    const {
+      couchService, syncService, dialogsLoadingService, planetMessageService, directive
+    } = buildDirective();
+    couchService.findAll.mockReturnValue(of([ { _id: 'resources_pull', _replication_state: 'completed' } ]));
+    vi.spyOn(directive, 'replicatorList').mockReturnValue([]);
+    vi.spyOn(directive, 'updateReplicatorUsers').mockReturnValue(of({}));
+    vi.spyOn(directive, 'sendStatsToParent').mockReturnValue(of({}));
+    vi.spyOn(directive, 'getParentUsers').mockReturnValue(of([ { _id: 'user-1' } ]));
+    vi.spyOn(directive, 'updateParentUsers').mockReturnValue(throwError(failure));
+
+    directive.runSyncClick();
+
+    expect(syncService.deleteReplicators).not.toHaveBeenCalled();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
+    expect(planetMessageService.showMessage).toHaveBeenCalledWith('parent users write failed');
+  });
+
+  it('waits for the parent users replacement before deleting replicators', () => {
+    const parentUsersReplacement = new Subject<any>();
+    const { couchService, syncService, directive } = buildDirective();
+    couchService.findAll.mockReturnValue(of([ { _id: 'resources_pull', _replication_state: 'completed' } ]));
+    syncService.deleteReplicators.mockReturnValue(NEVER);
+    vi.spyOn(directive, 'replicatorList').mockReturnValue([]);
+    vi.spyOn(directive, 'updateReplicatorUsers').mockReturnValue(of({}));
+    vi.spyOn(directive, 'sendStatsToParent').mockReturnValue(of({}));
+    vi.spyOn(directive, 'getParentUsers').mockReturnValue(of([ { _id: 'user-1' } ]));
+    vi.spyOn(directive, 'updateParentUsers').mockReturnValue(parentUsersReplacement);
+
+    directive.runSyncClick();
+    expect(syncService.deleteReplicators).not.toHaveBeenCalled();
+
+    parentUsersReplacement.next({});
+    parentUsersReplacement.complete();
+
+    expect(syncService.deleteReplicators).toHaveBeenCalledTimes(1);
+  });
+
   it('stops loading when preparing local replicator users fails', () => {
     const { dialogsLoadingService, directive } = buildDirective();
     vi.spyOn(directive, 'updateReplicatorUsers').mockReturnValue(throwError(new Error('offline')));
@@ -106,7 +145,7 @@ describe('SyncDirective parent users', () => {
     vi.spyOn(directive, 'updateReplicatorUsers').mockReturnValue(of({}));
     vi.spyOn(directive, 'sendStatsToParent').mockReturnValue(of({}));
     const getParentUsers = vi.spyOn(directive, 'getParentUsers').mockReturnValue(of([]));
-    vi.spyOn(directive, 'updateParentUsers').mockImplementation(() => {});
+    vi.spyOn(directive, 'updateParentUsers').mockReturnValue(of({}));
     vi.spyOn(directive, 'getAchievementsAndTeamAndNewsResources').mockReturnValue(of([ [], [], [] ]));
     vi.spyOn(directive, 'achievementResourceReplicator').mockReturnValue(of([]));
     vi.spyOn(directive, 'teamAndNewsResourcesReplicator').mockReturnValue(of([]));

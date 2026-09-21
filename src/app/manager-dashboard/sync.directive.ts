@@ -53,8 +53,9 @@ export class SyncDirective {
       rep => rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1
     ).map(rep => ({ ...rep, _deleted: true }));
     return forkJoin(this.couchService.findAll('_replicator'), this.sendStatsToParent(), this.getParentUsers()).pipe(
-      tap(([ , , users ]) => this.updateParentUsers(users)),
-      map(([ replicators ]) => replicators),
+      switchMap(([ replicators, , users ]) =>
+        this.updateParentUsers(users).pipe(map(() => replicators))
+      ),
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => this.getAchievementsAndTeamAndNewsResources()),
       switchMap(([ achievements, teamResources, news ]: any[]) =>
@@ -193,7 +194,7 @@ export class SyncDirective {
   }
 
   updateParentUsers(newUsers: any[]) {
-    this.couchService.findAll('parent_users').pipe(switchMap((oldUsers: any[]) => {
+    return this.couchService.findAll('parent_users').pipe(switchMap((oldUsers: any[]) => {
       const deleteArray = oldUsers
         .filter(oldUser => !newUsers.some(newUser => newUser._id === oldUser._id))
         .map(oldUser => ({ ...oldUser, _deleted: true }));
@@ -203,7 +204,7 @@ export class SyncDirective {
       });
       const docs = [ ...deleteArray, ...updateArray ].map(({ _attachments, ...doc }) => doc);
       return this.couchService.bulkDocs('parent_users', docs);
-    })).subscribe();
+    }));
   }
 
   getAchievementsAndTeamAndNewsResources() {
