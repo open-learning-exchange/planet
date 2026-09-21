@@ -1,7 +1,7 @@
 import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin, throwError, of } from 'rxjs';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map, reduce, finalize, tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
@@ -30,34 +30,42 @@ export class SyncDirective {
 
   @HostListener('click')
   runSyncClick() {
+    let loading = true;
+    const stopLoading = () => {
+      if (loading) {
+        loading = false;
+        this.dialogsLoadingService.stop();
+      }
+    };
     this.dialogsLoadingService.start();
-    this.updateReplicatorUsers().subscribe(() => {
-      this.syncPlanet();
-    });
+    this.updateReplicatorUsers().pipe(
+      switchMap(() => this.syncPlanet(stopLoading)),
+      finalize(stopLoading)
+    ).subscribe(() => {
+      this.planetMessageService.showMessage($localize`Syncing started`);
+      this.syncComplete.emit();
+    }, error => this.planetMessageService.showMessage(error.error ? error.error.reason : error));
   }
 
-  syncPlanet() {
+  syncPlanet(stopLoading = () => this.dialogsLoadingService.stop()) {
     const defaultList = this.replicatorList((type) => (val) => this.syncService.replicatorId(val, type));
     const deleteArray = (replicators) => replicators.filter(
       rep => rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1
     ).map(rep => ({ ...rep, _deleted: true }));
-    this.couchService.findAll('_replicator').pipe(
+    return forkJoin(this.couchService.findAll('_replicator'), this.sendStatsToParent(), this.getParentUsers()).pipe(
+      tap(([ , , users ]) => this.updateParentUsers(users)),
+      map(([ replicators ]) => replicators),
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
-      switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
-      map(([ res, users ]) => this.updateParentUsers(users)),
       switchMap(() => this.getAchievementsAndTeamAndNewsResources()),
       switchMap(([ achievements, teamResources, news ]: any[]) =>
         forkJoin(this.achievementResourceReplicator(achievements), this.teamAndNewsResourcesReplicator(teamResources, news))
       ),
-      switchMap((replicators: any) => {
-        this.dialogsLoadingService.stop();
-        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat(2)));
-      }),
+      tap(stopLoading),
+      switchMap((replicators: any) =>
+        this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat(2)))
+      ),
       switchMap(res => this.managerService.addAdminLog('sync'))
-    ).subscribe(data => {
-      this.planetMessageService.showMessage($localize`Syncing started`);
-      this.syncComplete.emit();
-    }, error => this.planetMessageService.showMessage(error.error ? error.error.reason : error));
+    );
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ continuous: this.planetConfiguration.alwaysOnline, ...val, type })) {
@@ -176,11 +184,12 @@ export class SyncDirective {
   }
 
   getParentUsers() {
-    return this.couchService.findAll(
+    // Only replace the local snapshot after every page arrives; a failed parent read must not look like an empty result.
+    return this.couchService.findAllStream(
       '_users',
       findDocuments({ planetCode: this.planetConfiguration.parentCode }),
       { domain: this.planetConfiguration.parentDomain }
-    );
+    ).pipe(reduce((users: any[], page: any[]) => users.concat(page), []));
   }
 
   updateParentUsers(newUsers: any[]) {

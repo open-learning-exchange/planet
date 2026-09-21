@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin, Observable, throwError, of } from 'rxjs';
-import { switchMap, map, takeWhile, catchError, take } from 'rxjs/operators';
+import { switchMap, map, takeWhile, catchError, last } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
 import { TagsService } from './forms/tags.service';
@@ -136,10 +136,10 @@ export class SyncService {
     };
   }
 
-  // hack: we take the first observable from the array on initialization since we get 2 as opposed to 1
+  // Initial finds emit one accumulated result per page, so wait for the complete snapshot.
   replicatorsArrayWithTags(items, type: 'pull' | 'push', planetField: 'local' | 'parent') {
     return this.stateService.getCouchState('tags', planetField).pipe(
-      take(1),
+      last(),
       map(tags => this.createReplicatorsArray(items, type, tags)));
   }
 

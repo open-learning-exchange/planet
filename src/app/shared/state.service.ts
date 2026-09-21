@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from './planet-message.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { Subject, of } from 'rxjs';
+import { defer, of, Subject } from 'rxjs';
 import { map, switchMap, filter, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -13,8 +12,6 @@ export class StateService {
   state: any = { local: {}, parent: {} };
   private stateUpdated = new Subject<any>();
   private inProgress = { local: new Map(), parent: new Map() };
-  // Tracks which planets already alerted the user, so one outage does not stack a snackbar per database
-  private errorNotified = new Set<string>();
 
   get configuration(): any {
     const config = this.state.local.configurations?.docs[0] || {};
@@ -27,8 +24,7 @@ export class StateService {
   }
 
   constructor(
-    private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
+    private couchService: CouchService
   ) {}
 
   requestBaseData() {
@@ -49,44 +45,42 @@ export class StateService {
   }
 
   getCouchState(db: string, planetField: string, sort?: { [key: string]: 'asc' | 'desc' }) {
-    const opts = this.optsFromPlanetField(planetField);
-    this.state[planetField] = this.state[planetField] || {};
-    this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
-    const currentData = this.state[planetField][db].docs;
-    const isInitialFind = currentData.length === 0;
-    const getData = isInitialFind ? this.getAll(db, opts, planetField, sort && [ sort ]) : this.getChanges(db, opts, planetField);
-    return getData.pipe(
-      map((changes) => {
-        const newData = this.combineChanges(this.state[planetField][db].docs, changes, sort);
-        const inProgress = isInitialFind && changes.length > 0;
-        this.state[planetField][db].docs = newData;
-        this.stateUpdated.next({ newData, db, planetField, inProgress });
-        this.setInProgress(db, planetField, inProgress);
-        this.errorNotified.delete(planetField);
-        return newData;
-      }),
-      catchError(() => {
-        // Always notify listeners, otherwise views waiting on this database keep their loading spinner forever
-        const docs = this.state[planetField][db].docs;
-        this.setInProgress(db, planetField, false);
-        this.stateUpdated.next({ newData: docs, db, planetField, inProgress: false, error: true });
-        this.notifyError(planetField);
-        return of(docs);
-      })
-    );
-  }
-
-  private setInProgress(db: string, planetField: string, inProgress: boolean) {
-    this.inProgress[planetField] = this.inProgress[planetField] || new Map();
-    this.inProgress[planetField].set(db, inProgress);
-  }
-
-  private notifyError(planetField: string) {
-    if (this.errorNotified.has(planetField)) {
-      return;
-    }
-    this.errorNotified.add(planetField);
-    this.planetMessageService.showAlert($localize`There was an error connecting to Planet`);
+    return defer(() => {
+      const opts = this.optsFromPlanetField(planetField);
+      this.inProgress[planetField] = this.inProgress[planetField] || new Map();
+      this.state[planetField] = this.state[planetField] || {};
+      this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
+      const currentData = this.state[planetField][db].docs;
+      const isInitialFind = currentData.length === 0 || this.state[planetField][db].incomplete === true;
+      const lastSeqBeforeFind = this.state[planetField][db].lastSeq;
+      const getData = isInitialFind ?
+        this.getAll(db, opts, planetField, sort && [ sort ]) :
+        this.getChanges(db, opts, planetField);
+      // A find returns the whole set, so its first page replaces anything a failed attempt cached. Merging into it
+      // instead would keep documents deleted since, because the retry never reports what is no longer there.
+      let mergeIntoCached = !isInitialFind;
+      return getData.pipe(
+        map((changes) => {
+          const newData = this.combineChanges(mergeIntoCached ? this.state[planetField][db].docs : [], changes, sort);
+          mergeIntoCached = true;
+          const inProgress = isInitialFind && changes.length > 0;
+          this.state[planetField][db].docs = newData;
+          this.state[planetField][db].incomplete = inProgress;
+          this.stateUpdated.next({ newData, db, planetField, inProgress });
+          this.inProgress[planetField].set(db, inProgress);
+          return newData;
+        }),
+        catchError(() => {
+          // Keep what arrived, but rewind so the retry re-runs the whole find instead of resuming past the gap
+          this.state[planetField][db].lastSeq = lastSeqBeforeFind;
+          this.state[planetField][db].incomplete = true;
+          const docs = this.state[planetField][db].docs;
+          this.inProgress[planetField].set(db, false);
+          this.stateUpdated.next({ newData: docs, db, planetField, inProgress: false, error: true });
+          return of(docs);
+        })
+      );
+    });
   }
 
   optsFromPlanetField(planetField: string) {
@@ -113,8 +107,8 @@ export class StateService {
       db + '/_changes?include_docs=true&since=' + (this.state[planetField][db].lastSeq || 'now'), opts
     ).pipe(map((res: any) => {
       this.state[planetField][db].lastSeq = res.last_seq;
-      return (res.results || [])
-        .filter((r: any) => r.doc !== undefined && r.doc !== null && r.doc._id.indexOf('_design') === -1)
+      return res.results
+        .filter((r: any) => r.doc && r.doc._id.indexOf('_design') === -1)
         .map((r: any) => r.doc);
     }));
   }

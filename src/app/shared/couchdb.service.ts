@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
-import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
+import { catchError, map, expand, toArray, flatMap, switchMap, timeoutWith } from 'rxjs/operators';
 import { PlanetMessageService } from './planet-message.service';
 import { findDocuments } from './mangoQueries';
 
@@ -16,14 +16,18 @@ export class CouchService {
   private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
   private reqNum = 0;
+  private parentTimeout = 30 * 1000;
   datePlaceholder = new DatePlaceholder();
 
   private setOpts(opts: any = {}) {
-    const { domain, protocol, ...httpOpts } = opts;
-    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
+    const { domain, protocol, suppressMessage, timeout: requestTimeout, ...httpOpts } = opts;
+    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts, {
+      suppressMessage,
+      requestTimeout: requestTimeout === undefined && domain ? this.parentTimeout : requestTimeout
+    } ];
   }
 
-  private couchDBReq(type: string, db: string, [ domain, protocol, opts ]: any[], data?: any) {
+  private couchDBReq(type: string, db: string, [ domain, protocol, opts, reqOpts ]: any[], data?: any) {
     const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
@@ -32,7 +36,7 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return this.formatHttpReq(httpReq);
+    return this.formatHttpReq(httpReq, reqOpts);
   }
 
   constructor(
@@ -40,10 +44,17 @@ export class CouchService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  formatHttpReq(httpReq: Observable<any>) {
-    return httpReq
+  // Shaped like a transport failure because callers dereference err.status and err.error
+  private bound(httpReq: Observable<any>, requestTimeout: number) {
+    return requestTimeout ?
+      httpReq.pipe(timeoutWith(requestTimeout, throwError({ status: 0, error: { reason: 'timeout' } }))) :
+      httpReq;
+  }
+
+  formatHttpReq(httpReq: Observable<any>, { suppressMessage = false, requestTimeout = 0 }: any = {}) {
+    return this.bound(httpReq, requestTimeout)
       .pipe(catchError(err => {
-        if (err.status === 403) {
+        if (err.status === 403 && !suppressMessage) {
           this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
         }
         return throwError(err);
@@ -67,8 +78,10 @@ export class CouchService {
   }
 
   getAttachment(url: string, opts?: any): Observable<Blob> {
-    const [ , , httpOpts ] = this.setOpts(opts);
-    return this.formatHttpReq(this.http.get(url, { ...httpOpts, responseType: 'blob' as const })) as Observable<Blob>;
+    const [ , , httpOpts, reqOpts ] = this.setOpts(opts);
+    return this.formatHttpReq(
+      this.http.get(url, { ...httpOpts, responseType: 'blob' as const }), reqOpts
+    ) as Observable<Blob>;
   }
 
   putAttachment(db: string, file: File | FormData, opts?: any) {
@@ -101,7 +114,7 @@ export class CouchService {
   }
 
   findAllStream(db: string, query: any = { selector: { _id: { $gt: null } }, limit: 1000 }, opts?: any) {
-    return this.findAllRequest(db, query, opts).pipe(map(({ docs }) => docs));
+    return this.findAllRequest(db, query, opts, false).pipe(map(({ docs }) => docs));
   }
 
   findAttachmentsByIds(ids: string[], opts?: any) {
@@ -122,13 +135,11 @@ export class CouchService {
     );
   }
 
-  private findAllRequest(db: string, query: any, opts: any) {
-    // Each page is guarded so one failed request returns the pages already fetched rather than erroring the whole stream
-    const findRequest = (bookmark?: string) => this.post(
-      db + '/_find', bookmark === undefined ? query : { ...query, bookmark }, opts
-    ).pipe(catchError(() => of({ docs: [], rows: [] })));
-    return findRequest().pipe(
-      expand((res: any) => res.docs.length > 0 ? findRequest(res.bookmark) : empty())
+  // findAllStream propagates failures to consumers; findAll keeps the guard until its callers are surveyed
+  private findAllRequest(db: string, query: any, opts: any, guardFirstPage = true) {
+    const firstPage = this.post(db + '/_find', query, opts);
+    return (guardFirstPage ? firstPage.pipe(catchError(() => of({ docs: [], rows: [] }))) : firstPage).pipe(
+      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
     );
   }
 
@@ -162,12 +173,12 @@ export class CouchService {
   }
 
   getUrl(url: string, reqOpts?: any) {
-    const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
+    const [ domainWithPort = '', protocol, opts, { requestTimeout } ] = this.setOpts(reqOpts);
     const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
     const urlPrefix = domain ?
       (protocol || environment.parentProtocol) + '://' + domain :
       window.location.origin;
-    return this.http.get(urlPrefix + '/' + url, opts).pipe(
+    return this.bound(this.http.get(urlPrefix + '/' + url, opts), requestTimeout).pipe(
       map((response: any) => {
         if (typeof response === 'string' && response.trimStart().startsWith('<!')) {
           throw new Error('Received HTML instead of expected response');
@@ -207,8 +218,8 @@ export class CouchService {
   }
 
   checkAuthorization(db, opts?) {
-    return this.get(db, opts).pipe(
-      catchError((err) => err.error === 'forbidden' ? of(false) : throwError(err)),
+    return this.get(db, { ...opts, suppressMessage: true }).pipe(
+      catchError((err) => err.status === 403 ? of(false) : throwError(err)),
       map((res) => res !== false)
     );
   }
