@@ -2,7 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } 
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { notificationRecipient } from '../shared/identity.utils';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';

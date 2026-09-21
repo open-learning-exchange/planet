@@ -7,8 +7,9 @@ import { fullName } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
-import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
-import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
+import { NotificationsService } from '../notifications/notifications.service';
+import { userIdentitySelector } from '../shared/mangoQueries';
+import { identityMatches, notificationRecipient, userIdentityCandidates } from '../shared/identity.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -189,28 +190,46 @@ export class UsersService {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    const taskIdentities = assigneeIdentityCandidates(user, this.stateService.configuration.code);
-    const taskPlanetCodes = taskIdentities.map(({ userPlanetCode }) => userPlanetCode)
-      .filter((code): code is string => !!code);
+    const [ canonical, ...materialized ] = userIdentityCandidates(user, this.stateService.configuration.code);
+    // Task cleanup is global, and an associated account's canonical ID also names its home planet's native account.
+    const taskIdentities = materialized.length > 0 ? materialized : [ canonical ];
     return this.couchService.get('shelf/' + userId).pipe(
       switchMap(shelfUser => forkJoin([
         this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
         this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
-        this.deleteUserFromTeams(user),
+        // Team cleanup also edits tasks, so it waits for this write instead of conflicting with it.
         this.tasksService.removeAssigneeFromTasks(
           taskIdentities[0]?.userId || user._id,
-          taskPlanetCodes.length > 0 ? taskPlanetCodes : undefined
-        )
+          taskIdentities.map(identity => identity?.userPlanetCode)
+        ).pipe(switchMap(() => this.deleteUserFromTeams(user)))
       ])),
       map(() => this.requestUsers(true))
     );
   }
 
   deleteUserFromTeams(user) {
-    return this.couchService.findAll('teams', { selector: { userId: user._id } }).pipe(
-      switchMap(teams => {
-        const docsWithUser = teams.map((doc: any) => ({ ...doc, _deleted: true }));
-        return this.couchService.bulkDocs('teams', docsWithUser);
+    const planetCode = this.stateService.configuration.code;
+    const [ canonical, ...materialized ] = userIdentityCandidates(user, planetCode);
+    if (!canonical) {
+      return throwError(new Error('User ID is required for team cleanup.'));
+    }
+    // An associated account's canonical ID belongs to its home planet's native account on synchronized teams.
+    // Rows with neither an explicit origin nor a team origin cannot safely be assigned to this account.
+    const belongsToDeletedUser = (doc: any) => materialized.length === 0 ?
+      identityMatches(doc, canonical) :
+      materialized.some(identity => identityMatches(doc, identity)) ||
+        (doc.teamPlanetCode === planetCode && identityMatches(doc, canonical));
+    return this.couchService.findAll('teams', { selector: userIdentitySelector([ canonical, ...materialized ]) }).pipe(
+      switchMap((docs: any[]) => {
+        const deletedDocs = docs.filter(belongsToDeletedUser);
+        // An associated account's canonical rows are removed only from this server's teams, and so are its tasks there.
+        const canonicalTeamIds = materialized.length === 0 ? [] :
+          [ ...new Set(deletedDocs.filter(doc => identityMatches(doc, canonical)).map(doc => doc.teamId)) ];
+        return this.couchService.bulkDocs('teams', deletedDocs.map(doc => ({ ...doc, _deleted: true }))).pipe(
+          switchMap(() => canonicalTeamIds.length === 0 ? of({}) : this.tasksService.removeAssigneeFromTasks(
+            canonical.userId, canonical.userPlanetCode, { teams: { $in: canonicalTeamIds } }
+          ))
+        );
       })
     );
   }

@@ -4,7 +4,8 @@ import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments, userIdentitySelector } from '../shared/mangoQueries';
+import { identityMatches, userIdentityCandidates } from '../shared/identity.utils';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '../shared/state.service';
@@ -154,16 +155,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.getData('resources', userShelf.resourceIds, { linkPrefix: '/resources/view/', addId: true }),
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/courses/view/', addId: true }),
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
-      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
       this.getTeamMembership()
     ]).pipe(finalize(() => this.isLoading = false)).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
-      const allTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
-      this.data.myTeams = dedupeObjectArray(allTeams, [ '_id' ])
-        .filter(team => team.status !== 'archived');
+      this.data.myTeams = this.sortByShelfOrder(
+        dedupeObjectArray(dashboardItems[3], [ '_id' ]).filter(team => team.status !== 'archived'),
+        userShelf.myTeamIds
+      );
     });
+  }
+
+  sortByShelfOrder(teams: any[], order: string[] = []) {
+    const rank = new Map(order.map((id, index) => [ id, index ] as [ string, number ]));
+    const at = (team) => rank.get(team._id) ?? Number.MAX_SAFE_INTEGER;
+    return [ ...teams ].sort((team1, team2) => at(team1) - at(team2));
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
@@ -176,17 +183,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getTeamMembership() {
     const configuration = this.stateService.configuration;
-    return this.couchService.findAll(
-      'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.user._id, docType: 'membership' })
-    ).pipe(
-      switchMap((memberships) => forkJoin([
-        of(memberships),
-        this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: '/teams/view/', addId: true })
-      ])),
-      map(([ memberships, teams ]: any[]) =>
-        teams.filter(team => team.type === undefined || team.type === 'team' || team.type === 'enterprise').map(team => ({
-          ...team, canRemove: memberships.some(membership => membership.teamId === team._id && membership.isLeader)
-        }))
+    const identities = userIdentityCandidates(this.user, configuration.code);
+    return this.couchService.findAll('teams', findDocuments({
+      ...userIdentitySelector(identities),
+      docType: 'membership'
+    })).pipe(
+      // The selector pairs every candidate ID with every code, so other accounts' rows go before their teams are fetched.
+      map((docs: any[]) => docs.filter(doc => identities.some(identity => identityMatches(doc, identity, configuration.code)))),
+      switchMap((memberships) => {
+        const teamIds = [ ...new Set(memberships.map((doc: any) => doc.teamId).filter(id => id)) ];
+        return forkJoin([
+          of(memberships),
+          teamIds.length === 0 ? of([]) : this.couchService.findAll('teams', findDocuments({ _id: { $in: teamIds } }))
+        ]);
+      }),
+      map(([ memberships, teams ]: any[]) => (teams || [])
+        .filter(team => team.type === undefined || team.type === 'team' || team.type === 'enterprise')
+        .map(team => {
+          const matchingMemberships = memberships.filter(membership => membership.teamId === team._id);
+          // Leave starts from the canonical row, preferring one stored with an explicit code over a code-less one.
+          const canonicalMemberships = matchingMemberships.filter(membership =>
+            identityMatches(membership, identities[0], configuration.code)
+          );
+          return {
+            ...team,
+            title: team.name,
+            link: '/teams/view/' + team._id,
+            // Leaving can archive the team, which must write this undecorated document rather than the tile item.
+            teamDoc: team,
+            membershipDoc: canonicalMemberships.find(membership => membership.userPlanetCode) || canonicalMemberships[0] ||
+              matchingMemberships[0],
+            canRemove: matchingMemberships.some(membership => membership.isLeader)
+          };
+        })
+        .filter(team => team.membershipDoc)
       )
     );
   }
@@ -202,7 +232,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isEmptyShelf(shelf) {
     return shelf.courseIds.length === 0
       && shelf.meetupIds.length === 0
-      && shelf.myTeamIds.length === 0
       && shelf.resourceIds.length === 0;
   }
 

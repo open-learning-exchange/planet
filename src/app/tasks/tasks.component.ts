@@ -11,12 +11,14 @@ import { CouchService } from '../shared/couchdb.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { notificationRecipient } from '../shared/identity.utils';
 import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { StateService } from '../shared/state.service';
 import {
-  assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees, storedAssignee
+  assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees,
+  legacyTeamAssigneeIdentity, storedAssignee
 } from './tasks.utils';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -141,9 +143,18 @@ export class TasksComponent implements OnInit {
   }
 
   private setCurrentAssignees() {
-    this.currentAssignees = new Map(this.assigneesList
-      .map(assignee => [ assigneeKey(assignee, this.localPlanetCode), assignee ] as [ string, any ])
-      .filter(([ key ]) => key));
+    this.currentAssignees = new Map();
+    this.assigneesList.forEach(assignee => {
+      const key = assigneeKey(assignee, this.localPlanetCode);
+      if (!key) {
+        return;
+      }
+      this.currentAssignees.set(key, assignee);
+      const legacyIdentity = this.legacyIdentity(assignee);
+      if (legacyIdentity) {
+        this.currentAssignees.set(assigneeKey(legacyIdentity, this.localPlanetCode), assignee);
+      }
+    });
   }
 
   addTask(task?) {
@@ -239,7 +250,7 @@ export class TasksComponent implements OnInit {
     };
     this.assigneeUpdates.set(taskId, state);
 
-    const index = state.assignees.findIndex(item => assigneeMatches(item, assignee, this.localPlanetCode));
+    const index = state.assignees.findIndex(item => this.matchesMemberAssignee(item, assignee));
     const key = assigneeKey(assignee, this.localPlanetCode);
     if (index > -1) {
       state.assignees.splice(index, 1);
@@ -312,7 +323,14 @@ export class TasksComponent implements OnInit {
   }
 
   private currentUserIdentities() {
-    return assigneeIdentityCandidates(this.userService.get(), this.localPlanetCode);
+    const identities = assigneeIdentityCandidates(this.userService.get(), this.localPlanetCode);
+    const legacyIdentities = this.assigneesList.filter(member => identities.some(identity =>
+      assigneeMatches(member, identity, this.localPlanetCode)
+    )).flatMap(member => {
+      const legacyIdentity = this.legacyIdentity(member);
+      return legacyIdentity ? [ legacyIdentity ] : [];
+    });
+    return [ ...identities, ...legacyIdentities ];
   }
 
   private sendPendingNotifications(state: AssigneeUpdateState) {
@@ -372,7 +390,17 @@ export class TasksComponent implements OnInit {
   }
 
   isAssigneeSelected(task, assignee): boolean {
-    return this.taskAssignees(task).some(item => assigneeMatches(item, assignee, this.localPlanetCode));
+    return this.taskAssignees(task).some(item => this.matchesMemberAssignee(item, assignee));
+  }
+
+  private legacyIdentity(member) {
+    return legacyTeamAssigneeIdentity(member, this.assigneesList, this.localPlanetCode);
+  }
+
+  private matchesMemberAssignee(stored, member): boolean {
+    const legacyIdentity = this.legacyIdentity(member);
+    return assigneeMatches(stored, member, this.localPlanetCode) ||
+      Boolean(legacyIdentity && assigneeMatches(stored, legacyIdentity, this.localPlanetCode));
   }
 
   openAssigneesPopup(assignees: any[]) {

@@ -100,7 +100,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       this.planetCode = this.planetCode || params.get('planet');
       this.profileView();
       this.getLoginInfo(this.urlName);
-      this.getTeamsAndEnterprises();
     });
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe((user) => {
       if (user._id === this.userDetail._id && user.planetCode === this.userDetail.planetCode) {
@@ -148,6 +147,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
         (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName.split('@')[0] !== this.urlName)
       );
       this.checkHasAchievments();
+      this.getTeamsAndEnterprises();
     }, (error) => {
       console.log(error);
     });
@@ -183,7 +183,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   getTeamsAndEnterprises() {
-    this.teamsService.getTeamsByUser(this.urlName, this.planetCode).subscribe(teams => {
+    this.teamsService.getTeamsByUser(this.userDetail).subscribe(teams => {
       this.teams = teams.filter((team: any) => !team.doc.type || team.doc.type === 'team');
       this.enterprises = teams.filter((team: any) => team.doc.type === 'enterprise');
     });

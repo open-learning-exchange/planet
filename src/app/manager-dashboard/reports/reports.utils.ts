@@ -1,6 +1,7 @@
 import { millisecondsToDay } from '../../meetups/constants';
 import type { CsvService } from '../../shared/csv.service';
 import { localizedGender } from '../../shared/utils';
+import { identityPlanetCode } from '../../shared/identity.utils';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -58,8 +59,18 @@ export const filterByDate = (array, dateField, { startDate, endDate, isEndInclus
   return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
 };
 
-export const isSelectedMember = (item, members) => members.length === 0 ||
-  members.some(member => (member.userId === item.userId || member.userId.split(':')[1] === item.user));
+// Activities record the login name used on the team's planet, where an associated account's name carries its origin.
+const memberLoginName = (member) => {
+  const name = member.userId?.split(':')[1] || '';
+  const origin = identityPlanetCode(member);
+  const isAssociated = member.teamPlanetCode && origin !== member.teamPlanetCode && !name.endsWith(`@${origin}`);
+  return isAssociated ? `${name}@${origin}` : name;
+};
+
+export const isSelectedMember = (item, members) => members.length === 0 || members.some(member => {
+  const loginName = memberLoginName(member);
+  return loginName === item.user || `org.couchdb.user:${loginName}` === item.userId;
+});
 
 export const filterByMember = (array, members = []) => array.filter(item => isSelectedMember(item, members));
 

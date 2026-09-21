@@ -1,29 +1,31 @@
+import { identityKey, identityMatches, identityPlanetCode, userIdentityCandidates } from '../shared/identity.utils';
+
 export interface AssigneeIdentity {
   userId: string;
   userPlanetCode?: string;
 }
 
-export const assigneeIdentityCandidates = (user: any, localPlanetCode?: string): AssigneeIdentity[] => {
-  const userId = user?.couchId || user?.userId || user?._id;
-  if (!userId) {
-    return [];
-  }
-  const planetCodes = new Set<string | undefined>([ user.userPlanetCode || user.planetCode ]);
-  if ((user.requestId || user.sync) && localPlanetCode) {
-    planetCodes.add(localPlanetCode);
-  }
-  return [ ...planetCodes ].map(userPlanetCode => ({ userId, userPlanetCode }));
-};
+export const assigneeIdentityCandidates = (user: any, localPlanetCode?: string): AssigneeIdentity[] =>
+  userIdentityCandidates(user, localPlanetCode);
+
+// Before member origins were derived from teamPlanetCode, code-less rows were saved on tasks with the local code.
+// The old assignment is ambiguous if the team also has a native member with the same ID.
+export const legacyTeamAssigneeIdentity = (
+  member: any, members: any[], localPlanetCode?: string
+): AssigneeIdentity | undefined =>
+  member?.userId && localPlanetCode && !member.userPlanetCode && member.teamPlanetCode &&
+  member.teamPlanetCode !== localPlanetCode &&
+  !members.some(other => other !== member && other.userId === member.userId &&
+    identityPlanetCode(other, localPlanetCode) === localPlanetCode) ?
+    { userId: member.userId, userPlanetCode: localPlanetCode } : undefined;
 
 export const assigneeKey = (
   assignee: Partial<AssigneeIdentity> = {}, localPlanetCode?: string
-): string => assignee.userId ?
-  `${assignee.userId}\u0000${assignee.userPlanetCode || localPlanetCode || ''}` : '';
+): string => identityKey(assignee, localPlanetCode);
 
 export const assigneeMatches = (
   assignee: Partial<AssigneeIdentity>, identity: Partial<AssigneeIdentity>, localPlanetCode?: string
-): boolean => assignee?.userId === identity?.userId &&
-    (assignee?.userPlanetCode || localPlanetCode) === (identity?.userPlanetCode || localPlanetCode);
+): boolean => identityMatches(assignee, identity, localPlanetCode);
 
 export const effectiveAssignees = (task: any): any[] =>
   Array.isArray(task?.assignees) && task.assignees.length > 0 ?
@@ -37,7 +39,7 @@ export const assigneeName = (assignee: any): string => assignee?.userDoc?.fullNa
 
 export const storedAssignee = (assignee: any, localPlanetCode?: string): any => ({
   userId: assignee?.userId,
-  userPlanetCode: assignee?.userPlanetCode || localPlanetCode,
+  userPlanetCode: identityPlanetCode(assignee, localPlanetCode),
   name: assignee?.name,
   userDoc: assignee?.userDoc?.fullName ? { fullName: assignee.userDoc.fullName } : undefined
 });

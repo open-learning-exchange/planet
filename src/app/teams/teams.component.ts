@@ -33,6 +33,8 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { enterpriseJoinAgreement } from './teams.utils';
+import { userIdentitySelector } from '../shared/mangoQueries';
+import { teamIdentityDocs, userIdentityCandidates } from '../shared/identity.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -112,7 +114,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   filter: string;
   deviceType: DeviceType;
   isMobile: boolean;
-  userNotInShelf = false;
   showFiltersRow = false;
   selection = new SelectionModel(true, []);
   selectedIds: string[] = [];
@@ -183,16 +184,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.dialogsLoadingService.stop();
       this.isLoading = false;
     }, (error) => {
-      if (this.userNotInShelf) {
-        this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
-        this.couchService.findAll(this.dbName, { selector: { status: 'active' } }).subscribe((teams) => {
-          this.teams.data = this.teamList(
-            teams.filter((team: any) => (
-              team.type === this.mode || (team.type === undefined && this.mode === 'team')
-            )
-            && this.excludeIds.indexOf(team._id) === -1));
-        });
-      }
       this.dialogsLoadingService.stop();
       console.log(error);
       this.isLoading = false;
@@ -200,20 +191,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getMembershipStatus() {
-    return forkJoin([
-      this.couchService.findAll(this.dbName, { selector: { userId: this.user._id, userPlanetCode: this.planetCode } }),
-      this.couchService.get('shelf/' + this.user._id)
-    ]).pipe(
-      map(([ membershipDocs, shelf ]) => this.userMembership = [
-        ...membershipDocs,
-        ...(shelf.myTeamIds || []).map(id => ({ teamId: id, fromShelf: true, docType: 'membership', userId: this.user._id }))
-      ]),
-      catchError(error => {
-        if (error.status === 404) {
-          this.userNotInShelf = true;
-        }
-        return throwError(error);
-      })
+    const identities = userIdentityCandidates(this.user, this.planetCode);
+    return this.couchService.findAll(this.dbName, { selector: userIdentitySelector(identities) }).pipe(
+      map((membershipDocs: any[]) => this.userMembership = membershipDocs)
     );
   }
 
@@ -224,9 +204,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamList(teamRes) {
     const noVisit = { visitCount: 0, lastVisit: undefined };
+    const identities = userIdentityCandidates(this.user, this.planetCode);
     return teamRes.map((res: any) => {
       const doc = res.doc || res;
-      const membershipDoc = this.userMembership.find(req => req.teamId === doc._id) || {};
+      const matchingRows = teamIdentityDocs(this.userMembership, doc, identities, this.planetCode);
+      const membershipDoc = matchingRows.find(req => req.docType === 'membership') ||
+        matchingRows.find(req => req.docType === 'request') || {};
       const visitLog = this.teamActivities.filter(activity => activity.teamId === doc._id).reduce(({ visitCount, lastVisit }, activity) =>
         ({ visitCount: visitCount + 1, lastVisit: lastVisit && activity.time < lastVisit ? lastVisit : activity.time }), noVisit)
         || noVisit;
@@ -234,7 +217,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       const team = { doc, membershipDoc, visitLog, teamPlanetName };
       switch (membershipDoc.docType) {
         case 'membership':
-          return { ...team, userStatus: 'member', isLeader: membershipDoc.isLeader };
+          return {
+            ...team,
+            userStatus: 'member',
+            isLeader: matchingRows.some(row => row.docType === 'membership' && row.isLeader)
+          };
         case 'request':
           return { ...team, userStatus: 'requesting' };
         default:
@@ -274,7 +261,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   addTeam(team: any = {}) {
     const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
-    this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe({
+    this.teamsService.addTeamDialog(this.user, this.mode, { ...team, teamType }).subscribe({
       next: () => {
         this.getTeams();
         const msg = team._id

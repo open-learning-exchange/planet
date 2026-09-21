@@ -133,4 +133,42 @@ describe('DashboardTileComponent', () => {
     expect(dialogRef.close).toHaveBeenCalled();
     expect(messageService.showMessage).toHaveBeenCalled();
   });
+
+  it('leaves through the exact code-less membership the dashboard loaded', () => {
+    const dialogRef = { close: vi.fn() };
+    const dialog = { open: vi.fn().mockReturnValue(dialogRef) };
+    const teamsService = { toggleTeamMembership: vi.fn().mockReturnValue(of({})) };
+    const membershipDoc = {
+      _id: 'membership-1',
+      _rev: '1-membership',
+      userId: 'org.couchdb.user:ann',
+      teamId: 'team-1'
+    };
+
+    TestBed.configureTestingModule({
+      imports: [ DashboardTileComponent ],
+      providers: [
+        { provide: CoursesService, useValue: {} },
+        { provide: DeviceInfoService, useValue: { watchDeviceType: vi.fn().mockReturnValue(of(undefined)) } },
+        { provide: MatDialog, useValue: dialog },
+        { provide: PlanetMessageService, useValue: { showMessage: vi.fn(), showAlert: vi.fn() } },
+        { provide: TeamsService, useValue: teamsService },
+        {
+          provide: UserService,
+          useValue: {
+            get: vi.fn().mockReturnValue({ _id: 'org.couchdb.user:ann', planetCode: 'community' }),
+            shelf: { myTeamIds: [ 'team-1' ] }
+          }
+        }
+      ]
+    });
+    const component = TestBed.createComponent(DashboardTileComponent).componentInstance;
+    component.shelfName = 'myTeamIds';
+    component.cardTitle = 'myTeams';
+
+    component.removeFromShelf({ stopPropagation: vi.fn() }, { _id: 'team-1', title: 'Team 1', membershipDoc, teamDoc: { _id: 'team-1' } });
+    dialog.open.mock.calls[0][1].data.okClick.request.subscribe();
+
+    expect(teamsService.toggleTeamMembership).toHaveBeenCalledWith({ _id: 'team-1' }, true, membershipDoc);
+  });
 });

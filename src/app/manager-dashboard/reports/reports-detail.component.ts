@@ -30,6 +30,7 @@ import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/cou
 import { ReportsHealthComponent } from './reports-health.component';
 import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { matchesUserIdentity } from '../../shared/identity.utils';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -322,7 +323,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
-          member => member.userId === user._id && member.userPlanetCode === user.doc.planetCode
+          member => matchesUserIdentity(member, user, this.planetCode)
         )
       )
     ));

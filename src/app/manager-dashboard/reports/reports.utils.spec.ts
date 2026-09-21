@@ -1,6 +1,21 @@
-import { demographicsForCsv, formatDemographicsForCsv } from './reports.utils';
+import { demographicsForCsv, formatDemographicsForCsv, isSelectedMember } from './reports.utils';
 
 describe('reports utils', () => {
+
+  describe('isSelectedMember', () => {
+
+    it('matches an associated member by the login name their activities record, not a same-named native account', () => {
+      const associated = [ { userId: 'org.couchdb.user:ann', userPlanetCode: 'community', teamPlanetCode: 'nation' } ];
+      const native = [ { userId: 'org.couchdb.user:ann', userPlanetCode: '', teamPlanetCode: 'nation' } ];
+
+      expect(isSelectedMember({ user: 'ann@community' }, associated)).toBe(true);
+      expect(isSelectedMember({ userId: 'org.couchdb.user:ann@community' }, associated)).toBe(true);
+      expect(isSelectedMember({ user: 'ann' }, associated)).toBe(false);
+      expect(isSelectedMember({ user: 'ann' }, native)).toBe(true);
+      expect(isSelectedMember({ user: 'ann@community' }, native)).toBe(false);
+    });
+
+  });
 
   describe('demographicsForCsv', () => {
 

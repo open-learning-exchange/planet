@@ -176,10 +176,10 @@
                 [member]="member"
                 [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
                 [actionMenu]="[]
-                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
-                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
-                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
-                [visits]="visits[member?.name]"
+                  .concat(!matchesCurrentUser(member) && isUserLeader ? [ 'remove' ] : [])
+                  .concat(!sameMember(member, leader) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                  .concat(matchesCurrentUser(member) || isUserLeader ? [ 'title' ] : [])"
+                [visits]="memberVisits(member)"
                 [userStatus]="userStatus"
                 [teamLeader]="leader"
                 (actionClick)="memberActionClick($event)">

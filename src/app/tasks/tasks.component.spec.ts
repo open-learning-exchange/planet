@@ -98,6 +98,38 @@ describe('TasksComponent', () => {
     });
   });
 
+  it('lets the only matching code-less member remove a pre-change local-code assignment', () => {
+    const member = {
+      userId: 'org.couchdb.user:alex', teamPlanetCode: 'planet-b',
+      name: 'alex', userDoc: { fullName: 'Alex' }
+    };
+    const task = {
+      _id: 'task-1', assignee: { userId: member.userId, userPlanetCode: 'planet-a' }
+    };
+    component.assignees = [ member ];
+    component.ngOnInit();
+    taskUpdates.next([ task ]);
+
+    expect(component.isAssigneeSelected(task, member)).toBe(true);
+    expect(component.taskViews[0].assignee).toBe(member);
+
+    component.toggleAssignee(task, member);
+
+    expect(tasksService.addTask).toHaveBeenCalledWith(expect.objectContaining({
+      assignee: '', assignees: []
+    }));
+  });
+
+  it('keeps a local assignment separate when a same-id local member is present', () => {
+    const remote = { userId: 'org.couchdb.user:alex', teamPlanetCode: 'planet-b' };
+    const local = { userId: remote.userId, userPlanetCode: 'planet-a' };
+    const task = { _id: 'task-1', assignee: { userId: remote.userId, userPlanetCode: 'planet-a' } };
+    component.assignees = [ remote, local ];
+
+    expect(component.isAssigneeSelected(task, remote)).toBe(false);
+    expect(component.isAssigneeSelected(task, local)).toBe(true);
+  });
+
   it('keeps the stored snapshot when the current member is unavailable', () => {
     const snapshot = {
       userId: 'org.couchdb.user:alex',
@@ -202,9 +234,10 @@ describe('TasksComponent', () => {
     expect(notificationsService.sendNotificationToUser).toHaveBeenCalled();
   });
 
-  it('recognizes both membership stamps for an associated current user', () => {
+  it('recognizes safe historical task identities without matching a same-named native user', () => {
     userService.get.mockReturnValue({
-      _id: 'org.couchdb.user:alex',
+      _id: 'org.couchdb.user:alex@planet-b',
+      name: 'alex@planet-b',
       planetCode: 'planet-b',
       requestId: 'request-1'
     });
@@ -212,16 +245,20 @@ describe('TasksComponent', () => {
 
     taskUpdates.next([
       { _id: 'origin-task', assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b' } },
-      { _id: 'local-task', assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' } },
+      { _id: 'materialized-local-task', assignee: {
+        userId: 'org.couchdb.user:alex@planet-b', userPlanetCode: 'planet-a'
+      } },
+      { _id: 'native-local-task', assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' } },
       { _id: 'other-task', assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-c' } }
     ]);
 
-    expect(component.myTasks.map(task => task._id)).toEqual([ 'origin-task', 'local-task' ]);
+    expect(component.myTasks.map(task => task._id)).toEqual([ 'origin-task', 'materialized-local-task' ]);
   });
 
-  it('suppresses self-notifications for either associated membership stamp', () => {
+  it('does not suppress notifications for a same-named native assignee', () => {
     userService.get.mockReturnValue({
-      _id: 'org.couchdb.user:alex',
+      _id: 'org.couchdb.user:alex@planet-b',
+      name: 'alex@planet-b',
       planetCode: 'planet-b',
       sync: true
     });
@@ -229,17 +266,23 @@ describe('TasksComponent', () => {
     component.toggleAssignee({ _id: 'origin-task' }, {
       userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b', name: 'alex'
     });
-    component.toggleAssignee({ _id: 'local-task' }, {
+    component.toggleAssignee({ _id: 'materialized-local-task' }, {
+      userId: 'org.couchdb.user:alex@planet-b', userPlanetCode: 'planet-a', name: 'alex@planet-b'
+    });
+    component.toggleAssignee({ _id: 'native-local-task' }, {
       userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a', name: 'alex'
     });
     component.toggleAssignee({ _id: 'other-task' }, {
       userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-c', name: 'alex'
     });
 
-    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledTimes(1);
-    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledWith(expect.objectContaining({
-      userPlanetCode: 'planet-c'
-    }));
+    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledTimes(2);
+    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledWith(
+      expect.objectContaining({ userPlanetCode: 'planet-a' })
+    );
+    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledWith(
+      expect.objectContaining({ userPlanetCode: 'planet-c' })
+    );
   });
 
   it('opens the profile dialog with the assignee planet code', () => {
