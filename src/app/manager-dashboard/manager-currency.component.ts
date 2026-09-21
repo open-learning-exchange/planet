@@ -25,7 +25,7 @@ import { SubmitDirective } from '../shared/submit.directive';
   ]
 })
 export class ManagerCurrencyComponent implements OnInit {
-  form: FormGroup<{ code: FormControl<string>, symbol: FormControl<string> }>;
+  form: FormGroup<{ code: FormControl<string>, symbol: FormControl<string>, key: FormControl<string> }>;
   configuration: any = {};
   spinnerOn = true;
 
@@ -38,14 +38,19 @@ export class ManagerCurrencyComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       code: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(6) ] }),
-      symbol: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(5) ] })
+      symbol: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(5) ] }),
+      key: this.fb.control('', { validators: [] })
     });
   }
 
   ngOnInit() {
     this.configuration = this.stateService.configuration;
+    this.configuration.keys = { currency: this.stateService.keys.currency };
     if (this.configuration?.currency) {
       this.form.patchValue(this.configuration.currency);
+    }
+    if (this.configuration?.keys?.currency) {
+      this.form.patchValue({ key: this.configuration.keys.currency });
     }
   }
 
@@ -56,7 +61,8 @@ export class ManagerCurrencyComponent implements OnInit {
       return;
     }
     this.spinnerOn = true;
-    this.configurationService.patchLocalConfiguration({ currency: { ...this.form.value } })
+    const { key, ...codeAndSymbol } = this.form.value;
+    this.configurationService.patchLocalConfiguration({ currency: { ...codeAndSymbol }, keys: { currency: key } })
       .pipe(finalize(spinnerOff))
       .subscribe(
         () => {
