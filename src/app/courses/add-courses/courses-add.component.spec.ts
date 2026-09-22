@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -20,6 +20,27 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;
   let fixture: ComponentFixture<CoursesAddComponent>;
+
+  const stubUndecodableImage = () => {
+    const originalImage = window.Image;
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
+    class ErrorImage {
+      onerror: () => void = () => {};
+
+      set src(_value: string) {
+        setTimeout(() => this.onerror());
+      }
+    }
+    (window as any).Image = ErrorImage;
+    URL.createObjectURL = vi.fn().mockReturnValue('blob:cover');
+    URL.revokeObjectURL = vi.fn();
+    return () => {
+      (window as any).Image = originalImage;
+      URL.createObjectURL = originalCreateObjectURL;
+      URL.revokeObjectURL = originalRevokeObjectURL;
+    };
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -60,6 +81,64 @@ describe('CoursesAddComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('rejects undecodable covers and reports a failed save after the cover changes', async () => {
+    const restoreImage = stubUndecodableImage();
+    const showAlert = vi.spyOn(TestBed.inject(PlanetMessageService), 'showAlert');
+    const addedCover = { file: new File([ new Uint8Array(2 * 1024 * 1024 + 1) ], 'bad.png', { type: 'image/png' }) } as any;
+    const coverUpload = {
+      added: [ addedCover ],
+      removeAdded: vi.fn(() => component.onCoverStateChange({ retained: [], removed: [], added: [] }))
+    };
+    component.coverUploadComponent = coverUpload as any;
+
+    try {
+      component.onCoverStateChange({ retained: [], removed: [], added: [ addedCover ] });
+      await vi.waitFor(() => expect(coverUpload.removeAdded).toHaveBeenCalledWith(0));
+
+      expect((component as any).coverState.added).toEqual([]);
+      expect(showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be processed'));
+
+      component.coverUploadComponent = undefined;
+      component.setCoverState({ retained: [], removed: [], added: [ addedCover ] });
+      await (component as any).validateAddedCover(addedCover);
+      expect((component as any).coverState.added).toEqual([]);
+
+      component.setCoverState({ retained: [], removed: [], added: [ addedCover ] });
+      component.updateCourse(component.courseForm.getRawValue(), true);
+      component.setCoverState({ retained: [], removed: [], added: [] });
+      await vi.waitFor(() => expect(showAlert).toHaveBeenLastCalledWith('There was an error saving this course'));
+    } finally {
+      restoreImage();
+    }
+  });
+
+  it('reuses a cover check until the existing attachment names change', async () => {
+    const restoreImage = stubUndecodableImage();
+    const addedCover = { file: new File([ 'image' ], 'cover.png', { type: 'image/png' }) } as any;
+    const saveCover = vi.spyOn(component as any, 'saveCourseWithNewCover').mockReturnValue(of([ {} ]));
+    vi.spyOn(component, 'courseChangeComplete').mockImplementation(() => undefined);
+    component.savedCourse = { _attachments: { 'cover.png': {} } };
+
+    try {
+      component.onCoverStateChange({ retained: [], removed: [], added: [ addedCover ] });
+      await vi.waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalledOnce());
+      component.updateCourse(component.courseForm.getRawValue(), true);
+      await vi.waitFor(() => expect(saveCover).toHaveBeenCalledOnce());
+
+      expect(saveCover.mock.calls[0][1].fileName).toBe('cover-1.png');
+      expect(URL.createObjectURL).toHaveBeenCalledOnce();
+
+      component.savedCourse._attachments['cover-1.png'] = {};
+      component.updateCourse(component.courseForm.getRawValue(), true);
+      await vi.waitFor(() => expect(saveCover).toHaveBeenCalledTimes(2));
+
+      expect(saveCover.mock.calls[1][1].fileName).toBe('cover-2.png');
+      expect(URL.createObjectURL).toHaveBeenCalledTimes(2);
+    } finally {
+      restoreImage();
+    }
   });
 
   it('should mark the course title as required when an empty form is submitted', () => {
