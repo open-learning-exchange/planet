@@ -24,7 +24,7 @@ import {
   PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
 } from '../shared/forms/planet-step-list.component';
 import { ExamsPreviewComponent } from './exams-preview.component';
-import { markdownToPlainText } from '../shared/utils';
+import { MarkdownRenderService } from '../shared/markdown-render.service';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
@@ -148,7 +148,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     private examsService: ExamsService,
     private planetStepListService: PlanetStepListService,
     private dialog: MatDialog,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private markdownRenderer: MarkdownRenderService
   ) {
     const typeParam = this.route.snapshot.paramMap.get('type');
     this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
@@ -290,7 +291,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   getQuestionLabel(value: unknown, index: number): string {
-    const questionText = markdownToPlainText(value);
+    const questionText = this.markdownRenderer.toPlainText(value);
     return questionText || $localize`Question ${index + 1}`;
   }
 
