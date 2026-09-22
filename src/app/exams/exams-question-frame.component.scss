@@ -110,7 +110,6 @@
       }
 
       // The status / error message that trails the buttons gets its own row.
-      .action-buttons__left > span,
       .action-buttons__right > span {
         flex: 1 1 100%;
         justify-content: center;

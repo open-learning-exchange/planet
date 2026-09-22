@@ -222,11 +222,10 @@ body {
 
   // Material offsets a leading icon from the label text beside it, e.g.
   // `.mat-mdc-raised-button > .mat-icon` is `margin-right: 8px; margin-left: -8px`.
-  // Buttons that drop their label on narrow screens are left with an icon that
-  // has nothing to offset from, sitting 8px off centre. Material always renders
-  // the `.mdc-button__label` wrapper around projected text, so an empty wrapper
-  // means an icon-only button and the offset should go. Keyed on Material
-  // internals: if either class is renamed the rule simply stops applying.
+  // When a button's projected label is absent, that offset leaves its icon off
+  // centre. Material still renders an empty `.mdc-button__label` wrapper, which
+  // identifies the buttons that need the offset removed. Keyed on Material
+  // internals: if either class is renamed, this rule stops applying.
   .mdc-button:has(> .mdc-button__label:empty) > .mat-icon {
     margin: 0;
   }
