@@ -57,8 +57,6 @@ export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: strin
   return `${trimmedBaseUrl}/${trimmedDbName}/${couchAttachmentPath(docId, attachmentName)}`;
 };
 
-// Cap on an original that could not be normalized. Anything larger is rejected rather than
-// replicated unprocessed, e.g. HEIC photos, which pass an `image/*` accept but no browser decodes.
 export const IMAGE_MAX_FALLBACK_BYTES = 2 * 1024 * 1024;
 
 export interface NormalizeImageOptions {
@@ -107,9 +105,6 @@ const encodedImage = async (canvas: HTMLCanvasElement, quality: number): Promise
   return jpeg?.type === 'image/jpeg' ? { blob: jpeg, contentType: 'image/jpeg', extension: 'jpg' } : null;
 };
 
-// Browser-side cover/image normalization: bounds replicated payloads while keeping upload UX permissive.
-// Returns null when the image cannot be decoded and the original is too large to attach unprocessed,
-// so callers reject it instead of replicating a payload no browser can render anyway.
 export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {}): Promise<NormalizedImage | null> => {
   const maxDimension = opts.maxDimension ?? 600;
   const quality = opts.quality ?? 0.82;

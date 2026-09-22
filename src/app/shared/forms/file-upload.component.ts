@@ -43,7 +43,6 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   @Input() typePills: string[] = [ 'PDF', 'EPUB', 'ZIP', 'MP3', 'MP4', 'IMG' ];
   @Input() multiple = false;
   @Input() maxFiles = 1;
-  // Zero leaves the component's advertised limit unenforced, matching callers that validate size themselves.
   @Input() maxSizeMb = 0;
   @Input() imagePreview = false;
   @Input() existingAttachments: ExistingAttachment[] = [];
