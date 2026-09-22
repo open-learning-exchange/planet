@@ -34,22 +34,26 @@
   </div>
   <div class="badges">
     @for (course of visibleBadges; track course._id) {
-      <span class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
+      <button type="button" class="badge-button" (click)="openCourseView(course)"
+        aria-label="View course {{ course.doc.courseTitle }}" i18n-aria-label
+        [matTooltip]="course.doc.courseTitle">
         <mat-icon
           [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
           fontSet="fa"
-          [fontIcon]="getBadgeIcon(course)">
+          fontIcon="fa-star">
         </mat-icon>
-      </span>
+      </button>
     }
     @if (remainingBadgesCount > 0) {
-      <a
-        [routerLink]="['myProgress']"
-        class="more-badges-chip"
-        [matTooltip]="moreBadgesTooltip"
-        [attr.aria-label]="moreBadgesTooltip">
+      <button type="button" class="more-badges-chip" [matMenuTriggerFor]="moreBadgesMenu"
+        [attr.aria-label]="moreBadgesLabel">
         +{{ remainingBadgesCount }}
-      </a>
+      </button>
+      <mat-menu #moreBadgesMenu="matMenu">
+        @for (course of hiddenBadges; track course._id) {
+          <button mat-menu-item type="button" (click)="openCourseView(course)">{{ course.doc.courseTitle }}</button>
+        }
+      </mat-menu>
     }
   </div>
 </div>

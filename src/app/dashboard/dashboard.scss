@@ -88,6 +88,20 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
         display: inline;
       }
 
+      .badge-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0;
+        border: 0;
+        background: none;
+        cursor: pointer;
+
+        &:focus-visible {
+          outline: 2px solid v.$primary;
+          outline-offset: 2px;
+        }
+      }
+
       .more-badges-chip {
         display: inline-flex;
         align-items: center;
@@ -95,6 +109,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
         font-size: 0.75rem;
         font-weight: 600;
         padding: 2px 8px;
+        border: 0;
         border-radius: 12px;
         background-color: v.$primary;
         color: v.$primary-text;
