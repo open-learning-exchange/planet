@@ -1,5 +1,5 @@
 import { FormBuilder } from '@angular/forms';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ExamsViewComponent } from './exams-view.component';
@@ -96,6 +96,25 @@ describe('ExamsViewComponent', () => {
 
     expect(planetMessageService.showAlert).toHaveBeenCalledWith('There was a problem recording the survey.');
     expect(submissionsService.startNewSubmission).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [ 'loads', (survey$: Subject<any>) => survey$.next({ _id: 'survey-1', name: 'Survey 1', questions: [ { body: 'Q1' } ] }) ],
+    [ 'fails', (survey$: Subject<any>) => survey$.error(new Error('failed')) ]
+  ])('ignores a survey that %s after the component is destroyed', (_, settle) => {
+    const params = { surveyId: 'survey-1', mode: 'take', questionNum: '1' };
+    const survey$ = new Subject<any>();
+    component = createComponent(params);
+    couchService.get.mockReturnValue(survey$);
+
+    component.setExam(paramMapOf(params));
+    component.ngOnDestroy();
+    settle(survey$);
+    survey$.complete();
+
+    expect(submissionsService.startNewSubmission).not.toHaveBeenCalled();
+    expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
   it('adds the submission ID to Q1 history before advancing to Q2', () => {

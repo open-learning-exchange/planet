@@ -279,7 +279,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     forkJoin([
       survey$,
       teamId ? this.couchService.get(`teams/${teamId}`) : of(null)
-    ]).subscribe(([ survey, team ]: [ any, any ]) => {
+    ]).pipe(takeUntil(this.onDestroy$)).subscribe(([ survey, team ]: [ any, any ]) => {
       this.title = survey.name;
       this.setTakingExam(survey, survey._id, 'survey', team ? { _id: team._id, name: team.name, type: team.type } : undefined, true);
     }, () => {
