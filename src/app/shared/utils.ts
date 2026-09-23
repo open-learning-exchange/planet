@@ -1,6 +1,4 @@
-import * as showdown from 'showdown';
 import mime from 'mime';
-export const converter = new showdown.Converter();
 
 // File.type can be empty for some browsers / file sources; fall back to the
 // filename extension via the mime package so callers don't reject valid files.
@@ -71,7 +69,7 @@ export interface NormalizedImage {
   fileName: string;
 }
 
-export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number; height: number } => {
+export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number, height: number } => {
   const scale = Math.min(1, maxDimension / Math.max(width, height));
   return {
     width: Math.max(1, Math.round(width * scale)),
@@ -165,17 +163,13 @@ export const dedupeShelfReduce = (ids, id) => {
   return ids.concat(id);
 };
 
-export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => {
-  return array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index;
-});
+export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => (
+  array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index)
+);
 
-export const removeFromArray = (startArray = [], removeArray = []) => {
-  return startArray.filter(item => removeArray.indexOf(item) === -1);
-};
+export const removeFromArray = (startArray = [], removeArray = []) => startArray.filter(item => removeArray.indexOf(item) === -1);
 
-export const addToArray = (startArray = [], addArray = []) => {
-  return startArray.concat(addArray).reduce(dedupeShelfReduce, []);
-};
+export const addToArray = (startArray = [], addArray = []) => startArray.concat(addArray).reduce(dedupeShelfReduce, []);
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
 
@@ -234,16 +228,57 @@ export const stringToHex = (string: string) => string.split('').map(char => char
 
 export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
-export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
+const calendarDate = (date: string | number | Date) => {
+  const parsed = new Date(date);
+  const parts = typeof date === 'string' ? date.match(/^(\d{4})-(\d{2})-(\d{2})/) : null;
+  if (!parts || isNaN(parsed.getTime())) {
+    return parsed;
+  }
+  const [ year, month, day ] = parts.slice(1).map(Number);
+  const calendar = new Date(year, month - 1, day);
+  return calendar.getMonth() === month - 1 && calendar.getDate() === day ? calendar : new Date(NaN);
+};
+
+export const ageFromBirthDate = (currentTime: number | Date, birthDate: string | number | Date) => {
+  if (birthDate === undefined || birthDate === null || birthDate === '') {
+    return null;
+  }
   const now = new Date(currentTime);
-  const birth = new Date(birthDate);
+  const birth = calendarDate(birthDate);
+  if (isNaN(now.getTime()) || isNaN(birth.getTime())) {
+    return null;
+  }
   const yearDiff = now.getFullYear() - birth.getFullYear();
-  const afterBirthDay = now.getMonth() < birth.getMonth() ?
-    false :
-    now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
-      false :
-      true;
+  const afterBirthDay = now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
   return yearDiff - (afterBirthDay ? 0 : 1);
+};
+
+export const ageFromUser = (
+  currentTime: number | Date,
+  user?: { age?: number | '' | null, birthDate?: string | number | Date | null }
+) => {
+  const age = ageFromBirthDate(currentTime, user?.birthDate) ?? user?.age;
+  return age === undefined || age === null || age === '' ? null : age;
+};
+
+export const genderBucket = (gender?: unknown) => {
+  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
+  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
+};
+
+export const localizedGender = (gender?: unknown, fallback = '') => {
+  if (typeof gender !== 'string' || !gender) {
+    return fallback;
+  }
+  switch (gender.toLowerCase()) {
+    case 'male':
+      return $localize`Male`;
+    case 'female':
+      return $localize`Female`;
+    default:
+      return toProperCase(gender);
+  }
 };
 
 export const formatStringDate = (date: string) =>
@@ -265,14 +300,8 @@ export const deepEqual = (item1: any, item2: any) => {
   return item1 === item2;
 };
 
-export const markdownToPlainText = (markdown: any) => {
-  if (typeof markdown !== 'string') {
-    return markdown;
-  }
-  const html = document.createElement('div');
-  html.innerHTML = converter.makeHtml(markdown);
-  return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
-};
+export const fullName = (user: any) =>
+  [ user?.firstName, user?.middleName, user?.lastName ].filter(namePart => namePart).join(' ');
 
 export const truncateText = (text, length) => {
   if (!text) {
@@ -284,20 +313,151 @@ export const truncateText = (text, length) => {
   return text;
 };
 
+const markdownColumnWidth = (value: string) => {
+  let width = 0;
+  for (const character of value) {
+    width = character === '\t' ? width + 4 - (width % 4) : width + 1;
+  }
+  return width;
+};
+
+const markdownTableRowRegex = /^[ \t]*\|[^\n]+\|[ \t]*$/;
+const isExcessiveWhitespace = (value: string) => value.length > 8 || (value.match(/\t/g)?.length || 0) > 1;
+const collapseWhitespaceRuns = (value: string) =>
+  value.replace(/[ \t]+/g, (match) => isExcessiveWhitespace(match) ? '  ' : match);
+
+interface MarkdownFence {
+  blockquoteDepth: number;
+  indentation: number;
+  marker: string;
+  length: number;
+}
+
+const stripMarkdownBlockquotePrefix = (line: string) => {
+  const prefix = line.match(/^(?: {0,3}>[ \t]?)+/)?.[0] || '';
+  return {
+    blockquoteDepth: (prefix.match(/>/g) || []).length,
+    content: line.slice(prefix.length),
+    prefix
+  };
+};
+
+const isClosingMarkdownFence = (line: string, fence: MarkdownFence) => {
+  const { blockquoteDepth, content } = stripMarkdownBlockquotePrefix(line);
+  const match = content.match(/^([ \t]*)(`+|~+)[ \t]*$/);
+  if (blockquoteDepth !== fence.blockquoteDepth ||
+      !match || match[2][0] !== fence.marker || match[2].length < fence.length) {
+    return false;
+  }
+  const indentation = markdownColumnWidth(match[1]);
+  return fence.indentation <= 3 ? indentation <= 3 : indentation === fence.indentation;
+};
+
+const getMarkdownFence = (lines: string[], index: number): MarkdownFence | undefined => {
+  const { blockquoteDepth, content } = stripMarkdownBlockquotePrefix(lines[index]);
+  const listPrefix = content.match(/^([ \t]{0,3}(?:[-+*]|\d+\.)[ \t]+)/)?.[0] || '';
+  const match = content.slice(listPrefix.length).match(/^([ \t]*)(`{3,}|~{3,})(.*)$/);
+  if (!match || (match[2][0] === '`' && match[3].includes('`'))) {
+    return;
+  }
+  const fence = {
+    blockquoteDepth,
+    indentation: markdownColumnWidth(listPrefix) + markdownColumnWidth(match[1]),
+    marker: match[2][0],
+    length: match[2].length
+  };
+  for (let lineIndex = index + 1; lineIndex < lines.length; lineIndex += 1) {
+    if (isClosingMarkdownFence(lines[lineIndex], fence)) {
+      return fence;
+    }
+  }
+};
+
+const normalizeMarkdownLine = (line: string, hasFollowingLine: boolean) => {
+  if (line.trim() === '') {
+    return '';
+  }
+  // Preserve ordinary Markdown indentation, but bound legacy alignment whitespace that can block rendering.
+  const { content: containerContent, prefix } = stripMarkdownBlockquotePrefix(line);
+  const leadingWhitespace = containerContent.match(/^[ \t]*/)?.[0] || '';
+  const indentation = markdownColumnWidth(leadingWhitespace);
+  const trailingWhitespace = containerContent.match(/[ \t]+$/)?.[0] || '';
+  const hasExcessiveIndentation = indentation > 8 || isExcessiveWhitespace(leadingWhitespace);
+  const hasExcessiveTrailingWhitespace = isExcessiveWhitespace(trailingWhitespace);
+  const contentWithoutIndentation = containerContent.slice(leadingWhitespace.length);
+  const isListItem = /^(?:[-+*]|\d+\.)[ \t]+/.test(contentWithoutIndentation);
+  const isTableRow = contentWithoutIndentation.startsWith('|');
+  const isIndentedCode = /^ {4,8}\S/.test(containerContent) || /^\t[^\t]/.test(containerContent);
+
+  if (isIndentedCode) {
+    return hasExcessiveTrailingWhitespace ? line.trimEnd() : line;
+  }
+  if (isListItem || isTableRow) {
+    const normalizedIndentation = isTableRow && hasExcessiveIndentation ? '  ' : leadingWhitespace;
+    const normalizedListOrTableLine =
+      `${prefix}${normalizedIndentation}${collapseWhitespaceRuns(contentWithoutIndentation)}`;
+    return !hasFollowingLine && hasExcessiveTrailingWhitespace ?
+      normalizedListOrTableLine.trimEnd() :
+      normalizedListOrTableLine;
+  }
+  const content = hasExcessiveIndentation ? containerContent.trimStart() : containerContent;
+  const normalizedLine = `${prefix}${collapseWhitespaceRuns(content)}`;
+  return !hasFollowingLine && hasExcessiveTrailingWhitespace ? normalizedLine.trimEnd() : normalizedLine;
+};
+
 export const normalizeMarkdownWhitespace = (content: string) => {
-  // Replace excessive consecutive whitespace (tabs, newlines, spaces) with reasonable limits
-  // Replace sequences of tabs/spaces with max 2 spaces
-  content = (content || '').replace(/[ \t]+/g, (match) => match.length > 2 ? '  ' : match);
-  // Replace excessive newlines (more than 2 consecutive) with just 2 newlines
-  content = content.replace(/\n{3,}/g, '\n\n');
-  return content.trim();
+  const lines = String(content ?? '').replace(/\r\n?/g, '\n').split('\n');
+  const normalizedLines: string[] = [];
+  let fence: MarkdownFence | undefined;
+  let blankLineCount = 0;
+
+  lines.forEach((sourceLine, index) => {
+    if (fence) {
+      normalizedLines.push(sourceLine);
+      blankLineCount = 0;
+      if (isClosingMarkdownFence(sourceLine, fence)) {
+        fence = undefined;
+      }
+      return;
+    }
+
+    const openingFence = getMarkdownFence(lines, index);
+    if (openingFence) {
+      fence = openingFence;
+      normalizedLines.push(sourceLine);
+      blankLineCount = 0;
+      return;
+    }
+
+    const line = normalizeMarkdownLine(sourceLine, index < lines.length - 1);
+    if (line === '') {
+      blankLineCount += 1;
+      if (blankLineCount === 1) {
+        normalizedLines.push('');
+      }
+      return;
+    }
+    blankLineCount = 0;
+    normalizedLines.push(line);
+
+    const isTopLevelListItem = /^ {0,3}(?:[-+*]|\d+\.)[ \t]+(?=\S|$)/.test(line);
+    const nextLineIsTableHeader = markdownTableRowRegex.test(lines[index + 1] || '');
+    const followingLineIsTableDivider = /^[ \t]*\|[ \t]*:?-{3,}/.test(lines[index + 2] || '');
+
+    // EasyMDE accepts a table directly below a list item, while Showdown needs a blank line.
+    if (isTopLevelListItem && nextLineIsTableHeader && followingLineIsTableDivider) {
+      normalizedLines.push('');
+    }
+  });
+
+  return normalizedLines.join('\n').replace(/^\n+|\n+$/g, '');
 };
 
 export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
 
+// Content must be normalized first so pathological whitespace cannot inflate preview length.
 export const getMarkdownPreviewText = (content: string) => {
-  const normalizedContent = normalizeMarkdownWhitespace(content);
-  const textOnly = normalizedContent.replace(new RegExp(markdownImageRegex), '');
+  const textOnly = (content || '').replace(new RegExp(markdownImageRegex), '');
   return textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
 };
 
@@ -314,7 +474,7 @@ export const calculateMdAdjustedLimit = (content, limit) => {
 export const hasMarkdownImages = (content: string) => new RegExp(markdownImageRegex).test(content || '');
 
 export const doesMarkdownPreviewTruncate = (content: string, limit = 450) => {
-  const previewText = getMarkdownPreviewText(content);
+  const previewText = getMarkdownPreviewText(normalizeMarkdownWhitespace(content));
   return previewText.length > calculateMdAdjustedLimit(previewText, limit);
 };
 
@@ -328,4 +488,22 @@ export const extractMarkdownImageUrls = (content: string) => {
   }
 
   return matches;
+};
+
+export const formatBytes = (bytes?: number): string => {
+  if (bytes === undefined || bytes === null || Number.isNaN(bytes) || bytes < 0) {
+    return '';
+  }
+  if (bytes === 0) {
+    return '0 B';
+  }
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let unitIndex = Math.max(0, Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1));
+  let formattedValue = parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(1));
+  if (formattedValue === k && unitIndex < sizes.length - 1) {
+    unitIndex++;
+    formattedValue = 1;
+  }
+  return `${formattedValue} ${sizes[unitIndex]}`;
 };

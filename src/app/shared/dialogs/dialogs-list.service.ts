@@ -8,11 +8,11 @@ import { filterSpecificFields } from '../table-helpers';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 
 const listColumns = {
-  'resources': [ 'title' ],
-  'courses': [ 'courseTitle' ],
-  '_users': [ 'Full Name', 'name' ],
-  'child_users': [ 'Full Name', 'name' ],
-  'communityregistrationrequests': [ 'name', 'code', 'localDomain' ]
+  resources: [ 'title' ],
+  courses: [ 'courseTitle' ],
+  _users: [ 'Full Name', 'name' ],
+  child_users: [ 'Full Name', 'name' ],
+  communityregistrationrequests: [ 'name', 'code', 'localDomain' ]
 };
 
 @Injectable()
@@ -34,8 +34,8 @@ export class DialogsListService {
       );
     };
     return {
-      '_users': users,
-      'child_users': users
+      _users: users,
+      child_users: users
     };
   }
 

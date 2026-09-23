@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,7 +22,7 @@ import { AndroidAppPromptService } from '../../shared/android-app-prompt.service
   templateUrl: './public-survey.component.html',
   styleUrls: ['./public-survey.component.scss'],
   imports: [
-    MatIcon, TdMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton,
+    MatIcon, PlanetMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton,
     ReactiveFormsModule, MatFormField, MatLabel, MatHint, MatError, MatInput, MatRadioGroup, MatRadioButton
   ]
 })
@@ -139,7 +139,7 @@ export class PublicSurveyComponent implements OnInit {
 
   openSignupDialog() {
     this.dialog.open(LoginDialogComponent, {
-      'data': { 'createMode': true }
+      data: { createMode: true }
     });
   }
 

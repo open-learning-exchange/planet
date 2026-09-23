@@ -85,6 +85,19 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "@angular-eslint/no-outputs-metadata-property": "error",
         "@angular-eslint/use-lifecycle-interface": "error",
         "@angular-eslint/use-pipe-transform-interface": "error",
+        "@stylistic/member-delimiter-style": [
+          "error",
+          {
+            "multiline": {
+              "delimiter": "semi",
+              "requireLast": true
+            },
+            "singleline": {
+              "delimiter": "comma",
+              "requireLast": false
+            }
+          }
+        ],
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
@@ -158,7 +171,9 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
             },
         }],
 
+        "@typescript-eslint/no-unused-expressions": "error",
         "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
 
@@ -169,8 +184,10 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         }],
 
         "@typescript-eslint/unified-signatures": "error",
+        "one-var": ["error", "never"],
         complexity: "off",
         "constructor-super": "error",
+        "eqeqeq": ["error", "smart"],
         "guard-for-in": "error",
         "id-match": "error",
         "import/no-deprecated": "warn",
@@ -212,8 +229,16 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "no-new-wrappers": "error",
 
         "no-restricted-imports": ["error", {
-            name: "rxjs/Rx",
-            message: "Please import directly from 'rxjs' instead",
+            paths: [{
+                name: "rxjs/Rx",
+                message: "Please import directly from 'rxjs' instead",
+            }, {
+                name: "showdown",
+                message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
+            }, {
+                name: "@covalent/markdown",
+                message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
+            }],
         }],
 
         "@typescript-eslint/no-shadow": ["error", {
@@ -222,11 +247,32 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "no-throw-literal": "error",
         "no-undef-init": "error",
+        "no-underscore-dangle": [
+          "error",
+          {
+            "allow": [
+              "_attachments",
+              "_filter",
+              "_id",
+              "_placeholder",
+              "_required",
+              "_rev",
+              "_tableState",
+              "_textValue",
+              "_value",
+              "_deleted",
+              "_replication_state",
+              "_changeDetectorRef",
+              "__karma__"
+            ]
+          }
+        ],
         "no-unsafe-finally": "error",
         "no-unused-labels": "error",
         radix: "error",
         "use-isnan": "error",
         "valid-typeof": "off",
+        "arrow-body-style": "error",
         "arrow-parens": "off",
         "comma-dangle": "off",
         curly: "error",
@@ -240,6 +286,17 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
+        "quote-props": ["error", "as-needed"],
+        "space-before-function-paren": [
+          "error",
+          {
+            "anonymous": "never",
+            "asyncArrow": "always",
+            "named": "never"
+          }
+        ],
+        "no-var": "error",
+        "object-shorthand": ["error", "always"],
         quotes: "off",
 
         "@stylistic/quotes": ["error", "single", {
@@ -248,6 +305,13 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "@stylistic/semi": ["error", "always"],
         "@stylistic/type-annotation-spacing": "error",
+        "prefer-arrow/prefer-arrow-functions": "error",
+        "prefer-const": "error",
+    },
+}, {
+    files: ["src/app/shared/markdown-render.service.ts"],
+    rules: {
+        "no-restricted-imports": "off",
     },
 }, {
     files: ["**/*.html"],

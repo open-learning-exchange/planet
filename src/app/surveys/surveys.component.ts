@@ -13,7 +13,10 @@ import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
-import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
+import {
+  filterSpecificFields, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
+  removeFilteredFromSelection, toggleVisibleSelection
+} from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -30,7 +33,7 @@ import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
@@ -38,6 +41,12 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { LinkCopyService } from '../shared/link-copy.service';
+
+type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
+
+const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'record', 'public', 'revoke' ];
+const questionBlockedActions: SurveyAction[] = [ 'send', 'record', 'public', 'submissions' ];
 
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
@@ -58,6 +67,7 @@ interface SurveyFilterForm {
     MatIconButton,
     MatIcon,
     MatFormField,
+    MatSuffix,
     MatLabel,
     MatInput,
     MatMiniFabButton,
@@ -107,13 +117,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   isAuthorized = false;
-  currentFilter = { viewMode: 'team' };
+  currentFilter: { viewMode: 'team' | 'adopt' } = { viewMode: 'team' };
   allSurveys: any[] = [];
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
   useDialogLoading = true;
   isLoading = true;
+  searchValue = '';
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
@@ -139,7 +150,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private chatService: ChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private linkCopyService: LinkCopyService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -183,7 +195,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadSurveys() {
     this.isLoading = true;
-    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
+    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ type }));
     forkJoin([
       receiveData('exams', 'surveys'),
       this.couchService.get('submissions/_design/surveyData/_view/submissionsByParent'),
@@ -193,7 +205,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const targetTeamId = this.teamId || this.routeTeamId;
 
-      const submissionsBySurvey: Record<string, Array<{ status: string; teamId: string | null; parent?: any }>> = {};
+      const submissionsBySurvey: Record<string, Array<{ status: string, teamId: string | null, parent?: any }>> = {};
       submissions.forEach(row => {
         const [baseSurveyId] = row.key;
         (submissionsBySurvey[baseSurveyId] ||= []).push(row.value);
@@ -258,15 +270,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   private applyViewModeFilter() {
     const targetTeamId = this.routeTeamId || this.teamId;
     this.surveys.data = this.allSurveys.filter(survey => {
-      if (this.currentFilter.viewMode === 'team') {
-        // team surveys: created by team, sent or adopted
-        return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
-      } else if (this.currentFilter.viewMode === 'adopt') {
-        // community surveys that can be adopted & team hasn't adopted yet
-        return !survey.sourceSurveyId && survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
+      if (this.currentFilter.viewMode === 'adopt') {
+        // active, shareable community surveys the team has not already adopted
+        return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
+          !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
-      // manager view: no team adopted/sent survey
-      return !survey.teamId && !survey.sourceSurveyId;
+      // without a target team, include surveys that are original rather than derived copies
+      return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
   }
 
@@ -292,20 +302,20 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   routeToEditSurvey(route, id = '') {
-    this.router.navigate([ route + '/' + id, { 'type': 'survey' } ], { relativeTo: this.route });
+    this.router.navigate([ route + '/' + id, { type: 'survey' } ], { relativeTo: this.route });
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.surveys.filter = filterValue;
-    queueMicrotask(() => {
-      const visibleSelection = new Set(this.renderedRows.map(row => row._id));
-      this.selection.deselect(...this.selection.selected.filter(selectedId => !visibleSelection.has(selectedId)));
-    });
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   isAllSelected() {
-    const selectableRowsInPage = this.renderedRows.filter(row => this.isRowSelectable(row));
-    return selectableRowsInPage.length > 0 && selectableRowsInPage.every(row => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows, {
+      selectValue: row => row._id,
+      isSelectable: row => this.isRowSelectable(row)
+    });
   }
 
   isRowSelectable(row: any): boolean {
@@ -313,15 +323,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => {
-        if (this.isRowSelectable(row)) {
-          this.selection.select(row._id);
-        }
-      });
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, {
+      selectValue: row => row._id,
+      isSelectable: row => this.isRowSelectable(row),
+      clearAllOnDeselect: true
+    });
   }
 
   deleteSelected() {
@@ -374,7 +380,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.couchService.findAll(
           'submissions',
           findDocuments(
-            { 'status': 'pending', 'parentId': { '$regex': `^${survey._id}(@|$)` } },
+            { status: 'pending', parentId: { $regex: `^${survey._id}(@|$)` } },
             0
           )
         ).pipe(switchMap((submissions) => {
@@ -439,12 +445,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       data: {
         okClick: (selection: any[]) => {
           this.dialogsLoadingService.start();
-          forkJoin(selection.map(item => {
-            return this.createTeamSurveyFromSource(survey, {
-              _id: item.doc._id,
-              name: item.doc.name
-            });
-          })).subscribe(() => {
+          forkJoin(selection.map(item => this.createTeamSurveyFromSource(survey, {
+            _id: item.doc._id,
+            name: item.doc.name
+          }))).subscribe(() => {
             this.planetMessageService.showMessage($localize`Survey sent to teams`);
             this.dialogsLoadingService.stop();
             this.dialogRef.close();
@@ -454,7 +458,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dialogsLoadingService.stop();
           });
         },
-        excludeIds: excludeIds,
+        excludeIds,
         mode: 'teams'
       }
     });
@@ -481,8 +485,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendSurvey(survey: any, users: any[]): Observable<void> {
     return this.submissionsService.sendSubmissionRequests(users, {
-      'parentId': survey._id,
-      'parent': survey
+      parentId: survey._id,
+      parent: survey
     }).pipe(
       tap(() => {
         this.planetMessageService.showMessage($localize`Survey requests sent`);
@@ -552,12 +556,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const link = `${window.location.origin}/survey/${targetTeamId}/${survey._id}`;
-    navigator.clipboard.writeText(link).then(() => {
-      this.planetMessageService.showMessage($localize`Public survey link copied`);
-    }).catch(() => {
-      this.planetMessageService.showAlert($localize`Failed to copy public survey link`);
-    });
+    this.linkCopyService.copyLink(
+      [ '/survey', targetTeamId, survey._id ],
+      {
+        success: $localize`Public survey link copied`,
+        failure: $localize`Failed to copy public survey link`
+      }
+    );
   }
 
   exportCSV(survey) {
@@ -569,7 +574,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    const hasChartableData = survey.questions.some(
+    const questions = Array.isArray(survey.questions) ? survey.questions : [];
+    const hasChartableData = questions.some(
       (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
@@ -681,15 +687,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.data = this.surveys.data.map(item => item._id === surveyId ? { ...item, ...changes } : item);
   }
 
-  getActionTooltip(
-    survey: any,
-    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke'
-  ): string {
+  getActionTooltip(survey: any, action: SurveyAction): string {
     if (survey.isArchived) {
       if (action === 'archive') {
         return $localize`Survey is already archived`;
       }
-      return $localize`Survey is archived and cannot accept new actions`;
+      if (archiveBlockedActions.includes(action)) {
+        return $localize`Survey is archived and cannot accept new actions`;
+      }
+    }
+
+    if (survey.teamId && this.isManagerRoute) {
+      if (action === 'send') {
+        return $localize`Team surveys cannot be sent from here`;
+      }
+      if (action === 'record') {
+        return $localize`Team surveys cannot be recorded from here`;
+      }
     }
 
     if (!survey.taken) {
@@ -705,11 +719,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return $localize`This survey was created on the parent planet and cannot be managed here`;
     }
 
-    if (this.currentFilter.viewMode === 'adopt') {
+    if (action === 'select' && this.currentFilter.viewMode === 'adopt') {
       return $localize`This is a community survey`;
     }
 
-    if (!survey.questions?.length) {
+    if (action === 'adopt') {
+      return $localize`Adopt Survey`;
+    }
+
+    if (questionBlockedActions.includes(action) && !survey.questions?.length) {
       return $localize`Survey has no questions`;
     }
 
@@ -725,6 +743,26 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (action === 'revoke') {
       return $localize`Revoke public access for this survey`;
+    }
+
+    if (action === 'edit') {
+      return $localize`Edit Survey`;
+    }
+
+    if (action === 'send') {
+      return $localize`Send Survey`;
+    }
+
+    if (action === 'archive') {
+      return $localize`Archive Survey`;
+    }
+
+    if (action === 'submissions') {
+      return $localize`View Submissions`;
+    }
+
+    if (action === 'export') {
+      return $localize`Export Survey Submissions`;
     }
 
     return '';

@@ -1,9 +1,6 @@
-import { Component, HostBinding, Input, OnDestroy, Optional, Self } from '@angular/core';
+import { Component, HostBinding, Input, Optional, Self } from '@angular/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { MatFormFieldControl } from '@angular/material/form-field';
-import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { UserService } from '../user.service';
 import { NgClass, NgStyle } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 
@@ -18,93 +15,57 @@ import { MatIcon } from '@angular/material/icon';
       cursor: pointer;
     }
   `],
-  providers: [
-    { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
-  ],
   imports: [NgClass, MatIcon, NgStyle]
 })
-export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
+export class PlanetRatingStarsComponent implements ControlValueAccessor {
 
-  static nextId = 0;
-
-  @HostBinding() id = `planet-rating-stars-${PlanetRatingStarsComponent.nextId++}`;
-  @HostBinding('attr.aria-describedby') describedBy = '';
-
-  private _required = false;
-  private _placeholder: string;
-  private _disabled = false;
+  #required = false;
+  #disabled = false;
 
   starActiveWidth = '0%';
-  stateChanges = new Subject<void>();
-  errorState = false;
-  // Label should always float above stars
-  shouldLabelFloat = true;
-  controlType = 'no-underline';
-  // Need to be defined on class, but not needed for this component
+  // Needs to be defined on class, but there is nothing to mark as touched
   onTouched;
-  onContainerClick;
-  focused = false;
+  @HostBinding('attr.role') role = 'img';
+  @HostBinding('attr.aria-label') get ariaLabel() {
+    return $localize`Rating: ${this.value} out of 5`;
+  }
 
   @Input()
   get value() {
-    return this._value;
+    return this.#value;
   }
   set value(rating: number) {
-    this._value = rating;
+    this.#value = rating;
     this.starActiveWidth = rating * 20 + '%';
     this.onChange(rating);
-    this.stateChanges.next();
   }
   @Input() isEnrolled: (id: any, type: any) => boolean;
   @Input() itemId: (id: any) => void;
   @Input() type: string;
-  private _value = 0;
+  #value = 0;
 
   onChange(_: any) {}
 
-  constructor(@Optional() @Self() public ngControl: NgControl, private userService: UserService) {
+  constructor(@Optional() @Self() public ngControl: NgControl) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
   }
 
-  ngOnDestroy() {
-    this.stateChanges.complete();
-  }
-
-  setDescribedByIds(ids: string[]) {
-    this.describedBy = ids.join(' ');
-  }
-
-  get empty() {
-    return this.value === 0;
-  }
-
   @Input()
   get required() {
-    return this._required;
+    return this.#required;
   }
   set required(req) {
-    this._required = coerceBooleanProperty(req);
-    this.stateChanges.next();
-  }
-
-  @Input()
-  get placeholder() {
-    return this._placeholder;
-  }
-  set placeholder(plh) {
-    this._placeholder = plh;
-    this.stateChanges.next();
+    this.#required = coerceBooleanProperty(req);
   }
 
   @Input()
   get disabled() {
-    return this._disabled;
+    return this.#disabled;
   }
   set disabled(dis) {
-    this._disabled = coerceBooleanProperty(dis);
-    this.stateChanges.next();
+    this.#disabled = coerceBooleanProperty(dis);
   }
 
   onStarClick(rating: number): void {
@@ -117,7 +78,7 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
   }
 
   mouseOverStar(starNumber: number): void {
-    if (!this.disabled) {
+    if (!this.#disabled) {
       this.starActiveWidth = starNumber * 20 + '%';
     }
   }

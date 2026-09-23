@@ -6,15 +6,16 @@ import { takeUntil } from 'rxjs/operators';
 import { TableState, UsersTableComponent } from '../users/users-table.component';
 import { HealthService } from './health.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   templateUrl: './health-list.component.html',
-  imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, FormsModule, MatButton, UsersTableComponent]
+  imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatSuffix, MatInput, FormsModule, MatTooltip, UsersTableComponent]
 })
 export class HealthListComponent implements OnInit, OnDestroy {
 

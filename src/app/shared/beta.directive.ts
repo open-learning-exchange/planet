@@ -10,13 +10,13 @@ export class PlanetBetaDirective implements OnInit {
     private viewContainer: ViewContainerRef
   ) {}
 
-  _planetBeta = true;
+  #planetBeta = true;
   @Input() set planetBeta(value: boolean) {
-    this._planetBeta = value === null ? true : value;
+    this.#planetBeta = value === null ? true : value;
   }
 
   ngOnInit() {
-    if (this._planetBeta === this.isBetaEnabled()) {
+    if (this.#planetBeta === this.isBetaEnabled()) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainer.clear();

@@ -16,10 +16,11 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet, NgClass } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RequestsTableComponent } from './requests-table.component';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
@@ -36,10 +37,11 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
     MatButtonToggle,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
+    MatTooltip,
     MatToolbarRow,
     MatButton,
-    NgClass,
     RequestsTableComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
@@ -102,7 +104,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   }
 
   filterData(search = this.searchValue) {
-    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) });
+    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { name: planet.nameDoc.name } : {}) });
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
@@ -135,7 +137,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
       [
         { placeholder: $localize`Name`, name: 'name', required: true, type: 'textbox' },
         { type: 'selectbox', name: 'planetId', placeholder: $localize`Planet`, required: false,
-          'options': [
+          options: [
             { name: $localize`Select Planet`, value: '' },
             ...this.sandboxPlanets.map(p => ({ name: p.nameDoc ? p.nameDoc.name : p.doc.name, value: p.doc._id }))
           ]

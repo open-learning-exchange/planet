@@ -18,7 +18,7 @@ export class TagsService {
 
   getTags(db: string, parent: boolean) {
     return forkJoin([
-      this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }),
+      this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { name: 'asc' }),
       this.stateService.getCouchState(db, parent ? 'parent' : 'local')
     ]).pipe(
       map(([ tags, linkDocs ]: [ any[], any[] ]) => {
@@ -65,7 +65,7 @@ export class TagsService {
       );
     }
     return (tag._id ?
-      this.couchService.findAll('tags', findDocuments({ '$or': [ { 'tagId': tag._id }, { 'attachedTo': tag._id } ] })) :
+      this.couchService.findAll('tags', findDocuments({ $or: [ { tagId: tag._id }, { attachedTo: tag._id } ] })) :
       of([])
     ).pipe(
       switchMap((oldLinks: any[]) => {
@@ -81,7 +81,7 @@ export class TagsService {
   }
 
   deleteTag(tag) {
-    return this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })).pipe(
+    return this.couchService.findAll('tags', findDocuments({ tagId: tag._id })).pipe(
       switchMap((tags: any[]) => {
         const deleteTagsArray = createDeleteArray(tags);
         return this.couchService.bulkDocs('tags', [ ...deleteTagsArray, { ...tag, _deleted: true } ]);
@@ -126,7 +126,7 @@ export class TagsService {
       ...newTagIds.filter(tagId => currentTags.findIndex((tag: any) => tag.tagId === tagId) === -1)
         .map(tagId => tagLinkDoc(tagId)),
       ...currentTags.filter((tag: any) => newTagIds.indexOf(tag.tagId) === -1)
-        .map((tag: any) => ({ ...tag.tagLink, '_deleted': true }))
+        .map((tag: any) => ({ ...tag.tagLink, _deleted: true }))
     ];
   }
 
