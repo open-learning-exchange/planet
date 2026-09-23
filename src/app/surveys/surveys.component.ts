@@ -502,8 +502,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  // The submission is not created here: it is written once the first answer is saved, so opening a
-  // survey and abandoning it does not leave an empty pending submission behind
   recordSurvey(survey: any) {
     const targetTeamId = this.teamId || this.routeTeamId;
     const { teamIds, taken, courseTitle, course, parent, ...recordingSurvey } = survey;

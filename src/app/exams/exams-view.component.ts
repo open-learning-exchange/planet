@@ -196,8 +196,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     );
   }
 
-  // The first question of a recording predates its submission id. That addition does not make
-  // browser Back an exit, but a different recording or submission still does.
   isSameExamDestination(): boolean {
     const destination = this.router.getCurrentNavigation()?.finalUrl;
     if (!destination) {
@@ -206,11 +204,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     const destinationUrl = this.router.serializeUrl(destination);
     const currentUrl = this.router.url;
     const param = (url: string, name: string) => url.match(new RegExp(`(?:^|;)${name}=([^;/]+)`))?.[1];
+    const currentSubmissionId = param(currentUrl, 'submissionId');
+    const destinationSubmissionId = param(destinationUrl, 'submissionId');
+    const sameSubmission = !currentSubmissionId || !destinationSubmissionId || currentSubmissionId === destinationSubmissionId;
     const sameRecording = !!param(currentUrl, 'recordingId') &&
       param(currentUrl, 'recordingId') === param(destinationUrl, 'recordingId') &&
       param(currentUrl, 'surveyId') === param(destinationUrl, 'surveyId') &&
-      (!param(currentUrl, 'submissionId') || !param(destinationUrl, 'submissionId') ||
-        param(currentUrl, 'submissionId') === param(destinationUrl, 'submissionId'));
+      sameSubmission;
     const identity = (url: string) => {
       const [ path, ...params ] = url.split(';');
       return [ path, ...params.filter(value => !value.startsWith('questionNum=') &&
@@ -248,8 +248,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       this.statusMessage = '';
       this.grade = 0;
     } else if (surveyId) {
-      // No submission exists yet -- one is only written to the database once the first answer is
-      // saved, so opening a survey and leaving it never leaves an empty record behind
       this.grade = this.mode === 'take' ? 0 : undefined;
       this.comment = undefined;
       this.setRecordingSurvey(surveyId, params.get('surveyTeamId'), params.get('recordingId'));
@@ -258,7 +256,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   setRecordingSurvey(surveyId: string, teamId: string | null, recordingId: string | null) {
     const inProgress = this.submissionsService.submission;
-    // The first question has no submission id in its URL. Resume it only within this recording.
     if (recordingId && recordingId === this.activeRecordingId && inProgress?.parentId === surveyId &&
       inProgress.status === 'pending' && (inProgress.team?._id || null) === teamId) {
       this.title = inProgress.parent.name;
@@ -388,13 +385,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     // A zero direction keeps the same url, which the router skips without running the guard, so
     // flagging it would leave the next real exit unprompted
     this.isInternalNavigation = direction !== 0;
-    this.router.navigate([ { ...this.examParams(), questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    this.router.navigate([ { ...this.questionRouteParams(), questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }
 
-  // A survey opened for recording starts without a submission id, so once the first answer creates
-  // the submission the url has to carry it or the next question would start a second submission
-  examParams() {
+  questionRouteParams() {
     const params = this.route.snapshot.params;
     return params.surveyId && this.submissionId ?
       { ...params, submissionId: this.submissionId, status: 'pending' } :
@@ -503,7 +498,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           this.questionNum = nextUnansweredQuestion;
           this.isInternalNavigation = true;
           this.router.navigate([ {
-            ...this.examParams(),
+            ...this.questionRouteParams(),
             questionNum: this.questionNum
           } ], { relativeTo: this.route });
         }

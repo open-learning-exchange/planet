@@ -215,11 +215,11 @@ describe('ExamsViewComponent', () => {
     const params = { surveyId: 'survey-1', mode: 'take', questionNum: '1' };
     component = createComponent(params);
 
-    expect(component.examParams()).toEqual(params);
+    expect(component.questionRouteParams()).toEqual(params);
 
     component.submissionId = 'submission-1';
 
-    expect(component.examParams()).toEqual({ ...params, submissionId: 'submission-1', status: 'pending' });
+    expect(component.questionRouteParams()).toEqual({ ...params, submissionId: 'submission-1', status: 'pending' });
   });
 
   it('keeps the url unchanged for a submission opened directly', () => {
@@ -227,6 +227,6 @@ describe('ExamsViewComponent', () => {
     component = createComponent(params);
     component.submissionId = 'submission-1';
 
-    expect(component.examParams()).toEqual(params);
+    expect(component.questionRouteParams()).toEqual(params);
   });
 });

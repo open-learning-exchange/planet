@@ -113,8 +113,6 @@ export class SubmissionsService {
     this.submissionUpdated.next({ submission: this.submission, attempts: 0 });
   }
 
-  // Re-emits the submission already in progress, so returning to a question of a survey that has
-  // not been saved under an id yet continues it rather than starting a second one
   resumeSubmission() {
     this.submissionUpdated.next({ submission: this.submission, attempts: this.submissionAttempts });
   }
