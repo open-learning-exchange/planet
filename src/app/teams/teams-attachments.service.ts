@@ -43,7 +43,7 @@ export class TeamsAttachmentsService {
       }));
   }
 
-  receiptAttachmentImages(doc: any): Observable<Array<{ image: string; name: string }>> {
+  receiptAttachmentImages(doc: any): Observable<Array<{ image: string, name: string }>> {
     const attachments = this.receiptAttachments(doc);
     if (attachments.length === 0) {
       return of([]);
@@ -54,7 +54,7 @@ export class TeamsAttachmentsService {
         map(image => ({ image, name: attachment.name })),
         catchError(() => of(null))
       )
-    )).pipe(map(images => images.filter((image): image is { image: string; name: string } => !!image)));
+    )).pipe(map(images => images.filter((image): image is { image: string, name: string } => !!image)));
   }
 
   retainSelectedAttachments(doc: any, state: AttachmentInputState) {

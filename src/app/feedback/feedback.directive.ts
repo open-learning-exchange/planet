@@ -9,8 +9,13 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { AuthService } from '../shared/auth-guard.service';
+import { from, Observable, of } from 'rxjs';
+import { catchError, concatMap, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { PendingAttachment } from '../shared/forms/file-upload.component';
+import { couchAttachmentPath, NormalizedImage, normalizeImage } from '../shared/utils';
 import {
-  FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
+  FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_SCREENSHOT_TYPES, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
   normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
 } from './feedback.utils';
 
@@ -18,6 +23,7 @@ export class Message {
   message: string;
   user: string;
   time: any;
+  attachments?: string[];
 }
 export class Feedback {
   type: string;
@@ -53,6 +59,19 @@ const dialogFieldOptions = [
     name: 'message',
     placeholder: $localize`Your Feedback`,
     required: true
+  },
+  {
+    type: 'file-upload',
+    name: 'attachments',
+    placeholder: $localize`Screenshots (optional)`,
+    fileUpload: {
+      accept: FEEDBACK_SCREENSHOT_TYPES.join(','),
+      multiple: true,
+      maxFiles: 3,
+      imagePreview: true,
+      hint: $localize`Up to three images. Other users may see them, so leave out private information.`,
+      typePills: [ 'PNG', 'JPEG', 'WebP' ]
+    }
   }
 ];
 
@@ -62,6 +81,7 @@ export class FeedbackDirective {
   @Input() message = '';
   @Input() type = '';
   @Input() priority = '';
+  private isSubmitting = false;
 
   constructor(
     private userService: UserService,
@@ -71,14 +91,17 @@ export class FeedbackDirective {
     private feedbackService: FeedbackService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   addFeedback(post: any) {
+    this.isSubmitting = true;
+    this.dialogsFormService.showErrorMessage('');
     const date = new Date();
     const user = this.userService.get().name;
     const feedbackUrl = this.router.url || '/';
-    const navigationUrl = feedbackUrl !== '/' ? this.removeNavigationParams(feedbackUrl) : '/';
+    const navigationUrl = feedbackUrl !== '/' ? this.removeNavigationParams(feedbackUrl).replace(/\/+$/, '') : '/';
     const urlParts = navigationUrl.split('/');
     const firstPart = urlParts[1] || 'home';
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
@@ -126,10 +149,11 @@ export class FeedbackDirective {
   }
 
   private updateFeedback(feedback: any, date: Date, user: string, url: string) {
+    const { attachments, ...feedbackValues } = feedback;
     const startingMessage: Message = { message: feedback.message, time: date, user };
     const newFeedback: Feedback = {
       owner: user,
-      ...feedback,
+      ...feedbackValues,
       openTime: date,
       status: normalizeFeedbackStatus('open'),
       type: normalizeFeedbackType(feedback.type),
@@ -140,15 +164,55 @@ export class FeedbackDirective {
       parentCode: this.stateService.configuration.parentCode,
       ...this.feedbackOf,
     };
-    this.couchService.updateDocument('feedback', newFeedback).subscribe(
-      () => {
+    this.normalizeScreenshots(attachments?.added).pipe(
+      switchMap(screenshots => {
+        if (screenshots.length) {
+          startingMessage.attachments = screenshots.map(({ fileName }) => fileName);
+        }
+        return this.couchService.updateDocument('feedback', newFeedback).pipe(
+          switchMap(({ id, rev }) => this.uploadScreenshots(id, rev, screenshots))
+        );
+      }),
+      finalize(() => {
+        this.isSubmitting = false;
+        this.dialogsLoadingService.stop();
+      })
+    ).subscribe(
+      (failedUploads) => {
+        this.dialogsFormService.closeDialogsForm();
         this.feedbackService.setFeedback();
-        this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
+        if (failedUploads) {
+          this.planetMessageService.showAlert($localize`Feedback submitted, but some screenshots could not be uploaded.`);
+        } else {
+          this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
+        }
       },
       () => {
-        this.planetMessageService.showAlert($localize`Error, your feedback cannot be submitted`);
+        this.dialogsFormService.showErrorMessage(
+          $localize`Your feedback could not be submitted. Your text and images are still here. Please try again.`
+        );
       }
     );
+  }
+
+  private normalizeScreenshots(screenshots: PendingAttachment[] = []): Observable<NormalizedImage[]> {
+    const usedNames: string[] = [];
+    return from(screenshots).pipe(
+      concatMap(({ file }) => normalizeImage(file, { maxDimension: 1920, usedNames })),
+      tap(({ fileName }) => usedNames.push(fileName)),
+      toArray()
+    );
+  }
+
+  private uploadScreenshots(id: string, rev: string, screenshots: NormalizedImage[]): Observable<number> {
+    return screenshots.reduce((upload$, { file, fileName, contentType }) => upload$.pipe(
+      switchMap(result => this.couchService.putAttachment(
+        `feedback/${couchAttachmentPath(id, fileName)}?rev=${result.rev}`, file, { headers: { 'Content-Type': contentType } }
+      ).pipe(
+        map((response: any) => ({ ...result, rev: response.rev })),
+        catchError(() => of({ ...result, failed: result.failed + 1 }))
+      ))
+    ), of({ rev, failed: 0 })).pipe(map(({ failed }) => failed));
   }
 
   @HostListener('click')
@@ -162,15 +226,20 @@ export class FeedbackDirective {
     const formGroup = {
       priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : '', Validators.required ],
       type: [ this.type ? normalizeFeedbackType(this.type) : '', Validators.required ],
-      message: [ this.message, CustomValidators.required ]
+      message: [ this.message, CustomValidators.required ],
+      attachments: [ { retained: [], removed: [], added: [] } ]
     };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup, false, true)
-      .subscribe((response) => {
-        if (response !== undefined) {
-          this.addFeedback(response);
+    this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
+      closeOnSubmit: false,
+      confirmUnsavedChanges: true,
+      onSubmit: response => {
+        if (this.isSubmitting) {
+          this.dialogsLoadingService.stop();
+          return;
         }
-      });
+        this.addFeedback(response);
+      }
+    });
   }
 
 }

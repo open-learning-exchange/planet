@@ -170,7 +170,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     }
     return UnsavedChangesPromptComponent.open(this.dialog, {
       type: this.examType === 'survey' ? 'survey' : 'exam',
-      extraMessage: $localize`Your progress will be saved.`
+      extraMessage: $localize`Your progress will be saved.`,
+      extraMessageType: 'supplementary'
     }).pipe(
       switchMap(confirmed => {
         if (!confirmed) {
@@ -220,16 +221,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.isNewQuestion = true;
     this.answer.setValue(null);
     this.currentAnswer = null;
-    if (courseId) {
-      this.coursesService.requestCourse({ courseId });
-      this.statusMessage = '';
-      this.grade = 0;
-    } else if (submissionId) {
+    if (submissionId) {
       this.fromSubmission = true;
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
       this.comment = undefined;
       this.submissionsService.openSubmission({ submissionId, status: params.get('status') });
+    } else if (courseId) {
+      this.coursesService.requestCourse({ courseId });
+      this.statusMessage = '';
+      this.grade = 0;
     } else if (surveyId) {
       // No submission exists yet -- one is only written to the database once the first answer is
       // saved, so opening a survey and leaving it never leaves an empty record behind
@@ -408,6 +409,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.coursesService.courseUpdated$.pipe(
       takeUntil(this.onDestroy$),
       switchMap(({ course, progress }: { course: any, progress: any }) => {
+        if (this.route.snapshot.paramMap.has('submissionId') || this.fromSubmission) {
+          return EMPTY;
+        }
         // To be readable by non-technical people stepNum & questionNum param will start at 1
         const examId = this.route.snapshot.paramMap.get('examId');
         const configuredStepIndex = examId ?
