@@ -13,7 +13,10 @@ import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
-import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
+import {
+  filterSpecificFields, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
+  removeFilteredFromSelection, toggleVisibleSelection
+} from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -38,6 +41,7 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { LinkCopyService } from '../shared/link-copy.service';
 
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
@@ -146,7 +150,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private chatService: ChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private linkCopyService: LinkCopyService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -200,7 +205,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const targetTeamId = this.teamId || this.routeTeamId;
 
-      const submissionsBySurvey: Record<string, Array<{ status: string; teamId: string | null; parent?: any }>> = {};
+      const submissionsBySurvey: Record<string, Array<{ status: string, teamId: string | null, parent?: any }>> = {};
       submissions.forEach(row => {
         const [baseSurveyId] = row.key;
         (submissionsBySurvey[baseSurveyId] ||= []).push(row.value);
@@ -303,15 +308,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
     this.surveys.filter = filterValue;
-    queueMicrotask(() => {
-      const visibleSelection = new Set(this.renderedRows.map(row => row._id));
-      this.selection.deselect(...this.selection.selected.filter(selectedId => !visibleSelection.has(selectedId)));
-    });
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   isAllSelected() {
-    const selectableRowsInPage = this.renderedRows.filter(row => this.isRowSelectable(row));
-    return selectableRowsInPage.length > 0 && selectableRowsInPage.every(row => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows, {
+      selectValue: row => row._id,
+      isSelectable: row => this.isRowSelectable(row)
+    });
   }
 
   isRowSelectable(row: any): boolean {
@@ -319,15 +323,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => {
-        if (this.isRowSelectable(row)) {
-          this.selection.select(row._id);
-        }
-      });
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, {
+      selectValue: row => row._id,
+      isSelectable: row => this.isRowSelectable(row),
+      clearAllOnDeselect: true
+    });
   }
 
   deleteSelected() {
@@ -556,12 +556,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const link = `${window.location.origin}/survey/${targetTeamId}/${survey._id}`;
-    navigator.clipboard.writeText(link).then(() => {
-      this.planetMessageService.showMessage($localize`Public survey link copied`);
-    }).catch(() => {
-      this.planetMessageService.showAlert($localize`Failed to copy public survey link`);
-    });
+    this.linkCopyService.copyLink(
+      [ '/survey', targetTeamId, survey._id ],
+      {
+        success: $localize`Public survey link copied`,
+        failure: $localize`Failed to copy public survey link`
+      }
+    );
   }
 
   exportCSV(survey) {

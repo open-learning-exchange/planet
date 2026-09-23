@@ -53,7 +53,7 @@
                     <mat-form-field class="mat-form-field half-width">
                       <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
                       <mat-error>
-                        <planet-form-error-messages [formControl]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
+                        <planet-form-error-messages [control]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
                       </mat-error>
                     </mat-form-field>
                     <button mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
