@@ -9,8 +9,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { forkJoin, Observable, Subject, throwError } from 'rxjs';
+import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import {
@@ -506,16 +506,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   // survey and abandoning it does not leave an empty pending submission behind
   recordSurvey(survey: any) {
     const targetTeamId = this.teamId || this.routeTeamId;
+    const { teamIds, taken, courseTitle, course, parent, ...recordingSurvey } = survey;
     this.router.navigate([
       this.teamId ? 'surveys/dispense' : 'dispense',
       {
         questionNum: 1,
         surveyId: survey._id,
+        recordingId: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
         mode: 'take',
         snap: this.route.snapshot.url,
         ...(targetTeamId ? { surveyTeamId: targetTeamId } : {})
       }
-    ], { relativeTo: this.route });
+    ], { relativeTo: this.route, state: { recordingSurvey } });
   }
 
   toggleSurveyPublicAccess(survey: any) {

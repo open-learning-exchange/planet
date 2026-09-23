@@ -78,6 +78,17 @@ describe('SurveysComponent', () => {
       [ 'surveys/dispense', expect.objectContaining({ surveyId: 'survey-2', surveyTeamId: 'team-2', mode: 'take' }) ],
       expect.anything()
     );
+    expect(router.navigate.mock.calls[0][0][1].recordingId).not.toBe(router.navigate.mock.calls[1][0][1].recordingId);
+  });
+
+  it('carries a parent survey snapshot without list-only fields', () => {
+    const survey = { _id: 'nation-survey', name: 'Nation survey', questions: [ { body: 'Q1' } ], parent: true, taken: 2 };
+
+    component.recordSurvey(survey);
+
+    expect(router.navigate.mock.calls[0][1].state.recordingSurvey).toEqual({
+      _id: 'nation-survey', name: 'Nation survey', questions: [ { body: 'Q1' } ]
+    });
   });
 
   it('delegates public survey links to the shared copy service', () => {

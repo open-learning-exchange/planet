@@ -90,9 +90,7 @@ export class SubmissionsService {
     return { source: configuration.code, parentCode: configuration.parentCode };
   }
 
-  openSubmission(
-    { parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending', team = undefined }: any
-  ) {
+  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending', team }: any) {
     const selector = submissionId ? { _id: submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
     const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
     obs.subscribe((res) => {
@@ -107,6 +105,12 @@ export class SubmissionsService {
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
     });
+  }
+
+  startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
+    this.newSubmission({ parentId, parent, user, type, team });
+    this.submissionAttempts = 0;
+    this.submissionUpdated.next({ submission: this.submission, attempts: 0 });
   }
 
   // Re-emits the submission already in progress, so returning to a question of a survey that has

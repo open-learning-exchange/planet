@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Observable, Subject, forkJoin, of } from 'rxjs';
+import { EMPTY, Observable, Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
@@ -96,6 +96,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   slideAnimationVariant: 'a' | 'b' = 'a';
   isInternalNavigation = false;
   isFinished = false;
+  private activeRecordingId: string | null = null;
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -195,15 +196,27 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     );
   }
 
-  // Only questionNum may differ between two views of one test, so any other change of destination
-  // -- a different submission, mode or test id -- still counts as leaving
+  // The first question of a recording predates its submission id. That addition does not make
+  // browser Back an exit, but a different recording or submission still does.
   isSameExamDestination(): boolean {
     const destination = this.router.getCurrentNavigation()?.finalUrl;
+    if (!destination) {
+      return false;
+    }
+    const destinationUrl = this.router.serializeUrl(destination);
+    const currentUrl = this.router.url;
+    const param = (url: string, name: string) => url.match(new RegExp(`(?:^|;)${name}=([^;/]+)`))?.[1];
+    const sameRecording = !!param(currentUrl, 'recordingId') &&
+      param(currentUrl, 'recordingId') === param(destinationUrl, 'recordingId') &&
+      param(currentUrl, 'surveyId') === param(destinationUrl, 'surveyId') &&
+      (!param(currentUrl, 'submissionId') || !param(destinationUrl, 'submissionId') ||
+        param(currentUrl, 'submissionId') === param(destinationUrl, 'submissionId'));
     const identity = (url: string) => {
       const [ path, ...params ] = url.split(';');
-      return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');
+      return [ path, ...params.filter(value => !value.startsWith('questionNum=') &&
+        (!sameRecording || (!value.startsWith('submissionId=') && !value.startsWith('status=')))).sort() ].join(';');
     };
-    return !!destination && identity(this.router.serializeUrl(destination)) === identity(this.router.url);
+    return identity(destinationUrl) === identity(currentUrl);
   }
 
   setExam(params) {
@@ -222,6 +235,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.answer.setValue(null);
     this.currentAnswer = null;
     if (submissionId) {
+      if (surveyId) {
+        this.activeRecordingId = params.get('recordingId');
+      }
       this.fromSubmission = true;
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
@@ -234,30 +250,51 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     } else if (surveyId) {
       // No submission exists yet -- one is only written to the database once the first answer is
       // saved, so opening a survey and leaving it never leaves an empty record behind
-      this.mode = mode || 'take';
       this.grade = this.mode === 'take' ? 0 : undefined;
       this.comment = undefined;
-      this.setRecordingSurvey(surveyId, params.get('surveyTeamId'));
+      this.setRecordingSurvey(surveyId, params.get('surveyTeamId'), params.get('recordingId'));
     }
   }
 
-  setRecordingSurvey(surveyId: string, teamId: string | null) {
+  setRecordingSurvey(surveyId: string, teamId: string | null, recordingId: string | null) {
     const inProgress = this.submissionsService.submission;
-    // Moving back to a question of a recording already under way, which the browser can do from a
-    // url that predates the submission's id, has to keep the answers already given
-    if (inProgress && inProgress.parentId === surveyId && inProgress.status === 'pending') {
+    // The first question has no submission id in its URL. Resume it only within this recording.
+    if (recordingId && recordingId === this.activeRecordingId && inProgress?.parentId === surveyId &&
+      inProgress.status === 'pending' && (inProgress.team?._id || null) === teamId) {
       this.title = inProgress.parent.name;
       this.setQuestion(inProgress.parent.questions);
       this.submissionsService.resumeSubmission();
       return;
     }
+    this.activeRecordingId = recordingId;
+    this.submissionId = undefined;
+    this.fromSubmission = false;
+    this.initialLoad = true;
     this.isLoading = true;
+    const recordingSurvey = this.router.getCurrentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
+    const survey$ = this.couchService.get(`exams/${surveyId}`).pipe(catchError(error => {
+      if (error.status !== 404) {
+        return throwError(error);
+      }
+      if (recordingSurvey?._id === surveyId) {
+        return of(recordingSurvey);
+      }
+      return this.couchService.post('submissions/_find', { selector: { parentId: surveyId }, limit: 1 }).pipe(
+        map((res: any) => {
+          const parent = res.docs?.[0]?.parent;
+          if (parent?._id !== surveyId) {
+            throw error;
+          }
+          return parent;
+        })
+      );
+    }));
     forkJoin([
-      this.couchService.get(`exams/${surveyId}`),
+      survey$,
       teamId ? this.couchService.get(`teams/${teamId}`) : of(null)
     ]).subscribe(([ survey, team ]: [ any, any ]) => {
       this.title = survey.name;
-      this.setTakingExam(survey, survey._id, 'survey', team ? { _id: team._id, name: team.name, type: team.type } : undefined);
+      this.setTakingExam(survey, survey._id, 'survey', team ? { _id: team._id, name: team.name, type: team.type } : undefined, true);
     }, () => {
       this.planetMessageService.showAlert($localize`There was a problem recording the survey.`);
       this.isInternalNavigation = true;
@@ -296,7 +333,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           this.challengesService.openChallengeDialog(this.dialog, challenge);
         }
       }
-    });
+    }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));
   }
 
   nextFromFrame() {
@@ -319,7 +356,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         return;
       }
       this.routeToNext(nextQuestion, previousStatus);
-    });
+    }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));
   }
 
   routeToNext(nextQuestion, previousStatus) {
@@ -388,15 +425,20 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.isNewQuestion = true;
   }
 
-  setTakingExam(exam, parentId, type, team?: { _id: string, name: string, type: string }) {
+  setTakingExam(exam, parentId, type, team?: { _id: string, name: string, type: string }, startNew = false) {
     const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
-    this.submissionsService.openSubmission({
+    const submission = {
       parentId,
       parent: exam,
       user,
       type,
-      team });
+      team };
+    if (startNew) {
+      this.submissionsService.startNewSubmission(submission);
+    } else {
+      this.submissionsService.openSubmission(submission);
+    }
   }
 
   setQuestion(questions: any[]) {
@@ -409,7 +451,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.coursesService.courseUpdated$.pipe(
       takeUntil(this.onDestroy$),
       switchMap(({ course, progress }: { course: any, progress: any }) => {
-        if (this.route.snapshot.paramMap.has('submissionId') || this.fromSubmission) {
+        if (this.route.snapshot.paramMap.has('submissionId') || this.route.snapshot.paramMap.has('surveyId') || this.fromSubmission) {
           return EMPTY;
         }
         // To be readable by non-technical people stepNum & questionNum param will start at 1
