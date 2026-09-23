@@ -113,10 +113,6 @@ export class SubmissionsService {
     this.submissionUpdated.next({ submission: this.submission, attempts: 0 });
   }
 
-  resumeSubmission() {
-    this.submissionUpdated.next({ submission: this.submission, attempts: this.submissionAttempts });
-  }
-
   submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];

@@ -510,7 +510,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         questionNum: 1,
         surveyId: survey._id,
-        recordingId: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
         mode: 'take',
         snap: this.route.snapshot.url,
         ...(targetTeamId ? { surveyTeamId: targetTeamId } : {})

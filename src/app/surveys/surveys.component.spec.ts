@@ -78,7 +78,6 @@ describe('SurveysComponent', () => {
       [ 'surveys/dispense', expect.objectContaining({ surveyId: 'survey-2', surveyTeamId: 'team-2', mode: 'take' }) ],
       expect.anything()
     );
-    expect(router.navigate.mock.calls[0][0][1].recordingId).not.toBe(router.navigate.mock.calls[1][0][1].recordingId);
   });
 
   it('carries a parent survey snapshot without list-only fields', () => {

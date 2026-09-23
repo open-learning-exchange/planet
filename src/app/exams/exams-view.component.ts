@@ -14,7 +14,7 @@ import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ChallengesService } from '../shared/challenges/challenges.service';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -96,7 +96,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   slideAnimationVariant: 'a' | 'b' = 'a';
   isInternalNavigation = false;
   isFinished = false;
-  private activeRecordingId: string | null = null;
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -123,6 +122,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     private dialogsLoadingService: DialogsLoadingService,
     private formBuilder: FormBuilder,
     private challengesService: ChallengesService,
+    private location: Location,
   ) {
     this.examForm = this.formBuilder.group({
       answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: examAnswerValidator })
@@ -169,9 +169,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     if (this.mode !== 'take' || this.previewMode) {
       return true;
     }
+    const answer = this.answer.value;
+    const hasAnswer = answer !== null && answer !== undefined && answer !== '' &&
+      (!Array.isArray(answer) || answer.length > 0);
+    const recordingSurvey = this.route.snapshot.paramMap.has('surveyId');
+    if (recordingSurvey && !hasAnswer && !this.submissionId) {
+      return true;
+    }
+    const willSaveAnswer = !recordingSurvey && hasAnswer && this.answer.valid && !!this.question && !this.isScoredQuestion;
+    let extraMessage: string | undefined;
+    if (recordingSurvey && this.submissionId) {
+      extraMessage = $localize`You cannot continue this response from the survey list after leaving.`;
+    } else if (hasAnswer) {
+      extraMessage = willSaveAnswer ? $localize`Your answer will be saved.` : $localize`Your current answer will not be saved.`;
+    }
     return UnsavedChangesPromptComponent.open(this.dialog, {
       type: this.examType === 'survey' ? 'survey' : 'exam',
-      extraMessage: $localize`Your progress will be saved.`,
+      extraMessage,
       extraMessageType: 'supplementary'
     }).pipe(
       switchMap(confirmed => {
@@ -180,7 +194,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         }
         // Scored questions are only submitted from the next button, where a wrong answer shows
         // feedback and lets the learner try again, so leaving must never grade one for them.
-        if (!this.answer.valid || !this.question || this.isScoredQuestion) {
+        if (!willSaveAnswer) {
           return of(true);
         }
         this.dialogsLoadingService.start();
@@ -196,27 +210,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     );
   }
 
+  // Only questionNum may differ between two views of one test, so any other change of destination
+  // -- a different submission, mode or test id -- still counts as leaving
   isSameExamDestination(): boolean {
     const destination = this.router.getCurrentNavigation()?.finalUrl;
-    if (!destination) {
-      return false;
-    }
-    const destinationUrl = this.router.serializeUrl(destination);
-    const currentUrl = this.router.url;
-    const param = (url: string, name: string) => url.match(new RegExp(`(?:^|;)${name}=([^;/]+)`))?.[1];
-    const currentSubmissionId = param(currentUrl, 'submissionId');
-    const destinationSubmissionId = param(destinationUrl, 'submissionId');
-    const sameSubmission = !currentSubmissionId || !destinationSubmissionId || currentSubmissionId === destinationSubmissionId;
-    const sameRecording = !!param(currentUrl, 'recordingId') &&
-      param(currentUrl, 'recordingId') === param(destinationUrl, 'recordingId') &&
-      param(currentUrl, 'surveyId') === param(destinationUrl, 'surveyId') &&
-      sameSubmission;
     const identity = (url: string) => {
       const [ path, ...params ] = url.split(';');
-      return [ path, ...params.filter(value => !value.startsWith('questionNum=') &&
-        (!sameRecording || (!value.startsWith('submissionId=') && !value.startsWith('status=')))).sort() ].join(';');
+      return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');
     };
-    return identity(destinationUrl) === identity(currentUrl);
+    return !!destination && identity(this.router.serializeUrl(destination)) === identity(this.router.url);
   }
 
   setExam(params) {
@@ -235,9 +237,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.answer.setValue(null);
     this.currentAnswer = null;
     if (submissionId) {
-      if (surveyId) {
-        this.activeRecordingId = params.get('recordingId');
-      }
       this.fromSubmission = true;
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
@@ -250,20 +249,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     } else if (surveyId) {
       this.grade = this.mode === 'take' ? 0 : undefined;
       this.comment = undefined;
-      this.setRecordingSurvey(surveyId, params.get('surveyTeamId'), params.get('recordingId'));
+      this.setRecordingSurvey(surveyId, params.get('surveyTeamId'));
     }
   }
 
-  setRecordingSurvey(surveyId: string, teamId: string | null, recordingId: string | null) {
-    const inProgress = this.submissionsService.submission;
-    if (recordingId && recordingId === this.activeRecordingId && inProgress?.parentId === surveyId &&
-      inProgress.status === 'pending' && (inProgress.team?._id || null) === teamId) {
-      this.title = inProgress.parent.name;
-      this.setQuestion(inProgress.parent.questions);
-      this.submissionsService.resumeSubmission();
-      return;
-    }
-    this.activeRecordingId = recordingId;
+  setRecordingSurvey(surveyId: string, teamId: string | null) {
     this.submissionId = undefined;
     this.fromSubmission = false;
     this.initialLoad = true;
@@ -385,6 +375,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     // A zero direction keeps the same url, which the router skips without running the guard, so
     // flagging it would leave the next real exit unprompted
     this.isInternalNavigation = direction !== 0;
+    if (direction > 0 && this.route.snapshot.params.surveyId && !this.route.snapshot.params.submissionId && this.submissionId) {
+      const currentQuestion = this.router.createUrlTree([
+        { ...this.questionRouteParams(), questionNum: this.questionNum }
+      ], { relativeTo: this.route });
+      this.location.replaceState(this.router.serializeUrl(currentQuestion), '', history.state);
+    }
     this.router.navigate([ { ...this.questionRouteParams(), questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }

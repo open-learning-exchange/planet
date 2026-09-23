@@ -12,6 +12,8 @@ describe('ExamsViewComponent', () => {
   let route: any;
   let component: ExamsViewComponent;
   let dialogsLoadingService: any;
+  let dialog: any;
+  let location: any;
 
   const paramMapOf = (params: any) => ({
     get: (key: string) => (params[key] !== undefined ? params[key] : null),
@@ -30,10 +32,11 @@ describe('ExamsViewComponent', () => {
       { get: vi.fn().mockReturnValue({ name: 'user' }) } as any,
       couchService,
       planetMessageService,
-      {} as any,
+      dialog,
       dialogsLoadingService,
       new FormBuilder(),
-      {} as any
+      {} as any,
+      location
     );
   };
 
@@ -45,10 +48,15 @@ describe('ExamsViewComponent', () => {
           { _id: 'survey-1', name: 'Survey 1', type: 'surveys', questions: [ { body: 'Q1' } ] }
       ))
     };
-    submissionsService = { openSubmission: vi.fn(), startNewSubmission: vi.fn(), resumeSubmission: vi.fn() };
+    submissionsService = { openSubmission: vi.fn(), startNewSubmission: vi.fn() };
     planetMessageService = { showAlert: vi.fn() };
     dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
-    router = { navigate: vi.fn(), url: '/surveys/dispense', getCurrentNavigation: vi.fn(), serializeUrl: vi.fn(url => url) };
+    dialog = { open: vi.fn().mockReturnValue({ afterClosed: () => of(false) }) };
+    location = { replaceState: vi.fn() };
+    router = {
+      navigate: vi.fn(), createUrlTree: vi.fn(), url: '/surveys/dispense',
+      getCurrentNavigation: vi.fn(), serializeUrl: vi.fn(url => url)
+    };
   });
 
   it('opens a survey for recording without creating a submission first', () => {
@@ -90,45 +98,35 @@ describe('ExamsViewComponent', () => {
     expect(submissionsService.startNewSubmission).not.toHaveBeenCalled();
   });
 
-  it('continues a recording already under way instead of starting a second one', () => {
-    const params = { surveyId: 'survey-1', recordingId: 'recording-1', mode: 'take', questionNum: '1' };
+  it('adds the submission ID to Q1 history before advancing to Q2', () => {
+    const params = { surveyId: 'survey-1', mode: 'take', questionNum: 1 };
     component = createComponent(params);
-    component.setExam(paramMapOf(params));
-    submissionsService.submission = {
-      parentId: 'survey-1',
-      status: 'pending',
-      parent: { name: 'Survey 1', questions: [ { body: 'Q1' } ] }
-    };
-    couchService.get.mockClear();
-    submissionsService.startNewSubmission.mockClear();
+    component.questionNum = 1;
+    component.submissionId = 'response-1';
+    const q1Url = '/surveys/dispense;surveyId=survey-1;questionNum=1;submissionId=response-1;status=pending';
+    router.createUrlTree.mockReturnValue(q1Url);
 
-    component.setExam(paramMapOf(params));
+    component.moveQuestion(1);
 
-    expect(submissionsService.resumeSubmission).toHaveBeenCalled();
-    expect(couchService.get).not.toHaveBeenCalled();
-    expect(submissionsService.startNewSubmission).not.toHaveBeenCalled();
+    expect(location.replaceState).toHaveBeenCalledWith(q1Url, '', history.state);
+    expect(router.navigate).toHaveBeenCalledWith([
+      expect.objectContaining({ questionNum: 2, submissionId: 'response-1', status: 'pending' })
+    ], { relativeTo: route });
+    expect(location.replaceState.mock.invocationCallOrder[0]).toBeLessThan(router.navigate.mock.invocationCallOrder[0]);
   });
 
-  it('resumes Q1 after opening a saved question URL', () => {
-    const savedParams = {
-      surveyId: 'survey-1', recordingId: 'recording-1', submissionId: 'response-1',
-      status: 'pending', mode: 'take', questionNum: '2'
-    };
-    component = createComponent(savedParams);
-    component.setExam(paramMapOf(savedParams));
-    submissionsService.submission = {
-      _id: 'response-1', parentId: 'survey-1', status: 'pending',
-      parent: { name: 'Survey 1', questions: [ { body: 'Q1' }, { body: 'Q2' } ] }
-    };
+  it('opens the saved response when Q1 is reloaded with its submission ID', () => {
+    const params = { surveyId: 'survey-1', submissionId: 'response-1', status: 'pending', mode: 'take', questionNum: '1' };
+    component = createComponent(params);
 
-    component.setExam(paramMapOf({ surveyId: 'survey-1', recordingId: 'recording-1', mode: 'take', questionNum: '1' }));
+    component.setExam(paramMapOf(params));
 
-    expect(submissionsService.resumeSubmission).toHaveBeenCalledOnce();
+    expect(submissionsService.openSubmission).toHaveBeenCalledWith({ submissionId: 'response-1', status: 'pending' });
     expect(submissionsService.startNewSubmission).not.toHaveBeenCalled();
   });
 
   it('starts a fresh recording when Record is clicked again for the same survey', () => {
-    const params = { surveyId: 'survey-1', recordingId: 'recording-2', mode: 'take', questionNum: '1' };
+    const params = { surveyId: 'survey-1', mode: 'take', questionNum: '1' };
     component = createComponent(params);
     submissionsService.submission = {
       _id: 'old-response', parentId: 'survey-1', status: 'pending',
@@ -137,30 +135,12 @@ describe('ExamsViewComponent', () => {
 
     component.setExam(paramMapOf(params));
 
-    expect(submissionsService.resumeSubmission).not.toHaveBeenCalled();
     expect(submissionsService.startNewSubmission).toHaveBeenCalledOnce();
-  });
-
-  it('does not resume a personal response from a team recording', () => {
-    const params = { surveyId: 'survey-1', surveyTeamId: 'team-1', recordingId: 'recording-1', mode: 'take', questionNum: '1' };
-    component = createComponent(params);
-    component.setExam(paramMapOf(params));
-    submissionsService.submission = {
-      _id: 'personal-response', parentId: 'survey-1', status: 'pending',
-      parent: { name: 'Survey 1', questions: [ { body: 'Q1' } ] }
-    };
-    submissionsService.startNewSubmission.mockClear();
-
-    component.setExam(paramMapOf(params));
-
-    expect(submissionsService.resumeSubmission).not.toHaveBeenCalled();
-    expect(submissionsService.startNewSubmission).toHaveBeenCalledWith(expect.objectContaining({
-      team: { _id: 'team-1', name: 'Team One', type: 'team' }
-    }));
+    expect(submissionsService.openSubmission).not.toHaveBeenCalled();
   });
 
   it('uses the carried Nation survey when it is unavailable locally', () => {
-    const params = { surveyId: 'nation-survey', recordingId: 'recording-1', mode: 'take', questionNum: '1' };
+    const params = { surveyId: 'nation-survey', mode: 'take', questionNum: '1' };
     const survey = { _id: 'nation-survey', name: 'Nation survey', questions: [ { body: 'Q1' } ] };
     component = createComponent(params);
     couchService.get.mockReturnValue(throwError({ status: 404 }));
@@ -173,7 +153,7 @@ describe('ExamsViewComponent', () => {
   });
 
   it('loads a Nation survey from a saved submission when the route has no snapshot', () => {
-    const params = { surveyId: 'nation-survey', recordingId: 'recording-1', mode: 'take', questionNum: '1' };
+    const params = { surveyId: 'nation-survey', mode: 'take', questionNum: '1' };
     const survey = { _id: 'nation-survey', name: 'Nation survey', questions: [ { body: 'Q1' } ] };
     component = createComponent(params);
     couchService.get.mockReturnValue(throwError({ status: 404 }));
@@ -185,15 +165,67 @@ describe('ExamsViewComponent', () => {
     expect(submissionsService.startNewSubmission).toHaveBeenCalledWith(expect.objectContaining({ parent: survey }));
   });
 
-  it('treats Back to Q1 as the same recording after its first save', () => {
+  it('leaves an unanswered survey without promising a save', () => {
+    component = createComponent({ surveyId: 'survey-1' });
+    component.examType = 'survey';
+    component.question = { correctChoice: '' } as any;
+
+    expect(component.canDeactivate()).toBe(true);
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  it('describes whether the current answer will be saved on exit', () => {
+    component = createComponent({ surveyId: 'survey-1' });
+    component.examType = 'survey';
+    component.question = { correctChoice: '' } as any;
+    component.answer.setValue('4');
+
+    component.canDeactivate();
+    expect(dialog.open.mock.calls[0][1].data.extraMessage).toBe('Your current answer will not be saved.');
+
     component = createComponent();
-    router.url = '/surveys/dispense;surveyId=survey-1;recordingId=recording-1;questionNum=2;submissionId=response-1;status=pending';
-    router.getCurrentNavigation.mockReturnValue({ finalUrl: '/surveys/dispense;surveyId=survey-1;recordingId=recording-1;questionNum=1' });
+    component.examType = 'exam';
+    component.question = { correctChoice: '' } as any;
+    component.answer.setValue('4');
+    component.canDeactivate();
+    expect(dialog.open.mock.calls[1][1].data.extraMessage).toBe('Your answer will be saved.');
+  });
 
-    expect(component.isSameExamDestination()).toBe(true);
+  it('does not create a one-question survey response when leaving without finishing', async () => {
+    component = createComponent({ surveyId: 'survey-1' });
+    component.examType = 'survey';
+    component.question = { correctChoice: '' } as any;
+    component.questionNum = 1;
+    component.answer.setValue('9');
+    dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+    submissionsService.submitAnswer = vi.fn();
 
-    router.getCurrentNavigation.mockReturnValue({ finalUrl: '/surveys/dispense;surveyId=survey-1;recordingId=recording-2;questionNum=1' });
-    expect(component.isSameExamDestination()).toBe(false);
+    expect(await (component.canDeactivate() as any).toPromise()).toBe(true);
+    expect(submissionsService.submitAnswer).not.toHaveBeenCalled();
+  });
+
+  it('warns before leaving a saved recording from an unanswered question', () => {
+    component = createComponent({ surveyId: 'survey-1', submissionId: 'response-1' });
+    component.examType = 'survey';
+    component.submissionId = 'response-1';
+    component.question = { correctChoice: '' } as any;
+
+    component.canDeactivate();
+
+    expect(dialog.open.mock.calls[0][1].data.extraMessage).toBe(
+      'You cannot continue this response from the survey list after leaving.'
+    );
+  });
+
+  it('keeps the leave prompt for an exam with no current answer', () => {
+    component = createComponent();
+    component.examType = 'exam';
+    component.question = { correctChoice: '' } as any;
+
+    component.canDeactivate();
+
+    expect(dialog.open).toHaveBeenCalledOnce();
+    expect(dialog.open.mock.calls[0][1].data.extraMessage).toBeUndefined();
   });
 
   it.each([ 'nextQuestion', 'nextFromFrame' ])('reports a failed first save from %s', action => {
