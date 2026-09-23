@@ -7,6 +7,7 @@ import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { PublicSurveyComponent } from './public-survey.component';
+import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { PublicSurveysService } from './public-surveys.service';
 import { AndroidAppPromptService } from '../../shared/android-app-prompt.service';
 
@@ -62,6 +63,7 @@ describe('PublicSurveyComponent', () => {
       .toContain('Community Health Check');
     expect(intro.nativeElement.textContent).toContain('invited');
     expect(intro.nativeElement.textContent).toContain('Bhaktapur Learning Center');
+    expect(intro.nativeElement.textContent).toContain('A few questions about how the health post is serving you.');
     expect(fixture.debugElement.query(By.css('planet-exams-question-frame'))).toBeNull();
   });
 
@@ -78,8 +80,24 @@ describe('PublicSurveyComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.debugElement.query(By.css('.km-survey-intro'))).toBeNull();
-    expect(fixture.debugElement.query(By.css('planet-exams-question-frame'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('.km-question-body')).nativeElement.textContent)
+      .toContain('How often do you visit?');
+    expect(fixture.debugElement.query(By.css('planet-exams-take-widget'))).toBeTruthy();
     expect(fixture.componentInstance.questionNum).toBe(1);
+  });
+
+  it('keeps the toolbar next arrow disabled until the question is answered', () => {
+    createComponent();
+    fixture.componentInstance.startSurvey();
+    fixture.detectChanges();
+    const frame: ExamsQuestionFrameComponent = fixture.debugElement.query(By.directive(ExamsQuestionFrameComponent)).componentInstance;
+
+    expect(frame.disableNext).toBe(true);
+
+    fixture.componentInstance.answer.setValue('Weekly');
+    fixture.detectChanges();
+
+    expect(frame.disableNext).toBe(false);
   });
 
   it('shows the error state rather than a welcome when the survey is unavailable', () => {
