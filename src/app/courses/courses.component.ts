@@ -20,7 +20,6 @@ import {
   isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import * as constants from './constants';
-import { foundationIcons } from './constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
@@ -203,7 +202,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   private previewHasHiddenContent = new Map<string, boolean>();
   private previewOverflow = new Map<string, boolean>();
   certifications: any[] = [];
-  badgeIcons = foundationIcons;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -273,17 +271,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.countSelectNotEnrolled(source.selected);
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.certificationsService.getCertifications().pipe(
-      catchError(() => of([])),
-      takeUntil(this.onDestroy$)
-    ).subscribe((certifications: any) => {
-      this.certifications = certifications || [];
-      if (this.courses?.data?.length) {
-        this.courses.data.forEach((course: any) => {
-          course.inCertification = this.certifications.some(c => c.courseIds?.indexOf(course._id) > -1);
-        });
-      }
-    });
+    if (!this.parent && !this.isDialog && !this.isForm) {
+      this.certificationsService.getCertifications().pipe(
+        catchError(() => of([])),
+        takeUntil(this.onDestroy$)
+      ).subscribe((certifications: any[]) => {
+        this.certifications = certifications;
+        this.courses.data.forEach((course: any) => course.inCertification = this.isInCertification(course._id));
+      });
+    }
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
@@ -310,20 +306,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
       course.canManage = this.coursesService.canManageCourse(course.doc);
       course.admission = myCourseIndex > -1;
-      course.inCertification = this.certifications.some(c => c.courseIds?.indexOf(course._id) > -1);
-      course.isCompleted = this.isCourseCompleted(course);
+      course.inCertification = this.isInCertification(course._id);
+      course.isCompleted = course.doc.steps?.length > 0 &&
+        this.certificationsService.isCourseCompleted(course, this.user);
       return course;
     });
   }
 
-  isCourseCompleted(course: any): boolean {
-    return !!(course?.doc?.steps?.length > 0 &&
-      course.progress?.filter((step: any) => step.passed === true).length === course.doc.steps.length);
-  }
-
-  getBadgeIcon(course: any): string {
-    const foundation = course?.doc?.foundation || 'none';
-    return this.badgeIcons[foundation] || 'fa-star';
+  private isInCertification(courseId: string): boolean {
+    return this.certifications.some(certification => certification.courseIds?.includes(courseId));
   }
 
   getCourses() {
