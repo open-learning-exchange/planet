@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, forkJoin, of, combineLatest, race, interval, from, throwError } from 'rxjs';
+import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -356,7 +356,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     (addedCover ? from(this.normalizedCover(addedCover.file, existingAttachmentNames)) : of(null)).pipe(
       switchMap(normalizedCover => {
         if (addedCover && !normalizedCover) {
-          return throwError(() => new Error(unprocessableCoverError));
+          throw new Error(unprocessableCoverError);
         }
         if (normalizedCover) {
           return this.saveCourseWithNewCover(newCourse, normalizedCover);

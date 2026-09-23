@@ -141,6 +141,22 @@ describe('CoursesAddComponent', () => {
     }
   });
 
+  it('clears an invalid cover when Save finishes before selection validation', async () => {
+    const restoreImage = stubUndecodableImage();
+    const addedCover = { file: new File([ new Uint8Array(2 * 1024 * 1024 + 1) ], 'bad.png', { type: 'image/png' }) } as any;
+    const showAlert = vi.spyOn(TestBed.inject(PlanetMessageService), 'showAlert');
+
+    try {
+      component.setCoverState({ retained: [], removed: [], added: [ addedCover ] });
+      component.updateCourse(component.courseForm.getRawValue(), true);
+      await vi.waitFor(() => expect(showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be processed')));
+
+      expect((component as any).coverState.added).toEqual([]);
+    } finally {
+      restoreImage();
+    }
+  });
+
   it('should mark the course title as required when an empty form is submitted', () => {
     component.onSubmit();
     expect(component.courseForm.controls.courseTitle.hasError('required')).toBe(true);
