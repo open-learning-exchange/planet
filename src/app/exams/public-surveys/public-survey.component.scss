@@ -35,41 +35,28 @@
   padding: 2rem 1.5rem;
 }
 
-.survey-intro__icon {
+.survey-intro-icon {
   font-size: 3rem;
   height: 3rem;
   width: 3rem;
 }
 
-.survey-intro__invite {
+.survey-intro-text {
   margin: 0;
-  color: v.$grey-text;
 }
 
-.survey-intro__name {
+.survey-intro-name {
   margin: 0;
   font-size: 1.75rem;
   line-height: 1.2;
   overflow-wrap: break-word;
 }
 
-.survey-intro__team {
-  margin: 0;
-  color: v.$grey-text;
-}
-
-.survey-intro__meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem 1.5rem;
-  color: v.$grey-text;
-}
-
-.survey-intro__meta-item {
+.survey-intro-meta {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  margin: 0;
 
   mat-icon {
     font-size: 1.25rem;
@@ -78,7 +65,7 @@
   }
 }
 
-.survey-intro__description {
+.survey-intro-description {
   display: block;
   width: 100%;
   margin-top: 0.25rem;
@@ -88,7 +75,7 @@
   overflow-wrap: break-word;
 }
 
-.survey-intro__start {
+.survey-intro-start {
   margin-top: 0.5rem;
 }
 
@@ -97,7 +84,7 @@
     padding: 1.5rem 1rem;
   }
 
-  .survey-intro__name {
+  .survey-intro-name {
     font-size: 1.4rem;
   }
 }

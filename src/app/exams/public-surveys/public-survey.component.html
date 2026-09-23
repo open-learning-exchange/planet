@@ -12,22 +12,20 @@
 @if (survey && step === 'intro') {
   <div class="state-view">
     <mat-card class="survey-intro km-survey-intro">
-      <mat-icon aria-hidden="true" class="survey-intro__icon primary-text-color">assignment</mat-icon>
-      <p class="survey-intro__invite" i18n>You have been invited to take the following survey</p>
-      <h1 class="survey-intro__name km-survey-name">{{ survey.name }}</h1>
+      <mat-icon aria-hidden="true" class="survey-intro-icon primary-text-color">assignment</mat-icon>
+      <p class="survey-intro-text grey-text-color" i18n>You have been invited to take the following survey</p>
+      <h1 class="survey-intro-name km-survey-name">{{ survey.name }}</h1>
       @if (team?.name) {
-        <p class="survey-intro__team" i18n>Shared by {{ team.name }}</p>
+        <p class="survey-intro-text grey-text-color" i18n>Shared by {{ team.name }}</p>
       }
-      <div class="survey-intro__meta">
-        <span class="survey-intro__meta-item">
-          <mat-icon aria-hidden="true">help_outline</mat-icon>
-          <span i18n>{maxQuestions, plural, =1 {1 question} other {{{maxQuestions}} questions}}</span>
-        </span>
-      </div>
+      <p class="survey-intro-meta grey-text-color">
+        <mat-icon aria-hidden="true">help_outline</mat-icon>
+        <span i18n>{maxQuestions, plural, =1 {1 question} other {{{maxQuestions}} questions}}</span>
+      </p>
       @if (survey.description) {
-        <planet-markdown class="survey-intro__description" [content]="survey.description"></planet-markdown>
+        <planet-markdown class="survey-intro-description" [content]="survey.description"></planet-markdown>
       }
-      <button mat-raised-button color="primary" class="survey-intro__start km-start-survey" (click)="startSurvey()" i18n>Start Survey</button>
+      <button mat-raised-button color="primary" class="survey-intro-start km-start-survey" (click)="startSurvey()" i18n>Start Survey</button>
     </mat-card>
   </div>
 }
