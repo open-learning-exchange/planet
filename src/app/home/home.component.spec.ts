@@ -30,7 +30,7 @@ describe('Home', () => {
         template: `
           <mat-toolbar #toolbar></mat-toolbar>
           <mat-sidenav-container #content>
-            @if (isMobile) {
+            @if (usesOverlayNav) {
               <mat-sidenav #mobileSidenav mode="over"></mat-sidenav>
             } @else {
               <mat-sidenav mode="side" opened></mat-sidenav>
@@ -49,9 +49,10 @@ describe('Home', () => {
   };
 
   // Renders a real drawer without unrelated navigation directives.
-  const renderNav = (isMobile: boolean) => {
+  const renderNav = (isMobile: boolean, isShortViewport = false) => {
     const context = setup();
     context.comp.isMobile = isMobile;
+    context.comp.isShortViewport = isShortViewport;
     context.fixture.detectChanges();
     return context;
   };
@@ -133,6 +134,33 @@ describe('Home', () => {
     expect(firstRun.closed).toBe(true);
     comp.endAnimation();
     expect(comp.animDisp.closed).toBe(true);
+  });
+
+  it('should use the overlay nav on a short viewport that is too wide to count as mobile', () => {
+    const { comp } = renderNav(false, true);
+
+    expect(comp.usesOverlayNav).toBe(true);
+    expect(comp.mobileSidenav).toBeDefined();
+  });
+
+  it('should close the overlay nav on navigation when the viewport is only short', () => {
+    const { fixture, comp, routerEvents } = renderNav(false, true);
+    comp.toggleNav();
+    fixture.detectChanges();
+    expect(comp.mobileSidenav.opened).toBe(true);
+
+    routerEvents.next(navigationEnd('/courses'));
+
+    expect(comp.mobileSidenav.opened).toBe(false);
+  });
+
+  it('should force the modern toolbar on a short viewport that has room for the classic links', () => {
+    const { comp } = renderNav(false, true);
+    comp.classicToolbarWidth = 0;
+
+    comp.syncToolbarLayout();
+
+    expect(comp.forceModern).toBe(true);
   });
 
   it('should stop closing the nav once the component is destroyed', () => {
