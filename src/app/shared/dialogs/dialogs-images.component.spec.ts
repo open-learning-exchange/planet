@@ -1,6 +1,8 @@
+import { DebugElement, getDebugNode } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogClose, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BehaviorSubject, of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -26,7 +28,7 @@ describe('DialogsImagesComponent', () => {
   let planetMessageServiceMock: { showAlert: ReturnType<typeof vi.fn> };
 
   const dialogData = {
-    imageGroup: ['groupA']
+    imageGroup: { teams: 'team-a' }
   };
 
   beforeEach(async () => {
@@ -49,7 +51,7 @@ describe('DialogsImagesComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [DialogsImagesComponent, BrowserAnimationsModule],
+      imports: [DialogsImagesComponent, MatDialogModule, NoopAnimationsModule],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: dialogData },
         { provide: MatDialogRef, useValue: dialogRefMock },
@@ -78,8 +80,8 @@ describe('DialogsImagesComponent', () => {
   it('should filter received resources for images matching group or community', () => {
     const mockResources = [
       { doc: { filename: 'img1.png', mediaType: 'image', privateFor: 'community' } },
-      { doc: { filename: 'img2.png', mediaType: 'image', privateFor: ['groupA'] } },
-      { doc: { filename: 'img3.png', mediaType: 'image', privateFor: ['otherGroup'] } },
+      { doc: { filename: 'img2.png', mediaType: 'image', privateFor: { teams: 'team-a' } } },
+      { doc: { filename: 'img3.png', mediaType: 'image', privateFor: { teams: 'other-team' } } },
       { doc: { filename: 'doc1.pdf', mediaType: 'pdf', privateFor: 'community' } }
     ];
 
@@ -95,9 +97,11 @@ describe('DialogsImagesComponent', () => {
     ];
     resourcesSubject.next(initialResources);
     expect(component.images.length).toBe(1);
+    expect(resourcesSubject.observers).toHaveLength(1);
 
     // Destroy the fixture and component
     fixture.destroy();
+    expect(resourcesSubject.observers).toHaveLength(0);
 
     // Emit another update
     const updatedResources = [
@@ -108,6 +112,31 @@ describe('DialogsImagesComponent', () => {
 
     // Images should remain unchanged because subscription was terminated by DestroyRef
     expect(component.images.length).toBe(1);
+  });
+
+  it.each(['selection', 'Cancel'])('should release subscriptions after repeated %s closes', async closeRoute => {
+    const initialSubscribers = resourcesSubject.observers.length;
+    const dialog = TestBed.inject(MatDialog);
+    const selectedImage = { filename: 'photo.jpg', _id: 'img-123' };
+
+    for (let cycle = 0; cycle < 3; cycle++) {
+      const dialogRef = dialog.open(DialogsImagesComponent, { data: dialogData });
+      const componentRef = dialogRef.componentRef;
+      componentRef.changeDetectorRef.detectChanges();
+      expect(resourcesSubject.observers).toHaveLength(initialSubscribers + 1);
+      const closed = dialogRef.afterClosed().toPromise();
+
+      if (closeRoute === 'selection') {
+        dialogRef.componentInstance.selectImage(selectedImage);
+      } else {
+        const dialogElement = getDebugNode(componentRef.location.nativeElement) as DebugElement;
+        dialogElement.query(By.directive(MatDialogClose)).nativeElement.click();
+      }
+
+      expect(await closed).toEqual(closeRoute === 'selection' ? selectedImage : '');
+      expect(componentRef.hostView.destroyed).toBe(true);
+      expect(resourcesSubject.observers).toHaveLength(initialSubscribers);
+    }
   });
 
   it('should filter images by search query', () => {
@@ -169,7 +198,7 @@ describe('DialogsImagesComponent', () => {
         title: 'new_photo.png',
         filename: 'new_photo.png',
         private: true,
-        privateFor: ['groupA'],
+        privateFor: { teams: 'team-a' },
         sourcePlanet: 'testplanet',
         resideOn: 'testplanet',
         addedBy: 'testuser',
