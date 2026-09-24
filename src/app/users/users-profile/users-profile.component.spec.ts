@@ -56,4 +56,21 @@ describe('UserProfileComponent', () => {
     const backButton = fixture.debugElement.query(By.css('.km-profile-back-button'));
     expect(backButton).toBeNull();
   });
+
+  describe('getUserLanguages', () => {
+    it('should return languages array if userDetail has languages array', () => {
+      component.userDetail = { languages: ['English', 'Spanish'] } as any;
+      expect(component.getUserLanguages()).toEqual(['English', 'Spanish']);
+    });
+
+    it('should return array with single language if userDetail only has legacy language string', () => {
+      component.userDetail = { language: 'Somali' } as any;
+      expect(component.getUserLanguages()).toEqual(['Somali']);
+    });
+
+    it('should return empty array if userDetail has no languages or language', () => {
+      component.userDetail = {} as any;
+      expect(component.getUserLanguages()).toEqual([]);
+    });
+  });
 });

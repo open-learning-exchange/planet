@@ -182,6 +182,13 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     return Array.from(rolesSet);
   }
 
+  getUserLanguages(): string[] {
+    if (Array.isArray(this.userDetail?.languages) && this.userDetail.languages.length > 0) {
+      return this.userDetail.languages;
+    }
+    return this.userDetail?.language ? [ this.userDetail.language ] : [];
+  }
+
   getTeamsAndEnterprises() {
     this.teamsService.getTeamsByUser(this.urlName, this.planetCode).subscribe(teams => {
       this.teams = teams.filter((team: any) => !team.doc.type || team.doc.type === 'team');

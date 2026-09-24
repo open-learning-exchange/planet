@@ -33,14 +33,14 @@
         </mat-form-field>
         <mat-form-field>
           <mat-label i18n>Language</mat-label>
-          <mat-select required formControlName="language">
-            @for (language of languages; track language) {
+          <mat-select required formControlName="languages" multiple>
+            @for (language of languages; track language.shortCode) {
               <mat-option [value]="language.name">
                 {{language.name}}
               </mat-option>
             }
           </mat-select>
-          <mat-error><planet-form-error-messages [control]="profileForm.controls.language"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.languages"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-label i18n>Birthdate</mat-label>

@@ -29,7 +29,7 @@ interface ProfileFormValue {
   middleName: string;
   lastName: string;
   email: string;
-  language: string;
+  languages: string[];
   phoneNumber: string;
   birthDate: Date | null;
   birthplace: string;
@@ -101,7 +101,14 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit() {
-    this.profileForm.patchValue(this.userService.get());
+    const user = this.userService.get();
+    const userLanguages = Array.isArray(user.languages) && user.languages.length > 0
+      ? user.languages
+      : (user.language ? [ user.language ] : []);
+    this.profileForm.patchValue({
+      ...user,
+      languages: userLanguages
+    });
     this.healthService.getHealthData(this.userService.get()._id).subscribe(([ data ]: any[]) => {
       this.existingData = data;
       this.healthForm.patchValue(data.profile);
@@ -150,7 +157,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       middleName: this.fb.control(''),
       lastName: this.fb.control('', { validators: [ CustomValidators.required ] }),
       email: this.fb.control('', { validators: [ Validators.required, Validators.email ] }),
-      language: this.fb.control('', { validators: [ Validators.required ] }),
+      languages: this.fb.control<string[]>([], { validators: [ Validators.required ] }),
       phoneNumber: this.fb.control('', { validators: [ CustomValidators.required ] }),
       birthDate: this.fb.control<Date | null>(null, {
         validators: [ CustomValidators.dateValidRequired ],
@@ -193,7 +200,11 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
     const profileValue = this.profileForm.getRawValue();
     const healthValue = this.healthForm.getRawValue();
     forkJoin([
-      this.userService.updateUser({ ...this.userService.get(), ...profileValue }),
+      this.userService.updateUser({
+        ...this.userService.get(),
+        ...profileValue,
+        language: profileValue.languages[0] || ''
+      }),
       this.healthService.postHealthProfileData({
         _id: this.existingData._id || this.userService.get()._id,
         _rev: this.existingData._rev,

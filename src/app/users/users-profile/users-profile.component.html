@@ -82,7 +82,7 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Language</h4>
-          <p matListItemLine><b>{{userDetail.language || 'N/A'}}</b></p>
+          <p matListItemLine><b>{{ getUserLanguages().join(', ') || 'N/A' }}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
