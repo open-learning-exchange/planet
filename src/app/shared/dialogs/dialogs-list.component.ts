@@ -3,7 +3,7 @@
  *  list, rendered as a Material table
  */
 
-import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import {
@@ -11,7 +11,7 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
+import { composeFilterFunctions, filterDropdowns, isAllVisibleSelected, toggleVisibleSelection } from '../table-helpers';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
@@ -21,6 +21,8 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { fullName } from '../utils';
 
 @Component({
@@ -63,7 +65,7 @@ import { fullName } from '../utils';
     MatTooltip
   ]
 })
-export class DialogsListComponent implements AfterViewInit {
+export class DialogsListComponent implements AfterViewInit, OnDestroy {
 
   tableData = new MatTableDataSource();
   tableColumns: string[] = [];
@@ -74,10 +76,11 @@ export class DialogsListComponent implements AfterViewInit {
   dropdownOptions: any;
   dropdownFilter: any = {};
   dropdownField: string;
-  selectedElements: any[];
-  selectedNames: string[] = [];
   tooltipText = '';
   @ViewChild('paginator') paginator: MatPaginator;
+  private rowsByIdentifier = new Map<string, any>();
+  private renderedRows: any[] = [];
+  private onDestroy$ = new Subject<void>();
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[];
@@ -97,7 +100,10 @@ export class DialogsListComponent implements AfterViewInit {
     const tableData = hasFullName ?
       this.appendFullName(this.data.tableData) :
       this.data.tableData;
-    this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
+    this.rowsByIdentifier = new Map(tableData.map((row: any): [ string, any ] => [ this.selectIdentifier(row), row ]));
+    // Saved selections can outlive their rows (deleted docs, resources that lost their attachment), so drop the stale ids
+    const initialSelection = (this.data.initialSelection || []).filter(id => this.rowsByIdentifier.has(id));
+    this.selection = new SelectionModel(this.data.allowMulti || false, initialSelection);
     this.tableData.data = tableData;
     this.tableColumns = this.data.columns;
     this.disableRowClick = this.data.disableSelection || false;
@@ -106,11 +112,17 @@ export class DialogsListComponent implements AfterViewInit {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
     this.setDropdownFilter(this.data.dropdownSettings, this.data.labels);
-    this.initializeTooltip();
+    this.updateTooltip();
   }
 
   ngAfterViewInit() {
     this.tableData.paginator = this.paginator;
+    this.tableData.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   ok() {
@@ -118,7 +130,14 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
+    this.resetPage();
     this.tableData.filter = filterValue || ' ';
+  }
+
+  private resetPage() {
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
   }
 
   appendFullName(data: any[]) {
@@ -128,69 +147,36 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   isAllSelected() {
-    // Finds first instance that a filtered row id is not selected, and undefined if all are selected
-    // Convert to boolean with ! (true = all selected, false = not all selected)
-    const allShownSelected = !this.tableData.filteredData.find(
-      (row: any) => this.selection.selected.indexOf(this.selectIdentifier(row)) === -1
-    );
-
     if (this.tableData.filteredData.length === 0) {
       return 'hidden';
     }
-    return allShownSelected ? 'yes' : 'no';
-
+    return isAllVisibleSelected(this.selection, this.renderedRows, {
+      selectValue: row => this.selectIdentifier(row)
+    }) ? 'yes' : 'no';
   }
 
   masterToggle() {
-    const isAllSelected = this.isAllSelected() === 'yes';
-    this.tableData.filteredData.forEach((row: any) => {
-      const selectIdentifier = this.selectIdentifier(row);
-      if (isAllSelected) {
-        this.selection.deselect(selectIdentifier);
-      } else {
-        this.selection.select(selectIdentifier);
-      }
-      this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
-    });
+    toggleVisibleSelection(this.selection, this.renderedRows, { selectValue: row => this.selectIdentifier(row) });
+    this.updateTooltip();
   }
 
   rowClick(row: any) {
     if (!this.disableRowClick) {
-      const selectIdentifier = this.selectIdentifier(row);
-      this.selection.toggle(selectIdentifier);
-      this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
+      this.selection.toggle(this.selectIdentifier(row));
+      this.updateTooltip();
     }
   }
 
   selectedRows() {
-    return this.selection.selected.map(id => this.tableData.data.find((row: any) => this.selectIdentifier(row) === id));
-  }
-
-  initializeTooltip() {
-    this.selectedRows().forEach((row: any) => this.setSelectedNames(row[this.data.nameProperty], this.selectIdentifier(row)));
+    return this.selection.selected.map(id => this.rowsByIdentifier.get(id)).filter(row => row !== undefined);
   }
 
   selectIdentifier(row: any) {
     return row._id + (row.planetCode === undefined ? '' : row.planetCode);
   }
 
-  setSelectedNames(name, selectIdentifier) {
-    if (this.selection.isSelected(selectIdentifier)) {
-      this.addToSelectedNames(name);
-    } else {
-      this.removeFromSelectedNames(name);
-    }
-    this.tooltipText = this.selectedNames.join(', ');
-  }
-
-  addToSelectedNames(name) {
-    if (this.selectedNames.indexOf(name) === -1) {
-      this.selectedNames.push(name);
-    }
-  }
-
-  removeFromSelectedNames(name) {
-    this.selectedNames.splice(this.selectedNames.indexOf(name), 1);
+  updateTooltip() {
+    this.tooltipText = [ ...new Set(this.selectedRows().map(row => row[this.data.nameProperty])) ].join(', ');
   }
 
   allowSubmit() {
@@ -228,6 +214,7 @@ export class DialogsListComponent implements AfterViewInit {
 
   onFilterChange(filterValue: string, field: string) {
     this.dropdownFilter[field] = filterValue === 'All' ? '' : filterValue;
+    this.resetPage();
     // Force filter to update by setting it to a space if empty
     this.tableData.filter = this.tableData.filter ? this.tableData.filter : ' ';
   }
