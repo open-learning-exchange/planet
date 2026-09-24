@@ -250,4 +250,16 @@ describe('PlanetRatingComponent', () => {
     expect(component.popupForm.value).toEqual({ rate: 0, comment: '' });
     expect(component.isPopupOpen).toBe(false);
   });
+
+  it('shows please join course message when not enrolled in course', () => {
+    const { component, planetMessage, ratingService } = createComponent();
+    (component as any).userService.countInShelf = () => ({ inShelf: 0 });
+    component.ratingType = 'course';
+    component.rateForm.setValue({ rate: 5 });
+
+    component.onStarClick();
+
+    expect(planetMessage.showMessage).toHaveBeenCalledWith('Please join the course before rating!');
+    expect(ratingService.saveRating).not.toHaveBeenCalled();
+  });
 });

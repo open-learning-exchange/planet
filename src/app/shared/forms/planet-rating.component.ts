@@ -75,6 +75,10 @@ export class PlanetRatingComponent implements OnChanges {
     ];
   }
 
+  private get itemId(): string {
+    return this.item?._id || this.item?.doc?._id || '';
+  }
+
   isEnrolled(id: any, type: any): boolean {
     const idType = type === 'course' ? 'courseIds' : 'resourceIds';
     const { inShelf } = this.userService.countInShelf([ id ], idType);
@@ -87,7 +91,7 @@ export class PlanetRatingComponent implements OnChanges {
       return;
     }
 
-    if (!this.isEnrolled(this.item._id, this.ratingType)) {
+    if (!this.isEnrolled(this.itemId, this.ratingType)) {
       if (this.ratingType === 'course') {
         this.planetMessage.showMessage($localize`Please join the course before rating!`);
       } else {
