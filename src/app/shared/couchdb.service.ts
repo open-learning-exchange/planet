@@ -100,6 +100,12 @@ export class CouchService {
     return this.findAllRequest(db, query, opts).pipe(flatMap(({ docs }) => docs), toArray());
   }
 
+  // Same as findAll, except every page of the query must succeed.  A failed '_find' request errors instead of
+  // resolving to an empty list, so callers which treat an empty result as proof of absence can rely on it.
+  findAllStrict(db: string, query: any = { selector: { _id: { $gt: null } }, limit: 1000 }, opts?: any) {
+    return this.findAllRequest(db, query, opts, true).pipe(flatMap(({ docs }) => docs), toArray());
+  }
+
   findAllStream(db: string, query: any = { selector: { _id: { $gt: null } }, limit: 1000 }, opts?: any) {
     return this.findAllRequest(db, query, opts).pipe(map(({ docs }) => docs));
   }
@@ -122,10 +128,11 @@ export class CouchService {
     );
   }
 
-  private findAllRequest(db: string, query: any, opts: any) {
-    return this.post(db + '/_find', query, opts).pipe(
-      catchError(() => of({ docs: [], rows: [] })),
-      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
+  private findAllRequest(db: string, query: any, opts: any, strict = false) {
+    const findPage = (pageQuery: any) => this.post(db + '/_find', pageQuery, opts);
+    const firstPage = strict ? findPage(query) : findPage(query).pipe(catchError(() => of({ docs: [], rows: [] })));
+    return firstPage.pipe(
+      expand((res) => res.docs.length > 0 ? findPage({ ...query, bookmark: res.bookmark }) : empty())
     );
   }
 
