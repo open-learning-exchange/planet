@@ -21,6 +21,7 @@ import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -32,6 +33,12 @@ describe('CoursesComponent', () => {
   let coursedata1;
   let coursedata2;
   let coursearray;
+
+  const completionService = new CertificationsService({} as any, {} as any, {} as any);
+  const certificationsServiceMock = {
+    getCertifications: vi.fn().mockReturnValue(of([])),
+    isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
+  };
 
   const coursesServiceMock = {
     requestCourses: vi.fn(),
@@ -61,7 +68,7 @@ describe('CoursesComponent', () => {
   };
 
   const userServiceMock = {
-    get: vi.fn().mockReturnValue({ isUserAdmin: true, name: 'user' }),
+    get: vi.fn().mockReturnValue({ _id: 'user_1', isUserAdmin: true, name: 'user' }),
     shelf: { courseIds: [] },
     shelfChange$: new Subject(),
     countInShelf: vi.fn().mockReturnValue({ inShelf: 0, notInShelf: 0 })
@@ -89,6 +96,7 @@ describe('CoursesComponent', () => {
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
         FuzzySearchService,
+        { provide: CertificationsService, useValue: certificationsServiceMock },
         { provide: MatDialog, useValue: dialogMock },
         {
           provide: ActivatedRoute,
@@ -134,7 +142,7 @@ describe('CoursesComponent', () => {
   it('confirms bulk removal for enrolled selections only', () => {
     component.courses.data = [
       { _id: '1', doc: { steps: [] } },
-      { _id: '2', doc: { steps: [ {} ] } }
+      { _id: '2', doc: { steps: [ {} ] }, progress: [] }
     ];
 
     component.enrollLeaveToggle([ '1', '2' ], 'remove');
@@ -152,7 +160,7 @@ describe('CoursesComponent', () => {
 
   it('uses the parent catalog when enrolling in a parent course', () => {
     component.parent = true;
-    component.courses.data = [ { _id: '1', doc: { steps: [ {} ] } } ];
+    component.courses.data = [ { _id: '1', doc: { steps: [ {} ] }, progress: [] } ];
 
     component.enrollLeaveToggle([ '1' ], 'add');
 
@@ -222,4 +230,42 @@ describe('CoursesComponent', () => {
       expect(component.deleteDialog.componentInstance.message).toBe('There was a problem deleting this course');
     });
   });*/
+
+  it('sets completion and certification flags using distinct passed steps', () => {
+    component.certifications = [ { courseIds: [ 'c1' ] } ];
+    const courses = [
+      {
+        _id: 'c1',
+        doc: { steps: [ {}, {} ] },
+        progress: [
+          { userId: 'user_1', stepNum: 1, passed: true },
+          { userId: 'user_1', stepNum: 1, passed: true }
+        ]
+      },
+      {
+        _id: 'c2',
+        doc: { steps: [ {}, {} ] },
+        progress: [
+          { userId: 'user_1', stepNum: 1, passed: true },
+          { userId: 'user_1', stepNum: 1, passed: true },
+          { userId: 'user_1', stepNum: 2, passed: true }
+        ]
+      },
+      {
+        _id: 'c3', doc: { steps: [ {}, {} ] },
+        progress: [
+          { userId: 'user_1', stepNum: 1, passed: true },
+          { userId: 'user_1', stepNum: 3, passed: true }
+        ]
+      },
+      { _id: 'c4', doc: { steps: [] }, progress: [] }
+    ];
+
+    const result = component.setupList(courses, [ 'c1' ]);
+    expect(result[0]).toMatchObject({ inCertification: true, isCompleted: false });
+    expect(result[1]).toMatchObject({ inCertification: false, isCompleted: true });
+    expect(result[2]).toMatchObject({ inCertification: false, isCompleted: false });
+    expect(result[3]).toMatchObject({ inCertification: false, isCompleted: false });
+    expect(certificationsServiceMock.isCourseCompleted).toHaveBeenCalledTimes(3);
+  });
 });

@@ -65,7 +65,11 @@ describe('DashboardComponent', () => {
       coursesListener$: vi.fn().mockReturnValue(of([]))
     };
     stateServiceMock = { configuration: { name: 'Planet Earth', code: 'earth_code' } };
-    certificationsServiceMock = { getCertifications: vi.fn().mockReturnValue(of([])) };
+    const completionService = new CertificationsService({} as any, {} as any, {} as any);
+    certificationsServiceMock = {
+      getCertifications: vi.fn().mockReturnValue(of([])),
+      isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
+    };
     deviceInfoServiceMock = { watchDeviceType: vi.fn().mockReturnValue(deviceType$.asObservable()) };
     matDialogMock = { open: vi.fn() };
 
@@ -223,10 +227,12 @@ describe('DashboardComponent', () => {
     createComponent();
     component.setBadgesCourses([
       {
-        _id: 'completed', doc: { foundation: 'literacy', steps: [ {} ] }, progress: [ { passed: true } ]
+        _id: 'completed', doc: { foundation: 'literacy', steps: [ {} ] },
+        progress: [ { userId: 'user_123', stepNum: 1, passed: true } ]
       },
       {
-        _id: 'incomplete', doc: { foundation: 'math', steps: [ {} ] }, progress: [ { passed: false } ]
+        _id: 'incomplete', doc: { foundation: 'math', steps: [ {} ] },
+        progress: [ { userId: 'user_123', stepNum: 1, passed: false } ]
       }
     ], [ { courseIds: [ 'completed' ] } ]);
 
@@ -238,11 +244,29 @@ describe('DashboardComponent', () => {
   it('groups completed courses without a foundation under none', () => {
     createComponent();
     component.setBadgesCourses([
-      { _id: 'course_none', doc: { steps: [ {} ] }, progress: [ { passed: true } ] }
+      {
+        _id: 'course_none', doc: { steps: [ {} ] },
+        progress: [ { userId: 'user_123', stepNum: 1, passed: true } ]
+      }
     ], []);
 
     expect(component.badgesCourses.none).toHaveLength(1);
     expect(component.badgeGroups).toEqual([ 'none' ]);
+  });
+
+  it('does not treat duplicate progress for one step as course completion', () => {
+    createComponent();
+    component.setBadgesCourses([
+      {
+        _id: 'duplicate_progress', doc: { foundation: 'literacy', steps: [ {}, {} ] },
+        progress: [
+          { userId: 'user_123', stepNum: 1, passed: true },
+          { userId: 'user_123', stepNum: 1, passed: true }
+        ]
+      }
+    ], []);
+
+    expect(component.badgesCourses.literacy).toBeUndefined();
   });
 
   it('sets canRemove only for team leaders', () => {
