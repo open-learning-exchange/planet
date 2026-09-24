@@ -95,13 +95,13 @@ export class AuthService {
     );
   }
 
-  static centerLandingGuard: CanActivateFn = () => {
+  static centerLandingGuard: CanActivateFn = (route, state) => {
     const router = inject(Router);
     const stateService = inject(StateService);
 
     // Only redirect on first navigation for center planets
     if (!router.navigated && stateService.configuration.planetType === 'center') {
-      router.navigate(['/login']);
+      router.navigate([ '/login' ], state.url === '/' ? {} : { queryParams: { returnUrl: state.url } });
       return false;
     }
     return true;
