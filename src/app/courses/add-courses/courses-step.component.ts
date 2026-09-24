@@ -13,7 +13,7 @@ import {
   PlanetStepListNumberDirective,
   PlanetStepListFormDirective,
   PlanetStepListActionsDirective
-} from '../../shared/ui/planet-step-list.component';
+} from '../../shared/forms/planet-step-list.component';
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';

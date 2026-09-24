@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 
-import { PlanetLocalStatusComponent } from './ui/planet-local-status.component';
+import { PlanetLocalStatusComponent } from './database/planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './dialogs/submit.directive';
 import { LowercaseDirective } from './forms/lowercase.directive';
@@ -22,7 +22,7 @@ import { TruncateTextPipe } from './text/truncate-text.pipe';
 import { FullNamePipe } from './text/full-name.pipe';
 import { TimeAgoPipe } from './text/time-ago.pipe';
 import { PlanetLoadingSpinnerComponent } from './ui/planet-loading-spinner.component';
-import { PreviewOverflowDirective } from './ui/preview-overflow.directive';
+import { PreviewOverflowDirective } from './text/preview-overflow.directive';
 
 @NgModule({
   imports: [

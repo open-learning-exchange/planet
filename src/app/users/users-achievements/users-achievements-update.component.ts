@@ -11,7 +11,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/ui/planet-step-list.component';
+import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/tables/table.helpers';
 import { normalizedContentType } from '../../shared/utils';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes/unsaved-changes.guard';

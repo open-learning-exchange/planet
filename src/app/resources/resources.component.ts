@@ -51,9 +51,9 @@ import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.direct
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PreviewOverflowDirective } from '../shared/ui/preview-overflow.directive';
+import { PreviewOverflowDirective } from '../shared/text/preview-overflow.directive';
 import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
-import { PlanetLocalStatusComponent } from '../shared/ui/planet-local-status.component';
+import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
 import { PlanetRatingComponent } from '../shared/ratings/planet-rating.component';

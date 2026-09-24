@@ -14,7 +14,7 @@ import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/auth/user.service';
 import { StateService } from '../../shared/state.service';
-import { PlanetStepListService } from '../../shared/ui/planet-step-list.component';
+import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags/tags.service';

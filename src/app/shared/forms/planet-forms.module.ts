@@ -10,7 +10,7 @@ import { PlanetStackedBarComponent } from '../charts/planet-stacked-bar.componen
 import { PlanetTagInputComponent } from './tags/planet-tag-input.component';
 import { PlanetTagSelectedInputComponent } from './tags/planet-tag-selected-input.component';
 import { PlanetStepListComponent, PlanetStepListFormDirective, PlanetStepListItemComponent,
-  PlanetStepListActionsDirective, PlanetStepListNumberDirective } from '../ui/planet-step-list.component';
+  PlanetStepListActionsDirective, PlanetStepListNumberDirective } from './planet-step-list.component';
 import { PlanetMarkdownTextboxComponent } from '../markdown/planet-markdown-textbox.component';
 import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from './tags/planet-tag-input-dialog.component';
 import { SharedComponentsModule } from '../shared-components.module';

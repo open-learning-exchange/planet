@@ -22,7 +22,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService, QuestionFormGroup } from './exams.service';
 import {
   PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
-} from '../shared/ui/planet-step-list.component';
+} from '../shared/forms/planet-step-list.component';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
