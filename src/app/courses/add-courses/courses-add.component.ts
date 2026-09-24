@@ -30,12 +30,14 @@ import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/mat
 import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
-import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
+import { FileUploadComponent, AttachmentInputState, ExistingAttachment, PendingAttachment } from '../../shared/forms/file-upload.component';
 import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
+const unprocessableCoverError = 'unprocessable-cover';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -75,6 +77,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private preserveCoverStateUntilSubmit = false;
   existingCoverAttachments: ExistingAttachment[] = [];
   private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
+  private coverCheck?: { file: File, usedNames: string[], image: Promise<NormalizedImage | null> };
   savedCourse: any = null;
   draftExists: boolean;
   deleteDialog: MatDialogRef<DialogsPromptComponent> | null = null;
@@ -155,7 +158,16 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         this.preserveCoverStateUntilSubmit = !!continuedCoverState;
         this.setFormAndSteps(continuedCourse);
         this.setCoverState(continuedCoverState || this.coverState);
-        this.submitAddedExam();
+        const addedCover = this.coverState.added[0];
+        if (addedCover) {
+          void this.validateAddedCover(addedCover).then(() => {
+            if (!this.isDestroyed) {
+              this.submitAddedExam();
+            }
+          });
+        } else {
+          this.submitAddedExam();
+        }
       } else {
         this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
         this.setInitialState();
@@ -274,9 +286,46 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       return;
     }
     this.setCoverState(state);
+    if (state.added[0]) {
+      void this.validateAddedCover(state.added[0]);
+    }
+  }
+
+  private async validateAddedCover(addedCover: PendingAttachment): Promise<void> {
+    const usedNames = Object.keys(this.savedCourse?._attachments || {});
+    if (!await this.normalizedCover(addedCover.file, usedNames)) {
+      this.rejectAddedCover(addedCover);
+    }
+  }
+
+  private normalizedCover(file: File, usedNames: string[]): Promise<NormalizedImage | null> {
+    const checked = this.coverCheck;
+    if (checked?.file === file && checked.usedNames.length === usedNames.length &&
+        checked.usedNames.every((name, index) => name === usedNames[index])) {
+      return checked.image;
+    }
+    const image = normalizeImage(file, { usedNames });
+    this.coverCheck = { file, usedNames: [ ...usedNames ], image };
+    return image;
+  }
+
+  private rejectAddedCover(addedCover: PendingAttachment): boolean {
+    if (this.isDestroyed || this.coverState.added[0] !== addedCover) {
+      return false;
+    }
+    const uploadIndex = this.coverUploadComponent?.added.indexOf(addedCover) ?? -1;
+    if (uploadIndex >= 0) {
+      this.coverUploadComponent.removeAdded(uploadIndex);
+    }
+    this.setCoverState({ ...this.coverState, added: [] });
+    this.planetMessageService.showAlert($localize`Cover image could not be processed. Please choose a JPEG or PNG image.`);
+    return true;
   }
 
   setCoverState(state: AttachmentInputState) {
+    if (this.coverCheck?.file !== state.added[0]?.file) {
+      this.coverCheck = undefined;
+    }
     this.coverState = state;
     this.coursesService.course = { coverState: state };
   }
@@ -304,8 +353,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     const addedCover = this.coverState?.added[0];
     const retainedCover = this.coverState?.retained[0];
     const existingAttachmentNames = Object.keys(this.savedCourse?._attachments || {});
-    (addedCover ? from(normalizeImage(addedCover.file, { usedNames: existingAttachmentNames })) : of(null)).pipe(
+    (addedCover ? from(this.normalizedCover(addedCover.file, existingAttachmentNames)) : of(null)).pipe(
       switchMap(normalizedCover => {
+        if (addedCover && !normalizedCover) {
+          throw new Error(unprocessableCoverError);
+        }
         if (normalizedCover) {
           return this.saveCourseWithNewCover(newCourse, normalizedCover);
         }
@@ -330,6 +382,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.preserveCoverStateUntilSubmit = false;
     }, (err) => {
       this.preserveCoverStateUntilSubmit = false;
+      if (err?.message === unprocessableCoverError && addedCover && this.rejectAddedCover(addedCover)) {
+        return;
+      }
       this.planetMessageService.showAlert($localize`There was an error saving this course`);
     });
   }
