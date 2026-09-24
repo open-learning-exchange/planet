@@ -41,7 +41,7 @@ interface UsersUpdateFormGroup {
   middleName: FormControl<string>;
   lastName: FormControl<string>;
   email: FormControl<string>;
-  language: FormControl<string>;
+  languages: FormControl<string[]>;
   phoneNumber: FormControl<string>;
   birthDate: FormControl<string | Date | null>;
   birthYear: FormControl<number | null>;
@@ -170,7 +170,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       middleName: this.fb.control(''),
       lastName: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
       email: this.fb.control('', [ this.conditionalValidator(Validators.required), Validators.email ]),
-      language: this.fb.control('', this.conditionalValidator(Validators.required)),
+      languages: this.fb.control<string[]>([], this.conditionalValidator(Validators.required)),
       phoneNumber: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
       birthDate: this.fb.control<string | Date | null>(
         null,
@@ -227,10 +227,19 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     if (this.submissionMode) {
       // Remove birthYear from submitted data
       const { birthYear, ...cleanUserData } = this.editForm.getRawValue();
-      this.appendToSurvey(cleanUserData);
+      this.appendToSurvey({
+        ...cleanUserData,
+        language: cleanUserData.languages[0] || ''
+      });
     } else {
+      const rawFormValue = this.editForm.getRawValue();
       const attachment = this.file ? this.createAttachmentObj(this.file) : {};
-      const updatedUser: UserDocument = { ...this.user, ...this.editForm.getRawValue(), ...attachment };
+      const updatedUser: UserDocument = {
+        ...this.user,
+        ...rawFormValue,
+        language: rawFormValue.languages[0] || '',
+        ...attachment
+      };
       this.userService.updateUser(updatedUser).pipe(
         switchMap(() => this.userService.addImageForReplication(true))
       ).subscribe(() => {
@@ -375,12 +384,15 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   private mapUserToFormValue(user: UserDocument): Partial<UsersUpdateFormValue> {
+    const userLanguages = Array.isArray(user.languages) && user.languages.length > 0
+      ? user.languages
+      : (user.language ? [ user.language ] : []);
     return {
       firstName: user.firstName ?? '',
       middleName: user.middleName ?? '',
       lastName: user.lastName ?? '',
       email: user.email ?? '',
-      language: user.language ?? '',
+      languages: userLanguages,
       phoneNumber: user.phoneNumber ?? '',
       birthDate: user.birthDate ?? null,
       birthYear: user.birthYear ?? null,

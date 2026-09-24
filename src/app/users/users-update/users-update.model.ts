@@ -21,6 +21,7 @@ export interface UserDocument {
   firstName?: string;
   gender?: string;
   language?: string;
+  languages?: string[];
   lastName?: string;
   level?: string;
   middleName?: string;
@@ -36,7 +37,8 @@ export interface UsersUpdateFormValue {
   email: string;
   firstName: string;
   gender: string;
-  language: string;
+  language?: string;
+  languages: string[];
   lastName: string;
   level: string;
   middleName: string;

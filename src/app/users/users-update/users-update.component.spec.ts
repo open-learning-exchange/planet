@@ -67,4 +67,46 @@ describe('UserUpdateProfileComponent', () => {
     expect(component).toBeTruthy();
     expect(couchServiceMock.get).toHaveBeenCalledWith('_users/org.couchdb.user:testuser');
   });
+
+  it('should map languages array to form value', () => {
+    const user = {
+      name: 'testuser',
+      languages: ['English', 'Spanish'],
+      language: 'English'
+    };
+    const formValue = (component as any).mapUserToFormValue(user);
+    expect(formValue.languages).toEqual(['English', 'Spanish']);
+  });
+
+  it('should fallback to legacy language string when languages array is not present', () => {
+    const user = {
+      name: 'testuser',
+      language: 'Spanish'
+    };
+    const formValue = (component as any).mapUserToFormValue(user);
+    expect(formValue.languages).toEqual(['Spanish']);
+  });
+
+  it('should include languages array and primary language on submitUser', () => {
+    component.submissionMode = false;
+    component.user = { name: 'testuser' } as any;
+    component.editForm.patchValue({
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com',
+      languages: ['English', 'Somali'],
+      phoneNumber: '1234567890',
+      gender: 'male',
+      level: 'level1'
+    });
+
+    component.submitUser();
+
+    expect(userServiceMock.updateUser).toHaveBeenCalledWith(
+      expect.objectContaining({
+        languages: ['English', 'Somali'],
+        language: 'English'
+      })
+    );
+  });
 });

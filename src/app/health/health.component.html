@@ -49,7 +49,7 @@
           <div>
             <div>
               <h4 class="primary-text-color" i18n>Language</h4>
-              <p><b>{{userDetail.language || 'N/A'}}</b></p>
+              <p><b>{{ (userDetail.languages && userDetail.languages.length ? userDetail.languages.join(', ') : userDetail.language) || 'N/A' }}</b></p>
             </div>
             <mat-divider></mat-divider>
           </div>
