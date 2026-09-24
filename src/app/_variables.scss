@@ -82,6 +82,9 @@ $font-family: Roboto, sans-serif;
 $screen-md: 1000px;
 $screen-sm: 780px;
 $screen-xs: 480px;
+// Keep this query in sync with SHORT_VIEWPORT_QUERY in device-info.service.ts.
+$short-viewport: '(max-height: 500px) and (pointer: coarse)';
+$toolbar-row-short: 48px;
 
 @mixin screen-sizes($md: 1000px, $sm: 780px, $xs: 480px) {
   --screen-md: #{$md};
@@ -90,11 +93,12 @@ $screen-xs: 480px;
 }
 
 // Maximum full height of view container (avoiding vertical overflow)
-$view-container-height: calc(100vh - 216px);
+$view-container-height: calc(var(--planet-vh) - 216px);
 $view-container-height-no-toolbar: calc(#{$view-container-height} + 64px);
+$view-container-min-height: 40vh;
 $search-filters-height: 25vh;
 // Height of dashboard
-$dashboard-height: calc(100vh - 128px);
+$dashboard-height: calc(var(--planet-vh) - 128px);
 $dashboard-tile-height: calc((#{$dashboard-height} - 3rem) / 4);
 $dashboard-tile-width: 125px;
 // Widths for forms fitting 1, 2, or 3 mat-input-fields horizontally
