@@ -6,12 +6,14 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MaterialModule } from '../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Subject } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { HomeComponent } from './home.component';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
+import { StateService } from '../shared/state.service';
+import { PouchAuthService } from '../shared/database/pouch-auth.service';
 
 describe('Home', () => {
 
@@ -142,6 +144,81 @@ describe('Home', () => {
     routerEvents.next(navigationEnd('/courses'));
 
     expect(close).not.toHaveBeenCalled();
+  });
+
+  // Shared state makes reading the user after unset() fail the test.
+  const setupLogout = (parentDelete, { user = { name: 'admin' }, configuration = {} }: any = {}) => {
+    const { comp } = setup();
+    let currentUser: any = user;
+    vi.spyOn(TestBed.inject(StateService), 'configuration', 'get').mockReturnValue({
+      adminName: 'admin@community', parentDomain: 'parent.example', planetType: 'community', ...configuration
+    });
+    const userService = TestBed.inject(UserService);
+    vi.spyOn(userService, 'get').mockImplementation(() => currentUser);
+    vi.spyOn(userService, 'endSessionLog').mockReturnValue(of({}));
+    vi.spyOn(TestBed.inject(PouchAuthService), 'logout').mockReturnValue(of({}));
+    const unset = vi.spyOn(userService, 'unset').mockImplementation(() => currentUser = { name: '' });
+    const deleteSession = vi.spyOn(TestBed.inject(CouchService), 'delete').mockReturnValue(parentDelete);
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    return { comp, unset, deleteSession, navigate };
+  };
+
+  it('should unset the user and navigate while the parent session delete is still pending', () => {
+    const parentDelete = new Subject<any>();
+    const { comp, unset, deleteSession, navigate } = setupLogout(parentDelete);
+
+    comp.logoutClick();
+
+    expect(deleteSession).toHaveBeenCalledWith('_session', { withCredentials: true, domain: 'parent.example' });
+    expect(parentDelete.observers.length).toBe(1);
+    expect(unset).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith([ '/' ], {});
+  });
+
+  it('should complete logout when the parent session delete fails', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { comp, unset, navigate } = setupLogout(throwError(() => new Error('parent unreachable')));
+
+    comp.logoutClick();
+
+    expect(unset).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith([ '/' ], {});
+    expect(error).toHaveBeenCalled();
+    error.mockRestore();
+  });
+
+  it('should not delete a parent session when the user is not the local admin', () => {
+    const { comp, unset, deleteSession, navigate } = setupLogout(new Subject<any>(), { user: { name: 'learner' } });
+
+    comp.logoutClick();
+
+    expect(deleteSession).not.toHaveBeenCalled();
+    expect(unset).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith([ '/' ], {});
+  });
+
+  it('should not delete a parent session on a center, which has no parent', () => {
+    const { comp, unset, deleteSession, navigate } = setupLogout(new Subject<any>(), {
+      configuration: { adminName: 'admin@center', parentDomain: '', planetType: 'center' }
+    });
+
+    comp.logoutClick();
+
+    expect(deleteSession).not.toHaveBeenCalled();
+    expect(unset).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith([ '/login' ], {});
+  });
+
+  it('should complete logout when neither the configuration nor the user carries a name', () => {
+    const { comp, unset, deleteSession, navigate } = setupLogout(new Subject<any>(), {
+      user: {}, configuration: { adminName: undefined }
+    });
+
+    comp.logoutClick();
+
+    expect(deleteSession).not.toHaveBeenCalled();
+    expect(unset).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith([ '/' ], {});
   });
 
 });
