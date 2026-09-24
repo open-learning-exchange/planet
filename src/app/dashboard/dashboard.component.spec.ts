@@ -223,52 +223,6 @@ describe('DashboardComponent', () => {
     }));
   });
 
-  it('includes only completed courses in badge groups', () => {
-    createComponent();
-    component.setBadgesCourses([
-      {
-        _id: 'completed', doc: { foundation: 'literacy', steps: [ {} ] },
-        progress: [ { userId: 'user_123', stepNum: 1, passed: true } ]
-      },
-      {
-        _id: 'incomplete', doc: { foundation: 'math', steps: [ {} ] },
-        progress: [ { userId: 'user_123', stepNum: 1, passed: false } ]
-      }
-    ], [ { courseIds: [ 'completed' ] } ]);
-
-    expect(component.badgesCourses.literacy[0]).toMatchObject({ _id: 'completed', inCertification: true });
-    expect(component.badgesCourses.math).toBeUndefined();
-    expect(component.badgeGroups).toEqual([ 'literacy' ]);
-  });
-
-  it('groups completed courses without a foundation under none', () => {
-    createComponent();
-    component.setBadgesCourses([
-      {
-        _id: 'course_none', doc: { steps: [ {} ] },
-        progress: [ { userId: 'user_123', stepNum: 1, passed: true } ]
-      }
-    ], []);
-
-    expect(component.badgesCourses.none).toHaveLength(1);
-    expect(component.badgeGroups).toEqual([ 'none' ]);
-  });
-
-  it('does not treat duplicate progress for one step as course completion', () => {
-    createComponent();
-    component.setBadgesCourses([
-      {
-        _id: 'duplicate_progress', doc: { foundation: 'literacy', steps: [ {}, {} ] },
-        progress: [
-          { userId: 'user_123', stepNum: 1, passed: true },
-          { userId: 'user_123', stepNum: 1, passed: true }
-        ]
-      }
-    ], []);
-
-    expect(component.badgesCourses.literacy).toBeUndefined();
-  });
-
   it('sets canRemove only for team leaders', () => {
     couchServiceMock.findAll.mockReturnValue(of([
       { teamId: 'leader-team', isLeader: true },
@@ -360,5 +314,86 @@ describe('DashboardComponent', () => {
     shelfChange$.next();
 
     expect(couchServiceMock.bulkGet).not.toHaveBeenCalled();
+  });
+
+  describe('completed courses badges and overflow', () => {
+    const createCompletedCourse = (id: string) => ({
+      _id: id,
+      doc: {
+        courseTitle: `Course ${id}`,
+        steps: [ {} ]
+      },
+      progress: [ { userId: mockUser._id, stepNum: 1, passed: true } ]
+    });
+
+    it('limits visible badges to 8 on desktop and 6 on tablet and mobile', () => {
+      createComponent();
+      const courses = Array.from({ length: 10 }, (_, i) => createCompletedCourse(`c_${i}`));
+      component.setCompletedCourses(courses, []);
+
+      deviceType$.next(DeviceType.DESKTOP);
+      expect(component.isMobile).toBe(false);
+      expect(component.maxVisibleBadges).toBe(8);
+      expect(component.visibleBadges).toHaveLength(8);
+      expect(component.remainingBadgesCount).toBe(2);
+
+      deviceType$.next(DeviceType.TABLET);
+      expect(component.maxVisibleBadges).toBe(6);
+      expect(component.visibleBadges).toHaveLength(6);
+      expect(component.hiddenBadges.map(course => course._id)).toEqual([ 'c_6', 'c_7', 'c_8', 'c_9' ]);
+
+      deviceType$.next(DeviceType.MOBILE);
+      expect(component.isMobile).toBe(true);
+      expect(component.maxVisibleBadges).toBe(6);
+      expect(component.visibleBadges).toHaveLength(6);
+      expect(component.remainingBadgesCount).toBe(4);
+    });
+
+    it('returns 0 remaining badges when completed courses do not exceed max', () => {
+      createComponent();
+      const courses = [ createCompletedCourse('c_1'), createCompletedCourse('c_2') ];
+      component.setCompletedCourses(courses, []);
+
+      expect(component.remainingBadgesCount).toBe(0);
+      expect(component.visibleBadges).toHaveLength(2);
+    });
+
+    it('names the overflow chip with its visible count', () => {
+      createComponent();
+      const courses = Array.from({ length: 10 }, (_, i) => createCompletedCourse(`c_${i}`));
+      component.setCompletedCourses(courses, []);
+
+      expect(component.moreBadgesLabel).toBe('Show 2 more completed courses');
+
+      component.setCompletedCourses(courses.slice(0, 9), []);
+      expect(component.moreBadgesLabel).toBe('Show 1 more completed course');
+    });
+
+    it('skips a course with no steps instead of throwing', () => {
+      createComponent();
+
+      expect(() => component.setCompletedCourses(
+        [ { _id: 'no_steps', doc: { courseTitle: 'No steps' }, progress: [] } ], []
+      )).not.toThrow();
+      expect(component.completedCourses).toHaveLength(0);
+    });
+
+    it('sorts certified courses ahead of uncertified courses while preserving tie order', () => {
+      createComponent();
+      const courses = [
+        createCompletedCourse('non_cert_1'),
+        createCompletedCourse('cert_1'),
+        createCompletedCourse('non_cert_2'),
+        createCompletedCourse('cert_2')
+      ];
+      component.setCompletedCourses(courses, [ { courseIds: [ 'cert_1', 'cert_2' ] } ]);
+
+      expect(component.completedCourses.map(c => c._id)).toEqual([
+        'cert_1',
+        'cert_2',
+        'non_cert_1',
+        'non_cert_2'
+      ]);
+    });
   });
 });
