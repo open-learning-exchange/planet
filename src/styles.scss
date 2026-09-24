@@ -53,13 +53,10 @@ body {
   .display-flex {
     display: flex;
   }
-
-  // Add an empty span within a mat-toolbar-row to separate left & right aligned content
   .toolbar-fill {
     flex: 1 1 auto;
   }
 
-  // Group search controls so the field grows without colliding with adjacent actions
   .toolbar-search {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -75,13 +72,11 @@ body {
     }
   }
 
-  // Add to forms within toolbars to display next to other content
   .toolbar-form {
     display: inline-block;
     max-height: 64px;
   }
 
-  // Use to reset font size to base
   .font-size-1 {
     font-size: 1rem;
   }
@@ -98,35 +93,26 @@ body {
     text-align: center;
   }
 
-  // Use to give elements horizontal space
   .margin-lr {
     margin: 0 5px;
   }
 
-  // Use to give elements vertical space
   .margin-tb {
     margin: 5px 0;
   }
 
-  // Use to give elements horizontal and vertical space
   .margin-tblr {
     margin: 5px 5px;
   }
 
-
-
-  // Use for text in all caps.  It avoids problems for screen readers to use this rather than all caps in HTML
-  // See https://webaim.org/techniques/fonts/#caps
   .uppercase {
     text-transform: uppercase;
   }
 
-  // For clickable items which don't have a cursor change by default
   .cursor-pointer {
     cursor: pointer;
   }
 
-  // Creates helper classes for smaller and larger horizontal spacing
   @mixin margin-lr {
     @for $i from 1 through 10 {
       .margin-lr-#{$i} {
@@ -137,12 +123,10 @@ body {
 
   @include margin-lr;
 
-  // Hide an element, but render its space
   .invisible {
     visibility: hidden;
   }
 
-  // Hide an element entirely, making space for other elements
   .hidden {
     display: none;
   }
@@ -169,7 +153,6 @@ body {
     min-height: $list-title-height;
   }
 
-  // Style which places menu icon in upper right corner of table cell
   .list-content-menu {
     display: grid;
     grid-template-areas:
@@ -213,19 +196,12 @@ body {
       grid-area: progress;
       margin-bottom: 0.5rem;
     }
-
   }
 
   .mat-mdc-button, .mdc-button {
     letter-spacing: normal;
   }
 
-  // Material offsets a leading icon from the label text beside it, e.g.
-  // `.mat-mdc-raised-button > .mat-icon` is `margin-right: 8px; margin-left: -8px`.
-  // When a button's projected label is absent, that offset leaves its icon off
-  // centre. Material still renders an empty `.mdc-button__label` wrapper, which
-  // identifies the buttons that need the offset removed. Keyed on Material
-  // internals: if either class is renamed, this rule stops applying.
   .mdc-button:has(> .mdc-button__label:empty) > .mat-icon {
     margin: 0;
   }
@@ -238,16 +214,12 @@ body {
     padding: 0;
   }
 
-  // the colored stars are placed on top of the uncolored ones
-  // the width is set dynamically with JS
   $stars-margin: 1px;
-  // Each mat-icon star is 24x24 (5 stars = 120px).  Will need to change if star sizes change
   $stars-width: calc(120px + (10 * #{$stars-margin}));
   .stars {
     display: inline-block;
     color: v.$grey;
     position: relative;
-    // Each mat-icon star is 24x24.  Will need to change if star sizes change
     width: $stars-width;
 
     mat-icon {
@@ -275,7 +247,6 @@ body {
       'ratio rating'
       'total rating'
       'your your-label';
-    // 5 mat-icon stars are 120px
     grid-template-columns: 130px 1fr;
     grid-template-rows: 2.5rem 1fr 1fr;
     align-items: center;
@@ -327,7 +298,6 @@ body {
     .your-rating-label {
       grid-area: your-label;
     }
-
   }
 
   .compress-rating .list-item-rating {
@@ -347,7 +317,6 @@ body {
       }
   }
 
-  // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS
   .rating-bar {
     display: block;
     height: 10px;
@@ -372,14 +341,9 @@ body {
     background-color: v.$primary-light;
   }
 
-  // Fix for checkboxes changing vertical alignment in cells when clicked as of Dec 28, 2017
-  // See https://github.com/angular/material2/issues/8600 & the 'Include Overflow Styling' section of
-  // https://material.angular.io/components/table/overview#selection
-  // Note checkbox column must be named "select" in table
   .mat-column-select {
     @include m.table-column-fixed(4rem);
     overflow: visible;
-    // Reduce padding for MDC checkbox cells
     padding-left: 12px !important;
   }
 
@@ -394,7 +358,6 @@ body {
     margin: 10px;
   }
 
-  // Remove the underline from mat-form-field for custom fields
   .mat-form-field-type-no-underline .mdc-line-ripple {
     display: none;
   }
@@ -435,15 +398,11 @@ body {
     padding: 1rem;
   }
 
-  // Style to make the view-container fill the available screen space
-  // 352px = 5 * 64px toolbars + 32px of padding
-  // Overflow must be set on children
   .view-container.view-full-height {
     height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
 
-    // Use the parent's bounds when the view is inside an already-sized container.
     &.fill-parent {
       height: 100%;
     }
@@ -453,7 +412,6 @@ body {
     padding: 0;
     position: relative;
     display: grid;
-    // Paginator row grows when controls wrap on narrow screens
     grid-template-rows: 1fr auto;
     mat-table {
       overflow-y: auto;
@@ -474,8 +432,6 @@ body {
     margin: 0 8px;
   }
 
-  // Tables using an explicit min-width should scroll inside their view container
-  // throughout the tablet range instead of overflowing the page.
   @media (max-width: v.$screen-md) {
     .view-container.view-table {
       overflow-x: auto;
@@ -483,9 +439,6 @@ body {
     }
   }
 
-  // Opt-in shared pattern for tables that can't reasonably collapse to a card layout.
-  // Can be applied either directly to a mat-table element, or to a wrapper div around one (dialogs, tabs, inline tables).
-  // Courses/resources use a separate pattern
   @media (max-width: v.$screen-sm) {
     mat-table.responsive-table,
     table.mat-mdc-table.responsive-table {
@@ -505,17 +458,12 @@ body {
     }
   }
 
-  // Opt-in addition to .responsive-table for tables whose columns (e.g. stacked action buttons)
-  // should never squish: holds a usable min-width at all viewport widths so the surrounding
-  // view-table container scrolls horizontally instead. Override via --responsive-table-min-width.
   mat-table.responsive-table.min-width-table,
   table.mat-mdc-table.responsive-table.min-width-table {
     min-width: var(--responsive-table-min-width, 1000px);
     width: 100%;
   }
 
-  // Shared opt-in styling for the button container in a table's action column.
-  // Apply to a div wrapping the buttons inside the action mat-cell; add .horizontal-align to center buttons.
   .table-action-buttons {
     display: inline-grid;
     grid-template-columns: minmax(150px, max-content);
@@ -556,7 +504,6 @@ body {
     }
   }
 
-  // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
   .card-table {
     .mat-column-courseTitle,
     .mat-column-title {
@@ -658,7 +605,6 @@ body {
     height: v.$view-container-height-no-toolbar;
   }
 
-  // Width of a form with 3 standard matInputs (180px + 10px of padding)
   .form-width-3 {
     width: 550px;
   }
@@ -750,7 +696,6 @@ body {
     min-height: 24px;
   }
 
-  // Set Material control tokens at blue toolbar scope so uncolored controls inherit text color.
   .mat-toolbar.primary-color,
   .mat-toolbar-row.primary-color {
     --mat-button-text-label-text-color: currentColor;
@@ -790,7 +735,6 @@ body {
     --mat-select-enabled-arrow-color: currentColor;
     --mat-select-focused-arrow-color: currentColor;
 
-    // Explicit fallback for unthemed toolbar buttons/icons after MDC migration.
     .mat-mdc-button-base:not(.mat-primary):not(.mat-accent):not(.mat-warn) {
       color: inherit !important;
     }
@@ -800,7 +744,6 @@ body {
     }
   }
 
-  // Material MDC form fields have a default background color which doesn't work with our designs, so we set it to transparent and add a border on hover instead
   .mat-mdc-form-field .mat-mdc-text-field-wrapper,
   .mat-mdc-form-field .mat-mdc-text-field-wrapper:hover,
   .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
@@ -966,7 +909,6 @@ body {
     padding-top: 0.5rem;
   }
 
-  // Pagination within tabs
   .tab-scroll-shell {
     overflow: hidden;
   }
@@ -1021,7 +963,6 @@ body {
     cursor: default;
   }
 
-  // Course/Resources Details ellipsis menu
   .actions-menu .mat-mdc-menu-content {
     display: flex;
     flex-flow: column;
@@ -1035,7 +976,6 @@ body {
     max-width: none;
   }
 
-  // Styles for the chat-output directive
   .conversation-query {
     text-align: left;
     padding: 8px;
@@ -1074,7 +1014,6 @@ body {
     }
   }
 
-  /* Custom scrollbar styles */
   ::-webkit-scrollbar {
     width: 13px;
   }
@@ -1092,5 +1031,4 @@ body {
   ::-webkit-scrollbar-thumb:hover {
     opacity: 0.8;
   }
-
 }
