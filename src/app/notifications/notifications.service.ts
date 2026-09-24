@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import { switchMap, map, catchError, filter } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 
 /**
@@ -33,6 +33,11 @@ export const notificationUserFilter = (user: any) => {
     [ { user: userId } ];
   return user.isUserAdmin ? [ ...userFilters, { user: 'SYSTEM' } ] : userFilters;
 };
+
+export const notificationLink = (notification: any) =>
+  notification.type === 'replyMessage' && notification.replyTo && (notification.link === '/' || notification.link?.startsWith('/voices/')) ?
+    `/voices/${notification.replyTo}` :
+    notification.link;
 
 @Injectable({
   providedIn: 'root'
@@ -80,49 +85,49 @@ export class NotificationsService {
     );
   }
 
+  sendReplyNotification(news: any, link: string): Observable<any> {
+    const currentUser = this.userService.get();
+    const serverPlanetCode = this.stateService.configuration.code;
+    const recipient = notificationRecipient(news.user, news.createdOn || serverPlanetCode);
+    const sender = notificationRecipient(currentUser, serverPlanetCode);
+    if (recipient.user === sender.user && recipient.userPlanetCode === sender.userPlanetCode) {
+      return of({});
+    }
+    return this.sendNotificationToUser({
+      ...recipient,
+      message: $localize`<b>${currentUser.name}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      link,
+      priority: 1,
+      type: 'replyMessage',
+      replyTo: news._id,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
+    });
+  }
+
   getUnreadReplyIds$(): Observable<string[]> {
-    const user = this.userService.get();
-    if (!user || !user.name) {
+    if (!this.userService.get().name) {
       return of([]);
     }
-    return this.couchService.findAll(
-      'notifications',
-      findDocuments({
-        user: 'org.couchdb.user:' + user.name,
-        type: 'replyMessage',
-        status: 'unread'
-      })
-    ).pipe(
-      map((notifications: any[]) =>
-        (notifications || [])
-          .map((n: any) => n.replyTo)
-          .filter(Boolean)
-      ),
+    return this.findUnreadReplies({}, [ 'replyTo' ]).pipe(
+      map(notifications => notifications.map(notification => notification.replyTo).filter(Boolean)),
       catchError(() => of([]))
     );
   }
 
-  markReplyNotificationsAsRead(replyToId: string): void {
-    if (!replyToId) {
-      return;
-    }
-    const user = this.userService.get();
-    if (!user || !user.name) {
-      return;
-    }
-    this.couchService.findAll(
-      'notifications',
-      findDocuments({
-        user: 'org.couchdb.user:' + user.name,
-        type: 'replyMessage',
-        status: 'unread',
-        replyTo: replyToId
-      })
-    ).subscribe((notifications: any[]) => {
-      if (notifications && notifications.length > 0) {
-        this.setNotificationsAsRead(notifications);
-      }
-    }, () => {});
+  markReplyNotificationsAsRead(replyTo: string) {
+    this.findUnreadReplies({ replyTo }).pipe(
+      filter(notifications => notifications.length > 0),
+      switchMap(notifications => this.couchService.bulkDocs(
+        'notifications', notifications.map(notification => ({ ...notification, status: 'read' }))
+      ))
+    ).subscribe(() => this.userService.setNotificationStateChange(), error => console.error(error));
+  }
+
+  private findUnreadReplies(selector: any, fields: any = 0): Observable<any[]> {
+    return this.couchService.findAll('notifications', findDocuments(
+      { $or: notificationUserFilter(this.userService.get()), type: 'replyMessage', status: 'unread', ...selector },
+      fields
+    ));
   }
 }
-

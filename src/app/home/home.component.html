@@ -105,8 +105,8 @@
       <div class="notification-items">
         <a mat-menu-item (click)="readAllNotification()" i18n>Mark all as Read</a>
         @for (notification of notifications; track notification) {
-          <a [routerLink]="notification.type !== 'challenges' ? (!notification.link ? '/notifications' : notification.link) : null"
-            [queryParams]="notification.linkParams"
+          @let link = notificationLink(notification);
+          <a [routerLink]="notification.type !== 'challenges' ? (!link ? '/notifications' : link !== '/' ? [link, notification.linkParams || {}] : '/') : null"
             class="menu-item-notification"
             [ngClass]="{'primary-text-color':notification.status==='unread'}"
             mat-menu-item

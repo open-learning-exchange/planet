@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationsService, notificationUserFilter } from './notifications.service';
+import { NotificationsService, notificationLink, notificationUserFilter } from './notifications.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -45,6 +45,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
+  notificationLink = notificationLink;
   private onDestroy$ = new Subject<void>();
   notificationStatus = [
     { value: 'all', label: $localize`All` },
