@@ -13,7 +13,7 @@ export interface MeetupAuthorizationContext {
   readOnly?: boolean;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MeetupService {
 
   private meetupUpdated = new Subject<any[]>();
@@ -131,7 +131,8 @@ export class MeetupService {
         type: 'event',
         amount: isMany ? 'many' : 'single',
         displayName,
-        extraMessage: recurringInfo
+        extraMessage: recurringInfo,
+        extraMessageType: 'supplementary'
       }
     });
   }

@@ -1,7 +1,4 @@
-import * as showdown from 'showdown';
 import mime from 'mime';
-showdown.setOption('strikethrough', true);
-export const converter = new showdown.Converter();
 
 // File.type can be empty for some browsers / file sources; fall back to the
 // filename extension via the mime package so callers don't reject valid files.
@@ -60,10 +57,13 @@ export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: strin
   return `${trimmedBaseUrl}/${trimmedDbName}/${couchAttachmentPath(docId, attachmentName)}`;
 };
 
+export const IMAGE_MAX_FALLBACK_BYTES = 2 * 1024 * 1024;
+
 export interface NormalizeImageOptions {
   maxDimension?: number;
   quality?: number;
   usedNames?: string[];
+  maxFallbackBytes?: number;
 }
 
 export interface NormalizedImage {
@@ -105,11 +105,11 @@ const encodedImage = async (canvas: HTMLCanvasElement, quality: number): Promise
   return jpeg?.type === 'image/jpeg' ? { blob: jpeg, contentType: 'image/jpeg', extension: 'jpg' } : null;
 };
 
-// Browser-side cover/image normalization: bounds replicated payloads while keeping upload UX permissive.
-export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {}): Promise<NormalizedImage> => {
+export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {}): Promise<NormalizedImage | null> => {
   const maxDimension = opts.maxDimension ?? 600;
   const quality = opts.quality ?? 0.82;
-  const fallback = (): NormalizedImage => ({
+  const maxFallbackBytes = opts.maxFallbackBytes ?? IMAGE_MAX_FALLBACK_BYTES;
+  const fallback = (): NormalizedImage | null => (file.size > maxFallbackBytes ? null : {
     file,
     contentType: normalizedContentType(file),
     fileName: safeAttachmentName(file.name, opts.usedNames)
@@ -231,16 +231,57 @@ export const stringToHex = (string: string) => string.split('').map(char => char
 
 export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
-export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
+const calendarDate = (date: string | number | Date) => {
+  const parsed = new Date(date);
+  const parts = typeof date === 'string' ? date.match(/^(\d{4})-(\d{2})-(\d{2})/) : null;
+  if (!parts || isNaN(parsed.getTime())) {
+    return parsed;
+  }
+  const [ year, month, day ] = parts.slice(1).map(Number);
+  const calendar = new Date(year, month - 1, day);
+  return calendar.getMonth() === month - 1 && calendar.getDate() === day ? calendar : new Date(NaN);
+};
+
+export const ageFromBirthDate = (currentTime: number | Date, birthDate: string | number | Date) => {
+  if (birthDate === undefined || birthDate === null || birthDate === '') {
+    return null;
+  }
   const now = new Date(currentTime);
-  const birth = new Date(birthDate);
+  const birth = calendarDate(birthDate);
+  if (isNaN(now.getTime()) || isNaN(birth.getTime())) {
+    return null;
+  }
   const yearDiff = now.getFullYear() - birth.getFullYear();
-  const afterBirthDay = now.getMonth() < birth.getMonth() ?
-    false :
-    now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
-      false :
-      true;
+  const afterBirthDay = now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
   return yearDiff - (afterBirthDay ? 0 : 1);
+};
+
+export const ageFromUser = (
+  currentTime: number | Date,
+  user?: { age?: number | '' | null, birthDate?: string | number | Date | null }
+) => {
+  const age = ageFromBirthDate(currentTime, user?.birthDate) ?? user?.age;
+  return age === undefined || age === null || age === '' ? null : age;
+};
+
+export const genderBucket = (gender?: unknown) => {
+  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
+  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
+};
+
+export const localizedGender = (gender?: unknown, fallback = '') => {
+  if (typeof gender !== 'string' || !gender) {
+    return fallback;
+  }
+  switch (gender.toLowerCase()) {
+    case 'male':
+      return $localize`Male`;
+    case 'female':
+      return $localize`Female`;
+    default:
+      return toProperCase(gender);
+  }
 };
 
 export const formatStringDate = (date: string) =>
@@ -260,15 +301,6 @@ export const deepEqual = (item1: any, item2: any) => {
     return Object.keys({ ...item1, ...item2 }).every((key) => deepEqual(item1[key], item2[key])) ;
   }
   return item1 === item2;
-};
-
-export const markdownToPlainText = (markdown: any) => {
-  if (typeof markdown !== 'string') {
-    return markdown;
-  }
-  const html = document.createElement('div');
-  html.innerHTML = converter.makeHtml(markdown);
-  return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
 };
 
 export const fullName = (user: any) =>

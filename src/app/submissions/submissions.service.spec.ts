@@ -1,13 +1,16 @@
 import { of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
 
 import { SubmissionsService } from './submissions.service';
+import { MarkdownRenderService } from '../shared/markdown-render.service';
 
 describe('SubmissionsService survey exports', () => {
   let service: SubmissionsService;
   let csvService: { exportCSV: ReturnType<typeof vi.fn> };
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
-  let pdfService: { download: ReturnType<typeof vi.fn> };
+  let pdfService: { download: ReturnType<typeof vi.fn>, getHtmlConverter?: ReturnType<typeof vi.fn> };
+  let couchService: { post: ReturnType<typeof vi.fn>, datePlaceholder: string };
 
   const exam = {
     _id: 'team-survey-1',
@@ -30,9 +33,10 @@ describe('SubmissionsService survey exports', () => {
     dialogsLoadingService = { stop: vi.fn() };
     planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     pdfService = { download: vi.fn().mockResolvedValue(undefined) };
+    couchService = { post: vi.fn(), datePlaceholder: 'NOW' };
     service = new SubmissionsService(
-      {} as any,
-      { configuration: { name: 'Planet' } } as any,
+      couchService as any,
+      { configuration: { name: 'Planet', code: 'planet-1' } } as any,
       {} as any,
       {} as any,
       csvService as any,
@@ -41,6 +45,7 @@ describe('SubmissionsService survey exports', () => {
       { getChildPlanets: vi.fn().mockReturnValue(of([])) } as any,
       {} as any,
       pdfService as any,
+      TestBed.inject(MarkdownRenderService),
       'en-US'
     );
     vi.spyOn(service, 'getSubmissionsExport').mockReturnValue(of([
@@ -48,6 +53,22 @@ describe('SubmissionsService survey exports', () => {
       1,
       [ 'Question' ]
     ]) as any);
+  });
+
+  it('starts each recorded response fresh without looking up an earlier submission', () => {
+    const user = { name: 'recorder' };
+    const team = { _id: 'team-1', name: 'Team', type: 'team' };
+    const recording = { parentId: exam._id, parent: exam, user, type: 'survey', team };
+    service.startNewSubmission(recording);
+    service.submission.answers.push({ value: 'First person' });
+    const firstSubmission = service.submission;
+
+    service.startNewSubmission(recording);
+
+    expect(service.submission).not.toBe(firstSubmission);
+    expect(service.submission.answers).toEqual([]);
+    expect(service.submission.team).toEqual(team);
+    expect(couchService.post).not.toHaveBeenCalled();
   });
 
   it('exports a CSV submission counted through its embedded team', async () => {
@@ -77,5 +98,73 @@ describe('SubmissionsService survey exports', () => {
     ));
     expect(pdfService.download).toHaveBeenCalled();
     expect(planetMessageService.showMessage).not.toHaveBeenCalledWith('There is no survey response');
+  });
+
+  const capturePdfHtml = async (exportOptions: { includeAnswers: boolean, includeQuestions: boolean }) => {
+    const htmlToPdfmake = vi.fn().mockReturnValue([]);
+    pdfService.getHtmlConverter = vi.fn().mockResolvedValue(htmlToPdfmake);
+    await service.buildInitialSubmissionPDF(exam, [ submissionWithEmbeddedTeam ], [ 'Question' ], exportOptions);
+    return htmlToPdfmake.mock.calls.map(call => call[0]).join('\n');
+  };
+
+  it('assembles questions-only PDF content as HTML', async () => {
+    const html = await capturePdfHtml({ includeQuestions: true, includeAnswers: false });
+
+    expect(html).toContain('<h3>');
+    expect(html).not.toContain('###');
+    expect(html).toContain('markdown-align-left');
+  });
+
+  it('assembles response PDF content as sanitized HTML with alignment classes', async () => {
+    const html = await capturePdfHtml({ includeQuestions: true, includeAnswers: true });
+
+    expect(html).toContain('markdown-align-right');
+    expect(html).not.toContain('style="text-align');
+    expect(html).not.toContain('###');
+  });
+
+  describe('the exported age', () => {
+
+    const time = new Date(2026, 8, 4).valueOf();
+
+    const exportedAgeOf = async (user: any) => {
+      vi.spyOn(service, 'getSubmissionsExport').mockReturnValue(of([
+        [ { ...submissionWithEmbeddedTeam, user } ],
+        time,
+        [ 'Question' ]
+      ]) as any);
+      await service.exportSubmissionsCsv(exam, 'survey', 'team-1').toPromise();
+      return csvService.exportCSV.mock.lastCall[0].data[0]['Age (years)'];
+    };
+
+    it('counts the years lived when the submission carries a birth date', async () => {
+      expect(await exportedAgeOf({ birthDate: new Date(1998, 8, 4).toJSON(), age: 12 })).toBe(28);
+    });
+
+    it('falls back to the age myPlanet sent when there is no birth date', async () => {
+      expect(await exportedAgeOf({ age: 20 })).toBe(20);
+    });
+
+    it('exports an age of zero rather than calling it unknown', async () => {
+      expect(await exportedAgeOf({ age: 0 })).toBe(0);
+    });
+
+    it('exports N/A when the age is blank or missing', async () => {
+      expect(await exportedAgeOf({ age: '' })).toBe('N/A');
+      expect(await exportedAgeOf({})).toBe('N/A');
+    });
+
+  });
+
+  it('preserves an age of zero in the AI analysis payload', async () => {
+    const getPrompt = vi.fn().mockReturnValue(of({ chat: 'Analysis' }));
+    (service as any).chatService = { getPrompt };
+
+    await service.analyseResponses(
+      { ...exam, type: 'survey', description: '', questions: [ { body: 'Question', type: 'text' } ] },
+      [ { ...submissionWithEmbeddedTeam, user: { age: 0 } } ]
+    );
+
+    expect(getPrompt.mock.calls[0][0].content).toContain('"age": 0');
   });
 });
