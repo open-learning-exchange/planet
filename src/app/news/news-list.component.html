@@ -1,4 +1,4 @@
-<div class="news-list-content">
+<div #listContent class="news-list-content">
   @if (replyViewing._id === 'root') {
     <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
       <mat-form-field class="search-form-field mdc-toolbar-input">
@@ -74,7 +74,7 @@
         [readOnly]="readOnly"
         [shareTarget]="shareTarget"
         [customLabels]="customLabels"
-        [hasUnreadReplies]="unreadReplyIds.has(item.doc?._id || item._id)"
+        [hasUnreadReplies]="unreadReplyIds.has(item._id) && replyObject[item._id]?.length > 0"
         (changeReplyViewing)="showReplies($event)"
         (updateNews)="openUpdateDialog($event)"
         (deleteNews)="openDeleteDialog($event)"

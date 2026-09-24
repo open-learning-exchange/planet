@@ -1,10 +1,10 @@
 import {
-  Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy, SimpleChanges
+  Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy, SimpleChanges, ElementRef
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil, filter, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -74,6 +74,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() customLabels: string[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @ViewChild('anchor', { static: false }) anchor: any;
+  @ViewChild('listContent', { static: false }) listContent: ElementRef<HTMLElement>;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
   filteredItems: any[] = [];
@@ -106,9 +107,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
   unreadReplyIds = new Set<string>();
-  private pendingReplyTo?: string;
-  private onDestroy$ = new Subject<void>();
   private routerEventsSubscription: Subscription;
+  private unreadRepliesSubscription: Subscription;
 
   get isTeamsFeed(): boolean {
     return this.viewableBy === 'teams';
@@ -163,36 +163,19 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.applyFilters();
     });
 
-    this.route.queryParamMap
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(params => {
-        const replyTo = params.get('replyTo');
-        if (replyTo) {
-          this.pendingReplyTo = replyTo;
-          this.checkAndNavigateToPendingReply();
-        }
-      });
+    this.unreadRepliesSubscription = merge(this.userService.notificationStateChange$, this.userService.userChange$).pipe(
+      startWith(null),
+      switchMap(() => this.notificationsService.getUnreadReplyIds$()),
+      map((ids, index) => ({ ids, firstLoad: index === 0 }))
+    ).subscribe(({ ids, firstLoad }) => {
+      this.unreadReplyIds = new Set(ids);
+      // later loads can include replies this feed has not fetched yet
+      if (firstLoad) {
+        this.markViewedRepliesRead();
+      }
+    });
 
-    merge(this.userService.notificationStateChange$, this.userService.userChange$)
-      .pipe(
-        tap(() => this.unreadReplyIds.clear()),
-        switchMap(() => this.notificationsService.getUnreadReplyIds$()),
-        takeUntil(this.onDestroy$)
-      )
-      .subscribe(ids => {
-        this.unreadReplyIds = new Set(ids || []);
-      });
-
-    this.loadUnreadReplyIds();
     this.initNews();
-  }
-
-  loadUnreadReplyIds() {
-    this.notificationsService.getUnreadReplyIds$()
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(ids => {
-        this.unreadReplyIds = new Set(ids || []);
-      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -202,6 +185,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.itemsById = new Map<string, any>(this.items.map(item => [ item._id, item ]));
     this.availableLabels = this.getAvailableLabels(this.items);
     this.applyFilters();
+    if (changes.items?.previousValue?.length === 0 && this.items.length > 0) {
+      this.initNews();
+    }
   }
 
   applyFilters() {
@@ -250,34 +236,19 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         isLatest = false;
       }
     });
-
-    if (this.pendingReplyTo) {
-      this.checkAndNavigateToPendingReply();
-      return;
-    }
-
-    const childPath = this.route.firstChild?.routeConfig?.path;
-    const voiceId = (childPath === 'voices/:id') ? this.route.firstChild?.snapshot.paramMap.get('id') : null;
-    if (voiceId) {
-      this.filterNewsToShow(voiceId);
-      return;
-    }
-
-    if (this.replyViewing._id !== 'root') {
-      const current = this.filteredItems.find(item => item._id === this.replyViewing._id);
-      if (current) {
-        this.filterNewsToShow(current._id);
-        return;
-      }
-      this.replyViewing = { _id: 'root' };
-      this.viewChange.emit(this.replyViewing);
-      if (this.useReplyRoutes) {
-        this.navigateToReply('root');
-      }
-    }
-
-    this.displayedItems = this.replyObject.root || [];
+    this.displayedItems = this.replyObject[this.replyViewing._id];
     this.loadPagedItems(true);
+    if (this.replyViewing._id !== 'root') {
+      this.replyViewing = this.filteredItems.find(item => item._id === this.replyViewing._id) || { _id: 'root' };
+      if (this.replyViewing._id === 'root') {
+        this.displayedItems = this.replyObject.root || [];
+        this.loadPagedItems(true);
+        this.viewChange.emit(this.replyViewing);
+        if (this.useReplyRoutes) {
+          this.navigateToReply('root');
+        }
+      }
+    }
   }
 
   ngAfterViewInit() {
@@ -286,9 +257,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   ngOnDestroy() {
     this.routerEventsSubscription?.unsubscribe();
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
     this.searchSubscription?.unsubscribe();
+    this.unreadRepliesSubscription?.unsubscribe();
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -313,57 +283,24 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   initNews() {
-    const childPath = this.route.firstChild?.routeConfig?.path;
-    const voiceId = (childPath === 'voices/:id') ? this.route.firstChild?.snapshot.paramMap.get('id') : null;
-    const deepLinkReplyTo = this.route.snapshot.paramMap.get('replyTo') || this.route.snapshot.queryParamMap.get('replyTo');
-
-    if (voiceId) {
-      this.pendingReplyTo = undefined;
-      this.filterNewsToShow(voiceId);
-    } else if (deepLinkReplyTo) {
-      this.pendingReplyTo = deepLinkReplyTo;
-      this.checkAndNavigateToPendingReply();
-    } else {
-      this.pendingReplyTo = undefined;
-      this.filterNewsToShow('root');
-    }
-  }
-
-  private checkAndNavigateToPendingReply() {
-    if (!this.pendingReplyTo || !this.items || this.items.length === 0) {
-      return;
-    }
-    const target = this.items.find(item => item._id === this.pendingReplyTo || item.doc?._id === this.pendingReplyTo);
-    if (target) {
-      this.pendingReplyTo = undefined;
-      this.showReplies(target);
-    }
+    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
+    this.filterNewsToShow(newVoiceId);
   }
 
   showReplies(news) {
-    let targetNewsId = news._id;
-    // remember the conversation’s true root post, even from deep threads
-    if (news._id !== 'root') {
-      this.lastRootPostId = this.getThreadRootId(news);
-      targetNewsId = this.lastRootPostId || news._id;
-      const newsId = news.doc?._id || news._id;
-      if (this.unreadReplyIds.has(newsId)) {
-        this.unreadReplyIds.delete(newsId);
-        this.notificationsService.markReplyNotificationsAsRead(newsId);
-      }
-    } else {
-      this.pendingReplyTo = undefined;
-    }
-    this.filterNewsToShow(targetNewsId);
     if (this.useReplyRoutes) {
-      this.navigateToReply(targetNewsId);
+      this.navigateToReply(news._id);
+      return;
     }
+    this.filterNewsToShow(news._id);
   }
 
   // climb replies until you reach the top-level post (_id with no replyTo)
   private getThreadRootId(news: any): string {
     let current = news;
-    while (current.doc && current.doc.replyTo) {
+    const visited = new Set<string>();
+    while (current.doc && current.doc.replyTo && !visited.has(current._id)) {
+      visited.add(current._id);
       const parent = this.itemsById.get(current.doc.replyTo);
       if (!parent) {
         break;
@@ -385,14 +322,23 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (newsId === this.replyViewing._id) {
       return;
     }
-    if (newsId !== 'root' && (!this.items || this.items.length === 0)) {
-      this.pendingReplyTo = newsId;
-      return;
+    if (this.itemsById.has(newsId) && !this.filteredItems.some(item => item._id === newsId)) {
+      this.resetFilters();
+      this.applyFilters();
     }
     const news = this.items.find(item => item._id === newsId) || { _id: 'root' };
     this.replyViewing = news;
+    this.markViewedRepliesRead();
     this.displayedItems = this.replyObject[news._id];
-    this.loadPagedItems(true);
+    if (news._id === 'root') {
+      this.pageIndex = this.rootPageIndex(this.lastRootPostId);
+      this.loadPagedItems(false);
+    } else {
+      // remember the conversation’s true root post, even from deep threads
+      this.lastRootPostId = this.getThreadRootId(news);
+      this.loadPagedItems(true);
+      this.scrollListToTop();
+    }
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
       (
@@ -413,6 +359,19 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (newsId !== 'root') {
       setTimeout(() => this.setupObserver(), 0);
     }
+  }
+
+  private markViewedRepliesRead() {
+    if (this.unreadReplyIds.delete(this.replyViewing._id)) {
+      this.notificationsService.markReplyNotificationsAsRead(this.replyViewing._id);
+      // the feed is not live, so the unread replies may not be loaded yet
+      this.newsService.requestNews();
+    }
+  }
+
+  private rootPageIndex(postId: string): number {
+    const index = this.getCurrentItems().findIndex(item => item._id === postId);
+    return index > 0 ? Math.floor(index / this.pageSize) : 0;
   }
 
   showPreviousReplies() {
@@ -456,6 +415,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
+      const repliedTo = oldNews._id ? undefined : this.itemsById.get(oldNews.replyTo)?.doc;
+      if (repliedTo) {
+        const link = this.useReplyRoutes ? `/voices/${repliedTo._id}` : this.router.url.split(/[;?#]/)[0];
+        this.notificationsService.sendReplyNotification(repliedTo, link).subscribe();
+      }
     });
   }
 
@@ -629,5 +593,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadPagedItems(false);
+    this.scrollListToTop();
+  }
+
+  private scrollListToTop() {
+    this.listContent?.nativeElement.scrollTo({ top: 0 });
   }
 }
