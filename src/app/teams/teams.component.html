@@ -65,6 +65,9 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
+            @if (element.doc?.coverFileName) {
+              <img class="team-table-cover" [src]="coverImageUrl(element.doc)" alt="Team cover" i18n-alt />
+            }
             <a (click)="$event.stopPropagation(); teamClick(element.doc._id, element.doc.teamType)"
                (keydown.space)="$event.preventDefault(); $event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
                (keydown.enter)="$event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"

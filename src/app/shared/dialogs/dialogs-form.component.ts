@@ -59,6 +59,10 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
       display: block;
       height: 24px;
     }
+
+    .file-upload-wrapper {
+      margin-bottom: 20px;
+    }
   `],
   imports: [
     FormsModule,

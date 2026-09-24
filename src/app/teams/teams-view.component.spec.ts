@@ -63,4 +63,14 @@ describe('TeamsViewComponent task projections', () => {
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
     expect(dialogRef.close).toHaveBeenCalled();
   });
+
+  it('builds a cover image URL when team has a cover file', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.team = { _id: 'team-123', coverFileName: 'cover.jpg' };
+    expect(component.coverImageUrl()).toContain('teams/team-123/cover.jpg');
+
+    component.team = { _id: 'team-123' };
+    expect(component.coverImageUrl()).toBe('');
+  });
 });
+
