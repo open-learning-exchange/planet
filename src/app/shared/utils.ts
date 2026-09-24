@@ -316,6 +316,11 @@ export const deepObjectPatch = (oldObject: any, patchObject: any) => {
       newObject[prop] = patchObjectProp(prop);
     }
   }
+  for (const prop in patchObject) {
+    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && !newObject[prop]) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
   return newObject;
 };
 
