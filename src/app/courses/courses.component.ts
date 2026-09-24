@@ -18,7 +18,7 @@ import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
   commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/tables/table.helpers';
-import * as constants from './constants';
+import * as constants from './courses.constants';
 import { languages } from '../shared/language/languages';
 import { SyncService } from '../shared/database/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -35,7 +35,7 @@ import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TagsService } from '../shared/forms/tags/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
 import { SearchService } from '../shared/search/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/platform/device-info.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/ui/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -43,7 +43,7 @@ import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/bu
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
+import { PlanetFilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
 import { PlanetTagSelectedInputComponent } from '../shared/forms/tags/planet-tag-selected-input.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
@@ -53,9 +53,9 @@ import { CoursesProgressBarComponent } from './progress-courses/courses-progress
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { PreviewOverflowDirective } from '../shared/ui/preview-overflow.directive';
 import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
-import { PlanetLocalStatusComponent } from '../shared/platform/planet-local-status.component';
+import { PlanetLocalStatusComponent } from '../shared/ui/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { DialogsRatingsDirective } from '../shared/ratings/dialogs-ratings.component';
+import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
 import { LanguageLabelComponent } from '../shared/language/language-label.component';
 import { PlanetRatingComponent } from '../shared/ratings/planet-rating.component';
 import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
@@ -87,7 +87,7 @@ import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
     NgClass,
     MatMiniFabButton,
     RouterLink,
-    FilteredAmountComponent,
+    PlanetFilteredAmountComponent,
     PlanetTagSelectedInputComponent,
     MatMenuTrigger,
     MatMenu,
@@ -110,7 +110,7 @@ import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
     PlanetMarkdownComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
-    DialogsRatingsDirective,
+    PlanetRatingDialogDirective,
     LanguageLabelComponent,
     PlanetRatingComponent,
     MatHeaderRowDef,

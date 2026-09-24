@@ -5,7 +5,7 @@ import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
 import { generateWeeksArray, filterByDate, weekDataLabels } from './reports.utils';
 import { ReportsService } from './reports.service';
-import { millisecondsToDay } from '../../meetups/constants';
+import { millisecondsToDay } from '../../meetups/meetups.constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
 import { conditions } from '../../health/health.constants';
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { DeviceInfoService } from './device-info.service';
-import { DialogsAndroidAppComponent } from './dialogs-android-app.component';
+import { DeviceInfoService } from '../ui/device-info.service';
+import { AndroidAppDialogComponent } from './android-app-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class AndroidAppPromptService {
       return;
     }
 
-    this.dialog.open(DialogsAndroidAppComponent, { maxWidth: '90vw', width: '400px' })
+    this.dialog.open(AndroidAppDialogComponent, { maxWidth: '90vw', width: '400px' })
       .afterClosed().subscribe(() => this.markDismissedForSession());
   }
 

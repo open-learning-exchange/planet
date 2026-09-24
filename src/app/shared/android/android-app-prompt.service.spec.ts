@@ -3,8 +3,8 @@ import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AndroidAppPromptService } from './android-app-prompt.service';
-import { DeviceInfoService } from './device-info.service';
-import { DialogsAndroidAppComponent } from './dialogs-android-app.component';
+import { DeviceInfoService } from '../ui/device-info.service';
+import { AndroidAppDialogComponent } from './android-app-dialog.component';
 
 describe('AndroidAppPromptService', () => {
   let afterClosed$: Subject<void>;
@@ -50,7 +50,7 @@ describe('AndroidAppPromptService', () => {
     service.openIfEligible();
 
     expect(dialog.open).toHaveBeenCalledWith(
-      DialogsAndroidAppComponent,
+      AndroidAppDialogComponent,
       { maxWidth: '90vw', width: '400px' }
     );
     expect(sessionStorage.getItem('planet-android-survey-app-prompt-dismissed')).toBeNull();

@@ -12,7 +12,7 @@ import { MatTableDataSource } from '@angular/material/table';
   `,
   selector: 'planet-filtered-amount'
 })
-export class FilteredAmountComponent {
+export class PlanetFilteredAmountComponent {
 
   @Input() table = new MatTableDataSource();
   @Input() labelFor = 'resources';

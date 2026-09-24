@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
-import { DialogsAddTableComponent } from '../../shared/tables/dialogs-add-table.component';
+import { TablesAddDialogComponent } from '../../shared/tables/tables-add-dialog.component';
 import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/tables/table.helpers';
 import { ValidatorService } from '../../validators/validator.service';
@@ -122,7 +122,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   openCourseDialog() {
     const initialCourseIds = this.courseIds || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {

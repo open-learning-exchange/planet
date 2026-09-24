@@ -18,7 +18,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TagsService } from '../shared/forms/tags/tags.service';
 import { SearchService } from '../shared/search/search.service';
-import { DeviceInfoService } from '../shared/platform/device-info.service';
+import { DeviceInfoService } from '../shared/ui/device-info.service';
 import { FuzzySearchService } from '../shared/search/fuzzy-search.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 

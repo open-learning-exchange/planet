@@ -17,7 +17,7 @@ import {
 } from '../shared/tables/table.helpers';
 import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';

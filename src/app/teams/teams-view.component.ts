@@ -16,7 +16,7 @@ import { findDocuments } from '../shared/database/mango-queries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { ResourcesPickerDialogComponent } from '../resources/resources-picker-dialog.component';
-import { DialogsAddTableComponent } from '../shared/tables/dialogs-add-table.component';
+import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
@@ -24,7 +24,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -38,14 +38,14 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
-import { PlanetCalendarComponent } from '../shared/calendar/calendar.component';
+import { PlanetCalendarComponent } from '../shared/calendar/planet-calendar.component';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { TeamsReportsComponent } from './teams-reports.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
-import { DialogsVoiceLabelsComponent } from '../shared/voices/dialogs-voice-labels.component';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
@@ -102,7 +102,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   isUserLeader = false;
   onDestroy$ = new Subject<void>();
   currentUserId = this.userService.get()._id;
-  dialogRef: MatDialogRef<DialogsAddTableComponent>;
+  dialogRef: MatDialogRef<TablesAddDialogComponent>;
   user = this.userService.get();
   news: any[] = [];
   private readonly emptyVoiceLabels: string[] = [];
@@ -605,7 +605,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -660,7 +660,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseDialog() {
     const initialCourses = this.team.courses || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -708,7 +708,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openManageLabelsDialog() {
-    this.dialog.open(DialogsVoiceLabelsComponent, {
+    this.dialog.open(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
       data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }

@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AuthService } from './shared/auth/auth-guard.service';
+import { AuthGuard } from './shared/auth/auth.guard';
 import { HomeComponent } from './home/home.component';
-import { UserGuard } from './shared/auth/user-guard.service';
+import { UserGuard } from './shared/auth/user.guard';
 import { UnsavedChangesGuard } from './shared/unsaved-changes/unsaved-changes.guard';
 
 const routes: Routes = [
@@ -15,7 +15,7 @@ const routes: Routes = [
     canActivateChild: [ UserGuard ],
     canDeactivate: [ UnsavedChangesGuard ]
   },
-  { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: [ AuthService ] },
+  { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: [ AuthGuard ] },
   { path: '**', component: PageNotFoundComponent }
 ];
 

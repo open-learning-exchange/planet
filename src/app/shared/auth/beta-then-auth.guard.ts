@@ -11,17 +11,17 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { iif, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { AuthService } from './auth-guard.service';
+import { AuthGuard } from './auth.guard';
 import { UserService } from './user.service';
 import { StateService } from '../state.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BetaThenAuthService {
+export class BetaThenAuthGuard {
 
   constructor(
-    private authService: AuthService,
+    private authGuard: AuthGuard,
     private userService: UserService,
     private stateService: StateService
   ) { }
@@ -35,7 +35,7 @@ export class BetaThenAuthService {
       if (this.userService.isBetaEnabled() === true) {
         return of(true);
       }
-      return this.authService.canActivateChild(route, state);
+      return this.authGuard.canActivateChild(route, state);
     }));
   }
 

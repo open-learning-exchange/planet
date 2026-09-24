@@ -18,8 +18,8 @@ import { baseContextPrompt } from '../shared/ai/ai-prompts.constants';
 
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { LowercaseDirective } from '../shared/text/lowercase.directive';
-import { RestrictDiacriticsDirective } from '../shared/language/restrict-diacritics.directive';
+import { LowercaseDirective } from '../shared/forms/lowercase.directive';
+import { RestrictDiacriticsDirective } from '../shared/forms/restrict-diacritics.directive';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';

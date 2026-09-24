@@ -10,7 +10,7 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
-}) export class ChatService {
+}) export class AiChatService {
   readonly dbName = 'chat_history';
 
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;

@@ -13,7 +13,7 @@ import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { ChatService } from '../shared/ai/chat.service';
+import { AiChatService } from '../shared/ai/ai-chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/charts/chart.utils';
 import { PdfService } from '../shared/export/pdf.service';
@@ -42,7 +42,7 @@ export class SubmissionsService {
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private pdfService: PdfService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }

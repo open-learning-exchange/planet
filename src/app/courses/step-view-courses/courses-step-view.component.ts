@@ -10,8 +10,8 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
 import { StateService } from '../../shared/state.service';
-import { ChatService } from '../../shared/ai/chat.service';
-import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
+import { AiChatService } from '../../shared/ai/ai-chat.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { coursesStepPrompt } from '../../shared/ai/ai-prompts.constants';
 import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -79,7 +79,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private coursesService: CoursesService,
     private dialog: MatDialog,
     private resourcesService: ResourcesService,

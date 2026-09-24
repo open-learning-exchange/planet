@@ -15,7 +15,6 @@ import { PlanetMarkdownTextboxComponent } from '../markdown/planet-markdown-text
 import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from './tags/planet-tag-input-dialog.component';
 import { SharedComponentsModule } from '../shared-components.module';
 import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
-import { PlanetSelectorComponent } from './planet-selector.component';
 import { PlanetNumberValidatorDirective } from './planet-number-validator.directive';
 import { PlanetRoundDirective } from './planet-round.directive';
 
@@ -35,7 +34,6 @@ import { PlanetRoundDirective } from './planet-round.directive';
     PlanetTagSelectedInputComponent,
     PlanetTagInputDialogComponent,
     PlanetTagInputToggleIconComponent,
-    PlanetSelectorComponent,
     PlanetStepListComponent,
     PlanetStepListFormDirective,
     PlanetStepListActionsDirective,
@@ -54,7 +52,6 @@ import { PlanetRoundDirective } from './planet-round.directive';
     PlanetTagInputComponent,
     PlanetTagSelectedInputComponent,
     CovalentTextEditorModule,
-    PlanetSelectorComponent,
     PlanetStepListComponent,
     PlanetStepListFormDirective,
     PlanetStepListActionsDirective,

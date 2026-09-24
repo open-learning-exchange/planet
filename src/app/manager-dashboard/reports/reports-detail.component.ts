@@ -28,7 +28,7 @@ import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/cou
 import { ReportsHealthComponent } from './reports-health.component';
 import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { findDocuments } from '../../shared/database/mango-queries';
-import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';

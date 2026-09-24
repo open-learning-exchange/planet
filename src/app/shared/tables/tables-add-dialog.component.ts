@@ -12,7 +12,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-  templateUrl: 'dialogs-add-table.component.html',
+  templateUrl: 'tables-add-dialog.component.html',
   imports: [
     CdkScrollable,
     MatDialogContent,
@@ -28,7 +28,7 @@ import { MatButton } from '@angular/material/button';
     MatDialogClose
   ]
 })
-export class DialogsAddTableComponent implements AfterViewInit {
+export class TablesAddDialogComponent implements AfterViewInit {
 
   @ViewChild(CoursesComponent) coursesComponent: CoursesComponent;
   @ViewChild(UsersComponent) usersComponent: UsersComponent;
@@ -49,7 +49,7 @@ export class DialogsAddTableComponent implements AfterViewInit {
   teamsSelected = [];
 
   constructor(
-    public dialogRef: MatDialogRef<DialogsAddTableComponent>,
+    public dialogRef: MatDialogRef<TablesAddDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService
   ) {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { StateService } from '../state.service';
-import { DialogsAnnouncementComponent } from './dialogs-announcement.component';
+import { ChallengesAnnouncementDialogComponent } from './challenges-announcement-dialog.component';
 
 const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
 
@@ -76,7 +76,7 @@ export class ChallengesService {
   }
 
   openChallengeDialog(dialog: MatDialog, challenge: PlanetChallenge) {
-    return dialog.open(DialogsAnnouncementComponent, {
+    return dialog.open(ChallengesAnnouncementDialogComponent, {
       width: '50vw',
       maxHeight: '100vh',
       data: challenge

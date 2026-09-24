@@ -7,9 +7,9 @@ import { NotificationsService, notificationRecipient } from '../notifications/no
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
-import { AuthService } from '../shared/auth/auth-guard.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -19,11 +19,11 @@ import { MatIcon } from '@angular/material/icon';
 import { LabelComponent } from '../shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
-import { ChatOutputDirective } from '../shared/ai/chat-output.directive';
+import { AiChatOutputDirective } from '../shared/ai/ai-chat-output.directive';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voices/voice-labels';
+import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
 import { FullNamePipe } from '../shared/text/full-name.pipe';
 
 @Component({
@@ -42,7 +42,7 @@ import { FullNamePipe } from '../shared/text/full-name.pipe';
     MatTooltip,
     MatCardContent,
     PlanetMarkdownComponent,
-    ChatOutputDirective,
+    AiChatOutputDirective,
     NgClass,
     MatIconButton,
     MatCardActions,
@@ -93,7 +93,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private notificationsService: NotificationsService,
     private stateService: StateService,
     private usersProfileDialogService: UsersProfileDialogService,
-    private authService: AuthService,
+    private authGuard: AuthGuard,
     private clipboard: Clipboard,
     private deviceInfoService: DeviceInfoService,
   ) {
@@ -153,7 +153,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
     const label = this.formLabel(news);
-    this.authService.checkAuthenticationStatus().subscribe(() => {
+    this.authGuard.checkAuthenticationStatus().subscribe(() => {
       this.updateNews.emit({
         title: $localize`Reply to ${label}`,
         placeholder:  $localize`Your ${label}`,
@@ -261,7 +261,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       event.stopPropagation();
       event.preventDefault();
     }
-    this.authService.checkAuthenticationStatus().subscribe(() => {
+    this.authGuard.checkAuthenticationStatus().subscribe(() => {
       this.usersProfileDialogService.open(
         { member: { ...member, userPlanetCode: member.planetCode } },
         { restoreFocus: false }

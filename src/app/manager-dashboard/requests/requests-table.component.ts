@@ -23,7 +23,7 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
 import { findDocuments } from '../../shared/database/mango-queries';
-import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';

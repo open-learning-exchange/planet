@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CoursesModule } from '../../courses/courses.module';
 import { UsersModule } from '../../users/users.module';
 import { TeamsModule } from '../../teams/teams.module';
-import { DialogsAddTableComponent } from './dialogs-add-table.component';
+import { TablesAddDialogComponent } from './tables-add-dialog.component';
 
 @NgModule({
   imports: [
@@ -13,10 +13,10 @@ import { DialogsAddTableComponent } from './dialogs-add-table.component';
     CoursesModule,
     UsersModule,
     TeamsModule,
-    DialogsAddTableComponent
+    TablesAddDialogComponent
   ],
   exports: [
-    DialogsAddTableComponent
+    TablesAddDialogComponent
   ]
 })
-export class DialogsAddTableModule {}
+export class TablesAddDialogModule {}

@@ -10,7 +10,7 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';

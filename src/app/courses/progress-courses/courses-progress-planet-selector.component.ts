@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { ManagerService } from '../../manager-dashboard/manager.service';
-import { StateService } from '../state.service';
+import { StateService } from '../../shared/state.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
@@ -8,7 +8,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 
 @Component({
-  selector: 'planet-selector',
+  selector: 'planet-courses-progress-planet-selector',
   template: `
     <mat-form-field>
       <mat-label i18n>Select Planet</mat-label>
@@ -21,7 +21,7 @@ import { MatOption } from '@angular/material/autocomplete';
     `,
   imports: [MatFormField, MatLabel, MatSelect, MatOption]
 })
-export class PlanetSelectorComponent implements OnChanges {
+export class CoursesProgressPlanetSelectorComponent implements OnChanges {
 
   @Input() planetCodes: string[] = [];
   @Output() selectionChange = new EventEmitter<any>();

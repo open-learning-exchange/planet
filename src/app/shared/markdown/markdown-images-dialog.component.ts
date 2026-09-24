@@ -16,11 +16,11 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatGridList, MatGridTile, MatGridTileText, MatGridTileFooterCssMatStyler } from '@angular/material/grid-list';
 import { MatButton } from '@angular/material/button';
-import { FileUploadComponent } from './file-upload.component';
+import { FileUploadComponent } from '../forms/file-upload.component';
 
 @Component({
-  templateUrl: './dialogs-images.component.html',
-  styleUrls: ['./dialogs-images.component.scss'],
+  templateUrl: './markdown-images-dialog.component.html',
+  styleUrls: ['./markdown-images-dialog.component.scss'],
   imports: [
     MatDialogTitle,
     CdkScrollable,
@@ -40,7 +40,7 @@ import { FileUploadComponent } from './file-upload.component';
     FileUploadComponent
   ]
 })
-export class DialogsImagesComponent implements OnInit {
+export class MarkdownImagesDialogComponent implements OnInit {
 
   images: any[] = [];
   urlPrefix = environment.couchAddress + '/resources/';
@@ -49,7 +49,7 @@ export class DialogsImagesComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
-    private dialogRef: MatDialogRef<DialogsImagesComponent>,
+    private dialogRef: MatDialogRef<MarkdownImagesDialogComponent>,
     private resourcesService: ResourcesService,
     private userService: UserService,
     private stateService: StateService,

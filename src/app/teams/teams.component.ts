@@ -20,7 +20,7 @@ import {
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';

@@ -15,7 +15,7 @@ import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemCompo
 import { showFormErrors } from '../../shared/tables/table.helpers';
 import { normalizedContentType } from '../../shared/utils';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes/unsaved-changes.component';
+import { warningMsg } from '../../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';

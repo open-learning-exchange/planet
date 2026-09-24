@@ -2,19 +2,19 @@ import { vi } from 'vitest';
 import { ElementRef } from '@angular/core';
 import { of } from 'rxjs';
 
-import { PlanetCalendarComponent } from './calendar.component';
+import { PlanetCalendarComponent } from './planet-calendar.component';
 import { styleVariables } from '../utils';
 
 describe('PlanetCalendarComponent read-only behavior', () => {
   const createComponent = () => {
     const dialog = { open: vi.fn() };
-    const authService = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
+    const authGuard = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
     const component = new PlanetCalendarComponent(
       { documentElement: { lang: 'en' } } as any,
       'en',
       dialog as any,
       {} as any,
-      authService as any,
+      authGuard as any,
       {} as any,
       {} as any,
       {} as any,
@@ -24,32 +24,32 @@ describe('PlanetCalendarComponent read-only behavior', () => {
     );
     component.editable = false;
 
-    return { authService, component, dialog };
+    return { authGuard, component, dialog };
   };
 
   it('does not open add-event flows when read-only', () => {
-    const { authService, component, dialog } = createComponent();
+    const { authGuard, component, dialog } = createComponent();
 
     (component.calendarOptions.select as (event: any) => void)({ start: new Date() });
     component.openAddEventDialog({ start: new Date() });
 
-    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(dialog.open).not.toHaveBeenCalled();
   });
 
   it('uses the latest editable value when a date range is selected', () => {
-    const { authService, component, dialog } = createComponent();
+    const { authGuard, component, dialog } = createComponent();
     const selection = { start: new Date('2026-01-01'), end: new Date('2026-01-02') };
 
     component.editable = true;
     (component.calendarOptions.select as (event: any) => void)(selection);
 
-    expect(authService.checkAuthenticationStatus).toHaveBeenCalledOnce();
+    expect(authGuard.checkAuthenticationStatus).toHaveBeenCalledOnce();
     expect(dialog.open).toHaveBeenCalledOnce();
   });
 
   it('does not authenticate from a stale add-event button after becoming read-only', () => {
-    const { authService, component, dialog } = createComponent();
+    const { authGuard, component, dialog } = createComponent();
     component.editable = true;
     vi.spyOn(component, 'getMeetups').mockImplementation(() => undefined);
     vi.spyOn(component, 'getTasks').mockImplementation(() => undefined);
@@ -58,7 +58,7 @@ describe('PlanetCalendarComponent read-only behavior', () => {
     component.editable = false;
     (component.buttons as any).addEventButton.click({ start: new Date() });
 
-    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(dialog.open).not.toHaveBeenCalled();
   });
 });

@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { MeetupsAddComponent } from './add-meetups/meetups-add.component';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes.component';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 
 import { MeetupsViewComponent } from './view-meetups/meetups-view.component';
 

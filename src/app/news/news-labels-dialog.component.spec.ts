@@ -1,9 +1,9 @@
 import { NEVER, of } from 'rxjs';
 import { vi } from 'vitest';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes.component';
-import { DialogsVoiceLabelsComponent } from './dialogs-voice-labels.component';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
+import { NewsLabelsDialogComponent } from './news-labels-dialog.component';
 
-describe('DialogsVoiceLabelsComponent', () => {
+describe('NewsLabelsDialogComponent', () => {
   let dialogRef: any;
   let stateService: any;
   let configurationService: any;
@@ -12,7 +12,7 @@ describe('DialogsVoiceLabelsComponent', () => {
   let dialogsLoadingService: any;
   let dialog: any;
 
-  const createComponent = (data: any) => new DialogsVoiceLabelsComponent(
+  const createComponent = (data: any) => new NewsLabelsDialogComponent(
     dialogRef,
     data,
     stateService,

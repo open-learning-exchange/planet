@@ -8,7 +8,7 @@ import { FeedbackService } from './feedback.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { AuthService } from '../shared/auth/auth-guard.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
 import {
   FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
   normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
@@ -71,7 +71,7 @@ export class FeedbackDirective {
     private feedbackService: FeedbackService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private authService: AuthService
+    private authGuard: AuthGuard
   ) {}
 
   addFeedback(post: any) {
@@ -153,7 +153,7 @@ export class FeedbackDirective {
 
   @HostListener('click')
   checkAuthentication() {
-    this.authService.checkAuthenticationStatus().subscribe(() => this.openFeedback());
+    this.authGuard.checkAuthenticationStatus().subscribe(() => this.openFeedback());
   }
 
   openFeedback() {

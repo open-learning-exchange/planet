@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, HostListener } from '@angular/core';
 import { TagsService } from './tags.service';
-import { DeviceInfoService, DeviceType } from '../../platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../ui/device-info.service';
 import { truncateText } from '../../utils';
 
 import { MatTooltip } from '@angular/material/tooltip';

@@ -30,7 +30,8 @@
 </mat-toolbar>
 <ng-template #filterSelectors>
   @if (planetCodes.length > 1) {
-    <planet-selector [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
+    <planet-courses-progress-planet-selector [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)">
+    </planet-courses-progress-planet-selector>
   }
   @if (submittedExamSteps?.length > 1) {
     <mat-form-field class="margin-lr-3">

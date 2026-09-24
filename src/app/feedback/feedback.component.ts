@@ -21,7 +21,7 @@ import { findDocuments } from '../shared/database/mango-queries';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { UsersService } from '../users/users.service';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { truncateText } from '../shared/utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';

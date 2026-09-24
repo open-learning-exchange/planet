@@ -10,7 +10,7 @@ import { HealthService } from './health.service';
 import { showFormErrors } from '../shared/tables/table.helpers';
 import { languages } from '../shared/language/languages';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes/unsaved-changes.component';
+import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

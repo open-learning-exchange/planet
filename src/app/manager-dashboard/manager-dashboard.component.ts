@@ -21,7 +21,7 @@ import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
 import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
-import { PlanetBetaDirective } from '../shared/auth/beta.directive';
+import { PlanetBetaDirective } from '../shared/auth/planet-beta.directive';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 
 @Component({

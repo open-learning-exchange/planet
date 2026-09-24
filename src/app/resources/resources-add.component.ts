@@ -18,8 +18,8 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { showFormErrors } from '../shared/tables/table.helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes/unsaved-changes.component';
-import { loadZipFile } from './zip.utils';
+import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
+import { loadZipFile } from './resources-zip.utils';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';

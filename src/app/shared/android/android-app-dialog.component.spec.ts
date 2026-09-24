@@ -3,18 +3,18 @@ import { By } from '@angular/platform-browser';
 import { MatDialogRef } from '@angular/material/dialog';
 import { vi } from 'vitest';
 
-import { DialogsAndroidAppComponent } from './dialogs-android-app.component';
+import { AndroidAppDialogComponent } from './android-app-dialog.component';
 
-describe('DialogsAndroidAppComponent', () => {
-  let fixture: ComponentFixture<DialogsAndroidAppComponent>;
+describe('AndroidAppDialogComponent', () => {
+  let fixture: ComponentFixture<AndroidAppDialogComponent>;
   const dialogRef = { close: vi.fn() };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [DialogsAndroidAppComponent],
+      imports: [AndroidAppDialogComponent],
       providers: [{ provide: MatDialogRef, useValue: dialogRef }]
     });
-    fixture = TestBed.createComponent(DialogsAndroidAppComponent);
+    fixture = TestBed.createComponent(AndroidAppDialogComponent);
     fixture.detectChanges();
   });
 

@@ -20,7 +20,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
 import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
-import { PlanetBetaDirective } from '../../shared/auth/beta.directive';
+import { PlanetBetaDirective } from '../../shared/auth/planet-beta.directive';
 import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/ui/avatar.component';
 import { fullName } from '../../shared/utils';

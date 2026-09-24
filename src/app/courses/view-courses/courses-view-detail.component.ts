@@ -3,7 +3,7 @@ import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
-import * as constants from '../constants';
+import * as constants from '../courses.constants';
 import { CoursesService } from '../courses.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { languages } from '../../shared/language/languages';

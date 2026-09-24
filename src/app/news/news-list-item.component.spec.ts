@@ -8,18 +8,18 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { NewsListItemComponent } from './news-list-item.component';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { LabelComponent } from '../shared/ui/label.component';
 import { UserService } from '../shared/auth/user.service';
 import { CouchService } from '../shared/database/couchdb.service';
 import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
-import { AuthService } from '../shared/auth/auth-guard.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
 
 describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {
-    const authService = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
+    const authGuard = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
     const clipboard = { copy: vi.fn() };
     const component = new NewsListItemComponent(
       {} as any,
@@ -29,18 +29,18 @@ describe('NewsListItemComponent read-only behavior', () => {
       {} as any,
       { configuration: { code: 'local', planetType: 'nation' } } as any,
       {} as any,
-      authService as any,
+      authGuard as any,
       clipboard as any,
       { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
 
-    return { authService, component };
+    return { authGuard, component };
   };
 
   it('blocks every mutating action while retaining label filtering', () => {
-    const { authService, component } = createComponent();
+    const { authGuard, component } = createComponent();
     const updateSpy = vi.spyOn(component.updateNews, 'emit');
     const deleteSpy = vi.spyOn(component.deleteNews, 'emit');
     const shareSpy = vi.spyOn(component.shareNews, 'emit');
@@ -52,7 +52,7 @@ describe('NewsListItemComponent read-only behavior', () => {
     component.shareStory(component.item.doc);
     component.labelClick('help', 'add');
 
-    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(updateSpy).not.toHaveBeenCalled();
     expect(deleteSpy).not.toHaveBeenCalled();
     expect(shareSpy).not.toHaveBeenCalled();
@@ -76,7 +76,7 @@ describe('NewsListItemComponent read-only template', () => {
         { provide: NotificationsService, useValue: {} },
         { provide: StateService, useValue: { configuration: { code: 'local', planetType: 'nation' } } },
         { provide: MatDialog, useValue: {} },
-        { provide: AuthService, useValue: {} },
+        { provide: AuthGuard, useValue: {} },
         { provide: Clipboard, useValue: { copy: vi.fn() } },
         { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(deviceType) } },
         provideNoopAnimations()

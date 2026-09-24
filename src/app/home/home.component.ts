@@ -12,7 +12,7 @@ import { CouchService } from '../shared/database/couchdb.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/language/planet-language.component';
@@ -21,7 +21,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetBetaDirective } from '../shared/auth/beta.directive';
+import { PlanetBetaDirective } from '../shared/auth/planet-beta.directive';
 import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { SyncDirective } from '../manager-dashboard/sync.directive';
@@ -31,7 +31,7 @@ import { ChangePasswordDirective } from '../shared/auth/change-password.directiv
 import { MatDivider } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { PulsateIconDirective } from './pulsate-icon.directive';
-import { ANDROID_APPS } from '../shared/platform/android-apps';
+import { ANDROID_APPS } from '../shared/android/android-apps';
 
 @Component({
   templateUrl: './home.component.html',

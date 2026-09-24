@@ -15,7 +15,7 @@ import { findDocuments } from '../shared/database/mango-queries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';

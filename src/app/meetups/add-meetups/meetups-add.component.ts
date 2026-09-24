@@ -3,7 +3,7 @@ import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, 
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { interval, of, race } from 'rxjs';
 import { debounce, switchMap } from 'rxjs/operators';
-import * as constants from '../constants';
+import * as constants from '../meetups.constants';
 import { CouchService } from '../../shared/database/couchdb.service';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -12,7 +12,7 @@ import { findDocuments } from '../../shared/database/mango-queries';
 import { showFormErrors } from '../../shared/tables/table.helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes/unsaved-changes.component';
+import { warningMsg } from '../../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';

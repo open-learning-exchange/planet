@@ -10,7 +10,7 @@ import { ResourcesPickerDialogModule } from '../resources/resources-picker-dialo
 import { ResourcesViewerDialogModule } from '../resources/view-resources/resources-viewer-dialog.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
-import { PlanetCalendarModule } from '../shared/calendar/calendar.module';
+import { PlanetCalendarModule } from '../shared/calendar/planet-calendar.module';
 import { FormsModule } from '@angular/forms';
 import { TeamsMemberComponent } from './teams-member.component';
 import { TeamsReportsComponent } from './teams-reports.component';

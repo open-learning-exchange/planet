@@ -11,7 +11,7 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../auth/user.service';
-import { UserChallengeStatusService } from './user-challenge-status.service';
+import { ChallengesUserStatusService } from './challenges-user-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
@@ -31,9 +31,9 @@ import { ChallengesService, PlanetChallenge } from './challenges.service';
       <p class="success-msg">{{ challenge.successMessage }}</p>
     </div>
   `,
-  styleUrls: ['./dialogs-announcement.component.scss']
+  styleUrls: ['./challenges-announcement-dialog.component.scss']
 })
-export class DialogsAnnouncementSuccessComponent {
+export class ChallengesAnnouncementSuccessDialogComponent {
   challenge: PlanetChallenge;
 
   constructor(
@@ -45,11 +45,11 @@ export class DialogsAnnouncementSuccessComponent {
 }
 
 @Component({
-  templateUrl: './dialogs-announcement.component.html',
-  styleUrls: ['./dialogs-announcement.component.scss'],
+  templateUrl: './challenges-announcement-dialog.component.html',
+  styleUrls: ['./challenges-announcement-dialog.component.scss'],
   imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgClass, MatProgressSpinner, MatIcon, MatAnchor]
 })
-export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
+export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject<void>();
   currentUserName = this.userService.get().name;
@@ -73,7 +73,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   dailyPostDots = [ 0, 1, 2, 3, 4 ];
 
   constructor(
-    public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
+    public dialogRef: MatDialogRef<ChallengesAnnouncementDialogComponent>,
     private router: Router,
     private couchService: CouchService,
     private coursesService: CoursesService,
@@ -81,7 +81,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-    private userStatusService: UserChallengeStatusService,
+    private userStatusService: ChallengesUserStatusService,
     private challengesService: ChallengesService,
     @Inject(MAT_DIALOG_DATA) public data: PlanetChallenge | null
   ) {}

@@ -12,7 +12,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

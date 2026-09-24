@@ -8,20 +8,20 @@ import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import { ConfigurationService } from '../../configuration/configuration.service';
-import { StateService } from '../state.service';
-import { CouchService } from '../database/couchdb.service';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
-import { LabelComponent } from '../ui/label.component';
-import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from './voice-labels';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes.component';
+import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { LabelComponent } from '../shared/ui/label.component';
+import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from './news-labels';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { Subject } from 'rxjs';
 import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
 
 @Component({
-  templateUrl: './dialogs-voice-labels.component.html',
-  styleUrl: './dialogs-voice-labels.component.scss',
+  templateUrl: './news-labels-dialog.component.html',
+  styleUrl: './news-labels-dialog.component.scss',
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -38,7 +38,7 @@ import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
     LabelComponent
   ]
 })
-export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
+export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
 
   systemLabels = DEFAULT_VOICE_LABELS;
   initialCustomLabels: string[] = [];
@@ -52,7 +52,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
 
   constructor(
-    private dialogRef: MatDialogRef<DialogsVoiceLabelsComponent>,
+    private dialogRef: MatDialogRef<NewsLabelsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private stateService: StateService,
     private configurationService: ConfigurationService,

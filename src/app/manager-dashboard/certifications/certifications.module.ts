@@ -10,7 +10,7 @@ import { SharedComponentsModule } from '../../shared/shared-components.module';
 import { PlanetDialogsModule } from '../../shared/dialogs/planet-dialogs.module';
 import { CertificationsAddComponent } from './certifications-add.component';
 import { CoursesModule } from '../../courses/courses.module';
-import { DialogsAddTableModule } from '../../shared/tables/dialogs-add-table.module';
+import { TablesAddDialogModule } from '../../shared/tables/tables-add-dialog.module';
 import { CertificationsViewComponent } from './certifications-view.component';
 import { UsersModule } from '../../users/users.module';
 
@@ -26,7 +26,7 @@ import { UsersModule } from '../../users/users.module';
     SharedComponentsModule,
     PlanetDialogsModule,
     CoursesModule,
-    DialogsAddTableModule,
+    TablesAddDialogModule,
     UsersModule,
     CertificationsComponent,
     CertificationsAddComponent,

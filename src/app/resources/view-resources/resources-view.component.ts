@@ -7,7 +7,7 @@ import { UserService } from '../../shared/auth/user.service';
 import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { languages } from '../../shared/language/languages';
 import * as constants from '../resources.constants';
 import { MatToolbar } from '@angular/material/toolbar';

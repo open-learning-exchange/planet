@@ -13,7 +13,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DeviceInfoService } from '../../shared/platform/device-info.service';
+import { DeviceInfoService } from '../../shared/ui/device-info.service';
 
 describe('ResourcesViewComponent', () => {
 

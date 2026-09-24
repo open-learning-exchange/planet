@@ -13,7 +13,7 @@ import { switchMap } from 'rxjs/operators';
 import { of, forkJoin, interval, race } from 'rxjs';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes/unsaved-changes.component';
+import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { debounce } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';

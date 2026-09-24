@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { UnsavedChangesPromptComponent } from './unsaved-changes.component';
+import { UnsavedChangesPromptComponent } from './unsaved-changes-prompt.component';
 
 export interface CanComponentDeactivate {
   canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;

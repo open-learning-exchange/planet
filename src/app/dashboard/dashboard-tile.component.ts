@@ -12,7 +12,7 @@ import { CoursesService } from '../courses/courses.service';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { MatCard } from '@angular/material/card';
 import { NgClass, NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';

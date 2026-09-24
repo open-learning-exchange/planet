@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 import { CouchService } from '../../shared/database/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import * as constants from '../constants';
+import * as constants from '../courses.constants';
 import { languages } from '../../shared/language/languages';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { CoursesService } from '../courses.service';

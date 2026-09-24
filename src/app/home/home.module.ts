@@ -17,7 +17,7 @@ import { UsersAchievementsModule } from '../users/users-achievements/users-achie
 import { NewsModule } from '../news/news.module';
 import { TeamsModule } from '../teams/teams.module';
 import { CommunityComponent } from '../community/community.component';
-import { PlanetCalendarModule } from '../shared/calendar/calendar.module';
+import { PlanetCalendarModule } from '../shared/calendar/planet-calendar.module';
 import { CommunityLinkDialogComponent } from '../community/community-link-dialog.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';

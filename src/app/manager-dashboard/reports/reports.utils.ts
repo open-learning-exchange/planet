@@ -1,4 +1,4 @@
-import { millisecondsToDay } from '../../meetups/constants';
+import { millisecondsToDay } from '../../meetups/meetups.constants';
 import { CsvService } from '../../shared/export/csv.service';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {

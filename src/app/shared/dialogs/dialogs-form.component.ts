@@ -28,7 +28,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from './submit.directive';
 import { deepEqual } from '../utils';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes.component';
+import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes-prompt.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',

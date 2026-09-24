@@ -36,7 +36,7 @@ import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { levelList } from './resources.constants';
 import { SearchService } from '../shared/search/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/platform/device-info.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -44,7 +44,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
-import { FilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
+import { PlanetFilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
 import { PlanetTagSelectedInputComponent } from '../shared/forms/tags/planet-tag-selected-input.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
@@ -53,9 +53,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { PreviewOverflowDirective } from '../shared/ui/preview-overflow.directive';
 import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
-import { PlanetLocalStatusComponent } from '../shared/platform/planet-local-status.component';
+import { PlanetLocalStatusComponent } from '../shared/ui/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { DialogsRatingsDirective } from '../shared/ratings/dialogs-ratings.component';
+import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
 import { PlanetRatingComponent } from '../shared/ratings/planet-rating.component';
 import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 
@@ -85,7 +85,7 @@ import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
     MatInput,
     MatMiniFabButton,
     RouterLink,
-    FilteredAmountComponent,
+    PlanetFilteredAmountComponent,
     PlanetTagSelectedInputComponent,
     MatMenuTrigger,
     MatMenu,
@@ -108,7 +108,7 @@ import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
     PlanetMarkdownComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
-    DialogsRatingsDirective,
+    PlanetRatingDialogDirective,
     PlanetRatingComponent,
     MatHeaderRowDef,
     MatHeaderRow,

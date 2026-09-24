@@ -5,15 +5,15 @@ import { MatIcon } from '@angular/material/icon';
 import { ANDROID_APPS } from './android-apps';
 
 @Component({
-  templateUrl: './dialogs-android-app.component.html',
-  styleUrls: ['./dialogs-android-app.component.scss'],
+  templateUrl: './android-app-dialog.component.html',
+  styleUrls: ['./android-app-dialog.component.scss'],
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatAnchor, MatButton, MatIcon]
 })
-export class DialogsAndroidAppComponent {
+export class AndroidAppDialogComponent {
 
   readonly apps = ANDROID_APPS;
 
-  constructor(public dialogRef: MatDialogRef<DialogsAndroidAppComponent>) {}
+  constructor(public dialogRef: MatDialogRef<AndroidAppDialogComponent>) {}
 
   close() {
     this.dialogRef.close();

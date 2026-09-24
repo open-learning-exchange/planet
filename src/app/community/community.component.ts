@@ -19,10 +19,10 @@ import { findDocuments } from '../shared/database/mango-queries';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
-import { DialogsAnnouncementSuccessComponent } from '../shared/challenges/dialogs-announcement.component';
-import { UserChallengeStatusService } from '../shared/challenges/user-challenge-status.service';
-import { ConfigurationCheckService } from '../shared/platform/configuration-check.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { ChallengesAnnouncementSuccessDialogComponent } from '../shared/challenges/challenges-announcement-dialog.component';
+import { ChallengesUserStatusService } from '../shared/challenges/challenges-user-status.service';
+import { ConfigurationCheckService } from '../configuration/configuration-check.service';
 import { ChallengesService } from '../shared/challenges/challenges.service';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { NgClass } from '@angular/common';
@@ -44,11 +44,11 @@ import {
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
-import { DialogsVoiceLabelsComponent } from '../shared/voices/dialogs-voice-labels.component';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports.component';
-import { PlanetCalendarComponent } from '../shared/calendar/calendar.component';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voices/voice-labels';
+import { PlanetCalendarComponent } from '../shared/calendar/planet-calendar.component';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../news/news-labels';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -175,7 +175,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private userStatusService: UserChallengeStatusService,
+    private userStatusService: ChallengesUserStatusService,
     private deviceInfoService: DeviceInfoService,
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
@@ -396,7 +396,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.userStatusService.getStatus('surveyComplete') &&
         !this.userStatusService.getStatus('hasPost')
       ) {
-        this.dialog.open(DialogsAnnouncementSuccessComponent, {
+        this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
           width: '50vw',
           maxHeight: '100vh',
           data: challenge
@@ -735,7 +735,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (this.planetCode) {
       return;
     }
-    this.dialog.open(DialogsVoiceLabelsComponent, {
+    this.dialog.open(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
       data: { target: 'community', customLabels: this.customVoiceLabels }

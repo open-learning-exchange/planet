@@ -10,8 +10,8 @@ import { CouchService } from '../shared/database/couchdb.service';
 import { NewsService } from '../news/news.service';
 import { TeamsService } from '../teams/teams.service';
 import { UserService } from '../shared/auth/user.service';
-import { UserChallengeStatusService } from '../shared/challenges/user-challenge-status.service';
-import { DialogsAnnouncementSuccessComponent } from '../shared/challenges/dialogs-announcement.component';
+import { ChallengesUserStatusService } from '../shared/challenges/challenges-user-status.service';
+import { ChallengesAnnouncementSuccessDialogComponent } from '../shared/challenges/challenges-announcement-dialog.component';
 import { ChallengesService } from '../shared/challenges/challenges.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
@@ -96,7 +96,7 @@ export class ChatShareDialogComponent implements OnInit {
     private teamsService: TeamsService,
     private userService: UserService,
     private dialog: MatDialog,
-    private userStatusService: UserChallengeStatusService,
+    private userStatusService: ChallengesUserStatusService,
     private challengesService: ChallengesService,
   ) {
     this.conversation = data || this.conversation;
@@ -206,7 +206,7 @@ export class ChatShareDialogComponent implements OnInit {
       this.userStatusService.getStatus('surveyComplete') &&
       !this.userStatusService.getStatus('hasPost')
     ) {
-      this.dialog.open(DialogsAnnouncementSuccessComponent, {
+      this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
         width: '50vw',
         maxHeight: '100vh',
         data: challenge

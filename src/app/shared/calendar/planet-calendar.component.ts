@@ -7,11 +7,11 @@ import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { MeetupsAddDialogComponent } from '../../meetups/meetups-add-dialog.component';
 import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
-import { days, millisecondsToDay } from '../../meetups/constants';
+import { days, millisecondsToDay } from '../../meetups/meetups.constants';
 import { CouchService } from '../database/couchdb.service';
 import { findDocuments } from '../database/mango-queries';
 import { styleVariables } from '../utils';
-import { AuthService } from '../auth/auth-guard.service';
+import { AuthGuard } from '../auth/auth.guard';
 import { TasksService } from '../../tasks/tasks.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { PlanetMessageService } from '../ui/planet-message.service';
@@ -33,7 +33,7 @@ const taskEventColors = {
 
 @Component({
   selector: 'planet-calendar',
-  styleUrls: ['./calendar.component.scss'],
+  styleUrls: ['./planet-calendar.component.scss'],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     @if (showLegend) {
@@ -105,7 +105,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
       if (!this.editable) {
         return;
       }
-      this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
+      this.authGuard.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
     },
     eventClick: this.eventClick.bind(this)
   };
@@ -119,7 +119,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     @Inject(LOCALE_ID) private localeId: string,
     private dialog: MatDialog,
     private couchService: CouchService,
-    private authService: AuthService,
+    private authGuard: AuthGuard,
     private tasksService: TasksService,
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
@@ -140,7 +140,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
             if (!this.editable) {
               return;
             }
-            this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
+            this.authGuard.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
           }
         }
       } :

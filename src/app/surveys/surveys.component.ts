@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/database/couchdb.service';
-import { ChatService } from '../shared/ai/chat.service';
+import { AiChatService } from '../shared/ai/ai-chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/tables/table.helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
@@ -23,9 +23,9 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UserService } from '../shared/auth/user.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsAddTableComponent } from '../shared/tables/dialogs-add-table.component';
+import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
 import { ExamsService } from '../exams/exams.service';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
@@ -109,7 +109,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
     return (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(surveyColumns);
   }
-  dialogRef: MatDialogRef<DialogsAddTableComponent>;
+  dialogRef: MatDialogRef<TablesAddDialogComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   isAuthorized = false;
@@ -143,7 +143,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService
@@ -410,7 +410,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
     ).subscribe((submissions: any[]) => {
       const excludeIds = submissions.map((submission: any) => submission.user._id);
-      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+      this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
         width: '80vw',
         data: {
           okClick: (selection: any[]) => {
@@ -440,7 +440,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyToTeamsDialog(survey) {
     const excludeIds = survey.teamIds || [];
-    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (selection: any[]) => {

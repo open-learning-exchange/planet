@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/database/couchdb.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ConfigurationCheckService } from '../shared/platform/configuration-check.service';
+import { ConfigurationCheckService } from '../configuration/configuration-check.service';
 import { MatCard } from '@angular/material/card';
 import { MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

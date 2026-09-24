@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { DialogsImagesComponent } from '../forms/dialogs-images.component';
+import { MarkdownImagesDialogComponent } from './markdown-images-dialog.component';
 import { TdTextEditorComponent } from '@covalent/text-editor';
 import { NgClass } from '@angular/common';
 
@@ -341,7 +341,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   addImage() {
-    this.dialog.open(DialogsImagesComponent, {
+    this.dialog.open(MarkdownImagesDialogComponent, {
       width: '500px',
       data: {
         imageGroup: this.imageGroup

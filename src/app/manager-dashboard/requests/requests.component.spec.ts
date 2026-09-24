@@ -13,7 +13,7 @@ import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
-import { DeviceInfoService } from '../../shared/platform/device-info.service';
+import { DeviceInfoService } from '../../shared/ui/device-info.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { UserService } from '../../shared/auth/user.service';
 

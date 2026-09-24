@@ -10,7 +10,7 @@ import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-  templateUrl: './dialogs-ratings.component.html',
+  templateUrl: './planet-rating-dialog.component.html',
   imports: [
     MatDialogTitle,
     CdkScrollable,
@@ -30,7 +30,7 @@ import { MatButton } from '@angular/material/button';
     DatePipe
   ]
 })
-export class DialogsRatingsComponent {
+export class PlanetRatingDialogComponent {
 
   ratings: any[] = [];
   title: string;
@@ -49,10 +49,10 @@ export class DialogsRatingsComponent {
 
 }
 
-@Directive({ selector: 'button[planetDialogsRatings]' })
-export class DialogsRatingsDirective {
+@Directive({ selector: 'button[planetRatingDialog]' })
+export class PlanetRatingDialogDirective {
 
-  @Input('planetDialogsRatings') item: any;
+  @Input('planetRatingDialog') item: any;
 
   constructor(
     private dialog: MatDialog
@@ -60,7 +60,7 @@ export class DialogsRatingsDirective {
 
   @HostListener('click') viewRatings() {
     const { doc, rating } = this.item;
-    this.dialog.open(DialogsRatingsComponent, {
+    this.dialog.open(PlanetRatingDialogComponent, {
       data: { title: doc.courseTitle || doc.title, ratings: rating.allRatings },
       minWidth: '600px'
     });

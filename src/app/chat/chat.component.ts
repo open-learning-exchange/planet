@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { ChatService } from '../shared/ai/chat.service';
+import { AiChatService } from '../shared/ai/ai-chat.service';
 import { AIProvider, ProviderName } from './chat.model';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
@@ -25,7 +25,7 @@ export class ChatComponent implements OnInit {
   displayToggle: boolean;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private route: ActivatedRoute,
     private router: Router,
   ) {}

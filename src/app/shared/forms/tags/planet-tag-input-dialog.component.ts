@@ -12,7 +12,7 @@ import { PlanetMessageService } from '../../ui/planet-message.service';
 import { ValidatorService } from '../../../validators/validator.service';
 import { DialogsFormService } from '../../dialogs/dialogs-form.service';
 import { UserService } from '../../auth/user.service';
-import { DeviceInfoService, DeviceType } from '../../platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../ui/device-info.service';
 import { CustomValidators } from '../../../validators/custom-validators';
 import { mapToArray, isInMap } from '../../utils';
 import { DialogsLoadingService } from '../../dialogs/dialogs-loading.service';

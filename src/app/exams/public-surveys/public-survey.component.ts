@@ -15,7 +15,7 @@ import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.compon
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { AndroidAppPromptService } from '../../shared/platform/android-app-prompt.service';
+import { AndroidAppPromptService } from '../../shared/android/android-app-prompt.service';
 
 @Component({
   selector: 'planet-public-survey',

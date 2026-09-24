@@ -10,7 +10,7 @@ import {
 import { finalize } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/tables/table.helpers';
-import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';

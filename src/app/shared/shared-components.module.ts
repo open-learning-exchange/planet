@@ -3,21 +3,21 @@ import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 
-import { PlanetLocalStatusComponent } from './platform/planet-local-status.component';
+import { PlanetLocalStatusComponent } from './ui/planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './dialogs/submit.directive';
-import { LowercaseDirective } from './text/lowercase.directive';
+import { LowercaseDirective } from './forms/lowercase.directive';
 import { PlanetLanguageComponent } from './language/planet-language.component';
 import { AuthorizedRolesDirective } from './auth/authorized-roles.directive';
-import { PlanetBetaDirective } from './auth/beta.directive';
-import { FilteredAmountComponent } from './tables/planet-filtered-amount.component';
+import { PlanetBetaDirective } from './auth/planet-beta.directive';
+import { PlanetFilteredAmountComponent } from './tables/planet-filtered-amount.component';
 import { PlanetRoleComponent } from './auth/planet-role.component';
 import { PlanetMarkdownComponent } from './markdown/planet-markdown.component';
 import { LabelComponent } from './ui/label.component';
 import { AvatarComponent } from './ui/avatar.component';
 import { LanguageLabelComponent } from './language/language-label.component';
-import { RestrictDiacriticsDirective } from './language/restrict-diacritics.directive';
-import { ChatOutputDirective } from './ai/chat-output.directive';
+import { RestrictDiacriticsDirective } from './forms/restrict-diacritics.directive';
+import { AiChatOutputDirective } from './ai/ai-chat-output.directive';
 import { TruncateTextPipe } from './text/truncate-text.pipe';
 import { FullNamePipe } from './text/full-name.pipe';
 import { TimeAgoPipe } from './text/time-ago.pipe';
@@ -34,14 +34,14 @@ import { PreviewOverflowDirective } from './ui/preview-overflow.directive';
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
+    PlanetFilteredAmountComponent,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
     LabelComponent,
     LanguageLabelComponent,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    ChatOutputDirective,
+    AiChatOutputDirective,
     TruncateTextPipe,
     FullNamePipe,
     TimeAgoPipe,
@@ -55,14 +55,14 @@ import { PreviewOverflowDirective } from './ui/preview-overflow.directive';
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
+    PlanetFilteredAmountComponent,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
     LabelComponent,
     LanguageLabelComponent,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    ChatOutputDirective,
+    AiChatOutputDirective,
     OverlayModule,
     TruncateTextPipe,
     FullNamePipe,

@@ -5,9 +5,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { Conversation, AIProvider } from '../chat.model';
-import { ChatService } from '../../shared/ai/chat.service';
+import { AiChatService } from '../../shared/ai/ai-chat.service';
 import { CouchService } from '../../shared/database/couchdb.service';
-import { DeviceInfoService, DeviceType } from '../../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { ChatShareDialogComponent } from '../chat-share-dialog.component';
 import { SearchService } from '../../shared/search/search.service';
 import { showFormErrors, trackById } from '../../shared/tables/table.helpers';
@@ -90,7 +90,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   isLoading = true;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,

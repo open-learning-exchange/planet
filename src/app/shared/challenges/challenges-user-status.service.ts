@@ -15,7 +15,7 @@ interface UserStatus {
 @Injectable({
   providedIn: 'root'
 })
-export class UserChallengeStatusService {
+export class ChallengesUserStatusService {
   userStatus: UserStatus = {
     joinedCourse: {
       status: false,

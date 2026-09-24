@@ -11,7 +11,7 @@ import { StateService } from '../state.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthGuard {
 
   constructor(
     private userService: UserService,

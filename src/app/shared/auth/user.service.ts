@@ -153,7 +153,7 @@ export class UserService {
     } : {});
   }
 
-  // Safeguard to make sure user profile has been set by AuthService
+  // Safeguard to make sure user profile has been set by AuthGuard
   // before running newSessionLog()
   getNewLogObj() {
     return new Observable(observer => {

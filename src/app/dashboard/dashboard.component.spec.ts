@@ -10,7 +10,7 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CoursesService } from '../courses/courses.service';
 import { StateService } from '../shared/state.service';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { DeviceInfoService, DeviceType } from '../shared/platform/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
 describe('DashboardComponent', () => {

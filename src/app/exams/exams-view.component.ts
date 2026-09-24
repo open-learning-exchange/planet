@@ -29,7 +29,7 @@ import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes.component';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
