@@ -1,4 +1,5 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, DestroyRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
 } from '@angular/material/dialog';
@@ -53,19 +54,22 @@ export class DialogsImagesComponent implements OnInit {
     private resourcesService: ResourcesService,
     private userService: UserService,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private destroyRef: DestroyRef
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesListener(false).subscribe(resources => {
-      if (resources) {
-        this.images = resources.map(({ doc }) => doc)
-          .filter(resource =>
-            resource.mediaType === 'image' &&
-            (resource.privateFor === 'community' || deepEqual(this.data.imageGroup, resource.privateFor))
-          );
-      }
-    });
+    this.resourcesService.resourcesListener(false)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(resources => {
+        if (resources) {
+          this.images = resources.map(({ doc }) => doc)
+            .filter(resource =>
+              resource.mediaType === 'image' &&
+              (resource.privateFor === 'community' || deepEqual(this.data.imageGroup, resource.privateFor))
+            );
+        }
+      });
     this.resourcesService.requestResourcesUpdate(false, false);
   }
 
