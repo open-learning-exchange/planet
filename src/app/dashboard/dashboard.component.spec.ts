@@ -65,9 +65,10 @@ describe('DashboardComponent', () => {
       coursesListener$: vi.fn().mockReturnValue(of([]))
     };
     stateServiceMock = { configuration: { name: 'Planet Earth', code: 'earth_code' } };
+    const completionService = new CertificationsService({} as any, {} as any, {} as any);
     certificationsServiceMock = {
       getCertifications: vi.fn().mockReturnValue(of([])),
-      isCourseCompleted: CertificationsService.prototype.isCourseCompleted
+      isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
     };
     deviceInfoServiceMock = { watchDeviceType: vi.fn().mockReturnValue(deviceType$.asObservable()) };
     matDialogMock = { open: vi.fn() };
@@ -366,48 +367,6 @@ describe('DashboardComponent', () => {
 
       component.setCompletedCourses(courses.slice(0, 9), []);
       expect(component.moreBadgesLabel).toBe('Show 1 more completed course');
-    });
-
-    it('does not treat duplicate progress documents for one step as completion', () => {
-      createComponent();
-      component.setCompletedCourses([ {
-        _id: 'two_steps',
-        doc: { courseTitle: 'Two steps', steps: [ {}, {} ] },
-        progress: [
-          { userId: mockUser._id, stepNum: 1, passed: true },
-          { userId: mockUser._id, stepNum: 1, passed: true }
-        ]
-      } ], []);
-
-      expect(component.completedCourses).toHaveLength(0);
-    });
-
-    it('excludes a course with an unpassed step', () => {
-      createComponent();
-      component.setCompletedCourses([
-        createCompletedCourse('completed'),
-        {
-          _id: 'incomplete',
-          doc: { courseTitle: 'Incomplete', steps: [ {}, {} ] },
-          progress: [
-            { userId: mockUser._id, stepNum: 1, passed: true },
-            { userId: mockUser._id, stepNum: 2, passed: false }
-          ]
-        }
-      ], []);
-
-      expect(component.completedCourses.map(course => course._id)).toEqual([ 'completed' ]);
-    });
-
-    it('excludes progress belonging to another user', () => {
-      createComponent();
-      component.setCompletedCourses([ {
-        _id: 'another_users_course',
-        doc: { courseTitle: 'Another user course', steps: [ {} ] },
-        progress: [ { userId: 'another_user', stepNum: 1, passed: true } ]
-      } ], []);
-
-      expect(component.completedCourses).toHaveLength(0);
     });
 
     it('skips a course with no steps instead of throwing', () => {

@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
@@ -20,6 +20,7 @@ import {
   isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import * as constants from './constants';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -200,6 +201,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   expandedElement: any = null;
   private previewHasHiddenContent = new Map<string, boolean>();
   private previewOverflow = new Map<string, boolean>();
+  certifications: any[] = [];
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -220,7 +222,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private certificationsService: CertificationsService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -268,6 +271,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.countSelectNotEnrolled(source.selected);
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    if (!this.parent && !this.isDialog && !this.isForm) {
+      this.certificationsService.getCertifications().pipe(
+        catchError(() => of([])),
+        takeUntil(this.onDestroy$)
+      ).subscribe((certifications: any[]) => {
+        this.certifications = certifications;
+        this.courses.data.forEach((course: any) => course.inCertification = this.isInCertification(course._id));
+      });
+    }
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
@@ -294,8 +306,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
       course.canManage = this.coursesService.canManageCourse(course.doc);
       course.admission = myCourseIndex > -1;
+      course.inCertification = this.isInCertification(course._id);
+      course.isCompleted = course.doc.steps?.length > 0 &&
+        this.certificationsService.isCourseCompleted(course, this.user);
       return course;
     });
+  }
+
+  private isInCertification(courseId: string): boolean {
+    return this.certifications.some(certification => certification.courseIds?.includes(courseId));
   }
 
   getCourses() {
