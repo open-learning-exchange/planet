@@ -77,14 +77,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
 
-  // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
     })
   );
-  // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
@@ -186,8 +184,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.languageComponent?.openMenu();
   }
 
-  // Used to swap in different background.
-  // Should remove when background is finalized.
   backgroundRoute() {
     const url = this.router.url;
     const routesWithBackground = [
@@ -195,7 +191,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises', 'certifications', 'myDashboard', 'nation', 'earth',
       'health', 'myPersonals', 'community', 'voices'
     ];
-    // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
       .findIndex((route) => url.indexOf(route) > -1) > -1;
@@ -264,9 +259,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }, (err) => console.log(err));
   }
 
-  /**
-   * Used for marking all notifications as read from navigation bar
-   */
   readAllNotification() {
     this.notificationsService.setNotificationsAsRead(this.notifications);
   }
