@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import {
   FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
@@ -61,8 +61,6 @@ interface ExamViewForm {
   ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeactivate {
-
-  @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
 
   @Input() isDialog = false;
   @Input() exam: Exam;
@@ -365,7 +363,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     if (direction !== 0) {
       this.slideDirection = direction > 0 ? 'right' : 'left';
       this.slideAnimationVariant = this.slideAnimationVariant === 'a' ? 'b' : 'a';
-      this.questionFrame?.scrollToTop();
     }
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
