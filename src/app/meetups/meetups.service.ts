@@ -13,7 +13,6 @@ export interface MeetupAuthorizationContext {
   readOnly?: boolean;
 }
 
-// Root-provided so the shared calendar can reach canEditMeetup outside MeetupsModule
 @Injectable({ providedIn: 'root' })
 export class MeetupService {
 
