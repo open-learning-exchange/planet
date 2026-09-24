@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { ElementRef } from '@angular/core';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { PlanetCalendarComponent } from './calendar.component';
 import { styleVariables } from './utils';
@@ -20,7 +20,9 @@ describe('PlanetCalendarComponent read-only behavior', () => {
       {} as any,
       {} as any,
       new ElementRef(document.createElement('div')),
-      { runOutsideAngular: (fn: () => void) => fn() } as any
+      { runOutsideAngular: (fn: () => void) => fn() } as any,
+      { canEditMeetup: () => false } as any,
+      {} as any
     );
     component.editable = false;
 
@@ -64,21 +66,54 @@ describe('PlanetCalendarComponent read-only behavior', () => {
 });
 
 describe('PlanetCalendarComponent', () => {
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
 
-  const createComponent = (couchService: any = {}, element = document.createElement('div')) => new PlanetCalendarComponent(
+  const createComponent = (
+    couchService: any = {},
+    meetupService: any = { canEditMeetup: () => true },
+    messageService: any = { showMessage: vi.fn(), showAlert: vi.fn() },
+    loadingService: any = { start: vi.fn(), stop: vi.fn() },
+    tasksService: any = {},
+    notificationsService: any = { notifyMeetupChange: vi.fn(() => of({ ok: true })) },
+    dialog: any = {},
+    element = document.createElement('div')
+  ) => new PlanetCalendarComponent(
     document,
     'en',
-    {} as any,
+    dialog,
     couchService,
     {} as any,
+    tasksService,
     {} as any,
-    {} as any,
-    {} as any,
-    {} as any,
+    messageService,
+    loadingService,
     new ElementRef(element),
-    { runOutsideAngular: (fn: () => void) => fn() } as any
+    { runOutsideAngular: (fn: () => void) => fn() } as any,
+    meetupService,
+    notificationsService
   );
+
+  const authorized = { canEditMeetup: () => true };
+  const meetup = {
+    _id: 'm1',
+    title: 'Meetup',
+    createdBy: 'admin',
+    recurring: 'none',
+    startDate: new Date(2026, 7, 10).getTime(),
+    endDate: new Date(2026, 7, 10).getTime()
+  };
+  const dropInfo = (event: any, delta: any = { days: 2, milliseconds: 0 }) => ({
+    event: { setExtendedProp: vi.fn(), ...event },
+    delta,
+    revert: vi.fn()
+  });
+  const writingCouchService = () => ({
+    updateDocument: vi.fn((db: string, doc: any) => of({ ok: true, rev: '2-new', doc: { ...doc, _rev: '2-new' } })),
+    findAll: vi.fn(() => of([]))
+  });
 
   it('preserves the time stored in a task deadline', () => {
     const component = createComponent();
@@ -208,5 +243,305 @@ describe('PlanetCalendarComponent', () => {
     expect(component.tasks[1].backgroundColor).toBe(component.eventLegend[2].color);
     expect(component.tasks[0].textColor).toBe(styleVariables.accentText);
     expect(component.tasks[1].textColor).toBe(styleVariables.accentText);
+  });
+
+  it('asks the shared predicate with this calendar context and blocks recurring meetups', () => {
+    const meetupService = { canEditMeetup: vi.fn(() => true) };
+    const component = createComponent({}, meetupService);
+    component.leaderOfTeamId = 'team-1';
+    component.editable = false;
+    const teamMeetup = { title: 'Event', recurring: 'none', link: { teams: 'team-1' } };
+
+    expect(component.eventObject(teamMeetup, new Date()).startEditable).toBe(true);
+    expect(meetupService.canEditMeetup).toHaveBeenCalledWith(teamMeetup, { leaderOfTeamId: 'team-1', readOnly: true });
+    expect(component.eventObject({ ...teamMeetup, recurring: 'daily' }, new Date()).startEditable).toBe(false);
+    expect(createComponent({}, { canEditMeetup: () => false })
+      .eventObject(teamMeetup, new Date()).startEditable).toBe(false);
+  });
+
+  it('disables event resizing, which the drop handler cannot persist', () => {
+    const component = createComponent();
+
+    expect(component.calendarOptions.eventDurationEditable).toBe(false);
+    expect(component.eventObject({ title: 'Event', recurring: 'none' }, new Date()).durationEditable).toBe(false);
+    expect(component.eventObject({ title: 'Task', isTask: true }, new Date()).durationEditable).toBe(false);
+  });
+
+  it('shows a pointer cursor for clickable events that cannot be dragged', () => {
+    const component = createComponent({}, { canEditMeetup: () => false });
+
+    expect(component.eventObject({ title: 'Event', recurring: 'none' }, new Date())).toEqual(expect.objectContaining({
+      classNames: [ 'cursor-pointer' ],
+      startEditable: false
+    }));
+  });
+
+  // Use a DST-observing timezone so this four-day drag crosses the fall transition
+  it('preserves a multi-day span dragged across a daylight saving change', () => {
+    const couchService = writingCouchService();
+    const component = createComponent(couchService, authorized);
+    const startDate = new Date(2026, 10, 3);
+    const endDate = new Date(2026, 10, 7);
+    const expectedStart = new Date(2026, 10, 3);
+    const expectedEnd = new Date(2026, 10, 7);
+    expectedStart.setDate(expectedStart.getDate() - 4);
+    expectedEnd.setDate(expectedEnd.getDate() - 4);
+
+    const multiDay = { ...meetup, startDate: startDate.getTime(), endDate: endDate.getTime() };
+    component.eventDrop(dropInfo(
+      { start: new Date(2026, 9, 30), extendedProps: { meetup: multiDay } },
+      { days: -4, milliseconds: 0 }
+    ));
+
+    const updated = couchService.updateDocument.mock.calls[0][1];
+    expect(updated.startDate).toBe(expectedStart.getTime());
+    expect(updated.endDate).toBe(expectedEnd.getTime());
+    expect(new Date(updated.endDate).getHours()).toBe(0);
+  });
+
+  it('routes a task drop through the tasks service so task listeners refresh', () => {
+    const couchService = writingCouchService();
+    const tasksService = { addTask: vi.fn((doc: any) => of({ ok: true, doc: { ...doc, _rev: '2-new' } })) };
+    const component = createComponent(couchService, authorized, undefined, undefined, tasksService);
+    const deadline = new Date(2026, 7, 12, 15, 30);
+    const info = dropInfo({
+      start: deadline,
+      extendedProps: { meetup: { _id: 't1', title: 'Task', isTask: true, deadline: new Date(2026, 7, 10, 15, 30).getTime() } }
+    });
+
+    component.eventDrop(info);
+
+    expect(tasksService.addTask).toHaveBeenCalledWith(expect.objectContaining({ _id: 't1', deadline: deadline.getTime() }));
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    // isTask has to survive so a second drag still takes the task branch
+    expect(info.event.setExtendedProp).toHaveBeenCalledWith('meetup', expect.objectContaining({ _rev: '2-new', isTask: true }));
+  });
+
+  it('keeps the loading indicator up until the refetch settles', () => {
+    const meetupSubject = new Subject<any[]>();
+    const couchService = {
+      updateDocument: vi.fn((db: string, doc: any) => of({ ok: true, rev: '2-new', doc })),
+      findAll: vi.fn(() => meetupSubject)
+    };
+    const loadingService = { start: vi.fn(), stop: vi.fn() };
+    const component = createComponent(couchService, authorized, undefined, loadingService);
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } }));
+
+    expect(loadingService.start).toHaveBeenCalled();
+    expect(loadingService.stop).not.toHaveBeenCalled();
+
+    meetupSubject.next([]);
+    meetupSubject.complete();
+
+    expect(loadingService.stop).toHaveBeenCalled();
+  });
+
+  // findAll swallows a first-page failure, but the bookmark request it chains after it does not
+  it('reports success and keeps the stored document when the refetch after a write fails', () => {
+    const couchService = writingCouchService();
+    const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const component = createComponent(couchService, authorized, messageService);
+    component.meetups = [ component.eventObject(meetup) ];
+    component.tasks = [];
+    couchService.findAll = vi.fn(() => throwError(new Error('offline')));
+    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
+
+    component.eventDrop(info);
+
+    expect(messageService.showMessage).toHaveBeenCalled();
+    expect(info.revert).not.toHaveBeenCalled();
+    expect(messageService.showAlert).not.toHaveBeenCalled();
+    expect(info.event.setExtendedProp).toHaveBeenCalledWith('meetup', expect.objectContaining({ _rev: '2-new' }));
+    expect(component.meetups[0].extendedProps.meetup.startDate).toBe(new Date(2026, 7, 12).getTime());
+    expect(component.meetups[0].extendedProps.meetup._rev).toBe('2-new');
+  });
+
+  it('keeps a stored task reschedule when the refetch after a write fails', () => {
+    const tasksService = { addTask: vi.fn((doc: any) => of({ ok: true, doc: { ...doc, _rev: '2-new' } })) };
+    const component = createComponent(
+      { findAll: vi.fn(() => throwError(new Error('offline'))) }, authorized, undefined, undefined, tasksService
+    );
+    const task = { _id: 't1', title: 'Task', isTask: true, deadline: new Date(2026, 7, 10).getTime() };
+    component.tasks = [ component.eventObject(task, task.deadline, task.deadline) ];
+    component.meetups = [];
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: task } }));
+
+    expect(component.tasks[0].extendedProps.meetup.deadline).toBe(new Date(2026, 7, 12).getTime());
+    expect(component.tasks[0].extendedProps.meetup._rev).toBe('2-new');
+  });
+
+  it('leaves a meetup without an end date without one', () => {
+    const couchService = writingCouchService();
+    const component = createComponent(couchService, authorized);
+    const { endDate, ...openEnded } = meetup;
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: openEnded } }));
+
+    expect(couchService.updateDocument.mock.calls[0][1]).not.toHaveProperty('endDate');
+  });
+
+  it('notifies shelf users once after a successful reschedule', () => {
+    const couchService = writingCouchService();
+    const notificationsService = { notifyMeetupChange: vi.fn(() => of({ ok: true })) };
+    const component = createComponent(couchService, authorized, undefined, undefined, undefined, notificationsService);
+
+    component.eventDrop(dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } }));
+
+    expect(notificationsService.notifyMeetupChange).toHaveBeenCalledTimes(1);
+    expect(notificationsService.notifyMeetupChange).toHaveBeenCalledWith(
+      expect.objectContaining({ _id: 'm1', startDate: new Date(2026, 7, 12).getTime() }),
+      'm1'
+    );
+  });
+
+  it('keeps a stored reschedule when notifying fails', () => {
+    const couchService = writingCouchService();
+    const notificationsService = { notifyMeetupChange: vi.fn(() => throwError(new Error('offline'))) };
+    const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const component = createComponent(couchService, authorized, messageService, undefined, undefined, notificationsService);
+    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
+
+    component.eventDrop(info);
+
+    expect(messageService.showMessage).toHaveBeenCalled();
+    expect(info.revert).not.toHaveBeenCalled();
+    expect(messageService.showAlert).not.toHaveBeenCalled();
+    expect(consoleError).toHaveBeenCalledWith('Failed to notify meetup participants', expect.any(Error));
+  });
+
+  it('reverts a task drop on a calendar the user cannot edit', () => {
+    const tasksService = { addTask: vi.fn(() => of({ ok: true })) };
+    const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const component = createComponent({}, authorized, messageService, undefined, tasksService);
+    component.editable = false;
+    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: { _id: 't1', isTask: true } } });
+
+    component.eventDrop(info);
+
+    expect(info.revert).toHaveBeenCalled();
+    expect(tasksService.addTask).not.toHaveBeenCalled();
+    expect(messageService.showAlert).toHaveBeenCalled();
+  });
+
+  it('reverts an unauthorized meetup drop without writing', () => {
+    const couchService = writingCouchService();
+    const component = createComponent(couchService, { canEditMeetup: () => false });
+    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
+
+    component.eventDrop(info);
+
+    expect(info.revert).toHaveBeenCalled();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('reverts a drop that has no new start instead of writing an epoch date', () => {
+    const couchService = writingCouchService();
+    const component = createComponent(couchService, authorized);
+    const info = dropInfo({ start: null, extendedProps: { meetup } });
+
+    component.eventDrop(info);
+
+    expect(info.revert).toHaveBeenCalled();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('reverts and alerts when persisting a meetup drop fails', () => {
+    const couchService = { updateDocument: vi.fn(() => throwError(new Error('conflict'))), findAll: vi.fn(() => of([])) };
+    const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const loadingService = { start: vi.fn(), stop: vi.fn() };
+    const notificationsService = { notifyMeetupChange: vi.fn(() => of({ ok: true })) };
+    const component = createComponent(couchService, authorized, messageService, loadingService, undefined, notificationsService);
+    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup } });
+
+    component.eventDrop(info);
+
+    expect(info.revert).toHaveBeenCalled();
+    expect(messageService.showAlert).toHaveBeenCalled();
+    expect(messageService.showMessage).not.toHaveBeenCalled();
+    expect(notificationsService.notifyMeetupChange).not.toHaveBeenCalled();
+    expect(loadingService.stop).toHaveBeenCalled();
+  });
+
+  it('reverts and alerts when persisting a task drop fails', () => {
+    const tasksService = { addTask: vi.fn(() => throwError(new Error('conflict'))) };
+    const messageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const component = createComponent({ findAll: vi.fn(() => of([])) }, authorized, messageService, undefined, tasksService);
+    const info = dropInfo({ start: new Date(2026, 7, 12), extendedProps: { meetup: { _id: 't1', isTask: true } } });
+
+    component.eventDrop(info);
+
+    expect(info.revert).toHaveBeenCalled();
+    expect(messageService.showAlert).toHaveBeenCalled();
+  });
+
+  it('passes matching team-leader context into the meetup dialog', () => {
+    const dialog = { open: vi.fn() };
+    const component = createComponent({}, undefined, undefined, undefined, undefined, undefined, dialog);
+    component.leaderOfTeamId = 'team-1';
+    const linkedMeetup = { _id: 'm1', link: { teams: 'team-1' } };
+
+    component.eventClick({ event: { extendedProps: { meetup: linkedMeetup } } });
+
+    expect(dialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ leaderOfTeamId: 'team-1', meetup: linkedMeetup })
+    }));
+  });
+
+  describe('Event filtering', () => {
+    it('keeps hidden event types filtered when replacing a cached event after a drop', () => {
+      const component = createComponent();
+      const cachedMeetup = component.eventObject(meetup);
+      const updatedMeetup = component.eventObject({ ...meetup, startDate: new Date(2026, 7, 12).getTime() });
+      component.meetups = [ cachedMeetup ];
+      component.tasks = [];
+      component.activeFilters.delete('event');
+
+      (component as any).replaceCachedEvent({ event: { setExtendedProp: vi.fn() } }, updatedMeetup);
+
+      expect(component.events).toEqual([ {} ]);
+      expect(component.calendarOptions.events).toEqual([ {} ]);
+    });
+
+    it('filters events by type when legend items are toggled', () => {
+      const couchService = {
+        findAll: (db: string) => of(db === 'meetups'
+          ? [{ title: 'Meeting', startDate: 1, endDate: 1, recurring: 'none' }]
+          : [{ title: 'Open Task', deadline: 1, completed: false }, { title: 'Done Task', deadline: 1, completed: true }])
+      };
+      const component = createComponent(couchService);
+      component.type = 'team';
+      component.getMeetups();
+      component.getTasks();
+
+      expect(component.calendarOptions.events.length).toBe(3);
+
+      component.toggleFilter('uncompleted');
+      expect(component.calendarOptions.events.some((e: any) => e.title === 'Open Task')).toBe(false);
+
+      component.toggleFilter('completed');
+      component.toggleFilter('event');
+      expect(component.calendarOptions.events).toEqual([ {} ]);
+
+      component.toggleFilter('event');
+      expect(component.calendarOptions.events.length).toBe(1);
+      expect(component.calendarOptions.events[0].title).toBe('Meeting');
+    });
+
+    it('shows meetups and tasks on non-team calendars', () => {
+      const couchService = {
+        findAll: (db: string) => of(db === 'meetups'
+          ? [{ title: 'Event', startDate: 1, endDate: 1, recurring: 'none' }]
+          : [{ title: 'Task', deadline: 1, completed: false }])
+      };
+      const component = createComponent(couchService);
+      component.type = 'community';
+      component.getMeetups();
+      component.getTasks();
+
+      expect(component.calendarOptions.events.map((e: any) => e.title)).toEqual([ 'Event', 'Task' ]);
+    });
   });
 });

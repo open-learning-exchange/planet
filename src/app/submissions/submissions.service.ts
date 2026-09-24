@@ -3,11 +3,12 @@ import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
 import { findDocuments } from '../shared/mangoQueries';
+import { appSourceLabel } from '../shared/app-source';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, converter } from '../shared/utils';
+import { ageFromUser, dedupeShelfReduce, localizedGender, toProperCase } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -17,6 +18,7 @@ import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
 import { PdfService } from '../shared/pdf.service';
+import { MarkdownRenderService } from '../shared/markdown-render.service';
 
 @Injectable({
   providedIn: 'root'
@@ -44,11 +46,12 @@ export class SubmissionsService {
     private managerService: ManagerService,
     private chatService: ChatService,
     private pdfService: PdfService,
+    private markdownRenderer: MarkdownRenderService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest, surveyId, type }: {
-    onlyBest?: boolean, opts?: any, query?: any, surveyId?: string, type?: 'exam' | 'survey'
+    onlyBest?: boolean; opts?: any; query?: any; surveyId?: string; type?: 'exam' | 'survey';
   } = {}) {
     const submissionsObs = surveyId && type
       ? this.getSubmissionsIncludingDerived(surveyId, type, 'complete')
@@ -68,8 +71,8 @@ export class SubmissionsService {
     this.submission = this.submissions.find((submission) => submission._id === id);
   }
 
-  private newSubmission({ parentId, parent, user, type }) {
-    this.submission = this.createNewSubmission({ parentId, parent, user, type });
+  private newSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
+    this.submission = this.createNewSubmission({ parentId, parent, user, type, team });
   }
 
   private createNewSubmission({ parentId, parent, user, type, sender, team }: { parentId, parent, user, type, sender?, team? }) {
@@ -87,7 +90,7 @@ export class SubmissionsService {
     return { source: configuration.code, parentCode: configuration.parentCode };
   }
 
-  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }: any) {
+  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending', team }: any) {
     const selector = submissionId ? { _id: submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
     const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
     obs.subscribe((res) => {
@@ -97,11 +100,17 @@ export class SubmissionsService {
       this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
       if (this.submission === undefined) {
         attempts += 1;
-        this.newSubmission({ parentId, parent, user, type });
+        this.newSubmission({ parentId, parent, user, type, team });
       }
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
     });
+  }
+
+  startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
+    this.newSubmission({ parentId, parent, user, type, team });
+    this.submissionAttempts = 0;
+    this.submissionUpdated.next({ submission: this.submission, attempts: 0 });
   }
 
   submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
@@ -221,10 +230,6 @@ export class SubmissionsService {
     );
   }
 
-  createSubmission(parent: any, type: string, user: any = {}, team?: { _id: string, name: string, type: string }) {
-    return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
-  }
-
   submissionName(user) {
     return user.name || ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
   }
@@ -292,14 +297,7 @@ export class SubmissionsService {
   }
 
   private localizedGender(gender?: string) {
-    switch (gender) {
-      case 'male':
-        return $localize`Male`;
-      case 'female':
-        return $localize`Female`;
-      default:
-        return gender || this.notAvailable();
-    }
+    return localizedGender(gender, this.notAvailable());
   }
 
   private localizedGroupType(type?: string) {
@@ -344,17 +342,15 @@ export class SubmissionsService {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
             [$localize`Gender`]: this.localizedGender(submission.user.gender),
-            [$localize`Age (years)`]: submission.user.birthDate ?
-              ageFromBirthDate(time, submission.user.birthDate) :
-              submission.user.age || this.notAvailable(),
+            [$localize`Age (years)`]: ageFromUser(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
-            [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
+            [$localize`Source`]: appSourceLabel(submission),
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
             [$localize`Group`]: submission.teamInfo?.name || this.notAvailable(),
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"${$localize`Question`} ${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+              [`"${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text).replace(/"/g, '""')}"`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };
@@ -406,7 +402,11 @@ export class SubmissionsService {
         continue;
       }
       question.index = i;
-      docContent.push({ stack: htmlToPdfmake(`<strong>${$localize`Question `} ${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
+      docContent.push({
+        stack: htmlToPdfmake(
+          `<strong>${$localize`Question `} ${i + 1}:</strong> ${this.markdownRenderer.render(question.body)}`
+        )
+      });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
@@ -468,19 +468,19 @@ export class SubmissionsService {
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
-      stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
+      stack: htmlToPdfmake(this.markdownRenderer.render(analysisPayload.chat, '', 'chat')),
       margin: [ 0, 10, 0, 10 ]
     });
   }
 
   async buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
     const htmlToPdfmake = await this.pdfService.getHtmlConverter();
-    const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
-    const submissionContents = markdownSubmissions.map((markdown, index) => {
+    const submissionHtml = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+    const submissionContents = submissionHtml.map((html, index) => {
       const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
       return {
         ...pageBreak,
-        stack: htmlToPdfmake(converter.makeHtml(markdown))
+        stack: htmlToPdfmake(this.markdownRenderer.sanitizeHtml(html))
       };
     });
     return [
@@ -560,7 +560,10 @@ export class SubmissionsService {
                 fontSize: 12,
                 bold: true,
                 alignment: 'center'
-              }
+              },
+              'markdown-align-left': { alignment: 'left' },
+              'markdown-align-center': { alignment: 'center' },
+              'markdown-align-right': { alignment: 'right' }
             }
           }, `${this.localizedSubmissionType(type)} - ${exam.name}.pdf`);
         } catch {
@@ -582,12 +585,10 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
-      const userAge = submission.user.birthDate ?
-        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
-        submission.user.age;
+      const userAge = ageFromUser(submission.lastUpdateTime, submission.user);
       const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
       const communityOrNation = submission.planetName;
-      const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
+      const planetSource = appSourceLabel(submission);
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
@@ -599,12 +600,12 @@ export class SubmissionsService {
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
-        userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
+        userAge !== null ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
         '</ul>',
         '<hr>'
       ].filter(Boolean).join('\n');
     } else {
-      return `### ${exam.name} ${$localize`Questions`} \n`;
+      return `<h3>${exam.name} ${$localize`Questions`}</h3>`;
     }
   }
 
@@ -612,7 +613,8 @@ export class SubmissionsService {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
       const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
-      return `<div style="text-align: ${alignment};"><strong>${localizedLabel} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;
+      const renderedText = this.markdownRenderer.render(text);
+      return `<div class="markdown-align-${alignment}"><strong>${localizedLabel} ${index + 1}:</strong><br>${renderedText}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
@@ -808,7 +810,7 @@ export class SubmissionsService {
   async analyseResponses(exam: any, submissions: any) {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
-        age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+        age: ageFromUser(submission.lastUpdateTime, submission.user),
         gender: submission.user.gender
       },
       answers: submission.answers

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, Observable, forkJoin } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, switchMap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
 import { CouchService } from '../couchdb.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
@@ -48,7 +48,7 @@ export class PouchAuthService {
   logout() {
     this.userStatusService.resetStatus();
     return from(this.authDB.logOut()).pipe(
-      switchMap(() => forkJoin(this.pouchService.deconfigureDBs())),
+      switchMap(() => forkJoin(this.pouchService.deconfigureDBs()).pipe(defaultIfEmpty([]))),
       catchError(this.handleError)
     );
   }
