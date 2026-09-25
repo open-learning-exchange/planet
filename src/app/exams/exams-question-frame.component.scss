@@ -87,6 +87,32 @@
       align-items: center;
       gap: 4px;
     }
+
+    @media (max-width: v.$screen-xs) {
+      .action-buttons--split {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .action-buttons__left,
+      .action-buttons__right {
+        width: 100%;
+        margin-left: 0;
+        justify-content: center;
+      }
+
+      .action-buttons__left > button,
+      .action-buttons__right > button {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      .action-buttons__right > span {
+        flex: 1 1 100%;
+        justify-content: center;
+        text-align: center;
+      }
+    }
   }
 
   @keyframes slideInRight {

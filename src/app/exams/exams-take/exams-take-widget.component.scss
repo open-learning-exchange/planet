@@ -92,6 +92,17 @@
       flex-wrap: wrap;
       max-width: 532px;
     }
+
+    @media (max-width: v.$screen-xs) {
+      &--grid {
+        margin-inline: auto;
+      }
+
+      &--row {
+        justify-content: center;
+        margin-inline: auto;
+      }
+    }
   }
 
   .rating-scale-button {

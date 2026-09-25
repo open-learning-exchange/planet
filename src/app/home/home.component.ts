@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy, Injector, afterNextRender } from '@angular/core';
 import {
   Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
 } from '@angular/router';
@@ -12,7 +12,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '../shared/device-info.service';
 import { NotificationsService, notificationLink, notificationUserFilter } from '../notifications/notifications.service';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
@@ -74,22 +74,25 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   deviceType: DeviceType;
   isAndroid: boolean;
   isMobile: boolean;
+  isShortViewport: boolean;
   showBanner = true;
   readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
 
-  // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
     })
   );
-  // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
+
+  get usesOverlayNav(): boolean {
+    return this.isMobile || this.isShortViewport;
+  }
 
   get notificationsLabel(): string {
     return $localize`Notifications: ${this.notifications.length}:count:`;
@@ -104,7 +107,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private notificationsService: NotificationsService,
-    private challengesService: ChallengesService
+    private challengesService: ChallengesService,
+    private injector: Injector
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -113,9 +117,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+    this.deviceInfoService.watchViewport().pipe(takeUntil(this.onDestroy$)).subscribe(({ deviceType, isShortViewport }) => {
+      const usedOverlayNav = this.usesOverlayNav;
       this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      this.isMobile = isMobileOrSmaller(deviceType);
+      this.isShortViewport = isShortViewport;
+      if (this.usesOverlayNav !== usedOverlayNav) {
+        this.resetContentMargins();
+      }
     });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
@@ -142,7 +151,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       ),
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
-      if (this.isMobile) {
+      if (this.usesOverlayNav) {
         this.mobileSidenav?.close();
       }
     });
@@ -177,18 +186,21 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   syncToolbarLayout() {
-    const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
-    if (this.forceModern !== isScreenTooNarrow) {
-      this.forceModern = isScreenTooNarrow;
+    const needsModern = window.innerWidth < this.classicToolbarWidth || this.isShortViewport;
+    if (this.forceModern !== needsModern) {
+      this.forceModern = needsModern;
     }
+  }
+
+  // Material can retain the side drawer's content margin after switching to overlay.
+  private resetContentMargins() {
+    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
   }
 
   openLanguageSelector(): void {
     this.languageComponent?.openMenu();
   }
 
-  // Used to swap in different background.
-  // Should remove when background is finalized.
   backgroundRoute() {
     const url = this.router.url;
     const routesWithBackground = [
@@ -196,7 +208,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises', 'certifications', 'myDashboard', 'nation', 'earth',
       'health', 'myPersonals', 'community', 'voices'
     ];
-    // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
       .findIndex((route) => url.indexOf(route) > -1) > -1;
@@ -226,18 +237,18 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       console.log(error);
       return of({});
     };
+    const localAdminName = configuration.adminName?.split('@')[0];
+    const isLocalAdmin = !!localAdminName && localAdminName === this.userService.get().name;
     this.userService.endSessionLog().pipe(
       catchError(errorCatch),
       switchMap(() => this.pouchAuthService.logout()),
-      switchMap(() => {
-        const localAdminName = configuration.adminName.split('@')[0];
-        if (localAdminName === this.userService.get().name) {
-          return this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain });
-        }
-        return of({});
-      }),
       catchError(errorCatch)
-    ).subscribe((response: any) => {
+    ).subscribe(() => {
+      if (isLocalAdmin && configuration.parentDomain) {
+        // Parent cleanup is best-effort and must not delay local logout.
+        this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain })
+          .subscribe({ error: error => console.error('Unable to end parent session', error) });
+      }
       this.userService.unset();
       this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/login' : '/' ], {});
     });
@@ -265,9 +276,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }, (err) => console.log(err));
   }
 
-  /**
-   * Used for marking all notifications as read from navigation bar
-   */
   readAllNotification() {
     this.notificationsService.setNotificationsAsRead(this.notifications);
   }
@@ -277,7 +285,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   toggleNav() {
-    if (this.isMobile) {
+    if (this.usesOverlayNav) {
       this.mobileSidenav?.toggle();
       return;
     }

@@ -6,7 +6,7 @@
   grid-template-columns: auto;
   grid-template-rows: 64px 1fr;
   grid-template-areas: "header" "main";
-  height: 100vh;
+  height: var(--planet-vh);
 
   @keyframes pulsate {
     100% { transform: scale(1.1) }
@@ -16,18 +16,20 @@
     grid-area: header;
     position: relative;
     z-index: 10;
-    //box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12)
     display: grid;
     grid-template-areas: "left center right";
     width: 100%;
     align-items: center;
 
     h1 {
-      display: inline;
       font-size: 1.5rem;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       @media (max-width: #{v.$screen-xs}) {
-        font-size: clamp(0.5rem, calc(0.1rem + 3vw), 1.5rem);
+        font-size: clamp(1rem, calc(0.75rem + 1.75vw), 1.5rem);
       }
     }
 
@@ -52,9 +54,11 @@
   .navbar-left {
     grid-area: left;
     display: flex;
+    min-width: 0;
     a {
       display: flex;
       align-items: center;
+      min-width: 0;
     }
   }
 
@@ -115,6 +119,12 @@
 @media (max-width: 600px) {
   :host {
     grid-template-rows: 56px 1fr;
+  }
+}
+
+@media #{v.$short-viewport} {
+  :host {
+    grid-template-rows: v.$toolbar-row-short 1fr;
   }
 }
 
@@ -204,6 +214,21 @@
   .bottom-nav {
     grid-area: btm;
     margin-bottom: 16px;
+  }
+
+  @media #{v.$short-viewport} {
+    grid-template-rows: auto auto;
+    grid-template-areas: "tp" "btm";
+    height: auto;
+    min-height: 100%;
+
+    .top-nav, .bottom-nav {
+      overflow: visible;
+    }
+
+    .bottom-nav {
+      margin-bottom: 0;
+    }
   }
 
 }
