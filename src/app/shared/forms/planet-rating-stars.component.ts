@@ -39,9 +39,6 @@ export class PlanetRatingStarsComponent implements ControlValueAccessor {
     this.starActiveWidth = rating * 20 + '%';
     this.onChange(rating);
   }
-  @Input() isEnrolled: (id: any, type: any) => boolean;
-  @Input() itemId: (id: any) => void;
-  @Input() type: string;
   #value = 0;
 
   onChange(_: any) {}
@@ -69,12 +66,9 @@ export class PlanetRatingStarsComponent implements ControlValueAccessor {
   }
 
   onStarClick(rating: number): void {
-    if (this.isEnrolled) {
-      if (!this.isEnrolled(this.itemId, this.type)) {
-        return;
-      }
+    if (!this.#disabled) {
+      this.writeValue(rating);
     }
-    this.writeValue(rating);
   }
 
   mouseOverStar(starNumber: number): void {
