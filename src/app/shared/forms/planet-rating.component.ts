@@ -75,14 +75,9 @@ export class PlanetRatingComponent implements OnChanges {
     ];
   }
 
-  private get itemId(): string {
-    return this.item?._id || this.item?.doc?._id || '';
-  }
-
-  isEnrolled(id: any, type: any): boolean {
-    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
-    const { inShelf } = this.userService.countInShelf([ id ], idType);
-    return inShelf;
+  private isEnrolled(): boolean {
+    const idType = this.ratingType === 'course' ? 'courseIds' : 'resourceIds';
+    return this.userService.countInShelf([ this.item?._id ], idType).inShelf > 0;
   }
 
   onStarClick() {
@@ -91,12 +86,13 @@ export class PlanetRatingComponent implements OnChanges {
       return;
     }
 
-    if (!this.isEnrolled(this.itemId, this.ratingType)) {
+    if (!this.isEnrolled()) {
       if (this.ratingType === 'course') {
         this.planetMessage.showMessage($localize`Please join the course before rating!`);
       } else {
         this.planetMessage.showMessage($localize`Please add the resource to your library before rating!`);
       }
+      this.resetRatingState();
       return;
     }
 
