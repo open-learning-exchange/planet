@@ -1,8 +1,14 @@
+import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { describe, expect, it, vi } from 'vitest';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { PlanetMessageService } from '../planet-message.service';
+import { UserService } from '../user.service';
 import { PlanetRatingComponent } from './planet-rating.component';
+import { RatingService } from './rating.service';
 
 interface PopupResult {
   rate: number;
@@ -262,5 +268,31 @@ describe('PlanetRatingComponent', () => {
     expect(planetMessage.showMessage).toHaveBeenCalledWith('Please join the course before rating!');
     expect(ratingService.saveRating).not.toHaveBeenCalled();
     expect(component.rateForm.value).toEqual({ rate: 5 });
+  });
+
+  it('saves a star clicked in the rendered widget and opens the comment dialog', () => {
+    const dialogsForm = { confirm: vi.fn(() => new Subject()) };
+    const ratingService = {
+      normalizeRatingInfo: vi.fn(normalizeRatingInfo),
+      saveRating: vi.fn(() => of(initialRating()))
+    };
+    TestBed.configureTestingModule({
+      imports: [ PlanetRatingComponent, MatIconTestingModule ],
+      providers: [
+        { provide: PlanetMessageService, useValue: { showMessage: vi.fn() } },
+        { provide: UserService, useValue: { countInShelf: () => ({ inShelf: 1 }) } },
+        { provide: DialogsFormService, useValue: dialogsForm },
+        { provide: RatingService, useValue: ratingService }
+      ]
+    });
+    const fixture = TestBed.createComponent(PlanetRatingComponent);
+    fixture.componentRef.setInput('item', { _id: 'item-1', title: 'Item' });
+    fixture.componentRef.setInput('rating', initialRating());
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelectorAll('.stars > span > mat-icon')[3].click();
+
+    expect(ratingService.saveRating).toHaveBeenCalledWith(expect.objectContaining({ rate: 4 }));
+    expect(dialogsForm.confirm).toHaveBeenCalled();
   });
 });
