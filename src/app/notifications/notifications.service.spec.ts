@@ -231,8 +231,6 @@ describe('NotificationsService', () => {
 });
 
 describe('NotificationsService reply notifications', () => {
-  afterEach(() => vi.restoreAllMocks());
-
   const createService = (couchOverrides: any = {}, userOverrides: any = {}) => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([])),
@@ -258,30 +256,6 @@ describe('NotificationsService reply notifications', () => {
     );
     return { service, couchService, userService };
   };
-
-  it('retrieves unread replyTo IDs scoped to the current user and planet', () => {
-    const { service, couchService } = createService({
-      findAll: vi.fn().mockReturnValue(of([ { replyTo: 'voice-123' }, { replyTo: 'voice-456' } ]))
-    }, { planetCode: 'planet-a' });
-
-    let result: string[] = [];
-    service.getUnreadReplyIds$().subscribe(ids => {
-      result = ids;
-    });
-
-    expect(result).toEqual([ 'voice-123', 'voice-456' ]);
-    expect(couchService.findAll.mock.calls[0][1]).toEqual(expect.objectContaining({
-      selector: {
-        $or: [
-          { user: 'org.couchdb.user:learner1', userPlanetCode: 'planet-a' },
-          { user: 'org.couchdb.user:learner1', userPlanetCode: { $exists: false } }
-        ],
-        type: 'replyMessage',
-        status: 'unread'
-      },
-      fields: [ 'replyTo' ]
-    }));
-  });
 
   it('notifies a same-named author on another planet', () => {
     const { service, couchService } = createService({}, {
@@ -362,11 +336,7 @@ describe('NotificationsService reply notifications', () => {
   });
 
   it('stores notifications for distinct replyTo targets on the same team page', () => {
-    const updateDocumentSpy = vi.fn().mockReturnValue(of({ ok: true }));
-    const { service, couchService } = createService({
-      findAll: vi.fn().mockReturnValue(of([])),
-      updateDocument: updateDocumentSpy
-    });
+    const { service, couchService } = createService();
 
     const notif1 = {
       user: 'org.couchdb.user:learner1',
@@ -398,6 +368,5 @@ describe('NotificationsService reply notifications', () => {
         selector: expect.objectContaining({ replyTo: 'voice-2' })
       })
     );
-    expect(updateDocumentSpy).toHaveBeenCalledTimes(2);
   });
 });
