@@ -229,3 +229,144 @@ describe('NotificationsService', () => {
     expect(couchService.updateDocument).toHaveBeenCalledWith('notifications', notification);
   });
 });
+
+describe('NotificationsService reply notifications', () => {
+  const createService = (couchOverrides: any = {}, userOverrides: any = {}) => {
+    const couchService = {
+      findAll: vi.fn().mockReturnValue(of([])),
+      bulkDocs: vi.fn().mockReturnValue(of([])),
+      updateDocument: vi.fn().mockReturnValue(of({})),
+      ...couchOverrides
+    };
+    const userService = {
+      get: vi.fn().mockReturnValue({ name: 'learner1', ...userOverrides }),
+      setNotificationStateChange: vi.fn()
+    };
+    const planetMessageService = {
+      showAlert: vi.fn()
+    };
+    const stateService = {
+      configuration: { code: 'planet-a' }
+    };
+    const service = new NotificationsService(
+      userService as any,
+      couchService as any,
+      planetMessageService as any,
+      stateService as any
+    );
+    return { service, couchService, userService };
+  };
+
+  it('notifies a same-named author on another planet', () => {
+    const { service, couchService } = createService({}, {
+      _id: 'org.couchdb.user:alex',
+      name: 'alex',
+      planetCode: 'planet-a'
+    });
+
+    service.sendReplyNotification({
+      _id: 'news-1',
+      createdOn: 'community-c',
+      user: { _id: 'org.couchdb.user:alex', name: 'alex' },
+      viewableBy: 'community'
+    }, '/voices/news-1').subscribe();
+
+    expect(couchService.updateDocument).toHaveBeenCalledWith('notifications', expect.objectContaining({
+      user: 'org.couchdb.user:alex',
+      userPlanetCode: 'community-c',
+      link: '/voices/news-1',
+      type: 'replyMessage',
+      replyTo: 'news-1'
+    }));
+  });
+
+  it('does not notify the author when the composite identity matches', () => {
+    const { service, couchService } = createService({}, {
+      _id: 'org.couchdb.user:alex',
+      name: 'alex',
+      planetCode: 'planet-a'
+    });
+
+    service.sendReplyNotification({
+      _id: 'news-1',
+      createdOn: 'planet-a',
+      user: { _id: 'org.couchdb.user:alex', name: 'alex', planetCode: 'planet-a' },
+      viewableBy: 'nation'
+    }, '/voices/news-1').subscribe();
+
+    expect(couchService.findAll).not.toHaveBeenCalled();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('does not notify an associated parent account for its own home-planet post', () => {
+    const { service, couchService } = createService({}, {
+      _id: 'org.couchdb.user:alex@community-c',
+      name: 'alex@community-c',
+      planetCode: 'community-c',
+      requestId: 'community-registration-request-1'
+    });
+
+    service.sendReplyNotification({
+      _id: 'news-1',
+      createdOn: 'community-c',
+      user: { _id: 'org.couchdb.user:alex', name: 'alex', planetCode: 'community-c' },
+      viewableBy: 'community'
+    }, '/voices/news-1').subscribe();
+
+    expect(couchService.findAll).not.toHaveBeenCalled();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('marks matching unread notifications as read when viewing a thread', () => {
+    const mockNotifications = [
+      { _id: 'n1', type: 'replyMessage', replyTo: 'voice-123', status: 'unread' }
+    ];
+    const bulkDocsSpy = vi.fn().mockReturnValue(of([]));
+    const { service, userService } = createService({
+      findAll: vi.fn().mockReturnValue(of(mockNotifications)),
+      bulkDocs: bulkDocsSpy
+    });
+
+    service.markReplyNotificationsAsRead('voice-123');
+
+    expect(bulkDocsSpy).toHaveBeenCalledWith('notifications', [
+      { _id: 'n1', type: 'replyMessage', replyTo: 'voice-123', status: 'read' }
+    ]);
+    expect(userService.setNotificationStateChange).toHaveBeenCalled();
+  });
+
+  it('stores notifications for distinct replyTo targets on the same team page', () => {
+    const { service, couchService } = createService();
+
+    const notif1 = {
+      user: 'org.couchdb.user:learner1',
+      link: '/teams/view/team-1',
+      type: 'replyMessage',
+      replyTo: 'voice-1',
+      status: 'unread'
+    };
+    const notif2 = {
+      user: 'org.couchdb.user:learner1',
+      link: '/teams/view/team-1',
+      type: 'replyMessage',
+      replyTo: 'voice-2',
+      status: 'unread'
+    };
+
+    service.sendNotificationToUser(notif1).subscribe();
+    service.sendNotificationToUser(notif2).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalledWith(
+      'notifications',
+      expect.objectContaining({
+        selector: expect.objectContaining({ replyTo: 'voice-1' })
+      })
+    );
+    expect(couchService.findAll).toHaveBeenCalledWith(
+      'notifications',
+      expect.objectContaining({
+        selector: expect.objectContaining({ replyTo: 'voice-2' })
+      })
+    );
+  });
+});

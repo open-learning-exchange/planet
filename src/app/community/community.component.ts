@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { EMPTY, Subject, Subscription, forkJoin, iif, of } from 'rxjs';
+import { EMPTY, Subject, Subscription, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, take, filter } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
@@ -214,7 +214,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
       this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
-      this.getCommunityData();
+      if (this.isLoggedIn) {
+        this.getCommunityData();
+      }
     });
   }
 
@@ -272,12 +274,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }),
       switchMap((res) => {
         this.setLinksAndFinances(res);
-        return this.couchService.get(`teams/${requestedTeam._id}`);
+        return this.couchService.get(`teams/${requestedTeam._id}`).pipe(
+          catchError(err => err.status === 404 ? of(requestedTeam) : throwError(err))
+        );
       }),
-      catchError(err => {
-        if (err.statusText === 'Object Not Found') {
-          return of(requestedTeam);
-        }
+      catchError(() => {
         this.teamLoading = false;
         this.communityDataLoading = false;
         this.newsLoading = false;

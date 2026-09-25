@@ -95,6 +95,13 @@
   }
 }
 
+@mixin unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: v.$primary;
+}
+
 @mixin search-toolbar {
   .search-bar {
     height: v.$search-filters-height;

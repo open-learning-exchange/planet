@@ -1,8 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
@@ -64,6 +62,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() editable = true;
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() hasUnreadReplies = false;
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
@@ -86,9 +85,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private router: Router,
     private userService: UserService,
-    private couchService: CouchService,
     private newsService: NewsService,
-    private notificationsService: NotificationsService,
     private stateService: StateService,
     private usersProfileDialogService: UsersProfileDialogService,
     private authService: AuthService,
@@ -137,6 +134,14 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     return this.editable && originPlanet === this.planetCode && this.canModifyNews;
   }
 
+  get repliesLabel(): string {
+    return this.hasUnreadReplies ? $localize`View replies, including unread` : $localize`View replies`;
+  }
+
+  get actionsLabel(): string {
+    return this.hasUnreadReplies ? $localize`More actions, unread replies` : $localize`More actions`;
+  }
+
   get canModifyNews(): boolean {
     return this.item.doc.user?.name === this.currentUser.name || this.currentUser.isUserAdmin;
   }
@@ -163,7 +168,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
           viewIn: news.viewIn
         }
       });
-      this.sendNewsNotifications(news);
     });
   }
 
@@ -182,28 +186,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.showExpand = doesMarkdownPreviewTruncate(message, this.previewLimit) ||
         hasMarkdownImages(message) || imagesLength > 0;
     }
-  }
-
-  sendNewsNotifications(news: any = '') {
-    const replyBy = this.currentUser.name;
-    const legacyPlanetCode = news.createdOn || this.stateService.configuration.code;
-    const recipient = notificationRecipient(news.user, legacyPlanetCode);
-    const sender = notificationRecipient(this.currentUser, this.stateService.configuration.code);
-    if (recipient.user === sender.user && recipient.userPlanetCode === sender.userPlanetCode) {
-      return;
-    }
-    const link = this.router.url;
-    const notification = {
-      ...recipient,
-      message:  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
-      link,
-      priority: 1,
-      type: 'replyMessage',
-      replyTo: news._id,
-      status: 'unread',
-      time: this.couchService.datePlaceholder,
-    };
-    this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {
@@ -268,7 +250,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   addTeamLabelsFromViewIn() {
-    if ([ 'teams', 'enterprises' ].some(route => this.router.url.includes(route))) {
+    if (this.isTeamFeed) {
       this.teamLabels = [];
       return;
     }
@@ -279,9 +261,14 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  private get isTeamFeed(): boolean {
+    return [ 'teams', 'enterprises' ].some(route => this.router.url.includes(route));
+  }
+
   copyLink(voice) {
+    const threadId = voice.replyTo && voice.replyTo !== 'root' ? voice.replyTo : voice._id;
     this.linkCopyService.copyLink(
-      [ '/voices', voice._id ],
+      this.isTeamFeed ? [ this.router.url.split(/[;?#]/)[0], { voice: threadId } ] : [ '/voices', threadId ],
       {
         success: $localize`Voice link copied to clipboard`,
         failure: $localize`Failed to copy voice link`
