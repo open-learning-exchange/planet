@@ -1,4 +1,5 @@
 import { of } from 'rxjs';
+import { convertToParamMap } from '@angular/router';
 import { vi } from 'vitest';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { TeamsViewComponent } from './teams-view.component';
@@ -62,5 +63,28 @@ describe('TeamsViewComponent task projections', () => {
     expect(dialogsLoadingService.start).toHaveBeenCalledTimes(1);
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
     expect(dialogRef.close).toHaveBeenCalled();
+  });
+});
+
+describe('TeamsViewComponent linked tabs', () => {
+  it('shows the chat tab when a link on the same team opens a voice', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.tabSelectedIndex = 2;
+    component.initTab = 'taskTab';
+
+    component.selectLinkedTab(convertToParamMap({ teamId: 'team-1', voice: 'voice-1' }));
+
+    expect(component.tabSelectedIndex).toBe(0);
+    expect(component.initTab).toBe('');
+  });
+
+  it('switches a member to the tab a link on the same team names', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.userStatus = 'member';
+    component.initTab = '';
+
+    component.selectLinkedTab(convertToParamMap({ teamId: 'team-1', activeTab: 'taskTab' }));
+
+    expect(component.initTab).toBe('taskTab');
   });
 });

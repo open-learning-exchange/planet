@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { NotificationsService, notificationLink, notificationRecipient, notificationUserFilter } from './notifications.service';
+import { NotificationsService, notificationRecipient, notificationUserFilter } from './notifications.service';
 
 describe('NotificationsService', () => {
   it('skips the bulk write when no users have the meetup shelved', () => {
@@ -103,12 +103,6 @@ describe('NotificationsService', () => {
       { user: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' },
       { user: 'org.couchdb.user:alex', userPlanetCode: { $exists: false } }
     ]);
-  });
-
-  it('opens community reply notifications at the replied-to voice', () => {
-    expect(notificationLink({ type: 'replyMessage', link: '/', replyTo: 'voice-1' })).toBe('/voices/voice-1');
-    expect(notificationLink({ type: 'replyMessage', link: '/voices/root-1', replyTo: 'voice-1' })).toBe('/voices/voice-1');
-    expect(notificationLink({ type: 'replyMessage', link: '/teams/view/team-1', replyTo: 'voice-1' })).toBe('/teams/view/team-1');
   });
 
   it('keeps the legacy user filter when the current user has no planet code', () => {

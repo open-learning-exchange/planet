@@ -34,11 +34,6 @@ export const notificationUserFilter = (user: any) => {
   return user.isUserAdmin ? [ ...userFilters, { user: 'SYSTEM' } ] : userFilters;
 };
 
-export const notificationLink = (notification: any) =>
-  notification.type === 'replyMessage' && notification.replyTo && (notification.link === '/' || notification.link?.startsWith('/voices/')) ?
-    `/voices/${notification.replyTo}` :
-    notification.link;
-
 @Injectable({
   providedIn: 'root'
 })
@@ -104,7 +99,7 @@ export class NotificationsService {
     );
   }
 
-  sendReplyNotification(news: any, link: string): Observable<any> {
+  sendReplyNotification(news: any, link: string, linkParams?: any): Observable<any> {
     const currentUser = this.userService.get();
     const serverPlanetCode = this.stateService.configuration.code;
     const recipient = notificationRecipient(news.user, news.createdOn || serverPlanetCode);
@@ -116,6 +111,7 @@ export class NotificationsService {
       ...recipient,
       message: $localize`<b>${currentUser.name}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
+      linkParams,
       priority: 1,
       type: 'replyMessage',
       replyTo: news._id,
@@ -129,7 +125,7 @@ export class NotificationsService {
       return of([]);
     }
     return this.findUnreadReplies({}, [ 'replyTo' ]).pipe(
-      map(notifications => notifications.map(notification => notification.replyTo).filter(Boolean)),
+      map(notifications => notifications.map(notification => notification.replyTo)),
       catchError(() => of([]))
     );
   }

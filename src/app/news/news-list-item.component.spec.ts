@@ -81,13 +81,21 @@ describe('NewsListItemComponent read-only behavior', () => {
     expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/voices', 'voice-id' ]);
   });
 
-  it('links a team message to its team page without tab parameters', () => {
+  it('links a post moved to the main feed by a delete to itself', () => {
+    const { component, linkCopyService } = createComponent();
+
+    component.copyLink({ _id: 'voice-id', replyTo: 'root' });
+
+    expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/voices', 'voice-id' ]);
+  });
+
+  it('links a team message to its thread on the team page without tab parameters', () => {
     const { component, linkCopyService, router } = createComponent();
     router.url = '/teams/view/team-1;activeTab=taskTab';
 
     component.copyLink({ _id: 'message-id' });
 
-    expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/teams/view/team-1' ]);
+    expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/teams/view/team-1', { voice: 'message-id' } ]);
   });
 
 });

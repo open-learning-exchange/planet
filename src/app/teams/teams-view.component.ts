@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError, distinctUntilChanged, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -163,7 +163,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.planetCode = this.stateService.configuration.code;
     this.route.paramMap.pipe(takeUntil(this.onDestroy$), map((params: ParamMap) =>
       params.get('teamId') || planetAndParentId(this.stateService.configuration)
-    ), tap((teamId) => {
+    ), distinctUntilChanged(), tap((teamId) => {
       this.teamId = teamId;
       this.initTeam(teamId);
       this.tasksService.getTasks();
@@ -172,6 +172,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$), skip(1)).subscribe(params => this.selectLinkedTab(params));
   }
 
   ngAfterViewChecked() {
@@ -181,6 +182,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position;
         this.initTab = activeTab.position === 0 ? '' : this.initTab;
       }, 0);
+    }
+  }
+
+  selectLinkedTab(params: ParamMap) {
+    if (params.get('voice')) {
+      this.initTab = '';
+      this.tabSelectedIndex = 0;
+    } else if (params.get('activeTab') && this.userStatus === 'member') {
+      this.initTab = params.get('activeTab');
     }
   }
 

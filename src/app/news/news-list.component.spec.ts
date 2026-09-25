@@ -29,6 +29,8 @@ const createComponent = (items: any[] = []) => {
   return component;
 };
 
+afterEach(() => vi.useRealTimers());
+
 describe('NewsListComponent labels', () => {
   it('handles label removal from a legacy post without a labels array', () => {
     const component = createComponent();
@@ -246,7 +248,7 @@ describe('NewsListComponent filtering', () => {
     vi.useFakeTimers();
     const component = createComponent(thread());
     component.router = { events: new Subject() };
-    component.route = { firstChild: null };
+    component.route = { firstChild: null, snapshot: { paramMap: { get: () => null } } };
     component.ngOnInit();
 
     component.messageSearch$.next('sprint');
@@ -255,7 +257,6 @@ describe('NewsListComponent filtering', () => {
 
     expect(component.messageSearch).toBe('');
     expect(component.filteredItems.length).toBe(3);
-    vi.useRealTimers();
   });
 
   it('drops the filters when the list switches to another feed', () => {
@@ -284,7 +285,6 @@ describe('NewsListComponent thread navigation', () => {
 
     expect(component.pageIndex).toBe(1);
     expect(component.displayedItems.map(item => item._id)).toEqual([ 'root-10', 'root-11' ]);
-    vi.useRealTimers();
   });
 
 });
@@ -300,7 +300,16 @@ describe('NewsListComponent voice route', () => {
     component.ngOnChanges({ items: { previousValue: [], currentValue: component.items, firstChange: false } });
 
     expect(component.replyViewing._id).toBe('root-1');
-    vi.useRealTimers();
+  });
+
+  it('opens the voice named in a team page link', () => {
+    vi.useFakeTimers();
+    const component = createComponent([ { _id: 'root-1', doc: { message: 'Weekly sprint planning' } } ]);
+    component.route = { firstChild: null, snapshot: { paramMap: { get: key => key === 'voice' ? 'root-1' : null } } };
+
+    component.initNews();
+
+    expect(component.replyViewing._id).toBe('root-1');
   });
 });
 
@@ -338,7 +347,6 @@ describe('NewsListComponent unread replies', () => {
     expect(component.notificationsService.markReplyNotificationsAsRead).toHaveBeenCalledWith('root-1');
     expect([ ...component.unreadReplyIds ]).toEqual([ 'root-1', 'root-2' ]);
     component.ngOnDestroy();
-    vi.useRealTimers();
   });
 });
 
@@ -362,16 +370,18 @@ describe('NewsListComponent reply notifications', () => {
     expect(sendReplyNotification).not.toHaveBeenCalled();
     posted$.next();
 
-    expect(sendReplyNotification).toHaveBeenCalledWith(expect.objectContaining({ _id: 'news-1' }), '/voices/news-1');
+    expect(sendReplyNotification).toHaveBeenCalledWith(expect.objectContaining({ _id: 'news-1' }), '/voices/news-1', undefined);
   });
 
-  it('links team reply notifications to the team page without its tab parameters', () => {
+  it('links team reply notifications to the replied-to message without the page tab parameters', () => {
     const { component, posted$, sendReplyNotification } = setup('/teams/view/team-1;activeTab=taskTab', false);
 
     component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' });
     posted$.next();
 
-    expect(sendReplyNotification).toHaveBeenCalledWith(expect.objectContaining({ _id: 'news-1' }), '/teams/view/team-1');
+    expect(sendReplyNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ _id: 'news-1' }), '/teams/view/team-1', { voice: 'news-1' }
+    );
   });
 
   it('does not notify when an existing reply is edited', () => {

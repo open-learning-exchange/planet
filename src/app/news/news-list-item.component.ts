@@ -266,8 +266,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   copyLink(voice) {
+    const threadId = voice.replyTo && voice.replyTo !== 'root' ? voice.replyTo : voice._id;
     this.linkCopyService.copyLink(
-      this.isTeamFeed ? [ this.router.url.split(/[;?#]/)[0] ] : [ '/voices', voice.replyTo || voice._id ],
+      this.isTeamFeed ? [ this.router.url.split(/[;?#]/)[0], { voice: threadId } ] : [ '/voices', threadId ],
       {
         success: $localize`Voice link copied to clipboard`,
         failure: $localize`Failed to copy voice link`

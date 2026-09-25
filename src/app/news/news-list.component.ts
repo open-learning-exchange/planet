@@ -283,7 +283,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   initNews() {
-    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
+    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('voice') || 'root';
     this.filterNewsToShow(newVoiceId);
   }
 
@@ -334,7 +334,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.pageIndex = this.rootPageIndex(this.lastRootPostId);
       this.loadPagedItems(false);
     } else {
-      // remember the conversation’s true root post, even from deep threads
       this.lastRootPostId = this.getThreadRootId(news);
       this.loadPagedItems(true);
       this.scrollListToTop();
@@ -418,7 +417,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       const repliedTo = oldNews._id ? undefined : this.itemsById.get(oldNews.replyTo)?.doc;
       if (repliedTo) {
         const link = this.useReplyRoutes ? `/voices/${repliedTo._id}` : this.router.url.split(/[;?#]/)[0];
-        this.notificationsService.sendReplyNotification(repliedTo, link).subscribe();
+        const linkParams = this.useReplyRoutes ? undefined : { voice: repliedTo._id };
+        this.notificationsService.sendReplyNotification(repliedTo, link, linkParams).subscribe();
       }
     });
   }

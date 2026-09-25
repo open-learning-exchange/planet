@@ -13,7 +13,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '../shared/device-info.service';
-import { NotificationsService, notificationLink, notificationUserFilter } from '../notifications/notifications.service';
+import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
 import { ChallengesService } from '../shared/challenges/challenges.service';
@@ -62,7 +62,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
   private onDestroy$ = new Subject<void>();
-  notificationLink = notificationLink;
   notifications = [];
   user: any = {};
   userImgSrc = '';
