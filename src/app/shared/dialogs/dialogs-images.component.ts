@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, DestroyRef, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
@@ -42,6 +42,7 @@ import { FileUploadComponent } from '../forms/file-upload.component';
   ]
 })
 export class DialogsImagesComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
 
   images: any[] = [];
   urlPrefix = environment.couchAddress + '/resources/';
@@ -54,8 +55,7 @@ export class DialogsImagesComponent implements OnInit {
     private resourcesService: ResourcesService,
     private userService: UserService,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService,
-    private destroyRef: DestroyRef
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
