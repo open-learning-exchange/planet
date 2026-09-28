@@ -303,7 +303,7 @@ export const deepEqual = (item1: any, item2: any) => {
 export const deepObjectPatch = (oldObject: any, patchObject: any) => {
   const newObject: any = {};
   const patchObjectProp = (prop: string) => {
-    if (!patchObject[prop]) {
+    if (patchObject[prop] === undefined || patchObject[prop] === null) {
       return oldObject[prop];
     }
     if (typeof oldObject[prop] === 'object') {
@@ -317,7 +317,7 @@ export const deepObjectPatch = (oldObject: any, patchObject: any) => {
     }
   }
   for (const prop in patchObject) {
-    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && !newObject[prop]) {
+    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && (newObject[prop] === undefined || newObject[prop] === null)) {
       newObject[prop] = patchObjectProp(prop);
     }
   }
