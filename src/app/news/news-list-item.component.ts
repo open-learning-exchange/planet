@@ -21,7 +21,7 @@ import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
+import { CustomVoiceLabel, DEFAULT_VOICE_LABELS, dedupeVoiceLabels, getVoiceLabelColor, voiceLabelsEqual } from '../shared/voice-labels';
 import { FullNamePipe } from '../shared/full-name.pipe';
 import { LinkCopyService } from '../shared/link-copy.service';
 
@@ -68,7 +68,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Input() customLabels: string[] = [];
+  @Input() customLabels: (string | CustomVoiceLabel)[] = [];
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
@@ -130,6 +130,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.labels.listed = this.labels.all.filter(label =>
       !(this.item.doc.labels || []).some(itemLabel => voiceLabelsEqual(itemLabel, label))
     );
+  }
+
+  getLabelColor(label: string): string {
+    return getVoiceLabelColor(label, this.customLabels);
   }
 
   get canEditLabels(): boolean {

@@ -32,6 +32,56 @@
   margin-top: 8px;
 }
 
+.color-picker-row {
+  margin: 4px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.color-picker-label {
+  font-size: 0.8125rem;
+  color: v.$grey-text;
+  font-weight: 500;
+}
+
+.color-swatches {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-swatch-button {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &.selected {
+    border: 2px solid v.$primary;
+    box-shadow: 0 0 0 1px v.$primary;
+  }
+
+  .check-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: v.$primary-dark;
+  }
+}
+
 .labels-empty {
   color: v.$grey-text;
   font-size: 0.875rem;

@@ -2,6 +2,7 @@ import { NEVER, of } from 'rxjs';
 import { vi } from 'vitest';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 import { DialogsVoiceLabelsComponent } from './dialogs-voice-labels.component';
+import { DEFAULT_LABEL_COLOR, LABEL_TINT_COLORS } from '../voice-labels';
 
 describe('DialogsVoiceLabelsComponent', () => {
   let dialogRef: any;
@@ -57,7 +58,7 @@ describe('DialogsVoiceLabelsComponent', () => {
   it('does not start loading when group settings are unavailable', () => {
     const component = createComponent({ target: 'team' });
     component.ngOnInit();
-    component.customLabels.push('Event');
+    component.customLabels.push({ name: 'Event', color: DEFAULT_LABEL_COLOR });
 
     component.save();
 
@@ -70,50 +71,68 @@ describe('DialogsVoiceLabelsComponent', () => {
 
     component.ngOnInit();
 
-    expect(component.initialCustomLabels).toEqual([ 'Event', 'News' ]);
-    expect(component.customLabels).toEqual([ 'Event', 'News' ]);
+    expect(component.initialCustomLabels).toEqual([
+      { name: 'Event', color: DEFAULT_LABEL_COLOR },
+      { name: 'News', color: DEFAULT_LABEL_COLOR }
+    ]);
+    expect(component.customLabels).toEqual([
+      { name: 'Event', color: DEFAULT_LABEL_COLOR },
+      { name: 'News', color: DEFAULT_LABEL_COLOR }
+    ]);
   });
 
-  it('uses the labels supplied by the parent and updates only the local configuration', () => {
-    const component = createComponent({ target: 'community', customLabels: [ 'Current label' ] });
+  it('uses the labels supplied by the parent and updates only the local configuration with chosen color', () => {
+    const component = createComponent({
+      target: 'community',
+      customLabels: [ { name: 'Current label', color: DEFAULT_LABEL_COLOR } ]
+    });
     component.ngOnInit();
-    component.customLabels.push('New label');
+    component.selectedColor = LABEL_TINT_COLORS[1]; // green tint
+    component.newLabelInput = 'New label';
+    component.addLabel();
 
     component.save();
 
-    expect(component.initialCustomLabels).toEqual([ 'Current label' ]);
+    expect(component.initialCustomLabels).toEqual([ { name: 'Current label', color: DEFAULT_LABEL_COLOR } ]);
     expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
-      customVoiceLabels: [ 'Current label', 'New label' ]
+      customVoiceLabels: [
+        { name: 'Current label', color: DEFAULT_LABEL_COLOR },
+        { name: 'New label', color: LABEL_TINT_COLORS[1] }
+      ]
     });
     expect(couchService.get).not.toHaveBeenCalled();
     expect(couchService.updateDocument).not.toHaveBeenCalled();
     expect(stateService.requestData).toHaveBeenCalledWith('configurations', 'local');
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
-    expect(dialogRef.close).toHaveBeenCalledWith([ 'Current label', 'New label' ]);
+    expect(dialogRef.close).toHaveBeenCalledWith([
+      { name: 'Current label', color: DEFAULT_LABEL_COLOR },
+      { name: 'New label', color: LABEL_TINT_COLORS[1] }
+    ]);
   });
 
-  it('adds valid pending input before saving', () => {
+  it('adds valid pending input with selected color before saving', () => {
     const component = createComponent({ target: 'community', customLabels: [] });
     component.ngOnInit();
+    component.selectedColor = LABEL_TINT_COLORS[2]; // amber tint
     component.newLabelInput = 'Event';
 
     component.save();
 
     expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
-      customVoiceLabels: [ 'Event' ]
+      customVoiceLabels: [ { name: 'Event', color: LABEL_TINT_COLORS[2] } ]
     });
-    expect(dialogRef.close).toHaveBeenCalledWith([ 'Event' ]);
+    expect(dialogRef.close).toHaveBeenCalledWith([ { name: 'Event', color: LABEL_TINT_COLORS[2] } ]);
   });
 
   it('persists a display-casing change', () => {
-    const component = createComponent({ target: 'community', customLabels: [ 'Announcement' ] });
+    const component = createComponent({ target: 'community', customLabels: [ { name: 'Announcement', color: DEFAULT_LABEL_COLOR } ] });
     component.ngOnInit();
-    component.customLabels = [ 'announcement' ];
+    component.customLabels = [ { name: 'announcement', color: DEFAULT_LABEL_COLOR } ];
 
     component.save();
 
     expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
-      customVoiceLabels: [ 'announcement' ]
+      customVoiceLabels: [ { name: 'announcement', color: DEFAULT_LABEL_COLOR } ]
     });
   });
 
@@ -121,7 +140,7 @@ describe('DialogsVoiceLabelsComponent', () => {
     const team = { _id: 'team', _rev: '1-stale' };
     couchService.get.mockReturnValue(of({ _id: 'team', _rev: '2-current', name: 'Team' }));
     couchService.updateDocument.mockReturnValue(of({
-      doc: { _id: 'team', _rev: '3-saved', name: 'Team', customVoiceLabels: [ 'Event' ] }
+      doc: { _id: 'team', _rev: '3-saved', name: 'Team', customVoiceLabels: [ { name: 'Event', color: DEFAULT_LABEL_COLOR } ] }
     }));
     const component = createComponent({
       target: 'team',
@@ -129,7 +148,7 @@ describe('DialogsVoiceLabelsComponent', () => {
       customLabels: []
     });
     component.ngOnInit();
-    component.customLabels.push('Event');
+    component.customLabels.push({ name: 'Event', color: DEFAULT_LABEL_COLOR });
 
     component.save();
 
@@ -138,17 +157,22 @@ describe('DialogsVoiceLabelsComponent', () => {
       _id: 'team',
       _rev: '2-current',
       name: 'Team',
-      customVoiceLabels: [ 'Event' ]
+      customVoiceLabels: [ { name: 'Event', color: DEFAULT_LABEL_COLOR } ]
     });
     expect(configurationService.patchLocalConfiguration).not.toHaveBeenCalled();
-    expect(team).toEqual({ _id: 'team', _rev: '3-saved', name: 'Team', customVoiceLabels: [ 'Event' ] });
+    expect(team).toEqual({
+      _id: 'team',
+      _rev: '3-saved',
+      name: 'Team',
+      customVoiceLabels: [ { name: 'Event', color: DEFAULT_LABEL_COLOR } ]
+    });
   });
 
   it('asks for confirmation before discarding edited labels', () => {
     vi.spyOn(UnsavedChangesPromptComponent, 'open').mockReturnValue(of(true));
     const component = createComponent({ target: 'community', customLabels: [] });
     component.ngOnInit();
-    component.customLabels.push('Event');
+    component.customLabels.push({ name: 'Event', color: DEFAULT_LABEL_COLOR });
 
     component.requestClose();
 
