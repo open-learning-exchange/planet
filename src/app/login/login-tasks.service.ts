@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, defaultIfEmpty, map, switchMap } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, throwError } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { PouchService } from '../shared/database/pouch.service';
@@ -81,17 +81,58 @@ export class LoginTasksService {
     if (environment.test || this.userService.get().roles.indexOf('_admin') === -1 || localConfig.planetType === 'center') {
       return obsArr;
     }
-    obsArr.push(this.createParentSession({ name: name + '@' + localConfig.code, password }));
-    if (localConfig.registrationRequest === 'pending') {
-      obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
-    }
+    const parentSession = this.createParentSession({ name: name + '@' + localConfig.code, password });
+    const syncDown = () => this.getConfigurationSyncDown(localConfig, { name, password });
+    // Waits for the session to restore the parent account, but runs even if it fails: the server may reach the parent when we can't
+    obsArr.push(localConfig.registrationRequest === 'pending' ?
+      parentSession.pipe(
+        catchError(error => syncDown().pipe(switchMap(() => throwError(error)))),
+        switchMap(syncDown)
+      ) :
+      parentSession
+    );
     return obsArr;
   }
 
   private createParentSession({ name, password }: { name: string, password: string }) {
-    return this.couchService.post('_session',
-      { name, password },
-      { withCredentials: true, domain: this.stateService.configuration.parentDomain });
+    const opts = { withCredentials: true, domain: this.stateService.configuration.parentDomain };
+    const isRegisteredAdmin = name === this.stateService.configuration.adminName;
+    return this.couchService.post('_session', { name, password }, opts).pipe(
+      catchError(error => error.status === 401 && isRegisteredAdmin ?
+        this.restoreParentAccount(name).pipe(
+          switchMap(() => this.couchService.post('_session', { name, password }, opts)),
+          catchError(() => throwError(error))
+        ) :
+        throwError(error))
+    );
+  }
+
+  private restoreParentAccount(adminName: string) {
+    const localConfig = this.stateService.configuration;
+    const opts = { domain: localConfig.parentDomain, withCredentials: false, suppressMessage: true };
+    const { _id, _rev, _attachments, ...user } = { ...this.userService.get(), ...this.userService.credentials };
+    return this.parentRegistration(localConfig).pipe(
+      switchMap(request => {
+        if (!request) {
+          return throwError(new Error('No registration request on the parent planet'));
+        }
+        const create = (roles: string[]) => this.couchService.updateDocument('_users', {
+          ...user, _id: 'org.couchdb.user:' + adminName, name: adminName, isUserAdmin: false, requestId: request._id, roles
+        }, opts);
+        // Once accepted, unlockUser has already run, so learner can only come from this create while the parent auto accepts
+        return request.registrationRequest === 'accepted' ?
+          create([ 'learner' ]).pipe(catchError(error => error.status === 403 ? create([]) : throwError(error))) :
+          create([]);
+      })
+    );
+  }
+
+  private parentRegistration(localConfig: any) {
+    return this.couchService.post(
+      'communityregistrationrequests/_find',
+      findDocuments({ code: localConfig.code }),
+      { domain: localConfig.parentDomain, withCredentials: false }
+    ).pipe(map(({ docs }) => docs[0]));
   }
 
   private getConfigurationSyncDown(configuration: { code: string }, credentials: { name: string, password: string }) {
