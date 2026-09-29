@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Subject, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
@@ -9,6 +9,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { dedupeObjectArray } from '../shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { NewsReactions } from './news.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -144,5 +145,21 @@ export class NewsService {
 
   postSharedWithCommunity(post) {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
+  }
+
+  saveReaction(newsDoc: any, reactions: NewsReactions) {
+    const updatedPost = { ...newsDoc, reactions };
+    return this.couchService.updateDocument(this.dbName, updatedPost).pipe(
+      map((res) => {
+        this.requestNews();
+        return res;
+      }),
+      catchError((error) => {
+        if (error?.status === 409) {
+          this.requestNews();
+        }
+        return throwError(error);
+      })
+    );
   }
 }

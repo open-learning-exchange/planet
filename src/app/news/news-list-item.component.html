@@ -79,6 +79,24 @@
         </div>
       }
     </div>
+    @if (reactionEntries(item.doc).length > 0) {
+      <div class="reactions-container">
+        @for (entry of reactionEntries(item.doc); track entry.emoji) {
+          <button
+            type="button"
+            class="reaction-chip km-reaction-chip"
+            [class.active]="hasUserReacted(item.doc, entry.emoji)"
+            [attr.aria-label]="reactionLabel(entry.emoji)"
+            [attr.aria-pressed]="hasUserReacted(item.doc, entry.emoji)"
+            [matTooltip]="reactionTooltip(entry.emoji, entry.users)"
+            [disabled]="readOnly"
+            (click)="toggleReaction(item.doc, entry.emoji)">
+            <span class="reaction-emoji">{{entry.emoji}}</span>
+            <span class="reaction-count">{{entry.count}}</span>
+          </button>
+        }
+      </div>
+    }
     @if (showExpand) {
       <div class="full-width text-center" (click)="showLess = !showLess">
         <button mat-icon-button>
@@ -105,6 +123,9 @@
     } @else {
       @if (!readOnly && (editable || item.public === true)) {
         <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
+        <button class="km-react-voice" mat-icon-button type="button" matTooltip="Reactions" i18n-matTooltip aria-label="Reactions" i18n-aria-label [matMenuTriggerFor]="reactionMenu">
+          <mat-icon>mood</mat-icon>
+        </button>
       }
       @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
         <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
@@ -142,6 +163,9 @@
 <ng-template #actionItems>
   @if (!readOnly && (editable || item.public === true)) {
     <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
+    <button class="km-react-voice" mat-menu-item type="button" [matMenuTriggerFor]="reactionMenu">
+      <mat-icon>mood</mat-icon><span i18n>Reactions</span>
+    </button>
   }
   @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
     <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
@@ -173,3 +197,19 @@
     }
   }
 </ng-template>
+
+<mat-menu #reactionMenu="matMenu" class="reaction-menu">
+  <div class="emoji-picker-grid">
+    @for (emoji of commonEmojis; track emoji) {
+      <button
+        type="button"
+        class="emoji-picker-item"
+        [class.active]="hasUserReacted(item.doc, emoji)"
+        [attr.aria-label]="reactionLabel(emoji)"
+        [attr.aria-pressed]="hasUserReacted(item.doc, emoji)"
+        (click)="toggleReaction(item.doc, emoji)">
+        {{emoji}}
+      </button>
+    }
+  </div>
+</mat-menu>

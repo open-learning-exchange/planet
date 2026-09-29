@@ -52,3 +52,84 @@ mat-card-content {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.reactions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.reaction-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid v.$medium-grey;
+  background-color: v.$light-grey;
+  color: v.$primary-dark;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  line-height: 1.25rem;
+
+  &:hover:not(:disabled) {
+    background-color: v.$primary-lighter;
+    border-color: v.$primary;
+  }
+
+  &.active {
+    background-color: v.$primary-lighter;
+    border-color: v.$primary;
+    color: v.$primary-lighter-text;
+    font-weight: 500;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.8;
+  }
+}
+
+.reaction-emoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.reaction-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.emoji-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.25rem;
+  padding: 0.5rem;
+  max-width: 240px;
+}
+
+.emoji-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+
+  &:hover {
+    background-color: v.$light-grey;
+    transform: scale(1.15);
+  }
+
+  &.active {
+    background-color: v.$primary-lighter;
+  }
+}
+
