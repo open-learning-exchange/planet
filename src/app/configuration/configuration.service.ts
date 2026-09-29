@@ -42,7 +42,7 @@ export class ConfigurationService {
   }
 
   addUserToParentPlanet(userDetail: any, adminName, configuration) {
-    const { _id, _rev, ...user } = userDetail;
+    const { _id, _rev, _attachments, ...user } = userDetail;
     return mergeMap((data: any) => {
       // then add user to parent planet with id of configuration and isUserAdmin set to false
       userDetail = { ...user, requestId: data.id, isUserAdmin: false, roles: [], name: adminName };
