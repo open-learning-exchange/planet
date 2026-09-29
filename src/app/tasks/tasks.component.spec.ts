@@ -572,6 +572,16 @@ describe('TasksComponent', () => {
     component.toggleTaskComplete({ _id: 'task-1', completed: true, status: 'completed' });
     expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'to_do', completed: false });
   });
+
+  it('provides a descriptive tooltip for moving to the next status', () => {
+    component.editable = true;
+    expect(component.taskStatusTooltip({ status: 'to_do', completed: false })).toBe('Move to "In Progress"');
+    expect(component.taskStatusTooltip({ status: 'in_progress', completed: false })).toBe('Move to "Completed"');
+    expect(component.taskStatusTooltip({ status: 'completed', completed: true })).toBe('Move to "To Do"');
+
+    component.editable = false;
+    expect(component.taskStatusTooltip({ status: 'to_do', completed: false })).toBe('To Do');
+  });
 });
 
 describe('TasksComponent read-only template', () => {

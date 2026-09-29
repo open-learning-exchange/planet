@@ -408,7 +408,12 @@ export class TasksComponent implements OnInit {
   }
 
   taskStatusTooltip(task: any): string {
-    return this.editable ? $localize`Click to advance status` : taskStatusBadgeLabel(effectiveTaskStatus(task));
+    if (!this.editable) {
+      return taskStatusBadgeLabel(effectiveTaskStatus(task));
+    }
+    const nextStatus = nextTaskStatus(effectiveTaskStatus(task));
+    const nextLabel = taskStatusBadgeLabel(nextStatus);
+    return $localize`Move to "${nextLabel}"`;
   }
 
   isAssigneeSelected(task, assignee): boolean {
