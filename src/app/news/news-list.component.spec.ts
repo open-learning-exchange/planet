@@ -36,6 +36,20 @@ describe('NewsListComponent labels', () => {
     );
   });
 
+  it('preserves custom label color when adding a label', () => {
+    const component = createComponent();
+    component.customLabels = [ { name: 'Meeting', color: '#e1bee7' } ];
+    component.newsService = { postNews: vi.fn().mockReturnValue(of({})) };
+    const news = { _id: 'news-1', labels: [] };
+
+    component.changeLabels({ news, label: 'Meeting', action: 'add' });
+
+    expect(component.newsService.postNews).toHaveBeenCalledWith(
+      { ...news, labels: [ { name: 'Meeting', color: '#e1bee7' } ] },
+      'Label added'
+    );
+  });
+
   it('collects labels from posts and leaves out the feed viewing them', () => {
     const component = createComponent();
     component.viewableId = 'team-1';
