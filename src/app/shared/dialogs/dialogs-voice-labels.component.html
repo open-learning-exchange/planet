@@ -48,18 +48,17 @@
     </div>
     <div class="color-picker-row">
       <span class="color-picker-label" i18n>Label color:</span>
-      <div class="color-swatches" role="radiogroup" aria-label="Label color" i18n-aria-label>
-        @for (color of colorPalette; track color) {
+      <div class="color-swatches" aria-label="Label color" i18n-aria-label>
+        @for (color of colorPalette; track color.value) {
           <button
             type="button"
             class="color-swatch-button"
-            [style.background-color]="color"
-            [class.selected]="selectedColor === color"
-            (click)="selectedColor = color"
-            [attr.aria-checked]="selectedColor === color"
-            role="radio"
-            [attr.aria-label]="color">
-            @if (selectedColor === color) {
+            [style.background-color]="color.value"
+            [class.selected]="selectedColor === color.value"
+            (click)="selectedColor = color.value"
+            [attr.aria-pressed]="selectedColor === color.value"
+            [attr.aria-label]="color.name">
+            @if (selectedColor === color.value) {
               <mat-icon class="check-icon">check</mat-icon>
             }
           </button>

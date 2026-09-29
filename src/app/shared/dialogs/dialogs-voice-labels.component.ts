@@ -53,7 +53,17 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
   customLabels: CustomVoiceLabel[] = [];
   newLabelInput = '';
   selectedColor: string = DEFAULT_LABEL_COLOR;
-  colorPalette = LABEL_TINT_COLORS;
+  colorPalette = [
+    { value: '#bbdefb', name: $localize`Blue` },
+    { value: '#c8e6c9', name: $localize`Green` },
+    { value: '#ffecb3', name: $localize`Amber` },
+    { value: '#ffcdd2', name: $localize`Coral` },
+    { value: '#e1bee7', name: $localize`Purple` },
+    { value: '#b2dfdb', name: $localize`Teal` },
+    { value: '#b2ebf2', name: $localize`Cyan` },
+    { value: '#ffe0b2', name: $localize`Orange` },
+    { value: '#f8bbd0', name: $localize`Pink` }
+  ];
   defaultColor = DEFAULT_LABEL_COLOR;
   errorMessage = '';
   isSaving = false;

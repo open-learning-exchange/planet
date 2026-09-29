@@ -15,7 +15,7 @@ import { CommunityListDialogComponent } from '../community/community-list-dialog
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { trackById } from '../shared/table-helpers';
 import {
-  dedupeCustomVoiceLabels, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual
+  dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual
 } from '../shared/voice-labels';
 
 import { NgClass } from '@angular/common';
@@ -481,9 +481,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (action === 'remove') {
       labels = (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label));
     } else {
+      const existing = news.labels || [];
       const customMatch = (this.customLabels || []).find(c => voiceLabelsEqual(c, label));
       const labelToAdd = customMatch || label;
-      labels = dedupeCustomVoiceLabels([ ...(news.labels || []), labelToAdd ]);
+      const alreadyPresent = existing.some(existingLabel => voiceLabelsEqual(existingLabel, labelToAdd));
+      labels = alreadyPresent ? existing : [ ...existing, labelToAdd ];
     }
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
