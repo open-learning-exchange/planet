@@ -8,7 +8,7 @@ import { StateService } from '../shared/state.service';
 import { of, Subject } from 'rxjs';
 import { addDateAndTime, getClockTime } from '../shared/utils';
 import { findDocuments } from '../shared/mangoQueries';
-import { assigneeMatches, effectiveAssignees, storedAssignee } from './tasks.utils';
+import { assigneeMatches, effectiveAssignees, effectiveTaskStatus, storedAssignee } from './tasks.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +60,7 @@ export class TasksService {
       ...newTask,
       deadline,
       ...additionalFields,
+      status: task.status || 'to_do',
       assignee: assignees[0] || '',
       assignees,
       deadlineTime: undefined
@@ -98,10 +99,13 @@ export class TasksService {
   }
 
   addTask(task) {
+    const status = effectiveTaskStatus(task);
+    const completed = status === 'completed';
     return this.couchService.updateDocument(this.dbName, {
       ...task,
-      completed: task.completed || false,
-      completedTime: task.completed ? (task.completedTime || this.couchService.datePlaceholder) : undefined
+      status,
+      completed,
+      completedTime: completed ? (task.completedTime || this.couchService.datePlaceholder) : undefined
     }).pipe(
       map(res => {
         this.getTasks();

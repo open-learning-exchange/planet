@@ -16,7 +16,8 @@ import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetup
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { StateService } from '../shared/state.service';
 import {
-  assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees, storedAssignee
+  assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees,
+  effectiveTaskStatus, nextTaskStatus, storedAssignee, TaskStatus, taskStatusBadgeLabel
 } from './tasks.utils';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -110,8 +111,10 @@ export class TasksComponent implements OnInit {
   taskViews: any[] = [];
   filteredTaskViews: any[] = [];
   imgUrlPrefix = environment.couchAddress;
-  filter: 'self' | 'all' = 'self';
+  filter: 'self' | 'all' | 'to_do' | 'in_progress' | 'completed' = 'self';
   trackById = trackById;
+  effectiveTaskStatus = effectiveTaskStatus;
+  taskStatusBadgeLabel = taskStatusBadgeLabel;
   private assigneesList: any[] = [];
   private currentAssignees = new Map<string, any>();
   private failedAvatarSources = new Map<string, string>();
@@ -133,7 +136,7 @@ export class TasksComponent implements OnInit {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
       this.setMyTasks();
-      this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
+      this.filter = this.filter === 'self' && this.myTasks.length === 0 ? 'all' : this.filter;
       this.setTaskViews();
       this.filterTasks();
     });
@@ -219,9 +222,33 @@ export class TasksComponent implements OnInit {
   }
 
   toggleTaskComplete(task) {
-    this.tasksService.addTask({ ...task, completed: !task.completed }).subscribe((res) => {
+    const completed = !task.completed;
+    const status: TaskStatus = completed ? 'completed' : 'to_do';
+    this.tasksService.addTask({ ...task, status, completed }).subscribe(() => {
       this.tasksService.getTasks();
     });
+  }
+
+  cycleTaskStatus(task: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!this.editable) {
+      return;
+    }
+    const nextStatus = nextTaskStatus(effectiveTaskStatus(task));
+    const completed = nextStatus === 'completed';
+    this.tasksService.addTask({ ...task, status: nextStatus, completed }).subscribe(() => {
+      this.tasksService.getTasks();
+    });
+  }
+
+  cycleTaskStatusFromKeyboard(event: KeyboardEvent, task: any) {
+    if (this.editable) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.cycleTaskStatus(task);
+    }
   }
 
   openAssigneeMenu(event) {
@@ -324,13 +351,22 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  setFilter(newFilter: 'self' | 'all') {
+  setFilter(newFilter: 'self' | 'all' | 'to_do' | 'in_progress' | 'completed') {
     this.filter = newFilter;
     this.filterTasks();
   }
 
   filterTasks() {
-    const filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
+    let filteredTasks = this.tasks;
+    if (this.filter === 'self') {
+      filteredTasks = this.myTasks;
+    } else if (this.filter === 'to_do') {
+      filteredTasks = this.tasks.filter(task => effectiveTaskStatus(task) === 'to_do');
+    } else if (this.filter === 'in_progress') {
+      filteredTasks = this.tasks.filter(task => effectiveTaskStatus(task) === 'in_progress');
+    } else if (this.filter === 'completed') {
+      filteredTasks = this.tasks.filter(task => effectiveTaskStatus(task) === 'completed');
+    }
     const filteredTaskIds = new Set(filteredTasks.map(task => task._id));
     this.filteredTaskViews = this.taskViews.filter(({ task }) => filteredTaskIds.has(task._id));
   }
@@ -369,6 +405,10 @@ export class TasksComponent implements OnInit {
 
   getAssignTooltip(task: any): string {
     return this.taskAssignees(task).length > 0 ? $localize`Reassign Task` : $localize`Assign Task`;
+  }
+
+  taskStatusTooltip(task: any): string {
+    return this.editable ? $localize`Click to advance status` : taskStatusBadgeLabel(effectiveTaskStatus(task));
   }
 
   isAssigneeSelected(task, assignee): boolean {

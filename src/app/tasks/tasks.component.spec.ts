@@ -518,20 +518,59 @@ describe('TasksComponent', () => {
     expect(notificationsService.sendNotificationToUser).not.toHaveBeenCalled();
   });
 
-  it('filters task views when switching between My Tasks and All Tasks', () => {
+  it('filters task views when switching between filter modes', () => {
     component.ngOnInit();
     taskUpdates.next([
-      { _id: 'owned', assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' } },
-      { _id: 'other', assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' } }
+      {
+        _id: 'owned', status: 'to_do', completed: false,
+        assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' }
+      },
+      {
+        _id: 'other-progress', status: 'in_progress', completed: false,
+        assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' }
+      },
+      {
+        _id: 'other-done', completed: true,
+        assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' }
+      }
     ]);
 
     expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
 
     component.setFilter('all');
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned', 'other' ]);
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned', 'other-progress', 'other-done' ]);
+
+    component.setFilter('to_do');
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
+
+    component.setFilter('in_progress');
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'other-progress' ]);
+
+    component.setFilter('completed');
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'other-done' ]);
 
     component.setFilter('self');
     expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
+  });
+
+  it('cycles task status through workflow states', () => {
+    const task = { _id: 'task-1', status: 'to_do', completed: false };
+    component.cycleTaskStatus(task);
+    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'in_progress', completed: false });
+
+    component.cycleTaskStatus({ _id: 'task-1', status: 'in_progress', completed: false });
+    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'completed', completed: true });
+
+    component.cycleTaskStatus({ _id: 'task-1', status: 'completed', completed: true });
+    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'to_do', completed: false });
+  });
+
+  it('synchronizes status when toggling task completion', () => {
+    component.toggleTaskComplete({ _id: 'task-1', completed: false, status: 'to_do' });
+    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'completed', completed: true });
+
+    component.toggleTaskComplete({ _id: 'task-1', completed: true, status: 'completed' });
+    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'to_do', completed: false });
   });
 });
 
@@ -588,9 +627,12 @@ describe('TasksComponent read-only template', () => {
 
     const row: HTMLElement = fixture.nativeElement.querySelector('.km-task-row');
     const title: HTMLElement = fixture.nativeElement.querySelector('.km-task-title');
+    const badge: HTMLElement = fixture.nativeElement.querySelector('.km-status-badge');
     const viewAssignees: HTMLButtonElement = fixture.nativeElement.querySelector('.km-view-assignees');
     expect(row).toBeTruthy();
     expect(title.getAttribute('tabindex')).toBeNull();
+    expect(badge.getAttribute('tabindex')).toBeNull();
+    expect(badge.textContent?.trim()).toBe('To Do');
     expect(viewAssignees.disabled).toBe(false);
 
     viewAssignees.click();

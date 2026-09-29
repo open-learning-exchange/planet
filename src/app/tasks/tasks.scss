@@ -23,9 +23,58 @@ planet-tasks {
       margin-left: -16px;
     }
 
+    .task-title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
     .task-title:focus-visible {
       outline: 2px solid v.$primary;
       outline-offset: 2px;
+    }
+
+    .task-status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 16px;
+      vertical-align: middle;
+
+      &.interactive {
+        cursor: pointer;
+        user-select: none;
+        transition: filter 0.15s ease-in-out;
+
+        &:hover {
+          filter: brightness(0.95);
+        }
+
+        &:focus-visible {
+          outline: 2px solid v.$primary;
+          outline-offset: 2px;
+        }
+      }
+
+      &.status-to_do {
+        background-color: v.$primary-lighter;
+        color: v.$primary-lighter-text;
+      }
+
+      &.status-in_progress {
+        background-color: v.$accent-lighter;
+        color: v.$accent-lighter-text;
+      }
+
+      &.status-completed {
+        background-color: v.$planet-green-lighter;
+        color: v.$planet-green-dark;
+      }
     }
   }
 
