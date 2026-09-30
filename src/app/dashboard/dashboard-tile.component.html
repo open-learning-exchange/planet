@@ -40,6 +40,7 @@
                 'has-course-cover': cardType === 'myCourses' && item.coverFileName
               }"
               cdkDrag
+              cdkDragPreviewClass="mat-elevation-z8"
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
               >
@@ -50,7 +51,7 @@
                 [matTooltip]="item.tooltip">
                 @if (cardType === 'myCourses' && item.coverFileName) {
                   <div class="dashboard-course-cover">
-                    <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt>
+                    <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt loading="lazy" decoding="async">
                   </div>
                 }
                 @if (item.firstLine || item.badge) {

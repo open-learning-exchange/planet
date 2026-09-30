@@ -8,7 +8,6 @@ import { MeetupsViewComponent } from './view-meetups/meetups-view.component';
 import { MeetupsRouterModule } from './meetups-router.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
-import { MeetupService } from './meetups.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
@@ -18,7 +17,6 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule,
     MatDialogModule, SharedComponentsModule,
     MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
-  ],
-  providers: [MeetupService]
+  ]
 })
 export class MeetupsModule {}

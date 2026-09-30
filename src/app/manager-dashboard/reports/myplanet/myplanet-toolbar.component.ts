@@ -51,7 +51,7 @@ export class MyPlanetToolbarComponent {
   @Input() types: string[] = [];
   @Input() selectedType = '';
   @Input() showTypeFilter = false;
-  @Input() timeFilterOptions: { label: string; value: string }[] = [];
+  @Input() timeFilterOptions: { label: string, value: string }[] = [];
   @Input() selectedTimeFilter = '';
   @Input() formGroup!: FormGroup<MyPlanetFiltersForm>;
   @Input() showCustomDateFields = false;

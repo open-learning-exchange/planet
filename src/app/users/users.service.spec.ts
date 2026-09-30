@@ -32,4 +32,48 @@ describe('UsersService notifications', () => {
       time: 'now'
     });
   });
+
+  it('cleans associated and code-less task identities when deleting users', () => {
+    const couchService = {
+      datePlaceholder: 'now',
+      get: vi.fn().mockReturnValue(of({ _rev: '1-shelf' })),
+      delete: vi.fn().mockReturnValue(of({})),
+      findAll: vi.fn().mockReturnValue(of([])),
+      bulkDocs: vi.fn().mockReturnValue(of([]))
+    };
+    const tasksService = { removeAssigneeFromTasks: vi.fn().mockReturnValue(of([])) };
+    const service = new UsersService(
+      couchService as any,
+      {} as any,
+      { configuration: { code: 'planet-a' }, couchStateListener: () => NEVER } as any,
+      tasksService as any,
+      {} as any
+    );
+
+    service.deleteUser({
+      _id: 'org.couchdb.user:alex@planet-b',
+      couchId: 'org.couchdb.user:alex',
+      _rev: '1-user',
+      name: 'alex',
+      planetCode: 'planet-b',
+      requestId: 'request-1'
+    }).subscribe();
+
+    expect(tasksService.removeAssigneeFromTasks).toHaveBeenCalledWith(
+      'org.couchdb.user:alex',
+      [ 'planet-b', 'planet-a' ]
+    );
+
+    tasksService.removeAssigneeFromTasks.mockClear();
+    service.deleteUser({
+      _id: 'org.couchdb.user:legacy',
+      _rev: '1-user',
+      name: 'legacy'
+    }).subscribe();
+
+    expect(tasksService.removeAssigneeFromTasks).toHaveBeenCalledWith(
+      'org.couchdb.user:legacy',
+      undefined
+    );
+  });
 });

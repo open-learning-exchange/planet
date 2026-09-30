@@ -16,11 +16,25 @@ export interface DeviceBreakpoints {
   smallMobile?: number;
 }
 
+export const isMobileOrSmaller = (deviceType: DeviceType): boolean =>
+  deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+
+export const isTabletOrSmaller = (deviceType: DeviceType): boolean =>
+  deviceType !== DeviceType.DESKTOP;
+
 export const DEFAULT_DEVICE_BREAKPOINTS: Required<DeviceBreakpoints> = {
   tablet: 1000,
   mobile: 780,
   smallMobile: 480
 };
+
+// Landscape phones may be tablet-width; coarse pointer excludes short desktop windows.
+export const SHORT_VIEWPORT_QUERY = '(max-height: 500px) and (pointer: coarse)';
+
+export interface ViewportState {
+  deviceType: DeviceType;
+  isShortViewport: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +79,24 @@ export class DeviceInfoService {
 
     this.deviceTypeCache.set(cacheKey, deviceType$);
     return deviceType$;
+  }
+
+  public watchViewport(): Observable<ViewportState> {
+    const breakpoints = this.resolveBreakpoints({});
+    return this.breakpointObserver.observe([
+      this.maxWidthQuery(breakpoints.smallMobile),
+      this.maxWidthQuery(breakpoints.mobile),
+      this.maxWidthQuery(breakpoints.tablet),
+      SHORT_VIEWPORT_QUERY
+    ]).pipe(
+      map(() => ({
+        deviceType: this.getDeviceType(breakpoints),
+        isShortViewport: this.breakpointObserver.isMatched(SHORT_VIEWPORT_QUERY)
+      })),
+      distinctUntilChanged((previous, current) =>
+        previous.deviceType === current.deviceType && previous.isShortViewport === current.isShortViewport
+      )
+    );
   }
 
   public isAndroid(): boolean {

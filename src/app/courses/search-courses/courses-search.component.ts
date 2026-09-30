@@ -31,7 +31,6 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
     `,
   selector: 'planet-courses-search-list',
-  styleUrls: ['./courses-search.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [MatSelectionList, MatListOption, MatListItemTitle]
 })
@@ -75,7 +74,6 @@ export class CoursesSearchListComponent {
       </planet-courses-search-list>
     }
     `,
-  styleUrls: ['./courses-search.scss'],
   selector: 'planet-courses-search',
   encapsulation: ViewEncapsulation.None,
   imports: [CoursesSearchListComponent]
@@ -118,8 +116,9 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
       category: category.label,
       items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
         .filter(item => typeof item === 'string' && item.trim() !== '')
-        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
+        .map(item => category.options.find(opt => opt.value === item))
         .filter(item => item)
+        .sort((a, b) => category.options.indexOf(a) - category.options.indexOf(b))
     });
   }
 

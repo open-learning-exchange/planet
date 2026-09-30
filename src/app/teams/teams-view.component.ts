@@ -45,6 +45,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
+import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -103,10 +105,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   user = this.userService.get();
   news: any[] = [];
+  private readonly emptyVoiceLabels: string[] = [];
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
-  isRoot = true;
   visits: any = {};
   leader: any = {};
   planetCode: string;
@@ -326,20 +328,20 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
       ...member,
-      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+      tasks: this.tasksService.sortedTasks(tasks.filter(task => isTaskAssignedTo(task, member, this.planetCode)), member.tasks)
     }));
     if (this.userStatus === 'member') {
-      const tasksForCount = this.isUserLeader ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      const currentMember = this.members.find(member => assigneeMatches(member, {
+        userId: this.user._id,
+        userPlanetCode: this.planetCode
+      }, this.planetCode));
+      const tasksForCount = this.isUserLeader ? tasks : currentMember?.tasks || [];
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
   }
 
   resetData() {
     this.getMembers().subscribe();
-  }
-
-  toggleAdd(data) {
-    this.isRoot = data._id === 'root';
   }
 
   setStatus(team, leader, user) {
@@ -349,14 +351,27 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
     this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
-    this.isUserLeader = user._id === leader.userId && user.planetCode === leader.userPlanetCode;
+    this.isUserLeader = !!leader && memberCompare(leader, { userId: user._id, userPlanetCode: user.planetCode });
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
   }
 
+  get canManageLabels(): boolean {
+    const canManageLocalTeams = this.team?.teamPlanetCode === this.planetCode &&
+      (this.user.isUserAdmin || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
+    return this.isUserLeader || canManageLocalTeams;
+  }
+
+  get customVoiceLabels(): string[] {
+    return this.team?.customVoiceLabels || this.emptyVoiceLabels;
+  }
+
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
+    return memberDocs.some((memberDoc: any) => assigneeMatches(memberDoc, {
+      userId: user._id,
+      userPlanetCode: this.planetCode
+    }, this.planetCode));
   }
 
   toggleMembership(team, leaveTeam) {
@@ -459,7 +474,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           membershipWriteCompleted = true;
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-        switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
+        switchMap(() => type === 'removed' ?
+          this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
@@ -495,7 +511,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           type: 'enterprise',
           displayName: this.team.name,
           rules: this.team.rules,
-          extraMessage: enterpriseJoinAgreement()
+          extraMessage: enterpriseJoinAgreement(),
+          extraMessageType: 'supplementary'
         }
       });
       return;
@@ -592,6 +609,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         okClick: (selected: any[]) => this.addMembers(selected),
         excludeIds: this.members.map(user => user.userId),
         hideChildren: true,
+        noSpinner: true,
         mode: 'users'
       }
     });
@@ -683,6 +701,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
+    });
+  }
+
+  openManageLabelsDialog() {
+    this.dialog.open(DialogsVoiceLabelsComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }
+    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+      if (updatedLabels) {
+        this.team = { ...this.team, customVoiceLabels: updatedLabels };
+      }
     });
   }
 

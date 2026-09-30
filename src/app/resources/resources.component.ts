@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, TemplateRef } from '@angular/core';
+import {
+  MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+} from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -17,7 +19,8 @@ import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
+  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -34,7 +37,7 @@ import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { levelList } from './resources-constants';
 import { SearchService } from '../shared/forms/search.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -63,6 +66,10 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
     MatToolbar,
     MatToolbarRow,
     NgTemplateOutlet,
@@ -122,10 +129,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
+  @ViewChild('filterDialog') filterDialogTemplate: TemplateRef<any>;
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
   dialogRef: MatDialogRef<DialogsListComponent> | null = null;
+  filterDialogRef: MatDialogRef<any> | null = null;
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
@@ -150,7 +159,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -169,11 +178,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   );
   trackById = trackById;
   initialSort = '';
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
   isMobile: boolean;
-  isTablet: boolean;
+  isTabletOrSmaller: boolean;
   showFiltersRow = false;
+  get showInlineFilters() {
+    return this.showFilters && !this.isTabletOrSmaller;
+  }
   expandedElement: any = null;
   private previewHasHiddenContent = new Map<string, boolean>();
   private previewOverflow = new Map<string, boolean>();
@@ -199,9 +209,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private fuzzySearchService: FuzzySearchService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-      this.isTablet = deviceType !== DeviceType.DESKTOP;
+      this.isMobile = isMobileOrSmaller(deviceType);
+      this.isTabletOrSmaller = isTabletOrSmaller(deviceType);
+      if (!this.isTabletOrSmaller && this.filterDialogRef) {
+        this.filterDialogRef.close();
+      }
     });
   }
 
@@ -236,7 +248,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
@@ -259,14 +271,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  removeFilteredFromSelection() {
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
-  }
-
-
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
   }
@@ -280,27 +284,24 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.filterDialogRef) {
+      this.filterDialogRef.close();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this.recordSearch(true);
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   updateResource(resource) {
@@ -401,7 +402,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           okClick: {
             request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
             onNext: () => {
-              this.removeFilteredFromSelection();
+              removeFilteredFromSelection(this.selection, () => this.renderedRows);
               this.onSelectionChange(this.selection.selected);
               dialogRef.close();
             },
@@ -412,7 +413,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -439,7 +440,30 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
+  }
+
+  toggleFiltersRow() {
+    this.showFiltersRow = !this.showFiltersRow;
+  }
+
+  toggleFilters() {
+    if (this.isTabletOrSmaller) {
+      if (this.filterDialogRef) {
+        return;
+      }
+      this.filterDialogRef = this.dialog.open(this.filterDialogTemplate, {
+        panelClass: 'filter-dialog',
+        autoFocus: 'dialog',
+        width: '80vw',
+        maxWidth: '80vw',
+        height: '80vh',
+        maxHeight: '80vh'
+      });
+      this.filterDialogRef.afterClosed().subscribe(() => this.filterDialogRef = null);
+      return;
+    }
+    this.showFilters = !this.showFilters;
   }
 
   resetFilter() {

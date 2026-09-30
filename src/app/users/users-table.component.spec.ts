@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { UsersTableComponent } from './users-table.component';
+import { TableState, UsersTableComponent } from './users-table.component';
 import { UserService } from '../shared/user.service';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -70,6 +70,26 @@ describe('UsersTableComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('preserves selected users when the paginator changes page', async () => {
+    const users = Array.from({ length: 51 }, (unused, index) => ({
+      doc: { ...mockUser, _id: `user-${index}`, name: `user-${index}` }
+    }));
+    component.tableState = new TableState();
+    fixture.componentRef.setInput('users', users);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.renderedData).toEqual(users.slice(0, 50));
+    component.masterToggle();
+    component.paginator.nextPage();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.paginator.pageIndex).toBe(1);
+    expect(component.renderedData).toEqual(users.slice(50));
+    expect(component.selection.selected).toEqual(users.slice(0, 50).map(row => row.doc));
+  });
+
   it('should open DialogsPromptComponent with deactivate configuration when deactivateClick is called', () => {
     const { event, dialogOpenSpy } = openDeactivateDialog();
 
@@ -82,6 +102,13 @@ describe('UsersTableComponent', () => {
         displayName: 'johndoe'
       })
     });
+  });
+
+  it('should mark the deactivation consequence as a supplementary message', () => {
+    const { dialogData } = openDeactivateDialog();
+
+    expect(dialogData.extraMessage).toBe('Deactivating will remove all active roles for this user.');
+    expect(dialogData.extraMessageType).toBe('supplementary');
   });
 
   it('should not call setRoles while the deactivation is unconfirmed', () => {

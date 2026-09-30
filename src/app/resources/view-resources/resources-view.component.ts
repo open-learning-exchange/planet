@@ -13,8 +13,9 @@ import * as constants from '../resources-constants';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { LanguageLabelComponent } from '../../shared/language-label.component';
@@ -23,6 +24,7 @@ import { ResourcesViewerComponent } from './resources-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../resources.utils';
+import { LinkCopyService } from '../../shared/link-copy.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -31,10 +33,12 @@ import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../
     MatToolbar,
     MatIconAnchor,
     MatIcon,
+    MatTooltip,
     NgTemplateOutlet,
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
+    MatMenuItem,
     MatButton,
     MatAnchor,
     NgClass,
@@ -87,7 +91,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private linkCopyService: LinkCopyService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -163,6 +168,16 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
+  }
+
+  copyLink() {
+    this.linkCopyService.copyLink(
+      [ '/resources/view', this.resourceId ],
+      {
+        success: $localize`Resource link copied to clipboard`,
+        failure: $localize`Failed to copy resource link`
+      }
+    );
   }
 
   updateResource() {

@@ -14,6 +14,8 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 })
 class MeetupsAddStubComponent {
   @Input() isDialog = false;
+  @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Input() link: any = {};
   @Input() meetup: any = {};
   @Input() sync: any;
@@ -35,6 +37,7 @@ class MeetupsViewStubComponent {
   @Input() isDialog = false;
   @Input() meetupDetail: any = {};
   @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Output() switchView = new EventEmitter<any>();
 }
 
@@ -47,7 +50,8 @@ describe('DialogsAddMeetupsComponent', () => {
 
   beforeEach(() => {
     data = {
-      onMeetupsChange: vi.fn()
+      onMeetupsChange: vi.fn(),
+      leaderOfTeamId: 'team-1'
     };
     dialogRef = {
       disableClose: false,
@@ -87,6 +91,9 @@ describe('DialogsAddMeetupsComponent', () => {
     expect(component.meetup).toEqual({});
     expect(component.view).toBe('add');
     expect(component.editable).toBe(true);
+    expect(component.leaderOfTeamId).toBe('team-1');
+    const meetupsAdd = fixture.debugElement.query(By.directive(MeetupsAddStubComponent)).componentInstance;
+    expect(meetupsAdd.leaderOfTeamId).toBe('team-1');
   });
 
   it('delegates canDeactivate to the add form', () => {

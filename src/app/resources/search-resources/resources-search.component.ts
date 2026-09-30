@@ -26,7 +26,6 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
     `,
   selector: 'planet-resources-search-list',
-  styleUrls: ['./resources-search.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [MatSelectionList, MatListOption, MatListItemTitle]
 })
@@ -70,7 +69,6 @@ export class ResourcesSearchListComponent {
       </planet-resources-search-list>
     }
     `,
-  styleUrls: ['./resources-search.scss'],
   selector: 'planet-resources-search',
   encapsulation: ViewEncapsulation.None,
   imports: [ResourcesSearchListComponent]

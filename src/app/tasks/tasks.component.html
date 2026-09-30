@@ -15,18 +15,20 @@
   </mat-button-toggle>
   </mat-button-toggle-group>
 }
-<mat-action-list [disableRipple]="!editable">
+<mat-list>
   @for (taskView of filteredTaskViews; track trackById($index, taskView.task)) {
     @let task = taskView.task;
-    <button mat-list-item (click)="openTaskDetail(task)" [disabled]="!editable">
+    <mat-list-item class="km-task-row" [class.cursor-pointer]="editable" (click)="editable && openTaskDetail(task)">
       <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
-      <span matListItemTitle>{{task.title}}</span>
-    <span matListItemLine [ngClass]="{'deadline-soon': isTaskDueSoon(task),
+      <span matListItemTitle class="task-title km-task-title" [attr.role]="editable ? 'button' : null" [attr.tabindex]="editable ? 0 : null"
+        [class.cursor-pointer]="editable" (click)="$event.stopPropagation(); editable && openTaskDetail(task)"
+        (keydown.enter)="openTaskDetailFromKeyboard($event, task)" (keydown.space)="openTaskDetailFromKeyboard($event, task)">{{task.title}}</span>
+    <span matListItemLine class="km-task-deadline" [ngClass]="{'deadline-soon': isTaskDueSoon(task),
     'deadline-passed': isTaskOverdue(task)}"><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</span>
         @if (task.completed) {
           <span matListItemLine><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
         }
-        @if (taskView.assignee; as assignee) {
+        @if (taskView.assignees.length === 1 && taskView.assignee; as assignee) {
           <img matListItemAvatar
             (click)="openMemberDialog(assignee); $event.stopPropagation()"
             (error)="useDefaultAvatar(taskView)"
@@ -34,21 +36,28 @@
             matTooltip="{{assignee | assigneeName}}"
             [src]="taskView.avatarSrc">
         }
-        @if (editable) {
-          <ng-container matListItemMeta>
+        <ng-container matListItemMeta>
+          @if (taskView.assignees.length > 1) {
+            <button mat-icon-button class="km-view-assignees" matTooltip="View Assignees" i18n-matTooltip
+              (click)="openAssigneesPopup(taskView.assignees); $event.stopPropagation()"><mat-icon>visibility</mat-icon></button>
+          }
+          @if (editable) {
             <button mat-icon-button matTooltip="Edit Task" i18n-matTooltip (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
             <button mat-icon-button matTooltip="Delete Task" i18n-matTooltip (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
             <button mat-icon-button [matTooltip]="getAssignTooltip(task)" [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
-          </ng-container>
-        }
+          }
+        </ng-container>
         <mat-menu #assigneeMenu="matMenu">
-          @if (taskView.assignee; as assignee) {
-            <button (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{assignee | assigneeName}}</button>
-          }
-          @for (assignee of (assignees | filterAssignee: task.assignee); track assignee) {
-            <button mat-menu-item (click)="addAssignee(task, assignee)">{{assignee | assigneeName}}</button>
-          }
+          <ng-template matMenuContent>
+            @for (assignee of assignees; track assigneeTrackKey(assignee)) {
+              @let selected = isAssigneeSelected(task, assignee);
+              <button mat-menu-item role="menuitemcheckbox" [attr.aria-checked]="selected"
+                (click)="toggleAssignee(task, assignee); $event.stopPropagation()">
+                <mat-icon>{{selected ? 'check' : ''}}</mat-icon>{{assignee | assigneeName}}
+              </button>
+            }
+          </ng-template>
         </mat-menu>
-      </button>
+      </mat-list-item>
     }
-  </mat-action-list>
+  </mat-list>

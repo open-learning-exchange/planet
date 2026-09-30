@@ -30,18 +30,18 @@ import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface NewReportForm {
-  _id?: string,
-  _rev?: string,
-  beginningBalance: string,
-  description: string,
-  endDate: Date,
-  label?: string,
-  otherExpenses: number,
-  otherIncome: number,
-  receiptImages?: AttachmentInputState,
-  sales: number,
-  startDate: Date,
-  wages: string
+  _id?: string;
+  _rev?: string;
+  beginningBalance: string;
+  description: string;
+  endDate: Date;
+  label?: string;
+  otherExpenses: number;
+  otherIncome: number;
+  receiptImages?: AttachmentInputState;
+  sales: number;
+  startDate: Date;
+  wages: string;
 }
 
 @Component({

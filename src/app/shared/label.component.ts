@@ -90,7 +90,8 @@ export class LabelComponent {
   };
 
   getTranslatedLabel(): string {
-    return this.labelTranslations[this.label] || this.label;
+    return Object.prototype.hasOwnProperty.call(this.labelTranslations, this.label) ?
+      this.labelTranslations[this.label] : this.label;
   }
 
 }

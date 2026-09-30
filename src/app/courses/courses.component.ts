@@ -1,5 +1,7 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input, OnChanges, ViewEncapsulation } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input, OnChanges, ViewEncapsulation, TemplateRef } from '@angular/core';
+import {
+  MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+} from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -10,13 +12,15 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
+  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import * as constants from './constants';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -33,7 +37,7 @@ import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -64,6 +68,10 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   styleUrls: ['./courses.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
     MatToolbar,
     MatToolbarRow,
     MatIconButton,
@@ -132,12 +140,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(CoursesSearchComponent) searchComponent: CoursesSearchComponent;
+  @ViewChild('filterDialog') filterDialogTemplate: TemplateRef<any>;
   @Input() isDialog = false;
   @Input() isForm = false;
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
   dialogRef: MatDialogRef<DialogsListComponent> | null = null;
+  filterDialogRef: MatDialogRef<any> | null = null;
   message = '';
   deleteDialog: any;
   readonly dbName = 'courses';
@@ -163,7 +173,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.courses.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
   user = this.userService.get();
   userShelf: any = [];
@@ -181,14 +191,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     filterIds(this.filterIds)
   ]);
   trackById = trackById;
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
   isMobile: boolean;
+  isTabletOrSmaller: boolean;
   showFilters = false;
   showFiltersRow = false;
+  get showInlineFilters() {
+    return this.showFilters && !this.isMobile;
+  }
   expandedElement: any = null;
   private previewHasHiddenContent = new Map<string, boolean>();
   private previewOverflow = new Map<string, boolean>();
+  certifications: any[] = [];
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -209,7 +222,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private certificationsService: CertificationsService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -218,8 +232,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       });
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      this.isMobile = isMobileOrSmaller(deviceType);
+      this.isTabletOrSmaller = isTabletOrSmaller(deviceType);
+      if (!this.isMobile && this.filterDialogRef) {
+        this.filterDialogRef.close();
+      }
     });
   }
 
@@ -254,10 +271,19 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.countSelectNotEnrolled(source.selected);
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    if (!this.parent && !this.isDialog && !this.isForm) {
+      this.certificationsService.getCertifications().pipe(
+        catchError(() => of([])),
+        takeUntil(this.onDestroy$)
+      ).subscribe((certifications: any[]) => {
+        this.certifications = certifications;
+        this.courses.data.forEach((course: any) => course.inCertification = this.isInCertification(course._id));
+      });
+    }
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
   }
 
@@ -267,6 +293,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnDestroy() {
+    if (this.filterDialogRef) {
+      this.filterDialogRef.close();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this.recordSearch(true);
@@ -275,11 +304,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   setupList(courseRes, myCourses) {
     return courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
-      course.canManage = this.user.isUserAdmin ||
-        (course.doc.creator === this.user.name + '@' + this.planetConfiguration.code);
+      course.canManage = this.coursesService.canManageCourse(course.doc);
       course.admission = myCourseIndex > -1;
+      course.inCertification = this.isInCertification(course._id);
+      course.isCompleted = course.doc.steps?.length > 0 &&
+        this.certificationsService.isCourseCompleted(course, this.user);
       return course;
     });
+  }
+
+  private isInCertification(courseId: string): boolean {
+    return this.certifications.some(certification => certification.courseIds?.includes(courseId));
   }
 
   getCourses() {
@@ -413,18 +448,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }, (error) => ((error)));
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   countSelectNotEnrolled(selected: any) {
@@ -448,14 +477,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // titleSearch set runs dropdownsFill and recordSearch
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
-  }
-
-  removeFilteredFromSelection() {
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   onSearchChange({ items, category }) {
@@ -464,7 +486,30 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
+  }
+
+  toggleFiltersRow() {
+    this.showFiltersRow = !this.showFiltersRow;
+  }
+
+  toggleFilters() {
+    if (this.isMobile) {
+      if (this.filterDialogRef) {
+        return;
+      }
+      this.filterDialogRef = this.dialog.open(this.filterDialogTemplate, {
+        panelClass: 'filter-dialog',
+        autoFocus: 'dialog',
+        width: '80vw',
+        maxWidth: '80vw',
+        height: '80vh',
+        maxHeight: '80vh'
+      });
+      this.filterDialogRef.afterClosed().subscribe(() => this.filterDialogRef = null);
+      return;
+    }
+    this.showFilters = !this.showFilters;
   }
 
   resetFilter() {
