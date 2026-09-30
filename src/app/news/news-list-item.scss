@@ -110,17 +110,14 @@ mat-card-content {
   max-width: 240px;
 }
 
-.emoji-picker-item {
-  display: flex;
-  align-items: center;
+.emoji-picker-grid .emoji-picker-item {
+  --mat-menu-item-label-text-size: 1.25rem;
   justify-content: center;
   width: 34px;
-  height: 34px;
+  min-height: 34px;
+  padding: 0;
   border-radius: 50%;
-  border: none;
-  background: transparent;
-  font-size: 1.25rem;
-  cursor: pointer;
+  text-align: center;
   transition: background-color 0.15s ease, transform 0.1s ease;
 
   &:hover {

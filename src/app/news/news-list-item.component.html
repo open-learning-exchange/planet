@@ -89,7 +89,7 @@
             [attr.aria-label]="reactionLabel(entry.emoji)"
             [attr.aria-pressed]="hasUserReacted(item.doc, entry.emoji)"
             [matTooltip]="reactionTooltip(entry.emoji, entry.users)"
-            [disabled]="readOnly"
+            [disabled]="!canReact"
             (click)="toggleReaction(item.doc, entry.emoji)">
             <span class="reaction-emoji">{{entry.emoji}}</span>
             <span class="reaction-count">{{entry.count}}</span>
@@ -202,11 +202,13 @@
   <div class="emoji-picker-grid">
     @for (emoji of commonEmojis; track emoji) {
       <button
+        mat-menu-item
         type="button"
+        role="menuitemradio"
         class="emoji-picker-item"
         [class.active]="hasUserReacted(item.doc, emoji)"
         [attr.aria-label]="reactionLabel(emoji)"
-        [attr.aria-pressed]="hasUserReacted(item.doc, emoji)"
+        [attr.aria-checked]="hasUserReacted(item.doc, emoji)"
         (click)="toggleReaction(item.doc, emoji)">
         {{emoji}}
       </button>

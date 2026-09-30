@@ -355,10 +355,7 @@ describe('NewsListItemComponent emoji reactions', () => {
     component.toggleReaction(component.item.doc, '🔥');
 
     expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
-    expect(newsService.saveReaction).toHaveBeenCalledWith(
-      expect.objectContaining({ _id: 'voice-1' }),
-      { '👍': ['user-2'], '❤️': ['user-3'], '🔥': ['user-1'] }
-    );
+    expect(newsService.saveReaction).toHaveBeenCalledWith(expect.objectContaining({ _id: 'voice-1' }));
     expect(component.item.doc.reactions).toEqual({
       '👍': ['user-2'],
       '❤️': ['user-3'],
@@ -393,6 +390,16 @@ describe('NewsListItemComponent emoji reactions', () => {
   it('does not toggle reaction when in readOnly mode', () => {
     const { component, authService, newsService } = setupReactions('user-1');
     component.readOnly = true;
+
+    component.toggleReaction(component.item.doc, '👍');
+
+    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(newsService.saveReaction).not.toHaveBeenCalled();
+  });
+
+  it('does not toggle reaction on a non-public voice the user cannot edit', () => {
+    const { component, authService, newsService } = setupReactions('user-1');
+    component.editable = false;
 
     component.toggleReaction(component.item.doc, '👍');
 

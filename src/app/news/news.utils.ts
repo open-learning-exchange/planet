@@ -35,9 +35,6 @@ export const hasUserReacted = (reactions: any, emoji: string, userId?: string): 
 };
 
 export const toggleNewsReaction = (reactions: any, emoji: string, userId: string): NewsReactions => {
-  if (!emoji || !userId) {
-    return parseReactions(reactions);
-  }
   const current = parseReactions(reactions);
   const updated: NewsReactions = {};
 

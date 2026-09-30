@@ -9,7 +9,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { dedupeObjectArray } from '../shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { NewsReactions } from './news.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -147,17 +146,13 @@ export class NewsService {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
   }
 
-  saveReaction(newsDoc: any, reactions: NewsReactions) {
-    const updatedPost = { ...newsDoc, reactions };
-    return this.couchService.updateDocument(this.dbName, updatedPost).pipe(
-      map((res) => {
-        this.requestNews();
-        return res;
-      }),
+  saveReaction(newsDoc: any) {
+    return this.couchService.updateDocument(this.dbName, newsDoc).pipe(
       catchError((error) => {
         if (error?.status === 409) {
           this.requestNews();
         }
+        this.planetMessageService.showAlert($localize`There was a problem saving your reaction.`);
         return throwError(error);
       })
     );

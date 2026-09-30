@@ -10,7 +10,7 @@ import { AuthService } from '../shared/auth-guard.service';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
@@ -322,34 +322,25 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     return $localize`React with ${emoji}`;
   }
 
+  get canReact() {
+    return !this.readOnly && (this.editable || this.item?.public === true);
+  }
+
   toggleReaction(newsDoc: any, emoji: string) {
-    if (this.readOnly || this.reactionSaving || !this.currentUser?._id || !newsDoc) {
+    if (!this.canReact || this.reactionSaving || !this.currentUser?._id || !newsDoc) {
       return;
     }
     this.reactionSaving = true;
     const previousReactions = newsDoc.reactions;
-    this.authService.checkAuthenticationStatus().subscribe({
-      next: () => {
-        const updatedReactions = toggleNewsReaction(newsDoc.reactions, emoji, this.currentUser._id);
-        newsDoc.reactions = updatedReactions;
-        this.newsService.saveReaction(newsDoc, updatedReactions).subscribe({
-          next: (res: any) => {
-            if (res?.rev) {
-              newsDoc._rev = res.rev;
-            }
-          },
-          error: () => {
-            newsDoc.reactions = previousReactions;
-            this.reactionSaving = false;
-          },
-          complete: () => {
-            this.reactionSaving = false;
-          }
-        });
-      },
-      error: () => {
-        this.reactionSaving = false;
-      }
+    this.authService.checkAuthenticationStatus().pipe(
+      switchMap(() => {
+        newsDoc.reactions = toggleNewsReaction(newsDoc.reactions, emoji, this.currentUser._id);
+        return this.newsService.saveReaction(newsDoc);
+      }),
+      finalize(() => this.reactionSaving = false)
+    ).subscribe({
+      next: (res: any) => newsDoc._rev = res.rev,
+      error: () => newsDoc.reactions = previousReactions
     });
   }
 }
