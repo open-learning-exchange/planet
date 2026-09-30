@@ -10,7 +10,7 @@ import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../../courses/courses.service';
-import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
+import { CertificationsService } from '../../shared/certifications/certifications.service';
 import { PdfService } from '../../shared/pdf.service';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { LinkCopyService } from '../../shared/link-copy.service';

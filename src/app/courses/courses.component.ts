@@ -20,7 +20,7 @@ import {
   isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import * as constants from './constants';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
+import { CertificationsService } from '../shared/certifications/certifications.service';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
