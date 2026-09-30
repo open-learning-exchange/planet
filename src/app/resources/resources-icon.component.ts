@@ -15,8 +15,8 @@ import { resourceFileType } from './resources.utils';
     }
   `,
   styles: [`
-    :host { display: inline-flex; flex-shrink: 0; vertical-align: middle; }
-    mat-icon { font-size: 1.25rem; width: 1.25rem; height: 1.25rem; margin-inline-end: 0.25rem; }
+    :host { display: inline-flex; flex-shrink: 0; vertical-align: middle; margin-inline-end: 0.25rem; }
+    mat-icon { font-size: 1.25rem; width: 1.25rem; height: 1.25rem; }
   `],
   imports: [ MatIcon, MatTooltip ]
 })
