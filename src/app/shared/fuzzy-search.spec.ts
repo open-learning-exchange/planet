@@ -2,15 +2,21 @@ import { editDistance, fuzzyWordMatch } from './fuzzy-search';
 
 describe('editDistance', () => {
   it('counts insertions, deletions, substitutions and swaps', () => {
-    expect(editDistance('kitten', 'sitting')).toBe(3);
+    expect(editDistance('corse', 'course')).toBe(1);
+    expect(editDistance('coursse', 'course')).toBe(1);
+    expect(editDistance('coarse', 'course')).toBe(1);
     expect(editDistance('musci', 'music')).toBe(1);
-    expect(editDistance('', 'course')).toBe(6);
   });
 
-  it('returns the distance within the limit and limit + 1 past it', () => {
-    expect(editDistance('beekeping', 'beekeeping', 3)).toBe(1);
+  it('ignores the rest of a longer value with prefix', () => {
+    expect(editDistance('courc', 'course')).toBe(2);
+    expect(editDistance('courc', 'course', Number.POSITIVE_INFINITY, true)).toBe(1);
+    expect(editDistance('cours', 'coursework', Number.POSITIVE_INFINITY, true)).toBe(0);
+  });
+
+  it('returns limit + 1 once past the limit', () => {
     expect(editDistance('abc', 'xyz', 1)).toBe(2);
-    expect(editDistance('bee', 'beekeeping', 2)).toBe(3);
+    expect(editDistance('beekeeping', 'bee', 2)).toBe(3);
   });
 });
 
@@ -34,16 +40,25 @@ describe('fuzzyWordMatch', () => {
     expect(fuzzyWordMatch('introducton musci', 'Introduction to Music')).toBe(true);
   });
 
+  it('matches a word still being typed, typo and all', () => {
+    expect(fuzzyWordMatch('courc', 'Course basics')).toBe(true);
+    expect(fuzzyWordMatch('educasi', 'Educación Básica')).toBe(true);
+  });
+
   it('does not match unrelated words of a similar length', () => {
     expect(fuzzyWordMatch('javascript', 'typescript')).toBe(false);
     expect(fuzzyWordMatch('course', 'Horse Care')).toBe(false);
   });
 
-  it('keeps short words exact', () => {
+  it('keeps words under four letters exact', () => {
     expect(fuzzyWordMatch('te', 'the')).toBe(false);
     expect(fuzzyWordMatch('to', 'Introduction to Music')).toBe(true);
     expect(fuzzyWordMatch('land', 'Sun and Moon')).toBe(false);
-    expect(fuzzyWordMatch('casa', 'Cada día')).toBe(false);
+  });
+
+  it('forgives a typo in a four letter word against whole words only', () => {
+    expect(fuzzyWordMatch('teem', 'Team building')).toBe(true);
+    expect(fuzzyWordMatch('open', 'Odenbrecht prize')).toBe(false);
   });
 
   it('matches a word of a file name, typo and all', () => {
