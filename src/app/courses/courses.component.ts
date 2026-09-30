@@ -14,7 +14,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
 import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import {
-  composeFilterFunctions, createDeleteArray, filterTags,
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
   commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
   isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
@@ -612,7 +612,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendCourse().bind(this),
-            filterPredicate: filterSpecificFieldsHybrid([ 'name' ]),
+            filterPredicate: filterSpecificFields([ 'name' ]),
             allowMulti: true,
             ...planet
           },

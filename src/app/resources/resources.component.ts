@@ -17,7 +17,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
-  composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
+  filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
   createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
   isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
@@ -505,7 +505,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendResource().bind(this),
-            filterPredicate: filterSpecificFieldsHybrid([ 'name' ]),
+            filterPredicate: filterSpecificFields([ 'name' ]),
             allowMulti: true,
             ...planet
           },
