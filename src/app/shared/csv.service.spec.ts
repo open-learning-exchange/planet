@@ -117,6 +117,21 @@ describe('CsvService', () => {
     );
   });
 
+  describe('exportCSV', () => {
+    const exportedRows = (data: any[]) => {
+      const generate = vi.spyOn(service as any, 'generate').mockImplementation(() => {});
+      service.exportCSV({ data, title: 'Report' });
+      return generate.mock.calls[0][0];
+    };
+
+    it('neutralizes values a spreadsheet would run as formulas', () => {
+      const rows = exportedRows([ { Label: '=1+1' }, { Label: '@SUM(A1)' }, { Label: '-2+3' }, { Label: '-500' }, { Label: 'Q1' } ]);
+
+      expect(rows).toEqual([ { Label: '\'=1+1' }, { Label: '\'@SUM(A1)' }, { Label: '\'-2+3' }, { Label: '-500' }, { Label: 'Q1' } ]);
+    });
+
+  });
+
   describe('exportMyPlanet', () => {
     const mapFn = (children: any[], planetName?: string) => children.map(child => ({ ...child, planetName }));
 

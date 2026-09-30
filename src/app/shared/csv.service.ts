@@ -13,6 +13,10 @@ import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
 export const CSV_PREVIEW_MAX_ROWS = 5000;
 
+const formulaPrefix = /^[=+\-@\t\r]/;
+const neutralizeFormula = (value: any) =>
+  typeof value === 'string' && formulaPrefix.test(value) && isNaN(Number(value)) ? `'${value}` : value;
+
 export interface CsvPreview {
   columns: string[];
   rows: Array<Record<string, string>>;
@@ -50,7 +54,7 @@ export class CsvService {
       ({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => (
         Object.entries(dataToDisplay).reduce(
           (object, [ key, value ]: [ string, any ]) =>
-            ({ ...object, [this.markdownRenderer.toPlainText(key)]: this.formatValue(key, value) }),
+            ({ ...object, [this.markdownRenderer.toPlainText(key)]: neutralizeFormula(this.formatValue(key, value)) }),
           {}
         )
       )
