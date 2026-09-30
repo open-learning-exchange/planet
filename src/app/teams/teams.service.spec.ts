@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { TeamsService } from './teams.service';
 
@@ -512,5 +512,49 @@ describe('TeamsService membership writes', () => {
 
     expect(next).toHaveBeenCalled();
     expect(error).not.toHaveBeenCalled();
+  });
+
+  describe('archiving after a leave', () => {
+    const noRows = of({ docs: [] });
+    const leave = (teamRows: any, shelfRows: any) => {
+      const { service, couchService } = createService({
+        findAll: vi.fn().mockReturnValue(of([ membership ])),
+        post: vi.fn().mockImplementation((db: string) => db === 'teams/_find' ? teamRows : shelfRows),
+        updateDocument: vi.fn().mockReturnValue(of({ id: team._id, rev: '2-team' }))
+      });
+      const next = vi.fn();
+      const error = vi.fn();
+      service.toggleTeamMembership(team, true, { userId: membership.userId, userPlanetCode: membership.userPlanetCode })
+        .subscribe({ next, error });
+      const archived = couchService.updateDocument.mock.calls.some(([ , doc ]) => doc.status === 'archived');
+      return { couchService, archived, next, error };
+    };
+
+    it('archives the team once no membership remains', () => {
+      const { couchService, archived } = leave(noRows, noRows);
+
+      expect(archived).toBe(true);
+      expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({
+        selector: expect.objectContaining({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, docType: 'membership' }),
+        limit: 1
+      }));
+    });
+
+    it('keeps the team while a membership remains', () => {
+      expect(leave(of({ docs: [ { _id: 'membership-2' } ] }), noRows).archived).toBe(false);
+    });
+
+    it('keeps the team while a shelf membership remains', () => {
+      expect(leave(noRows, of({ docs: [ { _id: 'org.couchdb.user:sam' } ] })).archived).toBe(false);
+    });
+
+    it.each([ 'teams', 'shelf' ])('keeps the team and completes the leave when the %s check fails', (failing) => {
+      const failure = throwError({ status: 500 });
+      const { archived, next, error } = leave(failing === 'teams' ? failure : noRows, failing === 'shelf' ? failure : noRows);
+
+      expect(archived).toBe(false);
+      expect(next).toHaveBeenCalled();
+      expect(error).not.toHaveBeenCalled();
+    });
   });
 });
