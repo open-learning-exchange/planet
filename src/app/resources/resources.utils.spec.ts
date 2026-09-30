@@ -69,6 +69,8 @@ describe('resource attachment utilities', () => {
     [ 'xz archives', { _attachments: { 'logs.tar.xz': {} } }, 'archive' ],
     [ 'unknown types', { _attachments: { 'app.apk': { content_type: 'application/vnd.android.package-archive' } } }, 'other' ],
     [ 'unzipped bundles', { _attachments: { 'index.html': {}, 'style.css': {} } }, 'html' ],
+    [ 'games with a start file', { openWhichFile: 'game/index.html', _attachments: { 'game/index.html': {}, 'game/a.js': {} } }, 'html' ],
+    [ 'unzipped files without a web page', { _attachments: { 'week1.pdf': {}, 'week2.pdf': {} } }, 'pdf' ],
     [ 'the start file of a bundle', { openWhichFile: 'week1.pdf', _attachments: { 'week1.pdf': {}, 'week2.pdf': {} } }, 'pdf' ]
   ])('classifies the file type from %s', (_, doc, fileType) => {
     expect(resourceFileType(doc)?.value).toBe(fileType);
