@@ -372,12 +372,12 @@ export class TeamsService {
     ));
   }
 
-  isTeamEmpty(team) {
+  private isTeamEmpty(team) {
     const firstRow = (db: string, selector: any) => this.couchService.post(db + '/_find', findDocuments(selector, [ '_id' ], 0, 1));
-    return forkJoin([
-      firstRow(this.dbName, this.activeMembershipSelector(team)),
-      firstRow('shelf', { myTeamIds: { $in: [ team._id ] } })
-    ]).pipe(map((results: any[]) => results.every(({ docs }) => docs.length === 0)));
+    return firstRow(this.dbName, this.activeMembershipSelector(team)).pipe(
+      switchMap((result: any) => result.docs.length > 0 ? of(result) : firstRow('shelf', { myTeamIds: { $in: [ team._id ] } })),
+      map(({ docs }) => docs.length === 0)
+    );
   }
 
   sendNotifications(type, members, notificationParams) {

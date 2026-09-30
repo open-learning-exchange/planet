@@ -535,13 +535,25 @@ describe('TeamsService membership writes', () => {
 
       expect(archived).toBe(true);
       expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({
-        selector: expect.objectContaining({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, docType: 'membership' }),
+        selector: {
+          teamId: team._id,
+          teamPlanetCode: team.teamPlanetCode,
+          status: { $or: [ { $exists: false }, { $ne: 'archived' } ] },
+          docType: 'membership'
+        },
+        limit: 1
+      }));
+      expect(couchService.post).toHaveBeenCalledWith('shelf/_find', expect.objectContaining({
+        selector: { myTeamIds: { $in: [ team._id ] } },
         limit: 1
       }));
     });
 
-    it('keeps the team while a membership remains', () => {
-      expect(leave(of({ docs: [ { _id: 'membership-2' } ] }), noRows).archived).toBe(false);
+    it('keeps the team without reading shelves while a membership remains', () => {
+      const { couchService, archived } = leave(of({ docs: [ { _id: 'membership-2' } ] }), noRows);
+
+      expect(archived).toBe(false);
+      expect(couchService.post).not.toHaveBeenCalledWith('shelf/_find', expect.anything());
     });
 
     it('keeps the team while a shelf membership remains', () => {
