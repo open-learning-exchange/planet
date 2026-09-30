@@ -1,4 +1,4 @@
-import { NEVER, of } from 'rxjs';
+import { NEVER, Observable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { UsersService } from './users.service';
 
@@ -75,5 +75,54 @@ describe('UsersService notifications', () => {
       'org.couchdb.user:legacy',
       undefined
     );
+  });
+});
+
+describe('UsersService community account deletion', () => {
+  const registration = { _id: 'request-1', _rev: '2-reg', adminName: 'admin@planet-b' };
+
+  const deleteAssociatedUser = (name: string, registrationResult: Observable<any> = of(registration)) => {
+    const order: string[] = [];
+    const couchService = {
+      get: vi.fn().mockImplementation((db: string) =>
+        db.startsWith('communityregistrationrequests/') ? registrationResult : of({ _rev: '1-shelf' })),
+      delete: vi.fn().mockImplementation((db: string) => {
+        order.push(db);
+        return of({});
+      }),
+      findAll: vi.fn().mockReturnValue(of([])),
+      bulkDocs: vi.fn().mockReturnValue(of([]))
+    };
+    const service = new UsersService(
+      couchService as any,
+      {} as any,
+      { configuration: { code: 'nation' }, couchStateListener: () => NEVER } as any,
+      { removeAssigneeFromTasks: vi.fn().mockReturnValue(of([])) } as any,
+      {} as any
+    );
+    service.deleteUser({ _id: 'org.couchdb.user:' + name, _rev: '1-user', name, requestId: 'request-1' }).subscribe();
+    return order;
+  };
+
+  it('disconnects the community by deleting its registration before its registered admin', () => {
+    expect(deleteAssociatedUser('admin@planet-b')).toEqual([
+      'communityregistrationrequests/request-1?rev=2-reg',
+      '_users/org.couchdb.user:admin@planet-b?rev=1-user',
+      'shelf/org.couchdb.user:admin@planet-b?rev=1-shelf'
+    ]);
+  });
+
+  it('keeps the registration when deleting a promoted admin of the community', () => {
+    expect(deleteAssociatedUser('ops@planet-b')).toEqual([
+      '_users/org.couchdb.user:ops@planet-b?rev=1-user',
+      'shelf/org.couchdb.user:ops@planet-b?rev=1-shelf'
+    ]);
+  });
+
+  it('still deletes a promoted admin left behind after its community was deleted', () => {
+    expect(deleteAssociatedUser('ops@planet-b', throwError({ status: 404 }))).toEqual([
+      '_users/org.couchdb.user:ops@planet-b?rev=1-user',
+      'shelf/org.couchdb.user:ops@planet-b?rev=1-shelf'
+    ]);
   });
 });
