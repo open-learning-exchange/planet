@@ -5,8 +5,8 @@ describe('normalizeSearchString', () => {
     expect(normalizeSearchString('Café Ñandú')).toBe('cafe nandu');
   });
 
-  it('keeps case when asked to', () => {
-    expect(normalizeSearchString('Café', true)).toBe('Cafe');
+  it('strips Arabic vowel marks', () => {
+    expect(normalizeSearchString('كِتَاب')).toBe('كتاب');
   });
 });
 
@@ -15,9 +15,8 @@ describe('splitSearchWords', () => {
     expect(splitSearchWords('  Intro   to \t Music ')).toEqual([ 'intro', 'to', 'music' ]);
   });
 
-  it('splits on punctuation as well', () => {
-    expect(splitSearchWords('my_photo.png')).toEqual([ 'my', 'photo', 'png' ]);
-    expect(splitSearchWords('e-learning (2024)')).toEqual([ 'e', 'learning', '2024' ]);
+  it('keeps symbols inside words', () => {
+    expect(splitSearchWords('C# e-learning')).toEqual([ 'c#', 'e-learning' ]);
   });
 
   it('returns no words for a blank search', () => {
@@ -63,6 +62,7 @@ describe('fuzzyMatch', () => {
   it('does not match unrelated words of a similar length', () => {
     expect(fuzzyMatch('javascript', 'typescript')).toBe(false);
     expect(fuzzyMatch('biology', 'geometry')).toBe(false);
+    expect(fuzzyMatch('course', 'horse')).toBe(false);
   });
 
   it('never matches an empty target', () => {
@@ -71,12 +71,6 @@ describe('fuzzyMatch', () => {
 
   it('matches everything for an empty search term', () => {
     expect(fuzzyMatch('', 'Beekeeping')).toBe(true);
-  });
-
-  it('honours the options passed in', () => {
-    expect(fuzzyMatch('cot', 'cat', { minFuzzyLength: 3 })).toBe(true);
-    expect(fuzzyMatch('beekeping', 'beekeeping', { maxDistance: 0, threshold: 1 })).toBe(false);
-    expect(fuzzyMatch('BEE', 'beekeeping', { caseSensitive: true })).toBe(false);
   });
 });
 
@@ -102,11 +96,30 @@ describe('fuzzyWordMatch', () => {
   it('keeps short words exact', () => {
     expect(fuzzyWordMatch('te', 'the')).toBe(false);
     expect(fuzzyWordMatch('to', 'Introduction to Music')).toBe(true);
+    expect(fuzzyWordMatch('land', 'Sun and Moon')).toBe(false);
+    expect(fuzzyWordMatch('casa', 'Cada día')).toBe(false);
   });
 
   it('matches a word of a file name or code, typo and all', () => {
     expect(fuzzyWordMatch('phoot', 'my_photo.png')).toBe(true);
     expect(fuzzyWordMatch('nation', 'earth-nation')).toBe(true);
+  });
+
+  it('matches words with vowel signs whole', () => {
+    expect(fuzzyWordMatch('नपाली', 'नेपाली भाषा')).toBe(true);
+    expect(fuzzyWordMatch('नेपाल', 'लेखन पुस्तक')).toBe(false);
+  });
+
+  it('matches words with digits exactly', () => {
+    expect(fuzzyWordMatch('2024', 'Community Survey 2024')).toBe(true);
+    expect(fuzzyWordMatch('2024', 'Community Survey 2023')).toBe(false);
+    expect(fuzzyWordMatch('bio101', 'BIO102')).toBe(false);
+  });
+
+  it('matches words with symbols only as typed', () => {
+    expect(fuzzyWordMatch('C#', 'C# Basics')).toBe(true);
+    expect(fuzzyWordMatch('C#', 'Cooking Basics')).toBe(false);
+    expect(fuzzyWordMatch('#', 'Cooking Basics')).toBe(false);
   });
 
   it('never matches an empty target', () => {

@@ -124,7 +124,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
 
   applyFilters() {
     this.planets = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name' ], [ 'doc.code' ])(planet, this.searchValue))
       .map(planet => ({
         ...planet,
         children: this.filterMyPlanetData(planet.children)

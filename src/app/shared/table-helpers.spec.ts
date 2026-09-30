@@ -1,6 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  filterSpecificFields, filterSpecificFieldsHybrid, isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
+  filterSpecificFields, filterSpecificFieldsByWord, filterSpecificFieldsHybrid, isAllVisibleSelected, removeFilteredFromSelection,
+  toggleVisibleSelection
 } from './table-helpers';
 
 describe('table-helpers select-all', () => {
@@ -121,10 +122,20 @@ describe('filterSpecificFieldsHybrid', () => {
     expect(filter({}, ' ')).toBe(true);
   });
 
-  it('takes fuzzy search options', () => {
-    expect(filter(course('Introduction to Beekeeping'), 'beekeping')).toBe(true);
-    expect(filterSpecificFieldsHybrid([ 'doc.courseTitle' ], { maxDistance: 0, threshold: 1 })(
-      course('Introduction to Beekeeping'), 'beekeping'
-    )).toBe(false);
+  it('matches exact fields only exactly', () => {
+    const planetFilter = filterSpecificFieldsHybrid([ 'name' ], [ 'code' ]);
+    const planet = { name: 'Learning Planet', code: 'abcd' };
+    expect(planetFilter(planet, 'lerning abcd')).toBe(true);
+    expect(planetFilter(planet, 'abce')).toBe(false);
+  });
+});
+
+describe('filterSpecificFieldsByWord', () => {
+  const filter = filterSpecificFieldsByWord([ 'fullName', 'doc.name' ]);
+  const user = { fullName: 'Maria Garcia', doc: { name: 'mgarcia' } };
+
+  it('matches each word exactly, in any order', () => {
+    expect(filter(user, 'garcia maria')).toBe(true);
+    expect(filter(user, 'mario')).toBe(false);
   });
 });

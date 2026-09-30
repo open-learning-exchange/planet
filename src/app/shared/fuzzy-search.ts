@@ -1,42 +1,24 @@
-export interface FuzzySearchOptions {
-  // Minimum similarity, from 0 to 1, for two strings to match.  Higher is stricter.
-  threshold?: number;
-  // Upper bound on the edit distance between two strings.  A term also gets no more than one edit per three
-  // characters, so a typo in a long word is forgiven without turning short words into wildcards.
-  maxDistance?: number;
-  caseSensitive?: boolean;
-  // Search terms shorter than this only match as substrings, since one edit rewrites most of a short word.
-  minFuzzyLength?: number;
-}
+const threshold = 0.75;
+const maxDistance = 3;
+const charactersPerEdit = 4;
+const minFuzzyLength = 5;
 
-type ResolvedOptions = Required<FuzzySearchOptions>;
+// Latin diacritics and Arabic vowel marks
+const ignoredMarks = /[\u0300-\u036f\u064b-\u065f\u0670]/g;
+// Marks stay inside words, or vowel signs would split words like "नेपाल".
+const wordSeparators = /[^\p{L}\p{M}\p{N}]+/u;
+const digit = /\p{N}/u;
 
-const defaultOptions: ResolvedOptions = {
-  threshold: 0.75,
-  maxDistance: 3,
-  caseSensitive: false,
-  minFuzzyLength: 4
-};
-
-const charactersPerEdit = 3;
-
-const combiningMarks = /[\u0300-\u036f]/g;
-// Anything that is neither a letter nor a number separates words, so "my_photo.png" searches as three words.
-const wordSeparators = /[^\p{L}\p{N}]+/u;
-
-// Strips diacritics so "café" and "cafe" are interchangeable, and lower cases unless told otherwise.
-export const normalizeSearchString = (value: string, caseSensitive = false): string => {
-  const normalized = value.normalize('NFD').replace(combiningMarks, '');
-  return caseSensitive ? normalized : normalized.toLowerCase();
-};
-
-export const splitSearchWords = (value: string, caseSensitive = false): string[] => (
-  normalizeSearchString(value, caseSensitive).split(wordSeparators).filter(word => word !== '')
+export const normalizeSearchString = (value: string): string => (
+  value.normalize('NFD').replace(ignoredMarks, '').toLowerCase()
 );
 
-// Damerau-Levenshtein distance, counting a swap of two neighbouring characters as one edit since that is
-// one of the most common typos.  Uses three rolling rows instead of a full matrix, and gives up early once
-// every candidate in a row is past the limit, returning limit + 1 rather than the true distance.
+// Whitespace only, so a word typed with symbols, like "C#", stays whole.
+export const splitSearchWords = (value: string): string[] => (
+  normalizeSearchString(value).split(/\s+/).filter(word => word !== '')
+);
+
+// Counts a swap of neighbouring characters as one edit.  Returns limit + 1 once every candidate is past the limit.
 export const editDistance = (first: string, second: string, limit: number = Number.POSITIVE_INFINITY): number => {
   if (first === second) {
     return 0;
@@ -74,9 +56,9 @@ export const editDistance = (first: string, second: string, limit: number = Numb
   return previousRow[second.length];
 };
 
-// Both strings must already be normalized.  A match is a substring hit, or an edit distance within the
-// allowance, or a similarity ratio at or above the threshold, whichever is most generous.
-const matchNormalized = (search: string, value: string, opts: ResolvedOptions): boolean => {
+// Both strings must already be normalized.  Short words and words with digits only match as substrings,
+// since one edit makes "and" of "land" and 2023 of 2024.
+const matchNormalized = (search: string, value: string): boolean => {
   if (search === '') {
     return true;
   }
@@ -86,45 +68,37 @@ const matchNormalized = (search: string, value: string, opts: ResolvedOptions): 
   if (value.includes(search)) {
     return true;
   }
-  if (search.length < opts.minFuzzyLength) {
+  if (search.length < minFuzzyLength || value.length < minFuzzyLength || digit.test(search)) {
     return false;
   }
   const longest = Math.max(search.length, value.length);
-  // Similarity is 1 - distance / longest, so the threshold is unreachable for a search term that is
-  // much shorter than the value it is compared against.
-  const similarityAllowance = search.length >= opts.threshold * longest ? Math.floor((1 - opts.threshold) * longest) : 0;
-  const distanceAllowance = Math.min(opts.maxDistance, Math.floor(search.length / charactersPerEdit));
-  const allowance = Math.max(distanceAllowance, similarityAllowance);
+  const similarityAllowance = search.length >= threshold * longest ? Math.floor((1 - threshold) * longest) : 0;
+  const lengthAllowance = Math.floor(search.length / charactersPerEdit);
+  const allowance = Math.min(maxDistance, Math.max(lengthAllowance, similarityAllowance));
   if (allowance < 1) {
     return false;
   }
   return editDistance(search, value, allowance) <= allowance;
 };
 
-// True when the search term matches the target as a substring or within the configured fuzziness.
-export const fuzzyMatch = (searchTerm: string, target: string, options?: FuzzySearchOptions): boolean => {
-  const opts = { ...defaultOptions, ...options };
-  return matchNormalized(
-    normalizeSearchString(searchTerm, opts.caseSensitive), normalizeSearchString(target, opts.caseSensitive), opts
-  );
-};
+export const fuzzyMatch = (searchTerm: string, target: string): boolean => (
+  matchNormalized(normalizeSearchString(searchTerm), normalizeSearchString(target))
+);
 
-// True when every word of the search matches the target, either against one of its words or against the
-// whole of it, so word order and extra words in the target do not matter.
-export const fuzzyWordMatch = (searchTerms: string, target: string, options?: FuzzySearchOptions): boolean => {
-  const opts = { ...defaultOptions, ...options };
-  const searchWords = splitSearchWords(searchTerms, opts.caseSensitive);
+export const fuzzyWordMatch = (searchTerms: string, target: string): boolean => {
+  const searchWords = splitSearchWords(searchTerms);
   if (searchWords.length === 0) {
     return true;
   }
-  const value = normalizeSearchString(target, opts.caseSensitive);
+  const value = normalizeSearchString(target);
   if (value === '') {
     return false;
   }
   const valueWords = value.split(wordSeparators).filter(word => word !== '');
-  return searchWords.every(searchWord => (
-    value.includes(searchWord) ||
-    valueWords.some(valueWord => matchNormalized(searchWord, valueWord, opts)) ||
-    (valueWords.length > 1 && matchNormalized(searchWord, value, opts))
+  return searchWords.every(searchWord => value.includes(searchWord) || (
+    !wordSeparators.test(searchWord) && (
+      valueWords.some(valueWord => matchNormalized(searchWord, valueWord)) ||
+      (valueWords.length > 1 && matchNormalized(searchWord, value))
+    )
   ));
 };

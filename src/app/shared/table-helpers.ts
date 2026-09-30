@@ -1,6 +1,6 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
-import { FuzzySearchOptions, fuzzyWordMatch, normalizeSearchString, splitSearchWords } from './fuzzy-search';
+import { fuzzyWordMatch, normalizeSearchString, splitSearchWords } from './fuzzy-search';
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
@@ -37,8 +37,7 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
   return includeItem;
 });
 
-// Multi level field filter by spliting each field by '.'.  Matches the filter as one exact substring, so
-// use it for filtering on a known value.  For anything a user types, use filterSpecificFieldsHybrid.
+// Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => (data: any, filter: string) => {
   const normalizedFilter = normalizeSearchString(filter.trim());
   return filterFields.some(filterField => {
@@ -47,19 +46,28 @@ export const filterSpecificFields = (filterFields: string[]): any => (data: any,
   });
 };
 
-// The search filter for anything a user types: every word of the filter must match at least one of the
-// fields, exactly or within the fuzziness of fuzzy-search, so typos and word order do not matter.
-export const filterSpecificFieldsHybrid = (filterFields: string[], options?: FuzzySearchOptions): any => (
-  (data: any, filter: string) => {
-    const words = splitSearchWords(filter);
-    if (words.length === 0) {
-      return true;
-    }
-    const fieldValues = filterFields
-      .map(filterField => getProperty(data, filterField))
-      .filter(fieldValue => typeof fieldValue === 'string' && fieldValue !== '');
-    return words.every(word => fieldValues.some(fieldValue => fuzzyWordMatch(word, fieldValue, options)));
+const filterFieldsByWord = (fuzzyFields: string[], exactFields: string[]) => (data: any, filter: string) => {
+  const words = splitSearchWords(filter);
+  if (words.length === 0) {
+    return true;
   }
+  const fieldValues = (fields: string[]) => fields
+    .map(field => getProperty(data, field))
+    .filter(fieldValue => typeof fieldValue === 'string' && fieldValue !== '');
+  const fuzzyValues = fieldValues(fuzzyFields);
+  const exactValues = fieldValues(exactFields).map(fieldValue => normalizeSearchString(fieldValue));
+  return words.every(word => (
+    exactValues.some(fieldValue => fieldValue.includes(word)) ||
+    fuzzyValues.some(fieldValue => fuzzyWordMatch(word, fieldValue))
+  ));
+};
+
+// Exact per word, for lists where a near miss could be selected by mistake, as with people.
+export const filterSpecificFieldsByWord = (filterFields: string[]): any => filterFieldsByWord([], filterFields);
+
+// Forgives typos per word, except in exactFields such as codes.
+export const filterSpecificFieldsHybrid = (filterFields: string[], exactFields: string[] = []): any => (
+  filterFieldsByWord(filterFields, exactFields)
 );
 
 export const filterDropdowns = (filterObj: any) => (data: any, filter: string) =>

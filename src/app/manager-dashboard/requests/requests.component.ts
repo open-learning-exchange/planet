@@ -105,7 +105,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
 
   filterData(search = this.searchValue) {
     const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { name: planet.nameDoc.name } : {}) });
-    const filterFunction = filterSpecificFieldsHybrid([ 'code', 'name' ]);
+    const filterFunction = filterSpecificFieldsHybrid([ 'name' ], [ 'code' ]);
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
     );

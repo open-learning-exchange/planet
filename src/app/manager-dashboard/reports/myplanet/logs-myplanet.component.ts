@@ -140,7 +140,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
 
   applyFilters() {
     this.apklogs = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name' ], [ 'doc.code' ])(planet, this.searchValue))
       .map(planet => ({
         ...planet,
         children: this.filterLogs(planet.children)
