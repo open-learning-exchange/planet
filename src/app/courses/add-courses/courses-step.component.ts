@@ -23,7 +23,7 @@ import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messag
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
-import { PlanetResourceIconComponent } from '../../resources/resources-icon.component';
+import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 interface CoursesStepForm {
   id: FormControl<string>;
@@ -41,7 +41,7 @@ interface CoursesStepForm {
     CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
     ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
     MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, TruncateTextPipe, PlanetResourceIconComponent
+    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent
   ]
 })
 export class CoursesStepComponent implements OnDestroy {

@@ -242,9 +242,9 @@
                     </span>
                   }
                   @if (resource.resource===undefined) {
-                    <span class="resource-title-wrapper" i18n-matTooltip
+                    <span i18n-matTooltip
                       matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
-                      <planet-resource-icon [resource]="resource.linkDoc"></planet-resource-icon>{{resource.linkDoc.title | truncateText:75}}
+                      {{resource.linkDoc.title | truncateText:75}}
                     </span>
                   }
                 </div>

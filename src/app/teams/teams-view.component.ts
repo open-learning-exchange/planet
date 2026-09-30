@@ -45,7 +45,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { PlanetResourceIconComponent } from '../resources/resources-icon.component';
+import { ResourcesIconComponent } from '../resources/resources-icon.component';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
@@ -87,7 +87,7 @@ import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
     SurveysComponent,
     DatePipe,
     TruncateTextPipe,
-    PlanetResourceIconComponent
+    ResourcesIconComponent
   ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {

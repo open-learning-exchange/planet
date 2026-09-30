@@ -133,7 +133,7 @@
             <mat-button-toggle-group class="full-width-toggle-group" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
               @for (resource of stepDetail.resources; track resource; let i = $index) {
                 <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title">
-                  <planet-resource-icon [resource]="resource"></planet-resource-icon>{{resource.title}}
+                  <planet-resource-icon [resource]="resource" [showTooltip]="false"></planet-resource-icon>{{resource.title}}
                 </mat-button-toggle>
               }
             </mat-button-toggle-group>
@@ -159,7 +159,7 @@
             <mat-button-toggle-group class="full-width-toggle-group" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
               @for (resource of stepDetail.resources; track resource; let i = $index) {
                 <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title">
-                  <planet-resource-icon [resource]="resource"></planet-resource-icon>{{resource.title}}
+                  <planet-resource-icon [resource]="resource" [showTooltip]="false"></planet-resource-icon>{{resource.title}}
                 </mat-button-toggle>
               }
             </mat-button-toggle-group>

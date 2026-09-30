@@ -43,12 +43,7 @@
       display: inline-flex;
       align-items: center;
       max-width: 100%;
-      min-width: 0;
       vertical-align: middle;
-
-      planet-resource-icon {
-        flex-shrink: 0;
-      }
     }
 
     b {
@@ -57,7 +52,6 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      vertical-align: middle;
     }
   }
 
