@@ -81,10 +81,6 @@ const matchNormalized = (search: string, value: string): boolean => {
   return editDistance(search, value, allowance) <= allowance;
 };
 
-export const fuzzyMatch = (searchTerm: string, target: string): boolean => (
-  matchNormalized(normalizeSearchString(searchTerm), normalizeSearchString(target))
-);
-
 export const fuzzyWordMatch = (searchTerms: string, target: string): boolean => {
   const searchWords = splitSearchWords(searchTerms);
   if (searchWords.length === 0) {
