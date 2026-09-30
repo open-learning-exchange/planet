@@ -7,21 +7,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   templateUrl: './teams-reports-dialog.component.html',
-  styles: [`
-    h3 {
-      margin: 0;
-    }
-    .mat-subtitle-2 {
-      margin-top: 0;
-    }
-    .report-label {
-      padding: 2px 8px;
-      margin-right: 4px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.08);
-      font-weight: 600;
-    }
-  `],
+  styleUrls: ['./teams-reports-dialog.scss'],
   imports: [
     MatDialogTitle, CdkScrollable, MatDialogContent, TeamsReportsDetailComponent, MatDialogActions, MatButton, MatDialogClose, DatePipe
   ]

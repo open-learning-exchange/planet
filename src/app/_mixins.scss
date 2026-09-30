@@ -132,3 +132,10 @@
     height: calc(#{v.$view-container-height} - #{v.$search-filters-height});
   }
 }
+
+@mixin label-chip {
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: v.$light-grey;
+  font-weight: 600;
+}

@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import { StateService } from '../shared/state.service';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 import { TeamsReportsComponent } from './teams-reports.component';
@@ -33,10 +32,6 @@ describe('TeamsReportsComponent', () => {
     );
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   describe('filtering', () => {
     beforeEach(() => {
       component.reports = [
@@ -46,10 +41,6 @@ describe('TeamsReportsComponent', () => {
         report({ _id: 'd', label: 'Archived Label', status: 'archived' })
       ];
       component.ngOnChanges();
-    });
-
-    it('shows every unarchived report when no filter is set', () => {
-      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a', 'b', 'c' ]);
     });
 
     it('matches a label regardless of case', () => {
@@ -62,6 +53,12 @@ describe('TeamsReportsComponent', () => {
       component.applyFilter('Jan 31, 2026');
 
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a', 'b', 'c' ]);
+    });
+
+    it('matches words in any order across the label and full month name', () => {
+      component.applyFilter('january audit');
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a' ]);
     });
 
     it('matches nothing when the search is absent from labels and dates', () => {
@@ -82,6 +79,41 @@ describe('TeamsReportsComponent', () => {
       component.ngOnChanges();
 
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a', 'e' ]);
+    });
+  });
+
+  it('lists the latest period first, then the most recently created', () => {
+    component.reports = [
+      report({ _id: 'old', startDate: Date.UTC(2025, 0, 1), createdDate: 3 }),
+      report({ _id: 'first', createdDate: 1 }),
+      report({ _id: 'second', createdDate: 2 })
+    ];
+    component.ngOnChanges();
+
+    expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'second', 'first', 'old' ]);
+  });
+
+  describe('export', () => {
+    beforeEach(() => {
+      component.team = { name: 'Team' };
+    });
+
+    it('adds a Label column only when an exported report has a label', () => {
+      component.reports = [ report({ _id: 'a' }), report({ _id: 'b' }) ];
+      component.ngOnChanges();
+      expect(Object.keys(component['reportsExportData']().data[0])).not.toContain('Label');
+
+      component.reports = [ report({ _id: 'a', label: 'Q1' }), report({ _id: 'b' }) ];
+      component.ngOnChanges();
+      expect(component['reportsExportData']().data.map(row => row.Label)).toEqual([ 'Q1', '' ]);
+    });
+
+    it('names the active filter in the export title', () => {
+      component.reports = [ report({ label: 'Q1' }) ];
+      component.ngOnChanges();
+      component.applyFilter(' Q1 ');
+
+      expect(component['reportsExportData']().title).toBe('Financial Summary for Team filtered by Q1');
     });
   });
 

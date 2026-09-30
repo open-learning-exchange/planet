@@ -24,10 +24,11 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
+import { filterSpecificFieldsByWord } from '../shared/table-helpers';
 
 interface NewReportForm {
   _id?: string;
@@ -63,6 +64,7 @@ interface NewReportForm {
     MatMenuTrigger,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
     FormsModule,
     DatePipe,
@@ -85,6 +87,7 @@ export class TeamsReportsComponent implements OnChanges {
   ngOnChanges() {
     this.reportCards = (this.reports || [])
       .filter(report => report.status !== 'archived')
+      .sort((a, b) => b.startDate - a.startDate || b.createdDate - a.createdDate)
       .map(report => {
         const income = (+report.sales || 0) + (+report.otherIncome || 0);
         const expenses = (+report.wages || 0) + (+report.otherExpenses || 0);
@@ -105,18 +108,15 @@ export class TeamsReportsComponent implements OnChanges {
 
   applyFilter(filter: string) {
     this.filter = filter;
-    const search = (filter || '').trim().toLowerCase();
-    this.filteredCards = search === '' ?
-      this.reportCards :
-      this.reportCards.filter(card => card.searchText.indexOf(search) > -1);
+    const matchesFilter = filterSpecificFieldsByWord([ 'searchText' ]);
+    this.filteredCards = this.reportCards.filter(card => matchesFilter(card, filter));
   }
 
   private searchableText(report) {
-    return [
-      report.label,
-      formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC'),
-      formatDate(report.endDate, 'mediumDate', this.localeId, 'UTC')
-    ].filter(text => !!text).join(' ').toLowerCase();
+    const dates = [ report.startDate, report.endDate ].filter(date => date);
+    const dateText = [ 'mediumDate', 'MMMM yyyy', 'yyyy-MM' ]
+      .map(format => dates.map(date => formatDate(date, format, this.localeId, 'UTC')).join(' '));
+    return [ report.label, ...dateText ].filter(text => !!text).join(' ');
   }
 
   private reportLabels() {
@@ -331,7 +331,7 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   exportReportsPdf() {
-    const { data, title, titleName } = this.reportsExportData();
+    const { data, title } = this.reportsExportData();
     const totalIncome = this.filteredCards.reduce((sum, card) => sum + card.income, 0);
     const totalExpenses = this.filteredCards.reduce((sum, card) => sum + card.expenses, 0);
     this.dialogsLoadingService.start();
@@ -358,7 +358,7 @@ export class TeamsReportsComponent implements OnChanges {
           { label: $localize`Net Profit/Loss`, value: totalIncome - totalExpenses, format: 'currency' }
         ],
         imageSections,
-        filename: $localize`Financial Summary for ${titleName}.pdf`
+        filename: `${title}.pdf`
       }));
   }
 
@@ -381,10 +381,12 @@ export class TeamsReportsComponent implements OnChanges {
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
+    const filter = this.filter.trim();
     return {
       data,
-      title: $localize`Financial Summary for ${titleName}`,
-      titleName
+      title: filter ?
+        $localize`Financial Summary for ${titleName} filtered by ${filter}` :
+        $localize`Financial Summary for ${titleName}`
     };
   }
 
