@@ -18,7 +18,7 @@
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
             <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min"
-              [attr.maxlength]="field.maxLength">
+              [maxlength]="field.maxLength">
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
         }
@@ -26,7 +26,7 @@
         @if (field.type === 'textbox' && field.suggestions?.length) {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput formControlName="{{field.name}}" [required]="field.required" [attr.maxlength]="field.maxLength" [matAutocomplete]="auto">
+            <input matInput formControlName="{{field.name}}" [required]="field.required" [maxlength]="field.maxLength" [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete">
               @for (suggestion of filteredSuggestions(field); track suggestion) {
                 <mat-option [value]="suggestion">{{suggestion}}</mat-option>
