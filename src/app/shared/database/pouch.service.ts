@@ -16,7 +16,8 @@ export class PouchService {
   private baseUrl = environment.couchAddress + '/';
   private localDBs = new Map<string, PouchDB.Database>();
   private authDB: PouchDB.Database;
-  private databases = new Set<string>([ 'feedback' ]);
+  private databases = new Set<string>();
+  private legacyDatabases = new Set<string>([ 'feedback' ]);
 
   constructor() {
     // test is a placeholder temp databases
@@ -25,7 +26,7 @@ export class PouchService {
     // we will have to create corresponding documents in couchdb and we can sync
     // we can decide that when the user is being created for the first time?
     this.authDB = new PouchDB(this.baseUrl + 'test', {
-      fetch(url, opts) {
+      fetch: (url, opts) => {
         opts.credentials = 'include';
         return (PouchDB as any).fetch(url, opts);
       }
@@ -41,6 +42,9 @@ export class PouchService {
   }
 
   deconfigureDBs() {
+    this.legacyDatabases.forEach(db => new PouchDB(`local-${db}`).destroy().catch(error =>
+      console.error(`Unable to remove legacy local-${db} database`, error)
+    ));
     return Array.from(this.localDBs.values(), pouchDB => pouchDB.destroy());
   }
 
@@ -87,7 +91,7 @@ export class PouchService {
 
   saveDocEditing(doc, db, id = 'new') {
     this.getDocEditing(db, id).subscribe((oldDoc: any) => {
-      this.docEditingDB(db, id).put({ ...doc, '_id': id, '_rev': oldDoc && oldDoc._rev });
+      this.docEditingDB(db, id).put({ ...doc, _id: id, _rev: oldDoc && oldDoc._rev });
     });
   }
 

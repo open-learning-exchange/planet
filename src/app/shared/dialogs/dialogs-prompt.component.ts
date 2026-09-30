@@ -6,13 +6,19 @@
  * amount - Required if showMainParagraph.  Sets the text of the main message on the modal.  See HTML for options.
  * cancelable - Optional. Shows/hides the cancel button.
  * message - Optional.  Error message that is displayed when value is truthy.
+ * extraMessage - Optional.  Additional message shown below the main message.  Accepts HTML.
+ * extraMessageType - Optional, defaults to 'body'.  Semantic role of extraMessage.  Use 'body' when it
+ *  carries the dialog's primary question, warning, or instructions (i.e. with showMainParagraph false),
+ *  and 'supplementary' for supporting notes, consequences, agreements, and metadata, which render in
+ *  smaller italic text so they read as secondary to the primary message.
  * displayName - Optional. If deleteItem does not have a 'name' property, set this to
  *  display to the user what is being deleted.
- * okClick - Optional.  Function to call when user clicks OK.
+ * okClick - Optional.  { request, onNext, onError } run when user clicks OK.  Defaults to closing
+ *  the dialog with true, or false if the request errors.
  */
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { timer, throwError } from 'rxjs';
+import { timer, throwError, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
@@ -20,6 +26,7 @@ import { LabelComponent } from '../label.component';
 import { MatButton } from '@angular/material/button';
 import { SubmitDirective } from '../submit.directive';
 import { TruncateTextPipe } from '../truncate-text.pipe';
+import { PlanetMarkdownComponent } from '../planet-markdown.component';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
@@ -28,6 +35,13 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
       word-wrap: break-word;
       white-space: normal;
       word-break: break-word;
+    }
+    .enterprise-rules {
+      margin-top: 12px;
+    }
+    .extra-message-supplementary {
+      font-size: 0.875rem;
+      font-style: italic;
     }
   `],
   imports: [
@@ -39,7 +53,8 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
     MatDialogClose,
     SubmitDirective,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    PlanetMarkdownComponent
   ]
 })
 export class DialogsPromptComponent {
@@ -50,6 +65,7 @@ export class DialogsPromptComponent {
   spinnerOn: boolean;
   labels: string[];
   isDateUtc = false;
+  extraMessageType: 'body' | 'supplementary';
 
   constructor(
     public dialogRef: MatDialogRef<DialogsPromptComponent>,
@@ -59,10 +75,15 @@ export class DialogsPromptComponent {
     this.data.amount = this.setDefault(this.data.amount, 'single');
     this.showMainParagraph = this.setDefault(this.data.showMainParagraph, true);
     this.cancelable = this.setDefault(this.data.cancelable, true);
-    this.data.okClick = this.setDefault(this.data.okClick, this.close.bind(this));
+    this.data.okClick = this.setDefault(this.data.okClick, {
+      request: of(true),
+      onNext: () => this.dialogRef.close(true),
+      onError: () => this.dialogRef.close(false)
+    });
     this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
     this.labels = this.data.showLabels;
     this.isDateUtc = this.data.isDateUtc;
+    this.extraMessageType = this.setDefault(this.data.extraMessageType, 'body');
   }
 
   ok() {

@@ -6,7 +6,8 @@ import { map } from 'rxjs/operators';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
 import { CouchService } from './couchdb.service';
-import { couchAttachmentPath, markdownToPlainText, formatDate } from './utils';
+import { couchAttachmentPath, formatDate } from './utils';
+import { MarkdownRenderService } from './markdown-render.service';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
 export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
@@ -32,6 +33,7 @@ export class CsvService {
     private couchService: CouchService,
     private reportsService: ReportsService,
     private planetMessageService: PlanetMessageService,
+    private markdownRenderer: MarkdownRenderService,
     @Inject(LOCALE_ID) private localeId: string
   ) {}
 
@@ -44,17 +46,32 @@ export class CsvService {
   exportCSV({ data, title }: { data: any[], title: string }) {
     const reportDate = formatLocaleDate(new Date(), 'mediumDate', this.localeId);
     const options = { title, filename: $localize`Report of ${title} on ${reportDate}`, showTitle: true };
-    const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
-      return Object.entries(dataToDisplay).reduce(
-        (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
-        {}
-      );
-    });
+    const formattedData = data.map(
+      ({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => (
+        Object.entries(dataToDisplay).reduce(
+          (object, [ key, value ]: [ string, any ]) =>
+            ({ ...object, [this.markdownRenderer.toPlainText(key)]: this.formatValue(key, value) }),
+          {}
+        )
+      )
+    );
     if (formattedData.length === 0) {
       this.planetMessageService.showAlert($localize`There was no data during that period to export`);
       return;
     }
     this.generate(formattedData, options);
+  }
+
+  exportMyPlanet(
+    children: any[],
+    planetName: string | undefined,
+    mapFn: (children: any[], planetName?: string) => any[],
+    title: string
+  ): void {
+    const csvData = planetName ?
+      mapFn(children, planetName) :
+      children.flatMap((planet: any) => mapFn(planet.children, planet.name));
+    this.exportCSV({ data: csvData, title });
   }
 
   exportSummaryCSV(
@@ -100,7 +117,7 @@ export class CsvService {
     return monthData.reduce((total, item) => total + (item.count || 0), 0);
   }
 
-  private buildSummaryTable(sections: Array<{ title: string; data: any[]; countUnique: boolean }>): any[] {
+  private buildSummaryTable(sections: Array<{ title: string, data: any[], countUnique: boolean }>): any[] {
     const allMonths = new Set<string>();
     sections.forEach(section => {
       section.data.forEach(item => allMonths.add(item.date));
@@ -159,7 +176,7 @@ export class CsvService {
       this.formatHealthConditions(value) :
       this.isDateKey(key) ?
         dateString(value) :
-        markdownToPlainText(value);
+        this.markdownRenderer.toPlainText(value);
   }
 
   isDateKey(key: string) {

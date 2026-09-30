@@ -9,7 +9,7 @@ import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 import { NgClass } from '@angular/common';
-import { ChatOutputDirective } from '../../shared/chat-output.directive';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
@@ -24,7 +24,7 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.scss'],
   imports: [
-    ChatOutputDirective,
+    PlanetMarkdownComponent,
     NgClass,
     FormsModule,
     ReactiveFormsModule,
@@ -229,8 +229,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   handleIncomingMessage(message: any) {
     if (message.type === 'final') {
       this.selectedConversationId = {
-        '_id': message.couchDBResponse?.id,
-        '_rev': message.couchDBResponse?.rev
+        _id: message.couchDBResponse?.id,
+        _rev: message.couchDBResponse?.rev
       };
       this.postSubmit();
     } else {
@@ -275,8 +275,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         (completion: any) => {
           this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
           this.selectedConversationId = {
-            '_id': completion.couchDBResponse?.id,
-            '_rev': completion.couchDBResponse?.rev
+            _id: completion.couchDBResponse?.id,
+            _rev: completion.couchDBResponse?.rev
           };
           this.postSubmit();
         },

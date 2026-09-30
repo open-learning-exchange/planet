@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: '', component: SurveysComponent },
   { path: 'add', component: ExamsAddComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'update/:id', component: ExamsAddComponent, canDeactivate: [UnsavedChangesGuard] },
-  { path: 'dispense', component: ExamsViewComponent, data: { newUser: true } }
+  { path: 'dispense', component: ExamsViewComponent, data: { newUser: true }, canDeactivate: [UnsavedChangesGuard] }
 ];
 
 @NgModule({

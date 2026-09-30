@@ -17,9 +17,9 @@ describe('Login', () => {
       imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, LoginComponent],
       providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
     });
-    const fixture = TestBed.createComponent(LoginComponent),
-      comp = fixture.componentInstance;
-      /*de = fixture.debugElement.query(By.css('#login-status')),
+    const fixture = TestBed.createComponent(LoginComponent);
+    const comp = fixture.componentInstance;
+    /*de = fixture.debugElement.query(By.css('#login-status')),
       statusElement = de.nativeElement,
       couchService = fixture.debugElement.injector.get(CouchService),
       testModel = { name: 'test', password: 'password', repeatPassword: 'password' };*/

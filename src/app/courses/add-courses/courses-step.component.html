@@ -10,16 +10,17 @@
         }
       </span>
       <ng-container matListItemMeta>
-        @if (step?.exam?.questions.length) {
-          <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
-        }
-        @if (step?.resources?.length) {
-          <planet-course-icon [icon]="courseIcons.attachFile"></planet-course-icon>
-        }
-        @if (step?.survey?.questions.length) {
-          <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
-        }
-        <span class="toolbar-fill"></span>
+        <span class="step-icons">
+          @if (step?.exam?.questions.length) {
+            <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
+          }
+          @if (step?.resources?.length) {
+            <planet-course-icon [icon]="courseIcons.attachFile"></planet-course-icon>
+          }
+          @if (step?.survey?.questions.length) {
+            <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
+          }
+        </span>
       </ng-container>
     </planet-step-list-item>
   }

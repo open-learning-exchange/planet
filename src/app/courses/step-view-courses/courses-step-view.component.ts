@@ -15,7 +15,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
@@ -32,7 +32,6 @@ import { PlanetResourceIconComponent } from '../../resources/resources-icon.comp
   styleUrls: ['./courses-step-view.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     MatButton,
     MatIconButton,
@@ -127,9 +126,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           this.coursesService.courseActivity('visit', course, this.stepNum);
           this.countActivity = false;
         }
-        this.canManage = this.userService.get().isUserAdmin ||
-        course.creator !== undefined &&
-        (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
+        this.canManage = this.coursesService.canManageCourse(course);
       });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {

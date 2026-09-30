@@ -25,7 +25,7 @@
         @if (field.type === 'password') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput type="{{passwordVisibility.get(field.name) ? 'text' : 'password'}}" formControlName="{{field.name}}" required="{{field.required}}">
+            <input matInput type="{{passwordVisibility.get(field.name) ? 'text' : 'password'}}" formControlName="{{field.name}}" [required]="!!field.required">
             <button type="button" mat-icon-button matIconSuffix (click)="togglePasswordVisibility(field.name)" tabindex="-1">
               <mat-icon>{{passwordVisibility.get(field.name) ? 'visibility' : 'visibility_off'}}</mat-icon>
             </button>
@@ -36,7 +36,7 @@
         @if (field.type === 'selectbox') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <mat-select formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple">
+            <mat-select formControlName="{{field.name}}" [required]="!!field.required" [multiple]="field.multiple">
               @if (field.reset) {
                 <mat-option i18n>None</mat-option>
               }
@@ -49,8 +49,13 @@
         }
         <!-- radio button -->
         @if (field.type === 'radio') {
-          <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}">
-            <mat-label>{{field.label}}</mat-label><br>
+          <mat-radio-group formControlName="{{field.name}}" [required]="!!field.required">
+            <mat-label class="planet-radio-label">
+              {{field.label}}
+              @if (field.required) {
+                <span class="warn-text-color km-required-marker" aria-hidden="true">*</span>
+              }
+            </mat-label><br>
             @for (option of field.options; track option) {
               <mat-radio-button class="planet-radio-button" [value]="getRadioOptionValue(option)">
                 {{getRadioOptionLabel(option)}}
@@ -61,17 +66,27 @@
         }
         <!-- Star Rating -->
         @if (field.type === 'rating') {
-          <mat-form-field class="rating">
-            <mat-label>{{field.placeholder}}</mat-label>
-            <planet-rating-stars [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating-stars>
-            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-          </mat-form-field>
+          <div class="rating-input">
+            <planet-rating-stars [formControl]="modalForm.controls[field.name]" [required]="!!field.required"></planet-rating-stars>
+            <button
+              type="button"
+              mat-icon-button
+              class="km-clear-rating"
+              [disabled]="modalForm.controls[field.name].value === 0"
+              (click)="clearRating(field.name)"
+              matTooltip="Clear rating"
+              i18n-matTooltip
+              aria-label="Clear rating"
+              i18n-aria-label>
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
         }
         <!-- Textarea -->
         @if (field.type === 'textarea') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <textarea matInput formControlName="{{field.name}}" required="{{field.required}}"></textarea>
+            <textarea matInput formControlName="{{field.name}}" [required]="!!field.required"></textarea>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
         }
@@ -93,7 +108,7 @@
         @if (field.type === 'date') {
           <mat-form-field class="full-width" (click)="dp.open()">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput [matDatepicker]="dp" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
+            <input matInput [matDatepicker]="dp" [formControl]="modalForm.controls[field.name]" [required]="!!field.required" [min]="field.min" [max]="field.max">
             <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
             <mat-datepicker #dp></mat-datepicker>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
@@ -122,7 +137,7 @@
             }
             <planet-file-upload
               [accept]="field.fileUpload?.accept || ''"
-              [existingAttachments]="field.fileUpload?.existingAttachments || []"
+              [existingAttachments]="field.fileUpload?.existingAttachments || emptyAttachments"
               [hint]="field.fileUpload?.hint || ''"
               [imagePreview]="!!field.fileUpload?.imagePreview"
               [maxFiles]="field.fileUpload?.maxFiles || 1"
@@ -138,7 +153,7 @@
   @if (title !== 'Rating') {
     <mat-dialog-actions>
       <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
-      <button type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
+      <button type="button" mat-raised-button (click)="onCancel()" i18n>Cancel</button>
       <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
     </mat-dialog-actions>
   }

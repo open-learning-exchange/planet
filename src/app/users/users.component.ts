@@ -16,12 +16,13 @@ import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { PlanetRoleComponent } from '../shared/planet-role.component';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'planet-users',
@@ -36,12 +37,14 @@ import { FormsModule } from '@angular/forms';
     MatButtonToggleGroup,
     MatButtonToggle,
     MatFormField,
+    MatSuffix,
     MatLabel,
     MatSelect,
     MatOption,
     PlanetRoleComponent,
     MatInput,
     MatButton,
+    MatTooltip,
     FormsModule,
     UsersTableComponent
   ]

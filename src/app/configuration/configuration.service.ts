@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap, mergeMap, takeWhile, toArray } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
+import { StateService } from '../shared/state.service';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce, stringToHex } from '../shared/utils';
 
@@ -13,27 +14,25 @@ import { dedupeShelfReduce, stringToHex } from '../shared/utils';
 })
 export class ConfigurationService {
 
-  configuration: any;
-  lastSeq: string;
-
   constructor(
     private couchService: CouchService,
     private userService: UserService,
     private managerService: ManagerService,
+    private stateService: StateService,
     private syncService: SyncService
   ) {}
 
   createRequestNotification(configuration) {
     return mergeMap(data => {
       const requestNotification = {
-        'user': 'SYSTEM',
-        'message': $localize`New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
-        'link': '/manager/requests/',
-        'linkParams': { 'search': configuration.code },
-        'type': 'request',
-        'priority': 1,
-        'status': 'unread',
-        'time': this.couchService.datePlaceholder
+        user: 'SYSTEM',
+        message: $localize`New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
+        link: '/manager/requests/',
+        linkParams: { search: configuration.code },
+        type: 'request',
+        priority: 1,
+        status: 'unread',
+        time: this.couchService.datePlaceholder
       };
       // Send notification to parent
       return this.couchService.updateDocument('notifications', requestNotification, {
@@ -52,11 +51,9 @@ export class ConfigurationService {
   }
 
   addUserToShelf(adminName, configuration) {
-    return mergeMap(data => {
-      return this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
-        domain: configuration.parentDomain
-      });
-    });
+    return mergeMap(data => this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
+      domain: configuration.parentDomain
+    }));
   }
 
   createReplicators(configuration, credentials) {
@@ -64,16 +61,16 @@ export class ConfigurationService {
       type: 'pull',
       parentDomain: configuration.parentDomain,
       code: configuration.code,
-      selector: { 'sendOnAccept': true }
+      selector: { sendOnAccept: true }
     };
     const userReplicator = {
       dbSource: '_users', db: 'tablet_users',
-      selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } },
+      selector: { isUserAdmin: false, requestId: { $exists: false } },
       continuous: true, type: 'internal'
     };
     const meetupReplicator = {
       dbSource: 'meetups', db: 'community_meetups',
-      selector: { 'link': { 'teams': { '$eq': `${configuration.code}@${configuration.parentCode}` } } },
+      selector: { link: { teams: { $eq: `${configuration.code}@${configuration.parentCode}` } } },
       continuous: true, type: 'internal'
     };
     return forkJoin([
@@ -121,15 +118,15 @@ export class ConfigurationService {
   createPlanet(admin, configuration, credentials) {
     const userDetail: any = {
       ...admin,
-      'roles': [],
-      'type': 'user',
-      'isUserAdmin': true,
-      'joinDate': this.couchService.datePlaceholder,
-      'planetCode': configuration.code
+      roles: [],
+      type: 'user',
+      isUserAdmin: true,
+      joinDate: this.couchService.datePlaceholder,
+      planetCode: configuration.code
     };
     const pin = this.managerService.createPin();
     return forkJoin([
-      this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
+      this.createUser('satellite', { name: 'satellite', password: pin, roles: [ 'learner' ], type: 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
     ]).pipe(
       switchMap(() => this.createReplicators(configuration, credentials)),
@@ -150,25 +147,68 @@ export class ConfigurationService {
     );
   }
 
-  updateConfiguration(configuration) {
-    return this.postConfiguration(configuration).pipe(switchMap(() => {
-      return this.couchService.post(
-        'communityregistrationrequests/_find',
-        findDocuments({ 'code': configuration.code }),
-        { domain: configuration.parentDomain }
-      );
-    }), switchMap((res) => {
-      // Remove local revision as it will have conflict with parent
-      const { _rev: localRev, ...localConfig } = configuration;
-      // if parent record not found set empty
-      const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
+  /**
+   * Applies a configuration patch locally and forwards it to the parent without keys.
+   * Use patchLocalConfiguration for settings which must remain on this planet.
+   */
+  patchConfiguration(patch: any) {
+    return this.patchLocalConfiguration(patch).pipe(switchMap((configuration) => {
+      const sideEffects = [
+        // addPlanetToParent emits nothing for an existing registration, so collect its completion
+        this.sendConfigurationPatchToParent(configuration, patch).pipe(toArray()),
+        ...(Object.prototype.hasOwnProperty.call(patch, 'autoAccept') ? [ this.updateAutoAccept(configuration.autoAccept) ] : [])
+      ];
+      return forkJoin(sideEffects).pipe(map(() => configuration));
+    }));
+  }
+
+  patchLocalConfiguration(patch: any): Observable<any> {
+    return this.patchLocalConfigurationWithRetry(patch, 1);
+  }
+
+  private patchLocalConfigurationWithRetry(patch: any, retriesOnConflict: number): Observable<any> {
+    const fields = { ...patch };
+    delete fields._rev;
+    return this.getConfiguration(fields._id).pipe(
+      switchMap((configuration) =>
+        this.couchService.updateDocument('configurations', { ...configuration, ...fields }).pipe(
+          map(({ doc }) => doc),
+          catchError((error) => error?.status === 409 && retriesOnConflict > 0 ?
+            this.patchLocalConfigurationWithRetry(patch, retriesOnConflict - 1) : throwError(error))
+        ))
+    );
+  }
+
+  private getConfiguration(configurationId?: string) {
+    configurationId = configurationId ?? this.stateService.configuration?._id;
+    return configurationId ?
+      this.couchService.get('configurations/' + configurationId) :
+      throwError(new Error('There is no local configuration to update'));
+  }
+
+  private sendConfigurationPatchToParent(configuration: any, patch: any) {
+    return this.couchService.post(
+      'communityregistrationrequests/_find',
+      findDocuments({ code: configuration.code }),
+      { domain: configuration.parentDomain }
+    ).pipe(switchMap((res) => {
+      const parentPatch = { ...patch };
+      delete parentPatch._id;
+      delete parentPatch._rev;
+      delete parentPatch.keys;
+      const parentConfiguration = res.docs.length ? { ...res.docs[0], ...parentPatch } : { ...configuration };
+      if (res.docs.length === 0) {
+        // A new parent registration cannot use the local CouchDB revision
+        delete parentConfiguration._rev;
+        delete parentConfiguration.keys;
+      }
       const userDetail = { ...this.userService.get(), ...this.userService.credentials };
-      return this.addPlanetToParent({ ...localConfig, ...parentConfig }, res.docs.length === 0, userDetail);
+      return this.addPlanetToParent(parentConfiguration, res.docs.length === 0, userDetail);
     }));
   }
 
   createUser(name, details, opts?) {
-    return this.couchService.updateDocument('_users', { '_id': 'org.couchdb.user:' + name, ...details }, opts);
+    return this.couchService.updateDocument('_users', { _id: 'org.couchdb.user:' + name, ...details }, opts);
   }
 
   setCouchPerUser({ doc: configuration }) {

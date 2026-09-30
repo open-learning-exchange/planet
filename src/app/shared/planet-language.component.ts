@@ -22,9 +22,8 @@ export class PlanetLanguageComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    this.currentLanguage = this.languages.find(language => {
-      return window.location.href.indexOf('/' + language.shortCode + '/') > -1;
-    }) || this.currentLanguage;
+    this.currentLanguage = this.languages.find(language => window.location.href.indexOf('/' + language.shortCode + '/') > -1) ||
+      this.currentLanguage;
 
     this.languages = languages.filter(
       language => language.shortCode !== this.currentLanguage.shortCode);

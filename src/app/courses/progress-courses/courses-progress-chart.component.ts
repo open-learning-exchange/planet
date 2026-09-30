@@ -29,7 +29,7 @@ export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, 
   @ViewChildren('errorsTotal, errorsIndex') yScrollElements;
   @ViewChild('errorsUserTotal') xScrollElement;
   @ViewChild('errorsUser') dataElement;
-  sets = [];
+  sets: any[] = [];
   horizTotals = [];
   private observer: MutationObserver;
 
@@ -40,9 +40,10 @@ export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, 
       items: fillEmptyItems(input.items),
       total: input.items.reduce((total, item) => total + (item.number || 0), 0)
     }));
-    this.horizTotals = this.sets.reduce((totals, set) => {
-      return set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable }));
-    }, Array(this.height).fill(0).map(() => ({ count: 0, clickable: false })));
+    this.horizTotals = this.sets.reduce(
+      (totals, set) => set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable })),
+      Array(this.height).fill(0).map(() => ({ count: 0, clickable: false }))
+    );
   }
 
   ngAfterViewInit() {
@@ -91,7 +92,14 @@ export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, 
     }
   }
 
-  labelClick(set) {
+  labelClick(set, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
+    }
     this.clickAction.emit(set);
   }
 

@@ -19,14 +19,16 @@ import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
-  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, formatDemographicsForCsv,
+  demographicsForCsv
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
+import { AppSourceFilter, appSourceLabel, appSources } from '../../shared/app-source';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -116,6 +118,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   users: any[] = [];
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
+  appSources = appSources;
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
@@ -140,7 +143,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
-  selectedTimeFilter = '12m';
+  selectedTimeFilter = '3m';
   showCustomDateFields = false;
   resourcesLoading = true;
   coursesLoading = true;
@@ -178,6 +181,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService,
@@ -242,7 +246,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.charts = [];
   }
 
-  onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
+  onFilterChange(filterValue: AppSourceFilter) {
     this.filter.app = filterValue;
     this.filterData();
   }
@@ -342,7 +346,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-          ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
+          ? this.dateQueryParams.startDate : this.defaultStartDate()
       );
       this.setLoginActivities();
     });
@@ -449,7 +453,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getTeams() {
-    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any[]) => {
+    this.couchService.findAll('teams', { selector: { status: 'active' } }).subscribe((teams: any[]) => {
       this.teams = teams
         .filter(team => team.teamPlanetCode === this.planetCode && team.name)
         .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
@@ -610,16 +614,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
-      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
+      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
     ];
-    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const teamField = { placeholder: $localize`Team`, name: 'team', options: teamOptions, type: 'selectbox' };
     const sortingOptions = sortingOptionsMap[reportType];
     const fields = [
       ...commonFields,
       ...(reportType === 'health' ? [] : [ teamField ]),
       ...(sortingOptions && sortingOptions.length > 0
-        ? [ { 'placeholder': $localize`Sort By`, 'name': 'sortBy', 'options': sortingOptions, 'type': 'selectbox' } ]
+        ? [ { placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' } ]
         : [])
     ];
     const formGroup = {
@@ -757,14 +761,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (field === 'username') {
       field = 'user';
     }
+    const dateValue = (value: any) => {
+      const time = new Date(value).getTime();
+      return isNaN(time) ? 0 : time;
+    };
     return data.sort((a, b) => {
+      const [ valueA, valueB ] = [ a[field], b[field] ];
       let comparison = 0;
-      if ([ 'loginTime', 'logoutTime', 'time' ].includes(field)) {
-        const dateA = new Date(a[field]).getTime();
-        const dateB = new Date(b[field]).getTime();
-        comparison = dateA - dateB;
+      if ([ 'loginTime', 'logoutTime', 'time', 'createdDate' ].includes(field)) {
+        comparison = dateValue(valueA) - dateValue(valueB);
+      } else if (typeof valueA === 'number' || typeof valueB === 'number') {
+        comparison = (Number(valueA) || 0) - (Number(valueB) || 0);
       } else {
-        comparison = a[field].localeCompare(b[field]);
+        comparison = `${valueA ?? ''}`.localeCompare(`${valueB ?? ''}`);
       }
       return comparison * order;
     });
@@ -773,18 +782,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[], sortBy: string) {
     switch (reportType) {
       case 'logins':
-        let data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
-          .map(activity => ({
-            ...activity,
-            androidId: activity.androidId || '',
-            deviceName: activity.deviceName || '',
-            customDeviceName: activity.customDeviceName || ''
-          }));
+        let data = this.activityService.appendUserDemographics(
+          filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members), this.today
+        ).map(({ app, ...activity }) => ({
+          ...formatDemographicsForCsv(activity),
+          [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId }),
+          androidId: activity.androidId || '',
+          deviceName: activity.deviceName || '',
+          customDeviceName: activity.customDeviceName || ''
+        }));
         if (sortBy) {
           data = this.sortData(data, sortBy);
         }
         this.csvService.exportCSV({
-          data: data,
+          data,
           title: $localize`Member Visits`
         });
         break;
@@ -812,8 +823,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
+    const demographics = this.activityService.demographicsFor(this.today);
     const exportData = data.map(activity => ({
       [$localize`User`]: activity.user || '',
+      ...demographicsForCsv(demographics(activity)),
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,
@@ -868,7 +881,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId },
+      data: { courseId },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -878,33 +891,40 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   exportDocView(reportType: string, dateRange: any, members: any[], sortBy: string) {
     let data = {
-      'resourceViews': this.resourceActivities.total.data,
-      'courseViews': this.courseActivities.total.data,
-      'stepCompletions': this.progress.steps.data,
-      'health': this.healthComponent && this.healthComponent.examinations
+      resourceViews: this.resourceActivities.total.data,
+      courseViews: this.courseActivities.total.data,
+      stepCompletions: this.progress.steps.data,
+      health: this.healthComponent && this.healthComponent.examinations
     }[reportType];
     const title = {
-      'resourceViews': $localize`Resource Views`,
-      'courseViews': $localize`:@@course-views-single:Course Views`,
-      'health': $localize`Community Health`,
-      'stepCompletions': $localize`Courses Progress` }[reportType];
+      resourceViews: $localize`Resource Views`,
+      courseViews: $localize`:@@course-views-single:Course Views`,
+      health: $localize`Community Health`,
+      stepCompletions: $localize`Courses Progress` }[reportType];
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
-    this.csvService.exportCSV({
-      data: this.activityService.appendAge(
-        filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(activity => {
-          const baseActivity = {
-            ...activity,
-            androidId: activity.androidId || '',
-            deviceName: activity.deviceName || ''
-          };
-          if (reportType === 'health' && activity.updatedDate) {
-            baseActivity.updatedDate = fullLabel(activity.updatedDate, this.localeId);
-          }
-          return baseActivity;
+    const activities = filterByMember(
+      filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members
+    ).map(({ app, ...activity }) => {
+      const baseActivity = {
+        ...activity,
+        ...(reportType === 'health' ? {} : {
+          [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId })
         }),
+        androidId: activity.androidId || '',
+        deviceName: activity.deviceName || ''
+      };
+      if (reportType === 'health' && activity.updatedDate) {
+        return { ...baseActivity, updatedDate: fullLabel(activity.updatedDate, this.localeId) };
+      }
+      return baseActivity;
+    });
+    const activitiesWithDemographics = reportType === 'health' ?
+      this.activityService.appendAge(activities, this.today) :
+      this.activityService.appendUserDemographics(activities, this.today);
+    this.csvService.exportCSV({
+      data: activitiesWithDemographics.map(formatDemographicsForCsv),
       title
     });
   }
@@ -918,11 +938,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
-  openMemberView(user) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { name: user.name, userPlanetCode: user.planetCode } },
-      autoFocus: false
-    });
+  openMemberView(user, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
+    }
+    if (!user) {
+      return;
+    }
+    this.usersProfileDialogService.open({ member: { name: user.name, userPlanetCode: user.planetCode } });
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
@@ -934,14 +961,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }, { emitEvent: true });
   }
 
+  private defaultStartDate() {
+    return this.selectedTimeFilter === 'custom' ?
+      this.filter.startDate :
+      this.activityService.getDateRange(this.selectedTimeFilter, this.minDate).startDate;
+  }
+
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
     const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
     this.showCustomDateFields = showCustomDateFields;
 
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date();
-      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentStartDate = this.defaultStartDate();
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
@@ -959,7 +991,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.filter.app = '';
     this.selectedTeam = 'All';
     this.filter.members = [];
-    this.onTimeFilterChange('12m');
+    this.onTimeFilterChange('3m');
   }
 
   onHealthLoadingChange(loading: boolean) {
@@ -1057,7 +1089,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         week1: week1Value,
         week2: week2Value,
         change: changeText,
-        changeValue: changeValue
+        changeValue
       };
     });
   }

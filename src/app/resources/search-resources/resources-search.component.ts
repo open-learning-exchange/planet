@@ -26,7 +26,6 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
     `,
   selector: 'planet-resources-search-list',
-  styleUrls: ['./resources-search.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [MatSelectionList, MatListOption, MatListItemTitle]
 })
@@ -70,7 +69,6 @@ export class ResourcesSearchListComponent {
       </planet-resources-search-list>
     }
     `,
-  styleUrls: ['./resources-search.scss'],
   selector: 'planet-resources-search',
   encapsulation: ViewEncapsulation.None,
   imports: [ResourcesSearchListComponent]
@@ -84,10 +82,10 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   trackByFn = trackByCategory;
 
   categories = [
-    { 'label': 'subject', 'options': constants.subjectList },
-    { 'label': 'language', 'options': languages },
-    { 'label': 'medium', 'options': constants.media },
-    { 'label': 'level', 'options': constants.levelList }
+    { label: 'subject', options: constants.subjectList },
+    { label: 'language', options: languages },
+    { label: 'medium', options: constants.media },
+    { label: 'level', options: constants.levelList }
   ];
 
   searchLists = [];
@@ -98,9 +96,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.searchLists = this.categories.reduce((lists, category) => {
-      return lists.concat(this.createSearchList(category, this.filteredData));
-    }, []);
+    this.searchLists = this.categories.reduce((lists, category) => lists.concat(this.createSearchList(category, this.filteredData)), []);
   }
 
   reset({ startingSelection = {}, isInit = false } = {}) {

@@ -9,9 +9,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { urlToParamObject } from '../shared/utils';
+import { couchAttachmentUrl, urlToParamObject } from '../shared/utils';
 import { UsersService } from '../users/users.service';
-import { trackById } from '../shared/table-helpers';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -22,8 +21,12 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
+import {
+  FEEDBACK_SCREENSHOT_TYPES, getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType
+} from './feedback.utils';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { environment } from '../../environments/environment';
+import { ExistingAttachment } from '../shared/forms/file-upload.component';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -75,7 +78,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   showParams = 'off';
   showParamsButton = false;
   users = {};
-  trackById = trackById;
   normalizedType = '';
   normalizedStatus = '';
 
@@ -125,7 +127,16 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   getFeedback(id) {
-    return this.couchService.post(this.dbName + '/_find', findDocuments({ '_id': id }));
+    return this.couchService.post(this.dbName + '/_find', findDocuments({ _id: id }));
+  }
+
+  messageAttachments(message: { attachments?: string[] }): ExistingAttachment[] {
+    return (message.attachments || []).filter(name =>
+      FEEDBACK_SCREENSHOT_TYPES.includes(this.feedback._attachments?.[name]?.content_type)
+    ).map(name => ({
+      name,
+      url: couchAttachmentUrl(environment.couchAddress, this.dbName, this.feedback._id, name)
+    }));
   }
 
   postMessage() {
@@ -161,12 +172,12 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     ));
     const notificationDoc = ({ user, userPlanetCode }) => ({
       user,
-      'message': $localize`You have unread messages in feedback`,
+      message: $localize`You have unread messages in feedback`,
       link,
-      'type': 'feedbackReply',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      type: 'feedbackReply',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       userPlanetCode
     });
     return this.couchService.findAll('notifications', findDocuments({ link, type: 'feedbackReply', status: 'unread' })).pipe(
@@ -196,9 +207,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.couchService.stream('GET', this.dbName + '/_changes?feed=continuous&since=now')
       .pipe(
         takeUntil(this.onDestroy$),
-        switchMap(() => {
-          return this.getFeedback(id);
-        })
+        switchMap(() => this.getFeedback(id))
       )
       .subscribe(this.setFeedback.bind(this), error => console.log(error), () => {
         // Feed times out after one minute, so resubscribe until ngOnDestrpy runs.

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
 
@@ -10,20 +9,14 @@ export const warningMsg = $localize`You have unsaved changes. Are you sure you w
   standalone: false
 })
 export class UnsavedChangesPromptComponent {
-  static open(dialog: MatDialog) {
+  // data overrides the defaults below, i.e. to name the thing being left or add a message
+  static open(dialog: MatDialog, data: any = {}) {
     const dialogRef = dialog.open(DialogsPromptComponent, {
       data: {
         changeType: 'exit',
         type: 'changes',
         cancelable: true,
-        okClick: {
-          request: new Observable(observer => {
-            observer.next(true);
-            observer.complete();
-          }),
-          onNext: () => dialogRef.close(true),
-          onError: () => dialogRef.close(false)
-        }
+        ...data
       }
     });
     return dialogRef.afterClosed();

@@ -1,7 +1,8 @@
+import { AppSourceFilter, isFromAppSource } from '../../shared/app-source';
 import { filterByDate, isSelectedMember } from './reports.utils';
 
 export interface ReportDetailFilter {
-  app: 'planet' | 'myplanet' | '';
+  app: AppSourceFilter;
   members: any;
   startDate?: Date;
   endDate?: Date;
@@ -9,12 +10,12 @@ export interface ReportDetailFilter {
 
 export class ReportsDetailData {
 
-  _data: any[] = [];
+  #data: any[] = [];
   get data() {
-    return this._data;
+    return this.#data;
   }
   set data(newData: any[]) {
-    this._data = newData;
+    this.#data = newData;
     this.filteredData = newData;
   }
   filteredData: any[] = [];
@@ -27,7 +28,7 @@ export class ReportsDetailData {
   }
 
   filter({ app, members, startDate, endDate }: ReportDetailFilter) {
-    const isCorrectApp = item => (app === '' || ((app === 'myplanet') !== (item.androidId === undefined)));
+    const isCorrectApp = item => isFromAppSource(item, app);
     this.filteredData = filterByDate(
       this.data,
       this.dateField,

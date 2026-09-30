@@ -32,7 +32,7 @@ export class FeedbackService {
 
   closeFeedback(feedback: any) {
     return this.modifyFeedback(
-      { ...feedback, 'closeTime': this.couchService.datePlaceholder, 'status': normalizeFeedbackStatus('closed') },
+      { ...feedback, closeTime: this.couchService.datePlaceholder, status: normalizeFeedbackStatus('closed') },
       $localize`You closed this feedback.`
     );
   }

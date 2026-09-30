@@ -62,7 +62,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       name: this.fb.control('', {
         validators: [ CustomValidators.required ],
         asyncValidators: [ ac => this.validatorService.isUnique$(this.dbName, 'name', ac, {
-          selectors: { _id: { '$ne': this.certificateInfo._id || '' } }
+          selectors: { _id: { $ne: this.certificateInfo._id || '' } }
         }) ]
       })
     });

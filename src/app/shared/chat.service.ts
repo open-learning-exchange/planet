@@ -118,7 +118,7 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
   }
 
   findConversations(ids, user?, opts?) {
-    return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids), 'user': inSelector(user) }), opts);
+    return this.couchService.findAll(this.dbName, findDocuments({ _id: inSelector(ids), user: inSelector(user) }), opts);
   }
 
   sendNewChatAddedSignal() {
