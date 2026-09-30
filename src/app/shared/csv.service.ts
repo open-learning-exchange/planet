@@ -47,14 +47,16 @@ export class CsvService {
     }
   }
 
-  exportCSV({ data, title }: { data: any[], title: string }) {
+  exportCSV({ data, title, markdown = true }: { data: any[], title: string, markdown?: boolean }) {
     const reportDate = formatLocaleDate(new Date(), 'mediumDate', this.localeId);
     const options = { title, filename: $localize`Report of ${title} on ${reportDate}`, showTitle: true };
     const formattedData = data.map(
       ({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => (
         Object.entries(dataToDisplay).reduce(
-          (object, [ key, value ]: [ string, any ]) =>
-            ({ ...object, [this.markdownRenderer.toPlainText(key)]: neutralizeFormula(this.formatValue(key, value)) }),
+          (object, [ key, value ]: [ string, any ]) => ({
+            ...object,
+            [markdown ? this.markdownRenderer.toPlainText(key) : key]: neutralizeFormula(this.formatValue(key, value, markdown))
+          }),
           {}
         )
       )
@@ -174,13 +176,13 @@ export class CsvService {
     pushRow('', $localize`Total`, totalAll, totalMale, totalFemale, totalUnspecified);
   }
 
-  formatValue(key: string, value: any) {
+  formatValue(key: string, value: any, markdown = true) {
     const dateString = (date: number | undefined) => date ? new Date(date).toString() : '';
     return key === 'conditions' ?
       this.formatHealthConditions(value) :
       this.isDateKey(key) ?
         dateString(value) :
-        this.markdownRenderer.toPlainText(value);
+        markdown ? this.markdownRenderer.toPlainText(value) : value;
   }
 
   isDateKey(key: string) {

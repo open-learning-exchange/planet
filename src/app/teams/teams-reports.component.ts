@@ -327,7 +327,7 @@ export class TeamsReportsComponent implements OnChanges {
 
   exportReports() {
     const { data, title } = this.reportsExportData();
-    this.csvService.exportCSV({ data, title });
+    this.csvService.exportCSV({ data, title, markdown: false });
   }
 
   exportReportsPdf() {

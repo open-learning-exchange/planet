@@ -1,8 +1,6 @@
 import { vi } from 'vitest';
-import { TestBed } from '@angular/core/testing';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { PdfService } from '../shared/pdf.service';
-import { MarkdownRenderService } from '../shared/markdown-render.service';
 import { TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 describe('TeamsTablePdfExportService', () => {
@@ -15,8 +13,7 @@ describe('TeamsTablePdfExportService', () => {
     pdfService = { download: vi.fn() };
     service = new TeamsTablePdfExportService(
       pdfService as any as PdfService,
-      messageService as any as PlanetMessageService,
-      TestBed.inject(MarkdownRenderService)
+      messageService as any as PlanetMessageService
     );
   });
 
@@ -63,11 +60,19 @@ describe('TeamsTablePdfExportService', () => {
     expect(pdfService.download).toHaveBeenCalledWith(documentDefinition, 'Test report.pdf');
   });
 
+  it('keeps cell text literally instead of reading it as Markdown', () => {
+    service.exportTable({ data: [ { Label: '**Urgent**' }, { Label: '<Q1>' } ], title: 'Labels' });
+
+    const tableBody = (pdfService.download.mock.calls[0][0] as any).content[1].table.body;
+
+    expect(tableBody.slice(1).map(([ cell ]) => cell.text)).toEqual([ '**Urgent**', '<Q1>' ]);
+  });
+
   it('adds image sections after the table', () => {
     service.exportTable({
       data: [ { Name: 'Alice' } ],
       imageSections: [
-        { title: '**Receipts**', images: [ { image: 'data:image/png;base64,test', name: 'receipt.png' } ] }
+        { title: 'Receipts', images: [ { image: 'data:image/png;base64,test', name: 'receipt.png' } ] }
       ],
       title: 'Report with images'
     });
