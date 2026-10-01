@@ -7,7 +7,7 @@ import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { SyncService } from '../shared/sync.service';
-import { dedupeShelfReduce, stringToHex } from '../shared/utils';
+import { dedupeShelfReduce, deepObjectPatch, stringToHex } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -171,7 +171,7 @@ export class ConfigurationService {
     delete fields._rev;
     return this.getConfiguration(fields._id).pipe(
       switchMap((configuration) =>
-        this.couchService.updateDocument('configurations', { ...configuration, ...fields }).pipe(
+        this.couchService.updateDocument('configurations', deepObjectPatch(configuration, fields)).pipe(
           map(({ doc }) => doc),
           catchError((error) => error?.status === 409 && retriesOnConflict > 0 ?
             this.patchLocalConfigurationWithRetry(patch, retriesOnConflict - 1) : throwError(error))
