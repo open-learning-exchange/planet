@@ -42,7 +42,7 @@ import { ANDROID_APPS } from '../shared/android-apps';
         width: '72px'
       })),
       state('open', style({
-        width: '175px'
+        width: '210px'
       })),
       transition('closed <=> open', animate('500ms ease'))
     ]),

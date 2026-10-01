@@ -8,6 +8,7 @@ import { ResourcesService } from '../../resources/resources.service';
 import { UserService } from '../user.service';
 import { StateService } from '../state.service';
 import { PlanetMessageService } from '../planet-message.service';
+import { fuzzyWordMatch } from '../fuzzy-search';
 import { deepEqual, normalizedContentType } from '../utils';
 
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -74,7 +75,7 @@ export class DialogsImagesComponent implements OnInit {
   }
 
   get filteredImages() {
-    return this.images.filter(image => image.filename.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    return this.images.filter(image => fuzzyWordMatch(this.searchQuery, image.filename ?? ''));
   }
 
   uploadImage(file: File) {

@@ -77,7 +77,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   getNotifications() {
     const userFilter = notificationUserFilter(this.userService.get());
-    this.couchService.findAll('notifications/_find', findDocuments(
+    this.couchService.findAll('notifications', findDocuments(
       { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
         time: { $gt: 0 }
