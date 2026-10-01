@@ -7,22 +7,46 @@
     (change)="setFilter($event.value)"
     #filterGroup="matButtonToggleGroup"
     >
-    <mat-button-toggle value="self" [checked]="filter === 'self'" [disabled]="myTasks.length === 0" i18n>
-    myTasks
-  </mat-button-toggle>
     <mat-button-toggle value="all" [checked]="filter === 'all'" i18n>
-    All Tasks
-  </mat-button-toggle>
+      All Tasks
+    </mat-button-toggle>
+    <mat-button-toggle value="to_do" [checked]="filter === 'to_do'" i18n>
+      To Do
+    </mat-button-toggle>
+    <mat-button-toggle value="in_progress" [checked]="filter === 'in_progress'" i18n>
+      In Progress
+    </mat-button-toggle>
+    <mat-button-toggle value="completed" [checked]="filter === 'completed'" i18n>
+      Completed
+    </mat-button-toggle>
+    <mat-button-toggle value="self" [checked]="filter === 'self'" [disabled]="myTasks.length === 0" i18n>
+      myTasks
+    </mat-button-toggle>
   </mat-button-toggle-group>
 }
 <mat-list>
   @for (taskView of filteredTaskViews; track trackById($index, taskView.task)) {
     @let task = taskView.task;
     <mat-list-item class="km-task-row" [class.cursor-pointer]="editable" (click)="editable && openTaskDetail(task)">
-      <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
-      <span matListItemTitle class="task-title km-task-title" [attr.role]="editable ? 'button' : null" [attr.tabindex]="editable ? 0 : null"
-        [class.cursor-pointer]="editable" (click)="$event.stopPropagation(); editable && openTaskDetail(task)"
-        (keydown.enter)="openTaskDetailFromKeyboard($event, task)" (keydown.space)="openTaskDetailFromKeyboard($event, task)">{{task.title}}</span>
+      <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable"
+        (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
+      <span matListItemTitle class="task-title-row">
+        <span class="task-title km-task-title" [attr.role]="editable ? 'button' : null" [attr.tabindex]="editable ? 0 : null"
+          [class.cursor-pointer]="editable" (click)="$event.stopPropagation(); editable && openTaskDetail(task)"
+          (keydown.enter)="openTaskDetailFromKeyboard($event, task)"
+          (keydown.space)="openTaskDetailFromKeyboard($event, task)">{{task.title}}</span>
+        <span class="task-status-badge km-status-badge status-{{effectiveTaskStatus(task)}}"
+          [class.interactive]="editable"
+          [attr.role]="editable ? 'button' : null"
+          [attr.tabindex]="editable ? 0 : null"
+          [attr.aria-label]="taskStatusBadgeLabel(effectiveTaskStatus(task))"
+          [matTooltip]="taskStatusTooltip(task)"
+          (click)="cycleTaskStatus(task, $event)"
+          (keydown.enter)="cycleTaskStatusFromKeyboard($event, task)"
+          (keydown.space)="cycleTaskStatusFromKeyboard($event, task)">
+          {{taskStatusBadgeLabel(effectiveTaskStatus(task))}}
+        </span>
+      </span>
     <span matListItemLine class="km-task-deadline" [ngClass]="{'deadline-soon': isTaskDueSoon(task),
     'deadline-passed': isTaskOverdue(task)}"><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</span>
         @if (task.completed) {

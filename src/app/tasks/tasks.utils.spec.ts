@@ -1,5 +1,6 @@
 import {
-  assigneeIdentityCandidates, assigneeKey, assigneeMatches, effectiveAssignees, isTaskAssignedTo, storedAssignee
+  assigneeIdentityCandidates, assigneeKey, assigneeMatches, effectiveAssignees,
+  effectiveTaskStatus, isTaskAssignedTo, nextTaskStatus, storedAssignee, taskStatusBadgeLabel
 } from './tasks.utils';
 
 describe('task assignee utilities', () => {
@@ -53,3 +54,32 @@ describe('task assignee utilities', () => {
     })).toEqual({ ...local, userDoc: { fullName: 'Alex Example' } });
   });
 });
+
+describe('task status utilities', () => {
+  it('determines effective status with backward compatibility', () => {
+    expect(effectiveTaskStatus({ status: 'archived' })).toBe('archived');
+    expect(effectiveTaskStatus({ completed: true })).toBe('completed');
+    expect(effectiveTaskStatus({ status: 'completed', completed: true })).toBe('completed');
+    expect(effectiveTaskStatus({ status: 'in_progress', completed: false })).toBe('in_progress');
+    expect(effectiveTaskStatus({ status: 'in_progress' })).toBe('in_progress');
+    expect(effectiveTaskStatus({ status: 'to_do', completed: false })).toBe('to_do');
+    expect(effectiveTaskStatus({ status: 'completed', completed: false })).toBe('to_do');
+    expect(effectiveTaskStatus({})).toBe('to_do');
+    expect(effectiveTaskStatus(null)).toBe('to_do');
+  });
+
+  it('cycles through task status transitions', () => {
+    expect(nextTaskStatus('to_do')).toBe('in_progress');
+    expect(nextTaskStatus('in_progress')).toBe('completed');
+    expect(nextTaskStatus('completed')).toBe('to_do');
+    expect(nextTaskStatus('archived')).toBe('to_do');
+    expect(nextTaskStatus('unknown')).toBe('to_do');
+  });
+
+  it('provides human-readable status badge labels', () => {
+    expect(taskStatusBadgeLabel('to_do')).toBe('To Do');
+    expect(taskStatusBadgeLabel('in_progress')).toBe('In Progress');
+    expect(taskStatusBadgeLabel('completed')).toBe('Completed');
+  });
+});
+
