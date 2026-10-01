@@ -10,7 +10,7 @@ import {
 import { finalize } from 'rxjs/operators';
 import { CertificationsService } from '../../shared/certifications/certifications.service';
 import { CertificationsManagerService } from './certifications-manager.service';
-import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
+import { sortNumberOrString, filterSpecificFieldsHybrid } from '../../shared/table-helpers';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -94,7 +94,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCertifications();
-    this.certifications.filterPredicate = filterSpecificFieldsByWord([ 'name' ]);
+    this.certifications.filterPredicate = filterSpecificFieldsHybrid([ 'name' ]);
   }
 
   ngAfterViewInit() {

@@ -14,7 +14,7 @@ import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import {
-  filterSpecificFields, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
+  filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
   removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -164,7 +164,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.useDialogLoading) {
       this.dialogsLoadingService.start();
     }
-    this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
+    this.surveys.filterPredicate = filterSpecificFieldsHybrid([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
     this.couchService.checkAuthorization(this.dbName)
