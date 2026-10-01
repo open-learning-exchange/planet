@@ -9,7 +9,7 @@ import { throwError, combineLatest, defer, EMPTY, merge, of, Observable, Subject
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
-import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
+import { CertificationsService } from '../../shared/certifications/certifications.service';
 import { PdfService } from '../../shared/pdf.service';
 import { NgClass, DatePipe, formatDate } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';

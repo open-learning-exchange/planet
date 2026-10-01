@@ -7,7 +7,7 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 @Injectable({
   providedIn: 'root'
 })
-export class CertificationsService {
+export class CertificationsManagerService {
 
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   readonly dbName = 'certifications';
@@ -17,14 +17,6 @@ export class CertificationsService {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService
   ) {}
-
-  getCertifications() {
-    return this.couchService.findAll(this.dbName);
-  }
-
-  getCertification(id: string) {
-    return this.couchService.get(`${this.dbName}/${id}`);
-  }
 
   openDeleteDialog(certification: any, callback) {
     const displayName = certification.name;
@@ -52,11 +44,6 @@ export class CertificationsService {
 
   addCertification(certification) {
     return this.couchService.updateDocument(this.dbName, { ...certification });
-  }
-
-  isCourseCompleted(course, user) {
-    return course.doc.steps.every((_, index) => course.progress.some(step =>
-      step.userId === user._id && step.stepNum === index + 1 && step.passed));
   }
 
 }
