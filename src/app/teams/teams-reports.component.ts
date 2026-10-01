@@ -120,9 +120,14 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   private reportLabels() {
-    return Array.from(new Set(
-      this.reportCards.map(({ report }) => (report.label || '').trim()).filter(label => label !== '')
-    )).sort((a, b) => a.localeCompare(b));
+    const labels = new Map<string, string>();
+    this.reportCards.forEach(({ report }) => {
+      const label = (report.label || '').trim();
+      if (label && !labels.has(label.toLowerCase())) {
+        labels.set(label.toLowerCase(), label);
+      }
+    });
+    return Array.from(labels.values()).sort((a, b) => a.localeCompare(b));
   }
 
   trackByReport(index: number, card: any) {

@@ -317,7 +317,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
-      this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+      this.reports = docs.filter(doc => doc.docType === 'report');
       this.reportsCount = this.reports.length;
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);

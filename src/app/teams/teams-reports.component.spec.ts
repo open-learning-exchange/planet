@@ -118,11 +118,11 @@ describe('TeamsReportsComponent', () => {
   });
 
   describe('label suggestions', () => {
-    it('lists the labels already in use, deduplicated and sorted', () => {
+    it('lists the labels already in use, deduplicated regardless of case and sorted', () => {
       component.reports = [
         report({ label: 'Quarterly' }),
         report({ label: 'Annual' }),
-        report({ label: 'Quarterly' })
+        report({ label: 'quarterly ' })
       ];
       component.ngOnChanges();
 
