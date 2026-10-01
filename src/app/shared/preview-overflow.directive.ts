@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, EventEmitter, NgZone, OnDestroy, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Directive, ElementRef, EventEmitter, NgZone, OnDestroy, Output } from '@angular/core';
 
 @Directive({ selector: '[planetPreviewOverflow]' })
 export class PreviewOverflowDirective implements AfterViewInit, OnDestroy {
@@ -8,17 +8,15 @@ export class PreviewOverflowDirective implements AfterViewInit, OnDestroy {
   private resizeObserver: ResizeObserver | null = null;
   private frameId: number | null = null;
   private lastEmitted: boolean | null = null;
-  private readonly onWindowResize = () => this.scheduleMeasure();
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
     private ngZone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   ngAfterViewInit() {
     this.ngZone.runOutsideAngular(() => {
-      this.scheduleMeasure();
-
       this.mutationObserver = new MutationObserver(() => this.scheduleMeasure());
       this.mutationObserver.observe(this.elementRef.nativeElement, {
         childList: true,
@@ -26,19 +24,14 @@ export class PreviewOverflowDirective implements AfterViewInit, OnDestroy {
         characterData: true,
       });
 
-      if (typeof ResizeObserver !== 'undefined') {
-        this.resizeObserver = new ResizeObserver(() => this.scheduleMeasure());
-        this.resizeObserver.observe(this.elementRef.nativeElement);
-      }
-
-      window.addEventListener('resize', this.onWindowResize, { passive: true });
+      this.resizeObserver = new ResizeObserver(() => this.scheduleMeasure());
+      this.resizeObserver.observe(this.elementRef.nativeElement);
     });
   }
 
   ngOnDestroy() {
     this.mutationObserver?.disconnect();
     this.resizeObserver?.disconnect();
-    window.removeEventListener('resize', this.onWindowResize);
     if (this.frameId !== null) {
       cancelAnimationFrame(this.frameId);
     }
@@ -53,7 +46,9 @@ export class PreviewOverflowDirective implements AfterViewInit, OnDestroy {
       const hasOverflow = element.scrollHeight - element.clientHeight > 1;
       if (hasOverflow !== this.lastEmitted) {
         this.lastEmitted = hasOverflow;
-        this.ngZone.run(() => this.planetPreviewOverflowChange.emit(hasOverflow));
+        // Outside the zone, markForCheck batches every preview reporting this frame into one change detection pass
+        this.planetPreviewOverflowChange.emit(hasOverflow);
+        this.changeDetectorRef.markForCheck();
       }
       this.frameId = null;
     });

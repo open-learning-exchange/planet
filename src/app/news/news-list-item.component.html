@@ -96,8 +96,11 @@
     </button>
     <span class="toolbar-fill"></span>
     @if (isMobile) {
-      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu" [attr.aria-label]="actionsLabel">
         <mat-icon>more_vert</mat-icon>
+        @if (hasUnreadReplies) {
+          <span class="unread-reply-dot corner" aria-hidden="true"></span>
+        }
       </button>
       <mat-menu #actionsMenu="matMenu" class="actions-menu">
         <ng-container *ngTemplateOutlet="actionItems"></ng-container>
@@ -107,8 +110,11 @@
         <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
       }
       @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-        <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
+        <button mat-button type="button" matTooltip="View replies" i18n-matTooltip [attr.aria-label]="repliesLabel" (click)="showReplies(item)">
           <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+          @if (hasUnreadReplies) {
+            <span class="unread-reply-dot" aria-hidden="true"></span>
+          }
         </button>
       }
       @if (!readOnly) {
@@ -144,8 +150,11 @@
     <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
   }
   @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-    <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
+    <button mat-button type="button" matTooltip="View replies" i18n-matTooltip [attr.aria-label]="repliesLabel" (click)="showReplies(item)">
       <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+      @if (hasUnreadReplies) {
+        <span class="unread-reply-dot" aria-hidden="true"></span>
+      }
     </button>
   }
   @if (!readOnly) {
