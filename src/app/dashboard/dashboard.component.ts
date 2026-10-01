@@ -11,7 +11,7 @@ import { StateService } from '../shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray, fullName } from '../shared/utils';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
+import { CertificationsService } from '../shared/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NgClass, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';

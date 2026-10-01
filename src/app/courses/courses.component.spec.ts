@@ -20,7 +20,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
+import { CertificationsService } from '../shared/certifications/certifications.service';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -33,7 +33,7 @@ describe('CoursesComponent', () => {
   let coursedata2;
   let coursearray;
 
-  const completionService = new CertificationsService({} as any, {} as any, {} as any);
+  const completionService = new CertificationsService({} as any);
   const certificationsServiceMock = {
     getCertifications: vi.fn().mockReturnValue(of([])),
     isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))

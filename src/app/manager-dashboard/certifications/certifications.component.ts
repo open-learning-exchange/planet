@@ -8,7 +8,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { finalize } from 'rxjs/operators';
-import { CertificationsService } from './certifications.service';
+import { CertificationsService } from '../../shared/certifications/certifications.service';
+import { CertificationsManagerService } from './certifications-manager.service';
 import { sortNumberOrString, filterSpecificFieldsHybrid } from '../../shared/table-helpers';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
@@ -80,6 +81,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private certificationsService: CertificationsService,
+    private certificationsManagerService: CertificationsManagerService,
     private deviceInfoService: DeviceInfoService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
@@ -113,7 +115,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(certification) {
-    this.certificationsService.openDeleteDialog(certification, this.deleteCertification());
+    this.certificationsManagerService.openDeleteDialog(certification, this.deleteCertification());
   }
 
   getCertifications() {

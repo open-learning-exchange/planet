@@ -9,7 +9,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CoursesService } from '../courses/courses.service';
 import { StateService } from '../shared/state.service';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
+import { CertificationsService } from '../shared/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
@@ -65,7 +65,7 @@ describe('DashboardComponent', () => {
       coursesListener$: vi.fn().mockReturnValue(of([]))
     };
     stateServiceMock = { configuration: { name: 'Planet Earth', code: 'earth_code' } };
-    const completionService = new CertificationsService({} as any, {} as any, {} as any);
+    const completionService = new CertificationsService({} as any);
     certificationsServiceMock = {
       getCertifications: vi.fn().mockReturnValue(of([])),
       isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))

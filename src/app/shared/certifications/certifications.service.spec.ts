@@ -1,7 +1,7 @@
 import { CertificationsService } from './certifications.service';
 
 describe('CertificationsService', () => {
-  const service = new CertificationsService({} as any, {} as any, {} as any);
+  const service = new CertificationsService({} as any);
   const user = { _id: 'learner' };
 
   it('requires a passed progress record for every current step', () => {

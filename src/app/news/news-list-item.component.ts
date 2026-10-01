@@ -8,7 +8,7 @@ import { AuthService } from '../shared/auth-guard.service';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
@@ -22,6 +22,7 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
 import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
 import { FullNamePipe } from '../shared/full-name.pipe';
 import { LinkCopyService } from '../shared/link-copy.service';
+import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -81,6 +82,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   previewLimit = 500;
   deviceType: DeviceType;
   isMobile: boolean;
+  commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
+  reactionSaving = false;
 
   constructor(
     private router: Router,
@@ -274,5 +277,57 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
         failure: $localize`Failed to copy voice link`
       }
     );
+  }
+
+  reactionEntries(newsDoc: any): ReactionEntry[] {
+    return getReactionEntries(newsDoc?.reactions);
+  }
+
+  hasUserReacted(newsDoc: any, emoji: string): boolean {
+    return hasUserReacted(newsDoc?.reactions, emoji, this.currentUser?._id);
+  }
+
+  reactionTooltip(emoji: string, users: string[] = []): string {
+    const count = users.length;
+    if (this.hasUserReacted(this.item?.doc, emoji)) {
+      if (count === 1) {
+        return $localize`You reacted with ${emoji}`;
+      }
+      const others = count - 1;
+      if (others === 1) {
+        return $localize`You and 1 other reacted with ${emoji}`;
+      }
+      return $localize`You and ${others} others reacted with ${emoji}`;
+    }
+    if (count === 1) {
+      return $localize`1 person reacted with ${emoji}`;
+    }
+    return $localize`${count} people reacted with ${emoji}`;
+  }
+
+  reactionLabel(emoji: string): string {
+    return $localize`React with ${emoji}`;
+  }
+
+  get canReact() {
+    return !this.readOnly && (this.editable || this.item?.public === true);
+  }
+
+  toggleReaction(newsDoc: any, emoji: string) {
+    if (!this.canReact || this.reactionSaving || !this.currentUser?._id || !newsDoc) {
+      return;
+    }
+    this.reactionSaving = true;
+    const previousReactions = newsDoc.reactions;
+    this.authService.checkAuthenticationStatus().pipe(
+      switchMap(() => {
+        newsDoc.reactions = toggleNewsReaction(newsDoc.reactions, emoji, this.currentUser._id);
+        return this.newsService.saveReaction(newsDoc);
+      }),
+      finalize(() => this.reactionSaving = false)
+    ).subscribe({
+      next: (res: any) => newsDoc._rev = res.rev,
+      error: () => newsDoc.reactions = previousReactions
+    });
   }
 }
