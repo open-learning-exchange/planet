@@ -14,7 +14,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
-import { filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
+import { filterSpecificFieldsHybrid, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -143,7 +143,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getTeams();
     this.teams.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'doc.name' ]),
+      filterSpecificFieldsHybrid([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
     this.teams.sortingDataAccessor = deepSortingDataAccessor;
