@@ -80,7 +80,7 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
-  customVoiceLabels: string[] = this.configuration.customVoiceLabels || [];
+  private readonly emptyVoiceLabels: string[] = [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -227,16 +227,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const challenge = this.challengesService.getActiveChallenge();
-    if (!challenge) {
-      return;
-    }
-    const dialogRef = this.challengesService.openChallengeDialog(this.dialog, challenge);
-    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      if (!this.userStatusService.getCompleteChallenge()) {
-        this.sendChallengeNotification(this.user, challenge).pipe(takeUntil(this.onDestroy$)).subscribe();
-      }
-    });
+    this.challengesService.getActiveChallenge().pipe(
+      filter(challenge => !!challenge),
+      switchMap(challenge => this.challengesService.openChallengeDialog(this.dialog, challenge).afterClosed().pipe(map(() => challenge))),
+      filter(() => !this.userStatusService.getCompleteChallenge()),
+      switchMap(challenge => this.sendChallengeNotification(this.user, challenge)),
+      takeUntil(this.onDestroy$)
+    ).subscribe();
   }
 
   sendChallengeNotification(user, challenge) {
@@ -265,7 +262,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
           name: planetCode,
           planetType: childPlanetType || 'community'
         };
-        this.customVoiceLabels = this.configuration.customVoiceLabels || [];
         this.team = requestedTeam;
         this.teamId = this.team._id;
         this.requestNewsAndUsers(planetCode);
@@ -342,11 +338,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
         )).map(user => this.sendNotifications(user._id, this.user._id));
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
+      switchMap(() => this.challengesService.getActiveChallenge()),
       finalize(() => this.dialogsLoadingService.stop()),
       takeUntil(this.onDestroy$)
-    ).subscribe(() => {
+    ).subscribe(challenge => {
       this.dialogsFormService.closeDialogsForm();
-      const challenge = this.challengesService.getActiveChallenge();
       if (
         challenge &&
         this.userStatusService.getStatus('joinedCourse') &&
@@ -626,6 +622,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.currentTab = index;
   }
 
+  get customVoiceLabels(): string[] {
+    return this.team?.customVoiceLabels || this.emptyVoiceLabels;
+  }
+
   get canManageLabels(): boolean {
     return !this.planetCode &&
       (this.isCommunityLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
@@ -638,11 +638,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsVoiceLabelsComponent, {
       width: '500px',
       autoFocus: false,
-      data: { target: 'community', customLabels: this.customVoiceLabels }
+      data: { target: 'community', team: this.team, customLabels: this.customVoiceLabels }
     }).afterClosed().subscribe((updatedLabels?: string[]) => {
       if (updatedLabels) {
-        this.customVoiceLabels = updatedLabels;
-        this.configuration = { ...this.configuration, customVoiceLabels: updatedLabels };
+        this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }
     });
   }

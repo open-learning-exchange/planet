@@ -232,10 +232,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 
   setResourceUrl(resourceUrl: string) {

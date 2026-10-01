@@ -115,11 +115,13 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   openAnnouncementDialog(notification?: any) {
-    const challenge = notification ?
+    const challenge$ = notification ?
       this.challengesService.getChallengeForNotification(notification) :
       this.challengesService.getActiveChallenge();
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    challenge$.subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 }
