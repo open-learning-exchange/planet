@@ -14,7 +14,7 @@
                 }
               </ng-container>
               @if (canManageLabels) {
-                <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" [disabled]="teamLoading" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+                <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" [disabled]="!teamLoaded" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
                   <mat-icon>label</mat-icon>
                 </button>
               }

@@ -109,6 +109,17 @@ describe('CommunityComponent remote exchange behavior', () => {
 
     expect(component.servicesDescriptionLabel).toBe('Add');
     expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('keeps label editing off when the team doc fails to load', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 500, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(false);
   });
 
   it('reloads community data on login but not when a logout unsets the user', () => {

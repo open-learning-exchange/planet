@@ -103,6 +103,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceTypes = DeviceType;
   newsLoading = true;
   teamLoading = true;
+  teamLoaded = false;
   private challengeChecked = false;
   currentTab = 0;
   activeReplyId: string | null = null;
@@ -160,6 +161,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.communityDataRequest$.pipe(
       tap(() => {
         this.teamLoading = true;
+        this.teamLoaded = false;
         this.newsLoading = true;
         this.communityDataLoading = true;
         this.activeReplyId = null;
@@ -176,6 +178,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
       this.teamLoading = false;
+      this.teamLoaded = true;
       if (!this.challengeChecked) {
         this.challengeChecked = true;
         this.communityChallenge();
