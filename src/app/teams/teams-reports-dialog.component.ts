@@ -7,14 +7,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   templateUrl: './teams-reports-dialog.component.html',
-  styles: [`
-    h3 {
-      margin: 0;
-    }
-    .mat-subtitle-2 {
-      margin-top: 0;
-    }
-  `],
+  styleUrls: ['./teams-reports-dialog.scss'],
   imports: [
     MatDialogTitle, CdkScrollable, MatDialogContent, TeamsReportsDetailComponent, MatDialogActions, MatButton, MatDialogClose, DatePipe
   ]

@@ -311,7 +311,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
 
   exportTableData() {
     const { data, title } = this.financeExportData(this.sortedData);
-    this.csvService.exportCSV({ data, title });
+    this.csvService.exportCSV({ data, title, markdown: false });
   }
 
   exportTablePdf() {
