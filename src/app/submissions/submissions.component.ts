@@ -5,7 +5,8 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/tables/table.helpers';
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '../shared/tables/table.helpers';
+import { appSourceLabel } from '../shared/android/app-source';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
@@ -85,8 +86,12 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
+  @Input() courseId: string;
+  @Input() courseTitle: string;
+  @Input() showCourseHeader = false;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
+  @Output() backClick = new EventEmitter<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
@@ -182,7 +187,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.submissions.data = submissions.map(submission => ({
         ...submission,
         submittedBy: this.submissionsService.submissionName(submission.user),
-        docSource: submission.androidId ? 'myPlanet' : 'planet'
+        docSource: appSourceLabel(submission)
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
@@ -216,6 +221,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.filter.type = 'survey';
       return { surveyId: this.surveyId, type: 'survey' as const };
     }
+    if (this.courseId) {
+      const escapedCourseId = this.courseId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return { query: findDocuments({ parentId: { $regex: `@${escapedCourseId}$` } }) };
+    }
     switch (this.mode) {
       case 'survey':
         return { query: findDocuments({
@@ -238,7 +247,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   setupTable() {
     this.submissions.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'parent.name' ]),
+      filterSpecificFieldsHybrid([ 'parent.name' ]),
       filterDropdowns(this.filter)
     ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {
@@ -273,6 +282,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
+    // A host that scopes the list to a course owns the route it came from.
+    if (this.courseId) {
+      this.backClick.emit();
+      return;
+    }
     this.router.navigate([ '../' ], { relativeTo: this.route.parent });
   }
 

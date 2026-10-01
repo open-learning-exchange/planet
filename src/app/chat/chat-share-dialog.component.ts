@@ -114,7 +114,7 @@ export class ChatShareDialogComponent implements OnInit {
     this.getTeams();
   }
 
-  teamSelect({ teamId, teamType }: { teamId: string; teamType: string }) {
+  teamSelect({ teamId, teamType }: { teamId: string, teamType: string }) {
     this.teamForm.controls.linkId.setValue(teamId);
     this.teamForm.controls.teamType.setValue(teamType);
     this.linkStepper.selected.completed = true;
@@ -199,23 +199,24 @@ export class ChatShareDialogComponent implements OnInit {
     this.conversation.chat = true;
     this.interact();
     this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).subscribe(() => {});
-    const challenge = this.challengesService.getActiveChallenge();
-    if (
-      challenge &&
-      this.userStatusService.getStatus('joinedCourse') &&
-      this.userStatusService.getStatus('surveyComplete') &&
-      !this.userStatusService.getStatus('hasPost')
-    ) {
-      this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
-        width: '50vw',
-        maxHeight: '100vh',
-        data: challenge
-      });
-      this.userStatusService.updateStatus('hasPost', {
-        status: true,
-        amount: challenge.voicePostReward ?? 2
-      });
-    }
+    this.challengesService.getActiveChallenge().subscribe(challenge => {
+      if (
+        challenge &&
+        this.userStatusService.getStatus('joinedCourse') &&
+        this.userStatusService.getStatus('surveyComplete') &&
+        !this.userStatusService.getStatus('hasPost')
+      ) {
+        this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
+          width: '50vw',
+          maxHeight: '100vh',
+          data: challenge
+        });
+        this.userStatusService.updateStatus('hasPost', {
+          status: true,
+          amount: challenge.voicePostReward ?? 2
+        });
+      }
+    });
   }
 
   interact() {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of, empty, forkJoin, throwError } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
+import { switchMap, map, take, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/database/couchdb.service';
 import { UserService } from '../shared/auth/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -157,7 +157,7 @@ export class TeamsService {
       this.updateShelf(memberInfo) :
       this.updateMembershipDoc(team, leaveTeam, memberInfo)
     ).pipe(
-      switchMap(() => leaveTeam ? this.isTeamEmpty(team) : of(team)),
+      switchMap(() => leaveTeam ? this.isTeamEmpty(team).pipe(catchError(() => of(false))) : of(team)),
       switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
       switchMap((newTeam) => of({ ...team, ...newTeam }))
     );
@@ -335,16 +335,19 @@ export class TeamsService {
     };
   }
 
-  getTeamMembers(team, withAllLinks = false) {
-    const selector = {
+  private activeMembershipSelector(team, withAllLinks = false) {
+    return {
       teamId: team._id,
       teamPlanetCode: team.teamPlanetCode,
       status: { $or: [ { $exists: false }, { $ne: 'archived' } ] },
       ...(withAllLinks ? {} : { docType: 'membership' })
     };
+  }
+
+  getTeamMembers(team, withAllLinks = false) {
     this.usersService.requestUserData();
     return forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selector)),
+      this.couchService.findAll(this.dbName, findDocuments(this.activeMembershipSelector(team, withAllLinks))),
       this.couchService.findAll('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0)),
       this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
@@ -369,8 +372,12 @@ export class TeamsService {
     ));
   }
 
-  isTeamEmpty(team) {
-    return this.getTeamMembers(team).pipe(map((docs) => docs.length === 0));
+  private isTeamEmpty(team) {
+    const firstRow = (db: string, selector: any) => this.couchService.post(db + '/_find', findDocuments(selector, [ '_id' ], 0, 1));
+    return firstRow(this.dbName, this.activeMembershipSelector(team)).pipe(
+      switchMap((result: any) => result.docs.length > 0 ? of(result) : firstRow('shelf', { myTeamIds: { $in: [ team._id ] } })),
+      map(({ docs }) => docs.length === 0)
+    );
   }
 
   sendNotifications(type, members, notificationParams) {

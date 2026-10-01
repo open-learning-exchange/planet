@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { trackByIndex } from '../../shared/tables/table.helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
@@ -51,6 +51,8 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     PlanetMarkdownComponent,
     MatExpansionPanelActionRow,
     ResourcesMenuComponent,
+    MatAnchor,
+    RouterLink,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
   ]
@@ -103,9 +105,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
-        this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
-          this.courseDetail.creator !== undefined &&
-          (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
+        this.canManage = this.coursesService.canManageCourse(this.courseDetail, { readOnly: this.parent });
         return this.stateService.getCouchState('exams', 'local');
       }),
       takeUntil(this.onDestroy$)
@@ -113,6 +113,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
       this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
     }, () => this.isLoading = false);
+    this.coursesService.courseTagsListener$(this.parent).pipe(
+      filter(({ courseId }) => courseId === this.courseDetail._id),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });

@@ -17,7 +17,6 @@ import { LabelComponent } from './ui/label.component';
 import { AvatarComponent } from './ui/avatar.component';
 import { LanguageLabelComponent } from './language/language-label.component';
 import { RestrictDiacriticsDirective } from './forms/restrict-diacritics.directive';
-import { AiChatOutputDirective } from './ai/ai-chat-output.directive';
 import { TruncateTextPipe } from './text/truncate-text.pipe';
 import { FullNamePipe } from './text/full-name.pipe';
 import { TimeAgoPipe } from './text/time-ago.pipe';
@@ -41,7 +40,6 @@ import { PreviewOverflowDirective } from './text/preview-overflow.directive';
     LanguageLabelComponent,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    AiChatOutputDirective,
     TruncateTextPipe,
     FullNamePipe,
     TimeAgoPipe,
@@ -62,7 +60,6 @@ import { PreviewOverflowDirective } from './text/preview-overflow.directive';
     LanguageLabelComponent,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    AiChatOutputDirective,
     OverlayModule,
     TruncateTextPipe,
     FullNamePipe,

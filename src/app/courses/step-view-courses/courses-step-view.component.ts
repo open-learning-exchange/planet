@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
+import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -48,7 +49,8 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-sp
     MatButtonToggle,
     MatTooltip,
     ResourcesViewerComponent,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    ResourcesIconComponent
   ]
 })
 
@@ -124,9 +126,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           this.coursesService.courseActivity('visit', course, this.stepNum);
           this.countActivity = false;
         }
-        this.canManage = this.userService.get().isUserAdmin ||
-        course.creator !== undefined &&
-        (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
+        this.canManage = this.coursesService.canManageCourse(course);
       });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -232,10 +232,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 
   setResourceUrl(resourceUrl: string) {

@@ -16,7 +16,9 @@ export interface DialogField<TName extends string = string> {
   required?: boolean;
   disabled?: boolean;
   multiple?: boolean;
-  options?: Array<{ name: string; value?: unknown } | string>;
+  options?: Array<{ name: string, value?: unknown } | string>;
+  maxLength?: number;
+  suggestions?: string[];
   planetBeta?: boolean;
   tooltip?: string;
   reset?: boolean;

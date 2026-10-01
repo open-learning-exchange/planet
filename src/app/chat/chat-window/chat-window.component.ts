@@ -9,7 +9,7 @@ import { showFormErrors, trackByIdVal } from '../../shared/tables/table.helpers'
 import { UserService } from '../../shared/auth/user.service';
 import { StateService } from '../../shared/state.service';
 import { NgClass } from '@angular/common';
-import { AiChatOutputDirective } from '../../shared/ai/ai-chat-output.directive';
+import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
@@ -24,7 +24,7 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.scss'],
   imports: [
-    AiChatOutputDirective,
+    PlanetMarkdownComponent,
     NgClass,
     FormsModule,
     ReactiveFormsModule,

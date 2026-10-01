@@ -31,7 +31,7 @@ interface RegisterFormControls extends LoginFormControls {
 
 interface LoginCredentials {
   name: string;
-  password: string
+  password: string;
 };
 
 type LoginFormGroup = FormGroup<LoginFormControls>;

@@ -8,16 +8,14 @@ import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import { ConfigurationService } from '../configuration/configuration.service';
-import { StateService } from '../shared/state.service';
 import { CouchService } from '../shared/database/couchdb.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { LabelComponent } from '../shared/ui/label.component';
 import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from './news-labels';
 import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
-import { Subject } from 'rxjs';
-import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
+import { Subject, of, throwError } from 'rxjs';
+import { catchError, filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
 
 @Component({
   templateUrl: './news-labels-dialog.component.html',
@@ -54,8 +52,6 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
   constructor(
     private dialogRef: MatDialogRef<NewsLabelsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private stateService: StateService,
-    private configurationService: ConfigurationService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
@@ -76,8 +72,6 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     let configuredLabels: string[] = [];
     if (Array.isArray(this.data?.customLabels)) {
       configuredLabels = this.data.customLabels;
-    } else if (this.target === 'community') {
-      configuredLabels = this.stateService.configuration?.customVoiceLabels || [];
     } else if (this.team && Array.isArray(this.team.customVoiceLabels)) {
       configuredLabels = this.team.customVoiceLabels;
     }
@@ -189,10 +183,7 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     if (!this.labelsChanged) {
       return;
     }
-    const isCommunity = this.target === 'community';
-    const currentConfig = this.stateService.configuration;
-    const targetDocument = isCommunity ? currentConfig : this.team;
-    if (!targetDocument?._id) {
+    if (!this.team?._id) {
       this.planetMessageService.showAlert($localize`Label settings are not available. Please try again.`);
       return;
     }
@@ -200,22 +191,17 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     this.isSaving = true;
     this.dialogsLoadingService.start();
     const customVoiceLabels = [ ...this.customLabels ];
-    const updateRequest = isCommunity ?
-      this.configurationService.patchLocalConfiguration({ customVoiceLabels }) :
-      this.couchService.get(`teams/${targetDocument._id}`).pipe(
-        switchMap(currentDocument => this.couchService.updateDocument('teams', { ...currentDocument, customVoiceLabels }))
-      );
-
-    updateRequest.pipe(
+    this.couchService.get(`teams/${this.team._id}`).pipe(
+      // The community's services doc is only created once something is saved to it
+      catchError(error => this.target === 'community' && error.status === 404 ? of(this.team) : throwError(error)),
+      switchMap(currentDocument => this.couchService.updateDocument('teams', { ...currentDocument, customVoiceLabels })),
       finalize(() => {
         this.isSaving = false;
         this.dialogsLoadingService.stop();
       })
     ).subscribe({
       next: (savedDocument) => {
-        if (isCommunity) {
-          this.stateService.requestData('configurations', 'local');
-        } else if (savedDocument?.doc) {
+        if (savedDocument?.doc) {
           Object.assign(this.team, savedDocument.doc);
         }
         this.planetMessageService.showMessage($localize`Voice labels updated successfully.`);

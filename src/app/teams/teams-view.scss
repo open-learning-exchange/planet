@@ -1,5 +1,10 @@
 .teams-view {
 
+  .new-message-btn {
+    flex: 0 0 auto;
+    align-self: center;
+  }
+
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -33,6 +38,13 @@
 
   .mat-subtitle-1 {
     margin: 5px 25px 10px 15px;
+
+    .resource-title-wrapper {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      vertical-align: middle;
+    }
 
     b {
       display: inline-block;

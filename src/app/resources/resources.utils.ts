@@ -1,4 +1,6 @@
+import mime from 'mime';
 import { formatBytes } from '../shared/utils';
+import { fileTypes } from './resources.constants';
 
 interface ResourceAttachment {
   content_type?: string;
@@ -19,6 +21,26 @@ export const resourceAttachmentFilename = (doc?: ResourceDocumentWithAttachments
     return doc.openWhichFile;
   }
   return Object.keys(attachments)[0] ?? '';
+};
+
+const fileTypeFor = (value: string) => fileTypes.find(fileType => fileType.value === value);
+
+const matchFileType = (contentType?: string | null) => fileTypes.find(({ pattern }) => contentType && pattern?.test(contentType));
+
+const attachmentFileType = (doc: ResourceDocumentWithAttachments, filename: string) => {
+  const storedType = attachmentsFor(doc)[filename]?.content_type?.split(';')[0].trim().toLowerCase();
+  return matchFileType(storedType) ?? matchFileType(mime.getType(filename)) ?? fileTypeFor('other');
+};
+
+// Zip uploads are unzipped, so an unzipped web page without a chosen start file is a web bundle
+export const resourceFileType = (doc?: ResourceDocumentWithAttachments | null) => {
+  const filename = resourceAttachmentFilename(doc);
+  if (!filename) {
+    return undefined;
+  }
+  const isWebBundle = filename !== doc?.openWhichFile &&
+    Object.keys(attachmentsFor(doc)).some(name => attachmentFileType(doc, name).value === 'html');
+  return isWebBundle ? fileTypeFor('html') : attachmentFileType(doc, filename);
 };
 
 export const formatResourceAttachmentSize = (

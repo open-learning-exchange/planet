@@ -3,7 +3,8 @@ import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFo
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
-import { CertificationsService } from './certifications.service';
+import { CertificationsService } from '../../shared/certifications/certifications.service';
+import { CertificationsManagerService } from './certifications-manager.service';
 import { TablesAddDialogComponent } from '../../shared/tables/tables-add-dialog.component';
 import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/tables/table.helpers';
@@ -54,6 +55,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private certificationsService: CertificationsService,
+    private certificationsManagerService: CertificationsManagerService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private cdRef: ChangeDetectorRef
@@ -105,7 +107,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       return;
     }
     const certificateFormValue = this.certificateForm.getRawValue();
-    this.certificationsService.addCertification({
+    this.certificationsManagerService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds

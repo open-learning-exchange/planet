@@ -93,17 +93,14 @@
         <planet-loading-spinner text="Loading messages..." i18n-text></planet-loading-spinner>
       }
       @if (!newsLoading) {
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [customLabels]="customVoiceLabels" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
-          @if (isRoot) {
-            <button mat-stroked-button (click)="openAddMessageDialog()" i18n>New message</button>
-            @if (canManageLabels) {
-              <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
-                <mat-icon>label</mat-icon>
-              </button>
-            }
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [customLabels]="customVoiceLabels" [shareTarget]="configuration?.planetType" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
+          @if (userStatus === 'member') {
+            <button class="new-message-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New message</button>
           }
-          @if (news?.length === 0) {
-            <p i18n>No messages available.</p>
+          @if (canManageLabels) {
+            <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+              <mat-icon>label</mat-icon>
+            </button>
           }
         </planet-news-list>
       }
@@ -207,7 +204,7 @@
           <ng-container i18n>Calendar</ng-container>
         </ng-template>
         @if (calendarTab.isActive) {
-          <planet-calendar [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'" [leaderOfTeamId]="isUserLeader ? teamId : undefined"></planet-calendar>
         }
       </mat-tab>
       @if (mode!=='team') {
@@ -240,8 +237,8 @@
               <mat-card (click)="resource.resource && openResource(resource.resource._id)" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource?._attachments" [ngClass]="{'cursor-pointer': resource.resource}">
                 <div class="mat-subtitle-1">
                   @if (resource.resource!==undefined) {
-                    <span>
-                      <b>{{resource.resource.title | truncateText:75}}</b>
+                    <span class="resource-title-wrapper">
+                      <planet-resource-icon [resource]="resource.resource"></planet-resource-icon><b>{{resource.resource.title | truncateText:75}}</b>
                     </span>
                   }
                   @if (resource.resource===undefined) {

@@ -15,7 +15,7 @@ import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
+  filterSpecificFieldsHybrid, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
 } from '../shared/tables/table.helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -145,7 +145,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getTeams();
     this.teams.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'doc.name' ]),
+      filterSpecificFieldsHybrid([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
     this.teams.sortingDataAccessor = deepSortingDataAccessor;
@@ -416,7 +416,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         type: 'enterprise',
         displayName,
         rules: team.rules,
-        extraMessage: enterpriseJoinAgreement()
+        extraMessage: enterpriseJoinAgreement(),
+        extraMessageType: 'supplementary'
       }
     });
   }

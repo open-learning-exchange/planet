@@ -77,7 +77,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   getNotifications() {
     const userFilter = notificationUserFilter(this.userService.get());
-    this.couchService.findAll('notifications/_find', findDocuments(
+    this.couchService.findAll('notifications', findDocuments(
       { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
         time: { $gt: 0 }
@@ -114,12 +114,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     this.notificationsService.setNotificationsAsRead(this.notifications.data);
   }
 
-  openAnnouncementDialog(notification?: any) {
-    const challenge = notification ?
-      this.challengesService.getChallengeForNotification(notification) :
-      this.challengesService.getActiveChallenge();
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+  openAnnouncementDialog(notification: any) {
+    this.challengesService.getChallengeForNotification(notification).subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 }

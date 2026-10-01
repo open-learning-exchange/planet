@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { PdfService } from '../shared/export/pdf.service';
-import { markdownToPlainText } from '../shared/utils';
 
 export interface PdfSummaryItem {
   format?: 'currency';
@@ -131,22 +130,18 @@ export class TeamsTablePdfExportService {
   ) {
     return data.map(row => Object.entries(row).reduce(
       (object, [ key, value ]: [ string, any ]) => {
-        const formattedKey = markdownToPlainText(key);
-        const formatter = columnFormatters[formattedKey];
-        const formattedValue = moneyColumns.includes(formattedKey) ?
+        const formatter = columnFormatters[key];
+        const formattedValue = moneyColumns.includes(key) ?
           this.formatCurrency(value, currencyCode, currencySymbol) :
           formatter ? formatter(value, row) : value;
-        return { ...object, [formattedKey]: this.formatValue(formattedValue) };
+        return { ...object, [key]: this.formatValue(formattedValue) };
       },
       {}
     ));
   }
 
   private formatValue(value: any) {
-    if (value === undefined || value === null) {
-      return '';
-    }
-    return markdownToPlainText(value);
+    return value === undefined || value === null ? '' : value;
   }
 
   private summaryContent(summary: PdfSummaryItem[], currencyCode?: string, currencySymbol?: string) {
@@ -204,7 +199,7 @@ export class TeamsTablePdfExportService {
     return sections
       .filter(section => section.images.length > 0)
       .flatMap(section => [
-        { text: markdownToPlainText(section.title), style: 'imageSectionTitle' },
+        { text: section.title, style: 'imageSectionTitle' },
         ...this.imageRows(section.images)
       ]);
   }

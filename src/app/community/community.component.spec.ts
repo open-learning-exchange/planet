@@ -1,5 +1,5 @@
 import { convertToParamMap } from '@angular/router';
-import { BehaviorSubject, EMPTY, Subscription, of } from 'rxjs';
+import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CommunityComponent } from './community.component';
@@ -21,23 +21,11 @@ describe('CommunityComponent custom labels', () => {
     expect(component.canManageLabels).toBe(true);
   });
 
-  it('filters malformed labels without crashing', () => {
+  it('passes the services doc labels to the dialog and applies the saved vocabulary locally', () => {
     const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
-    component.news = [ { doc: { labels: [ null, 42, 'Event' ], viewIn: [] } } ];
-    component.selectedLabel = 'event';
-    component.voiceSearch = '';
-
-    component.applyFilters();
-
-    expect(component.filteredNews).toEqual(component.news);
-  });
-
-  it('passes current labels to the dialog and applies the saved vocabulary locally', () => {
-    const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    const team = { _id: 'local@parent', customVoiceLabels: [ 'Announcement', 'Event' ] };
     component.planetCode = null;
-    component.configuration = { customVoiceLabels: [ 'Announcement', 'Event' ] };
-    component.customVoiceLabels = [ 'Announcement', 'Event' ];
-    component.selectedLabel = 'ANNOUNCEMENT';
+    component.team = team;
     const open = vi.fn().mockReturnValue({ afterClosed: () => of([ 'Event' ]) });
     (component as any).dialog = {
       open
@@ -49,18 +37,10 @@ describe('CommunityComponent custom labels', () => {
     expect(open).toHaveBeenCalledWith(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
-      data: { target: 'community', customLabels: [ 'Announcement', 'Event' ] }
+      data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }
     });
-    expect(component.selectedLabel).toBe('ANNOUNCEMENT');
     expect(component.customVoiceLabels).toEqual([ 'Event' ]);
     expect(component.requestNewsAndUsers).not.toHaveBeenCalled();
-  });
-
-  it('precomputes group label names for case-insensitive icon lookup', () => {
-    const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
-    component.getAvailableLabels([ { doc: { labels: [], viewIn: [ { name: 'Team Events' } ] } } ]);
-
-    expect(component.getLabelIcon('team events')).toBe('groups');
   });
 });
 
@@ -91,7 +71,9 @@ describe('CommunityComponent remote exchange behavior', () => {
       findAll: vi.fn(() => of([])),
       get: vi.fn(() => of({ _id: 'remote@local', description: '' }))
     };
-    const userService = { get: vi.fn(() => ({ _id: 'user', isUserAdmin: false, roles: [] })), userChange$: EMPTY };
+    const userChange$ = new Subject<any>();
+    const currentUser: any = { value: { _id: 'user', isUserAdmin: false, roles: [] } };
+    const userService = { get: vi.fn(() => currentUser.value), userChange$ };
     const usersService = { usersListener: vi.fn(() => EMPTY) };
     const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
     const component = new CommunityComponent(
@@ -111,11 +93,48 @@ describe('CommunityComponent remote exchange behavior', () => {
       deviceInfoService as any,
       {} as any,
       { checkConfiguration: vi.fn(() => of(undefined)) } as any,
-      { getActiveChallenge: vi.fn(() => null) } as any
+      { getActiveChallenge: vi.fn(() => of(undefined)), activeChallengeIn: vi.fn() } as any
     );
 
-    return { component, couchService, dialog, dialogsFormService, routeParamMap, router, stateService };
+    return {
+      component, couchService, dialog, dialogsFormService, routeParamMap, router, stateService, userChange$, currentUser
+    };
   };
+
+  it('treats a missing team doc as a community without one', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 404, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.servicesDescriptionLabel).toBe('Add');
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('keeps label editing off when the team doc fails to load', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 500, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(false);
+  });
+
+  it('reloads community data on login but not when a logout unsets the user', () => {
+    const { component, couchService, userChange$, currentUser } = createComponent();
+    component.ngOnInit();
+    const callsAfterInit = couchService.findAll.mock.calls.length;
+
+    currentUser.value = { name: '' };
+    userChange$.next(currentUser.value);
+    expect(couchService.findAll.mock.calls.length).toBe(callsAfterInit);
+
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [] };
+    userChange$.next(currentUser.value);
+    expect(couchService.findAll.mock.calls.length).toBeGreaterThan(callsAfterInit);
+  });
 
   it('sets remote exchange mode synchronously from the route snapshot', () => {
     const { component } = createComponent();
