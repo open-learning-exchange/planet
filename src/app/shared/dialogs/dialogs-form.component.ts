@@ -28,7 +28,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
 import { deepEqual } from '../utils';
-import { filterSpecificFields } from '../table-helpers';
+import { filterSpecificFieldsHybrid } from '../table-helpers';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 
 @Component({
@@ -188,7 +188,7 @@ export class DialogsFormComponent {
   }
 
   filteredSuggestions(field: DialogField) {
-    const matchesValue = filterSpecificFields([ 'suggestion' ]);
+    const matchesValue = filterSpecificFieldsHybrid([ 'suggestion' ]);
     const value = (this.modalForm.controls[field.name].value || '').toString();
     return field.suggestions.filter(suggestion => matchesValue({ suggestion }, value));
   }

@@ -28,7 +28,7 @@ import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
-import { filterSpecificFieldsByWord } from '../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../shared/table-helpers';
 
 interface NewReportForm {
   _id?: string;
@@ -108,7 +108,7 @@ export class TeamsReportsComponent implements OnChanges {
 
   applyFilter(filter: string) {
     this.filter = filter;
-    const matchesFilter = filterSpecificFieldsByWord([ 'searchText' ]);
+    const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
     this.filteredCards = this.reportCards.filter(card => matchesFilter(card, filter));
   }
 

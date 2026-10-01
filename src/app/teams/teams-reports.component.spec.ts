@@ -61,6 +61,26 @@ describe('TeamsReportsComponent', () => {
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a' ]);
     });
 
+    it('finds labels with misspelled words in any order', () => {
+      component.applyFilter('reveiw annual');
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'b' ]);
+    });
+
+    it('tolerates typos across the label and month name', () => {
+      component.applyFilter('audti januarry');
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a' ]);
+    });
+
+    it('does not approximate numeric label codes or years', () => {
+      component.applyFilter('Q2 audti');
+      expect(component.filteredCards).toEqual([]);
+
+      component.applyFilter('2027');
+      expect(component.filteredCards).toEqual([]);
+    });
+
     it('matches nothing when the search is absent from labels and dates', () => {
       component.applyFilter('payroll');
 
@@ -114,6 +134,16 @@ describe('TeamsReportsComponent', () => {
       component.applyFilter(' Q1 ');
 
       expect(component['reportsExportData']().title).toBe('Financial Summary for Team filtered by Q1');
+    });
+
+    it('exports the reports matched by a misspelled label', () => {
+      component.reports = [ report({ label: 'Audit' }), report({ label: 'Annual Review' }) ];
+      component.ngOnChanges();
+      component.applyFilter('audti');
+
+      const { data, title } = component['reportsExportData']();
+      expect(data.map(row => row.Label)).toEqual([ 'Audit' ]);
+      expect(title).toBe('Financial Summary for Team filtered by audti');
     });
   });
 
