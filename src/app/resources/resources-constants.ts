@@ -66,3 +66,17 @@ export const resourceFor = [
   { label: $localize`Leader`, value: 'leader' },
   { label: $localize`Learner`, value: 'learner' }
 ];
+
+export const fileTypes = [
+  { label: $localize`PDF`, value: 'pdf', icon: 'picture_as_pdf', pattern: /^application\/pdf$/ },
+  { label: $localize`Video`, value: 'video', icon: 'movie', pattern: /^video\/|^application\/mp4$/ },
+  { label: $localize`Audio`, value: 'audio', icon: 'audiotrack', pattern: /^audio\// },
+  { label: $localize`Image`, value: 'image', icon: 'image', pattern: /^image\// },
+  { label: $localize`Spreadsheet`, value: 'spreadsheet', icon: 'grid_on', pattern: /csv|(comma|tab)-separated|spreadsheet|ms-excel/ },
+  { label: $localize`Slides`, value: 'slides', icon: 'slideshow', pattern: /presentation|powerpoint/ },
+  { label: $localize`Document`, value: 'document', icon: 'description', pattern: /wordprocessing|opendocument\.text|ms-?word|rtf$|epub/ },
+  { label: $localize`Web page`, value: 'html', icon: 'language', pattern: /^text\/html$|xhtml/ },
+  { label: $localize`Text`, value: 'text', icon: 'subject', pattern: /^text\/|[/+](json|xml)$/ },
+  { label: $localize`Archive`, value: 'archive', icon: 'archive', pattern: /zip2?$|compressed$|tar$|rar$|xz$/ },
+  { label: $localize`Other file`, value: 'other', icon: 'insert_drive_file' }
+];
