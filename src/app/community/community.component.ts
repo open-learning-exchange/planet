@@ -39,7 +39,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
-import { TeamsReportsComponent } from '../teams/teams-reports.component';
+import { TeamsReportsComponent } from '../teams/teams-reports/teams-reports.component';
 import { PlanetCalendarComponent } from '../shared/calendar.component';
 
 interface CommunityDescriptionForm {

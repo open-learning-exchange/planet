@@ -4,7 +4,7 @@ import { forkJoin } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
-import { attachNamesToPlanets } from './reports.utils';
+import { attachNamesToPlanets } from '../reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
@@ -14,7 +14,7 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
 import { PendingTableComponent } from './pending-table.component';
 
 @Component({
-  templateUrl: './reports-pending.component.html',
+  templateUrl: './pending.component.html',
   imports: [
     MatToolbar,
     MatIconButton,
@@ -27,7 +27,7 @@ import { PendingTableComponent } from './pending-table.component';
     PendingTableComponent
   ]
 })
-export class ReportsPendingComponent implements OnInit {
+export class PendingComponent implements OnInit {
 
   data = [];
   planets = [];

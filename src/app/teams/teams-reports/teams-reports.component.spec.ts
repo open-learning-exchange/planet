@@ -1,5 +1,5 @@
-import { StateService } from '../shared/state.service';
-import { TeamsAttachmentsService } from './teams-attachments.service';
+import { StateService } from '../../shared/state.service';
+import { TeamsAttachmentsService } from '../teams-attachments.service';
 import { TeamsReportsComponent } from './teams-reports.component';
 
 describe('TeamsReportsComponent', () => {
