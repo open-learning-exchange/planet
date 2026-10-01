@@ -59,6 +59,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
 import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
 import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { ResourcesIconComponent } from './resources-icon.component';
 
 @Component({
   selector: 'planet-resources',
@@ -118,7 +119,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatNoDataRow,
     MatPaginator,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    ResourcesIconComponent
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
