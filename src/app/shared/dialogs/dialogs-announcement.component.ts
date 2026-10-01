@@ -40,7 +40,7 @@ export class DialogsAnnouncementSuccessComponent {
     private challengesService: ChallengesService,
     @Inject(MAT_DIALOG_DATA) public data: PlanetChallenge | null,
   ) {
-    this.challenge = this.challengesService.normalizeChallenge(data || this.challengesService.getActiveChallenge() || {});
+    this.challenge = this.challengesService.normalizeChallenge(data || {});
   }
 }
 
@@ -87,7 +87,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.challenge = this.challengesService.normalizeChallenge(this.data || this.challengesService.getActiveChallenge() || {});
+    this.challenge = this.challengesService.normalizeChallenge(this.data || {});
     this.courseId = this.challenge.courseId;
     this.surveyExamId = this.challenge.surveyExamId;
     this.startDate = this.getDate(this.challenge.startsAt);

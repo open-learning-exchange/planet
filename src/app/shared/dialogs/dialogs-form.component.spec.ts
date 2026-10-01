@@ -11,6 +11,8 @@ import { DialogsListService } from './dialogs-list.service';
 import { UserService } from '../user.service';
 import { DialogGuardService } from './dialog-guard.service';
 import { DialogField } from './dialogs-form.service';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 
 describe('DialogsFormComponent', () => {
   let fixture: ComponentFixture<DialogsFormComponent>;
@@ -148,5 +150,37 @@ describe('DialogsFormComponent', () => {
     fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
 
     expect(scrollSpy).toHaveBeenCalledTimes(1);
+  });
+
+  describe('label suggestions', () => {
+    const renderSuggestions = async (suggestions: string[]) => {
+      createComponent({
+        title: 'Report',
+        fields: [ { name: 'label', type: 'textbox', placeholder: 'Label', suggestions } ],
+        formGroup: { label: [ '' ] },
+        closeOnSubmit: true
+      });
+      return TestbedHarnessEnvironment.loader(fixture).getHarness(MatAutocompleteHarness);
+    };
+
+    it('finds a misspelled multiword label and keeps the selected label unchanged', async () => {
+      const input = await renderSuggestions([ 'Quarterly Review', 'Annual Review' ]);
+
+      await input.enterText('reveiw quartrly');
+      const options = await input.getOptions();
+      expect(await Promise.all(options.map(option => option.getText()))).toEqual([ 'Quarterly Review' ]);
+
+      await input.selectOption({ text: 'Quarterly Review' });
+      expect(component.modalForm.controls['label'].value).toBe('Quarterly Review');
+    });
+
+    it('keeps numeric label codes and years exact in suggestions', async () => {
+      const input = await renderSuggestions([ 'Q1 Audit 2026', 'Q2 Audit 2026', 'Q2 Audit 2027' ]);
+
+      await input.enterText('Q2 audti 2027');
+      const options = await input.getOptions();
+
+      expect(await Promise.all(options.map(option => option.getText()))).toEqual([ 'Q2 Audit 2027' ]);
+    });
   });
 });

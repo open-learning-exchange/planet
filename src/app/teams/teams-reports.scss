@@ -1,4 +1,5 @@
 @use "../variables" as v;
+@use "../mixins" as m;
 
 .reports-container {
   display: flex;
@@ -35,6 +36,10 @@
       height: 18px;
     }
   }
+  .reports-filter {
+    flex: 0 1 260px;
+    min-width: 180px;
+  }
 }
 
 .reports-grid {
@@ -68,6 +73,28 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
+}
+
+.report-card-title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.report-card-eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.report-card-label {
+  @include m.label-chip;
+  max-width: 100%;
+  min-width: 0;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .report-card-eyebrow {

@@ -1,22 +1,19 @@
-import { NEVER, of } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 import { DialogsVoiceLabelsComponent } from './dialogs-voice-labels.component';
 
 describe('DialogsVoiceLabelsComponent', () => {
   let dialogRef: any;
-  let stateService: any;
-  let configurationService: any;
   let couchService: any;
   let planetMessageService: any;
   let dialogsLoadingService: any;
   let dialog: any;
+  let communityTeam: any;
 
   const createComponent = (data: any) => new DialogsVoiceLabelsComponent(
     dialogRef,
     data,
-    stateService,
-    configurationService,
     couchService,
     planetMessageService,
     dialogsLoadingService,
@@ -30,20 +27,10 @@ describe('DialogsVoiceLabelsComponent', () => {
       backdropClick: vi.fn().mockReturnValue(NEVER),
       keydownEvents: vi.fn().mockReturnValue(NEVER)
     };
-    stateService = {
-      configuration: { _id: 'configuration', code: 'local', customVoiceLabels: [ 'Stale label' ] },
-      requestData: vi.fn()
-    };
-    configurationService = {
-      patchLocalConfiguration: vi.fn().mockReturnValue(of({}))
-    };
+    communityTeam = { _id: 'local@parent', teamType: 'sync', teamPlanetCode: 'local', type: 'services' };
     couchService = {
       get: vi.fn().mockReturnValue(of({
-        _id: 'configuration',
-        _rev: '2-current',
-        code: 'local',
-        customVoiceLabels: [ 'Stale label' ],
-        keys: { service: 'secret' }
+        ...communityTeam, _rev: '2-current', description: 'About us', customVoiceLabels: [ 'Stale label' ]
       })),
       updateDocument: vi.fn().mockReturnValue(of({}))
     };
@@ -74,47 +61,56 @@ describe('DialogsVoiceLabelsComponent', () => {
     expect(component.customLabels).toEqual([ 'Event', 'News' ]);
   });
 
-  it('uses the labels supplied by the parent and updates only the local configuration', () => {
-    const component = createComponent({ target: 'community', customLabels: [ 'Current label' ] });
+  it('saves the labels supplied by the parent onto the latest community services doc', () => {
+    const component = createComponent({ target: 'community', team: communityTeam, customLabels: [ 'Current label' ] });
     component.ngOnInit();
     component.customLabels.push('New label');
 
     component.save();
 
     expect(component.initialCustomLabels).toEqual([ 'Current label' ]);
-    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
+    expect(couchService.get).toHaveBeenCalledWith('teams/local@parent');
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
+      ...communityTeam,
+      _rev: '2-current',
+      description: 'About us',
       customVoiceLabels: [ 'Current label', 'New label' ]
     });
-    expect(couchService.get).not.toHaveBeenCalled();
-    expect(couchService.updateDocument).not.toHaveBeenCalled();
-    expect(stateService.requestData).toHaveBeenCalledWith('configurations', 'local');
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalledWith([ 'Current label', 'New label' ]);
   });
 
+  it('creates the community services doc when it does not exist yet', () => {
+    couchService.get.mockReturnValue(throwError({ status: 404 }));
+    const component = createComponent({ target: 'community', team: communityTeam, customLabels: [] });
+    component.ngOnInit();
+    component.customLabels.push('Event');
+
+    component.save();
+
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', { ...communityTeam, customVoiceLabels: [ 'Event' ] });
+    expect(dialogRef.close).toHaveBeenCalledWith([ 'Event' ]);
+  });
+
   it('adds valid pending input before saving', () => {
-    const component = createComponent({ target: 'community', customLabels: [] });
+    const component = createComponent({ target: 'community', team: communityTeam, customLabels: [] });
     component.ngOnInit();
     component.newLabelInput = 'Event';
 
     component.save();
 
-    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
-      customVoiceLabels: [ 'Event' ]
-    });
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({ customVoiceLabels: [ 'Event' ] }));
     expect(dialogRef.close).toHaveBeenCalledWith([ 'Event' ]);
   });
 
   it('persists a display-casing change', () => {
-    const component = createComponent({ target: 'community', customLabels: [ 'Announcement' ] });
+    const component = createComponent({ target: 'community', team: communityTeam, customLabels: [ 'Announcement' ] });
     component.ngOnInit();
     component.customLabels = [ 'announcement' ];
 
     component.save();
 
-    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
-      customVoiceLabels: [ 'announcement' ]
-    });
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({ customVoiceLabels: [ 'announcement' ] }));
   });
 
   it('merges team labels into the latest team revision', () => {
@@ -140,7 +136,6 @@ describe('DialogsVoiceLabelsComponent', () => {
       name: 'Team',
       customVoiceLabels: [ 'Event' ]
     });
-    expect(configurationService.patchLocalConfiguration).not.toHaveBeenCalled();
     expect(team).toEqual({ _id: 'team', _rev: '3-saved', name: 'Team', customVoiceLabels: [ 'Event' ] });
   });
 

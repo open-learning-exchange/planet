@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { StateService } from '../state.service';
+import { CouchService } from '../couchdb.service';
 import { DialogsAnnouncementComponent } from '../dialogs/dialogs-announcement.component';
+import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
 
@@ -30,28 +34,42 @@ export interface PlanetChallenge {
 export class ChallengesService {
 
   constructor(
-    private stateService: StateService
+    private stateService: StateService,
+    private couchService: CouchService
   ) { }
 
-  getChallenges(configuration: any = this.stateService.configuration): PlanetChallenge[] {
-    return Array.isArray(configuration?.challenges) ? configuration.challenges.map(challenge => this.normalizeChallenge(challenge)) : [];
+  getChallenges(): Observable<PlanetChallenge[]> {
+    return this.couchService.get(`teams/${planetAndParentId(this.stateService.configuration)}`).pipe(
+      map(servicesDoc => this.servicesDocChallenges(servicesDoc)),
+      catchError(() => of([]))
+    );
   }
 
-  getActiveChallenge(referenceDate = new Date(), configuration: any = this.stateService.configuration): PlanetChallenge | undefined {
-    return this.getChallenges(configuration).find(challenge => this.isChallengeActive(challenge, referenceDate));
+  activeChallengeIn(servicesDoc: any, referenceDate = new Date()): PlanetChallenge | undefined {
+    return this.servicesDocChallenges(servicesDoc).find(challenge => this.isChallengeActive(challenge, referenceDate));
   }
 
-  getActiveChallengeForCourse(courseId: string, referenceDate = new Date(), configuration: any = this.stateService.configuration) {
-    return this.getChallenges(configuration)
-      .find(challenge => challenge.courseId === courseId && this.isChallengeActive(challenge, referenceDate));
+  private servicesDocChallenges(servicesDoc: any): PlanetChallenge[] {
+    return (Array.isArray(servicesDoc?.challenges) ? servicesDoc.challenges : []).map(challenge => this.normalizeChallenge(challenge));
   }
 
-  getChallengeForNotification(notification: any, referenceDate = new Date(), configuration: any = this.stateService.configuration) {
-    const challenges = this.getChallenges(configuration);
-    const activeChallenges = challenges.filter(challenge => this.isChallengeActive(challenge, referenceDate));
-    return notification?.challengeId ?
-      activeChallenges.find(challenge => challenge.id === notification.challengeId) :
-      activeChallenges[0];
+  getActiveChallenge(referenceDate = new Date()): Observable<PlanetChallenge | undefined> {
+    return this.getActiveChallenges(referenceDate).pipe(map(challenges => challenges[0]));
+  }
+
+  getActiveChallengeForCourse(courseId: string, referenceDate = new Date()): Observable<PlanetChallenge | undefined> {
+    return this.getActiveChallenges(referenceDate).pipe(map(challenges => challenges.find(challenge => challenge.courseId === courseId)));
+  }
+
+  getChallengeForNotification(notification: any, referenceDate = new Date()): Observable<PlanetChallenge | undefined> {
+    return this.getActiveChallenges(referenceDate).pipe(map(challenges => notification?.challengeId ?
+      challenges.find(challenge => challenge.id === notification.challengeId) :
+      challenges[0]
+    ));
+  }
+
+  private getActiveChallenges(referenceDate: Date) {
+    return this.getChallenges().pipe(map(challenges => challenges.filter(challenge => this.isChallengeActive(challenge, referenceDate))));
   }
 
   isChallengeActive(challenge: PlanetChallenge, referenceDate = new Date()): boolean {

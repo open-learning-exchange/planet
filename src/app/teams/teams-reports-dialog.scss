@@ -1,0 +1,14 @@
+@use "../mixins" as m;
+
+h3 {
+  margin: 0;
+}
+
+.mat-subtitle-2 {
+  margin-top: 0;
+}
+
+.report-label {
+  @include m.label-chip;
+  margin-right: 4px;
+}
