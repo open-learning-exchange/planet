@@ -2,15 +2,15 @@ import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@a
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { interval, of, race } from 'rxjs';
-import { debounce, switchMap } from 'rxjs/operators';
+import { catchError, debounce, map, switchMap } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
-import { findDocuments } from '../../shared/mangoQueries';
 import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
+import { NotificationsService } from '../../notifications/notifications.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
@@ -129,7 +129,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     private fb: NonNullableFormBuilder,
     private userService: UserService,
     private stateService: StateService,
-    private meetupService: MeetupService
+    private meetupService: MeetupService,
+    private notificationsService: NotificationsService
   ) {
     this.createForm();
   }
@@ -284,12 +285,15 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       _rev: this.revision,
       startDate: this.parseDateValue(meetupInfo.startDate),
       endDate: this.parseDateValue(meetupInfo.endDate)
-    }).pipe(switchMap(() => this.couchService.post('shelf/_find', findDocuments({
-      meetupIds: { $in: [ this.id ] }
-    }, [ '_id' ], 0))),
-    switchMap(data => this.couchService.updateDocument(
-      'notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id)
-    ))).subscribe((res) => {
+    }).pipe(
+      switchMap((res) => this.notificationsService.notifyMeetupChange(meetupInfo, this.id).pipe(
+        catchError((err) => {
+          console.error('Failed to notify meetup participants', err);
+          return of(null);
+        }),
+        map(() => res)
+      ))
+    ).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
     }, (err) => {
@@ -375,19 +379,6 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
         break;
     }
     dayFormArray.updateValueAndValidity();
-  }
-
-  meetupChangeNotifications(users, meetupInfo, meetupId) {
-    return { docs: users.map((user) => ({
-      user: user._id,
-      message: $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
-      link: '/meetups/view/' + meetupId,
-      item: meetupId,
-      type: 'meetup',
-      priority: 1,
-      status: 'unread',
-      time: this.couchService.datePlaceholder
-    })) };
   }
 
   openNativePicker(input: HTMLInputElement): void {

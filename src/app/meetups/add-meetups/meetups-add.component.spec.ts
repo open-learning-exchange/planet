@@ -13,9 +13,9 @@ describe('MeetupsAddComponent authorization', () => {
     const couchService = {
       datePlaceholder: {},
       get: vi.fn(() => options.loadError ? throwError(new Error('offline')) : of(options.storedMeetup)),
-      updateDocument: vi.fn(() => of({})),
-      post: vi.fn(() => of({ docs: [] }))
+      updateDocument: vi.fn(() => of({}))
     };
+    const notificationsService = { notifyMeetupChange: vi.fn(() => of(null)) };
     const planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     const router = { navigate: vi.fn() };
     const meetupService = {
@@ -35,13 +35,15 @@ describe('MeetupsAddComponent authorization', () => {
       new FormBuilder().nonNullable,
       { get: vi.fn(() => activeUser) } as any,
       { configuration: { code: 'planet' } } as any,
-      meetupService as any
+      meetupService as any,
+      notificationsService as any
     );
     const setMeetupData = vi.spyOn(component, 'setMeetupData');
     const goBack = vi.spyOn(component, 'goBack').mockImplementation(() => {});
     return {
       component,
       couchService,
+      notificationsService,
       planetMessageService,
       router,
       meetupService,
@@ -124,6 +126,21 @@ describe('MeetupsAddComponent authorization', () => {
     expect(planetMessageService.showAlert).toHaveBeenCalledWith('There was a problem loading this meetup');
     expect(router.navigate).toHaveBeenCalledWith([ '/meetups' ]);
     expect(setMeetupData).not.toHaveBeenCalled();
+  });
+
+  it('finishes the edit when announcing the change fails', () => {
+    const { component, couchService, notificationsService, planetMessageService, goBack } = createComponent(creator);
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    component.setMeetupData({ _id: 'm1', _rev: '1-a', createdBy: 'ann' });
+    notificationsService.notifyMeetupChange = vi.fn(() => throwError(new Error('offline')));
+
+    component.updateMeetup({ title: 'Changed meetup', startDate: null, endDate: null });
+
+    expect(couchService.updateDocument).toHaveBeenCalled();
+    expect(goBack).toHaveBeenCalled();
+    expect(planetMessageService.showMessage).toHaveBeenCalledWith('Edited event: Changed meetup');
+    expect(consoleError).toHaveBeenCalledWith('Failed to notify meetup participants', expect.any(Error));
+    consoleError.mockRestore();
   });
 
   it('rechecks authorization against the loaded meetup before persisting', () => {

@@ -43,6 +43,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   @Input() typePills: string[] = [ 'PDF', 'EPUB', 'ZIP', 'MP3', 'MP4', 'IMG' ];
   @Input() multiple = false;
   @Input() maxFiles = 1;
+  @Input() maxSizeMb = 0;
   @Input() imagePreview = false;
   @Input() existingAttachments: ExistingAttachment[] = [];
   @Output() fileSelected = new EventEmitter<File>();
@@ -59,8 +60,8 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
   private readonly fileTypeMap: { [ext: string]: FileMeta } = {
     pdf: { icon: 'picture_as_pdf', label: $localize`PDF` },
-    zip: { icon: 'folder_zip', label: $localize`ZIP` },
-    epub: { icon: 'menu_book', label: $localize`EPUB` },
+    zip: { icon: 'archive', label: $localize`ZIP` },
+    epub: { icon: 'import_contacts', label: $localize`EPUB` },
     mp3: { icon: 'audiotrack', label: $localize`Audio` },
     wav: { icon: 'audiotrack', label: $localize`Audio` },
     mp4: { icon: 'movie', label: $localize`Video` },
@@ -74,7 +75,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     docx: { icon: 'description', label: $localize`Document` },
     ppt: { icon: 'slideshow', label: $localize`Slides` },
     pptx: { icon: 'slideshow', label: $localize`Slides` },
-    txt: { icon: 'article', label: $localize`Text` }
+    txt: { icon: 'subject', label: $localize`Text` }
   };
 
   ngOnChanges(changes: SimpleChanges) {
@@ -180,6 +181,11 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     candidateFiles.forEach(file => {
       if (!isAcceptableFile(file, this.accept)) {
         this.errorMessage = $localize`File type not allowed`;
+        this.fileRejected.emit(file);
+        return;
+      }
+      if (this.maxSizeMb > 0 && file.size / 1024 / 1024 > this.maxSizeMb) {
+        this.errorMessage = $localize`File is larger than ${this.maxSizeMb} MB`;
         this.fileRejected.emit(file);
         return;
       }

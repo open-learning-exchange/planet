@@ -13,7 +13,7 @@ export interface MeetupAuthorizationContext {
   readOnly?: boolean;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MeetupService {
 
   private meetupUpdated = new Subject<any[]>();

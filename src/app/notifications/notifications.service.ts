@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map, catchError, filter } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 
 /**
@@ -54,6 +54,25 @@ export class NotificationsService {
     }, (err) => this.planetMessageService.showAlert($localize`There was a problem marking all as read`));
   }
 
+  notifyMeetupChange(meetupInfo: any, meetupId: string): Observable<any> {
+    return this.couchService.findAll('shelf', findDocuments({
+      meetupIds: { $in: [ meetupId ] }
+    }, [ '_id' ], 0)).pipe(
+      switchMap((users: any[]) => users.length === 0 ? of(null) : this.couchService.updateDocument('notifications/_bulk_docs', {
+        docs: users.map((user: any) => ({
+          user: user._id,
+          message: $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
+          link: '/meetups/view/' + meetupId,
+          item: meetupId,
+          type: 'meetup',
+          priority: 1,
+          status: 'unread',
+          time: this.couchService.datePlaceholder
+        }))
+      }))
+    );
+  }
+
   sendNotificationToUser(notifications: any): Observable<any> {
     const serverPlanetCode = this.stateService.configuration.code;
     const planetSelector = notifications.userPlanetCode && notifications.userPlanetCode === serverPlanetCode ?
@@ -69,6 +88,7 @@ export class NotificationsService {
       type: notifications.type,
       status: notifications.status,
       user: notifications.user,
+      ...(notifications.replyTo ? { replyTo: notifications.replyTo } : {}),
       ...planetSelector
     };
     return this.couchService.findAll(
@@ -77,5 +97,52 @@ export class NotificationsService {
     ).pipe(
       switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notifications) : of({}))
     );
+  }
+
+  sendReplyNotification(news: any, link: string, linkParams?: any): Observable<any> {
+    const currentUser = this.userService.get();
+    const serverPlanetCode = this.stateService.configuration.code;
+    const recipient = notificationRecipient(news.user, news.createdOn || serverPlanetCode);
+    const sender = notificationRecipient(currentUser, serverPlanetCode);
+    if (recipient.user === sender.user && recipient.userPlanetCode === sender.userPlanetCode) {
+      return of({});
+    }
+    return this.sendNotificationToUser({
+      ...recipient,
+      message: $localize`<b>${currentUser.name}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      link,
+      linkParams,
+      priority: 1,
+      type: 'replyMessage',
+      replyTo: news._id,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
+    });
+  }
+
+  getUnreadReplyIds$(): Observable<string[]> {
+    if (!this.userService.get().name) {
+      return of([]);
+    }
+    return this.findUnreadReplies({}, [ 'replyTo' ]).pipe(
+      map(notifications => notifications.map(notification => notification.replyTo)),
+      catchError(() => of([]))
+    );
+  }
+
+  markReplyNotificationsAsRead(replyTo: string) {
+    this.findUnreadReplies({ replyTo }).pipe(
+      filter(notifications => notifications.length > 0),
+      switchMap(notifications => this.couchService.bulkDocs(
+        'notifications', notifications.map(notification => ({ ...notification, status: 'read' }))
+      ))
+    ).subscribe(() => this.userService.setNotificationStateChange(), error => console.error(error));
+  }
+
+  private findUnreadReplies(selector: any, fields: any = 0): Observable<any[]> {
+    return this.couchService.findAll('notifications', findDocuments(
+      { $or: notificationUserFilter(this.userService.get()), type: 'replyMessage', status: 'unread', ...selector },
+      fields
+    ));
   }
 }

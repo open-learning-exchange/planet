@@ -1,8 +1,9 @@
-import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, Inject, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { take } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, take, takeUntil } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
@@ -70,9 +71,10 @@ export class CoursesViewDetailComponent implements OnChanges {
     `,
   imports: [MatDialogTitle, CdkScrollable, MatDialogContent, CoursesViewDetailComponent, MatDialogActions, MatButton, MatDialogClose]
 })
-export class CoursesViewDetailDialogComponent implements OnInit {
+export class CoursesViewDetailDialogComponent implements OnInit, OnDestroy {
 
   courseDetail;
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
@@ -89,6 +91,15 @@ export class CoursesViewDetailDialogComponent implements OnInit {
       this.courseDetail = course;
       this.dialogsLoadingService.stop();
     });
+    this.coursesService.courseTagsListener$().pipe(
+      filter(({ courseId }) => courseId === this.courseDetail?._id),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   routeToCourses(courseId) {

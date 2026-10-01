@@ -1,7 +1,8 @@
 import { vi } from 'vitest';
 import {
   ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
-  genderBucket, hasMarkdownImages, localizedGender, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
+  genderBucket, hasMarkdownImages, IMAGE_MAX_FALLBACK_BYTES, localizedGender, normalizeImage,
+  normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -302,9 +303,9 @@ ${'\t'.repeat(18)}
 
       const result = await normalizeImage(file);
 
-      expect(result.file).toBe(file);
-      expect(result.fileName).toBe('bad.png');
-      expect(result.contentType).toBe('image/png');
+      expect(result?.file).toBe(file);
+      expect(result?.fileName).toBe('bad.png');
+      expect(result?.contentType).toBe('image/png');
       expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:cover');
     });
 
@@ -313,7 +314,21 @@ ${'\t'.repeat(18)}
 
       const result = await normalizeImage(file, { usedNames: [ 'cover.png' ] });
 
-      expect(result.fileName).toBe('cover-1.png');
+      expect(result?.fileName).toBe('cover-1.png');
+    });
+
+    it('rejects an undecodable original too large to attach unprocessed', async () => {
+      const file = new File([ new Uint8Array(IMAGE_MAX_FALLBACK_BYTES + 1) ], 'photo.heic', { type: 'image/heic' });
+
+      expect(await normalizeImage(file)).toBeNull();
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:cover');
+    });
+
+    it('honours a caller supplied fallback size cap', async () => {
+      const file = new File([ new Uint8Array(2048) ], 'small.heic', { type: 'image/heic' });
+
+      expect(await normalizeImage(file, { maxFallbackBytes: 1024 })).toBeNull();
+      expect(await normalizeImage(file, { maxFallbackBytes: 4096 })).not.toBeNull();
     });
 
   });

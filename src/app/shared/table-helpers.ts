@@ -1,6 +1,6 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
-import { FuzzySearchService } from './fuzzy-search.service';
+import { fuzzyWordMatch, normalizeSearchString, splitSearchWords } from './fuzzy-search';
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
@@ -39,47 +39,35 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => (data: any, filter: string) => {
-  const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  for (const filterField of filterFields) {
+  const normalizedFilter = normalizeSearchString(filter.trim());
+  return filterFields.some(filterField => {
     const fieldValue = getProperty(data, filterField);
-    if (typeof fieldValue === 'string' &&
-          fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(normalizedFilter) > -1) {
-      return true;
-    }
-  }
-  return false;
+    return typeof fieldValue === 'string' && normalizeSearchString(fieldValue).includes(normalizedFilter);
+  });
 };
 
-export const filterSpecificFieldsByWord = (filterFields: string[]): any => (data: any, filter: string) => {
-  // Normalize each word
-  const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-  return words.every(word => filterFields.some(field => {
-    const fieldValue = getProperty(data, field);
-    return typeof fieldValue === 'string' &&
-               fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(word);
-  }));
+const filterFieldsByWord = (fuzzyFields: string[], exactFields: string[]) => (data: any, filter: string) => {
+  const words = splitSearchWords(filter);
+  if (words.length === 0) {
+    return true;
+  }
+  const fieldValues = (fields: string[]) => fields
+    .map(field => getProperty(data, field))
+    .filter(fieldValue => typeof fieldValue === 'string' && fieldValue !== '');
+  const fuzzyValues = fieldValues(fuzzyFields);
+  const exactValues = fieldValues(exactFields).map(fieldValue => normalizeSearchString(fieldValue));
+  return words.every(word => (
+    exactValues.some(fieldValue => fieldValue.includes(word)) ||
+    fuzzyValues.some(fieldValue => fuzzyWordMatch(word, fieldValue))
+  ));
 };
 
-// Enhanced version that combines exact and fuzzy search
-export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => (
-  (data: any, filter: string) => {
-    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (!normalizedFilter) {
-      return true;
-    }
+// Exact per word, for lists where a near miss could be selected by mistake, as with people.
+export const filterSpecificFieldsByWord = (filterFields: string[]): any => filterFieldsByWord([], filterFields);
 
-    return filterFields.some(field => {
-      const fieldValue = getProperty(data, field);
-      if (typeof fieldValue !== 'string') {
-        return false;
-      }
-
-      // Try exact match first, then fuzzy if available
-      const normalizedFieldValue = fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      return normalizedFieldValue.includes(normalizedFilter) ||
-             (fuzzySearchService?.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 }) ?? false);
-    });
-  }
+// Forgives typos per word, except in exactFields such as codes.
+export const filterSpecificFieldsHybrid = (filterFields: string[], exactFields: string[] = []): any => (
+  filterFieldsByWord(filterFields, exactFields)
 );
 
 export const filterDropdowns = (filterObj: any) => (data: any, filter: string) =>

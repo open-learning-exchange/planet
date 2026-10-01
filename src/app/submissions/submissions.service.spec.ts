@@ -10,6 +10,7 @@ describe('SubmissionsService survey exports', () => {
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
   let pdfService: { download: ReturnType<typeof vi.fn>, getHtmlConverter?: ReturnType<typeof vi.fn> };
+  let couchService: { post: ReturnType<typeof vi.fn>, datePlaceholder: string };
 
   const exam = {
     _id: 'team-survey-1',
@@ -32,9 +33,10 @@ describe('SubmissionsService survey exports', () => {
     dialogsLoadingService = { stop: vi.fn() };
     planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     pdfService = { download: vi.fn().mockResolvedValue(undefined) };
+    couchService = { post: vi.fn(), datePlaceholder: 'NOW' };
     service = new SubmissionsService(
-      {} as any,
-      { configuration: { name: 'Planet' } } as any,
+      couchService as any,
+      { configuration: { name: 'Planet', code: 'planet-1' } } as any,
       {} as any,
       {} as any,
       csvService as any,
@@ -51,6 +53,22 @@ describe('SubmissionsService survey exports', () => {
       1,
       [ 'Question' ]
     ]) as any);
+  });
+
+  it('starts each recorded response fresh without looking up an earlier submission', () => {
+    const user = { name: 'recorder' };
+    const team = { _id: 'team-1', name: 'Team', type: 'team' };
+    const recording = { parentId: exam._id, parent: exam, user, type: 'survey', team };
+    service.startNewSubmission(recording);
+    service.submission.answers.push({ value: 'First person' });
+    const firstSubmission = service.submission;
+
+    service.startNewSubmission(recording);
+
+    expect(service.submission).not.toBe(firstSubmission);
+    expect(service.submission.answers).toEqual([]);
+    expect(service.submission.team).toEqual(team);
+    expect(couchService.post).not.toHaveBeenCalled();
   });
 
   it('exports a CSV submission counted through its embedded team', async () => {

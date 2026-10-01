@@ -10,9 +10,7 @@ import { NewsListItemComponent } from './news-list-item.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { LabelComponent } from '../shared/label.component';
 import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
 import { NewsService } from './news.service';
-import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { AuthService } from '../shared/auth-guard.service';
 import { LinkCopyService } from '../shared/link-copy.service';
@@ -21,11 +19,10 @@ describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {
     const authService = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
     const linkCopyService = { copyLink: vi.fn() };
+    const router = { url: '/' };
     const component = new NewsListItemComponent(
-      {} as any,
+      router as any,
       { get: vi.fn(() => ({ _id: 'user', name: 'user' })), userChange$: of(undefined) } as any,
-      {} as any,
-      {} as any,
       {} as any,
       { configuration: { code: 'local', planetType: 'nation' } } as any,
       {} as any,
@@ -36,7 +33,7 @@ describe('NewsListItemComponent read-only behavior', () => {
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
 
-    return { authService, component, linkCopyService };
+    return { authService, component, linkCopyService, router };
   };
 
   it('blocks every mutating action while retaining label filtering', () => {
@@ -76,6 +73,31 @@ describe('NewsListItemComponent read-only behavior', () => {
     );
   });
 
+  it('links a reply to the conversation it sits in', () => {
+    const { component, linkCopyService } = createComponent();
+
+    component.copyLink({ _id: 'reply-id', replyTo: 'voice-id' });
+
+    expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/voices', 'voice-id' ]);
+  });
+
+  it('links a post moved to the main feed by a delete to itself', () => {
+    const { component, linkCopyService } = createComponent();
+
+    component.copyLink({ _id: 'voice-id', replyTo: 'root' });
+
+    expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/voices', 'voice-id' ]);
+  });
+
+  it('links a team message to its thread on the team page without tab parameters', () => {
+    const { component, linkCopyService, router } = createComponent();
+    router.url = '/teams/view/team-1;activeTab=taskTab';
+
+    component.copyLink({ _id: 'message-id' });
+
+    expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/teams/view/team-1', { voice: 'message-id' } ]);
+  });
+
 });
 
 describe('NewsListItemComponent read-only template', () => {
@@ -85,9 +107,7 @@ describe('NewsListItemComponent read-only template', () => {
       providers: [
         { provide: Router, useValue: { url: '/community/remote', navigate: vi.fn() } },
         { provide: UserService, useValue: { get: () => ({ _id: 'user', name: 'user', isUserAdmin: true }), userChange$: of(undefined) } },
-        { provide: CouchService, useValue: { datePlaceholder: 0 } },
         { provide: NewsService, useValue: { postSharedWithCommunity: vi.fn(() => false) } },
-        { provide: NotificationsService, useValue: {} },
         { provide: StateService, useValue: { configuration: { code: 'local', planetType: 'nation' } } },
         { provide: MatDialog, useValue: {} },
         { provide: AuthService, useValue: {} },
@@ -185,91 +205,6 @@ describe('NewsListItemComponent label choices', () => {
 
     component.item.doc.messagePlanetCode = 'foreign';
     expect(component.canEditLabels).toBe(false);
-  });
-});
-
-describe('NewsListItemComponent notifications', () => {
-  const setup = (currentUser: any) => {
-    const notificationsService = {
-      sendNotificationToUser: vi.fn().mockReturnValue(of({}))
-    };
-    const component = new NewsListItemComponent(
-      { url: '/news' } as any,
-      { get: () => currentUser } as any,
-      { datePlaceholder: 'now' } as any,
-      {} as any,
-      notificationsService as any,
-      { configuration: { code: 'nation-n' } } as any,
-      {} as any,
-      {} as any,
-      {} as any,
-      { watchDeviceType: () => of(DeviceType.DESKTOP) } as any
-    );
-    return { component, notificationsService };
-  };
-
-  it('notifies a same-named author on another planet', () => {
-    const { component, notificationsService } = setup({
-      _id: 'org.couchdb.user:alex',
-      name: 'alex',
-      planetCode: 'nation-n'
-    });
-
-    component.sendNewsNotifications({
-      _id: 'news-1',
-      createdOn: 'community-c',
-      user: { _id: 'org.couchdb.user:alex', name: 'alex' },
-      viewableBy: 'community'
-    });
-
-    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledWith(expect.objectContaining({
-      user: 'org.couchdb.user:alex',
-      userPlanetCode: 'community-c',
-      type: 'replyMessage'
-    }));
-  });
-
-  it('does not notify the author when the composite identity matches', () => {
-    const { component, notificationsService } = setup({
-      _id: 'org.couchdb.user:alex',
-      name: 'alex',
-      planetCode: 'nation-n'
-    });
-
-    component.sendNewsNotifications({
-      _id: 'news-1',
-      createdOn: 'nation-n',
-      user: {
-        _id: 'org.couchdb.user:alex',
-        name: 'alex',
-        planetCode: 'nation-n'
-      },
-      viewableBy: 'nation'
-    });
-
-    expect(notificationsService.sendNotificationToUser).not.toHaveBeenCalled();
-  });
-
-  it('does not notify an associated parent account for its own home-planet post', () => {
-    const { component, notificationsService } = setup({
-      _id: 'org.couchdb.user:alex@community-c',
-      name: 'alex@community-c',
-      planetCode: 'community-c',
-      requestId: 'community-registration-request-1'
-    });
-
-    component.sendNewsNotifications({
-      _id: 'news-1',
-      createdOn: 'community-c',
-      user: {
-        _id: 'org.couchdb.user:alex',
-        name: 'alex',
-        planetCode: 'community-c'
-      },
-      viewableBy: 'community'
-    });
-
-    expect(notificationsService.sendNotificationToUser).not.toHaveBeenCalled();
   });
 });
 

@@ -3,7 +3,6 @@ import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { dedupeShelfReduce } from '../../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -56,10 +55,8 @@ export class CertificationsService {
   }
 
   isCourseCompleted(course, user) {
-    return course.doc.steps.length === course.progress
-      .filter(step => step.userId === user._id && step.passed)
-      .map(step => step.stepNum)
-      .reduce(dedupeShelfReduce, []).length;
+    return course.doc.steps.every((_, index) => course.progress.some(step =>
+      step.userId === user._id && step.stepNum === index + 1 && step.passed));
   }
 
 }

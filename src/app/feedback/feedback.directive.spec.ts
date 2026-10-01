@@ -151,7 +151,44 @@ describe('FeedbackDirective', () => {
     await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
 
     expect(couchService.putAttachment.mock.calls[1][0]).toBe('feedback/feedback-1/b.png?rev=1-a');
-    expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be uploaded'));
+    expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be included'));
+  });
+
+  it('submits feedback without a screenshot that cannot be normalized', async () => {
+    const originalImage = window.Image;
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
+    class ErrorImage {
+      onerror: () => void = () => {};
+
+      set src(_value: string) {
+        setTimeout(() => this.onerror());
+      }
+    }
+    (window as any).Image = ErrorImage;
+    URL.createObjectURL = vi.fn().mockReturnValue('blob:screenshot');
+    URL.revokeObjectURL = vi.fn();
+    couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
+    couchService.putAttachment.mockReturnValue(of({ rev: '2-b' }));
+
+    try {
+      const large = { file: new File([ new Uint8Array(2 * 1024 * 1024 + 1) ], 'bad.png', { type: 'image/png' }) };
+      directive.addFeedback({ ...post, attachments: { added: [ large, screenshot('good.png') ] } });
+      await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
+
+      const feedback = couchService.updateDocument.mock.calls[0][1];
+      expect(feedback.messages[0].attachments).toEqual([ 'good.png' ]);
+      expect(couchService.putAttachment.mock.calls.map(([ path ]) => path)).toEqual([
+        'feedback/feedback-1/good.png?rev=1-a'
+      ]);
+      expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(
+        expect.stringContaining('could not be included')
+      );
+    } finally {
+      (window as any).Image = originalImage;
+      URL.createObjectURL = originalCreateObjectURL;
+      URL.revokeObjectURL = originalRevokeObjectURL;
+    }
   });
 
   it('keeps the dialog open with an error when the feedback cannot be saved', () => {

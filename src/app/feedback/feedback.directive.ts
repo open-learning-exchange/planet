@@ -10,7 +10,7 @@ import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { AuthService } from '../shared/auth-guard.service';
 import { from, Observable, of } from 'rxjs';
-import { catchError, concatMap, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
+import { catchError, concatMap, filter, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { PendingAttachment } from '../shared/forms/file-upload.component';
 import { couchAttachmentPath, NormalizedImage, normalizeImage } from '../shared/utils';
@@ -164,13 +164,15 @@ export class FeedbackDirective {
       parentCode: this.stateService.configuration.parentCode,
       ...this.feedbackOf,
     };
-    this.normalizeScreenshots(attachments?.added).pipe(
+    const addedScreenshots: PendingAttachment[] = attachments?.added || [];
+    this.normalizeScreenshots(addedScreenshots).pipe(
       switchMap(screenshots => {
         if (screenshots.length) {
           startingMessage.attachments = screenshots.map(({ fileName }) => fileName);
         }
         return this.couchService.updateDocument('feedback', newFeedback).pipe(
-          switchMap(({ id, rev }) => this.uploadScreenshots(id, rev, screenshots))
+          switchMap(({ id, rev }) => this.uploadScreenshots(id, rev, screenshots)),
+          map(failedUploads => ({ failedUploads, skippedScreenshots: addedScreenshots.length - screenshots.length }))
         );
       }),
       finalize(() => {
@@ -178,11 +180,11 @@ export class FeedbackDirective {
         this.dialogsLoadingService.stop();
       })
     ).subscribe(
-      (failedUploads) => {
+      ({ failedUploads, skippedScreenshots }) => {
         this.dialogsFormService.closeDialogsForm();
         this.feedbackService.setFeedback();
-        if (failedUploads) {
-          this.planetMessageService.showAlert($localize`Feedback submitted, but some screenshots could not be uploaded.`);
+        if (failedUploads || skippedScreenshots) {
+          this.planetMessageService.showAlert($localize`Feedback submitted, but some screenshots could not be included.`);
         } else {
           this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
         }
@@ -199,6 +201,7 @@ export class FeedbackDirective {
     const usedNames: string[] = [];
     return from(screenshots).pipe(
       concatMap(({ file }) => normalizeImage(file, { maxDimension: 1920, usedNames })),
+      filter((image): image is NormalizedImage => image !== null),
       tap(({ fileName }) => usedNames.push(fileName)),
       toArray()
     );
