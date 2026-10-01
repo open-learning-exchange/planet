@@ -1,4 +1,5 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, DestroyRef, Inject, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
 } from '@angular/material/dialog';
@@ -42,6 +43,7 @@ import { FileUploadComponent } from '../forms/file-upload.component';
   ]
 })
 export class DialogsImagesComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
 
   images: any[] = [];
   urlPrefix = environment.couchAddress + '/resources/';
@@ -58,15 +60,17 @@ export class DialogsImagesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesListener(false).subscribe(resources => {
-      if (resources) {
-        this.images = resources.map(({ doc }) => doc)
-          .filter(resource =>
-            resource.mediaType === 'image' &&
-            (resource.privateFor === 'community' || deepEqual(this.data.imageGroup, resource.privateFor))
-          );
-      }
-    });
+    this.resourcesService.resourcesListener(false)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(resources => {
+        if (resources) {
+          this.images = resources.map(({ doc }) => doc)
+            .filter(resource =>
+              resource.mediaType === 'image' &&
+              (resource.privateFor === 'community' || deepEqual(this.data.imageGroup, resource.privateFor))
+            );
+        }
+      });
     this.resourcesService.requestResourcesUpdate(false, false);
   }
 
