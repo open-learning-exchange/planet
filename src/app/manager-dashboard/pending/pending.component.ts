@@ -14,7 +14,7 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
 import { PendingTableComponent } from './pending-table.component';
 
 @Component({
-  templateUrl: './reports-pending.component.html',
+  templateUrl: './pending.component.html',
   imports: [
     MatToolbar,
     MatIconButton,
@@ -27,7 +27,7 @@ import { PendingTableComponent } from './pending-table.component';
     PendingTableComponent
   ]
 })
-export class ReportsPendingComponent implements OnInit {
+export class PendingComponent implements OnInit {
 
   data = [];
   planets = [];

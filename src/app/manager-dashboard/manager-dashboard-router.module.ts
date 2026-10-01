@@ -9,7 +9,7 @@ import { ManagerDashboardConfigurationComponent } from './manager-dashboard-conf
 import { ManagerCurrencyComponent } from './manager-settings/manager-currency.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail/reports-detail.component';
-import { ReportsPendingComponent } from './pending/reports-pending.component';
+import { PendingComponent } from './pending/pending.component';
 import { ReportsMyPlanetComponent } from './reports/myplanet/reports-myplanet.component';
 import { LogsMyPlanetComponent } from './reports/myplanet/logs-myplanet.component';
 
@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
   { path: 'reports', component: ReportsComponent },
   { path: 'reports/detail', component: ReportsDetailComponent },
-  { path: 'reports/pending', component: ReportsPendingComponent },
+  { path: 'reports/pending', component: PendingComponent },
   { path: 'reports/myplanet', component: ReportsMyPlanetComponent },
   { path: 'logs/myplanet', component: LogsMyPlanetComponent },
   { path: 'requests', component: RequestsComponent }

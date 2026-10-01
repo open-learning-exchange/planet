@@ -16,7 +16,7 @@ import { RequestsTableComponent } from './requests/requests-table.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail/reports-detail.component';
-import { ReportsPendingComponent } from './pending/reports-pending.component';
+import { PendingComponent } from './pending/pending.component';
 import { PendingTableComponent } from './pending/pending-table.component';
 import { ReportsMyPlanetComponent } from './reports/myplanet/reports-myplanet.component';
 import { LogsMyPlanetComponent } from './reports/myplanet/logs-myplanet.component';
@@ -48,7 +48,7 @@ import { ManagerCurrencyComponent } from './manager-settings/manager-currency.co
     ReportsComponent,
     ReportsTableComponent,
     ReportsDetailComponent,
-    ReportsPendingComponent,
+    PendingComponent,
     PendingTableComponent,
     ReportsMyPlanetComponent,
     LogsMyPlanetComponent,
