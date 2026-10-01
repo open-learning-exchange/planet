@@ -93,7 +93,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   reports: any[] = [];
   deleteMode = false;
   onDestroy$ = new Subject<void>();
-  communityDataRequest$ = new Subject<void>();
+  communityDataRequest$ = new Subject<boolean>();
   newsRequestSubscription?: Subscription;
   isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
   planetCode = this.route.snapshot.paramMap.get('code');
@@ -159,7 +159,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();
     this.communityDataRequest$.pipe(
-      tap(() => {
+      tap(withNews => {
+        if (!withNews) {
+          return;
+        }
         this.teamLoading = true;
         this.teamLoaded = false;
         this.newsLoading = true;
@@ -172,7 +175,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.councillors = [];
         this.newsRequestSubscription?.unsubscribe();
       }),
-      switchMap(() => this.loadCommunityData()),
+      switchMap(withNews => withNews ? this.loadCommunityData() : this.loadMemberData()),
       takeUntil(this.onDestroy$)
     ).subscribe(team => {
       this.team = team;
@@ -221,8 +224,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
       this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
-      if (this.isLoggedIn) {
-        this.getCommunityData();
+      if (this.isLoggedIn && !this.teamLoaded) {
+        this.getCommunityData(false);
       }
     });
   }
@@ -251,8 +254,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.couchService.updateDocument('notifications', data);
   }
 
-  getCommunityData() {
-    this.communityDataRequest$.next();
+  getCommunityData(withNews = true) {
+    this.communityDataRequest$.next(withNews);
   }
 
   private loadCommunityData() {
@@ -274,15 +277,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         };
         this.team = requestedTeam;
         this.teamId = this.team._id;
-        this.requestNewsAndUsers(planetCode);
-        this.communityDataLoading = true;
-        return this.getLinks(planetCode);
-      }),
-      switchMap((res) => {
-        this.setLinksAndFinances(res);
-        return this.couchService.get(`teams/${requestedTeam._id}`).pipe(
-          catchError(err => err.status === 404 ? of(requestedTeam) : throwError(err))
-        );
+        this.requestNews(planetCode);
+        return this.loadMemberData();
       }),
       catchError(() => {
         this.teamLoading = false;
@@ -293,11 +289,30 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
+  private loadMemberData() {
+    const requestedTeam = this.teamObject(this.planetCode);
+    this.requestUsers(this.planetCode);
+    this.communityDataLoading = true;
+    return this.getLinks(this.planetCode).pipe(
+      switchMap((res) => {
+        this.setLinksAndFinances(res);
+        return this.couchService.get(`teams/${requestedTeam._id}`).pipe(
+          catchError(err => err.status === 404 ? of(requestedTeam) : throwError(err))
+        );
+      }),
+      catchError(() => {
+        this.teamLoading = false;
+        this.communityDataLoading = false;
+        return EMPTY;
+      })
+    );
+  }
+
   private getChildPlanetType(planetType: string): 'community' | 'nation' | undefined {
     return planetType === 'center' ? 'nation' : planetType === 'nation' ? 'community' : undefined;
   }
 
-  requestNewsAndUsers(planetCode?: string) {
+  requestNews(planetCode?: string) {
     this.newsRequestSubscription = this.newsService.requestNews({
       selectors: {
         $or: [
@@ -307,6 +322,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       },
       viewId: this.teamId
     });
+  }
+
+  private requestUsers(planetCode?: string) {
     if (planetCode) {
       this.stateService.requestData('child_users', 'local');
     } else {

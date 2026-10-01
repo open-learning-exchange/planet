@@ -30,7 +30,7 @@ describe('CommunityComponent custom labels', () => {
     (component as any).dialog = {
       open
     };
-    vi.spyOn(component, 'requestNewsAndUsers').mockImplementation(() => undefined);
+    vi.spyOn(component, 'requestNews').mockImplementation(() => undefined);
 
     component.openManageLabelsDialog();
 
@@ -40,7 +40,7 @@ describe('CommunityComponent custom labels', () => {
       data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }
     });
     expect(component.customVoiceLabels).toEqual([ 'Event' ]);
-    expect(component.requestNewsAndUsers).not.toHaveBeenCalled();
+    expect(component.requestNews).not.toHaveBeenCalled();
   });
 });
 
@@ -97,7 +97,8 @@ describe('CommunityComponent remote exchange behavior', () => {
     );
 
     return {
-      component, couchService, dialog, dialogsFormService, routeParamMap, router, stateService, userChange$, currentUser
+      component, couchService, dialog, dialogsFormService, newsService, routeParamMap, router, stateService, teamsService, userChange$,
+      currentUser
     };
   };
 
@@ -122,18 +123,34 @@ describe('CommunityComponent remote exchange behavior', () => {
     expect(component.teamLoaded).toBe(false);
   });
 
-  it('reloads community data on login but not when a logout unsets the user', () => {
-    const { component, couchService, userChange$, currentUser } = createComponent();
+  it('loads only member data, not voices, when a guest logs in', () => {
+    const { component, newsService, teamsService, userChange$, currentUser } = createComponent();
+    teamsService.getTeamMembers.mockReturnValueOnce(throwError({ status: 401 }));
     component.ngOnInit();
-    const callsAfterInit = couchService.findAll.mock.calls.length;
-
-    currentUser.value = { name: '' };
-    userChange$.next(currentUser.value);
-    expect(couchService.findAll.mock.calls.length).toBe(callsAfterInit);
+    const newsRequests = newsService.requestNews.mock.calls.length;
+    expect(component.teamLoaded).toBe(false);
 
     currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [] };
     userChange$.next(currentUser.value);
-    expect(couchService.findAll.mock.calls.length).toBeGreaterThan(callsAfterInit);
+
+    expect(newsService.requestNews).toHaveBeenCalledTimes(newsRequests);
+    expect(teamsService.getTeamMembers).toHaveBeenCalledTimes(2);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('reloads nothing on logout or when a member logs in again', () => {
+    const { component, couchService, newsService, teamsService, userChange$, currentUser } = createComponent();
+    component.ngOnInit();
+    const requestCounts = () => [ couchService.findAll, couchService.get, newsService.requestNews, teamsService.getTeamMembers ]
+      .map(request => request.mock.calls.length);
+    const countsAfterInit = requestCounts();
+
+    currentUser.value = { name: '' };
+    userChange$.next(currentUser.value);
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [] };
+    userChange$.next(currentUser.value);
+
+    expect(requestCounts()).toEqual(countsAfterInit);
   });
 
   it('sets remote exchange mode synchronously from the route snapshot', () => {
