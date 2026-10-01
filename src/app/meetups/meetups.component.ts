@@ -8,8 +8,7 @@ import {
 } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterSpecificFieldsByWord, isAllVisibleSelected,
-  removeFilteredFromSelection, toggleVisibleSelection
+  filterSpecificFieldsHybrid, isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -128,10 +127,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogsLoadingService.stop();
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
-    this.meetups.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'title' ]),
-      filterSpecificFields([ 'description' ])
-    ]);
+    this.meetups.filterPredicate = filterSpecificFieldsHybrid([ 'title', 'description' ]);
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectedShelf(source.selected);

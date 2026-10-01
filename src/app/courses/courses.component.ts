@@ -13,7 +13,6 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
 import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
   commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
@@ -186,7 +185,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
-    filterSpecificFieldsHybrid([ 'doc.courseTitle' ], this.fuzzySearchService),
+    filterSpecificFieldsHybrid([ 'doc.courseTitle' ]),
     filterShelf(this.myCoursesFilter, 'admission'),
     filterIds(this.filterIds)
   ]);
@@ -222,7 +221,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService,
     private certificationsService: CertificationsService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))

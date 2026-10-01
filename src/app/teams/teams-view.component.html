@@ -237,8 +237,8 @@
               <mat-card (click)="resource.resource && openResource(resource.resource._id)" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource?._attachments" [ngClass]="{'cursor-pointer': resource.resource}">
                 <div class="mat-subtitle-1">
                   @if (resource.resource!==undefined) {
-                    <span>
-                      <b>{{resource.resource.title | truncateText:75}}</b>
+                    <span class="resource-title-wrapper">
+                      <planet-resource-icon [resource]="resource.resource"></planet-resource-icon><b>{{resource.resource.title | truncateText:75}}</b>
                     </span>
                   }
                   @if (resource.resource===undefined) {

@@ -1,13 +1,15 @@
 import {
-  Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy, SimpleChanges
+  Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy, SimpleChanges, ElementRef
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -72,6 +74,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() customLabels: string[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @ViewChild('anchor', { static: false }) anchor: any;
+  @ViewChild('listContent', { static: false }) listContent: ElementRef<HTMLElement>;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
   filteredItems: any[] = [];
@@ -103,7 +106,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageIndex = 0;
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
+  unreadReplyIds = new Set<string>();
   private routerEventsSubscription: Subscription;
+  private unreadRepliesSubscription: Subscription;
 
   get isTeamsFeed(): boolean {
     return this.viewableBy === 'teams';
@@ -136,6 +141,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
+    private notificationsService: NotificationsService,
+    private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private dialogGuard: DialogGuardService,
     private router: Router,
@@ -143,15 +150,29 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ) {}
 
   ngOnInit() {
-    this.routerEventsSubscription = this.router.events.subscribe(() => {
-      this.initNews();
-    });
+    this.routerEventsSubscription = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.initNews();
+      });
     this.searchSubscription = this.messageSearch$.pipe(
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(searchValue => {
       this.messageSearch = searchValue;
       this.applyFilters();
+    });
+
+    this.unreadRepliesSubscription = merge(this.userService.notificationStateChange$, this.userService.userChange$).pipe(
+      startWith(null),
+      switchMap(() => this.notificationsService.getUnreadReplyIds$()),
+      map((ids, index) => ({ ids, firstLoad: index === 0 }))
+    ).subscribe(({ ids, firstLoad }) => {
+      this.unreadReplyIds = new Set(ids);
+      // later loads can include replies this feed has not fetched yet
+      if (firstLoad) {
+        this.markViewedRepliesRead();
+      }
     });
 
     this.initNews();
@@ -164,6 +185,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.itemsById = new Map<string, any>(this.items.map(item => [ item._id, item ]));
     this.availableLabels = this.getAvailableLabels(this.items);
     this.applyFilters();
+    if (changes.items?.previousValue?.length === 0 && this.items.length > 0) {
+      this.initNews();
+    }
   }
 
   applyFilters() {
@@ -234,6 +258,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ngOnDestroy() {
     this.routerEventsSubscription?.unsubscribe();
     this.searchSubscription?.unsubscribe();
+    this.unreadRepliesSubscription?.unsubscribe();
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -258,15 +283,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   initNews() {
-    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
+    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('voice') || 'root';
     this.filterNewsToShow(newVoiceId);
   }
 
   showReplies(news) {
-    // remember the conversation’s true root post, even from deep threads
-    if (news._id !== 'root') {
-      this.lastRootPostId = this.getThreadRootId(news);
-    }
     if (this.useReplyRoutes) {
       this.navigateToReply(news._id);
       return;
@@ -277,7 +298,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   // climb replies until you reach the top-level post (_id with no replyTo)
   private getThreadRootId(news: any): string {
     let current = news;
-    while (current.doc && current.doc.replyTo) {
+    const visited = new Set<string>();
+    while (current.doc && current.doc.replyTo && !visited.has(current._id)) {
+      visited.add(current._id);
       const parent = this.itemsById.get(current.doc.replyTo);
       if (!parent) {
         break;
@@ -299,10 +322,22 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (newsId === this.replyViewing._id) {
       return;
     }
+    if (this.itemsById.has(newsId) && !this.filteredItems.some(item => item._id === newsId)) {
+      this.resetFilters();
+      this.applyFilters();
+    }
     const news = this.items.find(item => item._id === newsId) || { _id: 'root' };
     this.replyViewing = news;
+    this.markViewedRepliesRead();
     this.displayedItems = this.replyObject[news._id];
-    this.loadPagedItems(true);
+    if (news._id === 'root') {
+      this.pageIndex = this.rootPageIndex(this.lastRootPostId);
+      this.loadPagedItems(false);
+    } else {
+      this.lastRootPostId = this.getThreadRootId(news);
+      this.loadPagedItems(true);
+      this.scrollListToTop();
+    }
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
       (
@@ -323,6 +358,19 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (newsId !== 'root') {
       setTimeout(() => this.setupObserver(), 0);
     }
+  }
+
+  private markViewedRepliesRead() {
+    if (this.unreadReplyIds.delete(this.replyViewing._id)) {
+      this.notificationsService.markReplyNotificationsAsRead(this.replyViewing._id);
+      // the feed is not live, so the unread replies may not be loaded yet
+      this.newsService.requestNews();
+    }
+  }
+
+  private rootPageIndex(postId: string): number {
+    const index = this.getCurrentItems().findIndex(item => item._id === postId);
+    return index > 0 ? Math.floor(index / this.pageSize) : 0;
   }
 
   showPreviousReplies() {
@@ -366,6 +414,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
+      const repliedTo = oldNews._id ? undefined : this.itemsById.get(oldNews.replyTo)?.doc;
+      if (repliedTo) {
+        const link = this.useReplyRoutes ? `/voices/${repliedTo._id}` : this.router.url.split(/[;?#]/)[0];
+        const linkParams = this.useReplyRoutes ? undefined : { voice: repliedTo._id };
+        this.notificationsService.sendReplyNotification(repliedTo, link, linkParams).subscribe();
+      }
     });
   }
 
@@ -539,5 +593,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadPagedItems(false);
+    this.scrollListToTop();
+  }
+
+  private scrollListToTop() {
+    this.listContent?.nativeElement.scrollTo({ top: 0 });
   }
 }
