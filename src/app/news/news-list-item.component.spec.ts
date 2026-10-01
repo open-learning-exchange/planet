@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -143,6 +143,7 @@ describe('NewsListItemComponent read-only template', () => {
     expect(fixture.debugElement.query(By.css('.km-copy-voice'))).toBeNull();
     expect(fixture.debugElement.query(By.css('.km-edit-voice'))).toBeNull();
     expect(fixture.debugElement.query(By.css('.km-delete-voice'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('.km-react-voice'))).toBeNull();
   });
 
   it('hides mobile copy and mutation controls', async () => {
@@ -155,6 +156,7 @@ describe('NewsListItemComponent read-only template', () => {
     expect(document.body.querySelector('.km-copy-voice')).toBeNull();
     expect(document.body.querySelector('.km-edit-voice')).toBeNull();
     expect(document.body.querySelector('.km-delete-voice')).toBeNull();
+    expect(document.body.querySelector('.km-react-voice')).toBeNull();
   });
 });
 
@@ -214,5 +216,193 @@ describe('voice label display', () => {
     component.label = 'constructor';
 
     expect(component.getTranslatedLabel()).toBe('constructor');
+  });
+});
+
+describe('NewsListItemComponent emoji reactions', () => {
+  const setupReactions = (currentUserId = 'user-1') => {
+    const authService = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
+    const newsService = {
+      saveReaction: vi.fn(() => of({ ok: true })),
+      postSharedWithCommunity: vi.fn(() => false)
+    };
+    const component = new NewsListItemComponent(
+      { url: '/voices' } as any,
+      { get: vi.fn(() => ({ _id: currentUserId, name: 'Alex' })), userChange$: of(undefined) } as any,
+      newsService as any,
+      { configuration: { code: 'local', planetType: 'nation' } } as any,
+      {} as any,
+      authService as any,
+      { copyLink: vi.fn() } as any,
+      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+    );
+    component.item = {
+      _id: 'voice-1',
+      doc: {
+        _id: 'voice-1',
+        reactions: { '👍': ['user-1', 'user-2'], '❤️': ['user-3'] },
+        user: { _id: 'user-2', name: 'Bob' },
+        labels: [],
+        viewIn: []
+      }
+    };
+    return { component, authService, newsService };
+  };
+
+  it('extracts reaction entries with counts and users', () => {
+    const { component } = setupReactions();
+    const entries = component.reactionEntries(component.item.doc);
+
+    expect(entries).toEqual([
+      { emoji: '👍', count: 2, users: ['user-1', 'user-2'] },
+      { emoji: '❤️', count: 1, users: ['user-3'] }
+    ]);
+  });
+
+  it('determines if the current user has reacted', () => {
+    const { component } = setupReactions('user-1');
+
+    expect(component.hasUserReacted(component.item.doc, '👍')).toBe(true);
+    expect(component.hasUserReacted(component.item.doc, '❤️')).toBe(false);
+    expect(component.hasUserReacted(component.item.doc, '🔥')).toBe(false);
+  });
+
+  it('formats tooltip messages accurately', () => {
+    const { component } = setupReactions('user-1');
+
+    expect(component.reactionTooltip('👍', ['user-1', 'user-2'])).toBe('You and 1 other reacted with 👍');
+    expect(component.reactionTooltip('👍', ['user-1'])).toBe('You reacted with 👍');
+    expect(component.reactionTooltip('❤️', ['user-3'])).toBe('1 person reacted with ❤️');
+    expect(component.reactionTooltip('🔥', ['user-3', 'user-4'])).toBe('2 people reacted with 🔥');
+  });
+
+  it('formats label for reaction action', () => {
+    const { component } = setupReactions('user-1');
+    expect(component.reactionLabel('👍')).toBe('React with 👍');
+  });
+
+  it('toggles reaction, updates _rev on success, and checks auth', () => {
+    const { component, authService, newsService } = setupReactions('user-1');
+    newsService.saveReaction.mockReturnValue(of({ ok: true, rev: '2-rev' }));
+
+    component.toggleReaction(component.item.doc, '🔥');
+
+    expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
+    expect(newsService.saveReaction).toHaveBeenCalledWith(expect.objectContaining({ _id: 'voice-1' }));
+    expect(component.item.doc.reactions).toEqual({
+      '👍': ['user-2'],
+      '❤️': ['user-3'],
+      '🔥': ['user-1']
+    });
+    expect(component.item.doc._rev).toBe('2-rev');
+    expect(component.reactionSaving).toBe(false);
+  });
+
+  it('restores previous reactions when saveReaction fails', () => {
+    const { component, authService, newsService } = setupReactions('user-1');
+    const previousReactions = { '👍': ['user-1', 'user-2'], '❤️': ['user-3'] };
+    newsService.saveReaction.mockReturnValue(throwError(new Error('Network error')));
+
+    component.toggleReaction(component.item.doc, '🔥');
+
+    expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
+    expect(component.item.doc.reactions).toEqual(previousReactions);
+    expect(component.reactionSaving).toBe(false);
+  });
+
+  it('ignores toggle calls while reactionSaving is true', () => {
+    const { component, authService, newsService } = setupReactions('user-1');
+    component.reactionSaving = true;
+
+    component.toggleReaction(component.item.doc, '👍');
+
+    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(newsService.saveReaction).not.toHaveBeenCalled();
+  });
+
+  it('does not toggle reaction when in readOnly mode', () => {
+    const { component, authService, newsService } = setupReactions('user-1');
+    component.readOnly = true;
+
+    component.toggleReaction(component.item.doc, '👍');
+
+    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(newsService.saveReaction).not.toHaveBeenCalled();
+  });
+
+  it('does not toggle reaction on a non-public voice the user cannot edit', () => {
+    const { component, authService, newsService } = setupReactions('user-1');
+    component.editable = false;
+
+    component.toggleReaction(component.item.doc, '👍');
+
+    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(newsService.saveReaction).not.toHaveBeenCalled();
+  });
+});
+
+describe('NewsListItemComponent reactions template', () => {
+  const renderWithReactions = async (reactions: any = { '👍': ['user-1'], '❤️': ['user-2'] }) => {
+    await TestBed.configureTestingModule({
+      imports: [NewsListItemComponent],
+      providers: [
+        { provide: Router, useValue: { url: '/community', navigate: vi.fn() } },
+        {
+          provide: UserService,
+          useValue: { get: () => ({ _id: 'user-1', name: 'user-1' }), userChange$: of(undefined) }
+        },
+        {
+          provide: NewsService,
+          useValue: { postSharedWithCommunity: vi.fn(() => false), saveReaction: vi.fn(() => of({ ok: true })) }
+        },
+        { provide: StateService, useValue: { configuration: { code: 'local', planetType: 'nation' } } },
+        { provide: MatDialog, useValue: {} },
+        { provide: AuthService, useValue: { checkAuthenticationStatus: () => of(undefined) } },
+        { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
+        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(DeviceType.DESKTOP) } },
+        provideNoopAnimations()
+      ]
+    }).compileComponents();
+    const fixture = TestBed.createComponent(NewsListItemComponent);
+    fixture.componentRef.setInput('item', {
+      _id: 'voice-1',
+      avatar: 'assets/image.png',
+      doc: {
+        _id: 'voice-1',
+        createdOn: 'local',
+        labels: [],
+        message: 'Voice message',
+        reactions,
+        time: 0,
+        user: { _id: 'user-2', name: 'user-2' },
+        viewIn: []
+      }
+    });
+    fixture.componentRef.setInput('replyObject', { 'voice-1': [] });
+    fixture.componentRef.setInput('readOnly', false);
+    fixture.detectChanges();
+
+    return fixture;
+  };
+
+  it('renders reaction chips and highlights active reaction', async () => {
+    const fixture = await renderWithReactions();
+
+    const chips = fixture.debugElement.queryAll(By.css('.km-reaction-chip'));
+    expect(chips.length).toBe(2);
+
+    expect(chips[0].nativeElement.textContent).toContain('👍');
+    expect(chips[0].nativeElement.textContent).toContain('1');
+    expect(chips[0].nativeElement.classList).toContain('active');
+    expect(chips[0].nativeElement.getAttribute('aria-pressed')).toBe('true');
+    expect(chips[0].nativeElement.getAttribute('aria-label')).toBe('React with 👍');
+
+    expect(chips[1].nativeElement.textContent).toContain('❤️');
+    expect(chips[1].nativeElement.classList).not.toContain('active');
+    expect(chips[1].nativeElement.getAttribute('aria-pressed')).toBe('false');
+    expect(chips[1].nativeElement.getAttribute('aria-label')).toBe('React with ❤️');
+
+    const reactBtn = fixture.debugElement.query(By.css('.km-react-voice'));
+    expect(reactBtn).not.toBeNull();
   });
 });
