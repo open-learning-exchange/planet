@@ -117,6 +117,18 @@ describe('CsvService', () => {
     );
   });
 
+  describe('exportCSV', () => {
+    const exportedRows = (data: any[], markdown?: boolean) => {
+      const generate = vi.spyOn(service as any, 'generate').mockImplementation(() => {});
+      service.exportCSV({ data, title: 'Report', markdown });
+      return generate.mock.calls[0][0];
+    };
+
+    it('keeps text literally when the data is not Markdown', () => {
+      expect(exportedRows([ { Label: '**Urgent**' }, { Label: '<Q1>' } ], false)).toEqual([ { Label: '**Urgent**' }, { Label: '<Q1>' } ]);
+    });
+  });
+
   describe('exportMyPlanet', () => {
     const mapFn = (children: any[], planetName?: string) => children.map(child => ({ ...child, planetName }));
 

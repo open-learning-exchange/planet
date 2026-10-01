@@ -18,7 +18,7 @@ import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../forms/form-error-messages.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
 import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
@@ -28,6 +28,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
 import { deepEqual } from '../utils';
+import { filterSpecificFieldsHybrid } from '../table-helpers';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 
 @Component({
@@ -78,6 +79,8 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
     MatIconButton,
     MatSuffix,
     MatSelect,
+    MatAutocomplete,
+    MatAutocompleteTrigger,
     MatOption,
     MatRadioGroup,
     MatRadioButton,
@@ -182,6 +185,12 @@ export class DialogsFormComponent {
   togglePasswordVisibility(fieldName: string) {
     const visibility = this.passwordVisibility.get(fieldName) || false;
     this.passwordVisibility.set(fieldName, !visibility);
+  }
+
+  filteredSuggestions(field: DialogField) {
+    const matchesValue = filterSpecificFieldsHybrid([ 'suggestion' ]);
+    const value = (this.modalForm.controls[field.name].value || '').toString();
+    return field.suggestions.filter(suggestion => matchesValue({ suggestion }, value));
   }
 
   clearRating(fieldName: string) {

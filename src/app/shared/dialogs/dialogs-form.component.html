@@ -14,10 +14,25 @@
           </mat-checkbox>
         }
         <!-- input field -->
-        @if (field.type === 'textbox') {
+        @if (field.type === 'textbox' && !field.suggestions?.length) {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min">
+            <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min"
+              [maxlength]="field.maxLength">
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- input field with suggestions -->
+        @if (field.type === 'textbox' && field.suggestions?.length) {
+          <mat-form-field class="full-width">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min"
+              [maxlength]="field.maxLength" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+              @for (suggestion of filteredSuggestions(field); track suggestion) {
+                <mat-option [value]="suggestion">{{suggestion}}</mat-option>
+              }
+            </mat-autocomplete>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
         }
