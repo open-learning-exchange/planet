@@ -80,7 +80,7 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
-  customVoiceLabels: string[] = this.configuration.customVoiceLabels || [];
+  private readonly emptyVoiceLabels: string[] = [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -103,6 +103,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceTypes = DeviceType;
   newsLoading = true;
   teamLoading = true;
+  teamLoaded = false;
+  private challengeChecked = false;
   currentTab = 0;
   activeReplyId: string | null = null;
   lastReplyId: string | null = null;
@@ -159,6 +161,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.communityDataRequest$.pipe(
       tap(() => {
         this.teamLoading = true;
+        this.teamLoaded = false;
         this.newsLoading = true;
         this.communityDataLoading = true;
         this.activeReplyId = null;
@@ -175,6 +178,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
       this.teamLoading = false;
+      this.teamLoaded = true;
+      if (!this.challengeChecked) {
+        this.challengeChecked = true;
+        this.communityChallenge();
+      }
     });
     // planetCode is seeded from the route snapshot; the configuration listener below performs the initial load.
     // This subscription only reloads data when Angular reuses the component for a different community code.
@@ -202,7 +210,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.communityChallenge();
     iif(
       () => this.stateService.configuration?._id !== undefined,
       of(this.stateService.configuration),
@@ -227,16 +234,16 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const challenge = this.challengesService.getActiveChallenge();
-    if (!challenge) {
-      return;
-    }
-    const dialogRef = this.challengesService.openChallengeDialog(this.dialog, challenge);
-    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      if (!this.userStatusService.getCompleteChallenge()) {
-        this.sendChallengeNotification(this.user, challenge).pipe(takeUntil(this.onDestroy$)).subscribe();
-      }
-    });
+    const challenge$ = this.isRemoteExchange ?
+      this.challengesService.getActiveChallenge() :
+      of(this.challengesService.activeChallengeIn(this.team));
+    challenge$.pipe(
+      filter(challenge => !!challenge),
+      switchMap(challenge => this.challengesService.openChallengeDialog(this.dialog, challenge).afterClosed().pipe(map(() => challenge))),
+      filter(() => !this.userStatusService.getCompleteChallenge()),
+      switchMap(challenge => this.sendChallengeNotification(this.user, challenge)),
+      takeUntil(this.onDestroy$)
+    ).subscribe();
   }
 
   sendChallengeNotification(user, challenge) {
@@ -265,7 +272,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
           name: planetCode,
           planetType: childPlanetType || 'community'
         };
-        this.customVoiceLabels = this.configuration.customVoiceLabels || [];
         this.team = requestedTeam;
         this.teamId = this.team._id;
         this.requestNewsAndUsers(planetCode);
@@ -346,7 +352,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
-      const challenge = this.challengesService.getActiveChallenge();
+      const challenge = this.challengesService.activeChallengeIn(this.team);
       if (
         challenge &&
         this.userStatusService.getStatus('joinedCourse') &&
@@ -626,6 +632,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.currentTab = index;
   }
 
+  get customVoiceLabels(): string[] {
+    return this.team?.customVoiceLabels || this.emptyVoiceLabels;
+  }
+
   get canManageLabels(): boolean {
     return !this.planetCode &&
       (this.isCommunityLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
@@ -638,11 +648,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsVoiceLabelsComponent, {
       width: '500px',
       autoFocus: false,
-      data: { target: 'community', customLabels: this.customVoiceLabels }
+      data: { target: 'community', team: this.team, customLabels: this.customVoiceLabels }
     }).afterClosed().subscribe((updatedLabels?: string[]) => {
       if (updatedLabels) {
-        this.customVoiceLabels = updatedLabels;
-        this.configuration = { ...this.configuration, customVoiceLabels: updatedLabels };
+        this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }
     });
   }

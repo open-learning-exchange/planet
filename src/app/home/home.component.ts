@@ -305,9 +305,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   openAnnouncementDialog(notification) {
     this.readNotification(notification);
-    const challenge = this.challengesService.getChallengeForNotification(notification);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesService.getChallengeForNotification(notification).subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 }

@@ -21,11 +21,11 @@ describe('CommunityComponent custom labels', () => {
     expect(component.canManageLabels).toBe(true);
   });
 
-  it('passes current labels to the dialog and applies the saved vocabulary locally', () => {
+  it('passes the services doc labels to the dialog and applies the saved vocabulary locally', () => {
     const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    const team = { _id: 'local@parent', customVoiceLabels: [ 'Announcement', 'Event' ] };
     component.planetCode = null;
-    component.configuration = { customVoiceLabels: [ 'Announcement', 'Event' ] };
-    component.customVoiceLabels = [ 'Announcement', 'Event' ];
+    component.team = team;
     const open = vi.fn().mockReturnValue({ afterClosed: () => of([ 'Event' ]) });
     (component as any).dialog = {
       open
@@ -37,7 +37,7 @@ describe('CommunityComponent custom labels', () => {
     expect(open).toHaveBeenCalledWith(DialogsVoiceLabelsComponent, {
       width: '500px',
       autoFocus: false,
-      data: { target: 'community', customLabels: [ 'Announcement', 'Event' ] }
+      data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }
     });
     expect(component.customVoiceLabels).toEqual([ 'Event' ]);
     expect(component.requestNewsAndUsers).not.toHaveBeenCalled();
@@ -93,7 +93,7 @@ describe('CommunityComponent remote exchange behavior', () => {
       deviceInfoService as any,
       {} as any,
       { checkConfiguration: vi.fn(() => of(undefined)) } as any,
-      { getActiveChallenge: vi.fn(() => null) } as any
+      { getActiveChallenge: vi.fn(() => of(undefined)), activeChallengeIn: vi.fn() } as any
     );
 
     return {
@@ -109,6 +109,17 @@ describe('CommunityComponent remote exchange behavior', () => {
 
     expect(component.servicesDescriptionLabel).toBe('Add');
     expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('keeps label editing off when the team doc fails to load', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 500, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(false);
   });
 
   it('reloads community data on login but not when a logout unsets the user', () => {

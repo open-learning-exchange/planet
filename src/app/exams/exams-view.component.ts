@@ -313,9 +313,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         this.currentAnswer = null;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
-        const challenge = isFinish ? this.challengesService.getActiveChallengeForCourse(this.courseId) : undefined;
-        if (challenge) {
-          this.challengesService.openChallengeDialog(this.dialog, challenge);
+        if (isFinish) {
+          this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
+            if (challenge) {
+              this.challengesService.openChallengeDialog(this.dialog, challenge);
+            }
+          });
         }
       }
     }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));
