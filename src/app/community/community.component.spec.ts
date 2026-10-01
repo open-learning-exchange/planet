@@ -30,7 +30,6 @@ describe('CommunityComponent custom labels', () => {
     (component as any).dialog = {
       open
     };
-    vi.spyOn(component, 'requestNews').mockImplementation(() => undefined);
 
     component.openManageLabelsDialog();
 
@@ -40,12 +39,15 @@ describe('CommunityComponent custom labels', () => {
       data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }
     });
     expect(component.customVoiceLabels).toEqual([ 'Event' ]);
-    expect(component.requestNews).not.toHaveBeenCalled();
   });
 });
 
 describe('CommunityComponent remote exchange behavior', () => {
-  const createComponent = (localPlanetType: 'center' | 'nation' = 'nation') => {
+  const createComponent = (
+    localPlanetType: 'center' | 'nation' = 'nation',
+    code: string | null = 'remote',
+    user: any = { _id: 'user', isUserAdmin: false, roles: [] }
+  ) => {
     const configuration = {
       _id: 'configuration',
       code: 'local',
@@ -53,9 +55,10 @@ describe('CommunityComponent remote exchange behavior', () => {
       planetType: localPlanetType
     };
     const router = { navigate: vi.fn() };
-    const routeParamMap = new BehaviorSubject(convertToParamMap({ code: 'remote' }));
+    const params = convertToParamMap(code ? { code } : {});
+    const routeParamMap = new BehaviorSubject(params);
     const route = {
-      snapshot: { paramMap: convertToParamMap({ code: 'remote' }) },
+      snapshot: { paramMap: params },
       paramMap: routeParamMap
     };
     const stateService = {
@@ -72,9 +75,9 @@ describe('CommunityComponent remote exchange behavior', () => {
       get: vi.fn(() => of({ _id: 'remote@local', description: '' }))
     };
     const userChange$ = new Subject<any>();
-    const currentUser: any = { value: { _id: 'user', isUserAdmin: false, roles: [] } };
+    const currentUser: any = { value: user };
     const userService = { get: vi.fn(() => currentUser.value), userChange$ };
-    const usersService = { usersListener: vi.fn(() => EMPTY) };
+    const usersService = { usersListener: vi.fn(() => EMPTY), requestUsers: vi.fn() };
     const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
     const component = new CommunityComponent(
       dialog as any,
@@ -123,34 +126,72 @@ describe('CommunityComponent remote exchange behavior', () => {
     expect(component.teamLoaded).toBe(false);
   });
 
-  it('loads only member data, not voices, when a guest logs in', () => {
-    const { component, newsService, teamsService, userChange$, currentUser } = createComponent();
-    teamsService.getTeamMembers.mockReturnValueOnce(throwError({ status: 401 }));
+  it('loads member data, not voices, when a guest logs in', () => {
+    const { component, couchService, newsService, teamsService, userChange$, currentUser } = createComponent('nation', null, { name: '' });
     component.ngOnInit();
-    const newsRequests = newsService.requestNews.mock.calls.length;
+    expect(teamsService.getTeamMembers).not.toHaveBeenCalled();
     expect(component.teamLoaded).toBe(false);
 
-    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [] };
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [ 'learner' ] };
     userChange$.next(currentUser.value);
 
-    expect(newsService.requestNews).toHaveBeenCalledTimes(newsRequests);
-    expect(teamsService.getTeamMembers).toHaveBeenCalledTimes(2);
+    expect(newsService.requestNews).toHaveBeenCalledTimes(1);
+    expect(teamsService.getTeamMembers).toHaveBeenCalledTimes(1);
+    expect(couchService.get).toHaveBeenCalledWith('teams/local@parent');
     expect(component.teamLoaded).toBe(true);
   });
 
-  it('reloads nothing on logout or when a member logs in again', () => {
+  it('restarts a remote load when a login lands before its configuration', () => {
     const { component, couchService, newsService, teamsService, userChange$, currentUser } = createComponent();
+    const configuration$ = new Subject<any[]>();
+    couchService.findAll = vi.fn(() => configuration$);
     component.ngOnInit();
-    const requestCounts = () => [ couchService.findAll, couchService.get, newsService.requestNews, teamsService.getTeamMembers ]
-      .map(request => request.mock.calls.length);
-    const countsAfterInit = requestCounts();
+
+    userChange$.next(currentUser.value);
+    configuration$.next([ { code: 'remote', name: 'Remote' } ]);
+
+    expect(newsService.requestNews).toHaveBeenCalledTimes(1);
+    expect(component.teamId).toBe('remote@local');
+    expect(teamsService.getTeamMembers).toHaveBeenCalledWith(expect.objectContaining({ _id: 'remote@local' }), true);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('drops member data still loading when the user logs out', () => {
+    const { component, couchService, teamsService, userChange$, currentUser } = createComponent('nation', null, { name: '' });
+    const servicesDoc$ = new Subject<any>();
+    teamsService.getTeamMembers.mockReturnValue(of([ { docType: 'link', title: 'Clinic' } ]));
+    couchService.get = vi.fn(() => servicesDoc$);
+    component.ngOnInit();
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [ 'learner' ] };
+    userChange$.next(currentUser.value);
 
     currentUser.value = { name: '' };
     userChange$.next(currentUser.value);
-    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [] };
+    servicesDoc$.next({ _id: 'local@parent', _rev: '1-a' });
+
+    expect(component.links).toEqual([]);
+    expect(component.teamLoaded).toBe(false);
+    expect(component.teamLoading).toBe(false);
+  });
+
+  it('clears member data on logout and reloads only that on the next login', () => {
+    const { component, newsService, teamsService, userChange$, currentUser } = createComponent('nation', null);
+    teamsService.getTeamMembers.mockReturnValue(of([ { docType: 'link', title: 'Clinic' } ]));
+    component.ngOnInit();
+    expect(component.links.length).toBe(1);
+
+    currentUser.value = { name: '' };
+    userChange$.next(currentUser.value);
+    expect(component.links).toEqual([]);
+    expect(component.teamLoaded).toBe(false);
+
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [ 'learner' ] };
+    userChange$.next(currentUser.value);
     userChange$.next(currentUser.value);
 
-    expect(requestCounts()).toEqual(countsAfterInit);
+    expect(component.links.length).toBe(1);
+    expect(teamsService.getTeamMembers).toHaveBeenCalledTimes(2);
+    expect(newsService.requestNews).toHaveBeenCalledTimes(1);
   });
 
   it('sets remote exchange mode synchronously from the route snapshot', () => {

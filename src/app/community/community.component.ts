@@ -104,6 +104,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   newsLoading = true;
   teamLoading = true;
   teamLoaded = false;
+  private communityReady = false;
+  private loggedOut$ = new Subject<void>();
   private challengeChecked = false;
   currentTab = 0;
   activeReplyId: string | null = null;
@@ -159,22 +161,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();
     this.communityDataRequest$.pipe(
-      tap(withNews => {
-        if (!withNews) {
-          return;
-        }
-        this.teamLoading = true;
-        this.teamLoaded = false;
-        this.newsLoading = true;
-        this.communityDataLoading = true;
-        this.activeReplyId = null;
-        this.news = [];
-        this.links = [];
-        this.finances = [];
-        this.reports = [];
-        this.councillors = [];
-        this.newsRequestSubscription?.unsubscribe();
-      }),
       switchMap(withNews => withNews ? this.loadCommunityData() : this.loadMemberData()),
       takeUntil(this.onDestroy$)
     ).subscribe(team => {
@@ -224,8 +210,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
       this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
-      if (this.isLoggedIn && !this.teamLoaded) {
-        this.getCommunityData(false);
+      if (!this.isLoggedIn) {
+        this.loggedOut$.next();
+        this.clearMemberData();
+      } else if (!this.teamLoaded) {
+        this.getCommunityData(!this.communityReady);
       }
     });
   }
@@ -259,6 +248,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   private loadCommunityData() {
+    this.communityReady = false;
+    this.teamLoading = true;
+    this.newsLoading = true;
+    this.communityDataLoading = true;
+    this.activeReplyId = null;
+    this.news = [];
+    this.councillors = [];
+    this.clearMemberData();
+    this.newsRequestSubscription?.unsubscribe();
     const planetCode = this.planetCode;
     const localConfiguration = this.stateService.configuration || {};
     const childPlanetType = this.getChildPlanetType(localConfiguration.planetType);
@@ -277,7 +275,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
         };
         this.team = requestedTeam;
         this.teamId = this.team._id;
+        this.communityReady = true;
         this.requestNews(planetCode);
+        this.requestUsers(planetCode);
+        if (!this.isLoggedIn) {
+          this.teamLoading = false;
+          this.communityDataLoading = false;
+          return EMPTY;
+        }
         return this.loadMemberData();
       }),
       catchError(() => {
@@ -290,29 +295,40 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   private loadMemberData() {
-    const requestedTeam = this.teamObject(this.planetCode);
-    this.requestUsers(this.planetCode);
+    const stopLoading = () => {
+      this.teamLoading = false;
+      this.communityDataLoading = false;
+    };
+    this.teamLoading = true;
     this.communityDataLoading = true;
-    return this.getLinks(this.planetCode).pipe(
+    return this.getLinks().pipe(
       switchMap((res) => {
         this.setLinksAndFinances(res);
-        return this.couchService.get(`teams/${requestedTeam._id}`).pipe(
-          catchError(err => err.status === 404 ? of(requestedTeam) : throwError(err))
+        return this.couchService.get(`teams/${this.team._id}`).pipe(
+          catchError(err => err.status === 404 ? of(this.team) : throwError(err))
         );
       }),
       catchError(() => {
-        this.teamLoading = false;
-        this.communityDataLoading = false;
+        stopLoading();
         return EMPTY;
-      })
+      }),
+      takeUntil(this.loggedOut$.pipe(tap(stopLoading)))
     );
+  }
+
+  private clearMemberData() {
+    this.links = [];
+    this.finances = [];
+    this.reports = [];
+    this.team = this.teamObject(this.planetCode);
+    this.teamLoaded = false;
   }
 
   private getChildPlanetType(planetType: string): 'community' | 'nation' | undefined {
     return planetType === 'center' ? 'nation' : planetType === 'nation' ? 'community' : undefined;
   }
 
-  requestNews(planetCode?: string) {
+  private requestNews(planetCode?: string) {
     this.newsRequestSubscription = this.newsService.requestNews({
       selectors: {
         $or: [
@@ -410,8 +426,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
 
-  getLinks(planetCode?) {
-    return this.teamsService.getTeamMembers(this.team || this.teamObject(planetCode), true).pipe(map((docs) => {
+  getLinks() {
+    return this.teamsService.getTeamMembers(this.team, true).pipe(map((docs) => {
       const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => {
         if (!docObject[doc.docType]) {
           docObject[doc.docType] = [];
