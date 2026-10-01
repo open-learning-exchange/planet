@@ -44,7 +44,7 @@
 
   <ng-template #actionButtons>
     @if (canManage && !parent) {
-      <a mat-raised-button color="primary" [routerLink]="['/courses/submissions', courseDetail._id]" class="margin-lr-3 km-course-submissions-btn" i18n>
+      <a mat-raised-button color="accent" [routerLink]="['/courses/submissions', courseDetail._id]" class="margin-lr-3 km-course-submissions-btn" i18n>
         Submissions & Grading
       </a>
     }
@@ -54,13 +54,15 @@
           Join
         </button>
       }
+    }
+    <button class="view-step-button margin-lr-3" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
+    @if (!parent) {
       @if (isUserEnrolled && courseDetail.steps.length) {
-        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3">
+        <button mat-raised-button color="warn" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3">
           Leave
         </button>
       }
     }
-    <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </ng-template>
 
   <div class="view-container view-full-height">
