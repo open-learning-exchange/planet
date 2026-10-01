@@ -1,3 +1,4 @@
+@use '../mixins' as m;
 @use '../variables' as v;
 
 mat-card {
@@ -130,3 +131,16 @@ mat-card-content {
   }
 }
 
+.unread-reply-dot {
+  @include m.unread-dot;
+  display: inline-block;
+  margin-left: 4px;
+  vertical-align: middle;
+
+  &.corner {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    margin-left: 0;
+  }
+}

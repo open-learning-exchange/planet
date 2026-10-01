@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, throwError } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
@@ -148,6 +148,7 @@ export class NewsService {
 
   saveReaction(newsDoc: any) {
     return this.couchService.updateDocument(this.dbName, newsDoc).pipe(
+      tap(() => this.requestNews()),
       catchError((error) => {
         if (error?.status === 409) {
           this.requestNews();
