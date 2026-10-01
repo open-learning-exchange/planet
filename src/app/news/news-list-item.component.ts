@@ -314,14 +314,14 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleReaction(newsDoc: any, emoji: string) {
-    if (!this.canReact || this.reactionSaving || !this.currentUser?._id || !newsDoc) {
+    if (!this.canReact || this.reactionSaving || !newsDoc) {
       return;
     }
     this.reactionSaving = true;
     const previousReactions = newsDoc.reactions;
     this.authService.checkAuthenticationStatus().pipe(
       switchMap(() => {
-        newsDoc.reactions = toggleNewsReaction(newsDoc.reactions, emoji, this.currentUser._id);
+        newsDoc.reactions = toggleNewsReaction(newsDoc.reactions, emoji, this.userService.get()._id);
         return this.newsService.saveReaction(newsDoc);
       }),
       finalize(() => this.reactionSaving = false)

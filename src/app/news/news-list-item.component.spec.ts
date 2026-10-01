@@ -226,9 +226,10 @@ describe('NewsListItemComponent emoji reactions', () => {
       saveReaction: vi.fn(() => of({ ok: true })),
       postSharedWithCommunity: vi.fn(() => false)
     };
+    const userService = { get: vi.fn((): any => ({ _id: currentUserId, name: 'Alex' })), userChange$: of(undefined) };
     const component = new NewsListItemComponent(
       { url: '/voices' } as any,
-      { get: vi.fn(() => ({ _id: currentUserId, name: 'Alex' })), userChange$: of(undefined) } as any,
+      userService as any,
       newsService as any,
       { configuration: { code: 'local', planetType: 'nation' } } as any,
       {} as any,
@@ -246,7 +247,7 @@ describe('NewsListItemComponent emoji reactions', () => {
         viewIn: []
       }
     };
-    return { component, authService, newsService };
+    return { component, authService, newsService, userService };
   };
 
   it('extracts reaction entries with counts and users', () => {
@@ -307,6 +308,35 @@ describe('NewsListItemComponent emoji reactions', () => {
 
     expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
     expect(component.item.doc.reactions).toEqual(previousReactions);
+    expect(component.reactionSaving).toBe(false);
+  });
+
+  it('asks a logged-out visitor to log in and saves the reaction as the user who logged in', () => {
+    const { component, authService, newsService, userService } = setupReactions();
+    userService.get.mockReturnValue({});
+    component.currentUser = {};
+    authService.checkAuthenticationStatus.mockImplementation(() => {
+      userService.get.mockReturnValue({ _id: 'user-9', name: 'Sam' });
+      return of(undefined);
+    });
+
+    component.toggleReaction(component.item.doc, '🔥');
+
+    expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
+    expect(component.item.doc.reactions).toEqual({ '👍': [ 'user-1', 'user-2' ], '❤️': [ 'user-3' ], '🔥': [ 'user-9' ] });
+    expect(newsService.saveReaction).toHaveBeenCalled();
+  });
+
+  it('leaves reactions unchanged when the login dialog is cancelled', () => {
+    const { component, authService, newsService } = setupReactions();
+    component.currentUser = {};
+    const previousReactions = component.item.doc.reactions;
+    authService.checkAuthenticationStatus.mockReturnValue(throwError(new Error('Not authorized')));
+
+    component.toggleReaction(component.item.doc, '🔥');
+
+    expect(newsService.saveReaction).not.toHaveBeenCalled();
+    expect(component.item.doc.reactions).toBe(previousReactions);
     expect(component.reactionSaving).toBe(false);
   });
 
