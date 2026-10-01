@@ -22,6 +22,7 @@ describe('ChallengesService', () => {
 
     expect(couchService.get).toHaveBeenCalledWith('teams/local@parent');
     expect(active).toEqual(expect.objectContaining({ id: 'reto', courseId: 'course-1' }));
+    expect(service.activeChallengeIn({ challenges: [ challenge ] }, referenceDate)).toEqual(active);
   });
 
   it('has no active challenge when the services doc does not exist', () => {

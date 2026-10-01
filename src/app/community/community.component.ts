@@ -103,6 +103,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceTypes = DeviceType;
   newsLoading = true;
   teamLoading = true;
+  private challengeChecked = false;
   currentTab = 0;
   activeReplyId: string | null = null;
   lastReplyId: string | null = null;
@@ -175,6 +176,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
       this.teamLoading = false;
+      if (!this.challengeChecked) {
+        this.challengeChecked = true;
+        this.communityChallenge();
+      }
     });
     // planetCode is seeded from the route snapshot; the configuration listener below performs the initial load.
     // This subscription only reloads data when Angular reuses the component for a different community code.
@@ -202,7 +207,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.communityChallenge();
     iif(
       () => this.stateService.configuration?._id !== undefined,
       of(this.stateService.configuration),
@@ -227,7 +231,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    this.challengesService.getActiveChallenge().pipe(
+    const challenge$ = this.isRemoteExchange ?
+      this.challengesService.getActiveChallenge() :
+      of(this.challengesService.activeChallengeIn(this.team));
+    challenge$.pipe(
       filter(challenge => !!challenge),
       switchMap(challenge => this.challengesService.openChallengeDialog(this.dialog, challenge).afterClosed().pipe(map(() => challenge))),
       filter(() => !this.userStatusService.getCompleteChallenge()),
@@ -338,11 +345,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
         )).map(user => this.sendNotifications(user._id, this.user._id));
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
-      switchMap(() => this.challengesService.getActiveChallenge()),
       finalize(() => this.dialogsLoadingService.stop()),
       takeUntil(this.onDestroy$)
-    ).subscribe(challenge => {
+    ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
+      const challenge = this.challengesService.activeChallengeIn(this.team);
       if (
         challenge &&
         this.userStatusService.getStatus('joinedCourse') &&

@@ -93,7 +93,7 @@ describe('CommunityComponent remote exchange behavior', () => {
       deviceInfoService as any,
       {} as any,
       { checkConfiguration: vi.fn(() => of(undefined)) } as any,
-      { getActiveChallenge: vi.fn(() => of(undefined)) } as any
+      { getActiveChallenge: vi.fn(() => of(undefined)), activeChallengeIn: vi.fn() } as any
     );
 
     return {

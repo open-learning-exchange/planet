@@ -40,10 +40,17 @@ export class ChallengesService {
 
   getChallenges(): Observable<PlanetChallenge[]> {
     return this.couchService.get(`teams/${planetAndParentId(this.stateService.configuration)}`).pipe(
-      map(servicesDoc => Array.isArray(servicesDoc?.challenges) ? servicesDoc.challenges : []),
-      map(challenges => challenges.map(challenge => this.normalizeChallenge(challenge))),
+      map(servicesDoc => this.servicesDocChallenges(servicesDoc)),
       catchError(() => of([]))
     );
+  }
+
+  activeChallengeIn(servicesDoc: any, referenceDate = new Date()): PlanetChallenge | undefined {
+    return this.servicesDocChallenges(servicesDoc).find(challenge => this.isChallengeActive(challenge, referenceDate));
+  }
+
+  private servicesDocChallenges(servicesDoc: any): PlanetChallenge[] {
+    return (Array.isArray(servicesDoc?.challenges) ? servicesDoc.challenges : []).map(challenge => this.normalizeChallenge(challenge));
   }
 
   getActiveChallenge(referenceDate = new Date()): Observable<PlanetChallenge | undefined> {
