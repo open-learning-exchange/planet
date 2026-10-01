@@ -17,9 +17,9 @@
       <p class="labels-empty" i18n>No custom labels created yet.</p>
     } @else {
       <mat-chip-set aria-label="Custom Labels" i18n-aria-label>
-        @for (label of customLabels; track label) {
-          <mat-chip class="planet-chip-label chip-outline-primary">
-            <planet-label [label]="label"></planet-label>
+        @for (label of customLabels; track label.name) {
+          <mat-chip class="planet-chip-label" [style.background-color]="label.color || defaultColor">
+            <planet-label [label]="label.name"></planet-label>
             <button matChipRemove aria-label="Remove label option" i18n-aria-label
               [disabled]="isSaving" (click)="removeLabel(label)">
               <mat-icon>clear</mat-icon>
@@ -45,6 +45,25 @@
       </mat-form-field>
       <button mat-stroked-button color="primary" class="add-btn" type="button"
         [disabled]="isSaving" (click)="addLabel()" i18n>Add</button>
+    </div>
+    <div class="color-picker-row">
+      <span class="color-picker-label" i18n>Label color:</span>
+      <div class="color-swatches" aria-label="Label color" i18n-aria-label>
+        @for (color of colorPalette; track color.value) {
+          <button
+            type="button"
+            class="color-swatch-button"
+            [style.background-color]="color.value"
+            [class.selected]="selectedColor === color.value"
+            (click)="selectedColor = color.value"
+            [attr.aria-pressed]="selectedColor === color.value"
+            [attr.aria-label]="color.name">
+            @if (selectedColor === color.value) {
+              <mat-icon class="check-icon">check</mat-icon>
+            }
+          </button>
+        }
+      </div>
     </div>
     @if (errorMessage) {
       <div class="mat-caption warn-text-color" role="alert">{{ errorMessage }}</div>

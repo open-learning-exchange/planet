@@ -16,7 +16,9 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { trackById } from '../shared/table-helpers';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voice-labels';
+import {
+  dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual
+} from '../shared/voice-labels';
 
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -529,9 +531,16 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (action === 'select' || this.readOnly) {
       return;
     }
-    const labels = action === 'remove' ?
-      (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
-      dedupeVoiceLabels([ ...(news.labels || []), label ]);
+    let labels: any[];
+    if (action === 'remove') {
+      labels = (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label));
+    } else {
+      const existing = news.labels || [];
+      const customMatch = (this.customLabels || []).find(c => voiceLabelsEqual(c, label));
+      const labelToAdd = customMatch || label;
+      const alreadyPresent = existing.some(existingLabel => voiceLabelsEqual(existingLabel, labelToAdd));
+      labels = alreadyPresent ? existing : [ ...existing, labelToAdd ];
+    }
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 

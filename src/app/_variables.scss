@@ -47,6 +47,29 @@ $planet-green: mat.m2-get-color-from-palette($planet-app-green, $primary-hue);
 $planet-green-lighter: mat.m2-get-color-from-palette($planet-app-green, 100);
 $planet-green-dark: mat.m2-get-color-from-palette($planet-app-green, $dark-hue);
 
+// Lighter tint palette for custom voice labels, theme-aligned to 100-level low-emphasis fills.
+$label-tint-blue: #bbdefb;
+$label-tint-green: #c8e6c9;
+$label-tint-amber: #ffecb3;
+$label-tint-coral: #ffcdd2;
+$label-tint-purple: #e1bee7;
+$label-tint-teal: #b2dfdb;
+$label-tint-cyan: #b2ebf2;
+$label-tint-orange: #ffe0b2;
+$label-tint-pink: #f8bbd0;
+
+$label-tint-palette: (
+  $label-tint-blue,
+  $label-tint-green,
+  $label-tint-amber,
+  $label-tint-coral,
+  $label-tint-purple,
+  $label-tint-teal,
+  $label-tint-cyan,
+  $label-tint-orange,
+  $label-tint-pink
+);
+
 // Text shades that clear WCAG AA on the matching *-lighter surface. The -lighter
 // shades are the established low-emphasis fill (chips, table highlights, selected
 // states); pair them with these rather than inventing a new tint.

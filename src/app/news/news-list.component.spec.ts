@@ -45,6 +45,34 @@ describe('NewsListComponent labels', () => {
     );
   });
 
+  it('preserves custom label color when adding a label', () => {
+    const component = createComponent();
+    component.customLabels = [ { name: 'Meeting', color: '#e1bee7' } ];
+    component.newsService = { postNews: vi.fn().mockReturnValue(of({})) };
+    const news = { _id: 'news-1', labels: [] };
+
+    component.changeLabels({ news, label: 'Meeting', action: 'add' });
+
+    expect(component.newsService.postNews).toHaveBeenCalledWith(
+      { ...news, labels: [ { name: 'Meeting', color: '#e1bee7' } ] },
+      'Label added'
+    );
+  });
+
+  it('preserves existing string labels without modifying them when adding a new label', () => {
+    const component = createComponent();
+    component.customLabels = [ { name: 'Urgent', color: '#ffcdd2' } ];
+    component.newsService = { postNews: vi.fn().mockReturnValue(of({})) };
+    const news = { _id: 'news-1', labels: [ 'legacy-label' ] };
+
+    component.changeLabels({ news, label: 'Urgent', action: 'add' });
+
+    expect(component.newsService.postNews).toHaveBeenCalledWith(
+      { ...news, labels: [ 'legacy-label', { name: 'Urgent', color: '#ffcdd2' } ] },
+      'Label added'
+    );
+  });
+
   it('collects labels from posts and leaves out the feed viewing them', () => {
     const component = createComponent();
     component.viewableId = 'team-1';

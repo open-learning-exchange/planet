@@ -14,7 +14,15 @@ import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { LabelComponent } from '../label.component';
-import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from '../voice-labels';
+import {
+  CustomVoiceLabel,
+  DEFAULT_VOICE_LABELS,
+  SHARED_CHAT_LABEL,
+  DEFAULT_LABEL_COLOR,
+  LABEL_TINT_COLORS,
+  dedupeCustomVoiceLabels,
+  getVoiceLabelName
+} from '../voice-labels';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 import { Subject } from 'rxjs';
 import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -41,9 +49,22 @@ import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
 export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
 
   systemLabels = DEFAULT_VOICE_LABELS;
-  initialCustomLabels: string[] = [];
-  customLabels: string[] = [];
+  initialCustomLabels: CustomVoiceLabel[] = [];
+  customLabels: CustomVoiceLabel[] = [];
   newLabelInput = '';
+  selectedColor: string = DEFAULT_LABEL_COLOR;
+  colorPalette = [
+    { value: '#bbdefb', name: $localize`Blue` },
+    { value: '#c8e6c9', name: $localize`Green` },
+    { value: '#ffecb3', name: $localize`Amber` },
+    { value: '#ffcdd2', name: $localize`Coral` },
+    { value: '#e1bee7', name: $localize`Purple` },
+    { value: '#b2dfdb', name: $localize`Teal` },
+    { value: '#b2ebf2', name: $localize`Cyan` },
+    { value: '#ffe0b2', name: $localize`Orange` },
+    { value: '#f8bbd0', name: $localize`Pink` }
+  ];
+  defaultColor = DEFAULT_LABEL_COLOR;
   errorMessage = '';
   isSaving = false;
   isConfirmingClose = false;
@@ -73,7 +94,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
     this.target = this.data?.target || 'community';
     this.team = this.data?.team;
 
-    let configuredLabels: string[] = [];
+    let configuredLabels: any[] = [];
     if (Array.isArray(this.data?.customLabels)) {
       configuredLabels = this.data.customLabels;
     } else if (this.target === 'community') {
@@ -82,7 +103,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
       configuredLabels = this.team.customVoiceLabels;
     }
 
-    const uniqueLabels = dedupeVoiceLabels(configuredLabels);
+    const uniqueLabels = dedupeCustomVoiceLabels(configuredLabels);
     this.initialCustomLabels = [ ...uniqueLabels ];
     this.customLabels = [ ...uniqueLabels ];
   }
@@ -105,8 +126,13 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
   }
 
   get labelsChanged(): boolean {
-    return this.initialCustomLabels.length !== this.customLabels.length ||
-      this.initialCustomLabels.some((label, index) => label !== this.customLabels[index]);
+    if (this.initialCustomLabels.length !== this.customLabels.length) {
+      return true;
+    }
+    return this.initialCustomLabels.some((label, index) => {
+      const current = this.customLabels[index];
+      return label.name !== current?.name || (label.color || DEFAULT_LABEL_COLOR) !== (current?.color || DEFAULT_LABEL_COLOR);
+    });
   }
 
   addLabel(): void {
@@ -131,7 +157,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.customLabels.some(l => l.toLowerCase() === lowerValue)) {
+    if (this.customLabels.some(l => l.name.toLowerCase() === lowerValue)) {
       this.errorMessage = $localize`"${value}" already exists in custom labels.`;
       return;
     }
@@ -141,15 +167,16 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.customLabels.push(value);
+    this.customLabels.push({ name: value, color: this.selectedColor || DEFAULT_LABEL_COLOR });
     this.newLabelInput = '';
   }
 
-  removeLabel(label: string): void {
+  removeLabel(label: CustomVoiceLabel | string): void {
     if (this.isSaving) {
       return;
     }
-    const index = this.customLabels.indexOf(label);
+    const labelName = getVoiceLabelName(label).toLowerCase();
+    const index = this.customLabels.findIndex(l => l.name.toLowerCase() === labelName);
     if (index >= 0) {
       this.customLabels.splice(index, 1);
     }

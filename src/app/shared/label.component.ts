@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
 })
 export class LabelComponent {
 
-  @Input() label: string;
+  @Input() label: string | any;
 
   private labelTranslations: { [key: string]: string } = {
     temperature: $localize`Temperature (°C)`,
@@ -90,8 +90,9 @@ export class LabelComponent {
   };
 
   getTranslatedLabel(): string {
-    return Object.prototype.hasOwnProperty.call(this.labelTranslations, this.label) ?
-      this.labelTranslations[this.label] : this.label;
+    const key = typeof this.label === 'object' && this.label ? (this.label.name || '') : this.label;
+    return Object.prototype.hasOwnProperty.call(this.labelTranslations, key) ?
+      this.labelTranslations[key] : key;
   }
 
 }
