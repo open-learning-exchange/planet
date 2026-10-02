@@ -6,7 +6,7 @@ import { ValidatorService } from '../../validators/validator.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CouchService } from '../../shared/couchdb.service';
+import { CouchService } from '../../shared/database/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, Subject } from 'rxjs';
@@ -15,7 +15,7 @@ import { vi } from 'vitest';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { PouchService } from '../../shared/database/pouch.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { StateService } from '../../shared/state.service';
 
 describe('CoursesAddComponent', () => {

@@ -1,11 +1,11 @@
 import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { forkJoin, throwError, of } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
-import { SyncService } from '../shared/sync.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
+import { SyncService } from '../shared/database/sync.service';
+import { findDocuments } from '../shared/database/mango-queries';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';

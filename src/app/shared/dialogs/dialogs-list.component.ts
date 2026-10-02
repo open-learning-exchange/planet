@@ -11,7 +11,7 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { composeFilterFunctions, filterDropdowns, isAllVisibleSelected, toggleVisibleSelection } from '../table-helpers';
+import { composeFilterFunctions, filterDropdowns, isAllVisibleSelected, toggleVisibleSelection } from '../tables/table.helpers';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { of, empty, forkJoin, throwError, from } from 'rxjs';
 import { switchMap, map, take, catchError, finalize } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
 import { DialogsFormService, DialogField } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '../shared/database/mango-queries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';

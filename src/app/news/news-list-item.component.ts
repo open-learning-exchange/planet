@@ -1,27 +1,27 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
-import { AuthService } from '../shared/auth-guard.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { Subject } from 'rxjs';
 import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { LabelComponent } from '../shared/label.component';
+import { LabelComponent } from '../shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TimeAgoPipe } from '../shared/time-ago.pipe';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
-import { FullNamePipe } from '../shared/full-name.pipe';
-import { LinkCopyService } from '../shared/link-copy.service';
+import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
+import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
+import { FullNamePipe } from '../shared/text/full-name.pipe';
+import { LinkCopyService } from '../shared/ui/link-copy.service';
 import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
@@ -91,7 +91,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private newsService: NewsService,
     private stateService: StateService,
     private usersProfileDialogService: UsersProfileDialogService,
-    private authService: AuthService,
+    private authGuard: AuthGuard,
     private linkCopyService: LinkCopyService,
     private deviceInfoService: DeviceInfoService,
   ) {
@@ -159,7 +159,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
     const label = this.formLabel(news);
-    this.authService.checkAuthenticationStatus().subscribe(() => {
+    this.authGuard.checkAuthenticationStatus().subscribe(() => {
       this.updateNews.emit({
         title: $localize`Reply to ${label}`,
         placeholder:  $localize`Your ${label}`,
@@ -244,7 +244,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       event.stopPropagation();
       event.preventDefault();
     }
-    this.authService.checkAuthenticationStatus().subscribe(() => {
+    this.authGuard.checkAuthenticationStatus().subscribe(() => {
       this.usersProfileDialogService.open(
         { member: { ...member, userPlanetCode: member.planetCode } },
         { restoreFocus: false }
@@ -319,7 +319,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.reactionSaving = true;
     const previousReactions = newsDoc.reactions;
-    this.authService.checkAuthenticationStatus().pipe(
+    this.authGuard.checkAuthenticationStatus().pipe(
       switchMap(() => {
         newsDoc.reactions = toggleNewsReaction(newsDoc.reactions, emoji, this.userService.get()._id);
         return this.newsService.saveReaction(newsDoc);

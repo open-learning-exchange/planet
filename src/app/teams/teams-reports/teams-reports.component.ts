@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { CouchService } from '../../shared/couchdb.service';
+import { CouchService } from '../../shared/database/couchdb.service';
 import { TeamsService } from '../teams.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
@@ -11,16 +11,16 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { convertUtcDate } from '../teams.utils';
-import { CsvService } from '../../shared/csv.service';
+import { CsvService } from '../../shared/export/csv.service';
 import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { fullLabel } from '../../manager-dashboard/reports/reports.utils';
 import { AttachmentInputState } from '../../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from '../teams-attachments.service';
 import { formatDate, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -28,7 +28,7 @@ import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from '../teams-table-pdf-export.service';
-import { filterSpecificFieldsHybrid } from '../../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../../shared/tables/table.helpers';
 
 interface NewReportForm {
   _id?: string;

@@ -15,20 +15,20 @@ import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
   isAllVisibleSelected, toggleVisibleSelection
-} from '../shared/table-helpers';
-import { UserService } from '../shared/user.service';
+} from '../shared/tables/table.helpers';
+import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { PlanetRoleComponent } from '../shared/auth/planet-role.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 

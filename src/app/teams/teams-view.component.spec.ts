@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
+import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
 import { TeamsViewComponent } from './teams-view.component';
 
 describe('TeamsViewComponent task projections', () => {
@@ -52,7 +52,7 @@ describe('TeamsViewComponent task projections', () => {
 
     component.openInviteMemberDialog();
     const selected = { _id: 'u1' };
-    const addTable = new DialogsAddTableComponent(dialogRef as any, dialogCfg.data, dialogsLoadingService as any);
+    const addTable = new TablesAddDialogComponent(dialogRef as any, dialogCfg.data, dialogsLoadingService as any);
     addTable.usersComponent = {
       usersTable: { tableData: { data: [ selected ] }, selection: { selected: [ selected ] } }
     } as any;

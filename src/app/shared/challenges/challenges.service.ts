@@ -4,8 +4,8 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { StateService } from '../state.service';
-import { CouchService } from '../couchdb.service';
-import { DialogsAnnouncementComponent } from '../dialogs/dialogs-announcement.component';
+import { CouchService } from '../database/couchdb.service';
+import { ChallengesAnnouncementDialogComponent } from './challenges-announcement-dialog.component';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
@@ -94,7 +94,7 @@ export class ChallengesService {
   }
 
   openChallengeDialog(dialog: MatDialog, challenge: PlanetChallenge) {
-    return dialog.open(DialogsAnnouncementComponent, {
+    return dialog.open(ChallengesAnnouncementDialogComponent, {
       width: '50vw',
       maxHeight: '100vh',
       data: challenge

@@ -7,9 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { TableState, UsersTableComponent } from './users-table.component';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { UsersService } from './users.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 describe('UsersTableComponent', () => {
