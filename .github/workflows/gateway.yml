@@ -29,6 +29,41 @@ jobs:
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
           echo "::set-output name=version::$version"
 
+  testing:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            gateway/package-lock.json
+
+      # Vitest resolves from the repository root's node_modules
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install gateway dependencies
+        run: npm ci
+        working-directory: gateway
+
+      - name: Run lint
+        run: npm run lint
+        working-directory: gateway
+
+      - name: Run unit tests
+        run: npm test
+        working-directory: gateway
+
   build:
     name: Gateway build
     needs: [ build-prepare ]
