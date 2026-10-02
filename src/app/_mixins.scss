@@ -134,10 +134,6 @@
       }
     }
   }
-
-  .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{v.$search-filters-height});
-  }
 }
 
 @mixin label-chip {

@@ -66,6 +66,9 @@ import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.scss'],
   encapsulation: ViewEncapsulation.None,
+  host: {
+    '[class.embedded]': 'isForm'
+  },
   imports: [
     MatDialogTitle,
     MatDialogContent,
