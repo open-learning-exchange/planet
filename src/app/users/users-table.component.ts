@@ -18,7 +18,7 @@ import {
 } from '../shared/tables/table.helpers';
 import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { DeviceInfoService } from '../shared/ui/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
@@ -125,8 +125,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
   promptDialog: MatDialogRef<DialogsPromptComponent>;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   trackById = trackById;
 
   constructor(
@@ -139,12 +138,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;

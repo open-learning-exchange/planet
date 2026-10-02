@@ -14,11 +14,11 @@
   @if (mode==='services') {
     <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
   }
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (deviceType() === deviceTypes.DESKTOP) {
     <ng-container *ngTemplateOutlet="editDetails"></ng-container>
     <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
   }
-  @if ( deviceType === deviceTypes.TABLET) {
+  @if ( deviceType() === deviceTypes.TABLET) {
     <ng-container *ngTemplateOutlet="editDetails"></ng-container>
     <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
       <mat-icon>more_vert</mat-icon>
@@ -27,7 +27,7 @@
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
     </mat-menu>
   }
-  @if (deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE) {
+  @if (isMobile()) {
     <span class="toolbar-fill"></span>
     <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
       <mat-icon>more_vert</mat-icon>

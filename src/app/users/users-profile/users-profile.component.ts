@@ -8,7 +8,7 @@ import { UsersAchievementsService } from '../users-achievements/users-achievemen
 import { findDocuments } from '../../shared/database/mango-queries';
 import { StateService } from '../../shared/state.service';
 import { educationLevel } from '../users.constants';
-import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
+import { DeviceInfoService } from '../../shared/ui/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
@@ -68,8 +68,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   totalLogins = 0;
   lastLogin = 0;
   educationLevel = educationLevel;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   teams: any[] = [];
   enterprises: any[] = [];
   private onDestroy$ = new Subject<void>();
@@ -86,12 +85,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private teamsService: TeamsService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.user = this.userService.get();

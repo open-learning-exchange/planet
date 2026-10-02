@@ -6,7 +6,7 @@ import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { AuthGuard } from '../shared/auth/auth.guard';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { DeviceInfoService } from '../shared/ui/device-info.service';
 import { Subject } from 'rxjs';
 import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -80,8 +80,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   labels = { listed: [], all: [ ...DEFAULT_VOICE_LABELS ] };
   teamLabels = [];
   previewLimit = 500;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
   reactionSaving = false;
 
@@ -94,12 +93,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private authGuard: AuthGuard,
     private linkCopyService: LinkCopyService,
     private deviceInfoService: DeviceInfoService,
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.handleItemExpansion();

@@ -137,7 +137,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   dateQueryParams = {
     startDate: null,
@@ -188,9 +188,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     @Inject(LOCALE_ID) private localeId: string
   ) {
     this.initDateFilterForm();
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
   }
 
   ngOnInit() {
