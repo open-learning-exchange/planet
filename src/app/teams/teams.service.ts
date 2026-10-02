@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import { of, empty, forkJoin, throwError, from } from 'rxjs';
-import { switchMap, map, take, catchError } from 'rxjs/operators';
+import { switchMap, map, take, catchError, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { DialogsFormService, DialogField } from '../shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { fullName, truncateText, normalizeImage, NormalizedImage, couchAttachmentUrl } from '../shared/utils';
+import {
+  fullName, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
+} from '../shared/utils';
 import { AttachmentInputState, ExistingAttachment } from '../shared/forms/file-upload.component';
 import { environment } from '../../environments/environment';
 
@@ -60,6 +63,7 @@ export class TeamsService {
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private usersService: UsersService,
     private stateService: StateService,
@@ -85,7 +89,7 @@ export class TeamsService {
     } : {};
     const formGroup = {
       ...nameControl,
-      coverImage: [ this.coverAttachmentState(team) ],
+      coverImage: [ { retained: this.existingCoverAttachments(team), removed: [], added: [] } ],
       description: team.description || '',
       services: team.services || '',
       rules: team.rules || '',
@@ -99,18 +103,19 @@ export class TeamsService {
           if (response === undefined) {
             return empty();
           }
-          const coverState: AttachmentInputState = response.coverImage || { retained: [], removed: [], added: [] };
-          delete response.coverImage;
-          const teamData = {
+          const { coverImage, ...changes } = response;
+          this.dialogsLoadingService.start();
+          return this.saveTeamWithCover({
             limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-            parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type
-          };
-          return this.saveTeamWithCover(teamData, coverState, team);
-        }),
-        switchMap((response) => !team._id ?
-          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
-          of(response)
-        )
+            parentCode: configuration.parentCode, createdBy: userId, ...team, ...changes, type
+          }, coverImage).pipe(
+            switchMap((savedTeam) => !team._id ?
+              this.toggleTeamMembership(savedTeam, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
+              of(savedTeam)
+            ),
+            finalize(() => this.dialogsLoadingService.stop())
+          );
+        })
       );
   }
 
@@ -144,7 +149,7 @@ export class TeamsService {
     return [
       type === 'services' ? [] : nameField,
       type === 'enterprise' ? enterpriseDescField : descriptionField,
-      coverField,
+      type === 'services' ? [] : coverField,
       type === 'team' ? typeField : [],
       publicField
     ].flat();
@@ -156,98 +161,30 @@ export class TeamsService {
     return fileName && attachment ? [ {
       name: fileName,
       contentType: attachment.content_type,
-      url: couchAttachmentUrl(environment.couchAddress, this.dbName, team._id, fileName),
+      url: this.coverImageUrl(team),
       size: attachment.length
     } ] : [];
   }
 
-  coverAttachmentState(team: any): AttachmentInputState {
-    return {
-      retained: this.existingCoverAttachments(team),
-      removed: [],
-      added: []
-    };
+  coverImageUrl(team: any): string {
+    return team?._id && team.coverFileName ? couchAttachmentUrl(environment.couchAddress, this.dbName, team._id, team.coverFileName) : '';
   }
 
-  saveTeamWithCover(team: any, coverState: AttachmentInputState, originalTeam: any = {}) {
-    const addedCover = coverState?.added?.[0];
-    const retainedCover = coverState?.retained?.[0];
-    const existingAttachmentNames = Object.keys(originalTeam?._attachments || {});
-
-    return (addedCover ? from(normalizeImage(addedCover.file, { usedNames: existingAttachmentNames })) : of(null)).pipe(
-      switchMap((normalizedCover: NormalizedImage | null) => {
-        if (normalizedCover) {
-          return this.saveTeamWithNewCover(team, normalizedCover, originalTeam);
-        }
-        const teamDoc = { ...team };
-        if (retainedCover && originalTeam?._attachments?.[retainedCover.name]) {
-          teamDoc.coverFileName = retainedCover.name;
-          teamDoc._attachments = { ...originalTeam._attachments };
-        } else {
-          const attachments = { ...(originalTeam?._attachments || {}) };
-          if (originalTeam?.coverFileName) {
-            delete attachments[originalTeam.coverFileName];
-          }
-          delete teamDoc.coverFileName;
-          if (Object.keys(attachments).length) {
-            teamDoc._attachments = attachments;
-          } else {
-            delete teamDoc._attachments;
-          }
-        }
-        return this.updateTeam(teamDoc);
-      })
+  saveTeamWithCover(team: any, coverState: AttachmentInputState) {
+    return from(withImageAttachment(team, 'coverFileName', coverState)).pipe(
+      switchMap(teamDoc => this.updateTeam(teamDoc)),
+      map(savedTeam => ({ ...savedTeam, _attachments: attachmentStubs(savedTeam._attachments) }))
     );
   }
 
-  private saveTeamWithNewCover(team: any, normalizedCover: NormalizedImage, originalTeam: any = {}) {
-    const existingTeamId = originalTeam._id || team._id;
-    const existingTeamRev = originalTeam._rev || team._rev;
-    const teamWithoutCover = { ...team };
-    delete teamWithoutCover.coverFileName;
-
-    const upload$ = existingTeamId && existingTeamRev ?
-      this.couchService.putAttachment(
-        `${this.dbName}/${existingTeamId}/${normalizedCover.fileName}?rev=${existingTeamRev}`,
-        normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
-      ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${existingTeamId}`))) :
-      this.updateTeam(teamWithoutCover).pipe(
-        switchMap((res: any) => {
-          const teamId = res._id || res.id;
-          const teamRev = res._rev || res.rev;
-          return this.couchService.putAttachment(
-            `${this.dbName}/${teamId}/${normalizedCover.fileName}?rev=${teamRev}`,
-            normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
-          ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${teamId}`)));
-        })
-      );
-
-    return upload$.pipe(
-      switchMap((uploadedDoc: any) => {
-        const attachments = { ...(uploadedDoc._attachments || {}) };
-        if (originalTeam?.coverFileName && originalTeam.coverFileName !== normalizedCover.fileName) {
-          delete attachments[originalTeam.coverFileName];
-        }
-        return this.updateTeam({
-          ...team,
-          _id: uploadedDoc._id,
-          _rev: uploadedDoc._rev,
-          ...(uploadedDoc.createdDate ? { createdDate: uploadedDoc.createdDate } : {}),
-          coverFileName: normalizedCover.fileName,
-          _attachments: attachments
-        });
-      })
-    );
+  saveErrorMessage(err: any): string {
+    return err?.message === UNPROCESSABLE_IMAGE_ERROR ?
+      $localize`Cover image could not be processed. Please choose a JPEG or PNG image.` :
+      $localize`There was a problem saving your changes.`;
   }
 
   updateTeam(team: any) {
-    return this.couchService.updateDocument(this.dbName, team).pipe(
-      switchMap((res: any) => of({
-        ...team,
-        _id: res._id || res.id || team._id,
-        _rev: res._rev || res.rev || team._rev
-      }))
-    );
+    return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => of({ ...team, _rev: res.rev, _id: res.id })));
   }
 
   requestToJoinTeam(team, user) {

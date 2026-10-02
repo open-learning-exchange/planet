@@ -24,7 +24,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { couchAttachmentUrl } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -606,10 +605,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.planetMessageService.showMessage(
-        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe({
+      next: (updatedTeam) => {
+        this.team = updatedTeam;
+        this.planetMessageService.showMessage(
+          (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      },
+      error: (err) => this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err))
     });
   }
 
@@ -811,11 +813,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   coverImageUrl(): string {
-    if (!this.team?._id || !this.team?.coverFileName) {
-      return '';
-    }
-    return couchAttachmentUrl(environment.couchAddress, 'teams', this.team._id, this.team.coverFileName);
+    return this.teamsService.coverImageUrl(this.team);
   }
 
 }
-

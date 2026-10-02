@@ -20,8 +20,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { environment } from '../../environments/environment';
-import { couchAttachmentUrl } from '../shared/utils';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
@@ -288,9 +286,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
             : $localize`:@@team-created-success:Team created successfully`);
         this.planetMessageService.showMessage(msg);
       },
-      error: () => {
+      error: (err) => {
         this.getTeams();
-        this.planetMessageService.showAlert($localize`There was a problem saving your changes.`);
+        this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err));
       }
     });
   }
@@ -484,11 +482,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   coverImageUrl(team: any): string {
-    if (!team?._id || !team?.coverFileName) {
-      return '';
-    }
-    return couchAttachmentUrl(environment.couchAddress, this.dbName, team._id, team.coverFileName);
+    return this.teamsService.coverImageUrl(team);
   }
 
 }
-
