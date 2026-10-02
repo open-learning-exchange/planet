@@ -1,5 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Injectable } from '@angular/core';
+import { computed, Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 
@@ -41,6 +42,8 @@ export interface ViewportState {
 })
 export class DeviceInfoService {
   private readonly deviceTypeCache = new Map<string, Observable<DeviceType>>();
+  readonly deviceType = toSignal(this.watchDeviceType(), { requireSync: true });
+  readonly isMobile = computed(() => isMobileOrSmaller(this.deviceType()));
 
   constructor(private breakpointObserver: BreakpointObserver) {}
 

@@ -129,7 +129,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reportsCount = 0;
   financesCount = 0;
   configuration = this.stateService.configuration;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   get requestBadgeDescription(): string {
@@ -155,11 +156,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private stateService: StateService,
     private tasksService: TasksService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;

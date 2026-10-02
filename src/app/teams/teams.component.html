@@ -8,16 +8,16 @@
       enterprise {Enterprises}
     }</span>
     <span class="toolbar-fill"></span>
-    @if (!isMobile) {
+    @if (!isMobile()) {
       <ng-container *ngTemplateOutlet="searchView"></ng-container>
     }
-    @if (isMobile) {
+    @if (isMobile()) {
       <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
     }
   </mat-toolbar-row>
   @if (showFiltersRow) {
     <mat-toolbar-row>
-      @if (isMobile) {
+      @if (isMobile()) {
         <ng-container *ngTemplateOutlet="searchView"></ng-container>
       }
     </mat-toolbar-row>
@@ -126,14 +126,14 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <div class="table-action-buttons" [ngClass]="{'horizontal-align': isMobile}">
+          <div class="table-action-buttons" [ngClass]="{'horizontal-align': isMobile()}">
             @if (user.isUserAdmin || user.roles.length) {
               @switch (element.userStatus) {
                 @case ('member') {
                   @if (!element.isLeader) {
                     <button mat-raised-button color="primary" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
                       <mat-icon>remove_circle</mat-icon>
-                      @if (!isMobile) {
+                      @if (!isMobile()) {
                         <label i18n> Leave </label>
                       }
                     </button>
@@ -141,7 +141,7 @@
                   @if (element.isLeader) {
                     <button mat-raised-button color="primary" (click)="addTeam(element.doc); $event.stopPropagation()">
                       <mat-icon>edit</mat-icon>
-                      @if (!isMobile) {
+                      @if (!isMobile()) {
                         <label i18n> Edit </label>
                       }
                     </button>
@@ -152,14 +152,14 @@
                     <button mat-raised-button color="primary"
                       (click)="requestToJoinEnterprise(element.doc); $event.stopPropagation()">
                       <mat-icon>add_circle</mat-icon>
-                      @if (!isMobile) {
+                      @if (!isMobile()) {
                         <label i18n> Request to Join </label>
                       }
                     </button>
                   } @else {
                     <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
                       <mat-icon>add_circle</mat-icon>
-                      @if (!isMobile) {
+                      @if (!isMobile()) {
                         <label i18n> Request to Join </label>
                       }
                     </button>
@@ -169,7 +169,7 @@
                   <button mat-raised-button color="warn" aria-label="Cancel Join Request" i18n-aria-label
                     (click)="openCancelJoinRequestDialog(element.doc); $event.stopPropagation()">
                     <mat-icon>cancel</mat-icon>
-                    @if (!isMobile) {
+                    @if (!isMobile()) {
                       <label i18n> Cancel Join Request </label>
                     }
                   </button>
@@ -178,13 +178,13 @@
             }
             <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id, name: element.doc.name}" (click)="$event.stopPropagation()">
               <mat-icon>feedback</mat-icon>
-              @if (!isMobile) {
+              @if (!isMobile()) {
                 <label i18n> Feedback </label>
               }
             </button>
             <button *planetAuthorizedRoles="''" mat-raised-button color="warn" (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
-              @if (!isMobile) {
+              @if (!isMobile()) {
                 <label i18n> Delete </label>
               }
             </button>

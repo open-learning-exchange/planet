@@ -1,5 +1,6 @@
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -7,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { NewsListItemComponent } from './news-list-item.component';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '../shared/ui/device-info.service';
 import { LabelComponent } from '../shared/ui/label.component';
 import { UserService } from '../shared/auth/user.service';
 import { NewsService } from './news.service';
@@ -28,7 +29,7 @@ describe('NewsListItemComponent read-only behavior', () => {
       {} as any,
       authGuard as any,
       linkCopyService as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { isMobile: signal(false) } as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
@@ -112,7 +113,7 @@ describe('NewsListItemComponent read-only template', () => {
         { provide: MatDialog, useValue: {} },
         { provide: AuthGuard, useValue: {} },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
-        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(deviceType) } },
+        { provide: DeviceInfoService, useValue: { isMobile: signal(isMobileOrSmaller(deviceType)) } },
         provideNoopAnimations()
       ]
     }).compileComponents();
@@ -235,7 +236,7 @@ describe('NewsListItemComponent emoji reactions', () => {
       {} as any,
       authGuard as any,
       { copyLink: vi.fn() } as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { isMobile: signal(false) } as any
     );
     component.item = {
       _id: 'voice-1',
@@ -389,7 +390,7 @@ describe('NewsListItemComponent reactions template', () => {
         { provide: MatDialog, useValue: {} },
         { provide: AuthGuard, useValue: { checkAuthenticationStatus: () => of(undefined) } },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
-        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(DeviceType.DESKTOP) } },
+        { provide: DeviceInfoService, useValue: { isMobile: signal(false) } },
         provideNoopAnimations()
       ]
     }).compileComponents();
