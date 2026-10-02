@@ -4,17 +4,17 @@ import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm, AIProvider } from '../chat.model';
-import { ChatService } from '../../shared/chat.service';
-import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
-import { UserService } from '../../shared/user.service';
+import { AiChatService } from '../../shared/ai/ai-chat.service';
+import { showFormErrors, trackByIdVal } from '../../shared/tables/table.helpers';
+import { UserService } from '../../shared/auth/user.service';
 import { StateService } from '../../shared/state.service';
 import { NgClass } from '@angular/common';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { SubmitDirective } from '../../shared/submit.directive';
+import { SubmitDirective } from '../../shared/dialogs/submit.directive';
 import { MatIcon } from '@angular/material/icon';
 
 type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
@@ -67,7 +67,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private fb: NonNullableFormBuilder,
     private stateService: StateService,
     private userService: UserService

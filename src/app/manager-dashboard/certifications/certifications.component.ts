@@ -10,8 +10,8 @@ import {
 import { finalize } from 'rxjs/operators';
 import { CertificationsService } from '../../shared/certifications/certifications.service';
 import { CertificationsManagerService } from './certifications-manager.service';
-import { sortNumberOrString, filterSpecificFieldsHybrid } from '../../shared/table-helpers';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { sortNumberOrString, filterSpecificFieldsHybrid } from '../../shared/tables/table.helpers';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';

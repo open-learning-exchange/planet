@@ -1,4 +1,4 @@
-import { AppSourceFilter, isFromAppSource } from '../../../shared/app-source';
+import { AppSourceFilter, isFromAppSource } from '../../../shared/android/app-source';
 import { filterByDate, isSelectedMember } from '../reports.utils';
 
 export interface ReportDetailFilter {

@@ -6,11 +6,11 @@ import { TeamsComponent } from './teams.component';
 import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
-import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
-import { DialogsResourcesViewerModule } from '../shared/dialogs/dialogs-resources-viewer.module';
+import { ResourcesPickerDialogModule } from '../resources/resources-picker-dialog.module';
+import { ResourcesViewerDialogModule } from '../resources/view-resources/resources-viewer-dialog.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
-import { PlanetCalendarModule } from '../shared/calendar.module';
+import { PlanetCalendarModule } from '../shared/calendar/planet-calendar.module';
 import { FormsModule } from '@angular/forms';
 import { TeamsMemberComponent } from './teams-member.component';
 import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
@@ -26,8 +26,8 @@ import { SurveysModule } from '../surveys/surveys.module';
     MaterialModule,
     PlanetDialogsModule,
     NewsModule,
-    DialogsAddResourcesModule,
-    DialogsResourcesViewerModule,
+    ResourcesPickerDialogModule,
+    ResourcesViewerDialogModule,
     SharedComponentsModule,
     PlanetCalendarModule,
     FormsModule,

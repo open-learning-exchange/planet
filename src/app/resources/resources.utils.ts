@@ -1,6 +1,6 @@
 import mime from 'mime';
 import { formatBytes } from '../shared/utils';
-import { fileTypes } from './resources-constants';
+import { fileTypes } from './resources.constants';
 
 interface ResourceAttachment {
   content_type?: string;

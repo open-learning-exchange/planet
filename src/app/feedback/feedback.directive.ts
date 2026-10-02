@@ -1,14 +1,14 @@
 import { Directive, HostListener, Input } from '@angular/core';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { AuthService } from '../shared/auth-guard.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
 import { from, Observable, of } from 'rxjs';
 import { catchError, concatMap, filter, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -91,7 +91,7 @@ export class FeedbackDirective {
     private feedbackService: FeedbackService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private authService: AuthService,
+    private authGuard: AuthGuard,
     private dialogsLoadingService: DialogsLoadingService
   ) {}
 
@@ -220,7 +220,7 @@ export class FeedbackDirective {
 
   @HostListener('click')
   checkAuthentication() {
-    this.authService.checkAuthenticationStatus().subscribe(() => this.openFeedback());
+    this.authGuard.checkAuthenticationStatus().subscribe(() => this.openFeedback());
   }
 
   openFeedback() {

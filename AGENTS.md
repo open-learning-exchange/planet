@@ -38,10 +38,18 @@ Planet Learning is an Angular 20 + CouchDB learning platform. There are two tier
 
 ### Repository layout
 
-- `src/app/` — feature-per-directory Angular app. Each feature owns its own `*-router.module.ts` and is lazy-loaded from `src/app/app-router.module.ts`, which mounts `HomeModule` at `''` (guarded by `UserGuard` + `UnsavedChangesGuard`) and `LoginModule` at `/login` (guarded by `AuthService`). Unknown routes fall through to `PageNotFoundComponent`.
-- `src/app/shared/` — cross-feature services, directives, dialogs, and the database layer. Two DB abstractions live here:
-  - `couchdb.service.ts` — HTTP wrapper around CouchDB used by most features. Every request goes through `setOpts` / `couchDBReq`, which injects `withCredentials` and surfaces 403s via `PlanetMessageService`. Prefer adding new calls through this service rather than raw `HttpClient`.
-  - `database/pouch.service.ts` + `pouch-auth.service.ts` — PouchDB mirror for offline-capable data (no databases are currently registered for mirroring). When adding an offline-capable database, register it in the `databases` Set so `configureDBs()` creates the local mirror.
+- `src/app/` — feature-per-directory Angular app. Each feature owns its own `*-router.module.ts` and is lazy-loaded from `src/app/app-router.module.ts`, which mounts `HomeModule` at `''` (guarded by `UserGuard` + `UnsavedChangesGuard`) and `LoginModule` at `/login` (guarded by `AuthGuard`). Unknown routes fall through to `PageNotFoundComponent`.
+- `src/app/shared/` — cross-feature code, grouped by the capability each file serves rather than by file kind. Put a new shared file in the bucket matching what it *achieves*; there is deliberately no `services/`, `directives/`, or `constants/` bucket. Use relative imports between and within buckets.
+  - `ai/` — gateway chat transport and prompt constants.
+  - `auth/` — route guards, `user.service.ts`, role/beta directives, password change.
+  - `android/`, `calendar/`, `certifications/`, `challenges/`, `charts/`, `ratings/`, `search/` — one capability each, dialogs included.
+  - `database/` — `couchdb.service.ts` (HTTP wrapper; every request goes through `setOpts` / `couchDBReq`, which injects `withCredentials` and surfaces 403s via `PlanetMessageService` — prefer it over raw `HttpClient`), `mango-queries.ts`, `sync.service.ts`, and the PouchDB mirror `pouch.service.ts` + `pouch-auth.service.ts` for offline-capable data (no databases are currently registered for mirroring; register new offline databases in the `databases` Set so `configureDBs()` creates the local mirror).
+  - `dialogs/` — the generic dialog framework (form, prompt, view, list, loading); only these take the `Dialogs` prefix. Put a dialog tied to a capability in that capability's folder, even when other features open it, and name it after that capability (`challenges/challenges-announcement-dialog.component.ts`, `chat/chat-share-dialog.component.ts`).
+  - `export/` — CSV and PDF generation. `forms/` — inputs and validation directives, with `tags/` for the tag inputs.
+  - `language/`, `markdown/`, `tables/`, `text/` (formatting pipes and text overflow detection), `ui/` (display primitives, `device-info.service.ts` breakpoints and `planet-message.service.ts`), `unsaved-changes/`.
+  - Only `utils.ts`, `state.service.ts`, `material.module.ts` and `shared-components.module.ts` stay at the root.
+  - Code that belongs to one feature lives in that feature even when others use it, as `news/` holds the voice labels that `community/` and `teams/` open.
+  - Per `Style-Guide.md`, keep each bucket under ~9 distinct concerns; split it rather than letting it sprawl.
 - `src/app/manager-dashboard/` — admin surfaces (sync, fetch, AI configuration, reports, requests, certifications). AI provider keys/models are read from the CouchDB `configurations` database; do not hardcode them.
 - `gateway/` — standalone Express + WebSocket gateway with internal `chatapi` and `public` modules. It serves chat on the existing `/ml/` namespace and scoped public operations on `/api/`. Credentials/models come from the CouchDB `configurations` doc, not env vars.
 - `design/` — CouchDB design documents (map/reduce views). Edit the per-db `.js` files and re-run `couchdb-setup.sh` to upload.

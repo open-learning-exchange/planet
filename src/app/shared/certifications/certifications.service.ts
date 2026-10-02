@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../couchdb.service';
+import { CouchService } from '../database/couchdb.service';
 
 @Injectable({
   providedIn: 'root'

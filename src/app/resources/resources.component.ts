@@ -12,20 +12,20 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
   createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
   isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
-} from '../shared/table-helpers';
+} from '../shared/tables/table.helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
-import { SyncService } from '../shared/sync.service';
-import { FormControl } from '../../../node_modules/@angular/forms';
-import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { SyncService } from '../shared/database/sync.service';
+import { FormControl } from '@angular/forms';
+import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
@@ -34,9 +34,9 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
-import { levelList } from './resources-constants';
-import { SearchService } from '../shared/forms/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/device-info.service';
+import { levelList } from './resources.constants';
+import { SearchService } from '../shared/search/search.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -44,20 +44,20 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
-import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
-import { PlanetTagSelectedInputComponent } from '../shared/forms/planet-tag-selected-input.component';
+import { PlanetFilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '../shared/forms/tags/planet-tag-selected-input.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PreviewOverflowDirective } from '../shared/preview-overflow.directive';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { PlanetLocalStatusComponent } from '../shared/planet-local-status.component';
+import { PreviewOverflowDirective } from '../shared/text/preview-overflow.directive';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
+import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
-import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
+import { PlanetRatingComponent } from '../shared/ratings/planet-rating.component';
+import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { ResourcesIconComponent } from './resources-icon.component';
 
 @Component({
@@ -86,7 +86,7 @@ import { ResourcesIconComponent } from './resources-icon.component';
     MatInput,
     MatMiniFabButton,
     RouterLink,
-    FilteredAmountComponent,
+    PlanetFilteredAmountComponent,
     PlanetTagSelectedInputComponent,
     MatMenuTrigger,
     MatMenu,
@@ -109,7 +109,7 @@ import { ResourcesIconComponent } from './resources-icon.component';
     PlanetMarkdownComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
-    DialogsRatingsDirective,
+    PlanetRatingDialogDirective,
     PlanetRatingComponent,
     MatHeaderRowDef,
     MatHeaderRow,

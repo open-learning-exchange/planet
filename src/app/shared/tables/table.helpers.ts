@@ -1,0 +1,247 @@
+import { FormControl, AbstractControl } from '@angular/forms';
+import { SelectionModel } from '@angular/cdk/collections';
+import { fuzzyWordMatch, normalizeSearchString, splitSearchWords } from '../search/fuzzy-search';
+
+// Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
+// keys or undefined.
+const getProperty = (data: any, fields: string) => {
+  const propertyArray = fields.split('.');
+  return propertyArray.reduce((obj, prop) => (obj && obj[prop] !== undefined) ? obj[prop] : undefined, data);
+};
+
+const dropdownString = (fieldValue: any, value: string) => {
+  if (fieldValue === undefined || value === undefined) {
+    // If there is no value to filter, include item.  If the data field is undefined, exclude item.
+    return value !== undefined;
+  }
+
+  if (fieldValue instanceof Array) {
+    return fieldValue.indexOf(value) === -1;
+  }
+
+  // Ensure both value and fieldValue are strings before calling toLowerCase
+  if (typeof value === 'string' && typeof fieldValue === 'string') {
+    return value.toLowerCase() !== fieldValue.toLowerCase();
+  }
+};
+
+const dropdownArray = (fieldValue: any, values: string[]) => values.findIndex(value => !dropdownString(fieldValue, value)) === -1;
+
+const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
+  const dataField = getProperty(data, field);
+  // If field is an array field, check if one value matches.  If not check if values match exactly.
+  const noMatch = val instanceof Array ? dropdownArray(dataField, val) : dropdownString(dataField, val);
+  if (val && noMatch) {
+    return false;
+  }
+  return includeItem;
+});
+
+// Multi level field filter by spliting each field by '.'
+export const filterSpecificFields = (filterFields: string[]): any => (data: any, filter: string) => {
+  const normalizedFilter = normalizeSearchString(filter.trim());
+  return filterFields.some(filterField => {
+    const fieldValue = getProperty(data, filterField);
+    return typeof fieldValue === 'string' && normalizeSearchString(fieldValue).includes(normalizedFilter);
+  });
+};
+
+const filterFieldsByWord = (fuzzyFields: string[], exactFields: string[]) => (data: any, filter: string) => {
+  const words = splitSearchWords(filter);
+  if (words.length === 0) {
+    return true;
+  }
+  const fieldValues = (fields: string[]) => fields
+    .map(field => getProperty(data, field))
+    .filter(fieldValue => typeof fieldValue === 'string' && fieldValue !== '');
+  const fuzzyValues = fieldValues(fuzzyFields);
+  const exactValues = fieldValues(exactFields).map(fieldValue => normalizeSearchString(fieldValue));
+  return words.every(word => (
+    exactValues.some(fieldValue => fieldValue.includes(word)) ||
+    fuzzyValues.some(fieldValue => fuzzyWordMatch(word, fieldValue))
+  ));
+};
+
+// Exact per word, for lists where a near miss could be selected by mistake, as with people.
+export const filterSpecificFieldsByWord = (filterFields: string[]): any => filterFieldsByWord([], filterFields);
+
+// Forgives typos per word, except in exactFields such as codes.
+export const filterSpecificFieldsHybrid = (filterFields: string[], exactFields: string[] = []): any => (
+  filterFieldsByWord(filterFields, exactFields)
+);
+
+export const filterDropdowns = (filterObj: any) => (data: any, filter: string) =>
+// Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
+  Object.entries(filterObj).reduce(checkFilterItems(data), true);
+
+// Takes array of field names and if trueIfExists is true, return true if field exists
+// if false return true if it does not exist
+export const filterFieldExists = (filterFields: string[], trueIfExists: boolean): any => (data: any, filter: string) => {
+  for (const filterField of filterFields) {
+    return trueIfExists === (getProperty(data, filterField) !== undefined);
+  }
+  return true;
+};
+
+const matchAllItems = (filterItems: string[], propItems: string[]) => {
+  const propSet = new Set(propItems);
+  return filterItems.every(filter => propSet.has(filter));
+};
+
+const filterArrayField = (filterField: string, filterItems: string[]) => (data: unknown, _filter: string) => {
+  const raw = getProperty(data, filterField);
+  const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
+
+  return matchAllItems(filterItems, propItems);
+};
+
+export const filterTags = (filterControl: FormControl) => (data: any, filter: string) => (
+  filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter)
+);
+
+export const filterAdvancedSearch = (searchObj: any) => (data: any, filter: string) => Object.entries(searchObj).reduce(
+  (isMatch, [ field, val ]: any[]) => (
+    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val)(data.doc, filter))
+  ),
+  true
+);
+
+// filterOnOff must be an object so it references a variable on component & changes with component changes
+export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: string) => (data: any, filter: string) => (
+  filterOnOff.value === 'off' || data[filterField] === true
+);
+
+// Special filter for showing members that are admins
+export const filterAdmin = (data, filter) => data.doc.isUserAdmin && data.doc.roles.length === 0;
+
+// Takes an array of the above filtering functions and returns true if all match
+export const composeFilterFunctions = (filterFunctions: any[]) => (
+  (data: any, filter: any) => filterFunctions.reduce((isMatch, filterFunction) => isMatch && filterFunction(data, filter), true)
+);
+
+export const sortNumberOrString = (item, property) => {
+  switch (typeof item[property]) {
+    case 'number':
+      return item[property];
+    case 'string':
+      return item[property].trim().toLowerCase();
+  }
+};
+
+// Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+// search text is deleted, but does not run when there are no active filters.
+export const dropdownsFill = (filterObj) => Object.entries(filterObj).reduce((emptySpace, [ field, val ]) => {
+  if (val) {
+    return ' ';
+  }
+  return emptySpace;
+}, '');
+
+export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+
+export const commonSortingDataAccessor = (item: any, property: string) => {
+  switch (property) {
+    case 'rating':
+      return item.rating.rateSum / item.rating.totalRating || 0;
+    default:
+      return item[property] ? sortNumberOrString(item, property) : sortNumberOrString(item.doc, property);
+  }
+};
+
+export const deepSortingDataAccessor = (item: any, property: string) => {
+  const keys = property.split('.');
+  const simpleItem = keys.reduce((newItem, key, index) => {
+    if (index === keys.length - 1 || newItem[key] === undefined || newItem[key] === null) {
+      return newItem;
+    }
+    return newItem[key];
+  }, item);
+  return sortNumberOrString(simpleItem, keys[keys.length - 1]);
+};
+
+export const trackById = (index, item) => item._id;
+
+export const trackByCategory = (index, item: { category: string }) => item.category;
+
+export const trackByIdVal = (index, item: { id: string }) => item.id;
+
+export const trackByIndex = (index: number) => index;
+
+export const showFormErrors = <T extends { [K in keyof T]: AbstractControl }>(controls: T) => {
+  (Object.values(controls) as AbstractControl[]).forEach(control => {
+    control.markAsTouched({ onlySelf: true });
+  });
+};
+
+export const filterIds = (filterObj: { ids: string[] }) => (data: any, filter: string) => (
+  filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true
+);
+
+const selectableVisibleValues = <T, S>(
+  visibleRows: T[], selectValue: (row: T) => S, isSelectable: (row: T) => boolean
+) => visibleRows.filter(row => isSelectable(row)).map(row => selectValue(row));
+
+const allValuesSelected = <S>(selection: SelectionModel<S>, values: S[]) => (
+  values.length > 0 && values.every(value => selection.isSelected(value))
+);
+
+interface VisibleSelectionOptions<T, S> {
+  selectValue?: (row: T) => S;
+  isSelectable?: (row: T) => boolean;
+}
+
+export const isAllVisibleSelected = <T, S>(
+  selection: SelectionModel<S>,
+  visibleRows: T[],
+  {
+    selectValue = (row: any) => row._id,
+    isSelectable = () => true
+  }: VisibleSelectionOptions<T, S> = {}
+) => {
+  let hasSelectable = false;
+  for (const row of visibleRows) {
+    if (!isSelectable(row)) {
+      continue;
+    }
+    if (!selection.isSelected(selectValue(row))) {
+      return false;
+    }
+    hasSelectable = true;
+  }
+  return hasSelectable;
+};
+
+export const toggleVisibleSelection = <T, S>(
+  selection: SelectionModel<S>,
+  visibleRows: T[],
+  options: VisibleSelectionOptions<T, S> & {
+    clearAllOnDeselect?: boolean;
+  } = {}
+) => {
+  const {
+    selectValue = (row: any) => row._id,
+    isSelectable = () => true,
+    clearAllOnDeselect = false
+  } = options;
+  const values = selectableVisibleValues(visibleRows, selectValue, isSelectable);
+  if (allValuesSelected(selection, values)) {
+    if (clearAllOnDeselect) {
+      selection.clear();
+    } else {
+      selection.deselect(...values);
+    }
+  } else {
+    selection.select(...values);
+  }
+};
+
+export const removeFilteredFromSelection = <T, S>(
+  selection: SelectionModel<S>,
+  visibleRows: () => T[],
+  { selectValue = (row: any) => row._id }: Pick<VisibleSelectionOptions<T, S>, 'selectValue'> = {}
+) => {
+  queueMicrotask(() => {
+    const visibleValues = new Set(visibleRows().map(row => selectValue(row)));
+    selection.deselect(...selection.selected.filter(value => !visibleValues.has(value)));
+  });
+};
