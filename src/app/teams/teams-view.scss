@@ -1,3 +1,5 @@
+@use "../mixins" as m;
+
 .teams-view {
 
   .new-message-btn {
@@ -64,20 +66,14 @@
   }
 
   .team-toolbar-cover {
-    width: 36px;
-    height: 36px;
-    border-radius: 4px;
-    object-fit: cover;
+    @include m.cover-thumbnail(36px);
     flex-shrink: 0;
     margin-inline-end: 8px;
   }
 
   .team-cover {
+    @include m.cover-thumbnail(180px);
     display: block;
-    width: 180px;
-    height: 180px;
-    border-radius: 4px;
-    object-fit: cover;
     margin-bottom: 1rem;
   }
 

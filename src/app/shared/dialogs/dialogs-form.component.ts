@@ -61,7 +61,7 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
       height: 24px;
     }
 
-    .file-upload-wrapper {
+    div:not(:last-child) > .file-upload-wrapper {
       margin-bottom: 20px;
     }
   `],

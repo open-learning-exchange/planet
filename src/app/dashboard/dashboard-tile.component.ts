@@ -301,7 +301,11 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     if (this.isAccordionMode) {
       return 'none';
     }
-    return (this.cardType === 'myCourses' || this.cardType === 'myTeams') && item.coverFileName ? this.courseTileLines : this.tileLines;
+    return this.hasCover(item) ? this.courseTileLines : this.tileLines;
+  }
+
+  hasCover(item: any): boolean {
+    return (this.cardType === 'myCourses' || this.cardType === 'myTeams') && !!item.coverFileName;
   }
 
   coverImageUrl(item: any): string {

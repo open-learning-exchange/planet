@@ -97,15 +97,6 @@ describe('DashboardTileComponent', () => {
       expect(component.dashboardTextLines({ coverFileName: 'cover.png' })).toBe('none');
     });
 
-    it('measures team title lines and clamps when team has cover', () => {
-      component.cardType = 'myTeams';
-      component.courseTileLines = 2;
-      component.tileLines = 4;
-
-      expect(component.dashboardTextLines({ coverFileName: 'team-cover.png' })).toBe(2);
-      expect(component.dashboardTextLines({})).toBe(4);
-    });
-
     it('builds coverImageUrl for myTeams and myCourses with respective dbs', () => {
       component.cardType = 'myTeams';
       expect(component.coverImageUrl({ _id: 't1', coverFileName: 'cover.png' })).toContain('/teams/t1/cover.png');

@@ -31,9 +31,6 @@
 
   // Keep joined/type metadata visible by allowing long names to wrap.
   .team-name {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
     max-width: 95%;
     overflow: hidden;
 
@@ -44,11 +41,9 @@
   }
 
   .team-table-cover {
-    width: 36px;
-    height: 36px;
-    border-radius: 4px;
-    object-fit: cover;
-    flex-shrink: 0;
+    @include m.cover-thumbnail(36px);
+    vertical-align: middle;
+    margin-inline-end: 8px;
   }
 
   .highlighted {
