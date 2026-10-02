@@ -13,9 +13,9 @@ import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 import { FormsModule } from '@angular/forms';
 import { TeamsMemberComponent } from './teams-member.component';
-import { TeamsReportsComponent } from './teams-reports.component';
-import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
-import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
+import { TeamsReportsDialogComponent } from './teams-reports/teams-reports-dialog.component';
+import { TeamsReportsDetailComponent } from './teams-reports/teams-reports-detail.component';
 import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({

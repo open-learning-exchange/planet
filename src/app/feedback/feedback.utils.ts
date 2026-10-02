@@ -15,6 +15,8 @@ export const FEEDBACK_STATUS_OPTIONS = [
   { label: $localize`Closed`, value: 'closed' }
 ] as const;
 
+export const FEEDBACK_SCREENSHOT_TYPES = [ 'image/png', 'image/jpeg', 'image/webp' ];
+
 interface FeedbackOption { label: string, value: string }
 
 export interface FeedbackTitleContext {

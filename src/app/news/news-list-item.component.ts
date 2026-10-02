@@ -1,8 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
@@ -10,7 +8,7 @@ import { AuthService } from '../shared/auth-guard.service';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
@@ -18,13 +16,13 @@ import { MatIcon } from '@angular/material/icon';
 import { LabelComponent } from '../shared/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { ChatOutputDirective } from '../shared/chat-output.directive';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
 import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from '../shared/voice-labels';
 import { FullNamePipe } from '../shared/full-name.pipe';
 import { LinkCopyService } from '../shared/link-copy.service';
+import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -42,7 +40,6 @@ import { LinkCopyService } from '../shared/link-copy.service';
     MatTooltip,
     MatCardContent,
     PlanetMarkdownComponent,
-    ChatOutputDirective,
     NgClass,
     MatIconButton,
     MatCardActions,
@@ -66,6 +63,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() editable = true;
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() hasUnreadReplies = false;
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
@@ -84,13 +82,13 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   previewLimit = 500;
   deviceType: DeviceType;
   isMobile: boolean;
+  commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
+  reactionSaving = false;
 
   constructor(
     private router: Router,
     private userService: UserService,
-    private couchService: CouchService,
     private newsService: NewsService,
-    private notificationsService: NotificationsService,
     private stateService: StateService,
     private usersProfileDialogService: UsersProfileDialogService,
     private authService: AuthService,
@@ -139,6 +137,14 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     return this.editable && originPlanet === this.planetCode && this.canModifyNews;
   }
 
+  get repliesLabel(): string {
+    return this.hasUnreadReplies ? $localize`View replies, including unread` : $localize`View replies`;
+  }
+
+  get actionsLabel(): string {
+    return this.hasUnreadReplies ? $localize`More actions, unread replies` : $localize`More actions`;
+  }
+
   get canModifyNews(): boolean {
     return this.item.doc.user?.name === this.currentUser.name || this.currentUser.isUserAdmin;
   }
@@ -165,7 +171,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
           viewIn: news.viewIn
         }
       });
-      this.sendNewsNotifications(news);
     });
   }
 
@@ -184,28 +189,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.showExpand = doesMarkdownPreviewTruncate(message, this.previewLimit) ||
         hasMarkdownImages(message) || imagesLength > 0;
     }
-  }
-
-  sendNewsNotifications(news: any = '') {
-    const replyBy = this.currentUser.name;
-    const legacyPlanetCode = news.createdOn || this.stateService.configuration.code;
-    const recipient = notificationRecipient(news.user, legacyPlanetCode);
-    const sender = notificationRecipient(this.currentUser, this.stateService.configuration.code);
-    if (recipient.user === sender.user && recipient.userPlanetCode === sender.userPlanetCode) {
-      return;
-    }
-    const link = this.router.url;
-    const notification = {
-      ...recipient,
-      message:  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
-      link,
-      priority: 1,
-      type: 'replyMessage',
-      replyTo: news._id,
-      status: 'unread',
-      time: this.couchService.datePlaceholder,
-    };
-    this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {
@@ -270,7 +253,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   addTeamLabelsFromViewIn() {
-    if ([ 'teams', 'enterprises' ].some(route => this.router.url.includes(route))) {
+    if (this.isTeamFeed) {
       this.teamLabels = [];
       return;
     }
@@ -281,13 +264,70 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  private get isTeamFeed(): boolean {
+    return [ 'teams', 'enterprises' ].some(route => this.router.url.includes(route));
+  }
+
   copyLink(voice) {
+    const threadId = voice.replyTo && voice.replyTo !== 'root' ? voice.replyTo : voice._id;
     this.linkCopyService.copyLink(
-      [ '/voices', voice._id ],
+      this.isTeamFeed ? [ this.router.url.split(/[;?#]/)[0], { voice: threadId } ] : [ '/voices', threadId ],
       {
         success: $localize`Voice link copied to clipboard`,
         failure: $localize`Failed to copy voice link`
       }
     );
+  }
+
+  reactionEntries(newsDoc: any): ReactionEntry[] {
+    return getReactionEntries(newsDoc?.reactions);
+  }
+
+  hasUserReacted(newsDoc: any, emoji: string): boolean {
+    return hasUserReacted(newsDoc?.reactions, emoji, this.currentUser?._id);
+  }
+
+  reactionTooltip(emoji: string, users: string[] = []): string {
+    const count = users.length;
+    if (this.hasUserReacted(this.item?.doc, emoji)) {
+      if (count === 1) {
+        return $localize`You reacted with ${emoji}`;
+      }
+      const others = count - 1;
+      if (others === 1) {
+        return $localize`You and 1 other reacted with ${emoji}`;
+      }
+      return $localize`You and ${others} others reacted with ${emoji}`;
+    }
+    if (count === 1) {
+      return $localize`1 person reacted with ${emoji}`;
+    }
+    return $localize`${count} people reacted with ${emoji}`;
+  }
+
+  reactionLabel(emoji: string): string {
+    return $localize`React with ${emoji}`;
+  }
+
+  get canReact() {
+    return !this.readOnly && (this.editable || this.item?.public === true);
+  }
+
+  toggleReaction(newsDoc: any, emoji: string) {
+    if (!this.canReact || this.reactionSaving || !newsDoc) {
+      return;
+    }
+    this.reactionSaving = true;
+    const previousReactions = newsDoc.reactions;
+    this.authService.checkAuthenticationStatus().pipe(
+      switchMap(() => {
+        newsDoc.reactions = toggleNewsReaction(newsDoc.reactions, emoji, this.userService.get()._id);
+        return this.newsService.saveReaction(newsDoc);
+      }),
+      finalize(() => this.reactionSaving = false)
+    ).subscribe({
+      next: (res: any) => newsDoc._rev = res.rev,
+      error: () => newsDoc.reactions = previousReactions
+    });
   }
 }

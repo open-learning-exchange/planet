@@ -21,7 +21,6 @@ import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
 import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
-import { ChatOutputDirective } from './chat-output.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { FullNamePipe } from '../shared/full-name.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
@@ -50,7 +49,6 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    ChatOutputDirective,
     TruncateTextPipe,
     FullNamePipe,
     TimeAgoPipe,
@@ -76,7 +74,6 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    ChatOutputDirective,
     OverlayModule,
     TruncateTextPipe,
     FullNamePipe,

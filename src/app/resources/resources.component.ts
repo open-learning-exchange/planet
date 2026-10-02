@@ -16,10 +16,10 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
+  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -58,6 +58,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
 import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
 import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { ResourcesIconComponent } from './resources-icon.component';
 
 @Component({
   selector: 'planet-resources',
@@ -117,7 +118,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatNoDataRow,
     MatPaginator,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    ResourcesIconComponent
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -158,7 +160,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -171,7 +173,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     [
       filterAdvancedSearch(this.searchSelection),
       filterTags(this.tagFilter),
-      filterSpecificFieldsHybrid([ 'doc.title' ], this.fuzzySearchService),
+      filterSpecificFieldsHybrid([ 'doc.title' ]),
       filterShelf({ value: this.myView === 'myLibrary' ? 'on' : 'off' }, 'libraryInfo')
     ]
   );
@@ -204,8 +206,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.isMobile = isMobileOrSmaller(deviceType);
@@ -247,7 +248,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
@@ -270,14 +271,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  removeFilteredFromSelection() {
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
-  }
-
-
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
   }
@@ -299,22 +292,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.recordSearch(true);
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   updateResource(resource) {
@@ -415,7 +402,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           okClick: {
             request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
             onNext: () => {
-              this.removeFilteredFromSelection();
+              removeFilteredFromSelection(this.selection, () => this.renderedRows);
               this.onSelectionChange(this.selection.selected);
               dialogRef.close();
             },
@@ -426,7 +413,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -453,7 +440,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   toggleFiltersRow() {

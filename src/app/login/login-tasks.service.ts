@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map, switchMap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -34,6 +34,7 @@ export class LoginTasksService {
 
   postLoginTasks$(name: string, password: string, isCreate: boolean, userId: string, configuration: any) {
     return forkJoin(this.pouchService.replicateFromRemoteDBs()).pipe(
+      defaultIfEmpty([]),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];

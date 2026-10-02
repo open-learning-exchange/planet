@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
@@ -18,16 +18,17 @@ import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../forms/form-error-messages.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
 import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
-import { AttachmentInputState, FileUploadComponent } from '../forms/file-upload.component';
+import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '../forms/file-upload.component';
 import { AuthorizedRolesDirective } from '../authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
 import { deepEqual } from '../utils';
+import { filterSpecificFieldsHybrid } from '../table-helpers';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 
 @Component({
@@ -37,12 +38,15 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
       margin: 0 0 20px 0;
     }
 
-    .mat-mdc-radio-group.ng-touched.ng-invalid label {
-      border-bottom: 2px solid red;
+    mat-radio-group {
+      display: block;
+      margin-bottom: 16px;
     }
 
-    .ng-touched.ng-valid {
-      border: none;
+    mat-radio-group mat-error {
+      display: block;
+      font-size: 0.75rem;
+      margin-top: 4px;
     }
 
     .rating-input {
@@ -79,6 +83,8 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
     MatIconButton,
     MatSuffix,
     MatSelect,
+    MatAutocomplete,
+    MatAutocompleteTrigger,
     MatOption,
     MatRadioGroup,
     MatRadioButton,
@@ -103,18 +109,9 @@ export class DialogsFormComponent {
   passwordVisibility = new Map<string, boolean>();
   isSpinnerOk = true;
   errorMessage = '';
+  readonly emptyAttachments: ExistingAttachment[] = [];
   dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
-
-  private markFormAsTouched(control: FormGroup | FormArray<AbstractControl>) {
-    const controls = control instanceof FormGroup ? Object.values(control.controls) : control.controls;
-    controls.forEach(innerControl => {
-      innerControl.markAsTouched();
-      if (innerControl instanceof FormGroup || innerControl instanceof FormArray) {
-        this.markFormAsTouched(innerControl);
-      }
-    });
-  }
 
   constructor(
     public dialogRef: MatDialogRef<DialogsFormComponent>,
@@ -124,7 +121,8 @@ export class DialogsFormComponent {
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsListService: DialogsListService,
     private userService: UserService,
-    private dialogGuard: DialogGuardService
+    private dialogGuard: DialogGuardService,
+    private elementRef: ElementRef<HTMLElement>
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.createModalForm(this.data.formGroup);
@@ -169,7 +167,8 @@ export class DialogsFormComponent {
 
   onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {
     if (!mForm.valid) {
-      this.markFormAsTouched(mForm);
+      mForm.markAllAsTouched();
+      this.scrollToFirstInvalidField();
       return;
     }
     if (this.data && this.data.onSubmit) {
@@ -182,9 +181,20 @@ export class DialogsFormComponent {
     }
   }
 
+  private scrollToFirstInvalidField(): void {
+    const invalidElement = this.elementRef.nativeElement.querySelector<HTMLElement>('.ng-invalid:not(form)');
+    invalidElement?.scrollIntoView({ block: 'center' });
+  }
+
   togglePasswordVisibility(fieldName: string) {
     const visibility = this.passwordVisibility.get(fieldName) || false;
     this.passwordVisibility.set(fieldName, !visibility);
+  }
+
+  filteredSuggestions(field: DialogField) {
+    const matchesValue = filterSpecificFieldsHybrid([ 'suggestion' ]);
+    const value = (this.modalForm.controls[field.name].value || '').toString();
+    return field.suggestions.filter(suggestion => matchesValue({ suggestion }, value));
   }
 
   clearRating(fieldName: string) {

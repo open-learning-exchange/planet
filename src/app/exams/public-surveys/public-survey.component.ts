@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -9,13 +9,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatCard } from '@angular/material/card';
 
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
-import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService } from './public-surveys.service';
+import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService, PublicSurveyTeam } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
 import { AndroidAppPromptService } from '../../shared/android-app-prompt.service';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+
+type PublicSurveyStep = 'intro' | 'questions' | 'demographics' | 'submitted';
 
 @Component({
   selector: 'planet-public-survey',
@@ -23,21 +27,20 @@ import { AndroidAppPromptService } from '../../shared/android-app-prompt.service
   styleUrls: ['./public-survey.component.scss'],
   imports: [
     MatIcon, PlanetMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton,
-    ReactiveFormsModule, MatFormField, MatLabel, MatHint, MatError, MatInput, MatRadioGroup, MatRadioButton
+    ReactiveFormsModule, MatFormField, MatLabel, MatHint, MatError, MatInput, MatRadioGroup, MatRadioButton,
+    PlanetLoadingSpinnerComponent, MatCard
   ]
 })
 export class PublicSurveyComponent implements OnInit {
-  @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
-
   survey: PublicSurvey | null = null;
+  team: PublicSurveyTeam | null = null;
   errorMessage = '';
+  step: PublicSurveyStep = 'intro';
   questionNum = 1;
   answers: StoredExamAnswer[] = [];
   currentAnswer: ExamAnswerValue | null = null;
   isLoading = true;
   isSubmitting = false;
-  isSubmitted = false;
-  showDemographics = false;
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
   readonly demographicsForm = this.fb.group({
     birthYear: this.fb.control<number | null>(null, [
@@ -73,16 +76,16 @@ export class PublicSurveyComponent implements OnInit {
     this.route.paramMap.pipe(
       switchMap(params => this.publicSurveysService.getSurvey(params.get('teamId') || '', params.get('surveyId') || ''))
     ).subscribe({
-      next: ({ survey }) => {
+      next: ({ survey, team }) => {
         this.survey = survey;
+        this.team = team;
         this.errorMessage = '';
+        this.step = 'intro';
         this.questionNum = 1;
         this.answers = Array.from({ length: survey.questions.length }, () => ({ value: null, valid: false }));
         this.currentAnswer = this.answers[0]?.value ?? null;
         this.answer.reset();
         this.demographicsForm.reset();
-        this.showDemographics = false;
-        this.isSubmitted = false;
         this.isLoading = false;
       },
       error: (error) => {
@@ -92,12 +95,15 @@ export class PublicSurveyComponent implements OnInit {
     });
   }
 
+  startSurvey() {
+    this.step = 'questions';
+  }
+
   moveQuestion(direction: number) {
     this.persistCurrentAnswer();
-    this.questionFrame?.scrollToTop();
     if (direction === 1 && this.questionNum === this.maxQuestions) {
       this.currentAnswer = this.answers[this.questionNum - 1]?.value ?? null;
-      this.showDemographics = true;
+      this.step = 'demographics';
       return;
     }
     this.questionNum = this.questionNum + direction;
@@ -105,7 +111,7 @@ export class PublicSurveyComponent implements OnInit {
   }
 
   submitSurvey() {
-    if (!this.survey || !this.showDemographics || !this.canSubmit()) {
+    if (!this.survey || this.step !== 'demographics' || !this.canSubmit()) {
       return;
     }
     this.isSubmitting = true;
@@ -115,7 +121,7 @@ export class PublicSurveyComponent implements OnInit {
     const user = this.getDemographics();
     this.publicSurveysService.submitSurvey(teamId, surveyId, answers, user).subscribe({
       next: () => {
-        this.isSubmitted = true;
+        this.step = 'submitted';
         this.isSubmitting = false;
       },
       error: (error) => {

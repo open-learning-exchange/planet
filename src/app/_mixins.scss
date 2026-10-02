@@ -95,6 +95,13 @@
   }
 }
 
+@mixin unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: v.$primary;
+}
+
 @mixin search-toolbar {
   .search-bar {
     height: v.$search-filters-height;
@@ -131,4 +138,11 @@
   .view-full-height.view-with-search {
     height: calc(#{v.$view-container-height} - #{v.$search-filters-height});
   }
+}
+
+@mixin label-chip {
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: v.$light-grey;
+  font-weight: 600;
 }

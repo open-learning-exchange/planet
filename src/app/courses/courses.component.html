@@ -172,6 +172,17 @@
                     <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
                   }
                 </span>
+                @if (element.isCompleted && !isForm) {
+                  <mat-icon
+                    class="margin-lr-3"
+                    [ngClass]="{ 'primary-text-color': element.inCertification, 'grey-text-color': !element.inCertification }"
+                    fontSet="fa"
+                    fontIcon="fa-star"
+                    [inline]="true"
+                    i18n-matTooltip
+                    matTooltip="Completed">
+                  </mat-icon>
+                }
               }
             </ng-template>
           </h3>
@@ -255,8 +266,12 @@
                 <mat-icon>person</mat-icon>
                 <span i18n>Enroll List</span>
               </a>
-            }
-            @if (element.canManage) {
+              @if (!parent) {
+                <a mat-menu-item [routerLink]="['/courses/submissions', element._id]" class="km-course-submissions-btn">
+                  <mat-icon>assignment_turned_in</mat-icon>
+                  <span i18n>Submissions & Grading</span>
+                </a>
+              }
               <button mat-menu-item (click)="deleteClick(element.doc)">
                 <mat-icon>delete_forever</mat-icon>
                 <span i18n>Delete</span>

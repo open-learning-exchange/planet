@@ -89,7 +89,7 @@
         // "@typescript-eslint/member-ordering": "error",
         "@typescript-eslint/naming-convention": [
           "error",
-        
+
           // Not transferring over the default case, it triggers on object properties which can
           // often come from external sources not fitting our naming conventions.
           {

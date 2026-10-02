@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError, distinctUntilChanged, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -41,11 +41,12 @@ import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
 import { PlanetCalendarComponent } from '../shared/calendar.component';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
-import { TeamsReportsComponent } from './teams-reports.component';
+import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { ResourcesIconComponent } from '../resources/resources-icon.component';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
@@ -86,7 +87,8 @@ import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
     MatMenuItem,
     SurveysComponent,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    ResourcesIconComponent
   ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -110,7 +112,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
-  isRoot = true;
   visits: any = {};
   leader: any = {};
   planetCode: string;
@@ -165,7 +166,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.planetCode = this.stateService.configuration.code;
     this.route.paramMap.pipe(takeUntil(this.onDestroy$), map((params: ParamMap) =>
       params.get('teamId') || planetAndParentId(this.stateService.configuration)
-    ), tap((teamId) => {
+    ), distinctUntilChanged(), tap((teamId) => {
       this.teamId = teamId;
       this.initTeam(teamId);
       this.tasksService.getTasks();
@@ -174,6 +175,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$), skip(1)).subscribe(params => this.selectLinkedTab(params));
   }
 
   ngAfterViewChecked() {
@@ -183,6 +185,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position;
         this.initTab = activeTab.position === 0 ? '' : this.initTab;
       }, 0);
+    }
+  }
+
+  selectLinkedTab(params: ParamMap) {
+    if (params.get('voice')) {
+      this.initTab = '';
+      this.tabSelectedIndex = 0;
+    } else if (params.get('activeTab') && this.userStatus === 'member') {
+      this.initTab = params.get('activeTab');
     }
   }
 
@@ -319,7 +330,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
-      this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+      this.reports = docs.filter(doc => doc.docType === 'report');
       this.reportsCount = this.reports.length;
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
@@ -344,10 +355,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   resetData() {
     this.getMembers().subscribe();
-  }
-
-  toggleAdd(data) {
-    this.isRoot = data._id === 'root';
   }
 
   setStatus(team, leader, user) {
@@ -517,7 +524,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           type: 'enterprise',
           displayName: this.team.name,
           rules: this.team.rules,
-          extraMessage: enterpriseJoinAgreement()
+          extraMessage: enterpriseJoinAgreement(),
+          extraMessageType: 'supplementary'
         }
       });
       return;

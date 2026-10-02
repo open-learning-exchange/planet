@@ -72,13 +72,31 @@
         <div class="chat-container">
           @for (conversation of (showLess ? (item.doc.news.conversations | slice:0:1) : item.doc.news.conversations); track conversation) {
             <div>
-              <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
-              <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+              <planet-markdown class="conversation-query" [content]="conversation.query" profile="chat"></planet-markdown>
+              <planet-markdown [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [content]="conversation.response" profile="chat"></planet-markdown>
             </div>
           }
         </div>
       }
     </div>
+    @if (reactionEntries(item.doc).length > 0) {
+      <div class="reactions-container">
+        @for (entry of reactionEntries(item.doc); track entry.emoji) {
+          <button
+            type="button"
+            class="reaction-chip km-reaction-chip"
+            [class.active]="hasUserReacted(item.doc, entry.emoji)"
+            [attr.aria-label]="reactionLabel(entry.emoji)"
+            [attr.aria-pressed]="hasUserReacted(item.doc, entry.emoji)"
+            [matTooltip]="reactionTooltip(entry.emoji, entry.users)"
+            [disabled]="!canReact"
+            (click)="toggleReaction(item.doc, entry.emoji)">
+            <span class="reaction-emoji">{{entry.emoji}}</span>
+            <span class="reaction-count">{{entry.count}}</span>
+          </button>
+        }
+      </div>
+    }
     @if (showExpand) {
       <div class="full-width text-center" (click)="showLess = !showLess">
         <button mat-icon-button>
@@ -96,8 +114,11 @@
     </button>
     <span class="toolbar-fill"></span>
     @if (isMobile) {
-      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu" [attr.aria-label]="actionsLabel">
         <mat-icon>more_vert</mat-icon>
+        @if (hasUnreadReplies) {
+          <span class="unread-reply-dot corner" aria-hidden="true"></span>
+        }
       </button>
       <mat-menu #actionsMenu="matMenu" class="actions-menu">
         <ng-container *ngTemplateOutlet="actionItems"></ng-container>
@@ -105,10 +126,16 @@
     } @else {
       @if (!readOnly && (editable || item.public === true)) {
         <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
+        <button class="km-react-voice" mat-icon-button type="button" matTooltip="Reactions" i18n-matTooltip aria-label="Reactions" i18n-aria-label [matMenuTriggerFor]="reactionMenu">
+          <mat-icon>mood</mat-icon>
+        </button>
       }
       @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-        <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
+        <button mat-button type="button" matTooltip="View replies" i18n-matTooltip [attr.aria-label]="repliesLabel" (click)="showReplies(item)">
           <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+          @if (hasUnreadReplies) {
+            <span class="unread-reply-dot" aria-hidden="true"></span>
+          }
         </button>
       }
       @if (!readOnly) {
@@ -142,10 +169,16 @@
 <ng-template #actionItems>
   @if (!readOnly && (editable || item.public === true)) {
     <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
+    <button class="km-react-voice" mat-menu-item type="button" [matMenuTriggerFor]="reactionMenu">
+      <mat-icon>mood</mat-icon><span i18n>Reactions</span>
+    </button>
   }
   @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-    <button mat-button type="button" matTooltip="View replies" i18n-matTooltip aria-label="View replies" i18n-aria-label (click)="showReplies(item)">
+    <button mat-button type="button" matTooltip="View replies" i18n-matTooltip [attr.aria-label]="repliesLabel" (click)="showReplies(item)">
       <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+      @if (hasUnreadReplies) {
+        <span class="unread-reply-dot" aria-hidden="true"></span>
+      }
     </button>
   }
   @if (!readOnly) {
@@ -173,3 +206,21 @@
     }
   }
 </ng-template>
+
+<mat-menu #reactionMenu="matMenu" class="reaction-menu">
+  <div class="emoji-picker-grid">
+    @for (emoji of commonEmojis; track emoji) {
+      <button
+        mat-menu-item
+        type="button"
+        role="menuitemradio"
+        class="emoji-picker-item"
+        [class.active]="hasUserReacted(item.doc, emoji)"
+        [attr.aria-label]="reactionLabel(emoji)"
+        [attr.aria-checked]="hasUserReacted(item.doc, emoji)"
+        (click)="toggleReaction(item.doc, emoji)">
+        {{emoji}}
+      </button>
+    }
+  </div>
+</mat-menu>

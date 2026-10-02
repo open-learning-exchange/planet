@@ -13,7 +13,7 @@ import { LabelComponent } from '../../shared/label.component';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { ReportsDetailActivitiesComponent } from './reports-detail-activities.component';
+import { ReportsDetailActivitiesComponent } from './reports-detail/reports-detail-activities.component';
 
 @Component({
   selector: 'planet-reports-health',
