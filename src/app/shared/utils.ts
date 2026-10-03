@@ -159,6 +159,8 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
+export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
+
 export const dedupeShelfReduce = (ids, id) => {
   if (ids.indexOf(id) > -1) {
     return ids;
