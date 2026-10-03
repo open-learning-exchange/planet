@@ -18,8 +18,8 @@
         View CV/Resume
       </a>
       }
-      @if (ownAchievements && !achievementNotFound) {
-        <a mat-stroked-button class="margin-r-1" (click)="generatePDF()">
+      @if (ownAchievements && achievements && !isLoading) {
+        <a mat-stroked-button class="margin-r-1 km-print-achievements" (click)="generatePDF()">
           <span i18n>Print Achievements</span>
         </a>
       }
