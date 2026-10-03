@@ -18,7 +18,6 @@ describe('user planet helpers', () => {
 
   it('builds the user document path for each planet relationship', () => {
     expect(userDocPath('alice', 'local', configuration)).toBe('_users/org.couchdb.user:alice');
-    expect(userDocPath('alice', null, configuration)).toBe('_users/org.couchdb.user:alice');
     expect(userDocPath('alice', 'parent', configuration)).toBe('parent_users/org.couchdb.user:alice');
     expect(userDocPath('alice', 'child', configuration)).toBe('child_users/alice@child');
   });

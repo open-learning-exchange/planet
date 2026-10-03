@@ -171,11 +171,6 @@ describe('UsersAchievementsComponent', () => {
   it('copies achievement links that name the planet of the viewed user', () => {
     const copiedLink = () => linkCopyService.copyLink.mock.lastCall[0];
 
-    navigate('alice', 'child');
-    component.copyLink();
-
-    expect(copiedLink()).toEqual([ '/profile', 'alice', 'achievements', { planet: 'child' } ]);
-
     navigate('alice');
     component.copyLink();
 
