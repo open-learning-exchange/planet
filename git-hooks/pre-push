@@ -39,6 +39,11 @@ run_lint() {
   tslint=$(npm run lint)
 }
 
+echo "Checking line endings of changed files"
+eol=$(npm run --silent lint:eol 2>&1)
+ret_code_eol=$?
+output_result $ret_code_eol "line endings" "$eol"
+
 echo "Running planet linters"
 run_lint .
 
