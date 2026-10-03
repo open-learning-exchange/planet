@@ -98,7 +98,7 @@ describe('DashboardTileComponent', () => {
     });
   });
 
-  it('removes a dashboard course only after confirmation', () => {
+  it('removes a dashboard course only after confirmation, leaving messages to the course service', () => {
     const dialogRef = { close: vi.fn() };
     const dialog = { open: vi.fn().mockReturnValue(dialogRef) };
     const coursesService = {
@@ -131,6 +131,12 @@ describe('DashboardTileComponent', () => {
 
     expect(coursesService.courseResignAdmission).toHaveBeenCalledWith('course-1', 'resign', 'Course 1');
     expect(dialogRef.close).toHaveBeenCalled();
-    expect(messageService.showMessage).toHaveBeenCalled();
+    expect(messageService.showMessage).not.toHaveBeenCalled();
+
+    dialogRef.close.mockClear();
+    dialogData.okClick.onError({ status: 500 });
+
+    expect(dialogRef.close).not.toHaveBeenCalled();
+    expect(messageService.showMessage).not.toHaveBeenCalled();
   });
 });
