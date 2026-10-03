@@ -240,11 +240,13 @@ export class CoursesService {
   courseResignAdmission(courseId, type, courseTitle?) {
     const title = courseTitle || this.getCourseNameFromId(courseId) || $localize`Selected course`;
     const remove = type === 'resign';
-    return this.updateCourseShelf(this.changedCourseIds([ courseId ], remove), remove, title).pipe(map((shelf) => {
-      const admissionMessage = remove
-        ? $localize`Removed from myCourses: ${title}`
-        : $localize`Course added to your dashboard: ${title}`;
-      this.planetMessageService.showMessage(admissionMessage);
+    const changedIds = this.changedCourseIds([ courseId ], remove);
+    return this.updateCourseShelf(changedIds, remove, title).pipe(map((shelf) => {
+      if (changedIds.length) {
+        this.planetMessageService.showMessage(
+          remove ? $localize`Removed from myCourses: ${title}` : $localize`Course added to your dashboard: ${title}`
+        );
+      }
       return shelf;
     }));
   }

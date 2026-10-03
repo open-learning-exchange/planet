@@ -36,6 +36,7 @@ describe('CoursesService', () => {
       service.courseResignAdmission('c', 'resign').subscribe((result) => shelf = result);
 
       expect(userService.changeShelf).not.toHaveBeenCalled();
+      expect(messageService.showMessage).not.toHaveBeenCalled();
       expect(shelf.courseIds).toEqual([ 'a', 'b' ]);
     });
 
@@ -54,6 +55,7 @@ describe('CoursesService', () => {
       service.courseResignAdmission('a', 'admission').subscribe();
 
       expect(userService.changeShelf).not.toHaveBeenCalled();
+      expect(messageService.showMessage).not.toHaveBeenCalled();
     });
 
     it('names a course missing from the catalog with a fallback', () => {
