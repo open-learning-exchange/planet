@@ -9,8 +9,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { fullName, truncateText } from '../shared/utils';
+import { fullName, planetAndParentId, truncateText } from '../shared/utils';
 
 const nameField = {
   type: 'textbox',
@@ -473,7 +472,7 @@ export class TeamsService {
   createServicesDoc() {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      _id: `${code}@${parentCode}`,
+      _id: planetAndParentId(this.stateService.configuration),
       createdDate: this.couchService.datePlaceholder,
       teamPlanetCode: `${code}`,
       parentCode: `${parentCode}`,
@@ -492,7 +491,7 @@ export class TeamsService {
   createServicesLink({ title, route, teamType, icon }) {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      teamId: `${code}@${parentCode}`,
+      teamId: planetAndParentId(this.stateService.configuration),
       createdDate: this.couchService.datePlaceholder,
       teamPlanetCode: `${code}`,
       parentCode: `${parentCode}`,

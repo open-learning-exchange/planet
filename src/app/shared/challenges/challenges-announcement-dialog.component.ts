@@ -12,7 +12,7 @@ import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../auth/user.service';
 import { ChallengesUserStatusService } from './challenges-user-status.service';
-import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
+import { planetAndParentId } from '../utils';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -283,7 +283,7 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
           (post.doc.viewIn || []).find(
             (view) =>
               view._id ===
-              `${this.configuration.code}@${this.configuration.parentCode}`
+              planetAndParentId(this.configuration)
           ) || {}
         ).public,
       }));
