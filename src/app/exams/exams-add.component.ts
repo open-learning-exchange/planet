@@ -25,6 +25,8 @@ import {
 } from '../shared/forms/planet-step-list.component';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { MarkdownRenderService } from '../shared/markdown/markdown-render.service';
+import { MarkdownImagesService } from '../shared/markdown/markdown-images.service';
+import { dedupeObjectArray } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
@@ -46,7 +48,7 @@ import { ExamsQuestionComponent } from './exams-question.component';
 
 interface ExamFormControls {
   name: FormControl<string>;
-  description: FormControl<string>;
+  description: FormControl<string | any>;
   passingPercentage: FormControl<number>;
   questions: FormArray<QuestionFormGroup>;
   type: FormControl<'courses' | 'surveys'>;
@@ -61,6 +63,7 @@ interface ExamInfo {
   type: 'courses' | 'surveys';
   teamShareAllowed: boolean;
   teamId?: string | null;
+  images?: Array<{ resourceId: string, filename: string, markdown: string }>;
   _id?: string;
   _rev?: string;
 }
@@ -137,6 +140,10 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     return this.examForm.controls.questions;
   }
 
+  get imageGroup(): 'community' | { [db: string]: string } {
+    return this.teamId ? { teams: this.teamId } : 'community';
+  }
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -149,7 +156,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     private planetStepListService: PlanetStepListService,
     private dialog: MatDialog,
     private submissionsService: SubmissionsService,
-    private markdownRenderer: MarkdownRenderService
+    private markdownRenderer: MarkdownRenderService,
+    private markdownImagesService: MarkdownImagesService
   ) {
     const typeParam = this.route.snapshot.paramMap.get('type');
     this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
@@ -208,7 +216,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
       const formValue = this.examForm.getRawValue();
-      const examInfo: ExamInfo = { ...formValue, ...(this.teamId ? { teamId: this.teamId } : {}) };
+      const serializedExam = this.serializeExamData(formValue);
+      const examInfo: ExamInfo = { ...serializedExam, ...(this.teamId ? { teamId: this.teamId } : {}) };
       this.showFormError = false;
       this.addExam({ ...examInfo, ...this.documentInfo }, reRoute);
     } else {
@@ -217,6 +226,40 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       }
       this.showErrorMessage();
     }
+  }
+
+  private serializeExamData(formValue: any): ExamInfo {
+    const descriptionText = typeof formValue.description === 'string'
+      ? formValue.description
+      : (formValue.description?.text ?? '');
+    const descriptionImages = typeof formValue.description === 'object' && formValue.description?.images
+      ? formValue.description.images
+      : [];
+
+    const allImages: Array<{ resourceId: string, filename: string, markdown: string }> = [ ...descriptionImages ];
+    const questions = (formValue.questions || []).map((q: any) => {
+      const bodyText = typeof q.body === 'string' ? q.body : (q.body?.text ?? '');
+      const questionImages = typeof q.body === 'object' && q.body?.images
+        ? q.body.images
+        : (q.images || []);
+      allImages.push(...questionImages);
+      return {
+        ...q,
+        body: bodyText,
+        images: questionImages.length > 0 ? questionImages : undefined
+      };
+    });
+
+    const dedupedImages = dedupeObjectArray(allImages, [ 'resourceId' ]);
+    const markdowns = [ descriptionText, ...questions.map((q: any) => q.body) ];
+    const filteredImages = this.markdownImagesService.filterMissingImages(markdowns, dedupedImages);
+
+    return {
+      ...formValue,
+      description: descriptionText,
+      questions,
+      images: filteredImages.length > 0 ? filteredImages : undefined
+    };
   }
 
   nameValidator(exception = ''): AsyncValidatorFn {
@@ -258,6 +301,10 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   appendToCourse(info: ExamInfo, type: 'exam' | 'survey') {
     const courseExam = { ...info, ...this.documentInfo, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
     this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
+    if (courseExam.images?.length) {
+      const currentImages = this.coursesService.course.images || [];
+      this.coursesService.course.images = dedupeObjectArray([ ...currentImages, ...courseExam.images ], [ 'resourceId' ]);
+    }
   }
 
   totalMarks(examInfo: ExamInfo) {
@@ -291,7 +338,10 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   getQuestionLabel(value: unknown, index: number): string {
-    const questionText = this.markdownRenderer.toPlainText(value);
+    const rawValue = typeof value === 'object' && value && 'text' in (value as any)
+      ? (value as any).text
+      : value;
+    const questionText = this.markdownRenderer.toPlainText(rawValue);
     return questionText || $localize`Question ${index + 1}`;
   }
 
@@ -332,8 +382,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       this.showErrorMessage();
       return;
     }
+    const serializedExam = this.serializeExamData(this.examForm.getRawValue());
     this.dialog.open(ExamsPreviewComponent, {
-      data: { exam: this.examForm.getRawValue(), examType: this.examType },
+      data: { exam: serializedExam, examType: this.examType },
       minWidth: '75vw'
     });
   }

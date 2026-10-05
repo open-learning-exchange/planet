@@ -303,16 +303,24 @@ export class CoursesService {
     const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
     const imagesArray = (item: { description: any }) =>
       this.markdownImagesService.createImagesArray(item, markdownText(item), 'description');
+    const stepExamImages = (course.steps || []).flatMap(step => [
+      ...(step.exam?.images || []),
+      ...(step.survey?.images || [])
+    ]);
+    const examMarkdown = (course.steps || []).flatMap(step => [
+      ...(step.exam?.questions || []).map(q => typeof q.body === 'string' ? q.body : (q.body?.text ?? '')),
+      ...(step.survey?.questions || []).map(q => typeof q.body === 'string' ? q.body : (q.body?.text ?? ''))
+    ]);
     const images = dedupeObjectArray(
-      [ course.images || [], imagesArray(course), course.steps.map(step => imagesArray(step)) ].flat(2),
+      [ course.images || [], imagesArray(course), (course.steps || []).map(step => imagesArray(step)), stepExamImages ].flat(2),
       [ 'resourceId' ]
     );
     return {
       ...course,
       description: markdownText(course),
-      steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
+      steps: (course.steps || []).map(step => ({ ...step, description: markdownText(step), images: undefined })),
       images: this.markdownImagesService.filterMissingImages(
-        [ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images
+        [ markdownText(course), ...(course.steps || []).map(step => markdownText(step)), ...examMarkdown ], images
       )
     };
   }
