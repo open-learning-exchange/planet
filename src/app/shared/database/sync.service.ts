@@ -186,6 +186,8 @@ export class SyncService {
           step => step.resources.map(r => ({ item: r, db: 'resources' }))
             .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
             .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
+            .concat((step.exam?.images || []).map(image => ({ item: { _id: image.resourceId }, db: 'resources' })))
+            .concat((step.survey?.images || []).map(image => ({ item: { _id: image.resourceId }, db: 'resources' })))
         )
         .concat(course.tags && course.tags.length > 0 ? [ this.tagsSync(course.tags, type) ] : [])
         .concat(course.doc.images ? course.doc.images.map(image => ({ item: { _id: image.resourceId }, db: 'resources' })) : [] )

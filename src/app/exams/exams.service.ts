@@ -11,13 +11,14 @@ export interface QuestionChoice {
   id: string;
 }
 export interface QuestionValue {
-  body: string;
+  body: string | { text: string, images?: any[] };
   type: string;
   correctChoice: string | string[];
   marks: number;
   choices: QuestionChoice[];
   hasOtherOption: boolean;
   scaleMax: number;
+  images?: Array<{ resourceId: string, filename: string, markdown: string }>;
 }
 
 export type QuestionChoiceFormGroup = FormGroup<{
@@ -26,7 +27,7 @@ export type QuestionChoiceFormGroup = FormGroup<{
 }>;
 
 export type QuestionFormGroup = FormGroup<{
-  body: FormControl<string>;
+  body: FormControl<string | any>;
   type: FormControl<string>;
   correctChoice: FormControl<string | string[]>;
   marks: FormControl<number>;
@@ -51,7 +52,7 @@ export class ExamsService {
   newQuestionForm(requireCorrect: boolean, initialValue?: Partial<QuestionValue>): QuestionFormGroup {
     const choices = (initialValue && initialValue.choices) || [];
     const formGroup = this.fb.group({
-      body: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      body: this.fb.control('', { validators: [ CustomValidators.requiredMarkdown ] }),
       type: this.fb.control('input'),
       correctChoice: this.fb.control<string | string[]>('', { validators: [ CustomValidators.choiceSelected(requireCorrect) ] }),
       marks: this.fb.control(1, { validators: [ CustomValidators.positiveNumberValidator ] }),

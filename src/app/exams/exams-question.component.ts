@@ -50,6 +50,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   @Input() question: QuestionFormGroup;
   @Output() questionChange = new EventEmitter<QuestionFormGroup>();
   @Input() examType = 'courses';
+  @Input() imageGroup: 'community' | { [db: string]: string } = 'community';
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
   correctCheckboxes: any = {};

@@ -9,6 +9,7 @@ export interface Exam {
   type: 'courses' | 'survey';
   updatedDate: number;
   sourcePlanet: string;
+  images?: Array<{ resourceId: string, filename: string, markdown: string }>;
 }
 
 export interface ExamQuestion {
@@ -18,4 +19,5 @@ export interface ExamQuestion {
   marks: number;
   choices: { text: string, id: string }[];
   scaleMax?: number;
+  images?: Array<{ resourceId: string, filename: string, markdown: string }>;
 }

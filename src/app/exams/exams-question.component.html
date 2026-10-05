@@ -25,7 +25,7 @@
   </div>
   <mat-form-field class="full-width mat-form-field-type-no-underline">
     <mat-label i18n>Question Detail</mat-label>
-    <planet-markdown-textbox class="full-width" required="true" [formControl]="questionForm.controls.body"></planet-markdown-textbox>
+    <planet-markdown-textbox class="full-width" required="true" [formControl]="questionForm.controls.body" [imageGroup]="imageGroup"></planet-markdown-textbox>
     <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
   </mat-form-field>
   <div class="question-choices">

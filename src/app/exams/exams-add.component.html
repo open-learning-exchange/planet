@@ -51,7 +51,7 @@
               </mat-form-field>
               <mat-form-field class="full-width mat-form-field-type-no-underline">
                 <mat-label i18n>Survey Description</mat-label>
-                <planet-markdown-textbox class="full-width" [required]="false" [formControl]="examForm.controls.description"></planet-markdown-textbox>
+                <planet-markdown-textbox class="full-width" [required]="false" [formControl]="examForm.controls.description" [imageGroup]="imageGroup"></planet-markdown-textbox>
                 <mat-error><planet-form-error-messages [control]="examForm.controls.description"></planet-form-error-messages></mat-error>
               </mat-form-field>
             </div>
@@ -73,7 +73,7 @@
             <span i18n>of</span>{{ ' ' + questions?.length }}
           </span>
           @if (activeQuestionIndex > -1) {
-            <planet-exam-question [(question)]="question" [examType]="examType"></planet-exam-question>
+            <planet-exam-question [(question)]="question" [examType]="examType" [imageGroup]="imageGroup"></planet-exam-question>
           }
         </div>
       </planet-step-list>
