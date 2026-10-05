@@ -1,7 +1,6 @@
 import { FormControl, AbstractControl } from '@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
 import { fuzzyWordMatch, normalizeSearchString, splitSearchWords } from '../search/fuzzy-search';
-import { getResourceFileType } from '../../resources/resources.constants';
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
@@ -84,36 +83,29 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
   return true;
 };
 
-const matchAnyItem = (filterItems: string[], propItems: string[]) => {
-  if (!filterItems || filterItems.length === 0) {
-    return true;
-  }
-  const propSet = new Set(propItems.map(p => String(p).toLowerCase()));
-  return filterItems.some(filter => propSet.has(String(filter).toLowerCase()));
-};
-
-const filterArrayField = (filterField: string, filterItems: string[]) => (data: unknown, _filter: string) => {
-  const raw = filterField === 'mediaType' ? getResourceFileType(data) : getProperty(data, filterField);
-  const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
-
-  return matchAnyItem(filterItems, propItems);
-};
-
 const matchAllItems = (filterItems: string[], propItems: string[]) => {
-  if (!filterItems || filterItems.length === 0) {
-    return true;
-  }
   const propSet = new Set(propItems);
   return filterItems.every(filter => propSet.has(filter));
 };
 
-export const filterTags = (filterControl: FormControl) => (data: any) => (
-  matchAllItems(filterControl.value, data.tags ? data.tags.map((tag: any) => tag._id) : [])
+const filterArrayField = (
+  filterField: string, filterItems: string[], fieldValue = (data: unknown) => getProperty(data, filterField)
+) => (data: unknown, _filter: string) => {
+  const raw = fieldValue(data);
+  const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
+
+  return matchAllItems(filterItems, propItems);
+};
+
+export const filterTags = (filterControl: FormControl) => (data: any, filter: string) => (
+  filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter)
 );
 
-export const filterAdvancedSearch = (searchObj: any) => (data: any, filter: string) => Object.entries(searchObj).reduce(
+export const filterAdvancedSearch = (
+  searchObj: any, fieldValues: { [field: string]: (doc: any) => unknown } = {}
+) => (data: any, filter: string) => Object.entries(searchObj).reduce(
   (isMatch, [ field, val ]: any[]) => (
-    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val)(data.doc, filter))
+    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val, fieldValues[field])(data.doc, filter))
   ),
   true
 );

@@ -1,6 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  filterSpecificFieldsByWord, filterSpecificFieldsHybrid, isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
+  filterAdvancedSearch, filterSpecificFieldsByWord, filterSpecificFieldsHybrid, isAllVisibleSelected, removeFilteredFromSelection,
+  toggleVisibleSelection
 } from './table.helpers';
 
 describe('table-helpers select-all', () => {
@@ -103,5 +104,23 @@ describe('filterSpecificFieldsByWord', () => {
   it('matches each word exactly, in any order', () => {
     expect(filter(user, 'garcia maria')).toBe(true);
     expect(filter(user, 'mario')).toBe(false);
+  });
+});
+
+describe('filterAdvancedSearch', () => {
+  const resource = (subject: string[], filename: string) => ({ doc: { subject, filename } });
+  const extension = (doc: any) => doc.filename.split('.').pop();
+
+  it('matches fields on the document by default', () => {
+    const filter = filterAdvancedSearch({ subject: [ 'Arts' ] });
+    expect(filter(resource([ 'Arts', 'History' ], 'notes.pdf'), '')).toBe(true);
+    expect(filter(resource([ 'History' ], 'notes.pdf'), '')).toBe(false);
+  });
+
+  it('matches a field through its value function', () => {
+    const filter = filterAdvancedSearch({ subject: [ 'Arts' ], extension: [ 'pdf' ] }, { extension });
+    expect(filter(resource([ 'Arts' ], 'notes.pdf'), '')).toBe(true);
+    expect(filter(resource([ 'Arts' ], 'clip.mp4'), '')).toBe(false);
+    expect(filter(resource([ 'History' ], 'notes.pdf'), '')).toBe(false);
   });
 });

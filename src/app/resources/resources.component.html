@@ -26,7 +26,6 @@
       <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
     </mat-toolbar-row>
   }
-
 </mat-toolbar>
 
 <ng-template #collectionRow>
@@ -57,7 +56,7 @@
 </ng-template>
 
 <ng-template #searchFilters>
-  <planet-resources-search [filteredData]="resources.data" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
+  <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
 </ng-template>
 
 <ng-template #filterDialog>

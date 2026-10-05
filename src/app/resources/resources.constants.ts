@@ -80,38 +80,3 @@ export const fileTypes = [
   { label: $localize`Archive`, value: 'archive', icon: 'archive', pattern: /zip2?$|compressed$|tar$|rar$|xz$/ },
   { label: $localize`Other file`, value: 'other', icon: 'insert_drive_file' }
 ];
-
-export const mediaTypeList = [
-  { label: $localize`PDF`, value: 'pdf' },
-  { label: $localize`Image`, value: 'image' },
-  { label: $localize`Audio`, value: 'audio' },
-  { label: $localize`Video`, value: 'video' },
-  { label: $localize`ZIP`, value: 'zip' },
-  { label: $localize`HTML`, value: 'HTML' },
-  { label: $localize`EPUB`, value: 'epub' },
-  { label: $localize`CSV`, value: 'csv' },
-  { label: $localize`Document`, value: 'document' },
-  { label: $localize`Slides`, value: 'slides' },
-  { label: $localize`Spreadsheet`, value: 'spreadsheet' },
-  { label: $localize`Other`, value: 'other' }
-];
-
-export const getResourceFileType = (doc: any): string => {
-  if (doc?._attachments && Object.keys(doc._attachments).length > 0) {
-    const filename = doc.openWhichFile || Object.keys(doc._attachments)[0] || '';
-    const ext = filename.includes('.') ? filename.split('.').pop()?.toLowerCase() : '';
-    if (ext) {
-      return ext;
-    }
-  }
-  if (doc?.filename) {
-    const ext = doc.filename.includes('.') ? doc.filename.split('.').pop()?.toLowerCase() : '';
-    if (ext) {
-      return ext;
-    }
-  }
-  if (doc?.mediaType) {
-    return doc.mediaType.toLowerCase();
-  }
-  return '';
-};
