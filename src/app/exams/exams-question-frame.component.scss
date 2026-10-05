@@ -1,22 +1,102 @@
+@use 'sass:color';
 @use '../variables' as v;
 
 :host {
   display: block;
 
+  .toolbar-title-block,
   mat-toolbar.primary-color > span {
     display: inline-flex;
     align-items: center;
+    gap: 4px;
     min-width: 0;
     overflow: hidden;
 
     .ellipsis-title {
       flex: 0 1 auto;
       min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .question-count-text {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+  }
+
+  .elapsed-time-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: color.change(v.$white, $alpha: 0.16);
+    border: 1px solid color.change(v.$white, $alpha: 0.32);
+    border-radius: 16px;
+    color: v.$white;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    line-height: 1;
+    margin: 0 8px;
+    outline: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+      background: color.change(v.$white, $alpha: 0.26);
+      border-color: color.change(v.$white, $alpha: 0.5);
+    }
+
+    &:focus-visible {
+      outline: 2px solid v.$white;
+      outline-offset: 2px;
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    .timer-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .timer-visibility-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      opacity: 0.8;
+    }
+
+    .timer-text--hidden {
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    &--hidden {
+      background: color.change(v.$white, $alpha: 0.1);
+      border-color: color.change(v.$white, $alpha: 0.2);
     }
   }
 
   mat-toolbar.primary-color button[mat-icon-button] {
     flex: 0 0 auto;
+  }
+
+  @media (max-width: v.$screen-xs) {
+    .elapsed-time-chip {
+      padding: 3px 6px;
+      margin: 0 4px;
+      font-size: 12px;
+      gap: 4px;
+
+      .timer-visibility-icon {
+        display: none;
+      }
+    }
   }
 
   .view-container {

@@ -16,6 +16,8 @@
     flex-wrap: wrap;
     gap: 14px;
     padding: 14px 16px;
+    min-height: 48px;
+    box-sizing: border-box;
     border: 2px solid v.$medium-grey;
     border-radius: 10px;
     background: v.$white;
@@ -28,6 +30,13 @@
     &:hover {
       border-color: v.$primary-light;
       background: v.$primary-lighter;
+      box-shadow: 0 2px 6px v.$subtle-shadow;
+    }
+
+    &:focus-within {
+      border-color: v.$primary;
+      outline: 2px solid v.$primary;
+      outline-offset: 1px;
     }
 
     &.selected {
@@ -141,22 +150,10 @@
     }
 
     &--phone {
-      $rating-bg: (
-        1: #ffeaea,
-        2: #ffeeea,
-        3: #fff2ea,
-        4: #fff6ea,
-        5: #fffaea,
-        6: #f6faea,
-        7: #f2faea,
-        8: #eefaea,
-        9: #eafaea
-      );
-
       height: 60px;
       font-size: 28px;
 
-      @each $rating, $color in $rating-bg {
+      @each $rating, $color in v.$rating-scale-palette {
         &[data-rating="#{$rating}"]:not(.selected) {
           background-color: $color;
         }

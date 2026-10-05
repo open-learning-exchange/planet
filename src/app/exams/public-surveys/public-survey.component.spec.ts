@@ -108,4 +108,19 @@ describe('PublicSurveyComponent', () => {
     expect(fixture.debugElement.query(By.css('.km-survey-intro'))).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('Survey not found or not public');
   });
+
+  it('starts the elapsed timer when the survey begins', () => {
+    createComponent();
+    expect(fixture.componentInstance.elapsedSeconds).toBeNull();
+
+    fixture.componentInstance.startSurvey();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.elapsedSeconds).toBe(0);
+
+    const frame: ExamsQuestionFrameComponent = fixture.debugElement.query(By.directive(ExamsQuestionFrameComponent)).componentInstance;
+    expect(frame.elapsedSeconds).toBe(0);
+
+    fixture.componentInstance.ngOnDestroy();
+  });
 });

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { Subject, Subscription, timer } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -31,7 +32,7 @@ type PublicSurveyStep = 'intro' | 'questions' | 'demographics' | 'submitted';
     PlanetLoadingSpinnerComponent, MatCard
   ]
 })
-export class PublicSurveyComponent implements OnInit {
+export class PublicSurveyComponent implements OnInit, OnDestroy {
   survey: PublicSurvey | null = null;
   team: PublicSurveyTeam | null = null;
   errorMessage = '';
@@ -41,6 +42,10 @@ export class PublicSurveyComponent implements OnInit {
   currentAnswer: ExamAnswerValue | null = null;
   isLoading = true;
   isSubmitting = false;
+  elapsedSeconds: number | null = null;
+  private sessionStartTimestamp: number | null = null;
+  private timerSub?: Subscription;
+  private onDestroy$ = new Subject<void>();
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
   readonly demographicsForm = this.fb.group({
     birthYear: this.fb.control<number | null>(null, [
@@ -95,8 +100,35 @@ export class PublicSurveyComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.stopTimer();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   startSurvey() {
     this.step = 'questions';
+    this.startTimer();
+  }
+
+  startTimer() {
+    if (this.timerSub) {
+      return;
+    }
+    this.sessionStartTimestamp = Date.now();
+    this.elapsedSeconds = 0;
+    this.timerSub = timer(1000, 1000).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      if (this.sessionStartTimestamp) {
+        this.elapsedSeconds = Math.max(0, Math.floor((Date.now() - this.sessionStartTimestamp) / 1000));
+      }
+    });
+  }
+
+  stopTimer() {
+    if (this.timerSub) {
+      this.timerSub.unsubscribe();
+      this.timerSub = undefined;
+    }
   }
 
   moveQuestion(direction: number) {
@@ -114,6 +146,7 @@ export class PublicSurveyComponent implements OnInit {
     if (!this.survey || this.step !== 'demographics' || !this.canSubmit()) {
       return;
     }
+    this.stopTimer();
     this.isSubmitting = true;
     const teamId = this.route.snapshot.paramMap.get('teamId') || '';
     const surveyId = this.route.snapshot.paramMap.get('surveyId') || '';

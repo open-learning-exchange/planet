@@ -19,7 +19,7 @@
             <span class="multiple-choice-text">{{option.text}}</span>
           </mat-radio-button>
           @if (isSelectOptionSelected(option)) {
-            <mat-icon class="option-check">check</mat-icon>
+            <mat-icon class="option-check" aria-hidden="true">check</mat-icon>
           }
         </div>
       }
@@ -39,7 +39,7 @@
               (click)="$event.stopPropagation()">
           </div>
           @if (isOtherSelected()) {
-            <mat-icon class="option-check">check</mat-icon>
+            <mat-icon class="option-check" aria-hidden="true">check</mat-icon>
           }
         </div>
       }
@@ -56,7 +56,7 @@
             <span class="multiple-choice-text">{{option.text}}</span>
           </mat-checkbox>
           @if (checkboxState[option.id]) {
-            <mat-icon class="option-check">check</mat-icon>
+            <mat-icon class="option-check" aria-hidden="true">check</mat-icon>
           }
         </div>
       }
@@ -76,7 +76,7 @@
               (click)="$event.stopPropagation()">
           </div>
           @if (checkboxState.other) {
-            <mat-icon class="option-check">check</mat-icon>
+            <mat-icon class="option-check" aria-hidden="true">check</mat-icon>
           }
         </div>
       }

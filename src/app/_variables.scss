@@ -72,7 +72,22 @@ $initials-palette: (
 );
 
 $white: rgba(255, 255, 255, 1);
+$black: rgba(0, 0, 0, 1);
+
+// Background shades for 1-9 rating scale controls
+$rating-scale-palette: (
+  1: color.mix($warn-lighter, $white, 60%),
+  2: color.mix($warn-lighter, $accent-lighter, 75%),
+  3: color.mix($warn-lighter, $accent-lighter, 50%),
+  4: color.mix($warn-lighter, $accent-lighter, 25%),
+  5: color.mix($accent-lighter, $white, 70%),
+  6: color.mix($accent-lighter, $planet-green-lighter, 60%),
+  7: color.mix($accent-lighter, $planet-green-lighter, 40%),
+  8: color.mix($accent-lighter, $planet-green-lighter, 20%),
+  9: color.mix($planet-green-lighter, $white, 60%)
+);
 $shadow: rgba(0, 0, 0, 0.2);
+$subtle-shadow: rgba(0, 0, 0, 0.05);
 $disabled-button: map.get(mat.$m2-light-theme-background-palette, 'disabled-button');
 $disabled-button-text: map.get(mat.$m2-light-theme-foreground-palette, 'disabled-button');
 
