@@ -4,22 +4,22 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
-import * as constants from './resources-constants';
+import * as constants from './resources.constants';
 import { FileUploadComponent } from '../shared/forms/file-upload.component';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { languages } from '../shared/languages';
+import { languages } from '../shared/language/languages';
 import { ResourcesService } from './resources.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { showFormErrors } from '../shared/table-helpers';
+import { showFormErrors } from '../shared/tables/table.helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes.component';
-import { loadZipFile } from '../shared/zip-utils';
+import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
+import { loadZipFile } from './resources-zip.utils';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
@@ -27,13 +27,13 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
-import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/markdown/planet-markdown-textbox.component';
+import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
 import { MatSelect } from '@angular/material/select';
 import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { SubmitDirective } from '../shared/submit.directive';
+import { SubmitDirective } from '../shared/dialogs/submit.directive';
 import {
   MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription
 } from '@angular/material/expansion';
@@ -43,7 +43,7 @@ type DatePlaceholderType = CouchService['datePlaceholder'];
 interface ResourceFormModel {
   title: FormControl<string>;
   author: FormControl<string>;
-  year: FormControl<string>;
+  year: FormControl<number | string | null>;
   description: FormControl<string>;
   language: FormControl<string>;
   publisher: FormControl<string>;
@@ -115,12 +115,12 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control<string[]>([]);
-  _existingResource: any = {};
+  #existingResource: any = {};
   get existingResource(): any {
-    return this._existingResource;
+    return this.#existingResource;
   }
   @Input() set existingResource(resource) {
-    this._existingResource = resource;
+    this.#existingResource = resource;
     if (this.resourceForm) {
       this.setFormValues(resource);
     }
@@ -136,7 +136,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
 
   get detailsInvalid(): boolean {
-    return this.resourceForm.controls.title.invalid || this.resourceForm.controls.description.invalid;
+    return this.resourceForm.controls.title.invalid ||
+      this.resourceForm.controls.description.invalid ||
+      this.resourceForm.controls.year.invalid;
   }
 
   get fileInvalid(): boolean {
@@ -168,7 +170,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.createForm();
     this.resourceForm.setValidators(() => {
       if (this.file && this.file.size / 1024 / 1024 > 512) {
-        return { 'fileTooBig': true };
+        return { fileTooBig: true };
       } else {
         return null;
       }
@@ -206,7 +208,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         ]
       }),
       author: this.fb.control(''),
-      year: this.fb.control(''),
+      year: this.fb.control<number | string | null>('', {
+        validators: [ CustomValidators.integerValidator, Validators.min(0) ]
+      }),
       description: this.fb.control('', { validators: CustomValidators.required }),
       language: this.fb.control(''),
       publisher: this.fb.control(''),
@@ -283,7 +287,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   private singleAttachment(file, mediaType) {
     const resource = {
       filename: file.name,
-      mediaType: mediaType,
+      mediaType,
       _attachments: {}
     };
     return of({ resource, file });
@@ -380,24 +384,20 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
-  private processZip(zipFile) {
-    return function(fileName) {
-      return new Observable((observer) => {
-        // When file was not read error block wasn't called from async so added try...catch block
-        try {
-          zipFile.file(fileName).async('base64').then(function success(data) {
-            observer.next({ name: fileName, data: data });
-            observer.complete();
-          }, function error(e) {
-            observer.error(e);
-          });
-        } catch (e) {
-          console.log(fileName + ' has caused error.');
-          observer.error(e);
-        }
+  private processZip = (zipFile) => (fileName) => new Observable((observer) => {
+    // When file was not read error block wasn't called from async so added try...catch block
+    try {
+      zipFile.file(fileName).async('base64').then((data) => {
+        observer.next({ name: fileName, data });
+        observer.complete();
+      }, (e) => {
+        observer.error(e);
       });
-    };
-  }
+    } catch (e) {
+      console.log(fileName + ' has caused error.');
+      observer.error(e);
+    }
+  });
 
   private getFileNames(data) {
     const files = data.files;
@@ -484,7 +484,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       medium: formValue.medium || '',
       resourceType: formValue.resourceType || '',
       author: formValue.author || '',
-      year: formValue.year || '',
+      year: formValue.year ?? '',
       tags: this.tags.value || [],
       attachment: this.file
         ? { name: this.file.name, size: this.file.size, type: this.file.type }

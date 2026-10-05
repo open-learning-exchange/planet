@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { ManagerService } from './manager.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -13,14 +13,14 @@ import {
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { findByIdInArray } from '../shared/utils';
-import { commonSortingDataAccessor } from '../shared/table-helpers';
-import { SyncService } from '../shared/sync.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { commonSortingDataAccessor, isAllVisibleSelected, toggleVisibleSelection } from '../shared/tables/table.helpers';
+import { SyncService } from '../shared/database/sync.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
@@ -115,18 +115,12 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.clear();
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   goBack() {

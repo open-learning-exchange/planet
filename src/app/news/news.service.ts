@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Subject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
+import { Subject, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { CouchService } from '../shared/database/couchdb.service';
 import { StateService } from '../shared/state.service';
-import { UserService } from '../shared/user.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { UserService } from '../shared/auth/user.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { findDocuments } from '../shared/database/mango-queries';
 import { environment } from '../../environments/environment';
 import { dedupeObjectArray } from '../shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
@@ -29,7 +29,7 @@ export class NewsService {
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
-    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).pipe(
+    return this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { time: 'desc' } ])).pipe(
       switchMap((newsItems: any[]) =>
         this.couchService.findAttachmentsByIds(this.collectAttachmentIds(newsItems)).pipe(
           map((attachments: any[]) => ({
@@ -119,7 +119,7 @@ export class NewsService {
 
   shareNews(news, planets?: any[], successMessage = $localize`Message has been successfully shared`) {
     const viewInObject = (planet) => (
-      { '_id': `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
+      { _id: `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
     );
     const existingPlanetIds = (news.viewIn || []).map(view => view._id);
     const newPlanets = planets ? planets
@@ -146,4 +146,16 @@ export class NewsService {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
   }
 
+  saveReaction(newsDoc: any) {
+    return this.couchService.updateDocument(this.dbName, newsDoc).pipe(
+      tap(() => this.requestNews()),
+      catchError((error) => {
+        if (error?.status === 409) {
+          this.requestNews();
+        }
+        this.planetMessageService.showAlert($localize`There was a problem saving your reaction.`);
+        return throwError(error);
+      })
+    );
+  }
 }

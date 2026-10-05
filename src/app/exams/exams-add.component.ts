@@ -14,9 +14,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService, QuestionFormGroup } from './exams.service';
@@ -24,23 +24,23 @@ import {
   PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
 } from '../shared/forms/planet-step-list.component';
 import { ExamsPreviewComponent } from './exams-preview.component';
-import { markdownToPlainText } from '../shared/utils';
+import { MarkdownRenderService } from '../shared/markdown/markdown-render.service';
 import { SubmissionsService } from './../submissions/submissions.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes.component';
+import { findDocuments } from '../shared/database/mango-queries';
+import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
-import { SubmitDirective } from '../shared/submit.directive';
+import { SubmitDirective } from '../shared/dialogs/submit.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/markdown/planet-markdown-textbox.component';
 import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
 import { ExamsQuestionComponent } from './exams-question.component';
 
@@ -123,14 +123,14 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
-  private _question!: QuestionFormGroup;
+  #question!: QuestionFormGroup;
   get question(): QuestionFormGroup {
-    return this._question;
+    return this.#question;
   }
   set question(newQuestion: QuestionFormGroup) {
     const question = this.questions.at(this.activeQuestionIndex);
     this.examsService.updateQuestion(question, newQuestion);
-    this._question = newQuestion;
+    this.#question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
   }
   get questions(): FormArray<QuestionFormGroup> {
@@ -148,7 +148,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     private examsService: ExamsService,
     private planetStepListService: PlanetStepListService,
     private dialog: MatDialog,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private markdownRenderer: MarkdownRenderService
   ) {
     const typeParam = this.route.snapshot.paramMap.get('type');
     this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
@@ -233,7 +234,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   addExam(examInfo: ExamInfo, reRoute: boolean) {
     const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
     this.couchService.findAll(this.dbName,
-      { selector: { type: this.examForm.controls.type.value, name: { '$regex': namePrefix } } }
+      { selector: { type: this.examForm.controls.type.value, name: { $regex: namePrefix } } }
     ).pipe(switchMap((exams: Array<{ name: string }>) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.examsService.createExamDocument(examInfo);
@@ -290,7 +291,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   getQuestionLabel(value: unknown, index: number): string {
-    const questionText = markdownToPlainText(value);
+    const questionText = this.markdownRenderer.toPlainText(value);
     return questionText || $localize`Question ${index + 1}`;
   }
 

@@ -1,29 +1,28 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Clipboard } from '@angular/cdk/clipboard';
-import { MatDialog } from '@angular/material/dialog';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { NotificationsService } from '../notifications/notifications.service';
+import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
-import { AuthService } from '../shared/auth-guard.service';
-import { calculateMdAdjustedLimit } from '../shared/utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
+import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { LabelComponent } from '../shared/label.component';
+import { LabelComponent } from '../shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { ChatOutputDirective } from '../shared/chat-output.directive';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TimeAgoPipe } from '../shared/time-ago.pipe';
+import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
+import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
+import { FullNamePipe } from '../shared/text/full-name.pipe';
+import { LinkCopyService } from '../shared/ui/link-copy.service';
+import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -41,7 +40,6 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
     MatTooltip,
     MatCardContent,
     PlanetMarkdownComponent,
-    ChatOutputDirective,
     NgClass,
     MatIconButton,
     MatCardActions,
@@ -51,7 +49,8 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
     NgTemplateOutlet,
     MatMenuItem,
     SlicePipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    FullNamePipe
   ]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
@@ -62,11 +61,14 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
+  @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() hasUnreadReplies = false;
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
+  @Input() customLabels: string[] = [];
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
@@ -75,22 +77,22 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
-  labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
+  labels = { listed: [], all: [ ...DEFAULT_VOICE_LABELS ] };
   teamLabels = [];
   previewLimit = 500;
   deviceType: DeviceType;
   isMobile: boolean;
+  commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
+  reactionSaving = false;
 
   constructor(
     private router: Router,
     private userService: UserService,
-    private couchService: CouchService,
     private newsService: NewsService,
-    private notificationsService: NotificationsService,
     private stateService: StateService,
-    private dialog: MatDialog,
-    private authService: AuthService,
-    private clipboard: Clipboard,
+    private usersProfileDialogService: UsersProfileDialogService,
+    private authGuard: AuthGuard,
+    private linkCopyService: LinkCopyService,
     private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -110,7 +112,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
-    this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
+    this.updateLabelsAll();
     if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
       const viewIn = this.item.doc.viewIn[0];
       if (viewIn.name) {
@@ -123,14 +125,41 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.handleItemExpansion();
   }
 
+  updateLabelsAll() {
+    this.labels.all = dedupeVoiceLabels([ ...DEFAULT_VOICE_LABELS, ...this.customLabels ]);
+    this.labels.listed = this.labels.all.filter(label =>
+      !(this.item.doc.labels || []).some(itemLabel => voiceLabelsEqual(itemLabel, label))
+    );
+  }
+
+  get canEditLabels(): boolean {
+    const originPlanet = this.item.doc.createdOn || this.item.doc.messagePlanetCode || this.item.doc.user?.planetCode;
+    return this.editable && originPlanet === this.planetCode && this.canModifyNews;
+  }
+
+  get repliesLabel(): string {
+    return this.hasUnreadReplies ? $localize`View replies, including unread` : $localize`View replies`;
+  }
+
+  get actionsLabel(): string {
+    return this.hasUnreadReplies ? $localize`More actions, unread replies` : $localize`More actions`;
+  }
+
+  get canModifyNews(): boolean {
+    return this.item.doc.user?.name === this.currentUser.name || this.currentUser.isUserAdmin;
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
   addReply(news) {
+    if (this.readOnly) {
+      return;
+    }
     const label = this.formLabel(news);
-    this.authService.checkAuthenticationStatus().subscribe(() => {
+    this.authGuard.checkAuthenticationStatus().subscribe(() => {
       this.updateNews.emit({
         title: $localize`Reply to ${label}`,
         placeholder:  $localize`Your ${label}`,
@@ -142,7 +171,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
           viewIn: news.viewIn
         }
       });
-      this.sendNewsNotifications(news);
     });
   }
 
@@ -156,33 +184,17 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     if (this.item.doc.news?.conversations?.length > 1) {
       this.showExpand = true;
     } else {
-      const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
+      const message = typeof this.item.doc.message === 'string' ? this.item.doc.message : '';
       const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
-      this.showExpand = messageLength > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit) || imagesLength > 0;
+      this.showExpand = doesMarkdownPreviewTruncate(message, this.previewLimit) ||
+        hasMarkdownImages(message) || imagesLength > 0;
     }
-  }
-
-  sendNewsNotifications(news: any = '') {
-    const replyBy = this.currentUser.name;
-    const userId = news.user._id;
-    if (replyBy === news.user.name) {
-      return;
-    }
-    const link = this.router.url;
-    const notification = {
-      user: userId,
-      'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
-      link,
-      'priority': 1,
-      'type': 'replyMessage',
-      'replyTo': news._id,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
-    };
-    this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {
+    if (this.readOnly) {
+      return;
+    }
     const label = this.formLabel(news);
     const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
@@ -202,36 +214,46 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openDeleteDialog(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.deleteNews.emit(news);
   }
 
   shareStory(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.shareNews.emit({ news, local: this.targetLocalPlanet });
   }
 
   labelClick(label, action) {
+    if (this.readOnly && action !== 'select') {
+      return;
+    }
     this.changeLabels.emit({ label, action, news: this.item.doc });
   }
 
   shouldShowShare() {
-    return this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
+    return !this.readOnly && this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 
-  openMemberDialog(member) {
-    this.authService.checkAuthenticationStatus().subscribe(() => {
-      this.dialog.open(UserProfileDialogComponent, {
-        data: { member: { ...member, userPlanetCode: member.planetCode } },
-        maxWidth: '90vw',
-        autoFocus: false,
-        restoreFocus: false,
-        maxHeight: '90vh'
-      });
+  openMemberDialog(member, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    this.authGuard.checkAuthenticationStatus().subscribe(() => {
+      this.usersProfileDialogService.open(
+        { member: { ...member, userPlanetCode: member.planetCode } },
+        { restoreFocus: false }
+      );
     });
   }
 
   addTeamLabelsFromViewIn() {
-    if ([ 'teams', 'enterprises' ].some(route => this.router.url.includes(route))) {
+    if (this.isTeamFeed) {
       this.teamLabels = [];
       return;
     }
@@ -242,8 +264,70 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  private get isTeamFeed(): boolean {
+    return [ 'teams', 'enterprises' ].some(route => this.router.url.includes(route));
+  }
+
   copyLink(voice) {
-    const link = `${window.location.origin}/voices/${voice._id}`;
-    this.clipboard.copy(link);
+    const threadId = voice.replyTo && voice.replyTo !== 'root' ? voice.replyTo : voice._id;
+    this.linkCopyService.copyLink(
+      this.isTeamFeed ? [ this.router.url.split(/[;?#]/)[0], { voice: threadId } ] : [ '/voices', threadId ],
+      {
+        success: $localize`Voice link copied to clipboard`,
+        failure: $localize`Failed to copy voice link`
+      }
+    );
+  }
+
+  reactionEntries(newsDoc: any): ReactionEntry[] {
+    return getReactionEntries(newsDoc?.reactions);
+  }
+
+  hasUserReacted(newsDoc: any, emoji: string): boolean {
+    return hasUserReacted(newsDoc?.reactions, emoji, this.currentUser?._id);
+  }
+
+  reactionTooltip(emoji: string, users: string[] = []): string {
+    const count = users.length;
+    if (this.hasUserReacted(this.item?.doc, emoji)) {
+      if (count === 1) {
+        return $localize`You reacted with ${emoji}`;
+      }
+      const others = count - 1;
+      if (others === 1) {
+        return $localize`You and 1 other reacted with ${emoji}`;
+      }
+      return $localize`You and ${others} others reacted with ${emoji}`;
+    }
+    if (count === 1) {
+      return $localize`1 person reacted with ${emoji}`;
+    }
+    return $localize`${count} people reacted with ${emoji}`;
+  }
+
+  reactionLabel(emoji: string): string {
+    return $localize`React with ${emoji}`;
+  }
+
+  get canReact() {
+    return !this.readOnly && (this.editable || this.item?.public === true);
+  }
+
+  toggleReaction(newsDoc: any, emoji: string) {
+    if (!this.canReact || this.reactionSaving || !newsDoc) {
+      return;
+    }
+    this.reactionSaving = true;
+    const previousReactions = newsDoc.reactions;
+    this.authGuard.checkAuthenticationStatus().pipe(
+      switchMap(() => {
+        newsDoc.reactions = toggleNewsReaction(newsDoc.reactions, emoji, this.userService.get()._id);
+        return this.newsService.saveReaction(newsDoc);
+      }),
+      finalize(() => this.reactionSaving = false)
+    ).subscribe({
+      next: (res: any) => newsDoc._rev = res.rev,
+      error: () => newsDoc.reactions = previousReactions
+    });
   }
 }

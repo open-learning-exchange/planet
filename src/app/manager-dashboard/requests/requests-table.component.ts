@@ -1,5 +1,5 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
+import { CouchService } from '../../shared/database/couchdb.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -10,20 +10,20 @@ import {
 } from '@angular/material/table';
 import { map, switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
+import { filterSpecificFields, sortNumberOrString } from '../../shared/tables/table.helpers';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { AbstractControl, NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
-import { findDocuments } from '../../shared/mangoQueries';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { findDocuments } from '../../shared/database/mango-queries';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
@@ -36,6 +36,7 @@ interface EditChildNameFormControls {
 @Component({
   selector: 'planet-requests-table',
   templateUrl: './requests-table.component.html',
+  styleUrls: ['./requests-table.component.scss'],
   imports: [
     MatTable,
     MatSort,
@@ -162,7 +163,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
       const doc = res.docs[0];
       return this.couchService.delete(db + doc._id + '?rev=' + doc._rev);
     }
-    return of({ 'ok': true });
+    return of({ ok: true });
   }
 
   deleteCommunity(community) {
@@ -180,27 +181,23 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
 
   pipeRemovePlanetUser(obs: any, community) {
     return obs.pipe(
-      switchMap(data => {
-        return forkJoin([ of(data), this.removePlanetUser(community) ]);
-      })
+      switchMap(data => forkJoin([ of(data), this.removePlanetUser(community) ]))
     );
   }
 
   removePlanetUser(community) {
     return forkJoin([
-      this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
-      this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
-    ]).pipe(switchMap(([ user, shelf ]) => {
-      return forkJoin([
-        this.addDeleteObservable(user, '_users/'),
-        this.addDeleteObservable(shelf, 'shelf/')
-      ]);
-    }));
+      this.couchService.post('_users/_find', { selector: { _id: 'org.couchdb.user:' + community.adminName } }),
+      this.couchService.post('shelf/_find', { selector: { _id: 'org.couchdb.user:' + community.adminName } })
+    ]).pipe(switchMap(([ user, shelf ]) => forkJoin([
+      this.addDeleteObservable(user, '_users/'),
+      this.addDeleteObservable(shelf, 'shelf/')
+    ])));
   }
 
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
   unlockUser(community) {
-    return this.couchService.findAll('_users', findDocuments({ 'requestId': community._id })).pipe(
+    return this.couchService.findAll('_users', findDocuments({ requestId: community._id })).pipe(
       switchMap((users: any[]) => this.couchService.bulkDocs('_users', users.map(user => ({ ...user, roles: [ 'learner' ] }))))
     );
   }
@@ -213,7 +210,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     this.dialogGuard.open(`child-planet:${url}`, () =>
       this.dialogsListService.getListAndColumns(
         this.dbName,
-        { 'registrationRequest': 'accepted' },
+        { registrationRequest: 'accepted' },
         url
       ).pipe(
         map(planets => this.dialog.open(DialogsListComponent, {
@@ -264,7 +261,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     });
     this.dialogsFormService.openDialogsForm(
       this.reportsService.editPlanetNameTitle(planet.doc.planetType),
-      [ { 'label': $localize`Name`, 'type': 'textbox', 'name': 'name', 'placeholder': $localize`Name`, 'required': true } ],
+      [ { label: $localize`Name`, type: 'textbox', name: 'name', placeholder: $localize`Name`, required: true } ],
       form,
       { onSubmit: this.editChildName(planet).bind(this) }
     );
@@ -275,7 +272,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     return ({ name }: { name: string }) => {
       this.couchService.updateDocument(
         this.dbName,
-        { ...nameDoc, 'name': name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
+        { ...nameDoc, name, docType: 'parentName', planetId: doc._id, createdDate: this.couchService.datePlaceholder }
       ).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {

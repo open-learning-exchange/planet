@@ -161,7 +161,7 @@
             <button mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
           }
           @if (uploadImage && currentImgKey && !imageFile && !attachmentDeleted) {
-            <button mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
+            <button mat-raised-button color="warn" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
           }
         </div>
       </div>

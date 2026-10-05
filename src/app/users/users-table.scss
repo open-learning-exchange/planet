@@ -1,12 +1,41 @@
-@use '../variables' as v;
+@use '../mixins' as m;
 
-/* Column Widths */
+.mat-column-name {
+  @include m.table-column-grow;
+}
+
 .mat-column-profile {
-  max-width: 100px;
+  @include m.table-column-fixed(7rem);
+}
+
+.mat-column-visitCount {
+  @include m.table-column-fixed(8rem);
+}
+
+.mat-column-joinDate,
+.mat-column-lastLogin,
+.mat-column-startDate,
+.mat-column-recentDate,
+.mat-column-birthDate,
+.mat-column-lastVisit {
+  @include m.table-column-fixed(10rem);
+}
+
+.mat-column-planet,
+.mat-column-roles {
+  @include m.table-column-fixed(14rem);
+}
+
+.mat-column-contact {
+  @include m.table-column-fixed(16rem);
+}
+
+.mat-column-action {
+  @include m.table-column-fixed(18rem);
 }
 
 .mat-mdc-cell.mat-column-name span {
-  padding-right:5px;
+  padding-right: 5px;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -15,9 +44,4 @@
 
 mat-cell p {
   margin: 0;
-}
-@media(max-width: v.$screen-md) {
-  .mat-column-visitCount, .mat-column-joinDate, .mat-column-lastLogin {
-    max-width: 70px;
-  }
 }

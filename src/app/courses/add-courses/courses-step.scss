@@ -4,6 +4,23 @@ planet-courses-step .planet-step-list-form-container .planet-step-list-form {
   overflow: visible;
 }
 
+planet-courses-step planet-step-list {
+  .step-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    planet-course-icon,
+    planet-course-icon > div,
+    planet-course-icon span,
+    planet-course-icon mat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
 .course-attach {
   .attach-grid {
     display: grid;

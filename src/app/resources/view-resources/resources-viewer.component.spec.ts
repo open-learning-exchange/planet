@@ -1,6 +1,6 @@
 import { Subject, of, throwError } from 'rxjs';
 
-import { CSV_PREVIEW_MAX_BYTES } from '../../shared/csv.service';
+import { CSV_PREVIEW_MAX_BYTES } from '../../shared/export/csv.service';
 import { ResourcesViewerComponent } from './resources-viewer.component';
 
 describe('ResourcesViewerComponent CSV preview', () => {
@@ -83,6 +83,34 @@ describe('ResourcesViewerComponent CSV preview', () => {
 
     secondLoad.next({ columns: [ 'Name' ], rows: [ { Name: 'current' } ], truncated: false });
     expect(component.dataSource.data).toEqual([ { Name: 'current' } ]);
+  });
+
+  it('formats the selected attachment size when loading a resource', () => {
+    component.setResource({
+      _id: 'doc-id',
+      title: 'PDF resource',
+      private: false,
+      mediaType: 'pdf',
+      openWhichFile: 'manual.pdf',
+      _attachments: {
+        'manual.pdf': { content_type: 'application/pdf', length: 2516582 },
+        'notes.txt': { content_type: 'text/plain', length: 100000 }
+      }
+    });
+
+    expect(component.formattedFileSize).toBe('2.4 MB');
+  });
+
+  it('clears viewer state when a resource has no attachments', () => {
+    component.resourceSrc = 'stale-url';
+    component.mediaType = 'pdf';
+    component.formattedFileSize = '2.4 MB';
+
+    component.setResource({ _id: 'doc-id', title: 'Empty resource', private: false, _attachments: {} });
+
+    expect(component.resourceSrc).toBe('');
+    expect(component.mediaType).toBe('');
+    expect(component.formattedFileSize).toBe('');
   });
 
 });

@@ -9,23 +9,25 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/user.service';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
+import {
+  filterDropdowns, filterSpecificFieldsHybrid, composeFilterFunctions, sortNumberOrString, dropdownsFill
+} from '../shared/tables/table.helpers';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { FeedbackService } from './feedback.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '../shared/database/mango-queries';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { UsersService } from '../users/users.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { truncateText } from '../shared/utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
@@ -33,7 +35,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import {
   FEEDBACK_STATUS_OPTIONS, FEEDBACK_TYPE_OPTIONS, getFeedbackDisplayTitle, getFeedbackPriorityLabel, getFeedbackStatusLabel,
   getFeedbackTypeIcon, getFeedbackTypeLabel, normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
@@ -62,6 +64,7 @@ import {
     MatToolbarRow,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatSelect,
     MatOption,
     MatInput,
@@ -110,17 +113,17 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     { text: FEEDBACK_STATUS_OPTIONS[2].label, value: FEEDBACK_STATUS_OPTIONS[2].value }
   ];
   filter = {
-    'type': '',
-    'status': ''
+    type: '',
+    status: ''
   };
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch;
+    return this.#titleSearch;
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the feedback filter
     this.feedback.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
   }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -164,7 +167,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.usersService.requestUsers();
     this.feedbackService.setFeedback();
     this.feedback.filterPredicate =
-      composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'displayTitle' ]) ]);
+      composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFieldsHybrid([ 'owner', 'displayTitle' ]) ]);
     this.feedback.sortingDataAccessor = (item: any, property: string) => {
       const displayField = this.displaySortFieldMap[property as keyof typeof this.displaySortFieldMap];
       if (displayField) {
@@ -189,8 +192,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getFeedback() {
-    const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
+    const selector = !this.user.isUserAdmin ? { owner: this.user.name } : { _id: { $gt: null } };
+    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { openTime: 'desc' } ])).subscribe((feedbackData: any[]) => {
       this.feedback.data = feedbackData.map(feedback => {
         const normalizedType = normalizeFeedbackType(feedback.type);
         const normalizedPriority = normalizeFeedbackPriority(feedback.priority);

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { takeUntil, debounceTime, map } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -10,18 +10,19 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { PlanetRoleComponent } from '../shared/auth/planet-role.component';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'planet-users',
@@ -36,12 +37,14 @@ import { FormsModule } from '@angular/forms';
     MatButtonToggleGroup,
     MatButtonToggle,
     MatFormField,
+    MatSuffix,
     MatLabel,
     MatSelect,
     MatOption,
     PlanetRoleComponent,
     MatInput,
     MatButton,
+    MatTooltip,
     FormsModule,
     UsersTableComponent
   ]

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { AttachmentInputState, ExistingAttachment, PendingAttachment } from '../shared/forms/file-upload.component';
 
 export interface TeamsAttachmentUploadResult {
@@ -43,7 +43,7 @@ export class TeamsAttachmentsService {
       }));
   }
 
-  receiptAttachmentImages(doc: any): Observable<Array<{ image: string; name: string }>> {
+  receiptAttachmentImages(doc: any): Observable<Array<{ image: string, name: string }>> {
     const attachments = this.receiptAttachments(doc);
     if (attachments.length === 0) {
       return of([]);
@@ -54,7 +54,7 @@ export class TeamsAttachmentsService {
         map(image => ({ image, name: attachment.name })),
         catchError(() => of(null))
       )
-    )).pipe(map(images => images.filter((image): image is { image: string; name: string } => !!image)));
+    )).pipe(map(images => images.filter((image): image is { image: string, name: string } => !!image)));
   }
 
   retainSelectedAttachments(doc: any, state: AttachmentInputState) {

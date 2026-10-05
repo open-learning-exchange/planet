@@ -16,7 +16,7 @@
     @case ('pdf') {
       <div style="position: relative;">
         <div class="pdf-toolbar">
-          <button mat-icon-button style="color: white" (click)="openFullscreen()">
+          <button mat-icon-button class="fullscreen-button" (click)="openFullscreen()">
             <mat-icon>fullscreen</mat-icon>
           </button>
         </div>
@@ -27,7 +27,7 @@
     @case ('csv') {
       <div class="csv-container">
         <div class="csv-actions">
-          <a mat-raised-button color="primary" i18n [href]="resourceSrc">Download/Open</a>
+          <ng-container *ngTemplateOutlet="downloadButton"></ng-container>
         </div>
         @if (csvPreviewTooLarge) {
           <span i18n>CSV files larger than {{ csvPreviewMaxSizeMb }} MB cannot be previewed. Download the file to view it.</span>
@@ -59,10 +59,18 @@
       </div>
     }
     @case ('other') {
-      <div><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>
+      <div>
+        <ng-container *ngTemplateOutlet="downloadButton"></ng-container>
+      </div>
     }
     @case ('HTML') {
       <iframe [src]="pdfSrc"></iframe>
     }
   }
 </div>
+
+<ng-template #downloadButton>
+  <a mat-raised-button color="primary" [href]="resourceSrc">
+    <span i18n>Download/Open</span>@if (formattedFileSize) {<span> ({{ formattedFileSize }})</span>}
+  </a>
+</ng-template>

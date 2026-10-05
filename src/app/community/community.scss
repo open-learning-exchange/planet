@@ -28,7 +28,7 @@
   }
 }
 
-planet-calendar {
+.view-container > planet-calendar {
   grid-area: calendar;
   overflow-y: auto;
 }
@@ -36,21 +36,9 @@ planet-calendar {
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-auto-rows: 125px;
+  grid-auto-rows: auto;
   margin: 0 0.5rem;
-  .top-right-icon {
-    position: absolute;
-    top: -0.25rem;
-    right: -0.25rem;
-  }
   word-break: break-word;
-}
-
-.sticky-button {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: v.$white;
 }
 
 .button-row {
@@ -58,48 +46,13 @@ planet-calendar {
   gap: 0.5rem;
 }
 
-.toolbar-row {
-  display: flex;
-  width: 100%;
-  gap: 12px;
-
-  .search-form-field {
-    flex: 2 1 0;
-  }
-  .label-filter-field {
-    flex: 1 1 0;
-
-    .label-icon {
-      margin-right: 4px;
-      vertical-align: middle;
-    }
-  }
-  .new-voice-btn {
-    flex: 0 0 auto;
-    align-self: center;
-  }
-  .pin-btn {
-    align-self: center;
-
-    mat-icon svg {
-      fill: black;
-    }
-  }
+.new-voice-btn {
+  flex: 0 0 auto;
+  align-self: center;
 }
 
 @media only screen and (max-width: v.$screen-xs) {
   .action-buttons.button-row {
     flex-direction: column;
-  }
-
-  .toolbar-row {
-    flex-wrap: wrap;
-    height: auto;
-
-    .search-form-field,
-    .label-filter-field {
-      flex: 1 1 25%;
-      min-width: 0;
-    }
   }
 }

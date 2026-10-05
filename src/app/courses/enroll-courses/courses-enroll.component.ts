@@ -3,14 +3,14 @@ import { formatDate } from '@angular/common';
 import { zip } from 'rxjs';
 import { switchMap, take, finalize } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { CouchService } from '../../shared/couchdb.service';
+import { CouchService } from '../../shared/database/couchdb.service';
 import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../courses.service';
 import { TableState, UsersTableComponent } from '../../users/users-table.component';
 import { StateService } from '../../shared/state.service';
 import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
-import { CsvService } from '../../shared/csv.service';
+import { CsvService } from '../../shared/export/csv.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -52,7 +52,7 @@ export class CoursesEnrollComponent {
       switchMap((paramMap: ParamMap) => {
         this.courseId = paramMap.get('id');
         return zip(
-          this.couchService.findAll('shelf', { 'selector': { 'courseIds': { '$elemMatch': { '$eq': this.courseId } } } }),
+          this.couchService.findAll('shelf', { selector: { courseIds: { $elemMatch: { $eq: this.courseId } } } }),
           this.coursesService.findProgress([ this.courseId ], { allUsers : true }),
           this.usersService.usersListener(true),
           this.managerService.getChildPlanets(),
@@ -94,17 +94,15 @@ export class CoursesEnrollComponent {
   }
 
   exportCSV() {
-    const csvData = this.members.map((user: any) => {
-      return {
-        [$localize`username`]: user.doc.name,
-        [$localize`Date Started`]: user.activityDates.createdDate
-          ? formatDate(user.activityDates.createdDate, 'mediumDate', this.localeId)
-          : $localize`N/A`,
-        [$localize`Most Recent Activity`]: user.activityDates.updatedDate
-          ? formatDate(user.activityDates.updatedDate, 'mediumDate', this.localeId)
-          : $localize`N/A`,
-      };
-    });
+    const csvData = this.members.map((user: any) => ({
+      [$localize`username`]: user.doc.name,
+      [$localize`Date Started`]: user.activityDates.createdDate
+        ? formatDate(user.activityDates.createdDate, 'mediumDate', this.localeId)
+        : $localize`N/A`,
+      [$localize`Most Recent Activity`]: user.activityDates.updatedDate
+        ? formatDate(user.activityDates.updatedDate, 'mediumDate', this.localeId)
+        : $localize`N/A`,
+    }));
     this.csvService.exportCSV({
       data: csvData,
       title: $localize`Course Enrollment Data - ${this.course}`,

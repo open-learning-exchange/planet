@@ -8,15 +8,13 @@ import { UsersAchievementsUpdateComponent } from '../users/users-achievements/us
 import { TeamsViewComponent } from '../teams/teams-view.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
-import { myDashboardRoute } from './router-constants';
+import { myDashboardRoute } from './home-router.constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import { AuthService } from '../shared/auth-guard.service';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
+import { AuthGuard } from '../shared/auth/auth.guard';
+import { UnsavedChangesGuard } from '../shared/unsaved-changes/unsaved-changes.guard';
 
-function dashboardPath(route): string {
-  return `${myDashboardRoute}/${route}`;
-}
+const dashboardPath = (route): string => `${myDashboardRoute}/${route}`;
 
 const alwaysGuardedRoutes = [
   { path: 'community/:code', component: CommunityComponent },
@@ -81,7 +79,7 @@ const routes: Routes = [
   {
     path: '',
     component: CommunityComponent,
-    canActivate: [ AuthService.centerLandingGuard ],
+    canActivate: [ AuthGuard.centerLandingGuard ],
     children: [ { path: 'voices/:id', component: NewsListComponent } ]
   },
   {
@@ -92,7 +90,7 @@ const routes: Routes = [
   {
     path: '',
     children: alwaysGuardedRoutes,
-    canActivateChild: [ AuthService ]
+    canActivateChild: [ AuthGuard ]
   }
 ];
 

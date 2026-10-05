@@ -55,9 +55,9 @@ while ! curl -X GET http://127.0.0.1:2200/_all_dbs ; do sleep 1; done
 node bin.js http://localhost:2200
 ```
 
-Clone and configure the Planet project:
+Clone and configure the Planet project (`--recurse-submodules` pulls in the shared agent skills under `.agents/skills/`; on an existing clone run `git submodule update --init --recursive` instead):
 ```
-git clone https://github.com/open-learning-exchange/planet.git
+git clone --recurse-submodules https://github.com/open-learning-exchange/planet.git
 cd planet
 chmod +x couchdb-setup.sh
 bash couchdb-setup.sh -p 2200

@@ -2,26 +2,26 @@ import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { UserService } from '../shared/auth/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { findDocuments } from '../shared/database/mango-queries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '../shared/state.service';
-import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
+import { dedupeShelfReduce, dedupeObjectArray, fullName } from '../shared/utils';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { foundations, foundationIcons } from '../courses/constants';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { CertificationsService } from '../shared/certifications/certifications.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { NgClass, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { PlanetRoleComponent } from '../shared/auth/planet-role.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { DashboardTileComponent } from './dashboard-tile.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -32,6 +32,9 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     PlanetRoleComponent,
     MatTooltip,
     MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     NgClass,
     DashboardTileComponent,
     DecimalPipe,
@@ -47,9 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   displayName: string;
   roles: string[];
   planetName: string;
-  badgesCourses: { [key: string]: any[] } = {};
-  badgeGroups = [ ...foundations, 'none' ];
-  badgeIcons = foundationIcons;
+  completedCourses: any[] = [];
   dateNow: any;
   visits = 0;
   surveysCount = 0;
@@ -79,7 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {
     const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
-    this.userService.shelfChange$.pipe()
+    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.ngOnInit();
       });
@@ -89,7 +90,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.coursesService.coursesListener$(),
       this.certificationsService.getCertifications()
     ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
-      this.setBadgesCourses(courses, certifications);
+      this.setCompletedCourses(courses, certifications);
     });
     this.initMyLifeItems();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -100,12 +101,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
+    this.displayName = fullName(this.user) || this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
     this.initDashboard();
-    this.couchService.findAll('login_activities', findDocuments({ 'user': this.user.name }, [ 'user' ], [], 1000))
+    this.couchService.findAll('login_activities', findDocuments({ user: this.user.name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
           console.warn('Error fetching login activities');
@@ -169,12 +170,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.bulkGet(db, shelf.filter(id => id))
       .pipe(
-        catchError(() => {
-          return of([]);
-        }),
-        map(docs => {
-          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
-        })
+        map(docs => docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }))),
+        catchError(() => of([]))
       );
   }
 
@@ -214,7 +211,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.submissionsService.getSubmissions(findDocuments({
       type,
       status,
-      'user.name': username || { '$gt': null }
+      'user.name': username || { $gt: null }
     }));
   }
 
@@ -250,18 +247,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  setBadgesCourses(courses, certifications) {
-    this.badgesCourses = courses
-      .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length
-        && course.doc.steps.length > 0)
+  setCompletedCourses(courses, certifications) {
+    this.completedCourses = courses
+      .filter(course => course.doc.steps?.length > 0 && this.certificationsService.isCourseCompleted(course, this.user))
       .map(course => ({
         ...course, inCertification: certifications.some(certification => certification.courseIds.indexOf(course._id) > -1)
       }))
-      .sort((a, b) => a.inCertification ? -1 : b.inCertification ? 1 : 0)
-      .reduce((badgesCourses, course) => ({
-        ...badgesCourses, [course.doc.foundation || 'none']: [ ...(badgesCourses[course.doc.foundation || 'none'] || []), course ]
-      }), { none: [] });
-    this.badgeGroups = [ ...foundations, 'none' ].filter(group => this.badgesCourses[group] && this.badgesCourses[group].length);
+      .sort((a, b) => Number(b.inCertification) - Number(a.inCertification));
+  }
+
+  get maxVisibleBadges(): number {
+    return this.deviceType === DeviceType.DESKTOP ? 8 : 6;
+  }
+
+  get visibleBadges(): any[] {
+    return this.completedCourses.slice(0, this.maxVisibleBadges);
+  }
+
+  get remainingBadgesCount(): number {
+    return Math.max(0, this.completedCourses.length - this.maxVisibleBadges);
+  }
+
+  get hiddenBadges(): any[] {
+    return this.completedCourses.slice(this.maxVisibleBadges);
+  }
+
+  get moreBadgesLabel(): string {
+    const count = this.remainingBadgesCount;
+    return count === 1 ?
+      $localize`Show ${count}:count: more completed course` :
+      $localize`Show ${count}:count: more completed courses`;
   }
 
   reminderBanner() {

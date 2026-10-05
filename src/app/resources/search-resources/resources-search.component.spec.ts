@@ -1,6 +1,6 @@
 import { ResourcesSearchComponent } from './resources-search.component';
-import { getResourceFileType } from '../resources-constants';
-import { filterAdvancedSearch } from '../../shared/table-helpers';
+import { getResourceFileType } from '../resources.constants';
+import { filterAdvancedSearch } from '../../shared/tables/table.helpers';
 
 describe('ResourcesSearchComponent and getResourceFileType', () => {
   let component: ResourcesSearchComponent;

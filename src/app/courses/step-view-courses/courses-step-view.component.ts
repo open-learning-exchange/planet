@@ -5,33 +5,33 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
+import { UserService } from '../../shared/auth/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
-import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
+import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
 import { StateService } from '../../shared/state.service';
-import { ChatService } from '../../shared/chat.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
+import { AiChatService } from '../../shared/ai/ai-chat.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
+import { coursesStepPrompt } from '../../shared/ai/ai-prompts.constants';
 import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
+import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
   styleUrls: ['./courses-step-view.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     MatButton,
     MatIconButton,
@@ -49,7 +49,8 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatButtonToggle,
     MatTooltip,
     ResourcesViewerComponent,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    ResourcesIconComponent
   ]
 })
 
@@ -80,7 +81,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private coursesService: CoursesService,
     private dialog: MatDialog,
     private resourcesService: ResourcesService,
@@ -125,9 +126,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           this.coursesService.courseActivity('visit', course, this.stepNum);
           this.countActivity = false;
         }
-        this.canManage = this.userService.get().isUserAdmin ||
-        course.creator !== undefined &&
-        (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
+        this.canManage = this.coursesService.canManageCourse(course);
       });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -233,10 +232,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 
   setResourceUrl(resourceUrl: string) {
@@ -276,7 +276,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   openReviewDialog() {
-    this.dialog.open(DialogsSubmissionsComponent, {
+    this.dialog.open(CoursesStepAttemptsDialogComponent, {
       minWidth: '500px',
       maxWidth: '90vw',
       maxHeight: '90vh',

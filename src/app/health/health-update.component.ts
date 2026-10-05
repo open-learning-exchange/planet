@@ -5,12 +5,12 @@ import { interval, of, race, forkJoin } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { HealthService } from './health.service';
-import { showFormErrors } from '../shared/table-helpers';
-import { languages } from '../shared/languages';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes.component';
+import { showFormErrors } from '../shared/tables/table.helpers';
+import { languages } from '../shared/language/languages';
+import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -21,7 +21,7 @@ import { MatSelect } from '@angular/material/select';
 
 import { MatOption } from '@angular/material/autocomplete';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/markdown/planet-markdown-textbox.component';
 
 interface ProfileFormValue {
   name: string;
@@ -82,7 +82,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   profileForm: FormGroup<ProfileFormGroup>;
   healthForm: FormGroup<HealthFormGroup>;
-  existingData: { _id?: string; _rev?: string; profile?: HealthFormValue } = {};
+  existingData: { _id?: string, _rev?: string, profile?: HealthFormValue } = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
   initialFormValues: string;

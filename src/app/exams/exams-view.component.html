@@ -45,7 +45,7 @@
       </button>
     }
   </mat-menu>
-  <td-markdown class="question-body" [content]="question?.body"></td-markdown>
+  <planet-markdown class="question-body" [content]="question?.body"></planet-markdown>
   <div>
     @switch (mode) {
       @case ('take') {
@@ -58,7 +58,7 @@
       }
       @case ('grade') {
         <p><b i18n>Submitted answer:</b></p>
-        <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
+        <planet-markdown [content]="answer?.value?.text || answer?.value"></planet-markdown>
         <mat-radio-group [(ngModel)]="grade" [disabled]="question?.type === 'select' || question?.type === 'selectMultiple'">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
@@ -70,7 +70,7 @@
       }
       @case ('view') {
         <p><b i18n>Response:</b></p>
-        <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
+        <planet-markdown [content]="answer?.value?.text || answer?.value"></planet-markdown>
         @if (grade>=0) {
           <p><b i18n>Grade:</b></p>
           @if (grade===1) {
@@ -82,7 +82,7 @@
         }
         @if (comment) {
           <p><b i18n>Feedback:</b></p>
-          <td-markdown [content]="comment"></td-markdown>
+          <planet-markdown [content]="comment"></planet-markdown>
         }
       }
     }
@@ -123,29 +123,31 @@
         {examType, select, survey {Finish Survey} exam {Finish Test}}
       </button>
         }
-        <span class="action-buttons-status small">
-          @switch (statusMessage) {
-            @case ('incorrect') {
-              <div class="warn-text-color">
-                <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
-              </div>
+        @if (statusMessage) {
+          <span class="action-buttons-status small">
+            @switch (statusMessage) {
+              @case ('incorrect') {
+                <div class="warn-text-color">
+                  <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
+                </div>
+              }
+              @case ('complete') {
+                <div class="primary-text-color">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>
+                    <ng-container i18n>{examType, select, survey {Survey is complete.} exam {Test is complete.}}</ng-container>
+                    {{' '}}
+                    @if (previewMode) {
+                      <ng-container i18n>You can close the preview.</ng-container>
+                    } @else {
+                      <ng-container i18n>{examType, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</ng-container>
+                    }
+                  </span>
+                </div>
+              }
             }
-            @case ('complete') {
-              <div class="primary-text-color">
-                <mat-icon>check_circle</mat-icon>
-                <span>
-                  <ng-container i18n>{examType, select, survey {Survey is complete.} exam {Test is complete.}}</ng-container>
-                  {{' '}}
-                  @if (previewMode) {
-                    <ng-container i18n>You can close the preview.</ng-container>
-                  } @else {
-                    <ng-container i18n>{examType, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</ng-container>
-                  }
-                </span>
-              </div>
-            }
-          }
-        </span>
+          </span>
+        }
       </div>
     </div>
   } @else {

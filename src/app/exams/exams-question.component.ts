@@ -8,12 +8,12 @@ import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
 import { ExamsService, QuestionChoiceFormGroup, QuestionFormGroup } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { trackByIdVal } from '../shared/table-helpers';
+import { trackByIdVal } from '../shared/tables/table.helpers';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/markdown/planet-markdown-textbox.component';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -142,7 +142,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   }
 
   clearChoices() {
-    this.questionForm.patchValue({ 'correctChoice': '' });
+    this.questionForm.patchValue({ correctChoice: '' });
     while (this.choices.length !== 0) {
       this.removeChoice(0);
     }

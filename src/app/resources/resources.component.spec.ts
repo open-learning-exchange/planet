@@ -4,7 +4,7 @@ import { ResourcesComponent } from './resources.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MaterialModule } from '../shared/material.module';
 import { RouterModule } from '@angular/router';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 

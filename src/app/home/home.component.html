@@ -73,15 +73,15 @@
     @if (isLoggedIn) {
       <ng-container *planetAuthorizedRoles="'learner'">
         @if (notifications.length > 0) {
-          <button mat-icon-button [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
-            <mat-icon matBadge={{notifications.length}} matBadgeColor="warn" MatBadgeSize="small">notifications</mat-icon>
+          <button mat-icon-button [matMenuTriggerFor]="notificationMenu" [attr.aria-label]="notificationsLabel" i18n-title title="Notifications">
+            <mat-icon [matBadge]="notifications.length" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
           </button>
         } @else {
           <button mat-icon-button routerLink="/notifications" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
         }
       </ng-container>
     }
-    <button mat-icon-button [matMenuTriggerFor]="userProfile">
+    <button mat-icon-button [matMenuTriggerFor]="userProfile" i18n-title title="User Profile">
       @if (user._attachments) {
         <img class="profile-image-large" [src]="userImgSrc">
       } @else {
@@ -125,23 +125,33 @@
 
 @if (isAndroid && showBanner) {
   <div class="banner">
-    <p i18n>Check out our Android app</p>
-    <a href="https://play.google.com/store/apps/details?id=org.ole.planet.myplanet" target="_blank">
-      <img src="assets/get_on_playstore.svg" i18n-alt alt="myPlanet on playstore" class="playstore-logo">
-    </a>
+    <p i18n>Check out our Android apps</p>
+    <div class="banner-apps">
+      @for (app of androidApps; track app.url) {
+        <a
+          class="banner-app"
+          [href]="app.url"
+          target="_blank"
+          rel="noopener"
+          [attr.aria-label]="app.installLabel">
+          <span>{{ app.name }}</span>
+          <img src="assets/get_on_playstore.svg" alt="" class="playstore-logo">
+        </a>
+      }
+    </div>
     <div class="spacer"></div>
-    <button class="close-btn" (click)="showBanner = false">✕</button>
+    <button class="close-btn" (click)="showBanner = false" aria-label="Close Android app banner" i18n-aria-label>✕</button>
   </div>
 }
 
 <mat-sidenav-container class="main-content" #content>
-  @if (!isMobile && (layout === 'modern' || forceModern)) {
+  @if (!usesOverlayNav && (layout === 'modern' || forceModern)) {
     <mat-sidenav #sidenav mode="side" class="primary-color nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
       <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
     </mat-sidenav>
   }
-  @if (isMobile && (layout === 'modern' || forceModern)) {
-    <mat-sidenav #sidenav mode="over" class="primary-color nav-shadow" [opened]="sidenavState === 'open'" (openedChange)="sidenavState = $event ? 'open' : 'closed'">
+  @if (usesOverlayNav && (layout === 'modern' || forceModern)) {
+    <mat-sidenav #mobileSidenav mode="over" class="primary-color nav-shadow">
       <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
     </mat-sidenav>
   }
@@ -246,19 +256,19 @@
       <li>
         <a mat-button routerLink="/chat" routerLinkActive="active" i18n-title title="AI Chat">
           <mat-icon>question_answer</mat-icon>
-          <label i18n>Chat</label>
+          <label i18n>AI Chat</label>
         </a>
       </li>
       <li>
-        <a mat-button planetFeedback i18n-title title="Feedback">
+        <a mat-button planetFeedback i18n-title title="Submit Feedback">
           <mat-icon svgIcon="feedback"></mat-icon>
-          <label i18n>Feedback</label>
+          <label i18n>Submit Feedback</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/feedback" routerLinkActive="active" i18n-title title="Messages">
+        <a mat-button routerLink="/feedback" routerLinkActive="active" i18n-title title="Review Feedback">
           <mat-icon svgIcon="feedbacklist"></mat-icon>
-          <label i18n>Messages</label>
+          <label i18n>Review Feedback</label>
         </a>
       </li>
       @if (isLoggedIn) {

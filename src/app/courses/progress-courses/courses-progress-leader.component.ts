@@ -1,28 +1,27 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { CsvService } from '../../shared/csv.service';
+import { CsvService } from '../../shared/export/csv.service';
 import { dedupeObjectArray } from '../../shared/utils';
-import { findDocuments } from '../../shared/mangoQueries';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { findDocuments } from '../../shared/database/mango-queries';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { PlanetSelectorComponent } from '../../shared/forms/planet-selector.component';
+import { CoursesProgressPlanetSelectorComponent } from './courses-progress-planet-selector.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { CoursesProgressChartComponent } from './courses-progress-chart.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
+import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -33,13 +32,12 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
   `],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     NgTemplateOutlet,
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
-    PlanetSelectorComponent,
+    CoursesProgressPlanetSelectorComponent,
     MatFormField,
     MatLabel,
     MatSelect,
@@ -77,7 +75,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private csvService: CsvService,
-    private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService
   ) {
@@ -128,7 +126,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setSubmissions() {
     this.chartData = [];
     this.submissionsService.updateSubmissions({
-      query: findDocuments({ parentId: { '$regex': this.course._id } }),
+      query: findDocuments({ parentId: { $regex: this.course._id } }),
       onlyBest: true
     });
   }
@@ -158,9 +156,13 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     if (!step.exam) {
       return { number: '', fill: userProgress.stepNum > index };
     }
-    const submission = submissions.find((sub: any) => {
-      return sub.user.name === user.name && sub.source === user.planetCode && sub.parentId === (step.exam._id + '@' + this.course._id);
-    });
+    const submission = submissions.find(
+      (sub: any) => (
+        sub.user.name === user.name &&
+        sub.source === user.planetCode &&
+        sub.parentId === (step.exam._id + '@' + this.course._id)
+      )
+    );
     if (submission) {
       return this.totalSubmissionAnswers(submission);
     }
@@ -173,9 +175,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.yAxisLength = this.course.steps.length;
     const users = dedupeObjectArray(submissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
     this.allChartData = users.map((user: any) => {
-      const answers = this.course.steps.map((step: any, index: number) => {
-        return this.userCourseAnswers(user, step, index, submissions);
-      }).reverse();
+      const answers = this.course.steps.map((step: any, index: number) => this.userCourseAnswers(user, step, index, submissions)).reverse();
       return ({
         items: answers,
         label: user.name,
@@ -247,11 +247,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   memberClick({ label: name, planetCode: userPlanetCode }) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { name, userPlanetCode } },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
-    });
+    this.usersProfileDialogService.open({ member: { name, userPlanetCode } });
   }
 
   structureChartData(data) {
@@ -289,7 +285,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     const structuredData = this.structureChartData(this.chartData);
     this.csvService.exportCSV({
       data: structuredData,
-      title: title
+      title
     });
   }
 

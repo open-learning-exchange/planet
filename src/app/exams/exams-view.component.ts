@@ -1,33 +1,35 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import {
   FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, forkJoin, of, throwError } from 'rxjs';
+import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ChallengesService } from '../shared/challenges/challenges.service';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/markdown/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
+import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -44,7 +46,7 @@ interface ExamViewForm {
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     MatFormField,
     MatLabel,
     FormsModule,
@@ -58,9 +60,7 @@ interface ExamViewForm {
     ExamsTakeWidgetComponent
   ]
 })
-export class ExamsViewComponent implements OnInit, OnDestroy {
-
-  @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
+export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   @Input() isDialog = false;
   @Input() exam: Exam;
@@ -92,10 +92,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   currentAnswer: ExamAnswerValue | null = null;
   slideDirection: 'right' | 'left' = 'right';
   slideAnimationVariant: 'a' | 'b' = 'a';
+  isInternalNavigation = false;
+  isFinished = false;
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
     return this.examForm.controls.answer;
+  }
+  get isScoredQuestion(): boolean {
+    return (this.question?.correctChoice || '').length > 0;
   }
   get disableFrameNext(): boolean {
     return this.isLoading ||
@@ -115,6 +120,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private formBuilder: FormBuilder,
     private challengesService: ChallengesService,
+    private location: Location,
   ) {
     this.examForm = this.formBuilder.group({
       answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: examAnswerValidator })
@@ -151,26 +157,134 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  canDeactivate(): Observable<boolean> | boolean {
+    // The router re-runs this guard whenever questionNum changes, whether the component navigated
+    // itself or the learner used browser history.  Clearing the flag re-arms the next exit.
+    if (this.isInternalNavigation || this.isFinished || this.isSameExamDestination()) {
+      this.isInternalNavigation = false;
+      return true;
+    }
+    if (this.mode !== 'take' || this.previewMode) {
+      return true;
+    }
+    const answer = this.answer.value;
+    const hasAnswer = answer !== null && answer !== undefined && answer !== '' &&
+      (!Array.isArray(answer) || answer.length > 0);
+    const recordingSurvey = this.route.snapshot.paramMap.has('surveyId');
+    if (recordingSurvey && !hasAnswer && !this.submissionId) {
+      return true;
+    }
+    const willSaveAnswer = !recordingSurvey && hasAnswer && this.answer.valid && !!this.question && !this.isScoredQuestion;
+    let extraMessage: string | undefined;
+    if (recordingSurvey && this.submissionId) {
+      extraMessage = $localize`You cannot continue this response from the survey list after leaving.`;
+    } else if (hasAnswer) {
+      extraMessage = willSaveAnswer ? $localize`Your answer will be saved.` : $localize`Your current answer will not be saved.`;
+    }
+    return UnsavedChangesPromptComponent.open(this.dialog, {
+      type: this.examType === 'survey' ? 'survey' : 'exam',
+      extraMessage,
+      extraMessageType: 'supplementary'
+    }).pipe(
+      switchMap(confirmed => {
+        if (!confirmed) {
+          return of(false);
+        }
+        // Scored questions are only submitted from the next button, where a wrong answer shows
+        // feedback and lets the learner try again, so leaving must never grade one for them.
+        if (!willSaveAnswer) {
+          return of(true);
+        }
+        this.dialogsLoadingService.start();
+        return this.createAnswerObservable().obs.pipe(
+          map(() => true),
+          catchError(() => {
+            this.planetMessageService.showAlert($localize`Your answer could not be saved`);
+            return of(false);
+          }),
+          finalize(() => this.dialogsLoadingService.stop())
+        );
+      })
+    );
+  }
+
+  // Only questionNum may differ between two views of one test, so any other change of destination
+  // -- a different submission, mode or test id -- still counts as leaving
+  isSameExamDestination(): boolean {
+    const destination = this.router.getCurrentNavigation()?.finalUrl;
+    const identity = (url: string) => {
+      const [ path, ...params ] = url.split(';');
+      return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');
+    };
+    return !!destination && identity(this.router.serializeUrl(destination)) === identity(this.router.url);
+  }
+
   setExam(params) {
     this.stepNum = +params.get('stepNum');
     this.examType = params.get('type') || this.examType;
     const courseId = params.get('id');
     const submissionId = params.get('submissionId');
+    const surveyId = params.get('surveyId');
     const mode = params.get('mode');
     this.mode = mode || this.mode;
+    this.isFinished = false;
+    this.isInternalNavigation = false;
+    // Params only change by moving to a question, including via browser history, so the stored
+    // answer for the destination has to be restored again
+    this.isNewQuestion = true;
     this.answer.setValue(null);
     this.currentAnswer = null;
-    if (courseId) {
-      this.coursesService.requestCourse({ courseId });
-      this.statusMessage = '';
-      this.grade = 0;
-    } else if (submissionId) {
+    if (submissionId) {
       this.fromSubmission = true;
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
       this.comment = undefined;
-      this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
+      this.submissionsService.openSubmission({ submissionId, status: params.get('status') });
+    } else if (courseId) {
+      this.coursesService.requestCourse({ courseId });
+      this.statusMessage = '';
+      this.grade = 0;
+    } else if (surveyId) {
+      this.grade = this.mode === 'take' ? 0 : undefined;
+      this.comment = undefined;
+      this.setRecordingSurvey(surveyId, params.get('surveyTeamId'));
     }
+  }
+
+  setRecordingSurvey(surveyId: string, teamId: string | null) {
+    this.submissionId = undefined;
+    this.fromSubmission = false;
+    this.initialLoad = true;
+    this.isLoading = true;
+    const recordingSurvey = this.router.getCurrentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
+    const survey$ = this.couchService.get(`exams/${surveyId}`).pipe(catchError(error => {
+      if (error.status !== 404) {
+        return throwError(error);
+      }
+      if (recordingSurvey?._id === surveyId) {
+        return of(recordingSurvey);
+      }
+      return this.couchService.post('submissions/_find', { selector: { parentId: surveyId }, limit: 1 }).pipe(
+        map((res: any) => {
+          const parent = res.docs?.[0]?.parent;
+          if (parent?._id !== surveyId) {
+            throw error;
+          }
+          return parent;
+        })
+      );
+    }));
+    forkJoin([
+      survey$,
+      teamId ? this.couchService.get(`teams/${teamId}`) : of(null)
+    ]).pipe(takeUntil(this.onDestroy$)).subscribe(([ survey, team ]: [ any, any ]) => {
+      this.title = survey.name;
+      this.setTakingExam(survey, survey._id, 'survey', team ? { _id: team._id, name: team.name, type: team.type } : undefined, true);
+    }, () => {
+      this.planetMessageService.showAlert($localize`There was a problem recording the survey.`);
+      this.isInternalNavigation = true;
+      this.goBack();
+    });
   }
 
   setExamPreview() {
@@ -199,12 +313,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.currentAnswer = null;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
-        const challenge = isFinish ? this.challengesService.getActiveChallengeForCourse(this.courseId) : undefined;
-        if (challenge) {
-          this.challengesService.openChallengeDialog(this.dialog, challenge);
+        if (isFinish) {
+          this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
+            if (challenge) {
+              this.challengesService.openChallengeDialog(this.dialog, challenge);
+            }
+          });
         }
       }
-    });
+    }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));
   }
 
   nextFromFrame() {
@@ -227,7 +344,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         return;
       }
       this.routeToNext(nextQuestion, previousStatus);
-    });
+    }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));
   }
 
   routeToNext(nextQuestion, previousStatus) {
@@ -249,18 +366,35 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (direction !== 0) {
       this.slideDirection = direction > 0 ? 'right' : 'left';
       this.slideAnimationVariant = this.slideAnimationVariant === 'a' ? 'b' : 'a';
-      this.questionFrame?.scrollToTop();
     }
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();
       return;
     }
-    this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    // A zero direction keeps the same url, which the router skips without running the guard, so
+    // flagging it would leave the next real exit unprompted
+    this.isInternalNavigation = direction !== 0;
+    if (direction > 0 && this.route.snapshot.params.surveyId && !this.route.snapshot.params.submissionId && this.submissionId) {
+      const currentQuestion = this.router.createUrlTree([
+        { ...this.questionRouteParams(), questionNum: this.questionNum }
+      ], { relativeTo: this.route });
+      this.location.replaceState(this.router.serializeUrl(currentQuestion), '', history.state);
+    }
+    this.router.navigate([ { ...this.questionRouteParams(), questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }
 
+  questionRouteParams() {
+    const params = this.route.snapshot.params;
+    return params.surveyId && this.submissionId ?
+      { ...params, submissionId: this.submissionId, status: 'pending' } :
+      params;
+  }
+
   examComplete() {
+    this.isFinished = true;
+    this.isInternalNavigation = true;
     if (this.route.snapshot.data.newUser === true) {
       this.router.navigate(
         [ '/users/submission', { id: this.submissionId } ],
@@ -282,14 +416,20 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.isNewQuestion = true;
   }
 
-  setTakingExam(exam, parentId, type) {
+  setTakingExam(exam, parentId, type, team?: { _id: string, name: string, type: string }, startNew = false) {
     const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
-    this.submissionsService.openSubmission({
+    const submission = {
       parentId,
       parent: exam,
       user,
-      type });
+      type,
+      team };
+    if (startNew) {
+      this.submissionsService.startNewSubmission(submission);
+    } else {
+      this.submissionsService.openSubmission(submission);
+    }
   }
 
   setQuestion(questions: any[]) {
@@ -302,6 +442,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$.pipe(
       takeUntil(this.onDestroy$),
       switchMap(({ course, progress }: { course: any, progress: any }) => {
+        if (this.route.snapshot.paramMap.has('submissionId') || this.route.snapshot.paramMap.has('surveyId') || this.fromSubmission) {
+          return EMPTY;
+        }
         // To be readable by non-technical people stepNum & questionNum param will start at 1
         const examId = this.route.snapshot.paramMap.get('examId');
         const configuredStepIndex = examId ?
@@ -313,6 +456,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const step = course.steps[configuredStepIndex > -1 ? configuredStepIndex : this.stepNum - 1];
         if (!step?.[this.examType]?._id) {
           this.planetMessageService.showAlert($localize`This test is not available`);
+          this.isInternalNavigation = true;
           this.goBack();
           return EMPTY;
         }
@@ -348,8 +492,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const nextUnansweredQuestion = this.unansweredQuestions[0];
         if (this.questionNum !== nextUnansweredQuestion) {
           this.questionNum = nextUnansweredQuestion;
+          this.isInternalNavigation = true;
           this.router.navigate([ {
-            ...this.route.snapshot.params,
+            ...this.questionRouteParams(),
             questionNum: this.questionNum
           } ], { relativeTo: this.route });
         }

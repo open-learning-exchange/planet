@@ -2,23 +2,22 @@ import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { CouchService } from '../../../shared/couchdb.service';
+import { CouchService } from '../../../shared/database/couchdb.service';
 import { StateService } from '../../../shared/state.service';
-import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { PlanetMessageService } from '../../../shared/ui/planet-message.service';
 import { ManagerService } from '../../manager.service';
-import { filterSpecificFields } from '../../../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../../../shared/tables/table.helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
-import { CsvService } from '../../../shared/csv.service';
+import { CsvService } from '../../../shared/export/csv.service';
 import { ReportsService } from '../reports.service';
 import { MyPlanetFiltersBase } from './filter.base';
-import { exportMyPlanetCsv } from '../reports.utils';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 
 import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
-import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../../shared/ui/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
@@ -39,7 +38,6 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
-  private exportCsvHelper = exportMyPlanetCsv(this.csvService);
   private allPlanets: any[] = [];
   apklogs: any[] = [];
   planetType = this.stateService.configuration.planetType;
@@ -142,7 +140,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
 
   applyFilters() {
     this.apklogs = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name' ], [ 'doc.code' ])(planet, this.searchValue))
       .map(planet => ({
         ...planet,
         children: this.filterLogs(planet.children)
@@ -150,8 +148,8 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     this.isEmpty = areNoChildren(this.apklogs);
   }
 
-  private mapToCsvData(children: any[], planetName?: string): any[] {
-    return children.map((data: any) => ({
+  private mapToCsvData = (children: any[], planetName?: string): any[] =>
+    children.map((data: any) => ({
       ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
       [$localize`ID`]: data.androidId,
       [$localize`Name`]: data.deviceName || data.customDeviceName,
@@ -160,14 +158,13 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
       [$localize`Version`]: data.version,
       [$localize`Error`]:  data.error || $localize`N/A`,
     }));
-  }
 
   exportAll(): void {
-    this.exportCsvHelper(this.apklogs, undefined, this.mapToCsvData, $localize`myPlanet Logs`);
+    this.csvService.exportMyPlanet(this.apklogs, undefined, this.mapToCsvData, $localize`myPlanet Logs`);
   }
 
   exportSingle(planet: any): void {
-    this.exportCsvHelper(planet.children, planet.name, this.mapToCsvData, $localize`myPlanet Logs for ${planet.name}`);
+    this.csvService.exportMyPlanet(planet.children, planet.name, this.mapToCsvData, $localize`myPlanet Logs for ${planet.name}`);
   }
 
 }

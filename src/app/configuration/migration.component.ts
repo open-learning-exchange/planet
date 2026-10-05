@@ -1,27 +1,27 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { forkJoin, interval } from 'rxjs';
 import { switchMap, takeWhile, map, finalize } from 'rxjs/operators';
-import { SyncService } from '../shared/sync.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { SyncService } from '../shared/database/sync.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ConfigurationService } from './configuration.service';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { LowercaseDirective } from '../shared/lowercase.directive';
-import { RestrictDiacriticsDirective } from '../shared/restrict-diacritics.directives';
+import { LowercaseDirective } from '../shared/forms/lowercase.directive';
+import { RestrictDiacriticsDirective } from '../shared/forms/restrict-diacritics.directive';
 import { MatButton } from '@angular/material/button';
 
-const removeProtocol = (str: string) => {
+const removeProtocol = (str: string) =>
   // RegEx grabs the fragment of the string between '//' and last character
   // First match includes characters, second does not (so we use second)
-  return /\/\/(.*?)$/.exec(str)[1];
-};
+  /\/\/(.*?)$/.exec(str)[1]
+;
 
 const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 
@@ -120,10 +120,8 @@ export class MigrationComponent implements OnInit {
         return this.couchService.put(`_node/nonode@nohost/_config/admins/${name}`, password);
       }),
       switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
-      switchMap(() => {
-        return Object.entries(this.admins).filter(admin => admin[0] !== this.credential.name)
-          .map(admin => this.couchService.put(`_node/nonode@nohost/_config/admins/${admin[0]}`, admin[1]));
-      }),
+      switchMap(() => Object.entries(this.admins).filter(admin => admin[0] !== this.credential.name)
+        .map(admin => this.couchService.put(`_node/nonode@nohost/_config/admins/${admin[0]}`, admin[1]))),
       switchMap(() => this.getDatabaseNames()),
       switchMap((syncDatabases: string[]) => forkJoin(syncDatabases.map(db => this.syncService.sync(this.syncDoc(db), this.credential))))
     ).subscribe(() => {

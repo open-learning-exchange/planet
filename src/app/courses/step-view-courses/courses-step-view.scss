@@ -11,6 +11,7 @@
 
   .view-container > * {
     overflow-y: auto;
+    min-width: 0;
   }
 
   .view-container.flex-view > * {
@@ -29,7 +30,7 @@
 
   .grid-view {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: 1fr;
     grid-column-gap: 1rem;
   }
@@ -61,7 +62,7 @@
   @media (max-width: v.$screen-sm) {
     .grid-view {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto;
     }
   }

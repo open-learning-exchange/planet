@@ -4,18 +4,18 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { UserService } from '../../shared/user.service';
+import { UserService } from '../../shared/auth/user.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { CoursesProgressChartComponent } from './courses-progress-chart.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
 
 @Component({
   templateUrl: 'courses-progress-learner.component.html',
   styleUrls: ['courses-progress.scss'],
-  imports: [MatToolbar, MatIconAnchor, MatIcon, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent]
+  imports: [MatToolbar, MatIconButton, MatIcon, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent]
 })
 export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 
@@ -53,7 +53,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
       this.createChart(this.courses, submissions);
       this.isLoading = false;
     });
-    this.submissionsService.updateSubmissions({ query: { 'selector': { 'user.name': this.user.name } } });
+    this.submissionsService.updateSubmissions({ query: { selector: { 'user.name': this.user.name } } });
     this.coursesService.requestCourses();
   }
 

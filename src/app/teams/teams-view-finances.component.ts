@@ -1,29 +1,31 @@
-import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
   MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { StateService } from '../shared/state.service';
-import { CsvService } from '../shared/csv.service';
+import { CsvService } from '../shared/export/csv.service';
 import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { AttachmentInputState } from '../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 import { forkJoin, of } from 'rxjs';
@@ -58,6 +60,8 @@ interface TransactionForm {
     MatCardContent,
     MatIcon,
     MatTable,
+    MatSort,
+    MatSortHeader,
     MatColumnDef,
     MatHeaderCellDef,
     MatHeaderCell,
@@ -65,6 +69,7 @@ interface TransactionForm {
     MatCell,
     NgClass,
     MatIconButton,
+    MatTooltip,
     MatHeaderRowDef,
     MatHeaderRow,
     MatRowDef,
@@ -85,6 +90,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
   @Input() editable = true;
   @Input() isLoading = false;
   @Output() financesChanged = new EventEmitter<void>();
+  @ViewChild(MatSort) set sort(sort: MatSort | undefined) {
+    this.table.sort = sort ?? null;
+  }
   allTransactions: any[] = [];
   table = new MatTableDataSource<any>();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
@@ -296,15 +304,21 @@ export class TeamsViewFinancesComponent implements OnChanges {
     this.updateTotals();
   }
 
+  private get sortedData(): any[] {
+    const rows = [ ...this.table.filteredData ];
+    return this.table.sort ? this.table.sortData(rows, this.table.sort) : rows;
+  }
+
   exportTableData() {
-    const { data, title } = this.financeExportData();
-    this.csvService.exportCSV({ data, title });
+    const { data, title } = this.financeExportData(this.sortedData);
+    this.csvService.exportCSV({ data, title, markdown: false });
   }
 
   exportTablePdf() {
-    const { data, title, titleName } = this.financeExportData();
+    const sortedData = this.sortedData;
+    const { data, title, titleName } = this.financeExportData(sortedData);
     this.dialogsLoadingService.start();
-    this.receiptImageSections(this.table.data)
+    this.receiptImageSections(sortedData)
       .pipe(finalize(() => this.dialogsLoadingService.stop()))
       .subscribe(imageSections => this.teamsTablePdfExportService.exportTable({
         data,
@@ -324,8 +338,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
       }));
   }
 
-  private financeExportData() {
-    const data = this.table.data.map(row => ({
+  private financeExportData(sourceData: any[]) {
+    const data = sourceData.map(row => ({
       [$localize`date`]: fullLabel(row.date, this.localeId),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,

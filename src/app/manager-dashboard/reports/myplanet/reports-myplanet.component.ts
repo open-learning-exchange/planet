@@ -5,14 +5,14 @@ import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { StateService } from '../../../shared/state.service';
-import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { PlanetMessageService } from '../../../shared/ui/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
-import { CouchService } from '../../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv, endOfDay } from '../reports.utils';
-import { findDocuments } from '../../../shared/mangoQueries';
-import { CsvService } from '../../../shared/csv.service';
-import { filterSpecificFields } from '../../../shared/table-helpers';
+import { CouchService } from '../../../shared/database/couchdb.service';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, endOfDay } from '../reports.utils';
+import { findDocuments } from '../../../shared/database/mango-queries';
+import { CsvService } from '../../../shared/export/csv.service';
+import { filterSpecificFieldsHybrid } from '../../../shared/tables/table.helpers';
 import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
@@ -21,7 +21,8 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
-import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../../shared/ui/planet-loading-spinner.component';
+import { appSourceLabel, appSourceOf } from '../../../shared/android/app-source';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
@@ -38,11 +39,11 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
     MatExpansionPanelTitle,
     MyPlanetTableComponent,
     PlanetLoadingSpinnerComponent
-  ]
+  ],
+  providers: [ TimePipe ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
-  private exportCsvHelper = exportMyPlanetCsv(this.csvService);
   private allPlanets: any[] = [];
   planets: any[] = [];
   isMobile: boolean;
@@ -80,7 +81,12 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.allPlanets = planets.map(planet => ({
       ...planet,
       children: this.filterMyPlanetData(
-        this.myPlanetGroups(planet, myPlanets).map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max }))
+        this.myPlanetGroups(planet, myPlanets).map((child: any) => ({
+          count: child.count,
+          totalUsedTime: child.sum,
+          ...child.max,
+          source: appSourceLabel({ app: child.appSource })
+        }))
       )
     }));
   };
@@ -119,7 +125,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
 
   applyFilters() {
     this.planets = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name' ], [ 'doc.code' ])(planet, this.searchValue))
       .map(planet => ({
         ...planet,
         children: this.filterMyPlanetData(planet.children)
@@ -131,9 +137,14 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     return this.reportsService.groupBy(
       myPlanets
         .filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code)
-        .map(myPlanet => (myPlanet.type === 'usages' || (myPlanet.usages || []) > 0) ? myPlanet.usages : myPlanet)
-        .flat(),
-      [ 'androidId' ],
+        .flatMap(myPlanet => {
+          const activities = myPlanet.type === 'usages' ? myPlanet.usages || [] : [ myPlanet ];
+          return activities.map(activity => {
+            const app = activity.app === undefined ? myPlanet.app : activity.app;
+            return { ...activity, appSource: appSourceOf({ ...activity, app }) };
+          });
+        }),
+      [ 'androidId', 'appSource' ],
       { maxField: 'time', sumField: 'totalUsed' }
     );
   }
@@ -164,10 +175,10 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
 
   myPlanetRequest(hubId) {
     const { planetCode, domain } = getDomainParams(this.configuration, hubId !== undefined);
-    return (hubId ? this.couchService.findAll('hubs', findDocuments({ 'planetId': hubId }), { domain }) : of([])).pipe(
+    return (hubId ? this.couchService.findAll('hubs', findDocuments({ planetId: hubId }), { domain }) : of([])).pipe(
       switchMap((hubs: any) => {
         this.hub = hubs[0] || { spokes: [] };
-        const selector = findDocuments({ 'createdOn': { '$in': this.hub.spokes } });
+        const selector = findDocuments({ createdOn: { $in: this.hub.spokes } });
         return forkJoin([
           this.managerService.getChildPlanets(true, planetCode, domain),
           this.couchService.findAll('myplanet_activities'),
@@ -185,8 +196,9 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
       ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
-      [$localize`ID`]: data.androidId.toString() || data.uniqueAndroidId.toString(),
+      [$localize`ID`]: (data.androidId || data.uniqueAndroidId || '').toString(),
       [$localize`Name`]: data.deviceName || data.customDeviceName,
+      [$localize`Source`]: data.source,
       [$localize`Last Synced`]: data.time && data.time !== 0 ?
         formatDate(data.time, 'mediumDate', this.localeId) :
         data.last_synced && data.last_synced !== 0 ?
@@ -199,11 +211,16 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   }
 
   exportAll(): void {
-    this.exportCsvHelper(this.planets, undefined, this.mapToCsvData.bind(this), $localize`myPlanet Reports`);
+    this.csvService.exportMyPlanet(
+      this.planets, undefined, (children, planetName) => this.mapToCsvData(children, planetName), $localize`myPlanet Reports`
+    );
   }
 
   exportSingle(planet: any): void {
-    this.exportCsvHelper(planet.children, planet.name, this.mapToCsvData.bind(this), $localize`myPlanet Reports for ${planet.name}`);
+    this.csvService.exportMyPlanet(
+      planet.children, planet.name, (children, planetName) => this.mapToCsvData(children, planetName),
+      $localize`myPlanet Reports for ${planet.name}`
+    );
   }
 
 }

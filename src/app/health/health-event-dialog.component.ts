@@ -5,18 +5,18 @@ import { Router } from '@angular/router';
 import { timer, of, combineLatest } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { PdfService } from '../shared/pdf.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
+import { PdfService } from '../shared/export/pdf.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe, formatDate } from '@angular/common';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatButton } from '@angular/material/button';
 
 @Component({
   templateUrl: './health-event-dialog.component.html',
   imports: [
-    MatDialogTitle, CdkScrollable, MatDialogContent, TdMarkdownComponent,
+    MatDialogTitle, CdkScrollable, MatDialogContent, PlanetMarkdownComponent,
     MatDialogActions, MatButton, MatDialogClose, DatePipe
   ]
 })

@@ -3,12 +3,13 @@ import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFo
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
-import { CertificationsService } from './certifications.service';
-import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
+import { CertificationsService } from '../../shared/certifications/certifications.service';
+import { CertificationsManagerService } from './certifications-manager.service';
+import { TablesAddDialogComponent } from '../../shared/tables/tables-add-dialog.component';
 import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '../../shared/table-helpers';
+import { showFormErrors } from '../../shared/tables/table.helpers';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -54,6 +55,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private certificationsService: CertificationsService,
+    private certificationsManagerService: CertificationsManagerService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private cdRef: ChangeDetectorRef
@@ -62,7 +64,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       name: this.fb.control('', {
         validators: [ CustomValidators.required ],
         asyncValidators: [ ac => this.validatorService.isUnique$(this.dbName, 'name', ac, {
-          selectors: { _id: { '$ne': this.certificateInfo._id || '' } }
+          selectors: { _id: { $ne: this.certificateInfo._id || '' } }
         }) ]
       })
     });
@@ -105,7 +107,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       return;
     }
     const certificateFormValue = this.certificateForm.getRawValue();
-    this.certificationsService.addCertification({
+    this.certificationsManagerService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds
@@ -122,7 +124,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   openCourseDialog() {
     const initialCourseIds = this.courseIds || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {

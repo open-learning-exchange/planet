@@ -2,14 +2,15 @@ import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, 
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-const isStringEdgeCase = (string: string) => {
-  return string.trim() === '' || string.trim() !== string;
-};
+const isStringEdgeCase = (string: string) => string.trim() === '' || string.trim() !== string;
 
 export class CustomValidators {
 
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl<number | string | null>): ValidationErrors | null {
+    if (ac.value === null || ac.value === undefined || ac.value === '') {
+      return null;
+    }
     const error = { invalidInt: true };
     const isValidInt = (number: number) => Number.isInteger(number) ? null : error;
     // Handle edge cases like Number(' ') => 0 and Number('  10 ') => 10
@@ -64,9 +65,7 @@ export class CustomValidators {
 
   // Allows us to supply a different errorType for specific patterns
   static pattern(pattern: string | RegExp, errorType = 'pattern') {
-    return (ac: AbstractControl<string | null>): ValidationErrors | null => {
-      return Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
-    };
+    return (ac: AbstractControl<string | null>): ValidationErrors | null => Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
   }
 
   // for validating whether end date comes before start date or not
@@ -209,11 +208,11 @@ export class CustomValidators {
         return null;
       }
 
-      const matchControl = ac.parent.get(matchField),
-        val1 = ac.value,
-        val2 = matchControl?.value,
-        confirmControl: AbstractControl<string | null> | null = confirm ? ac : matchControl,
-        errorType = match ? 'matchPassword' : 'unmatchPassword';
+      const matchControl = ac.parent.get(matchField);
+      const val1 = ac.value;
+      const val2 = matchControl?.value;
+      const confirmControl: AbstractControl<string | null> | null = confirm ? ac : matchControl;
+      const errorType = match ? 'matchPassword' : 'unmatchPassword';
 
       if (!confirmControl || !matchControl) {
         return null;
@@ -247,7 +246,7 @@ export class CustomValidators {
 
   static required(ac: AbstractControl<string | null>): ValidationErrors | null {
     const value = ac.value ?? '';
-    return /\S/.test(value) ? null : { 'required': true };
+    return /\S/.test(value) ? null : { required: true };
   }
 
   static requiredMarkdown(ac: AbstractControl<string | { text: string } | null>): ValidationErrors | null {
@@ -260,7 +259,7 @@ export class CustomValidators {
 
   static fileMatch(ac: AbstractControl<string | null>, fileList: string[]): ValidationErrors | null {
     if (fileList.length > 1 && ac.value !== '' && !fileList.includes(ac.value)) {
-      return { 'notFileMatch': true };
+      return { notFileMatch: true };
     }
     return null;
   }
@@ -272,17 +271,17 @@ export class CustomValidators {
       } else {
         const trimmedValue = ac.value.trim();
         if (/\s/.test(trimmedValue)) {
-          resolve({ 'invalidLink': true });
+          resolve({ invalidLink: true });
         } else {
           const domainRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*(\/.*)?$/;
           if (!domainRegex.test(trimmedValue)) {
-            resolve({ 'invalidLink': true });
+            resolve({ invalidLink: true });
           } else {
             try {
               const url = new URL(trimmedValue);
               resolve(null);
             } catch (_) {
-              resolve({ 'invalidLink': true });
+              resolve({ invalidLink: true });
             }
           }
         }

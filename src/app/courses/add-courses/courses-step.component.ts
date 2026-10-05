@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
-import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
+import { ResourcesPickerDialogComponent } from '../../resources/resources-picker-dialog.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import {
   PlanetStepListComponent,
@@ -18,11 +18,12 @@ import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '../../shared/markdown/planet-markdown-textbox.component';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
+import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 interface CoursesStepForm {
   id: FormControl<string>;
@@ -40,7 +41,7 @@ interface CoursesStepForm {
     CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
     ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
     MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, TruncateTextPipe
+    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent
   ]
 })
 export class CoursesStepComponent implements OnDestroy {
@@ -50,7 +51,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepEditorOpenChange = new EventEmitter<boolean>();
 
   stepForm: FormGroup<CoursesStepForm>;
-  dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
+  dialogRef: MatDialogRef<ResourcesPickerDialogComponent>;
   activeStep: any;
   activeStepIndex = -1;
   courseIcons = courseIcons;
@@ -98,7 +99,7 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   addResources() {
-    this.dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+    this.dialogRef = this.dialog.open(ResourcesPickerDialogComponent, {
       width: '80vw',
       data: {
         okClick: this.resourcsDialogOkClick.bind(this),

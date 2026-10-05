@@ -2,26 +2,28 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
-import { environment } from '../../../environments/environment';
-import { UserService } from '../../shared/user.service';
+import { CouchService } from '../../shared/database/couchdb.service';
+import { UserService } from '../../shared/auth/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
-import { findDocuments } from '../../shared/mangoQueries';
+import { findDocuments } from '../../shared/database/mango-queries';
 import { StateService } from '../../shared/state.service';
-import { educationLevel } from '../user-constants';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { educationLevel } from '../users.constants';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { ChangePasswordDirective } from '../../shared/dialogs/change-password.directive';
+import { ChangePasswordDirective } from '../../shared/auth/change-password.directive';
 import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } from '@angular/material/list';
-import { LanguageLabelComponent } from '../../shared/language-label.component';
+import { LanguageLabelComponent } from '../../shared/language/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/ui/avatar.component';
+import { FullNamePipe } from '../../shared/text/full-name.pipe';
 
 @Component({
   selector: 'planet-users-profile',
@@ -50,15 +52,16 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     MatCardContent,
     MatDialogClose,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    AvatarComponent,
+    FullNamePipe,
+    MatTooltip
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
   user: any = {};
   userDetail: any = {};
-  imageSrc = '';
-  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   editable = false;
   hasAchievement = false;
@@ -115,7 +118,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     const createdOn = this.planetCode || this.stateService.configuration.code;
     this.couchService.findAll(
       'login_activities',
-      findDocuments({ 'user': name, createdOn },0, [ { 'loginTime': 'desc' } ])
+      findDocuments({ user: name, createdOn },0, [ { loginTime: 'desc' } ])
     ).subscribe((logins: any) => {
       this.totalLogins = logins.length;
       this.lastLogin = logins.length ? logins[0].loginTime : '';
@@ -144,10 +147,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
         userDetail.name === this.userService.get().name ||
         (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName.split('@')[0] !== this.urlName)
       );
-      if (response['_attachments']) {
-        const filename = Object.keys(response._attachments)[0];
-        this.imageSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
-      }
       this.checkHasAchievments();
     }, (error) => {
       console.log(error);

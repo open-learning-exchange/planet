@@ -1,0 +1,206 @@
+import { convertToParamMap } from '@angular/router';
+import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'rxjs';
+import { vi } from 'vitest';
+
+import { CommunityComponent } from './community.component';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { DeviceType } from '../shared/ui/device-info.service';
+
+describe('CommunityComponent custom labels', () => {
+  it('allows community leaders and planet managers to manage community labels', () => {
+    const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    component.planetCode = null;
+    component.isCommunityLeader = true;
+    (component as any).userService = { doesUserHaveRole: () => false };
+
+    expect(component.canManageLabels).toBe(true);
+
+    component.isCommunityLeader = false;
+    (component as any).userService = { doesUserHaveRole: () => true };
+
+    expect(component.canManageLabels).toBe(true);
+  });
+
+  it('passes the services doc labels to the dialog and applies the saved vocabulary locally', () => {
+    const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    const team = { _id: 'local@parent', customVoiceLabels: [ 'Announcement', 'Event' ] };
+    component.planetCode = null;
+    component.team = team;
+    const open = vi.fn().mockReturnValue({ afterClosed: () => of([ 'Event' ]) });
+    (component as any).dialog = {
+      open
+    };
+    vi.spyOn(component, 'requestNewsAndUsers').mockImplementation(() => undefined);
+
+    component.openManageLabelsDialog();
+
+    expect(open).toHaveBeenCalledWith(NewsLabelsDialogComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }
+    });
+    expect(component.customVoiceLabels).toEqual([ 'Event' ]);
+    expect(component.requestNewsAndUsers).not.toHaveBeenCalled();
+  });
+});
+
+describe('CommunityComponent remote exchange behavior', () => {
+  const createComponent = (localPlanetType: 'center' | 'nation' = 'nation') => {
+    const configuration = {
+      _id: 'configuration',
+      code: 'local',
+      parentCode: 'parent',
+      planetType: localPlanetType
+    };
+    const router = { navigate: vi.fn() };
+    const routeParamMap = new BehaviorSubject(convertToParamMap({ code: 'remote' }));
+    const route = {
+      snapshot: { paramMap: convertToParamMap({ code: 'remote' }) },
+      paramMap: routeParamMap
+    };
+    const stateService = {
+      configuration,
+      couchStateListener: vi.fn(() => EMPTY),
+      requestData: vi.fn()
+    };
+    const dialog = { open: vi.fn() };
+    const dialogsFormService = { openDialogsForm: vi.fn() };
+    const newsService = { newsUpdated$: EMPTY, requestNews: vi.fn(() => new Subscription()) };
+    const teamsService = { getTeamMembers: vi.fn(() => of([])) };
+    const couchService = {
+      findAll: vi.fn(() => of([])),
+      get: vi.fn(() => of({ _id: 'remote@local', description: '' }))
+    };
+    const userChange$ = new Subject<any>();
+    const currentUser: any = { value: { _id: 'user', isUserAdmin: false, roles: [] } };
+    const userService = { get: vi.fn(() => currentUser.value), userChange$ };
+    const usersService = { usersListener: vi.fn(() => EMPTY) };
+    const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
+    const component = new CommunityComponent(
+      dialog as any,
+      router as any,
+      route as any,
+      stateService as any,
+      newsService as any,
+      dialogsFormService as any,
+      {} as any,
+      teamsService as any,
+      couchService as any,
+      {} as any,
+      userService as any,
+      usersService as any,
+      {} as any,
+      deviceInfoService as any,
+      {} as any,
+      { checkConfiguration: vi.fn(() => of(undefined)) } as any,
+      { getActiveChallenge: vi.fn(() => of(undefined)), activeChallengeIn: vi.fn() } as any
+    );
+
+    return {
+      component, couchService, dialog, dialogsFormService, routeParamMap, router, stateService, userChange$, currentUser
+    };
+  };
+
+  it('treats a missing team doc as a community without one', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 404, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.servicesDescriptionLabel).toBe('Add');
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('keeps label editing off when the team doc fails to load', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 500, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(false);
+  });
+
+  it('reloads community data on login but not when a logout unsets the user', () => {
+    const { component, couchService, userChange$, currentUser } = createComponent();
+    component.ngOnInit();
+    const callsAfterInit = couchService.findAll.mock.calls.length;
+
+    currentUser.value = { name: '' };
+    userChange$.next(currentUser.value);
+    expect(couchService.findAll.mock.calls.length).toBe(callsAfterInit);
+
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [] };
+    userChange$.next(currentUser.value);
+    expect(couchService.findAll.mock.calls.length).toBeGreaterThan(callsAfterInit);
+  });
+
+  it('sets remote exchange mode synchronously from the route snapshot', () => {
+    const { component } = createComponent();
+
+    expect(component.planetCode).toBe('remote');
+    expect(component.isRemoteExchange).toBe(true);
+  });
+
+  it('derives missing child configuration metadata from the local planet', () => {
+    const { component } = createComponent('center');
+
+    component.ngOnInit();
+
+    expect(component.configuration).toEqual({
+      code: 'remote',
+      name: 'remote',
+      planetType: 'nation'
+    });
+    component.ngOnDestroy();
+  });
+
+  it('keeps the remote route stable and resets reply state when returning to voices', () => {
+    const { component, router } = createComponent();
+    component.activeReplyId = 'voice-id';
+
+    component.tabChanged({ index: 1 });
+    expect(component.activeReplyId).toBe('voice-id');
+    component.tabChanged({ index: 0 });
+
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(component.activeReplyId).toBeNull();
+    expect(component.lastReplyId).toBeNull();
+  });
+
+  it('blocks local mutation handlers when invoked directly on a remote exchange', () => {
+    const { component, dialog, dialogsFormService } = createComponent();
+
+    component.openAddMessageDialog();
+    component.postMessage({ message: 'Voice' });
+    component.openAddLinkDialog();
+    component.openDeleteLinkDialog({});
+    component.confirmDeleteDescription();
+    component.openChangeTitleDialog({ member: {} });
+    component.openDescriptionDialog();
+    component.toggleDeleteMode();
+
+    expect(dialog.open).not.toHaveBeenCalled();
+    expect(dialogsFormService.openDialogsForm).not.toHaveBeenCalled();
+    expect(component.deleteMode).toBe(false);
+  });
+
+  it('cancels the previous exchange load when the route code changes', () => {
+    const { component, couchService, routeParamMap } = createComponent();
+    const firstRequest = new BehaviorSubject<any[]>([]);
+    const secondRequest = new BehaviorSubject<any[]>([]);
+    couchService.findAll.mockImplementation((_db, query) =>
+      query.selector.code === 'remote' ? firstRequest : secondRequest
+    );
+
+    component.ngOnInit();
+    expect(firstRequest.observers.length).toBe(1);
+
+    routeParamMap.next(convertToParamMap({ code: 'second' }));
+
+    expect(firstRequest.observers.length).toBe(0);
+    expect(secondRequest.observers.length).toBe(1);
+    component.ngOnDestroy();
+  });
+});

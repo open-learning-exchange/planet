@@ -2,10 +2,10 @@ import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
 import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
-import * as constants from '../resources-constants';
-import { languages } from '../../shared/languages';
+import * as constants from '../resources.constants';
+import { languages } from '../../shared/language/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
-import { trackByCategory } from '../../shared/table-helpers';
+import { trackByCategory } from '../../shared/tables/table.helpers';
 
 
 @Component({
@@ -28,7 +28,6 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
     `,
   selector: 'planet-resources-search-list',
-  styleUrls: ['./resources-search.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [MatSelectionList, MatListOption, MatListItemTitle]
 })
@@ -72,7 +71,6 @@ export class ResourcesSearchListComponent {
       </planet-resources-search-list>
     }
     `,
-  styleUrls: ['./resources-search.scss'],
   selector: 'planet-resources-search',
   encapsulation: ViewEncapsulation.None,
   imports: [ResourcesSearchListComponent]
@@ -86,11 +84,11 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   trackByFn = trackByCategory;
 
   categories = [
-    { 'label': 'subject', 'options': constants.subjectList },
-    { 'label': 'language', 'options': languages },
-    { 'label': 'medium', 'options': constants.media },
-    { 'label': 'mediaType', 'options': constants.mediaTypeList },
-    { 'label': 'level', 'options': constants.levelList }
+    { label: 'subject', options: constants.subjectList },
+    { label: 'language', options: languages },
+    { label: 'medium', options: constants.media },
+    { label: 'mediaType', options: constants.mediaTypeList },
+    { label: 'level', options: constants.levelList }
   ];
 
   searchLists = [];
@@ -101,9 +99,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.searchLists = this.categories.reduce((lists, category) => {
-      return lists.concat(this.createSearchList(category, this.filteredData));
-    }, []);
+    this.searchLists = this.categories.reduce((lists, category) => lists.concat(this.createSearchList(category, this.filteredData)), []);
   }
 
   reset({ startingSelection = {}, isInit = false } = {}) {

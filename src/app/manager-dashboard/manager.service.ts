@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { of, forkJoin } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '../shared/database/mango-queries';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -40,19 +40,17 @@ export class ManagerService {
         this.activityService.getActivities('resource_activities', 'byPlanetRecent'),
         this.activityService.getRatingInfo({ planetCode: configuration.code, tillDate, filterAdmin: true }),
       ])
-    )).pipe(map(([ adminActivities, resourceVisits, ratings ]) => {
-      return ({
-        resourceVisits: (resourceVisits.rows.find(row => row.key === configuration.code) || { value: 0 }).value,
-        ratings: ratings.length,
-        ...this.activityService.mostRecentAdminActivities(configuration, [], adminActivities)
-      });
-    }));
+    )).pipe(map(([ adminActivities, resourceVisits, ratings ]) => ({
+      resourceVisits: (resourceVisits.rows.find(row => row.key === configuration.code) || { value: 0 }).value,
+      ratings: ratings.length,
+      ...this.activityService.mostRecentAdminActivities(configuration, [], adminActivities)
+    })));
   }
 
   getPushedList() {
     return this.couchService.findAll(
       'send_items',
-      findDocuments({ 'sendTo': this.configuration.code }),
+      findDocuments({ sendTo: this.configuration.code }),
       { domain: this.configuration.parentDomain }
     );
   }
@@ -74,13 +72,13 @@ export class ManagerService {
 
   getChildPlanets(onlyAccepted = false, parentCode = this.stateService.configuration.code, domain?) {
     const selector = onlyAccepted ?
-      { '$or': [
-        { 'parentCode': parentCode, 'registrationRequest': 'accepted' },
-        { 'docType': 'parentName' }
+      { $or: [
+        { parentCode, registrationRequest: 'accepted' },
+        { docType: 'parentName' }
       ] } :
-      { '_id': { '$gt': null } };
+      { _id: { $gt: null } };
     return this.couchService.findAll('communityregistrationrequests',
-      findDocuments(selector, 0, [ { 'createdDate': 'desc' } ] ), domain ? { domain } : undefined);
+      findDocuments(selector, 0, [ { createdDate: 'desc' } ] ), domain ? { domain } : undefined);
   }
 
   updateCredentialsYml({ name, password }) {

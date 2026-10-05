@@ -1,0 +1,117 @@
+
+export const subjectList = [
+  { label: $localize`Agriculture`, value: 'Agriculture' },
+  { label: $localize`Arts`, value: 'Arts' },
+  { label: $localize`Business and Finance`, value: 'Business and Finance' },
+  { label: $localize`Environment`, value: 'Environment' },
+  { label: $localize`Food and Nutrition`, value: 'Food and Nutrition' },
+  { label: $localize`Geography`, value: 'Geography' },
+  { label: $localize`Health and Medicine`, value: 'Health and Medicine' },
+  { label: $localize`History`, value: 'History' },
+  { label: $localize`Human Development`, value: 'Human Development' },
+  { label: $localize`Languages`, value: 'Languages' },
+  { label: $localize`Law`, value: 'Law' },
+  { label: $localize`Learning`, value: 'Learning' },
+  { label: $localize`Literature`, value: 'Literature' },
+  { label: $localize`Math`, value: 'Math' },
+  { label: $localize`Music`, value: 'Music' },
+  { label: $localize`Politics and Government`, value: 'Politics and Government' },
+  { label: $localize`Reference`, value: 'Reference' },
+  { label: $localize`Religion`, value: 'Religion' },
+  { label: $localize`Science`, value: 'Science' },
+  { label: $localize`Social Sciences`, value: 'Social Sciences' },
+  { label: $localize`Sports`, value: 'Sports' },
+  { label: $localize`Technology`, value: 'Technology' }
+];
+
+export const levelList = [
+  { label: $localize`Open`, value: 'Early Education' },
+  { label: $localize`Lower Primary`, value: 'Lower Primary' },
+  { label: $localize`Upper Primary`, value: 'Upper Primary' },
+  { label: $localize`Lower Secondary`, value: 'Lower Secondary' },
+  { label: $localize`Upper Secondary`, value: 'Upper Secondary' },
+  { label: $localize`Undergraduate`, value: 'Undergraduate' },
+  { label: $localize`Graduate`, value: 'Graduate' },
+  { label: $localize`Professional`, value: 'Professional' }
+];
+
+export const media = [
+  { label: $localize`Text`, value: 'Text' },
+  { label: $localize`Graphic/Pictures`, value: 'Graphic/Pictures' },
+  { label: $localize`Audio/Music/Book`, value: 'Audio/Music/Book' },
+  { label: $localize`Video`, value: 'Video' }
+];
+
+export const openWith = [
+  { label: $localize`Just download`, value: 'Just download' },
+  { label: $localize`HTML`, value: 'HTML' },
+  { label: $localize`PDF.js`, value: 'PDF.js' },
+  { label: $localize`Bell-Reader`, value: 'Bell-Reader' },
+  { label: $localize`MP3`, value: 'MP3' },
+  { label: $localize`Flow Video Player`, value: 'Flow Video Player' },
+  { label: $localize`BeLL Video Book Player`, value: 'BeLL Video Book Player' },
+  { label: $localize`Native Video`, value: 'Native Video' }
+];
+
+export const resourceType = [
+  { label: $localize`Textbook`, value: 'Textbook' },
+  { label: $localize`Lesson Plan`, value: 'Lesson Plan' },
+  { label: $localize`Activities`, value: 'Activities' },
+  { label: $localize`Exercises`, value: 'Exercises' },
+  { label: $localize`Discussion Questions`, value: 'Discussion Questions' }
+];
+
+export const resourceFor = [
+  { label: $localize`Default`, value: 'default' },
+  { label: $localize`Leader`, value: 'leader' },
+  { label: $localize`Learner`, value: 'learner' }
+];
+
+export const fileTypes = [
+  { label: $localize`PDF`, value: 'pdf', icon: 'picture_as_pdf', pattern: /^application\/pdf$/ },
+  { label: $localize`Video`, value: 'video', icon: 'movie', pattern: /^video\/|^application\/mp4$/ },
+  { label: $localize`Audio`, value: 'audio', icon: 'audiotrack', pattern: /^audio\// },
+  { label: $localize`Image`, value: 'image', icon: 'image', pattern: /^image\// },
+  { label: $localize`Spreadsheet`, value: 'spreadsheet', icon: 'grid_on', pattern: /csv|(comma|tab)-separated|spreadsheet|ms-excel/ },
+  { label: $localize`Slides`, value: 'slides', icon: 'slideshow', pattern: /presentation|powerpoint/ },
+  { label: $localize`Document`, value: 'document', icon: 'description', pattern: /wordprocessing|opendocument\.text|ms-?word|rtf$|epub/ },
+  { label: $localize`Web page`, value: 'html', icon: 'language', pattern: /^text\/html$|xhtml/ },
+  { label: $localize`Text`, value: 'text', icon: 'subject', pattern: /^text\/|[/+](json|xml)$/ },
+  { label: $localize`Archive`, value: 'archive', icon: 'archive', pattern: /zip2?$|compressed$|tar$|rar$|xz$/ },
+  { label: $localize`Other file`, value: 'other', icon: 'insert_drive_file' }
+];
+
+export const mediaTypeList = [
+  { label: $localize`PDF`, value: 'pdf' },
+  { label: $localize`Image`, value: 'image' },
+  { label: $localize`Audio`, value: 'audio' },
+  { label: $localize`Video`, value: 'video' },
+  { label: $localize`ZIP`, value: 'zip' },
+  { label: $localize`HTML`, value: 'HTML' },
+  { label: $localize`EPUB`, value: 'epub' },
+  { label: $localize`CSV`, value: 'csv' },
+  { label: $localize`Document`, value: 'document' },
+  { label: $localize`Slides`, value: 'slides' },
+  { label: $localize`Spreadsheet`, value: 'spreadsheet' },
+  { label: $localize`Other`, value: 'other' }
+];
+
+export const getResourceFileType = (doc: any): string => {
+  if (doc?._attachments && Object.keys(doc._attachments).length > 0) {
+    const filename = doc.openWhichFile || Object.keys(doc._attachments)[0] || '';
+    const ext = filename.includes('.') ? filename.split('.').pop()?.toLowerCase() : '';
+    if (ext) {
+      return ext;
+    }
+  }
+  if (doc?.filename) {
+    const ext = doc.filename.includes('.') ? doc.filename.split('.').pop()?.toLowerCase() : '';
+    if (ext) {
+      return ext;
+    }
+  }
+  if (doc?.mediaType) {
+    return doc.mediaType.toLowerCase();
+  }
+  return '';
+};

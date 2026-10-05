@@ -2492,13 +2492,49 @@ Otras notas</target>
         <source>See All</source>
         <target state="final">Ver todo</target>
       </trans-unit>
-      <trans-unit id="3335034047405167528" datatype="html" approved="yes">
-        <source>Check out our Android app</source>
-        <target state="final">Echa un vistazo a nuestra aplicación Android</target>
+      <trans-unit id="3534984212959071163" datatype="html" approved="yes">
+        <source>Check out our Android apps</source>
+        <target state="final">Echa un vistazo a nuestras aplicaciones para Android</target>
       </trans-unit>
-      <trans-unit id="3947932744068086415" datatype="html">
-        <source>myPlanet on playstore</source>
-        <target state="translated">myPlanet en Google Play</target>
+      <trans-unit id="9065868234082693767" datatype="html" approved="yes">
+        <source>Close Android app banner</source>
+        <target state="final">Cerrar el banner de aplicaciones para Android</target>
+      </trans-unit>
+      <trans-unit id="2866055652148348809" datatype="html" approved="yes">
+        <source>Full-featured offline learning app</source>
+        <target state="final">Aplicación de aprendizaje sin conexión con todas las funciones</target>
+      </trans-unit>
+      <trans-unit id="4159803850116371687" datatype="html" approved="yes">
+        <source>Install myPlanet</source>
+        <target state="final">Instalar myPlanet</target>
+      </trans-unit>
+      <trans-unit id="7608345630430529300" datatype="html" approved="yes">
+        <source>myPlanet Lite</source>
+        <target state="final">myPlanet Lite</target>
+      </trans-unit>
+      <trans-unit id="5853502135183082395" datatype="html" approved="yes">
+        <source>Lightweight version that uses less storage</source>
+        <target state="final">Versión ligera que ocupa menos espacio de almacenamiento</target>
+      </trans-unit>
+      <trans-unit id="689883195141523023" datatype="html" approved="yes">
+        <source>Install myPlanet Lite</source>
+        <target state="final">Instalar myPlanet Lite</target>
+      </trans-unit>
+      <trans-unit id="3158554629807420909" datatype="html" approved="yes">
+        <source>Get the Planet mobile app</source>
+        <target state="final">Obtén la aplicación móvil de Planet</target>
+      </trans-unit>
+      <trans-unit id="4684839318250929517" datatype="html" approved="yes">
+        <source>You&apos;re browsing on an Android device. Install one of our apps for a faster, offline-capable experience.</source>
+        <target state="final">Estás navegando desde un dispositivo Android. Instala una de nuestras aplicaciones para disfrutar de una experiencia más rápida y con acceso sin conexión.</target>
+      </trans-unit>
+      <trans-unit id="6082171864197428613" datatype="html" approved="yes">
+        <source>Install</source>
+        <target state="final">Instalar</target>
+      </trans-unit>
+      <trans-unit id="5161411570094992408" datatype="html" approved="yes">
+        <source>Not now</source>
+        <target state="final">Ahora no</target>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html" approved="yes">
         <source>Dashboard</source>

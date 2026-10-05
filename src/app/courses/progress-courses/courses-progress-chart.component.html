@@ -49,7 +49,7 @@
       @if (showAvatar) {
         <planet-avatar class="cursor-pointer" (click)="labelClick(set)" [username]="set.label" [planetCode]="set.planetCode" imgClass="profile-image-large"></planet-avatar>
       }
-      <div class="wrap-content cursor-pointer" (click)="labelClick(set)" i18n-matTooltip [matTooltip]="set.label | truncateText:150"><p>{{set.label}}</p></div>
+      <div class="wrap-content cursor-pointer" tabindex="0" role="button" (keydown.enter)="labelClick(set, $event)" (keydown.space)="labelClick(set, $event)" (click)="labelClick(set)" i18n-matTooltip [matTooltip]="set.label | truncateText:150"><p>{{set.label}}</p></div>
     </div>
   }
 </div>

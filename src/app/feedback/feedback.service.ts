@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { map } from 'rxjs/operators';
 import { normalizeFeedbackStatus } from './feedback.utils';
 
@@ -32,7 +32,7 @@ export class FeedbackService {
 
   closeFeedback(feedback: any) {
     return this.modifyFeedback(
-      { ...feedback, 'closeTime': this.couchService.datePlaceholder, 'status': normalizeFeedbackStatus('closed') },
+      { ...feedback, closeTime: this.couchService.datePlaceholder, status: normalizeFeedbackStatus('closed') },
       $localize`You closed this feedback.`
     );
   }

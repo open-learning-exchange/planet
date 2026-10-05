@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, TemplateRef } from '@angular/core';
+import {
+  MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+} from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -9,51 +11,54 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
+import { Subject, of, combineLatest, defer } from 'rxjs';
+import { CouchService } from '../shared/database/couchdb.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
-} from '../shared/table-helpers';
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
+  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
+} from '../shared/tables/table.helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
-import { SyncService } from '../shared/sync.service';
-import { FormControl } from '../../../node_modules/@angular/forms';
-import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { SyncService } from '../shared/database/sync.service';
+import { FormControl } from '@angular/forms';
+import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
-import { levelList } from './resources-constants';
-import { SearchService } from '../shared/forms/search.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { levelList } from './resources.constants';
+import { SearchService } from '../shared/search/search.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
-import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
-import { PlanetTagSelectedInputComponent } from '../shared/forms/planet-tag-selected-input.component';
+import { PlanetFilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '../shared/forms/tags/planet-tag-selected-input.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PreviewOverflowDirective } from '../shared/preview-overflow.directive';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { PlanetLocalStatusComponent } from '../shared/planet-local-status.component';
+import { PreviewOverflowDirective } from '../shared/text/preview-overflow.directive';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
+import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
-import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
+import { PlanetRatingComponent } from '../shared/ratings/planet-rating.component';
+import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
+import { ResourcesIconComponent } from './resources-icon.component';
 
 @Component({
   selector: 'planet-resources',
@@ -61,6 +66,10 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
     MatToolbar,
     MatToolbarRow,
     NgTemplateOutlet,
@@ -68,6 +77,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatIcon,
     ResourcesSearchComponent,
     MatFormField,
+    MatSuffix,
     PlanetTagInputComponent,
     FormsModule,
     ReactiveFormsModule,
@@ -76,7 +86,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatInput,
     MatMiniFabButton,
     RouterLink,
-    FilteredAmountComponent,
+    PlanetFilteredAmountComponent,
     PlanetTagSelectedInputComponent,
     MatMenuTrigger,
     MatMenu,
@@ -99,7 +109,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     PlanetMarkdownComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
-    DialogsRatingsDirective,
+    PlanetRatingDialogDirective,
     PlanetRatingComponent,
     MatHeaderRowDef,
     MatHeaderRow,
@@ -108,7 +118,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatNoDataRow,
     MatPaginator,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    ResourcesIconComponent
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -119,10 +130,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
+  @ViewChild('filterDialog') filterDialogTemplate: TemplateRef<any>;
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
   dialogRef: MatDialogRef<DialogsListComponent> | null = null;
+  filterDialogRef: MatDialogRef<any> | null = null;
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
@@ -138,16 +151,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch.trim();
+    return this.#titleSearch.trim();
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -155,22 +168,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedSync = [];
   isAuthorized = false;
   showFilters = false;
-  searchSelection: any = { _empty: true };
+  searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions(
     [
       filterAdvancedSearch(this.searchSelection),
       filterTags(this.tagFilter),
-      filterSpecificFieldsHybrid([ 'doc.title' ], this.fuzzySearchService),
+      filterSpecificFieldsHybrid([ 'doc.title' ]),
       filterShelf({ value: this.myView === 'myLibrary' ? 'on' : 'off' }, 'libraryInfo')
     ]
   );
   trackById = trackById;
   initialSort = '';
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
   isMobile: boolean;
-  isTablet: boolean;
+  isTabletOrSmaller: boolean;
   showFiltersRow = false;
+  get showInlineFilters() {
+    return this.showFilters && !this.isTabletOrSmaller;
+  }
   expandedElement: any = null;
   private previewHasHiddenContent = new Map<string, boolean>();
   private previewOverflow = new Map<string, boolean>();
@@ -192,13 +206,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-      this.isTablet = deviceType !== DeviceType.DESKTOP;
+      this.isMobile = isMobileOrSmaller(deviceType);
+      this.isTabletOrSmaller = isTabletOrSmaller(deviceType);
+      if (!this.isTabletOrSmaller && this.filterDialogRef) {
+        this.filterDialogRef.close();
+      }
     });
   }
 
@@ -233,7 +248,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
@@ -243,22 +258,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setupList(resourcesRes, myLibrarys) {
     return resourcesRes.map((resource: any) => {
-      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
-        return resource._id === resourceId;
-      });
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => resource._id === resourceId);
       resource.canManage = this.currentUser.isUserAdmin ||
         (resource.doc.addedBy === this.currentUser.name && resource.doc.sourcePlanet === this.planetConfiguration.code);
-      return { ...resource, libraryInfo: myLibraryIndex > -1 };
+      const downloadFilename = resourceAttachmentFilename(resource.doc);
+      return {
+        ...resource,
+        libraryInfo: myLibraryIndex > -1,
+        downloadUrl: downloadFilename ? this.urlPrefix + couchAttachmentPath(resource._id, downloadFilename) : '',
+        downloadFileSize: formatResourceAttachmentSize(resource.doc, downloadFilename)
+      };
     });
   }
-
-  removeFilteredFromSelection() {
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
-  }
-
 
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
@@ -273,27 +284,24 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.filterDialogRef) {
+      this.filterDialogRef.close();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this.recordSearch(true);
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
+    return isAllVisibleSelected(this.selection, this.renderedRows);
   }
 
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   updateResource(resource) {
@@ -314,9 +322,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
-    let amount = 'many',
-      okClick = this.deleteResources(resources),
-      displayName = '';
+    let amount = 'many';
+    let okClick = this.deleteResources(resources);
+    let displayName = '';
     if (resources.length === 1) {
       const resource: any = resources[0];
       amount = 'single';
@@ -376,15 +384,43 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   libraryToggle(resourceIds, type) {
+    if (type === 'remove') {
+      const removableResourceIds = resourceIds.filter(resourceId => this.userService.shelf.resourceIds.includes(resourceId));
+      if (removableResourceIds.length === 0) {
+        return;
+      }
+      const foundResource = removableResourceIds.length === 1 ?
+        (this.resources.data.find((r: any) => r._id === removableResourceIds[0]) as any) : null;
+      const resourceTitle = foundResource?.doc?.title || '';
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'remove',
+          type: 'resource',
+          amount: removableResourceIds.length === 1 ? 'single' : 'many',
+          count: removableResourceIds.length,
+          displayName: resourceTitle,
+          okClick: {
+            request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
+            onNext: () => {
+              removeFilteredFromSelection(this.selection, () => this.renderedRows);
+              this.onSelectionChange(this.selection.selected);
+              dialogRef.close();
+            },
+            onError: () => this.planetMessageService.showAlert($localize`There was a problem removing from myLibrary.`)
+          }
+        }
+      });
+      return;
+    }
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
-      this.removeFilteredFromSelection();
+      removeFilteredFromSelection(this.selection, () => this.renderedRows);
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
 
   shareResource(type, resources) {
-    const msg = (type === 'pull' ? 'fetch' : 'send'),
-      items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
+    const msg = (type === 'pull' ? 'fetch' : 'send');
+    const items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
       .subscribe((response: any) => {
         this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
@@ -400,11 +436,34 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
-    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+    this.searchSelection.isEmpty = Object.entries(this.searchSelection).every(
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
+    removeFilteredFromSelection(this.selection, () => this.renderedRows);
+  }
+
+  toggleFiltersRow() {
+    this.showFiltersRow = !this.showFiltersRow;
+  }
+
+  toggleFilters() {
+    if (this.isTabletOrSmaller) {
+      if (this.filterDialogRef) {
+        return;
+      }
+      this.filterDialogRef = this.dialog.open(this.filterDialogTemplate, {
+        panelClass: 'filter-dialog',
+        autoFocus: 'dialog',
+        width: '80vw',
+        maxWidth: '80vw',
+        height: '80vh',
+        maxHeight: '80vh'
+      });
+      this.filterDialogRef.afterClosed().subscribe(() => this.filterDialogRef = null);
+      return;
+    }
+    this.showFilters = !this.showFilters;
   }
 
   resetFilter() {
@@ -420,7 +479,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   recordSearch(complete = false) {
     if (this.resources.filter !== '') {
       this.searchService.recordSearch({
-        text: this._titleSearch,
+        text: this.titleSearch,
         type: this.dbName,
         filter: { ...this.searchSelection, tags: this.tagFilter.value }
       }, complete);
@@ -444,7 +503,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogGuard.open('send-resource', () =>
-      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { registrationRequest: 'accepted' }).pipe(
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendResource().bind(this),
