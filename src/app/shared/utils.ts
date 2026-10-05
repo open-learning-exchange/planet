@@ -303,11 +303,31 @@ export const deepEqual = (item1: any, item2: any) => {
   return item1 === item2;
 };
 
-export const deepObjectPatch = (oldObject: any, patchObject: any) => {
+const isNullish = (value) => value === undefined || value === null;
+
+/*
+ * Deeply patches an object with the 'patchObject'.
+ * Assumes objects have roughly the same structure, including arrays.
+ * i.e. If old object includes an array of objects (or mixed) it will assume
+ * patch object has a similar array of objects structure.
+*/
+export const deepObjectPatch = (oldObject: any, patchObject: any): any => {
   const newObject: any = {};
+  const deepArrayPatch = (oldArray: any[], patchArray: any[]) => (
+    oldArray.map((oldValue: any, index: number): any[] => (
+      Array.isArray(oldValue) ?
+        deepArrayPatch(oldValue, patchArray[index]) :
+        typeof oldValue === 'object' ?
+          deepObjectPatch(oldValue, patchArray[index]) :
+          patchArray[index]
+    ))
+  );
   const patchObjectProp = (prop: string) => {
-    if (patchObject[prop] === undefined || patchObject[prop] === null) {
+    if (isNullish(patchObject) || isNullish(patchObject[prop])) {
       return oldObject[prop];
+    }
+    if (Array.isArray(oldObject[prop])) {
+      return deepArrayPatch(oldObject[prop], patchObject[prop]);
     }
     if (typeof oldObject[prop] === 'object') {
       return deepObjectPatch(oldObject[prop], patchObject[prop]);
