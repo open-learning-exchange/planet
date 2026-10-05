@@ -12,7 +12,7 @@ const isValidDate = (dateString: string, timestamp: number): boolean => {
 
   const [ year ]: number[] = dateString.split('-').map((v) => parseInt(v, 10));
 
-  if (year < 1999) {
+  if (year < OPENEXCHANGERATES_MIN_YEAR) {
     return false;
   }
 
@@ -44,7 +44,13 @@ export const getCurrencyRate = async (req: Request, res: Response) => {
   try {
     const apiResponse = await fetch(`https://openexchangerates.org/api/historical/${date}.json?app_id=${key}&symbols=GTQ`);
     const data = await apiResponse.json();
-    return res.status(201).json({
+    if (data.error) {
+      return res.status(data.status).json({
+        'error': data.error,
+        'message': data.description
+      });
+    }
+    return res.status(200).json({
       'status': 'Success',
       data
     });
