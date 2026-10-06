@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { ElementRef } from '@angular/core';
+import { ElementRef, SimpleChange } from '@angular/core';
 import { of, Subject, throwError } from 'rxjs';
 
 import { PlanetCalendarComponent } from './planet-calendar.component';
@@ -22,7 +22,8 @@ describe('PlanetCalendarComponent read-only behavior', () => {
       new ElementRef(document.createElement('div')),
       { runOutsideAngular: (fn: () => void) => fn() } as any,
       { canEditMeetup: () => false } as any,
-      {} as any
+      {} as any,
+      { userChange$: new Subject() } as any
     );
     component.editable = false;
 
@@ -79,7 +80,8 @@ describe('PlanetCalendarComponent', () => {
     tasksService: any = {},
     notificationsService: any = { notifyMeetupChange: vi.fn(() => of({ ok: true })) },
     dialog: any = {},
-    element = document.createElement('div')
+    element = document.createElement('div'),
+    userService: any = { userChange$: new Subject() }
   ) => new PlanetCalendarComponent(
     document,
     'en',
@@ -93,7 +95,8 @@ describe('PlanetCalendarComponent', () => {
     new ElementRef(element),
     { runOutsideAngular: (fn: () => void) => fn() } as any,
     meetupService,
-    notificationsService
+    notificationsService,
+    userService
   );
 
   const authorized = { canEditMeetup: () => true };
@@ -488,6 +491,76 @@ describe('PlanetCalendarComponent', () => {
     expect(dialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
       data: expect.objectContaining({ leaderOfTeamId: 'team-1', meetup: linkedMeetup })
     }));
+  });
+
+  describe('Reactive editability', () => {
+    const recurring = { ...meetup, _id: 'm2', title: 'Recurring', recurring: 'daily', recurringNumber: 1 };
+    const task = { _id: 't1', title: 'Task', deadline: meetup.startDate, completed: false };
+    const createLoadedCalendar = (canEditMeetup: (meetup: any, context: any) => boolean, editable = true) => {
+      const couchService = { findAll: vi.fn((db: string) => of(db === 'meetups' ? [ meetup, recurring ] : [ task ])) };
+      const userChange$ = new Subject<any>();
+      const meetupService = { canEditMeetup: vi.fn(canEditMeetup) };
+      const component = createComponent(couchService, meetupService, undefined, undefined, undefined, undefined, undefined, undefined, {
+        userChange$
+      });
+      component.editable = editable;
+      component.ngOnInit();
+      return { component, couchService, userChange$ };
+    };
+    const draggable = (component: PlanetCalendarComponent) =>
+      Object.fromEntries(component.calendarOptions.events.map((event: any) => [ event.title, event.startEditable ]));
+    const change = (previousValue: any, currentValue: any) => new SimpleChange(previousValue, currentValue, false);
+
+    it('turns on dragging and the add button from the cached events when the calendar becomes editable', () => {
+      const { component, couchService } = createLoadedCalendar((_, context) => !context.readOnly, false);
+      const renderedEvents = component.calendarOptions.events;
+      expect(draggable(component)).toEqual({ Meetup: false, Recurring: false, Task: false });
+      expect(component.calendarOptions.customButtons).toEqual({});
+
+      component.editable = true;
+      component.ngOnChanges({ editable: change(false, true) });
+
+      expect(draggable(component)).toEqual({ Meetup: true, Recurring: false, Task: true });
+      expect(component.calendarOptions.customButtons).toEqual({ addEventButton: expect.any(Object) });
+      expect(component.calendarOptions.events).not.toBe(renderedEvents);
+      expect(couchService.findAll).toHaveBeenCalledTimes(2);
+    });
+
+    it('rebuilds meetup dragging when team leadership changes', () => {
+      const { component } = createLoadedCalendar((_, context) => context.leaderOfTeamId === 'team-1');
+      expect(draggable(component)).toEqual({ Meetup: false, Recurring: false, Task: true });
+
+      component.leaderOfTeamId = 'team-1';
+      component.ngOnChanges({ leaderOfTeamId: change(undefined, 'team-1') });
+
+      expect(draggable(component)).toEqual({ Meetup: true, Recurring: false, Task: true });
+    });
+
+    it('rebuilds meetup dragging when the signed-in user changes', () => {
+      let signedIn = false;
+      const { component, userChange$ } = createLoadedCalendar(() => signedIn);
+      expect(draggable(component).Meetup).toBe(false);
+
+      signedIn = true;
+      userChange$.next({ _id: 'org.couchdb.user:ann' });
+
+      expect(draggable(component).Meetup).toBe(true);
+    });
+
+    it('drops the previous team\'s events and refetches when the team changes', () => {
+      const teamB = new Subject<any[]>();
+      const couchService = { findAll: vi.fn((db: string, query: any) =>
+        query.selector.link.teams === 'team-a' ? of(db === 'meetups' ? [ meetup ] : [ task ]) : teamB) };
+      const component = createComponent(couchService);
+      component.link = { teams: 'team-a' };
+      component.ngOnInit();
+
+      component.link = { teams: 'team-b' };
+      component.ngOnChanges({ link: change({ teams: 'team-a' }, component.link) });
+
+      expect(component.calendarOptions.events).toEqual([ {} ]);
+      expect(couchService.findAll).toHaveBeenCalledTimes(4);
+    });
   });
 
   describe('Event filtering', () => {
