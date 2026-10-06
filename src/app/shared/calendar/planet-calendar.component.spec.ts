@@ -547,19 +547,25 @@ describe('PlanetCalendarComponent', () => {
       expect(draggable(component).Meetup).toBe(true);
     });
 
-    it('drops the previous team\'s events and refetches when the team changes', () => {
-      const teamB = new Subject<any[]>();
-      const couchService = { findAll: vi.fn((db: string, query: any) =>
-        query.selector.link.teams === 'team-a' ? of(db === 'meetups' ? [ meetup ] : [ task ]) : teamB) };
+    it('shows only the new team\'s events once the team changes, even if the old fetch answers late', () => {
+      const responses: { [key: string]: Subject<any[]> } = {};
+      const couchService = { findAll: vi.fn((db: string, query: any) => {
+        const key = `${query.selector.link.teams} ${db}`;
+        responses[key] = responses[key] || new Subject<any[]>();
+        return responses[key];
+      }) };
       const component = createComponent(couchService);
       component.link = { teams: 'team-a' };
       component.ngOnInit();
 
       component.link = { teams: 'team-b' };
       component.ngOnChanges({ link: change({ teams: 'team-a' }, component.link) });
-
+      responses['team-a meetups'].next([ meetup ]);
       expect(component.calendarOptions.events).toEqual([ {} ]);
-      expect(couchService.findAll).toHaveBeenCalledTimes(4);
+
+      responses['team-b meetups'].next([ { ...meetup, title: 'Team B' } ]);
+      responses['team-b tasks'].next([]);
+      expect(component.calendarOptions.events.map((event: any) => event.title)).toEqual([ 'Team B' ]);
     });
   });
 

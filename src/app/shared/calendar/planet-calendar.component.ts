@@ -23,7 +23,7 @@ import { MeetupService } from '../../meetups/meetups.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { UserService } from '../auth/user.service';
 import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { of, Subject } from 'rxjs';
+import { of, Subject, Subscription } from 'rxjs';
 import { MatTooltip } from '@angular/material/tooltip';
 
 const taskEventColors = {
@@ -156,6 +156,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
   private resizeFrameId: number | null = null;
   private calendarWidth: number;
   private onDestroy$ = new Subject<void>();
+  private meetupsRequest?: Subscription;
+  private tasksRequest?: Subscription;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -276,8 +278,10 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
     this.calendarOptions.events = this.events;
   }
 
+  // A newer request replaces an older one, so a slow response cannot overwrite fresher events
   getMeetups() {
-    this.fetchMeetups().subscribe();
+    this.meetupsRequest?.unsubscribe();
+    this.meetupsRequest = this.fetchMeetups().subscribe();
   }
 
   private fetchMeetups() {
@@ -298,7 +302,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   getTasks() {
-    this.fetchTasks().subscribe();
+    this.tasksRequest?.unsubscribe();
+    this.tasksRequest = this.fetchTasks().subscribe();
   }
 
   private fetchTasks() {
