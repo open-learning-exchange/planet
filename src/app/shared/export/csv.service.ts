@@ -50,7 +50,7 @@ export class CsvService {
       const rows = data.map(row => Object.fromEntries(
         Object.entries(row).map(([ key, value ]) => [ quotedCell(key), neutralizeFormula(value) ])
       ));
-      new ExportToCsv({ ...csvOptions, ...(title && { title }) }).generateCsv(rows);
+      new ExportToCsv({ ...csvOptions, title }).generateCsv(rows);
     }
   }
 

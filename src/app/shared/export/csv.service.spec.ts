@@ -131,14 +131,17 @@ describe('CsvService', () => {
   });
 
   describe('generated CSV', () => {
+    afterEach(() => vi.restoreAllMocks());
+
     const exportedCsv = (run: () => void) => {
-      const generateCsv = vi.spyOn(ExportToCsv.prototype, 'generateCsv').mockImplementation(() => undefined);
+      const generateCsv = ExportToCsv.prototype.generateCsv;
+      let csv = '';
+      vi.spyOn(ExportToCsv.prototype, 'generateCsv').mockImplementation(function(this: ExportToCsv, rows) {
+        csv = generateCsv.call(this, rows, true);
+      });
       run();
-      const exporter = generateCsv.mock.contexts[0] as ExportToCsv;
-      const [ rows ] = generateCsv.mock.calls[0];
-      generateCsv.mockRestore();
       // export-to-csv ends the title with "\r\n\n", which papaparse can't split on one newline style
-      return papa.parse(exporter.generateCsv(rows, true).replace(/\r\n/g, '\n'), { skipEmptyLines: true }).data;
+      return papa.parse(csv.replace(/\r\n/g, '\n'), { skipEmptyLines: true }).data;
     };
 
     it('neutralizes cells a spreadsheet would run as formulas', () => {
