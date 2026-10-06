@@ -561,6 +561,7 @@ describe('PlanetCalendarComponent', () => {
       component.link = { teams: 'team-b' };
       component.ngOnChanges({ link: change({ teams: 'team-a' }, component.link) });
       responses['team-a meetups'].next([ meetup ]);
+      responses['team-a tasks'].next([ task ]);
       expect(component.calendarOptions.events).toEqual([ {} ]);
 
       responses['team-b meetups'].next([ { ...meetup, title: 'Team B' } ]);
