@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { PdfService } from '../shared/export/pdf.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { PdfService } from '@shared/export/pdf.service';
 
 export interface PdfSummaryItem {
   format?: 'currency';

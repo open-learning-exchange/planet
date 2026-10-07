@@ -5,13 +5,13 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { FeedbackViewComponent } from './feedback-view.component';
 import { FeedbackService } from './feedback.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { UserService } from '../shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
 import { UsersService } from '../users/users.service';
-import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { couchAttachmentUrl } from '../shared/utils';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { couchAttachmentUrl } from '@shared/utils';
 import { environment } from '../../environments/environment';
 
 describe('FeedbackViewComponent screenshots', () => {

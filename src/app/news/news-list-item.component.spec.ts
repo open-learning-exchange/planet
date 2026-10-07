@@ -7,13 +7,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { NewsListItemComponent } from './news-list-item.component';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
-import { LabelComponent } from '../shared/ui/label.component';
-import { UserService } from '../shared/auth/user.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { LabelComponent } from '@shared/ui/label.component';
+import { UserService } from '@shared/auth/user.service';
 import { NewsService } from './news.service';
-import { StateService } from '../shared/state.service';
-import { AuthGuard } from '../shared/auth/auth.guard';
-import { LinkCopyService } from '../shared/ui/link-copy.service';
+import { StateService } from '@shared/state.service';
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
 
 describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {

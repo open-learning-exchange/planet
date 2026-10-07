@@ -5,7 +5,7 @@ import { EMPTY } from 'rxjs';
 import { vi } from 'vitest';
 
 import { MeetupsAddDialogComponent } from './meetups-add-dialog.component';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({

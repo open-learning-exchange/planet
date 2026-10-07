@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 import { Router, NavigationStart, NavigationEnd, RouterOutlet } from '@angular/router';
-import { StateService } from './shared/state.service';
+import { StateService } from '@shared/state.service';
 import { Dir } from '@angular/cdk/bidi';
 declare let gtag: (type: string, account: string, params: { 'page_path': string }) => void;
 

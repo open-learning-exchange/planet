@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { environment } from '../../../environments/environment';
 import { ResourcesViewerDialogComponent } from './resources-viewer-dialog.component';
-import { couchAttachmentUrl } from '../../shared/utils';
+import { couchAttachmentUrl } from '@shared/utils';
 import { MatButton } from '@angular/material/button';
 
 

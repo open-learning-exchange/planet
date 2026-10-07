@@ -1,5 +1,5 @@
 import mime from 'mime';
-import { formatBytes } from '../shared/utils';
+import { formatBytes } from '@shared/utils';
 import { fileTypes } from './resources.constants';
 
 interface ResourceAttachment {

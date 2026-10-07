@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { SurveysComponent } from './surveys.component';
-import { DeviceType } from '../shared/ui/device-info.service';
+import { DeviceType } from '@shared/ui/device-info.service';
 
 describe('SurveysComponent', () => {
   let couchService: any;

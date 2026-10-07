@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 
 import { CommunityComponent } from './community.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
-import { DeviceType } from '../shared/ui/device-info.service';
+import { DeviceType } from '@shared/ui/device-info.service';
 
 describe('CommunityComponent custom labels', () => {
   it('allows community leaders and planet managers to manage community labels', () => {

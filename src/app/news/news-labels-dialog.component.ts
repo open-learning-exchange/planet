@@ -8,12 +8,12 @@ import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { LabelComponent } from '../shared/ui/label.component';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { LabelComponent } from '@shared/ui/label.component';
 import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from './news-labels';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { Subject, of, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
 

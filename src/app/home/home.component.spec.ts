@@ -4,16 +4,16 @@ import { Router, NavigationEnd, NavigationSkipped, NavigationSkippedCode } from 
 import { CommonModule } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { MaterialModule } from '../shared/material.module';
+import { MaterialModule } from '@shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { HomeComponent } from './home.component';
-import { CouchService } from '../shared/database/couchdb.service';
-import { UserService } from '../shared/auth/user.service';
-import { StateService } from '../shared/state.service';
-import { PouchAuthService } from '../shared/database/pouch-auth.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
 
 describe('Home', () => {
 
