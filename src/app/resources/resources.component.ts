@@ -19,7 +19,7 @@ import { UserService } from '../shared/auth/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
   createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
-  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
+  PaginatedSelection
 } from '../shared/tables/table.helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -125,7 +125,6 @@ import { ResourcesIconComponent } from './resources-icon.component';
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
   resources = new MatTableDataSource();
-  private renderedRows: any[] = [];
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -140,6 +139,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
@@ -160,7 +160,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
+    this.pageSelection.removeFiltered();
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -248,10 +248,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
-    this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.resources, this.onDestroy$);
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
   }
@@ -271,10 +270,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
   ngAfterViewInit() {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
@@ -292,16 +287,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.recordSearch(true);
   }
 
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedRows);
-  }
-
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
-  }
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   updateResource(resource) {
@@ -402,7 +389,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           okClick: {
             request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
             onNext: () => {
-              removeFilteredFromSelection(this.selection, () => this.renderedRows);
+              this.pageSelection.removeFiltered();
               this.onSelectionChange(this.selection.selected);
               dialogRef.close();
             },
@@ -413,7 +400,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
-      removeFilteredFromSelection(this.selection, () => this.renderedRows);
+      this.pageSelection.removeFiltered();
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -440,7 +427,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   toggleFiltersRow() {

@@ -164,9 +164,9 @@
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
+            [checked]="selection.hasValue() && pageSelection.isAllSelected()"
+            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row" class="table-selection-top">
@@ -320,7 +320,7 @@
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
+      (page)="pageSelection.onPageChange()">
     </mat-paginator>
   </div>
 </div>

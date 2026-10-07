@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, 
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormControl, NonNullableFormBuilder, FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
@@ -13,10 +13,7 @@ import { forkJoin, Observable, Subject, throwError } from 'rxjs';
 import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/database/couchdb.service';
 import { AiChatService } from '../shared/ai/ai-chat.service';
-import {
-  filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
-  removeFilteredFromSelection, toggleVisibleSelection
-} from '../shared/tables/table.helpers';
+import { filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray, PaginatedSelection } from '../shared/tables/table.helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -102,8 +99,8 @@ interface SurveyFilterForm {
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection, { isSelectable: row => this.isRowSelectable(row) });
   surveys = new MatTableDataSource<any>();
-  private renderedRows: any[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() surveyCount = new EventEmitter<number>();
@@ -169,8 +166,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadSurveys();
     this.couchService.checkAuthorization(this.dbName)
       .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.pageSelection.connect(this.surveys, this.onDestroy$);
     this.surveys.connect().pipe(takeUntil(this.onDestroy$)).subscribe(surveys => {
-      this.renderedRows = surveys;
       this.parentCount = surveys.filter(survey => survey.parent === true).length;
       this.surveyCount.emit(surveys.length);
     });
@@ -182,10 +179,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.surveys.sort = this.sort;
     this.surveys.paginator = this.paginator;
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
   }
 
   ngOnDestroy() {
@@ -308,26 +301,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
     this.surveys.filter = filterValue;
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
-  }
-
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedRows, {
-      selectValue: row => row._id,
-      isSelectable: row => this.isRowSelectable(row)
-    });
+    this.pageSelection.removeFiltered();
   }
 
   isRowSelectable(row: any): boolean {
     return row.parent !== true && this.currentFilter.viewMode !== 'adopt';
-  }
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, {
-      selectValue: row => row._id,
-      isSelectable: row => this.isRowSelectable(row),
-      clearAllOnDeselect: true
-    });
   }
 
   deleteSelected() {

@@ -7,9 +7,7 @@ import {
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import {
-  filterSpecificFieldsHybrid, isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
-} from '../shared/tables/table.helpers';
+import { filterSpecificFieldsHybrid, PaginatedSelection } from '../shared/tables/table.helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../shared/auth/user.service';
@@ -89,9 +87,9 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   meetups = new MatTableDataSource();
-  private renderedRows: any[] = [];
   message = '';
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection);
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -133,7 +131,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.countSelectedShelf(source.selected);
     });
     this.couchService.checkAuthorization('meetups').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.meetups.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.meetups, this.onDestroy$);
   }
 
   ngAfterViewInit() {
@@ -145,21 +143,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.meetupService.canEditMeetup(meetup, { readOnly: this.parent });
   }
 
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedRows);
-  }
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
-  }
-
   applyFilter(filterValue: string) {
     this.meetups.filter = filterValue;
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
+    this.pageSelection.removeFiltered();
   }
 
   ngOnDestroy() {

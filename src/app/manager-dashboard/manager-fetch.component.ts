@@ -1,19 +1,19 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/database/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { ManagerService } from './manager.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { findByIdInArray } from '../shared/utils';
-import { commonSortingDataAccessor, isAllVisibleSelected, toggleVisibleSelection } from '../shared/tables/table.helpers';
+import { commonSortingDataAccessor, PaginatedSelection } from '../shared/tables/table.helpers';
 import { SyncService } from '../shared/database/sync.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -67,13 +67,13 @@ import { MatCheckbox } from '@angular/material/checkbox';
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection);
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   planetConfiguration = this.stateService.configuration;
   displayedColumns = [ 'select', 'item', 'date' ];
   pushedItems = new MatTableDataSource();
   isLoading = true;
-  private renderedRows: any[] = [];
   private onDestroy$ = new Subject<void>();
 
   constructor(
@@ -88,7 +88,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.isLoading = true;
     this.pushedItems.sortingDataAccessor = commonSortingDataAccessor;
-    this.pushedItems.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.pushedItems, this.onDestroy$);
 
     this.managerService.getPushedList().subscribe((pushedList: any) => {
       this.pushedItems.data = pushedList.map((item: any) => ({
@@ -109,18 +109,6 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedRows);
-  }
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   goBack() {
