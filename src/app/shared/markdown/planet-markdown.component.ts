@@ -2,10 +2,10 @@ import { AfterViewChecked, Component, ElementRef, HostListener, Input, OnChanges
   ViewChild, ViewEncapsulation
 } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { StateService } from '../state.service';
+import { StateService } from '@shared/state.service';
 import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewText,
   normalizeMarkdownWhitespace, truncateText
-} from '../utils';
+} from '@shared/utils';
 import { MarkdownProfile, MarkdownRenderService } from './markdown-render.service';
 
 @Component({

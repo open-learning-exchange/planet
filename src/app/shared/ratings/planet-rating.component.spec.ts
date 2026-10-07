@@ -4,9 +4,9 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { describe, expect, it, vi } from 'vitest';
-import { DialogsFormService } from '../dialogs/dialogs-form.service';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { UserService } from '../auth/user.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
 import { PlanetRatingComponent } from './planet-rating.component';
 import { RatingService } from './rating.service';
 

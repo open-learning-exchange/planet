@@ -5,11 +5,11 @@ import {
 } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../../resources/resources.service';
-import { UserService } from '../auth/user.service';
-import { StateService } from '../state.service';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { fuzzyWordMatch } from '../search/fuzzy-search';
-import { deepEqual, normalizedContentType } from '../utils';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { fuzzyWordMatch } from '@shared/search/fuzzy-search';
+import { deepEqual, normalizedContentType } from '@shared/utils';
 
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatIcon } from '@angular/material/icon';
@@ -18,7 +18,7 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatGridList, MatGridTile, MatGridTileText, MatGridTileFooterCssMatStyler } from '@angular/material/grid-list';
 import { MatButton } from '@angular/material/button';
-import { FileUploadComponent } from '../forms/file-upload.component';
+import { FileUploadComponent } from '@shared/forms/file-upload.component';
 
 @Component({
   templateUrl: './markdown-images-dialog.component.html',

@@ -8,7 +8,7 @@ import { vi } from 'vitest';
 import { DialogsFormComponent } from './dialogs-form.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
-import { UserService } from '../auth/user.service';
+import { UserService } from '@shared/auth/user.service';
 import { DialogGuardService } from './dialog-guard.service';
 import { DialogField } from './dialogs-form.service';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';

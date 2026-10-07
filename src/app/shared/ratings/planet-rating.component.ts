@@ -1,13 +1,13 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { UserService } from '../auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
 import { tap } from 'rxjs/operators';
-import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { RatingInfo, RatingService, RatingType } from './rating.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetStackedBarComponent } from '../charts/planet-stacked-bar.component';
+import { PlanetStackedBarComponent } from '@shared/charts/planet-stacked-bar.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 import { ratingFormFields, RatingFormModel, RatingFormValue } from './rating-form';
 

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../database/couchdb.service';
-import { findDocuments } from '../database/mango-queries';
-import { UserService } from '../auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { UserService } from '@shared/auth/user.service';
 import { defer, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
-import { StateService } from '../state.service';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [] };
 

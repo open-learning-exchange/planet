@@ -6,7 +6,7 @@ import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { DialogGuardService } from './dialog-guard.service';
 import { map } from 'rxjs/operators';
-import { UserService } from '../auth/user.service';
+import { UserService } from '@shared/auth/user.service';
 import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { MatIcon } from '@angular/material/icon';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -15,21 +15,21 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../forms/form-error-messages.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { PlanetRatingStarsComponent } from '../ratings/planet-rating-stars.component';
-import { PlanetMarkdownTextboxComponent } from '../markdown/planet-markdown-textbox.component';
-import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '../forms/file-upload.component';
-import { AuthorizedRolesDirective } from '../auth/authorized-roles.directive';
+import { PlanetRatingStarsComponent } from '@shared/ratings/planet-rating-stars.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '@shared/forms/file-upload.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from './submit.directive';
-import { deepEqual } from '../utils';
-import { filterSpecificFieldsHybrid } from '../tables/table.helpers';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes-prompt.component';
+import { deepEqual } from '@shared/utils';
+import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',

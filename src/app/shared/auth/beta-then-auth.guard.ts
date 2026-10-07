@@ -13,7 +13,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { AuthGuard } from './auth.guard';
 import { UserService } from './user.service';
-import { StateService } from '../state.service';
+import { StateService } from '@shared/state.service';
 
 @Injectable({
   providedIn: 'root'

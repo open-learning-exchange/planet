@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Outpu
 
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
-import { isAcceptableFile, normalizedContentType, safeAttachmentName, truncateText } from '../utils';
+import { isAcceptableFile, normalizedContentType, safeAttachmentName, truncateText } from '@shared/utils';
 
 interface FileMeta {
   icon: string;

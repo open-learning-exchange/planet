@@ -3,7 +3,7 @@ import { from, throwError, Observable, forkJoin } from 'rxjs';
 import { catchError, defaultIfEmpty, switchMap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
 import { CouchService } from './couchdb.service';
-import { ChallengesUserStatusService } from '../challenges/challenges-user-status.service';
+import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
 
 interface SessionInfo {
   userCtx: {
