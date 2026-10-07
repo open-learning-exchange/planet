@@ -162,6 +162,15 @@ describe('SurveysComponent', () => {
     expect(component.surveys.data).toEqual([ archivedSurvey ]);
   });
 
+  it('clears the selection when switching views', () => {
+    component.selection.select('survey-1');
+    component.currentFilter.viewMode = 'adopt';
+
+    component.toggleSurveysView();
+
+    expect(component.selection.isEmpty()).toBe(true);
+  });
+
   it('explains question-dependent actions when a survey has no questions', () => {
     const survey = { _id: 'survey-1', questions: [], taken: 1 };
 
