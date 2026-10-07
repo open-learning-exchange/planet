@@ -21,7 +21,6 @@ import { TruncateTextPipe } from './text/truncate-text.pipe';
 import { FullNamePipe } from './text/full-name.pipe';
 import { TimeAgoPipe } from './text/time-ago.pipe';
 import { PlanetLoadingSpinnerComponent } from './ui/planet-loading-spinner.component';
-import { PreviewOverflowDirective } from './text/preview-overflow.directive';
 
 @NgModule({
   imports: [
@@ -42,8 +41,7 @@ import { PreviewOverflowDirective } from './text/preview-overflow.directive';
     RestrictDiacriticsDirective,
     TruncateTextPipe,
     FullNamePipe,
-    TimeAgoPipe,
-    PreviewOverflowDirective
+    TimeAgoPipe
   ],
   exports: [
     PlanetLocalStatusComponent,
@@ -63,8 +61,7 @@ import { PreviewOverflowDirective } from './text/preview-overflow.directive';
     OverlayModule,
     TruncateTextPipe,
     FullNamePipe,
-    TimeAgoPipe,
-    PreviewOverflowDirective
+    TimeAgoPipe
   ]
 })
 export class SharedComponentsModule {}
