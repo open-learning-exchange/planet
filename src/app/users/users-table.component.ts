@@ -13,9 +13,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
-  PaginatedSelection
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
 } from '../shared/tables/table.helpers';
+import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
 import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';

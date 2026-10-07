@@ -7,7 +7,8 @@ import {
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { filterSpecificFieldsHybrid, PaginatedSelection } from '../shared/tables/table.helpers';
+import { filterSpecificFieldsHybrid } from '../shared/tables/table.helpers';
+import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../shared/auth/user.service';

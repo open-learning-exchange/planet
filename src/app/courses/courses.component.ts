@@ -15,9 +15,9 @@ import { Subject, defer, of } from 'rxjs';
 import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
-  PaginatedSelection
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/tables/table.helpers';
+import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
 import * as constants from './courses.constants';
 import { CertificationsService } from '../shared/certifications/certifications.service';
 import { languages } from '../shared/language/languages';

@@ -11,7 +11,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { composeFilterFunctions, filterDropdowns, PaginatedSelection } from '../tables/table.helpers';
+import { composeFilterFunctions, filterDropdowns } from '../tables/table.helpers';
+import { PaginatedSelection } from '../tables/paginated-selection.helpers';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';

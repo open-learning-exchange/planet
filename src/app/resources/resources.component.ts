@@ -18,9 +18,9 @@ import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { UserService } from '../shared/auth/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
-  PaginatedSelection
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
 } from '../shared/tables/table.helpers';
+import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { SyncService } from '../shared/database/sync.service';
