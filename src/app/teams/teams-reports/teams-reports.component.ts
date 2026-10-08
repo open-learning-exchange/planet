@@ -30,7 +30,6 @@ import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular
 import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from '../teams-table-pdf-export.service';
 import { filterSpecificFieldsHybrid } from '../../shared/tables/table.helpers';
-import { endOfDay } from '../../manager-dashboard/reports/reports.utils';
 
 interface NewReportForm {
   _id?: string;
@@ -124,26 +123,15 @@ export class TeamsReportsComponent implements OnChanges {
     const searchText = (this.labelFilter || this.filter || '').trim();
     const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
 
-    const fromDate = this.startDate ? this.startDate.getTime() : -Infinity;
-    const toDate = this.endDate ? endOfDay(this.endDate).getTime() : Infinity;
-
     this.filteredCards = this.reportCards.filter(card => {
       const report = card.report;
-      const reportStart = typeof report.startDate === 'number' ? report.startDate : new Date(report.startDate).getTime();
-      const reportEnd = typeof report.endDate === 'number' ? report.endDate : new Date(report.endDate).getTime();
 
-      if (fromDate !== -Infinity) {
-        const end = !Number.isNaN(reportEnd) ? reportEnd : reportStart;
-        if (!Number.isNaN(end) && end < fromDate) {
-          return false;
-        }
+      if (this.startDate && !this.isSameDay(report.startDate, this.startDate)) {
+        return false;
       }
 
-      if (toDate !== Infinity) {
-        const start = !Number.isNaN(reportStart) ? reportStart : reportEnd;
-        if (!Number.isNaN(start) && start > toDate) {
-          return false;
-        }
+      if (this.endDate && !this.isSameDay(report.endDate, this.endDate)) {
+        return false;
       }
 
       if (searchText && !matchesFilter(card, searchText)) {
@@ -152,6 +140,39 @@ export class TeamsReportsComponent implements OnChanges {
 
       return true;
     });
+  }
+
+  private isSameDay(reportDate: any, filterDate: Date | undefined): boolean {
+    if (!filterDate) {
+      return true;
+    }
+    if (!reportDate) {
+      return false;
+    }
+    const d1 = new Date(reportDate);
+    const d2 = new Date(filterDate);
+    if (Number.isNaN(d1.getTime()) || Number.isNaN(d2.getTime())) {
+      return false;
+    }
+
+    const matchesUtc =
+      d1.getUTCFullYear() === d2.getUTCFullYear() &&
+      d1.getUTCMonth() === d2.getUTCMonth() &&
+      d1.getUTCDate() === d2.getUTCDate();
+    const matchesLocal =
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+    const matchesCross1 =
+      d1.getUTCFullYear() === d2.getFullYear() &&
+      d1.getUTCMonth() === d2.getMonth() &&
+      d1.getUTCDate() === d2.getDate();
+    const matchesCross2 =
+      d1.getFullYear() === d2.getUTCFullYear() &&
+      d1.getMonth() === d2.getUTCMonth() &&
+      d1.getDate() === d2.getUTCDate();
+
+    return matchesUtc || matchesLocal || matchesCross1 || matchesCross2;
   }
 
   applyFilter(filter: string) {
@@ -175,10 +196,7 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   private searchableText(report) {
-    const dates = [ report.startDate, report.endDate ].filter(date => date);
-    const dateText = [ 'mediumDate', 'MMMM yyyy', 'yyyy-MM' ]
-      .map(format => dates.map(date => formatDate(date, format, this.localeId, 'UTC')).join(' '));
-    return [ report.label, ...dateText ].filter(text => !!text).join(' ');
+    return [ report.label, report.description ].filter(text => !!text).join(' ');
   }
 
   private reportLabels() {
