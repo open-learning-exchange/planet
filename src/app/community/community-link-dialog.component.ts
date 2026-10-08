@@ -151,7 +151,11 @@ export class CommunityLinkDialogComponent {
       next: () => {
         this.dialogRef.close();
         this.planetMessageService.showMessage($localize`Added link: ${linkTitle}`);
-        this.data.getLinks().subscribe();
+        this.data.getLinks().subscribe({
+          error: () => this.planetMessageService.showAlert(
+            $localize`There was a problem refreshing the links. Reload the page to see the new link.`
+          )
+        });
       },
       error: () => {
         this.planetMessageService.showAlert($localize`Error adding link`);
