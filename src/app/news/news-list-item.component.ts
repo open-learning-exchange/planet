@@ -84,6 +84,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   isMobile: boolean;
   commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
   reactionSaving = false;
+  private expansionKey: string;
 
   constructor(
     private router: Router,
@@ -102,7 +103,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.handleItemExpansion();
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.currentUser = this.userService.get();
     });
@@ -175,11 +175,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   handleItemExpansion() {
-    if (this.item.latestMessage) {
-      this.showExpand = true;
-      this.showLess = false;
-    } else {
-      this.showLess = true;
+    // A refreshed copy of the same voice keeps the reader's expanded state
+    const expansionKey = `${this.item._id}:${this.item.latestMessage === true}`;
+    if (expansionKey !== this.expansionKey) {
+      this.expansionKey = expansionKey;
+      this.showLess = !this.item.latestMessage;
     }
     if (this.item.doc.news?.conversations?.length > 1) {
       this.showExpand = true;
