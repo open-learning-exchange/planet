@@ -72,7 +72,6 @@ $initials-palette: (
 );
 
 $white: rgba(255, 255, 255, 1);
-$black: rgba(0, 0, 0, 1);
 $shadow: rgba(0, 0, 0, 0.2);
 $disabled-button: map.get(mat.$m2-light-theme-background-palette, 'disabled-button');
 $disabled-button-text: map.get(mat.$m2-light-theme-foreground-palette, 'disabled-button');

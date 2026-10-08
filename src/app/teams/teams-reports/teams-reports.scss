@@ -14,7 +14,7 @@
   gap: 8px;
   flex-wrap: wrap;
   background: v.$white;
-  border: 1px solid rgba(v.$black, 0.12);
+  border: 1px solid v.$medium-grey;
   border-radius: 8px;
   padding: 10px 16px;
   position: sticky;
@@ -98,12 +98,12 @@
 .report-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(v.$black, 0.12);
+  border: 1px solid v.$medium-grey;
   cursor: pointer;
   transition: box-shadow 0.18s, border-color 0.18s;
 
   &:hover {
-    box-shadow: 0 2px 4px rgba(v.$black, 0.06), 0 4px 12px rgba(v.$black, 0.06);
+    box-shadow: 0 4px 8px v.$shadow;
     border-color: v.$primary-light;
   }
 
@@ -155,7 +155,6 @@
 .report-card-range {
   font-size: 13px;
   font-weight: 500;
-  color: rgba(v.$black, 0.87);
   margin-top: 2px;
 }
 
@@ -246,12 +245,11 @@
   gap: 8px;
   font-size: 12px;
   color: v.$grey-text;
-  border-top: 1px dashed rgba(v.$black, 0.12);
+  border-top: 1px dashed v.$medium-grey;
   padding-top: 10px;
 
   .num {
     font-weight: 600;
-    color: rgba(v.$black, 0.74);
     font-variant-numeric: tabular-nums;
   }
 }
