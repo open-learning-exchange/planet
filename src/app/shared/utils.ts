@@ -219,14 +219,6 @@ export const addToArray = (startArray = [], addArray = []) => startArray.concat(
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
 
-/*
- * styleVariables was previously imported from SCSS files as an ECMA module
- * Angular as of v14 throws an error when trying to do this
- * There might be a way to rework this, but with the low frequency of change
- * working on other priorities for now.
- * See https://github.com/angular/angular-cli/issues/23273
- */
-
 export const styleVariables: any = {
   primary: '#2196f3',
   primaryLighter: '#bbdefb',
