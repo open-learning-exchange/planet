@@ -9,9 +9,10 @@ import { CouchService } from '../shared/database/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { of, forkJoin, interval, race } from 'rxjs';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { debounce } from 'rxjs/operators';
@@ -88,7 +89,8 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private stateService: StateService,
     private couchService: CouchService,
     private dialog: MatDialog,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.healthForm = this.fb.group({
       temperature: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
@@ -174,10 +176,11 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     if (promptFields.length) {
       this.showWarning(promptFields);
     } else {
-      this.saveEvent().subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.saveEvent().pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => {
         this.hasUnsavedChanges = false;
         this.goBack();
-      });
+      }, () => this.showSaveError());
     }
   }
 
@@ -209,7 +212,8 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
           onNext: (data) => {
             this.dialogPrompt.close(true);
             this.goBack();
-          }
+          },
+          onError: () => this.showSaveError()
         },
         displayName: '',
         showMainParagraph: false,
@@ -221,6 +225,10 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     this.dialogPrompt.afterClosed().subscribe(result => {
       this.hasUnsavedChanges = !result;
     });
+  }
+
+  showSaveError() {
+    this.planetMessageService.showAlert($localize`There was an error saving the examination`);
   }
 
   isFieldValueExpected(field: HealthEventFormFields) {
