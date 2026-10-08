@@ -37,6 +37,7 @@
     [maxQuestions]="maxQuestions"
     [disablePrevious]="questionNum === 1"
     [disableNext]="questionNum === maxQuestions || !answer.valid"
+    [elapsedSeconds]="elapsedSeconds"
     (previous)="moveQuestion(-1)"
     (next)="moveQuestion(1)">
     <planet-markdown class="question-body km-question-body" [content]="question?.body"></planet-markdown>

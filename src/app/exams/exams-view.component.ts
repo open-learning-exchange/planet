@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Observable, Subject, forkJoin, of, throwError } from 'rxjs';
+import { EMPTY, Observable, Subject, Subscription, forkJoin, of, throwError, timer } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/auth/user.service';
@@ -94,6 +94,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   slideAnimationVariant: 'a' | 'b' = 'a';
   isInternalNavigation = false;
   isFinished = false;
+  elapsedSeconds: number | null = null;
+  sessionStartTimestamp: number | null = null;
+  private timerSub?: Subscription;
+  private activeExamKey = '';
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -153,6 +157,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   }
 
   ngOnDestroy() {
+    this.stopTimer();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -190,6 +195,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         if (!confirmed) {
           return of(false);
         }
+        this.stopTimer();
         // Scored questions are only submitted from the next button, where a wrong answer shows
         // feedback and lets the learner try again, so leaving must never grade one for them.
         if (!willSaveAnswer) {
@@ -227,6 +233,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     const surveyId = params.get('surveyId');
     const mode = params.get('mode');
     this.mode = mode || this.mode;
+    const currentKey = `${courseId || ''}_${submissionId || ''}_${surveyId || ''}_${this.stepNum}`;
+    if (this.activeExamKey !== currentKey || this.mode !== 'take') {
+      this.activeExamKey = currentKey;
+      this.sessionStartTimestamp = null;
+      this.stopTimer();
+      this.elapsedSeconds = null;
+    }
     this.isFinished = false;
     this.isInternalNavigation = false;
     // Params only change by moving to a question, including via browser history, so the stored
@@ -288,6 +301,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   }
 
   setExamPreview() {
+    this.stopTimer();
+    this.elapsedSeconds = null;
     this.answer.setValue(null);
     this.grade = 0;
     this.statusMessage = '';
@@ -393,6 +408,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   }
 
   examComplete() {
+    this.stopTimer();
     this.isFinished = true;
     this.isInternalNavigation = true;
     if (this.route.snapshot.data.newUser === true) {
@@ -436,6 +452,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
     this.answer.markAsUntouched();
+    this.startTimer();
   }
 
   setCourseListener() {
@@ -480,6 +497,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])
       ], []);
       this.submissionId = submission._id;
+      if (this.mode === 'take' && !this.previewMode) {
+        const submissionStartTime = submission?.startTime;
+        const parsedTime = submissionStartTime ? new Date(submissionStartTime).getTime() : NaN;
+        if (!Number.isNaN(parsedTime) && parsedTime <= Date.now() && parsedTime > 0) {
+          this.sessionStartTimestamp = parsedTime;
+          this.updateElapsedSeconds();
+        }
+        this.startTimer();
+      }
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
         this.examType = submission.parent.type === 'surveys' ? 'survey' : 'exam';
@@ -553,6 +579,43 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.answer.setValue(Array.isArray(answerValue) ? answerValue.map((a: ExamAnswerOption) => a.text).join(', ').trim() : answerValue);
     this.grade = answer.grade;
     this.comment = answer.gradeComment;
+  }
+
+  startTimer() {
+    if (this.mode !== 'take' || this.previewMode) {
+      this.stopTimer();
+      this.elapsedSeconds = null;
+      return;
+    }
+    if (this.timerSub) {
+      return;
+    }
+    if (!this.sessionStartTimestamp) {
+      const submissionStartTime = this.submissionsService.submission?.startTime;
+      const parsedTime = submissionStartTime ? new Date(submissionStartTime).getTime() : NaN;
+      if (!Number.isNaN(parsedTime) && parsedTime <= Date.now() && parsedTime > 0) {
+        this.sessionStartTimestamp = parsedTime;
+      } else {
+        this.sessionStartTimestamp = Date.now();
+      }
+    }
+    this.updateElapsedSeconds();
+    this.timerSub = timer(1000, 1000).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.updateElapsedSeconds();
+    });
+  }
+
+  updateElapsedSeconds() {
+    if (this.sessionStartTimestamp) {
+      this.elapsedSeconds = Math.max(0, Math.floor((Date.now() - this.sessionStartTimestamp) / 1000));
+    }
+  }
+
+  stopTimer() {
+    if (this.timerSub) {
+      this.timerSub.unsubscribe();
+      this.timerSub = undefined;
+    }
   }
 
 }

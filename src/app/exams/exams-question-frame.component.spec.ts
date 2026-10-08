@@ -44,4 +44,41 @@ describe('ExamsQuestionFrameComponent', () => {
     expect(scrollTo).toHaveBeenCalledTimes(2);
     expect(scrollTo).toHaveBeenLastCalledWith({ top: 0 });
   });
+
+  it('renders elapsed timer chip when elapsedSeconds is provided and toggles visibility on click', () => {
+    localStorage.removeItem('planet_exam_timer_hidden');
+    const fixture = TestBed.createComponent(ExamsQuestionFrameComponent);
+    const component = fixture.componentInstance;
+    component.elapsedSeconds = 75; // 01:15
+    fixture.detectChanges();
+
+    const timerChip = fixture.debugElement.query(By.css('.km-elapsed-time-chip'));
+    expect(timerChip).not.toBeNull();
+    expect(timerChip.nativeElement.textContent).toContain('01:15');
+
+    // Click to hide
+    timerChip.nativeElement.click();
+    fixture.detectChanges();
+
+    expect(component.isTimerHidden).toBe(true);
+    expect(timerChip.nativeElement.textContent).toContain('Hidden');
+    expect(localStorage.getItem('planet_exam_timer_hidden')).toBe('true');
+
+    // Click to show
+    timerChip.nativeElement.click();
+    fixture.detectChanges();
+
+    expect(component.isTimerHidden).toBe(false);
+    expect(timerChip.nativeElement.textContent).toContain('01:15');
+    expect(localStorage.getItem('planet_exam_timer_hidden')).toBe('false');
+  });
+
+  it('does not render elapsed timer chip when elapsedSeconds is null or undefined', () => {
+    const fixture = TestBed.createComponent(ExamsQuestionFrameComponent);
+    fixture.componentInstance.elapsedSeconds = null;
+    fixture.detectChanges();
+
+    const timerChip = fixture.debugElement.query(By.css('.km-elapsed-time-chip'));
+    expect(timerChip).toBeNull();
+  });
 });

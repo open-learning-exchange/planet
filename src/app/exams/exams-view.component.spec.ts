@@ -48,7 +48,12 @@ describe('ExamsViewComponent', () => {
           { _id: 'survey-1', name: 'Survey 1', type: 'surveys', questions: [ { body: 'Q1' } ] }
       ))
     };
-    submissionsService = { openSubmission: vi.fn(), startNewSubmission: vi.fn() };
+    submissionsService = {
+      openSubmission: vi.fn(),
+      startNewSubmission: vi.fn(),
+      submissionName: vi.fn().mockReturnValue('user'),
+      submissionUpdated$: new Subject<any>()
+    };
     planetMessageService = { showAlert: vi.fn() };
     dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
     dialog = { open: vi.fn().mockReturnValue({ afterClosed: () => of(false) }) };
@@ -279,5 +284,62 @@ describe('ExamsViewComponent', () => {
     component.submissionId = 'submission-1';
 
     expect(component.questionRouteParams()).toEqual(params);
+  });
+
+  it('starts the elapsed timer when taking an exam and computes elapsed seconds', () => {
+    component = createComponent({ mode: 'take', questionNum: '1' });
+    component.mode = 'take';
+    component.previewMode = false;
+    const now = Date.now();
+    component.sessionStartTimestamp = now - 15000;
+
+    component.setQuestion([ { body: 'Q1' } ]);
+
+    expect(component.elapsedSeconds).toBeGreaterThanOrEqual(15);
+    component.stopTimer();
+  });
+
+  it('stops and clears the timer in preview, grade, or view mode', () => {
+    component = createComponent({ mode: 'take', questionNum: '1' });
+    component.mode = 'take';
+    component.setQuestion([ { body: 'Q1' } ]);
+    expect(component.elapsedSeconds).not.toBeNull();
+
+    component.mode = 'grade';
+    component.startTimer();
+    expect(component.elapsedSeconds).toBeNull();
+  });
+
+  it('stops timer on examComplete and ngOnDestroy', () => {
+    component = createComponent({ mode: 'take', questionNum: '1' });
+    component.mode = 'take';
+    component.setQuestion([ { body: 'Q1' } ]);
+
+    const stopTimerSpy = vi.spyOn(component, 'stopTimer');
+    component.examComplete();
+    expect(stopTimerSpy).toHaveBeenCalled();
+
+    component.ngOnDestroy();
+    expect(stopTimerSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('reconciles elapsed timer with submission startTime upon submission update', () => {
+    component = createComponent({ mode: 'take', questionNum: '1' });
+    component.setSubmissionListener();
+    component.mode = 'take';
+    component.setQuestion([ { body: 'Q1' } ]);
+
+    const pastTime = new Date(Date.now() - 45000).toISOString();
+    submissionsService.submissionUpdated$.next({
+      submission: {
+        _id: 'sub-1',
+        startTime: pastTime,
+        parent: { questions: [ { body: 'Q1' } ] },
+        answers: []
+      }
+    });
+
+    expect(component.elapsedSeconds).toBeGreaterThanOrEqual(44);
+    component.ngOnDestroy();
   });
 });
