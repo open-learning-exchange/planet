@@ -8,6 +8,7 @@ import { UsersAchievementsService } from '../users-achievements/users-achievemen
 import { findDocuments } from '../../shared/database/mango-queries';
 import { StateService } from '../../shared/state.service';
 import { educationLevel } from '../users.constants';
+import { userDocPath, userRelationship } from '../users.utils';
 import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -59,7 +60,6 @@ import { FullNamePipe } from '../../shared/text/full-name.pipe';
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
-  private dbName = '_users';
   user: any = {};
   userDetail: any = {};
   urlName = '';
@@ -136,11 +136,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   profileView() {
-    const relationship = this.userRelationship(this.planetCode);
-    const dbName = relationship === 'local' ? this.dbName : `${relationship}_users`;
-    const userId = relationship === 'local' || relationship === 'parent'
-      ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.couchService.get(dbName + '/' + userId).subscribe((response) => {
+    const relationship = userRelationship(this.planetCode, this.stateService.configuration);
+    this.couchService.get(userDocPath(this.urlName, this.planetCode, this.stateService.configuration)).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
       this.editable = relationship === 'local' && (
@@ -151,14 +148,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     }, (error) => {
       console.log(error);
     });
-  }
-
-  userRelationship(planetCode: string) {
-    return planetCode === this.stateService.configuration.parentCode ?
-      'parent' :
-      planetCode === null || planetCode === this.stateService.configuration.code ?
-        'local' :
-        'child';
   }
 
   goBack() {
