@@ -11,6 +11,7 @@ import { UserService } from '../shared/auth/user.service';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { By } from '@angular/platform-browser';
 
 describe('UsersTableComponent', () => {
   let component: UsersTableComponent;
@@ -142,4 +143,29 @@ describe('UsersTableComponent', () => {
     expect(usersService.requestUsers).not.toHaveBeenCalled();
     expect(planetMessageService.showMessage).not.toHaveBeenCalled();
   });
+
+  it('displays the Promote button for active non-admin users', async () => {
+    component.tableState = new TableState();
+    fixture.componentRef.setInput('users', [
+      { doc: { ...mockUser, isUserAdmin: false, roles: [ 'learner' ] } }
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const promoteButton = fixture.debugElement.query(By.css('.km-promote-button'));
+    expect(promoteButton).toBeTruthy();
+  });
+
+  it('hides the Promote button for inactive users', async () => {
+    component.tableState = new TableState();
+    fixture.componentRef.setInput('users', [
+      { doc: { ...mockUser, isUserAdmin: false, roles: [] } }
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const promoteButton = fixture.debugElement.query(By.css('.km-promote-button'));
+    expect(promoteButton).toBeNull();
+  });
 });
+

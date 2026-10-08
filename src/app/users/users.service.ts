@@ -109,7 +109,7 @@ export class UsersService {
   }
 
   toggleAdminStatus(user) {
-    return user.roles.length === 0 ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
+    return user.isUserAdmin ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
   }
 
   demoteFromAdmin(user) {
