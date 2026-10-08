@@ -326,7 +326,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(requestDateCompare);
-      this.disableAddingMembers = this.members.length >= this.team.limit;
+      // Teams created on myPlanet are stored with a limit of 0, and the services directory has none
+      this.disableAddingMembers = this.team.limit > 0 && this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
       this.reports = docs.filter(doc => doc.docType === 'report');
