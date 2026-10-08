@@ -24,7 +24,7 @@ body {
   margin: 0;
 
   .gradient-background {
-    background: linear-gradient(to bottom, v.$black, v.$primary);
+    background: linear-gradient(to bottom, #000000, v.$primary);
   }
 
   a,
@@ -1034,7 +1034,7 @@ body {
   }
 
   .conversation-error {
-    color: v.$warn;
+    color: #ff0000;
     font-style: italic;
   }
 
@@ -1070,7 +1070,7 @@ body {
   ::-webkit-scrollbar-thumb {
     background-color: v.$primary;
     border-radius: 10px;
-    border: 3px solid v.$light-grey;
+    border: 3px solid #f1f1f1;
   }
 
   ::-webkit-scrollbar-thumb:hover {
