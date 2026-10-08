@@ -17,12 +17,14 @@ import { LabelComponent } from '../shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
+import {
+  DEFAULT_VOICE_LABELS, DEFAULT_VOICE_REACTIONS, dedupeVoiceLabels, voiceLabelsEqual,
+  getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry
+} from './news.utils';
 import { FullNamePipe } from '../shared/text/full-name.pipe';
 import { LinkCopyService } from '../shared/ui/link-copy.service';
-import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -46,6 +48,7 @@ import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry }
     MatButton,
     MatMenuTrigger,
     MatMenu,
+    MatMenuContent,
     NgTemplateOutlet,
     MatMenuItem,
     SlicePipe,
@@ -82,7 +85,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   previewLimit = 500;
   deviceType: DeviceType;
   isMobile: boolean;
-  commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
+  commonEmojis = DEFAULT_VOICE_REACTIONS;
   reactionSaving = false;
 
   constructor(

@@ -12,7 +12,7 @@ import { CouchService } from '../shared/database/couchdb.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { LabelComponent } from '../shared/ui/label.component';
-import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from './news-labels';
+import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from './news.utils';
 import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { Subject, of, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
