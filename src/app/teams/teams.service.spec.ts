@@ -1,6 +1,7 @@
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { TeamsService } from './teams.service';
+import { IMAGE_MAX_FALLBACK_BYTES } from '../shared/utils';
 
 describe('TeamsService membership writes', () => {
   const successfulBulkResponse = { res: [ { id: 'membership-1', ok: true, rev: '2-membership' } ] };
@@ -16,6 +17,7 @@ describe('TeamsService membership writes', () => {
     };
     const service = new TeamsService(
       couchService as any,
+      {} as any,
       {} as any,
       {} as any,
       {} as any,
@@ -568,5 +570,96 @@ describe('TeamsService membership writes', () => {
       expect(next).toHaveBeenCalled();
       expect(error).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('TeamsService cover image handling', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const createService = () => {
+    const couchService = {
+      updateDocument: vi.fn((db, doc) => of({ id: doc._id || 'new-id', rev: '2-rev' })),
+      putAttachment: vi.fn(),
+      get: vi.fn()
+    };
+    const service = new TeamsService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any
+    );
+    return { service, couchService };
+  };
+
+  const stub = { content_type: 'image/png', length: 1234, digest: 'md5-x', revpos: 1, stub: true };
+  const teamWithCover = {
+    _id: 'team-1',
+    _rev: '1-rev',
+    name: 'Team',
+    coverFileName: 'cover.png',
+    _attachments: { 'cover.png': stub, 'notes.pdf': { ...stub, content_type: 'application/pdf' } }
+  };
+  const pngFile = (name: string) => new File([ 'data' ], name, { type: 'image/png' });
+  const save = (service: TeamsService, team: any, coverState: any) =>
+    new Promise<any>((resolve, reject) => service.saveTeamWithCover(team, coverState).subscribe({ next: resolve, error: reject }));
+
+  it('keeps the cover and every attachment stub when the cover is unchanged', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [ { name: 'cover.png' } ], removed: [], added: [] });
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(1);
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', teamWithCover);
+  });
+
+  it('drops the cover and keeps other attachments when the cover is removed', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [], removed: [ { name: 'cover.png' } ], added: [] });
+
+    const savedDoc = couchService.updateDocument.mock.calls[0][1];
+    expect(savedDoc.coverFileName).toBeUndefined();
+    expect(savedDoc._attachments).toEqual({ 'notes.pdf': teamWithCover._attachments['notes.pdf'] });
+  });
+
+  it('creates a new team with its cover inlined in a single write', async () => {
+    const { service, couchService } = createService();
+
+    const savedTeam = await save(service, { name: 'New Team' }, { retained: [], removed: [], added: [ { file: pngFile('cover.png') } ] });
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(1);
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
+      name: 'New Team',
+      coverFileName: 'cover.png',
+      _attachments: { 'cover.png': { content_type: 'image/png', data: btoa('data') } }
+    });
+    expect(couchService.putAttachment).not.toHaveBeenCalled();
+    expect(couchService.get).not.toHaveBeenCalled();
+    expect(savedTeam._id).toBe('new-id');
+    expect(savedTeam._attachments).toEqual({ 'cover.png': { content_type: 'image/png', length: 4, stub: true } });
+  });
+
+  it('replaces a cover against the loaded revision under a new name', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [], removed: [ { name: 'cover.png' } ], added: [ { file: pngFile('cover.png') } ] });
+
+    const savedDoc = couchService.updateDocument.mock.calls[0][1];
+    expect(savedDoc._rev).toBe('1-rev');
+    expect(savedDoc.coverFileName).toBe('cover-1.png');
+    expect(Object.keys(savedDoc._attachments).sort()).toEqual([ 'cover-1.png', 'notes.pdf' ]);
+    expect(savedDoc._attachments['cover-1.png'].data).toBe(btoa('data'));
+  });
+
+  it('saves nothing when the new cover cannot be prepared', async () => {
+    const { service, couchService } = createService();
+    const tooLarge = new File([ new Uint8Array(IMAGE_MAX_FALLBACK_BYTES + 1) ], 'photo.heic', { type: 'image/heic' });
+
+    await expect(save(service, teamWithCover, { retained: [], removed: [], added: [ { file: tooLarge } ] })).rejects.toThrow();
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
   });
 });

@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
+import { StateService } from '../../shared/state.service';
 
 describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;
@@ -117,7 +118,7 @@ describe('CoursesAddComponent', () => {
   it('reuses a cover check until the existing attachment names change', async () => {
     const restoreImage = stubUndecodableImage();
     const addedCover = { file: new File([ 'image' ], 'cover.png', { type: 'image/png' }) } as any;
-    const saveCover = vi.spyOn(component as any, 'saveCourseWithNewCover').mockReturnValue(of([ {} ]));
+    const saveCourse = vi.spyOn(component as any, 'saveCourseDocument').mockReturnValue(of([ {} ]));
     vi.spyOn(component, 'courseChangeComplete').mockImplementation(() => undefined);
     component.savedCourse = { _attachments: { 'cover.png': {} } };
 
@@ -125,20 +126,37 @@ describe('CoursesAddComponent', () => {
       component.onCoverStateChange({ retained: [], removed: [], added: [ addedCover ] });
       await vi.waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalledOnce());
       component.updateCourse(component.courseForm.getRawValue(), true);
-      await vi.waitFor(() => expect(saveCover).toHaveBeenCalledOnce());
+      await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledOnce());
 
-      expect(saveCover.mock.calls[0][1].fileName).toBe('cover-1.png');
+      expect(saveCourse.mock.calls[0][0].coverFileName).toBe('cover-1.png');
+      expect(Object.keys(saveCourse.mock.calls[0][0]._attachments)).toEqual([ 'cover.png', 'cover-1.png' ]);
       expect(URL.createObjectURL).toHaveBeenCalledOnce();
 
       component.savedCourse._attachments['cover-1.png'] = {};
       component.updateCourse(component.courseForm.getRawValue(), true);
-      await vi.waitFor(() => expect(saveCover).toHaveBeenCalledTimes(2));
+      await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledTimes(2));
 
-      expect(saveCover.mock.calls[1][1].fileName).toBe('cover-2.png');
+      expect(saveCourse.mock.calls[1][0].coverFileName).toBe('cover-2.png');
       expect(URL.createObjectURL).toHaveBeenCalledTimes(2);
     } finally {
       restoreImage();
     }
+  });
+
+  it('keeps a just-saved cover as a stub when the save stays on the page', () => {
+    vi.spyOn(TestBed.inject(PouchService), 'deleteDocEditing').mockImplementation(() => undefined);
+    vi.spyOn(TestBed.inject(StateService), 'getCouchState').mockReturnValue(of([]));
+    component.pageType = 'Edit';
+
+    const savedCover = { content_type: 'image/webp', data: btoa('data') };
+    component.courseChangeComplete('Edited course', {
+      id: 'course-1',
+      doc: { _id: 'course-1', _rev: '2-rev', coverFileName: 'cover.webp', _attachments: { 'cover.webp': savedCover } }
+    }, false);
+
+    expect(component.savedCourse._attachments['cover.webp']).toEqual({ content_type: 'image/webp', length: 4, stub: true });
+    expect((component as any).coverState.retained.map((cover: any) => cover.name)).toEqual([ 'cover.webp' ]);
+    expect((component as any).coverState.added).toEqual([]);
   });
 
   it('clears an invalid cover when Save finishes before selection validation', async () => {
