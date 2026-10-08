@@ -299,10 +299,15 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     if (this.isAccordionMode) {
       return 'none';
     }
-    return this.cardType === 'myCourses' && item.coverFileName ? this.courseTileLines : this.tileLines;
+    return this.hasCover(item) ? this.courseTileLines : this.tileLines;
+  }
+
+  hasCover(item: any): boolean {
+    return (this.cardType === 'myCourses' || this.cardType === 'myTeams') && !!item.coverFileName;
   }
 
   coverImageUrl(item: any): string {
-    return couchAttachmentUrl(environment.couchAddress, 'courses', item._id, item.coverFileName);
+    const db = this.cardType === 'myTeams' ? 'teams' : 'courses';
+    return couchAttachmentUrl(environment.couchAddress, db, item._id, item.coverFileName);
   }
 }

@@ -146,3 +146,10 @@
   background: v.$light-grey;
   font-weight: 600;
 }
+
+@mixin cover-thumbnail($size) {
+  width: $size;
+  height: $size;
+  border-radius: 4px;
+  object-fit: cover;
+}
