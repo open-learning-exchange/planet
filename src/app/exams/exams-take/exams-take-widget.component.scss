@@ -128,14 +128,14 @@
 
     &:hover:not(.selected):not([disabled]) {
       border-color: v.$primary-light;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(v.$black, 0.1);
     }
 
     &.selected {
       background: v.$primary;
       color: v.$white;
       border-color: v.$primary;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 4px 8px rgba(v.$black, 0.18);
     }
 
     &--line {

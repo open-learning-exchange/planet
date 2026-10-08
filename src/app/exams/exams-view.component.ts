@@ -504,6 +504,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           this.sessionStartTimestamp = parsedTime;
           this.updateElapsedSeconds();
         }
+        this.startTimer();
       }
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
