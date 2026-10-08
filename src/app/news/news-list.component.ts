@@ -179,6 +179,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (Object.keys(changes).every(input => input === 'customLabels')) {
+      return;
+    }
     if (changes.viewableId && !changes.viewableId.firstChange) {
       this.resetFilters();
     }
