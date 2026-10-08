@@ -133,7 +133,7 @@
     }
   </ng-template>
 
-  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm, 'view-with-search': showInlineFilters && !isForm }">
+  <div class="card-table view-container view-full-height view-table" [ngClass]="{ 'fill-parent': isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -211,16 +211,7 @@
             }
           </mat-chip-set>
           <div class="content">
-            <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
-              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
-            </div>
-            @if (showPreviewExpand(element)) {
-              <div class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
-                <button mat-icon-button>
-                  <mat-icon>{{isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
-                </button>
-              </div>
-            }
+            <planet-markdown-preview [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [expanded]="isExpanded(element)" (expandedChange)="toggleRow(element)"></planet-markdown-preview>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           @if (!parent && !isDialog && !isForm) {
