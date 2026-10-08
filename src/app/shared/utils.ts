@@ -303,6 +303,54 @@ export const deepEqual = (item1: any, item2: any) => {
   return item1 === item2;
 };
 
+const isNullish = (value) => value === undefined || value === null;
+
+/*
+ * Deeply patches an object with the 'patchObject'.
+ * Assumes objects have roughly the same structure, including arrays.
+ * i.e. If old object includes an array of objects (or mixed) it will assume
+ * patch object has a similar array of objects structure.
+ * When property is an array in old object and not in patch object,
+ * ignores patch and maintains old object structure.
+ */
+export const deepObjectPatch = (oldObject: any, patchObject: any): any => {
+  const newObject: any = {};
+  const deepArrayPatch = (oldArray: any[], patchArray: any[]) => (
+    Array.isArray(patchArray) ? [
+      ...oldArray.map((oldValue: any, index: number): any[] => (
+        Array.isArray(oldValue) ?
+          deepArrayPatch(oldValue, patchArray[index]) :
+          typeof oldValue === 'object' ?
+            deepObjectPatch(oldValue, patchArray[index]) :
+            patchArray[index]
+      )),
+      ...patchArray.slice(oldArray.length)
+    ] : oldArray);
+  const patchObjectProp = (prop: string) => {
+    if (isNullish(patchObject) || isNullish(patchObject[prop])) {
+      return oldObject[prop];
+    }
+    if (Array.isArray(oldObject[prop])) {
+      return deepArrayPatch(oldObject[prop], patchObject[prop]);
+    }
+    if (typeof oldObject[prop] === 'object') {
+      return deepObjectPatch(oldObject[prop], patchObject[prop]);
+    }
+    return patchObject[prop];
+  };
+  for (const prop in oldObject) {
+    if (Object.prototype.hasOwnProperty.call(oldObject, prop)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
+  for (const prop in patchObject) {
+    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && (newObject[prop] === undefined || newObject[prop] === null)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
+  return newObject;
+};
+
 export const fullName = (user: any) =>
   [ user?.firstName, user?.middleName, user?.lastName ].filter(namePart => namePart).join(' ');
 
