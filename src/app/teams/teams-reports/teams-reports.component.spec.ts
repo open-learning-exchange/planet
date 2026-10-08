@@ -49,14 +49,14 @@ describe('TeamsReportsComponent', () => {
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a' ]);
     });
 
-    it('matches the formatted date range so unlabelled reports stay findable', () => {
+    it('does not match date strings in label search', () => {
       component.applyFilter('Jan 31, 2026');
 
-      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a', 'b', 'c' ]);
+      expect(component.filteredCards).toEqual([]);
     });
 
-    it('matches words in any order across the label and full month name', () => {
-      component.applyFilter('january audit');
+    it('matches words in any order in the label', () => {
+      component.applyFilter('audit q1');
 
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a' ]);
     });
@@ -67,8 +67,8 @@ describe('TeamsReportsComponent', () => {
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'b' ]);
     });
 
-    it('tolerates typos across the label and month name', () => {
-      component.applyFilter('audti januarry');
+    it('tolerates typos in the label', () => {
+      component.applyFilter('audti');
 
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a' ]);
     });
@@ -81,7 +81,7 @@ describe('TeamsReportsComponent', () => {
       expect(component.filteredCards).toEqual([]);
     });
 
-    it('matches nothing when the search is absent from labels and dates', () => {
+    it('matches nothing when the search is absent from labels and descriptions', () => {
       component.applyFilter('payroll');
 
       expect(component.filteredCards).toEqual([]);
@@ -99,6 +99,100 @@ describe('TeamsReportsComponent', () => {
       component.ngOnChanges();
 
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a', 'e' ]);
+    });
+
+    it('filters reports by exact start date', () => {
+      component.reports = [
+        report({ _id: 'jan', startDate: Date.UTC(2026, 0, 1), endDate: Date.UTC(2026, 0, 31) }),
+        report({ _id: 'feb', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(Date.UTC(2026, 1, 1));
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'feb' ]);
+    });
+
+    it('filters reports by exact end date', () => {
+      component.reports = [
+        report({ _id: 'jan', startDate: Date.UTC(2026, 0, 1), endDate: Date.UTC(2026, 0, 31) }),
+        report({ _id: 'feb', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.endDate = new Date(Date.UTC(2026, 1, 28));
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'feb' ]);
+    });
+
+    it('filters reports matching both exact start and end dates', () => {
+      component.reports = [
+        report({ _id: 'jan', startDate: Date.UTC(2026, 0, 1), endDate: Date.UTC(2026, 0, 31) }),
+        report({ _id: 'feb', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(Date.UTC(2026, 1, 1));
+      component.endDate = new Date(Date.UTC(2026, 1, 28));
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'feb' ]);
+    });
+
+    it('combines exact date filters and label search filtering', () => {
+      component.reports = [
+        report({ _id: 'feb-audit', label: 'Audit', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'feb-sales', label: 'Sales', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar-audit', label: 'Audit', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(Date.UTC(2026, 1, 1));
+      component.endDate = new Date(Date.UTC(2026, 1, 28));
+      component.labelFilter = 'Audit';
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'feb-audit' ]);
+    });
+
+    it('clears all filters and restores full report list', () => {
+      component.reports = [
+        report({ _id: 'a', label: 'Q1', startDate: Date.UTC(2026, 0, 1), endDate: Date.UTC(2026, 0, 31) }),
+        report({ _id: 'b', label: 'Q2', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(Date.UTC(2026, 0, 1));
+      component.endDate = new Date(Date.UTC(2026, 0, 31));
+      component.labelFilter = 'Q1';
+      component.applyFilters();
+
+      expect(component.hasActiveFilters).toBe(true);
+      expect(component.filteredCards.length).toBe(1);
+
+      component.clearAllFilters();
+
+      expect(component.hasActiveFilters).toBe(false);
+      expect(component.startDate).toBeUndefined();
+      expect(component.endDate).toBeUndefined();
+      expect(component.labelFilter).toBe('');
+      expect(component.filteredCards.length).toBe(2);
+    });
+
+    it('clears only label search when clearLabelFilter is called', () => {
+      component.startDate = new Date(Date.UTC(2026, 0, 1));
+      component.labelFilter = 'Q1';
+      component.applyFilters();
+
+      component.clearLabelFilter();
+
+      expect(component.labelFilter).toBe('');
+      expect(component.startDate).toBeDefined();
     });
   });
 

@@ -24,8 +24,9 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-sp
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix, MatPrefix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from '../teams-table-pdf-export.service';
 import { filterSpecificFieldsHybrid } from '../../shared/tables/table.helpers';
@@ -65,7 +66,12 @@ interface NewReportForm {
     MatFormField,
     MatLabel,
     MatSuffix,
+    MatPrefix,
+    MatError,
     MatInput,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
     FormsModule,
     DatePipe,
     CurrencyPipe
@@ -83,6 +89,13 @@ export class TeamsReportsComponent implements OnChanges {
   reportCards: any[] = [];
   filteredCards: any[] = [];
   filter = '';
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  labelFilter = '';
+
+  get hasActiveFilters(): boolean {
+    return !!(this.startDate || this.endDate || this.labelFilter.trim() || this.filter.trim());
+  }
 
   ngOnChanges() {
     this.reportCards = (this.reports || [])
@@ -103,20 +116,87 @@ export class TeamsReportsComponent implements OnChanges {
           isLoss: net < 0
         };
       });
-    this.applyFilter(this.filter);
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    const searchText = (this.labelFilter || this.filter || '').trim();
+    const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
+
+    this.filteredCards = this.reportCards.filter(card => {
+      const report = card.report;
+
+      if (this.startDate && !this.isSameDay(report.startDate, this.startDate)) {
+        return false;
+      }
+
+      if (this.endDate && !this.isSameDay(report.endDate, this.endDate)) {
+        return false;
+      }
+
+      if (searchText && !matchesFilter(card, searchText)) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  private isSameDay(reportDate: any, filterDate: Date | undefined): boolean {
+    if (!filterDate) {
+      return true;
+    }
+    if (!reportDate) {
+      return false;
+    }
+    const d1 = new Date(reportDate);
+    const d2 = new Date(filterDate);
+    if (Number.isNaN(d1.getTime()) || Number.isNaN(d2.getTime())) {
+      return false;
+    }
+
+    const matchesUtc =
+      d1.getUTCFullYear() === d2.getUTCFullYear() &&
+      d1.getUTCMonth() === d2.getUTCMonth() &&
+      d1.getUTCDate() === d2.getUTCDate();
+    const matchesLocal =
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+    const matchesCross1 =
+      d1.getUTCFullYear() === d2.getFullYear() &&
+      d1.getUTCMonth() === d2.getMonth() &&
+      d1.getUTCDate() === d2.getDate();
+    const matchesCross2 =
+      d1.getFullYear() === d2.getUTCFullYear() &&
+      d1.getMonth() === d2.getUTCMonth() &&
+      d1.getDate() === d2.getUTCDate();
+
+    return matchesUtc || matchesLocal || matchesCross1 || matchesCross2;
   }
 
   applyFilter(filter: string) {
     this.filter = filter;
-    const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
-    this.filteredCards = this.reportCards.filter(card => matchesFilter(card, filter));
+    this.labelFilter = filter;
+    this.applyFilters();
+  }
+
+  clearLabelFilter() {
+    this.labelFilter = '';
+    this.filter = '';
+    this.applyFilters();
+  }
+
+  clearAllFilters() {
+    this.startDate = undefined;
+    this.endDate = undefined;
+    this.labelFilter = '';
+    this.filter = '';
+    this.applyFilters();
   }
 
   private searchableText(report) {
-    const dates = [ report.startDate, report.endDate ].filter(date => date);
-    const dateText = [ 'mediumDate', 'MMMM yyyy', 'yyyy-MM' ]
-      .map(format => dates.map(date => formatDate(date, format, this.localeId, 'UTC')).join(' '));
-    return [ report.label, ...dateText ].filter(text => !!text).join(' ');
+    return [ report.label, report.description ].filter(text => !!text).join(' ');
   }
 
   private reportLabels() {
@@ -386,7 +466,7 @@ export class TeamsReportsComponent implements OnChanges {
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
-    const filter = this.filter.trim();
+    const filter = (this.labelFilter || this.filter || '').trim();
     return {
       data,
       title: filter ?
