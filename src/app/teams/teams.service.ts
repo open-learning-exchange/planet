@@ -11,6 +11,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { fullName, truncateText } from '../shared/utils';
+import { memberCompare } from './teams.utils';
 
 const nameField = {
   type: 'textbox',
@@ -211,12 +212,12 @@ export class TeamsService {
     if (selected.some(user => !user?._id)) {
       return throwError(new Error('Membership user ID is required.'));
     }
-    const selectedUserIds = new Set(selected.map(user => user._id));
     const newMembershipDocs = selected.map(user =>
       this.membershipProps(team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    const requestsToDelete = requests.filter(request => selectedUserIds.has(request.userId))
-      .map(({ _id, _rev }) => ({ _id, _rev, _deleted: true }));
+    // Deletions keep the request's fields so they still match the teams replication selector
+    const requestsToDelete = requests.filter(request => newMembershipDocs.some(membership => memberCompare(membership, request)))
+      .map(request => this.membershipWriteDoc(request, { _deleted: true }));
     return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
   }
 

@@ -166,7 +166,7 @@ describe('TeamsService membership writes', () => {
     } ]);
   });
 
-  it('validates mixed add-member writes and reduces request deletions to tombstones', () => {
+  it('validates mixed add-member writes and deletes requests with only their persisted fields', () => {
     const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
     const request = {
       ...membership,
@@ -195,8 +195,19 @@ describe('TeamsService membership writes', () => {
         userPlanetCode: selected[0].planetCode,
         docType: 'membership'
       },
-      { _id: request._id, _rev: request._rev, _deleted: true }
+      { ...membership, _id: request._id, _rev: request._rev, userId: selected[0]._id, docType: 'request', _deleted: true }
     ]);
+  });
+
+  it('keeps a request from the same user ID on another planet', () => {
+    const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-b', docType: 'request' };
+    const bulkDocs = vi.fn().mockReturnValue(of({ res: [ { id: 'membership-new', rev: '1-new' } ] }));
+    const { service } = createService({ bulkDocs });
+
+    service.addMembers(team, selected, [ request ]).subscribe();
+
+    expect(bulkDocs.mock.calls[0][1]).toHaveLength(1);
   });
 
   it('reports an individual add-member bulk failure', () => {
@@ -213,7 +224,7 @@ describe('TeamsService membership writes', () => {
 
   it('accepts an add-member write when only request cleanup conflicts', () => {
     const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
-    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id };
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
     const bulkDocs = vi.fn().mockReturnValue(of({
       res: [
         { id: 'membership-new', rev: '1-new' },
@@ -235,7 +246,7 @@ describe('TeamsService membership writes', () => {
       { _id: 'org.couchdb.user:first', planetCode: 'planet-a' },
       { _id: 'org.couchdb.user:second', planetCode: 'planet-a' }
     ];
-    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id };
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
     const bulkDocs = vi.fn().mockImplementation((_dbName: string, docs: any[]) => of({
       res: docs.map((doc, index) => {
         if (doc._deleted) {
