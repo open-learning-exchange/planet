@@ -15,6 +15,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
 import { trackById } from '../shared/tables/table.helpers';
 import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
 
@@ -146,7 +147,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private planetMessageService: PlanetMessageService,
     private dialogGuard: DialogGuardService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authGuard: AuthGuard
   ) {}
 
   ngOnInit() {
@@ -394,17 +396,19 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
     const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
-    this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
-      onSubmit: (newNews: any) => {
-        if (newNews) {
-          this.postNews(
-            { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
-            newNews
-          );
-        }
-      },
-      autoFocus: true
-    });
+    this.dialogGuard.open('news-form', () => (news._id ? of(true) : this.authGuard.checkAuthenticationStatus()).pipe(map(() =>
+      this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
+        onSubmit: (newNews: any) => {
+          if (newNews) {
+            this.postNews(
+              { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+              newNews
+            );
+          }
+        },
+        autoFocus: true
+      })
+    ))).subscribe();
   }
 
   postNews(oldNews, newNews) {

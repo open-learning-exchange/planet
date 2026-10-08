@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -28,7 +28,8 @@ describe('NewsListItemComponent read-only behavior', () => {
       {} as any,
       authGuard as any,
       linkCopyService as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any,
+      {} as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
@@ -252,7 +253,8 @@ describe('NewsListItemComponent emoji reactions', () => {
       {} as any,
       authGuard as any,
       { copyLink: vi.fn() } as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any,
+      {} as any
     );
     component.item = {
       _id: 'voice-1',
@@ -348,7 +350,7 @@ describe('NewsListItemComponent emoji reactions', () => {
     const { component, authGuard, newsService } = setupReactions();
     component.currentUser = {};
     const previousReactions = component.item.doc.reactions;
-    authGuard.checkAuthenticationStatus.mockReturnValue(throwError(new Error('Not authorized')));
+    authGuard.checkAuthenticationStatus.mockReturnValue(EMPTY);
 
     component.toggleReaction(component.item.doc, '🔥');
 

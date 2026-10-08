@@ -1,6 +1,7 @@
 import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
 import { NewsListComponent } from './news-list.component';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 
 const createComponent = (items: any[] = []) => {
   const component = Object.create(NewsListComponent.prototype) as any;
@@ -30,6 +31,32 @@ const createComponent = (items: any[] = []) => {
 };
 
 afterEach(() => vi.useRealTimers());
+
+describe('NewsListComponent reply form', () => {
+  it('checks the session and opens one form for replies requested while the check is pending', () => {
+    const component = createComponent();
+    const auth = new Subject<boolean>();
+    const closed = new Subject<void>();
+    const openDialogsForm = vi.fn(() => ({ afterClosed: () => closed }));
+    const checkAuthenticationStatus = vi.fn().mockReturnValueOnce(auth).mockReturnValue(of(true));
+    component.authGuard = { checkAuthenticationStatus };
+    component.dialogGuard = new DialogGuardService();
+    component.dialogsFormService = { openDialogsForm };
+    const reply = { title: 'Reply', placeholder: 'Your message', news: { replyTo: 'root', viewIn: [] } };
+
+    component.openUpdateDialog(reply);
+    component.openUpdateDialog(reply);
+    auth.next(true);
+
+    expect(checkAuthenticationStatus).toHaveBeenCalledOnce();
+    expect(openDialogsForm).toHaveBeenCalledOnce();
+
+    closed.next();
+    component.openUpdateDialog(reply);
+
+    expect(openDialogsForm).toHaveBeenCalledTimes(2);
+  });
+});
 
 describe('NewsListComponent labels', () => {
   it('handles label removal from a legacy post without a labels array', () => {
