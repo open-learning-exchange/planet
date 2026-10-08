@@ -14,6 +14,9 @@ on:
         description: 'Planet Image name Eg. "0.13.4-deploy-d6b59441"'
         required: false
 
+permissions:
+  contents: read
+
 env:
   DOCKER_ORG: treehouses
   DOCKER_REPO_TAG: planet-tags
