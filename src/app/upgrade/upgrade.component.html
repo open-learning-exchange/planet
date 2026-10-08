@@ -6,7 +6,7 @@
 </mat-toolbar>
 <div class="space-container">
   <div class="upgrade_buttons">
-    <button mat-stroked-button color="primary" (click)="upgrade()" [disabled]="!enabled || done">{{ message }}</button>
+    <button mat-stroked-button color="primary" (click)="upgrade()" [disabled]="!enabled || done || dialogGuard.isActive('upgrade')">{{ message }}</button>
   </div>
   @if (!done) {
     <div class="upgrade-progress-container">

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 
 import { StateService } from '../state.service';
 import { CouchService } from '../database/couchdb.service';
+import { DialogGuardService } from '../dialogs/dialog-guard.service';
 import { ChallengesAnnouncementDialogComponent } from './challenges-announcement-dialog.component';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
@@ -35,7 +36,8 @@ export class ChallengesService {
 
   constructor(
     private stateService: StateService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dialogGuard: DialogGuardService
   ) { }
 
   getChallenges(): Observable<PlanetChallenge[]> {
@@ -99,6 +101,13 @@ export class ChallengesService {
       maxHeight: '100vh',
       data: challenge
     });
+  }
+
+  openChallengeDialogOnce(dialog: MatDialog, challenge$: Observable<PlanetChallenge | undefined>) {
+    return this.dialogGuard.open('challenge-announcement', () => challenge$.pipe(
+      filter(challenge => !!challenge),
+      map(challenge => this.openChallengeDialog(dialog, challenge))
+    ));
   }
 
   normalizeChallenge(challenge: Partial<PlanetChallenge>): PlanetChallenge {

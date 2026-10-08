@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/auth/user.service';
 import { CouchService } from '../shared/database/couchdb.service';
 import { findDocuments } from '../shared/database/mango-queries';
@@ -41,7 +41,7 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     DatePipe
   ]
 })
-export class NotificationsComponent implements OnInit, AfterViewInit {
+export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
@@ -73,6 +73,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.notifications.paginator = this.paginator;
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getNotifications() {
@@ -115,10 +120,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   openAnnouncementDialog(notification: any) {
-    this.challengesService.getChallengeForNotification(notification).subscribe(challenge => {
-      if (challenge) {
-        this.challengesService.openChallengeDialog(this.dialog, challenge);
-      }
-    });
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getChallengeForNotification(notification))
+      .pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 }

@@ -599,8 +599,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const courses = courseIds.map(courseId => ({ item: findByIdInArray(this.courses.data, courseId), db: this.dbName }));
     const msg = (type === 'pull' ? 'fetch' : 'send');
     const parentType = type === 'pull' ? 'parent' : 'local';
-    this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(switchMap(replicators =>
-      this.syncService.confirmPasswordAndRunReplicators(replicators)
+    this.dialogGuard.run('share-course', () => this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(
+      switchMap(replicators => this.syncService.confirmPasswordAndRunReplicators(replicators))
     )).subscribe(() => {
       this.planetMessageService.showMessage($localize`${courses.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));

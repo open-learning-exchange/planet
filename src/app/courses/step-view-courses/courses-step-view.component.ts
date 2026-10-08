@@ -232,11 +232,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
-      if (challenge) {
-        this.challengesService.openChallengeDialog(this.dialog, challenge);
-      }
-    });
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId))
+      .subscribe();
   }
 
   setResourceUrl(resourceUrl: string) {

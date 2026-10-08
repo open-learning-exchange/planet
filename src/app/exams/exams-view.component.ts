@@ -314,11 +314,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       } else {
         this.routeToNext(nextQuestion, previousStatus);
         if (isFinish) {
-          this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
-            if (challenge) {
-              this.challengesService.openChallengeDialog(this.dialog, challenge);
-            }
-          });
+          this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId))
+            .subscribe();
         }
       }
     }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));
