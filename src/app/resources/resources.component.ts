@@ -28,7 +28,7 @@ import { FormControl } from '@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { couchAttachmentPath, findByIdInArray } from '../shared/utils';
 import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -51,8 +51,7 @@ import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.direct
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PreviewOverflowDirective } from '../shared/text/preview-overflow.directive';
-import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
+import { PlanetMarkdownPreviewComponent } from '../shared/markdown/planet-markdown-preview.component';
 import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
@@ -105,8 +104,7 @@ import { ResourcesIconComponent } from './resources-icon.component';
     MatTooltip,
     MatChipSet,
     MatChip,
-    PreviewOverflowDirective,
-    PlanetMarkdownComponent,
+    PlanetMarkdownPreviewComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
     PlanetRatingDialogDirective,
@@ -186,8 +184,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.showFilters && !this.isTabletOrSmaller;
   }
   expandedElement: any = null;
-  private previewHasHiddenContent = new Map<string, boolean>();
-  private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -555,29 +551,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return arr.map(s => s.trim()).filter(Boolean)
       .map(value => levelList.find(option => option.value === value)?.label || value)
       .join(', ');
-  }
-
-  showPreviewExpand(element: any): boolean {
-    const description = element?.doc?.description;
-    if (!description) {
-      return false;
-    }
-    const previewKey = this.getPreviewKey(element);
-    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
-    if (hasHiddenContent === undefined) {
-      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
-      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
-    }
-    // isExpanded check keeps the collapse button visible after the preview div unmounts
-    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
-  }
-
-  getPreviewKey(element: any): string {
-    return element?._id || '';
-  }
-
-  setPreviewOverflow(element: any, hasOverflow: boolean) {
-    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }

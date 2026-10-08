@@ -211,6 +211,23 @@ describe('NewsListItemComponent label choices', () => {
   });
 });
 
+describe('NewsListItemComponent preview expansion', () => {
+  it('keeps a voice the reader expanded open when the list refreshes it', () => {
+    const component = Object.create(NewsListItemComponent.prototype) as NewsListItemComponent;
+    const refreshedVoice = () => ({ _id: 'voice', doc: { message: 'Long message '.repeat(60) } });
+    component.previewLimit = 500;
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+    component.showLess = false;
+
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+
+    expect(component.showExpand).toBe(true);
+    expect(component.showLess).toBe(false);
+  });
+});
+
 describe('voice label display', () => {
   it('does not resolve custom labels through inherited object properties', () => {
     const component = new LabelComponent();

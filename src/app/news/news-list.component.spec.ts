@@ -298,6 +298,15 @@ describe('NewsListComponent filtering', () => {
     expect(component.selectedLabel).toBe('');
     expect(component.filteredItems.length).toBe(3);
   });
+
+  it('keeps the current page when only the custom labels change', () => {
+    const component = createComponent(thread());
+    component.pageIndex = 2;
+
+    component.ngOnChanges({ customLabels: { firstChange: false } as any });
+
+    expect(component.pageIndex).toBe(2);
+  });
 });
 
 describe('NewsListComponent thread navigation', () => {

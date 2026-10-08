@@ -29,7 +29,7 @@ import { CouchService } from '../shared/database/couchdb.service';
 import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
@@ -52,8 +52,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PreviewOverflowDirective } from '../shared/text/preview-overflow.directive';
-import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
+import { PlanetMarkdownPreviewComponent } from '../shared/markdown/planet-markdown-preview.component';
 import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
@@ -107,8 +106,7 @@ import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
     CoursesProgressBarComponent,
     MatChipSet,
     MatChip,
-    PreviewOverflowDirective,
-    PlanetMarkdownComponent,
+    PlanetMarkdownPreviewComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
     PlanetRatingDialogDirective,
@@ -198,8 +196,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     return this.showFilters && !this.isMobile;
   }
   expandedElement: any = null;
-  private previewHasHiddenContent = new Map<string, boolean>();
-  private previewOverflow = new Map<string, boolean>();
   certifications: any[] = [];
 
   @ViewChild(PlanetTagInputComponent)
@@ -658,29 +654,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
-  }
-
-  showPreviewExpand(element: any): boolean {
-    const description = element?.doc?.description;
-    if (!description) {
-      return false;
-    }
-    const previewKey = this.getPreviewKey(element);
-    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
-    if (hasHiddenContent === undefined) {
-      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
-      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
-    }
-    // isExpanded check keeps the collapse button visible after the preview div unmounts
-    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
-  }
-
-  getPreviewKey(element: any): string {
-    return element?._id || '';
-  }
-
-  setPreviewOverflow(element: any, hasOverflow: boolean) {
-    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }
