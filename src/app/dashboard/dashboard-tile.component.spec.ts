@@ -96,6 +96,14 @@ describe('DashboardTileComponent', () => {
 
       expect(component.dashboardTextLines({ coverFileName: 'cover.png' })).toBe('none');
     });
+
+    it('builds coverImageUrl for myTeams and myCourses with respective dbs', () => {
+      component.cardType = 'myTeams';
+      expect(component.coverImageUrl({ _id: 't1', coverFileName: 'cover.png' })).toContain('/teams/t1/cover.png');
+
+      component.cardType = 'myCourses';
+      expect(component.coverImageUrl({ _id: 'c1', coverFileName: 'cover.png' })).toContain('/courses/c1/cover.png');
+    });
   });
 
   it('removes a dashboard course only after confirmation', () => {
