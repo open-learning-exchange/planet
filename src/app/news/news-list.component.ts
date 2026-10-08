@@ -16,7 +16,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { trackById } from '../shared/tables/table.helpers';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news.utils';
 
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';

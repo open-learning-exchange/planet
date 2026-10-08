@@ -19,10 +19,12 @@ import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.comp
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
+import {
+  DEFAULT_VOICE_LABELS, DEFAULT_VOICE_REACTIONS, dedupeVoiceLabels, voiceLabelsEqual,
+  getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry
+} from './news.utils';
 import { FullNamePipe } from '../shared/text/full-name.pipe';
 import { LinkCopyService } from '../shared/ui/link-copy.service';
-import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -82,7 +84,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   previewLimit = 500;
   deviceType: DeviceType;
   isMobile: boolean;
-  commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
+  commonEmojis = DEFAULT_VOICE_REACTIONS;
   reactionSaving = false;
 
   constructor(
