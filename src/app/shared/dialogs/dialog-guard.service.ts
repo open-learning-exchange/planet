@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { EMPTY, Observable } from 'rxjs';
+import { defer, EMPTY, Observable } from 'rxjs';
 import { finalize, take, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
@@ -29,5 +29,16 @@ export class DialogGuardService {
         }
       })
     );
+  }
+
+  // For flows whose dialog opens inside a service, such as SyncService's password confirmation: the key is held until the flow ends
+  run<T>(key: string, work: () => Observable<T>): Observable<T> {
+    return defer(() => {
+      if (this.active.has(key)) {
+        return EMPTY;
+      }
+      this.active.add(key);
+      return defer(work).pipe(finalize(() => this.active.delete(key)));
+    });
   }
 }
