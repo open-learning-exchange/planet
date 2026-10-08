@@ -19,8 +19,16 @@ export class DialogsLoadingService {
     this.requestCount++;
     if (!this.isSpinnerOn) {
       this.isSpinnerOn = true;
-      this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
+      const spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
         disableClose: true
+      });
+      this.spinnerDialog = spinnerDialog;
+      // Back and forward close every dialog, this one included, so drop the requests it covered or start() never reopens it
+      spinnerDialog.afterClosed().subscribe(() => {
+        if (this.spinnerDialog === spinnerDialog && this.isSpinnerOn) {
+          this.isSpinnerOn = false;
+          this.requestCount = 0;
+        }
       });
     }
   }
