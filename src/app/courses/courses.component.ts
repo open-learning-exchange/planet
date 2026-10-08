@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input, OnChange
 import {
   MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
 } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
@@ -15,9 +15,9 @@ import { Subject, defer, of } from 'rxjs';
 import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
-  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/tables/table.helpers';
+import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
 import * as constants from './courses.constants';
 import { CertificationsService } from '../shared/certifications/certifications.service';
 import { languages } from '../shared/language/languages';
@@ -129,6 +129,7 @@ import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   isLoading = true;
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
   selectedLocal = 0;
@@ -136,7 +137,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     return this.courses;
   }
   courses = new MatTableDataSource();
-  private renderedRows: any[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(CoursesSearchComponent) searchComponent: CoursesSearchComponent;
@@ -173,7 +173,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.courses.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
+    this.pageSelection.removeFiltered();
   }
   user = this.userService.get();
   userShelf: any = [];
@@ -243,7 +243,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = commonSortingDataAccessor;
-    this.courses.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.courses, this.onDestroy$);
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
       switchMap((courses: any) => this.parent && courses !== undefined ?
@@ -280,7 +280,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
   }
 
@@ -324,10 +323,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (this.tagInputComponent) {
       this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
     }
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
   }
 
   searchFilter(filterValue: string) {
@@ -445,14 +440,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }, (error) => ((error)));
   }
 
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedRows);
-  }
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
-  }
-
   countSelectNotEnrolled(selected: any) {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected.filter(id => this.hasSteps(id)), 'courseIds');
     this.selectedEnrolled = inShelf;
@@ -474,7 +461,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // titleSearch set runs dropdownsFill and recordSearch
     this.titleSearch = this.titleSearch;
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   onSearchChange({ items, category }) {
@@ -483,7 +469,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   toggleFiltersRow() {
