@@ -9,8 +9,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, Observable, Subject, throwError } from 'rxjs';
-import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/database/couchdb.service';
 import { AiChatService } from '../shared/ai/ai-chat.service';
 import {
@@ -26,6 +26,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UserService } from '../shared/auth/user.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
 import { ExamsService } from '../exams/exams.service';
 import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
@@ -151,7 +152,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
-    private linkCopyService: LinkCopyService
+    private linkCopyService: LinkCopyService,
+    private dialogGuard: DialogGuardService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -406,11 +408,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendSurveyToUsersDialog(survey) {
-    this.submissionsService.getSubmissions(
+    this.dialogGuard.open('send-survey', () => this.submissionsService.getSubmissions(
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
-    ).subscribe((submissions: any[]) => {
+    ).pipe(map((submissions: any[]) => {
       const excludeIds = submissions.map((submission: any) => submission.user._id);
-      this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
+      return this.dialog.open(TablesAddDialogComponent, {
         width: '80vw',
         data: {
           okClick: (selection: any[]) => {
@@ -423,7 +425,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           mode: 'users'
         }
       });
-    });
+    }))).pipe(takeUntil(this.onDestroy$)).subscribe(dialogRef => this.dialogRef = dialogRef);
   }
 
   private createTeamSurveyFromSource(sourceSurvey: any, team: { _id: string, name: string }): Observable<any> {
@@ -440,7 +442,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyToTeamsDialog(survey) {
     const excludeIds = survey.teamIds || [];
-    this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
+    this.dialogGuard.open('send-survey', () => of(this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (selection: any[]) => {
@@ -461,7 +463,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         excludeIds,
         mode: 'teams'
       }
-    });
+    }))).pipe(takeUntil(this.onDestroy$)).subscribe(dialogRef => this.dialogRef = dialogRef);
   }
 
   adoptSurvey(survey) {

@@ -12,6 +12,7 @@ import { AuthGuard } from '../shared/auth/auth.guard';
 import { from, Observable, of } from 'rxjs';
 import { catchError, concatMap, filter, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { PendingAttachment } from '../shared/forms/file-upload.component';
 import { couchAttachmentPath, NormalizedImage, normalizeImage } from '../shared/utils';
 import {
@@ -92,7 +93,8 @@ export class FeedbackDirective {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private authGuard: AuthGuard,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialogGuard: DialogGuardService
   ) {}
 
   addFeedback(post: any) {
@@ -220,7 +222,9 @@ export class FeedbackDirective {
 
   @HostListener('click')
   checkAuthentication() {
-    this.authGuard.checkAuthenticationStatus().subscribe(() => this.openFeedback());
+    this.dialogGuard.open('feedback', () =>
+      this.authGuard.checkAuthenticationStatus().pipe(map(() => this.openFeedback()))
+    ).subscribe();
   }
 
   openFeedback() {
@@ -232,7 +236,7 @@ export class FeedbackDirective {
       message: [ this.message, CustomValidators.required ],
       attachments: [ { retained: [], removed: [], added: [] } ]
     };
-    this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
+    return this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       closeOnSubmit: false,
       confirmUnsavedChanges: true,
       onSubmit: response => {
