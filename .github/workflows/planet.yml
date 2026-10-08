@@ -13,6 +13,9 @@ on:
         required: true
         default: 'single-language'
 
+permissions:
+  contents: read
+
 env:
   DOCKER_ORG: treehouses
   DOCKER_REPO_PRE: planet-base
