@@ -17,7 +17,7 @@ import { LabelComponent } from '../shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
 import {
   DEFAULT_VOICE_LABELS, DEFAULT_VOICE_REACTIONS, dedupeVoiceLabels, voiceLabelsEqual,
@@ -48,6 +48,7 @@ import { LinkCopyService } from '../shared/ui/link-copy.service';
     MatButton,
     MatMenuTrigger,
     MatMenu,
+    MatMenuContent,
     NgTemplateOutlet,
     MatMenuItem,
     SlicePipe,
