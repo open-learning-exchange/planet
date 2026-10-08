@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CouchService } from '../../shared/database/couchdb.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 

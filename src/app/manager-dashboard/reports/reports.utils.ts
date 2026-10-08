@@ -1,5 +1,5 @@
-import { millisecondsToDay } from '../../meetups/constants';
-import type { CsvService } from '../../shared/csv.service';
+import { millisecondsToDay } from '../../meetups/meetups.constants';
+import type { CsvService } from '../../shared/export/csv.service';
 import { localizedGender } from '../../shared/utils';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {

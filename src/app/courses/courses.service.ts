@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { Subject, forkJoin, of } from 'rxjs';
-import { UserService } from '../shared/user.service';
-import { findDocuments, inSelector } from '../shared/mangoQueries';
+import { UserService } from '../shared/auth/user.service';
+import { findDocuments, inSelector } from '../shared/database/mango-queries';
 import { switchMap, map, filter, take } from 'rxjs/operators';
-import { RatingService } from '../shared/forms/rating.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { RatingService } from '../shared/ratings/rating.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
-import { TagsService } from '../shared/forms/tags.service';
+import { TagsService } from '../shared/forms/tags/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
-import { MarkdownService } from '../shared/markdown.service';
+import { MarkdownImagesService } from '../shared/markdown/markdown-images.service';
 import { UsersService } from '../users/users.service';
 
 export interface CourseAuthorizationContext {
@@ -51,7 +51,7 @@ export class CoursesService {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private tagsService: TagsService,
-    private markdownService: MarkdownService,
+    private markdownImagesService: MarkdownImagesService,
     private usersService: UsersService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
@@ -301,7 +301,8 @@ export class CoursesService {
 
   storeMarkdownImages(course) {
     const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
-    const imagesArray = (item: { description: any }) => this.markdownService.createImagesArray(item, markdownText(item), 'description');
+    const imagesArray = (item: { description: any }) =>
+      this.markdownImagesService.createImagesArray(item, markdownText(item), 'description');
     const images = dedupeObjectArray(
       [ course.images || [], imagesArray(course), course.steps.map(step => imagesArray(step)) ].flat(2),
       [ 'resourceId' ]
@@ -310,7 +311,9 @@ export class CoursesService {
       ...course,
       description: markdownText(course),
       steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
-      images: this.markdownService.filterMissingImages([ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images)
+      images: this.markdownImagesService.filterMissingImages(
+        [ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images
+      )
     };
   }
 

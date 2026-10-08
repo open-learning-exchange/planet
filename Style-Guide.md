@@ -55,7 +55,9 @@ For more information, see the docs [here](https://angular.io/guide/i18n).
 ### App Directory Structure
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
 
-The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
+Count distinct concerns rather than raw files when applying that threshold.  A component's `.html`, `.scss` and `.spec.ts` belong with its `.ts` and count once, so a directory of six components is not sprawling even at 20 files; a directory of 20 unrelated services is, at the same count.
+
+The `src/app/shared` directory is intended for files which are used across different features — a file whose only consumer is one feature belongs in that feature instead.  Within `shared`, group by the capability a file serves (`auth`, `database`, `tables`, `text`, …) rather than by file kind; there is deliberately no `services` or `directives` bucket.  Use relative imports between and within buckets.
 
 ### Naming
 Component files should be named after their page/feature and follow Angular's standard naming pattern:

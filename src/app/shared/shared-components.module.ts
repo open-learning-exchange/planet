@@ -3,29 +3,25 @@ import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 
-import { PlanetLocalStatusComponent } from './planet-local-status.component';
+import { PlanetLocalStatusComponent } from './database/planet-local-status.component';
 import { MaterialModule } from './material.module';
-import { SubmitDirective } from './submit.directive';
-import { LowercaseDirective } from '../shared/lowercase.directive';
-import { PlanetLanguageComponent } from './planet-language.component';
-import { ResourcesMenuComponent } from '../resources/view-resources/resources-menu.component';
-import { AuthorizedRolesDirective } from './authorized-roles.directive';
-import { PlanetBetaDirective } from './beta.directive';
-import { FilteredAmountComponent } from './planet-filtered-amount.component';
-import { TasksComponent, AssigneeNamePipe } from '../tasks/tasks.component';
-import { PlanetRoleComponent } from './planet-role.component';
-import { PlanetMarkdownComponent } from './planet-markdown.component';
-import { CommunityListComponent } from '../community/community-list.component';
-import { LabelComponent } from './label.component';
-import { TimePipe } from '../manager-dashboard/reports/time.pipe';
-import { AvatarComponent } from './avatar.component';
-import { LanguageLabelComponent } from './language-label.component';
-import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { FullNamePipe } from '../shared/full-name.pipe';
-import { TimeAgoPipe } from '../shared/time-ago.pipe';
-import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.component';
-import { PreviewOverflowDirective } from './preview-overflow.directive';
+import { SubmitDirective } from './dialogs/submit.directive';
+import { LowercaseDirective } from './forms/lowercase.directive';
+import { PlanetLanguageComponent } from './language/planet-language.component';
+import { AuthorizedRolesDirective } from './auth/authorized-roles.directive';
+import { PlanetBetaDirective } from './auth/planet-beta.directive';
+import { PlanetFilteredAmountComponent } from './tables/planet-filtered-amount.component';
+import { PlanetRoleComponent } from './auth/planet-role.component';
+import { PlanetMarkdownComponent } from './markdown/planet-markdown.component';
+import { LabelComponent } from './ui/label.component';
+import { AvatarComponent } from './ui/avatar.component';
+import { LanguageLabelComponent } from './language/language-label.component';
+import { RestrictDiacriticsDirective } from './forms/restrict-diacritics.directive';
+import { TruncateTextPipe } from './text/truncate-text.pipe';
+import { FullNamePipe } from './text/full-name.pipe';
+import { TimeAgoPipe } from './text/time-ago.pipe';
+import { PlanetLoadingSpinnerComponent } from './ui/planet-loading-spinner.component';
+import { PreviewOverflowDirective } from './text/preview-overflow.directive';
 
 @NgModule({
   imports: [
@@ -34,19 +30,14 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     PlanetLocalStatusComponent,
     SubmitDirective,
     PlanetLanguageComponent,
-    ResourcesMenuComponent,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
-    TasksComponent,
-    AssigneeNamePipe,
+    PlanetFilteredAmountComponent,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
-    CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
-    TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
     TruncateTextPipe,
@@ -59,19 +50,14 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     PlanetLoadingSpinnerComponent,
     SubmitDirective,
     PlanetLanguageComponent,
-    ResourcesMenuComponent,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
-    TasksComponent,
-    AssigneeNamePipe,
+    PlanetFilteredAmountComponent,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
-    CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
-    TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
     OverlayModule,
@@ -79,9 +65,6 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     FullNamePipe,
     TimeAgoPipe,
     PreviewOverflowDirective
-  ],
-  providers: [
-    TimePipe
   ]
 })
 export class SharedComponentsModule {}

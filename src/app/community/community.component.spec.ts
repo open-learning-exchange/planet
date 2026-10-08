@@ -3,8 +3,8 @@ import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'r
 import { vi } from 'vitest';
 
 import { CommunityComponent } from './community.component';
-import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
-import { DeviceType } from '../shared/device-info.service';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { DeviceType } from '../shared/ui/device-info.service';
 
 describe('CommunityComponent custom labels', () => {
   it('allows community leaders and planet managers to manage community labels', () => {
@@ -33,7 +33,7 @@ describe('CommunityComponent custom labels', () => {
 
     component.openManageLabelsDialog();
 
-    expect(open).toHaveBeenCalledWith(DialogsVoiceLabelsComponent, {
+    expect(open).toHaveBeenCalledWith(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
       data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }

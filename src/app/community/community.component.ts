@@ -11,36 +11,36 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
 import { UsersService } from '../users/users.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '../shared/database/mango-queries';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { DialogsAnnouncementSuccessComponent } from '../shared/dialogs/dialogs-announcement.component';
-import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
-import { ConfigurationCheckService } from '../shared/configuration-check.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { ChallengesAnnouncementSuccessDialogComponent } from '../shared/challenges/challenges-announcement-dialog.component';
+import { ChallengesUserStatusService } from '../shared/challenges/challenges-user-status.service';
+import { ConfigurationCheckService } from '../configuration/configuration-check.service';
 import { ChallengesService } from '../shared/challenges/challenges.service';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { MatIcon } from '@angular/material/icon';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import {
   MatNavList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
-import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
-import { TeamsReportsComponent } from '../teams/teams-reports.component';
-import { PlanetCalendarComponent } from '../shared/calendar.component';
+import { TeamsReportsComponent } from '../teams/teams-reports/teams-reports.component';
+import { PlanetCalendarComponent } from '../shared/calendar/planet-calendar.component';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -147,7 +147,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private userStatusService: UserChallengeStatusService,
+    private userStatusService: ChallengesUserStatusService,
     private deviceInfoService: DeviceInfoService,
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
@@ -393,7 +393,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.userStatusService.getStatus('surveyComplete') &&
         !this.userStatusService.getStatus('hasPost')
       ) {
-        this.dialog.open(DialogsAnnouncementSuccessComponent, {
+        this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
           width: '50vw',
           maxHeight: '100vh',
           data: challenge
@@ -679,7 +679,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (this.planetCode) {
       return;
     }
-    this.dialog.open(DialogsVoiceLabelsComponent, {
+    this.dialog.open(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
       data: { target: 'community', team: this.team, customLabels: this.customVoiceLabels }

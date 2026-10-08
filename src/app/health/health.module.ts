@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesGuard } from '../shared/unsaved-changes/unsaved-changes.guard';
 
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';

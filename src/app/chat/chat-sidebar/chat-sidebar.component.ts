@@ -5,14 +5,14 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { Conversation, AIProvider } from '../chat.model';
-import { ChatService } from '../../shared/chat.service';
-import { CouchService } from '../../shared/couchdb.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-share.component';
-import { SearchService } from '../../shared/forms/search.service';
-import { fuzzyWordMatch } from '../../shared/fuzzy-search';
-import { showFormErrors, trackById } from '../../shared/table-helpers';
-import { UserService } from '../../shared/user.service';
+import { AiChatService } from '../../shared/ai/ai-chat.service';
+import { CouchService } from '../../shared/database/couchdb.service';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
+import { ChatShareDialogComponent } from '../chat-share-dialog.component';
+import { SearchService } from '../../shared/search/search.service';
+import { fuzzyWordMatch } from '../../shared/search/fuzzy-search';
+import { showFormErrors, trackById } from '../../shared/tables/table.helpers';
+import { UserService } from '../../shared/auth/user.service';
 import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -24,9 +24,9 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
 import { ChatWindowComponent } from '../chat-window/chat-window.component';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
 
 interface TitleForm {
   title: FormControl<string>;
@@ -91,7 +91,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   isLoading = true;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
@@ -306,7 +306,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   openShareDialog(conversation) {
-    const dialogRef = this.dialog.open(DialogsChatShareComponent, {
+    const dialogRef = this.dialog.open(ChatShareDialogComponent, {
       width: '50vw',
       maxHeight: '90vh',
       data: {

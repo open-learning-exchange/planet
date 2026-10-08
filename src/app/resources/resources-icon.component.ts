@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { fileTypes } from './resources-constants';
+import { fileTypes } from './resources.constants';
 import { resourceFileType } from './resources.utils';
 
 @Component({

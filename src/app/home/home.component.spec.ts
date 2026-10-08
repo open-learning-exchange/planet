@@ -10,8 +10,8 @@ import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { HomeComponent } from './home.component';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 

@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { SimpleChange, SimpleChanges } from '@angular/core';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';

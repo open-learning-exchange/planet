@@ -5,9 +5,9 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CoursesService } from '../courses/courses.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { DashboardTileComponent } from './dashboard-tile.component';
 
@@ -95,6 +95,14 @@ describe('DashboardTileComponent', () => {
       component.deviceType = DeviceType.MOBILE;
 
       expect(component.dashboardTextLines({ coverFileName: 'cover.png' })).toBe('none');
+    });
+
+    it('builds coverImageUrl for myTeams and myCourses with respective dbs', () => {
+      component.cardType = 'myTeams';
+      expect(component.coverImageUrl({ _id: 't1', coverFileName: 'cover.png' })).toContain('/teams/t1/cover.png');
+
+      component.cardType = 'myCourses';
+      expect(component.coverImageUrl({ _id: 'c1', coverFileName: 'cover.png' })).toContain('/courses/c1/cover.png');
     });
   });
 

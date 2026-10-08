@@ -11,24 +11,24 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError } from 'rxjs';
 import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { ChatService } from '../shared/chat.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { AiChatService } from '../shared/ai/ai-chat.service';
 import {
   filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
   removeFilteredFromSelection, toggleVisibleSelection
-} from '../shared/table-helpers';
+} from '../shared/tables/table.helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findByIdInArray, filterById } from '../shared/utils';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/user.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { UserService } from '../shared/auth/user.service';
+import { findDocuments } from '../shared/database/mango-queries';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
+import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
 import { ExamsService } from '../exams/exams.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
@@ -36,12 +36,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { LinkCopyService } from '../shared/link-copy.service';
+import { LinkCopyService } from '../shared/ui/link-copy.service';
 
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
@@ -113,7 +113,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
     return (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(surveyColumns);
   }
-  dialogRef: MatDialogRef<DialogsAddTableComponent>;
+  dialogRef: MatDialogRef<TablesAddDialogComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   isAuthorized = false;
@@ -147,7 +147,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
@@ -410,7 +410,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
     ).subscribe((submissions: any[]) => {
       const excludeIds = submissions.map((submission: any) => submission.user._id);
-      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+      this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
         width: '80vw',
         data: {
           okClick: (selection: any[]) => {
@@ -440,7 +440,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyToTeamsDialog(survey) {
     const excludeIds = survey.teamIds || [];
-    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (selection: any[]) => {

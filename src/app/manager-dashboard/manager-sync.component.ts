@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { forkJoin } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';

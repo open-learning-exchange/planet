@@ -3,16 +3,16 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { TasksAssigneesDialogComponent } from './tasks-assignees-dialog.component';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { environment } from '../../environments/environment';
-import { UserService } from '../shared/user.service';
-import { trackById } from '../shared/table-helpers';
-import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
+import { trackById } from '../shared/tables/table.helpers';
+import { CouchService } from '../shared/database/couchdb.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
-import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
+import { MeetupsAddDialogComponent } from '../meetups/meetups-add-dialog.component';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { StateService } from '../shared/state.service';
 import {
@@ -352,7 +352,7 @@ export class TasksComponent implements OnInit {
   }
 
   openTaskDetail(task) {
-    this.dialog.open(DialogsAddMeetupsComponent, {
+    this.dialog.open(MeetupsAddDialogComponent, {
       data: {
         meetup: task,
         view: 'view',
