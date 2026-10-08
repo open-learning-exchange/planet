@@ -7,7 +7,7 @@ describe('TeamsService membership writes', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  const createService = (couchOverrides: any = {}) => {
+  const createService = (couchOverrides: any = {}, stateService: any = {}) => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([])),
       get: vi.fn().mockReturnValue(of({})),
@@ -19,7 +19,7 @@ describe('TeamsService membership writes', () => {
       {} as any,
       {} as any,
       {} as any,
-      {} as any,
+      stateService,
       {} as any
     );
     return { service, couchService };
@@ -436,6 +436,51 @@ describe('TeamsService membership writes', () => {
       _rev: shelf._rev,
       isLeader: true
     }));
+  });
+
+  describe('join requests', () => {
+    const user = { _id: 'org.couchdb.user:sam' };
+    const requestSelector = {
+      teamId: team._id,
+      userId: user._id,
+      teamPlanetCode: team.teamPlanetCode,
+      userPlanetCode: 'planet-a',
+      docType: 'request'
+    };
+    const requestToJoin = (existingRequests: any[]) => {
+      const { service, couchService } = createService({
+        post: vi.fn().mockReturnValue(of({ docs: existingRequests })),
+        updateDocument: vi.fn().mockReturnValue(of({ id: 'request-1', rev: '1-request' }))
+      }, { configuration: { code: 'planet-a' } });
+      const next = vi.fn();
+      service.requestToJoinTeam(team, user).subscribe(next);
+      return { couchService, next };
+    };
+
+    it('writes a request when the user has none', () => {
+      const { couchService } = requestToJoin([]);
+
+      expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({ selector: requestSelector, limit: 1 }));
+      expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
+        ...requestSelector,
+        teamType: team.teamType
+      }));
+    });
+
+    it('keeps an existing request instead of adding another', () => {
+      const { couchService, next } = requestToJoin([ { _id: 'request-1' } ]);
+
+      expect(couchService.updateDocument).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('removes requests made before the team type changed', () => {
+      const { service, couchService } = createService();
+
+      service.removeFromRequests({ ...team, teamType: 'sync' }, { userId: user._id, userPlanetCode: 'planet-a' }).subscribe();
+
+      expect(couchService.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({ selector: requestSelector }));
+    });
   });
 
   it('sanitizes membership deletion writes', () => {

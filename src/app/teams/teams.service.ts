@@ -132,19 +132,26 @@ export class TeamsService {
   }
 
   requestToJoinTeam(team, user) {
-    const userPlanetCode = this.stateService.configuration.code;
-    return this.couchService.updateDocument(this.dbName, {
-      createdDate: this.couchService.datePlaceholder,
-      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
-    }).pipe(
+    const memberInfo = { userId: user._id, userPlanetCode: this.stateService.configuration.code };
+    return this.couchService.post(`${this.dbName}/_find`, findDocuments(this.requestSelector(team, memberInfo), [ '_id' ], 0, 1)).pipe(
+      switchMap(({ docs }: any) => docs.length > 0 ? of({}) : this.couchService.updateDocument(this.dbName, {
+        createdDate: this.couchService.datePlaceholder,
+        ...this.membershipProps(team, memberInfo, 'request')
+      })),
       switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
     );
   }
 
   removeFromRequests(team, memberInfo) {
-    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, memberInfo, 'request'))).pipe(
+    return this.couchService.findAll(this.dbName, findDocuments(this.requestSelector(team, memberInfo))).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
     );
+  }
+
+  // teamId already names the team, and editing an enterprise can change its teamType after requests were made
+  private requestSelector(team, memberInfo) {
+    const { teamType, ...selector } = this.membershipProps(team, memberInfo, 'request');
+    return selector;
   }
 
   cancelJoinRequest(team) {
