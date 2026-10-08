@@ -228,11 +228,9 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
         displayName: item.title,
         okClick: {
           request: defer(() => this.coursesService.courseResignAdmission(item._id, 'resign', item.title)),
-          onNext: () => {
-            this.dialogPrompt.close();
-            this.removeMessage(item);
-          },
-          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+          onNext: () => this.dialogPrompt.close(),
+          // CoursesService reports the failure
+          onError: () => {}
         }
       }
     });
