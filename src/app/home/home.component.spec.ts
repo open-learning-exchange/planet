@@ -163,6 +163,19 @@ describe('Home', () => {
     expect(comp.forceModern).toBe(true);
   });
 
+  it('should force the modern toolbar when a phone has zoomed out to fit the classic links', () => {
+    const { comp } = renderNav(false);
+    const clientWidth = vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(390);
+    const innerWidth = vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(930);
+    comp.classicToolbarWidth = 930;
+
+    comp.syncToolbarLayout();
+
+    expect(comp.forceModern).toBe(true);
+    clientWidth.mockRestore();
+    innerWidth.mockRestore();
+  });
+
   it('should stop closing the nav once the component is destroyed', () => {
     const { comp, routerEvents } = renderNav(true);
     comp.toggleNav();
