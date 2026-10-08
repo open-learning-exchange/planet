@@ -120,10 +120,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   openAnnouncementDialog(notification: any) {
-    this.challengesService.getChallengeForNotification(notification).subscribe(challenge => {
-      if (challenge) {
-        this.challengesService.openChallengeDialog(this.dialog, challenge);
-      }
-    });
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getChallengeForNotification(notification))
+      .pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 }

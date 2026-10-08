@@ -13,7 +13,7 @@ describe('ChallengesService', () => {
 
   beforeEach(() => {
     couchService = { get: vi.fn().mockReturnValue(of({ _id: 'local@parent', challenges: [ challenge ] })) };
-    service = new ChallengesService({ configuration: { code: 'local', parentCode: 'parent' } } as any, couchService);
+    service = new ChallengesService({ configuration: { code: 'local', parentCode: 'parent' } } as any, couchService, {} as any);
   });
 
   it('reads challenges from the planet services doc', () => {
