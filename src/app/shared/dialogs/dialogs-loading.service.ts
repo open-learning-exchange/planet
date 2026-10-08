@@ -23,7 +23,7 @@ export class DialogsLoadingService {
         disableClose: true
       });
       this.spinnerDialog = spinnerDialog;
-      // Back and forward close every dialog, this one included, so drop the requests it covered or start() never reopens it
+      // Back and forward close every dialog, this one included: forget its count so the next start() reopens it. Requests keep running
       spinnerDialog.afterClosed().subscribe(() => {
         if (this.spinnerDialog === spinnerDialog && this.isSpinnerOn) {
           this.isSpinnerOn = false;
