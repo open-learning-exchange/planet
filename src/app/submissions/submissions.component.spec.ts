@@ -1,8 +1,9 @@
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { SubmissionsComponent } from './submissions.component';
 import { DeviceType } from '@shared/ui/device-info.service';
+
+import { SubmissionsComponent } from './submissions.component';
 
 describe('SubmissionsComponent', () => {
   const createComponent = () => new SubmissionsComponent(

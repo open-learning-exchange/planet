@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '@shared/database/couchdb.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ConfigurationCheckService } from '../configuration/configuration-check.service';
 import { MatCard } from '@angular/material/card';
 import { MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
 import { RouterOutlet } from '@angular/router';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
+
+import { ConfigurationCheckService } from '../configuration/configuration-check.service';
 
 @Component({
   templateUrl: './login.component.html',

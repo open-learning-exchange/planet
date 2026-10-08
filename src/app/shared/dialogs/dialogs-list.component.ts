@@ -11,7 +11,6 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { composeFilterFunctions, filterDropdowns, isAllVisibleSelected, toggleVisibleSelection } from '@shared/tables/table.helpers';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
@@ -23,6 +22,8 @@ import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
+import { composeFilterFunctions, filterDropdowns, isAllVisibleSelected, toggleVisibleSelection } from '@shared/tables/table.helpers';
 import { fullName } from '@shared/utils';
 
 @Component({

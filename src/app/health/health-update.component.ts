@@ -3,25 +3,26 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { interval, of, race, forkJoin } from 'rxjs';
 import { debounce } from 'rxjs/operators';
-import { CustomValidators } from '../validators/custom-validators';
-import { ValidatorService } from '../validators/validator.service';
-import { UserService } from '@shared/auth/user.service';
-import { HealthService } from './health.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
-import { languages } from '@shared/language/languages';
-import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { MatSelect } from '@angular/material/select';
-
 import { MatOption } from '@angular/material/autocomplete';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+
+import { UserService } from '@shared/auth/user.service';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { languages } from '@shared/language/languages';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+
+import { CustomValidators } from '../validators/custom-validators';
+import { ValidatorService } from '../validators/validator.service';
+import { HealthService } from './health.service';
 
 interface ProfileFormValue {
   name: string;

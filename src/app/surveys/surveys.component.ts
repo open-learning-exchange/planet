@@ -11,13 +11,23 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError } from 'rxjs';
 import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+
 import { CouchService } from '@shared/database/couchdb.service';
 import { AiChatService } from '@shared/ai/ai-chat.service';
 import {
   filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray, isAllVisibleSelected,
   removeFilteredFromSelection, toggleVisibleSelection
 } from '@shared/tables/table.helpers';
-import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
@@ -27,21 +37,13 @@ import { UserService } from '@shared/auth/user.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
-import { ExamsService } from '../exams/exams.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
-import { DatePipe } from '@angular/common';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
+
+import { SubmissionsService } from '../submissions/submissions.service';
+import { ExamsService } from '../exams/exams.service';
 
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 

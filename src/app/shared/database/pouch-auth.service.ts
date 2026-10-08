@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, Observable, forkJoin } from 'rxjs';
 import { catchError, defaultIfEmpty, switchMap } from 'rxjs/operators';
+
+import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
+
 import { PouchService } from './pouch.service';
 import { CouchService } from './couchdb.service';
-import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
 
 interface SessionInfo {
   userCtx: {

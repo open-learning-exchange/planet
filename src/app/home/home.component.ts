@@ -6,32 +6,34 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
+import { MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatBadge } from '@angular/material/badge';
+import { MatDivider } from '@angular/material/list';
+import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+
 import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
-import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
-import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
 import { ChallengesService } from '@shared/challenges/challenges.service';
-import { MatToolbar } from '@angular/material/toolbar';
-import { NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
-import { MatIconButton, MatAnchor } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
 import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
+import { ANDROID_APPS } from '@shared/android/android-apps';
+
+import { environment } from '../../environments/environment';
+import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
+import { LoginDialogComponent } from '../login/login-dialog.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { SyncDirective } from '../manager-dashboard/sync.directive';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatBadge } from '@angular/material/badge';
-import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
-import { MatDivider } from '@angular/material/list';
-import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { PulsateIconDirective } from './pulsate-icon.directive';
-import { ANDROID_APPS } from '@shared/android/android-apps';
 
 @Component({
   templateUrl: './home.component.html',

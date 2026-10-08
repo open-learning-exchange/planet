@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+
 import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
 import { CoursesService } from '../courses.service';
 import { SubmissionsComponent } from '../../submissions/submissions.component';
-import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 @Component({
   selector: 'planet-courses-submissions',

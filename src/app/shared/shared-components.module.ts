@@ -4,7 +4,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 
 import { PlanetLocalStatusComponent } from '@shared/database/planet-local-status.component';
-import { MaterialModule } from './material.module';
 import { SubmitDirective } from '@shared/dialogs/submit.directive';
 import { LowercaseDirective } from '@shared/forms/lowercase.directive';
 import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
@@ -22,6 +21,8 @@ import { FullNamePipe } from '@shared/text/full-name.pipe';
 import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { PreviewOverflowDirective } from '@shared/text/preview-overflow.directive';
+
+import { MaterialModule } from './material.module';
 
 @NgModule({
   imports: [

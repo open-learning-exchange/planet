@@ -12,6 +12,13 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { NgClass, DatePipe } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
   isAllVisibleSelected, toggleVisibleSelection
@@ -20,17 +27,12 @@ import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
-import { UsersService } from './users.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
-import { NgClass, DatePipe } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
+
+import { UsersService } from './users.service';
+import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
 
 export class TableState {
   isOnlyManagerSelected = false;

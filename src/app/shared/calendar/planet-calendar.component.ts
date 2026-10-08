@@ -5,23 +5,25 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
-import { MeetupsAddDialogComponent } from '../../meetups/meetups-add-dialog.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { MatTooltip } from '@angular/material/tooltip';
+
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
-import { days, millisecondsToDay } from '../../meetups/meetups.constants';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { styleVariables } from '@shared/utils';
 import { AuthGuard } from '@shared/auth/auth.guard';
-import { TasksService } from '../../tasks/tasks.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { FullCalendarModule } from '@fullcalendar/angular';
+
+import { MeetupsAddDialogComponent } from '../../meetups/meetups-add-dialog.component';
+import { days, millisecondsToDay } from '../../meetups/meetups.constants';
+import { TasksService } from '../../tasks/tasks.service';
 import { MeetupService } from '../../meetups/meetups.service';
 import { NotificationsService } from '../../notifications/notifications.service';
-import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { MatTooltip } from '@angular/material/tooltip';
 
 const taskEventColors = {
   completed: {

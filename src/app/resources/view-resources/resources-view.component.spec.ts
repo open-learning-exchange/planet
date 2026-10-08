@@ -10,13 +10,14 @@ import { vi } from 'vitest';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
-import { ResourcesViewComponent } from './resources-view.component';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { StateService } from '@shared/state.service';
-import { ResourcesService } from '../resources.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
+
+import { ResourcesViewComponent } from './resources-view.component';
+import { ResourcesService } from '../resources.service';
 
 describe('ResourcesViewComponent', () => {
 

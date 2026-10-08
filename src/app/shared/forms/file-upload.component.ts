@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
-
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
+
 import { isAcceptableFile, normalizedContentType, safeAttachmentName, truncateText } from '@shared/utils';
 
 interface FileMeta {

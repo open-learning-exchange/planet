@@ -14,34 +14,36 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { CouchService } from '@shared/database/couchdb.service';
-import { ValidatorService } from '../validators/validator.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { CoursesService } from '../courses/courses.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { ExamsService, QuestionFormGroup } from './exams.service';
-import {
-  PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
-} from '@shared/forms/planet-step-list.component';
-import { ExamsPreviewComponent } from './exams-preview.component';
-import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
-import { SubmissionsService } from './../submissions/submissions.service';
-import { findDocuments } from '@shared/database/mango-queries';
-import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
-import { SubmitDirective } from '@shared/dialogs/submit.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import {
+  PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
+} from '@shared/forms/planet-step-list.component';
+import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
-import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
+
+import { ValidatorService } from '../validators/validator.service';
+import { CoursesService } from '../courses/courses.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { ExamsService, QuestionFormGroup } from './exams.service';
+import { ExamsPreviewComponent } from './exams-preview.component';
+import { SubmissionsService } from './../submissions/submissions.service';
 import { ExamsQuestionComponent } from './exams-question.component';
 
 interface ExamFormControls {

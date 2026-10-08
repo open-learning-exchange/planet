@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { myDashboardRoute } from '../home/home-router.constants';
+
 import { MaterialModule } from '@shared/material.module';
+
+import { myDashboardRoute } from '../home/home-router.constants';
 
 @Component({
   templateUrl: './dashboard-notifications-dialog.component.html',

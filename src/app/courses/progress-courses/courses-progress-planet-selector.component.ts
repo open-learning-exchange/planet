@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
-import { ManagerService } from '../../manager-dashboard/manager.service';
-import { StateService } from '@shared/state.service';
-import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-
 import { MatOption } from '@angular/material/autocomplete';
+
+import { StateService } from '@shared/state.service';
+
+import { ManagerService } from '../../manager-dashboard/manager.service';
+import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-courses-progress-planet-selector',

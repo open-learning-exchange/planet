@@ -2,15 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CoursesService } from '../courses.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { UserService } from '@shared/auth/user.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { CoursesProgressChartComponent } from './courses-progress-chart.component';
+import { UserService } from '@shared/auth/user.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
+import { CoursesService } from '../courses.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { CoursesProgressChartComponent } from './courses-progress-chart.component';
 
 @Component({
   templateUrl: 'courses-progress-learner.component.html',

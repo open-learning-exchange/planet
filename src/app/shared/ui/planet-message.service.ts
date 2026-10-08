@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { truncateText } from '@shared/utils';
 
 @Injectable({

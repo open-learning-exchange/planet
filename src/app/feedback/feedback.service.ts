@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { map } from 'rxjs/operators';
+
 import { normalizeFeedbackStatus } from './feedback.utils';
 
 @Injectable({

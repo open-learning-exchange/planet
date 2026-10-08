@@ -1,17 +1,19 @@
 import { Component, Inject, LOCALE_ID, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
 import { timer, of, combineLatest } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
-import { UsersService } from '../users/users.service';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { DatePipe, formatDate } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { PdfService } from '@shared/export/pdf.service';
-import { CdkScrollable } from '@angular/cdk/scrolling';
-import { DatePipe, formatDate } from '@angular/common';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
-import { MatButton } from '@angular/material/button';
+
+import { conditionAndTreatmentFields, vitals } from './health.constants';
+import { UsersService } from '../users/users.service';
 
 @Component({
   templateUrl: './health-event-dialog.component.html',

@@ -22,11 +22,13 @@ import { timer, throwError, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
-import { LabelComponent } from '@shared/ui/label.component';
 import { MatButton } from '@angular/material/button';
-import { SubmitDirective } from './submit.directive';
+
+import { LabelComponent } from '@shared/ui/label.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+
+import { SubmitDirective } from './submit.directive';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',

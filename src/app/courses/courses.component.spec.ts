@@ -5,11 +5,9 @@ import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CoursesComponent } from './courses.component';
 import { CouchService } from '@shared/database/couchdb.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
-import { CoursesService } from './courses.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
 import { SyncService } from '@shared/database/sync.service';
@@ -21,6 +19,9 @@ import { SearchService } from '@shared/search/search.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { CertificationsService } from '@shared/certifications/certifications.service';
+
+import { CoursesComponent } from './courses.component';
+import { CoursesService } from './courses.service';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;

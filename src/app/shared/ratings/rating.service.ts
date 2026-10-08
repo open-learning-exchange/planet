@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { defer, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, finalize, map } from 'rxjs/operators';
+
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { UserService } from '@shared/auth/user.service';
-import { defer, Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, finalize, map } from 'rxjs/operators';
 import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';

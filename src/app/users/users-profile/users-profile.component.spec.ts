@@ -6,11 +6,13 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { UsersProfileComponent } from './users-profile.component';
+
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { MaterialModule } from '@shared/material.module';
+
+import { UsersProfileComponent } from './users-profile.component';
 
 describe('UserProfileComponent', () => {
   let component: UsersProfileComponent;

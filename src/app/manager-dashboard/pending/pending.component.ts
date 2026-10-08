@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '@shared/database/couchdb.service';
 import { forkJoin } from 'rxjs';
-import { StateService } from '@shared/state.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { ManagerService } from '../manager.service';
-import { attachNamesToPlanets } from '../reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+
+import { ManagerService } from '../manager.service';
+import { attachNamesToPlanets } from '../reports/reports.utils';
 import { PendingTableComponent } from './pending-table.component';
 
 @Component({

@@ -1,8 +1,9 @@
 import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CoursesService } from './courses.service';
 import { TagsService } from '@shared/forms/tags/tags.service';
+
+import { CoursesService } from './courses.service';
 
 describe('CoursesService', () => {
   it('uses the parent catalog when reporting a parent-course shelf change', () => {

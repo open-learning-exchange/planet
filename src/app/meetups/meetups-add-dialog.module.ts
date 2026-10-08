@@ -1,6 +1,8 @@
-import { MaterialModule } from '@shared/material.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { MaterialModule } from '@shared/material.module';
+
 import { MeetupsModule } from './meetups.module';
 import { MeetupsAddDialogComponent } from './meetups-add-dialog.component';
 

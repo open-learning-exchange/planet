@@ -2,28 +2,30 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CouchService } from '@shared/database/couchdb.service';
-import { UserService } from '@shared/auth/user.service';
-import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
-import { findDocuments } from '@shared/database/mango-queries';
-import { StateService } from '@shared/state.service';
-import { educationLevel } from '../users.constants';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
-import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
 import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } from '@angular/material/list';
-import { LanguageLabelComponent } from '@shared/language/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { AvatarComponent } from '@shared/ui/avatar.component';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
+
+import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
+import { educationLevel } from '../users.constants';
+import { TeamsService } from '../../teams/teams.service';
 
 @Component({
   selector: 'planet-users-profile',

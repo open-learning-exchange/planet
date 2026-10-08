@@ -7,14 +7,16 @@ import { By } from '@angular/platform-browser';
 import { MatSortHeader } from '@angular/material/sort';
 import { LOCALE_ID } from '@angular/core';
 import { vi } from 'vitest';
-import { TeamsViewFinancesComponent } from './teams-view-finances.component';
+
 import { CsvService } from '@shared/export/csv.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 import { StateService } from '@shared/state.service';
+
+import { TeamsViewFinancesComponent } from './teams-view-finances.component';
+import { TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 import { TeamsService } from './teams.service';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 

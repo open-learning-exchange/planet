@@ -1,6 +1,8 @@
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+
 import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+
 import { TeamsViewComponent } from './teams-view.component';
 
 describe('TeamsViewComponent task projections', () => {

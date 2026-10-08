@@ -1,17 +1,19 @@
 import { NgModule } from '@angular/core';
-import { TeamsRouterModule } from './teams-router.module';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 import { MaterialModule } from '@shared/material.module';
+import { PlanetDialogsModule } from '@shared/dialogs/planet-dialogs.module';
+import { SharedComponentsModule } from '@shared/shared-components.module';
+import { PlanetCalendarModule } from '@shared/calendar/planet-calendar.module';
+
+import { TeamsRouterModule } from './teams-router.module';
 import { TeamsComponent } from './teams.component';
 import { TeamsViewComponent } from './teams-view.component';
-import { PlanetDialogsModule } from '@shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
 import { ResourcesPickerDialogModule } from '../resources/resources-picker-dialog.module';
 import { ResourcesViewerDialogModule } from '../resources/view-resources/resources-viewer-dialog.module';
-import { SharedComponentsModule } from '@shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
-import { PlanetCalendarModule } from '@shared/calendar/planet-calendar.module';
-import { FormsModule } from '@angular/forms';
 import { TeamsMemberComponent } from './teams-member.component';
 import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { TeamsReportsDialogComponent } from './teams-reports/teams-reports-dialog.component';

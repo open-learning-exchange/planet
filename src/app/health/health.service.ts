@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { of, forkJoin, BehaviorSubject } from 'rxjs';
-import { CouchService } from '@shared/database/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
-import { UsersService } from '../users/users.service';
 import { stringToHex, ageFromBirthDate } from '@shared/utils';
 import { findDocuments } from '@shared/database/mango-queries';
+
+import { UsersService } from '../users/users.service';
 
 @Injectable({
   providedIn: 'root'

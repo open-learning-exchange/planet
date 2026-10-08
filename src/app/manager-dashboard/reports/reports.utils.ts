@@ -1,6 +1,7 @@
-import { millisecondsToDay } from '../../meetups/meetups.constants';
 import type { CsvService } from '@shared/export/csv.service';
 import { localizedGender } from '@shared/utils';
+
+import { millisecondsToDay } from '../../meetups/meetups.constants';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');

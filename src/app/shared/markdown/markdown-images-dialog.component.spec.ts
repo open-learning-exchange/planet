@@ -6,11 +6,12 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 
-import { MarkdownImagesDialogComponent } from './markdown-images-dialog.component';
-import { ResourcesService } from '../../resources/resources.service';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+
+import { MarkdownImagesDialogComponent } from './markdown-images-dialog.component';
+import { ResourcesService } from '../../resources/resources.service';
 
 describe('MarkdownImagesDialogComponent', () => {
   let component: MarkdownImagesDialogComponent;

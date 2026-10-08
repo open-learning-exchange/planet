@@ -5,27 +5,27 @@ import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogContent, MatDialogClose, MatDialogActions } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-
-import { CouchService } from '@shared/database/couchdb.service';
-import { NewsService } from '../news/news.service';
-import { TeamsService } from '../teams/teams.service';
-import { UserService } from '@shared/auth/user.service';
-import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
-import { ChallengesAnnouncementSuccessDialogComponent } from '@shared/challenges/challenges-announcement-dialog.component';
-import { ChallengesService } from '@shared/challenges/challenges.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
 } from '@angular/material/expansion';
 import { MatCheckbox } from '@angular/material/checkbox';
-
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { TeamsComponent } from '../teams/teams.component';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
+import { ChallengesAnnouncementSuccessDialogComponent } from '@shared/challenges/challenges-announcement-dialog.component';
+import { ChallengesService } from '@shared/challenges/challenges.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+import { NewsService } from '../news/news.service';
+import { TeamsService } from '../teams/teams.service';
+import { TeamsComponent } from '../teams/teams.component';
 
 interface TeamForm {
   message: FormControl<string>;

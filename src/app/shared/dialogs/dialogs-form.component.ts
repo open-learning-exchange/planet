@@ -1,13 +1,7 @@
 import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DialogsLoadingService } from './dialogs-loading.service';
-import { DialogsListService } from './dialogs-list.service';
-import { DialogsListComponent } from './dialogs-list.component';
-import { DialogGuardService } from './dialog-guard.service';
 import { map } from 'rxjs/operators';
-import { UserService } from '@shared/auth/user.service';
-import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { MatIcon } from '@angular/material/icon';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
@@ -15,21 +9,29 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+
+import { UserService } from '@shared/auth/user.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetRatingStarsComponent } from '@shared/ratings/planet-rating-stars.component';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
 import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '@shared/forms/file-upload.component';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
-import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { SubmitDirective } from './submit.directive';
 import { deepEqual } from '@shared/utils';
 import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
 import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+
+import { DialogsLoadingService } from './dialogs-loading.service';
+import { DialogsListService } from './dialogs-list.service';
+import { DialogsListComponent } from './dialogs-list.component';
+import { DialogGuardService } from './dialog-guard.service';
+import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
+import { SubmitDirective } from './submit.directive';
 
 @Component({
   templateUrl: './dialogs-form.component.html',

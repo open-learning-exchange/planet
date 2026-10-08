@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { DeviceInfoService } from '@shared/ui/device-info.service';
+
 import { AndroidAppDialogComponent } from './android-app-dialog.component';
 
 @Injectable({

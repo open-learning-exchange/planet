@@ -3,14 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { ResourcesService } from '../resources.service';
-import { StateService } from '@shared/state.service';
-import { UserService } from '@shared/auth/user.service';
-import { CouchService } from '@shared/database/couchdb.service';
-import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '@shared/export/csv.service';
-import { couchAttachmentPath } from '@shared/utils';
-import { formatResourceAttachmentSize, resourceAttachmentFilename } from '../resources.utils';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -20,6 +12,16 @@ import {
 } from '@angular/material/table';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+
+import { StateService } from '@shared/state.service';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '@shared/export/csv.service';
+import { couchAttachmentPath } from '@shared/utils';
+
+import { environment } from '../../../environments/environment';
+import { ResourcesService } from '../resources.service';
+import { formatResourceAttachmentSize, resourceAttachmentFilename } from '../resources.utils';
 
 @Component({
   selector: 'planet-resources-viewer',

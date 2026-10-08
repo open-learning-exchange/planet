@@ -1,16 +1,18 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { CouchService } from '@shared/database/couchdb.service';
-import { ManagerService } from '../manager-dashboard/manager.service';
-import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 import { NgClass } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import {
   MatList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
 } from '@angular/material/list';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
+import { ManagerService } from '../manager-dashboard/manager.service';
+import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-community-list',

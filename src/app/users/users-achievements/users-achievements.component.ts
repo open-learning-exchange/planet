@@ -1,23 +1,21 @@
 import { Component, Inject, LOCALE_ID, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { CouchService } from '@shared/database/couchdb.service';
-import { UserService } from '@shared/auth/user.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { UsersAchievementsService } from './users-achievements.service';
 import { catchError, auditTime, filter, map, shareReplay, switchMap, take, takeUntil } from 'rxjs/operators';
 import { throwError, combineLatest, defer, EMPTY, merge, of, Observable, Subject } from 'rxjs';
-import { StateService } from '@shared/state.service';
-import { CoursesService } from '../../courses/courses.service';
-import { environment } from '../../../environments/environment';
-import { CertificationsService } from '@shared/certifications/certifications.service';
-import { PdfService } from '@shared/export/pdf.service';
 import { NgClass, DatePipe, formatDate } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { PdfService } from '@shared/export/pdf.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
@@ -25,6 +23,10 @@ import { AvatarComponent } from '@shared/ui/avatar.component';
 import { fullName } from '@shared/utils';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
+
+import { UsersAchievementsService } from './users-achievements.service';
+import { CoursesService } from '../../courses/courses.service';
+import { environment } from '../../../environments/environment';
 
 interface AchievementsRoute {
   achievementsId: string | null;

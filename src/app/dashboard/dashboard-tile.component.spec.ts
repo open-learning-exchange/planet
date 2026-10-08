@@ -4,10 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CoursesService } from '../courses/courses.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
+
+import { CoursesService } from '../courses/courses.service';
 import { TeamsService } from '../teams/teams.service';
 import { DashboardTileComponent } from './dashboard-tile.component';
 

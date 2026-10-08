@@ -6,9 +6,11 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
 import { MatButton } from '@angular/material/button';
 import { DatePipe } from '@angular/common';
+
+import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
+
 import { TimePipe } from '../time.pipe';
 
 @Component({

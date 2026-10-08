@@ -3,21 +3,22 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent } from 
 import { Router } from '@angular/router';
 import { Subject, of, Observable, forkJoin } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
-
-import { findDocuments } from '@shared/database/mango-queries';
-import { CouchService } from '@shared/database/couchdb.service';
-import { CoursesService } from '../../courses/courses.service';
-import { NewsService } from '../../news/news.service';
-import { StateService } from '@shared/state.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { UserService } from '@shared/auth/user.service';
-import { ChallengesUserStatusService } from './challenges-user-status.service';
-import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { MatAnchor } from '@angular/material/button';
+
+import { findDocuments } from '@shared/database/mango-queries';
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { UserService } from '@shared/auth/user.service';
+
+import { CoursesService } from '../../courses/courses.service';
+import { NewsService } from '../../news/news.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { ChallengesUserStatusService } from './challenges-user-status.service';
+import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 import { ChallengesService, PlanetChallenge } from './challenges.service';
 
 @Component({

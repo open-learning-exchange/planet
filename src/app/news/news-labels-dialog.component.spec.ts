@@ -1,6 +1,8 @@
 import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+
 import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+
 import { NewsLabelsDialogComponent } from './news-labels-dialog.component';
 
 describe('NewsLabelsDialogComponent', () => {

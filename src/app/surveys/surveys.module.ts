@@ -5,11 +5,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '@shared/forms/planet-forms.module';
 import { PlanetDialogsModule } from '@shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '@shared/material.module';
+import { SharedComponentsModule } from '@shared/shared-components.module';
 
 import { SurveysComponent } from './surveys.component';
 import { ExamsModule } from '../exams/exams.module';
 import { SurveysRouterModule } from './surveys-router.module';
-import { SharedComponentsModule } from '@shared/shared-components.module';
 
 @NgModule({
   imports: [

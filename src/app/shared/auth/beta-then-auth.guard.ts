@@ -11,9 +11,10 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { iif, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { StateService } from '@shared/state.service';
+
 import { AuthGuard } from './auth.guard';
 import { UserService } from './user.service';
-import { StateService } from '@shared/state.service';
 
 @Injectable({
   providedIn: 'root'

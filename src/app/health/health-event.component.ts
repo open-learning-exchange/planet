@@ -1,31 +1,32 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HealthService } from './health.service';
-import { conditions, conditionAndTreatmentFields } from './health.constants';
-import { UserService } from '@shared/auth/user.service';
-import { StateService } from '@shared/state.service';
-import { CouchService } from '@shared/database/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { switchMap } from 'rxjs/operators';
 import { of, forkJoin, interval, race } from 'rxjs';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { debounce } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatCheckbox } from '@angular/material/checkbox';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-validator.directive';
 import { PlanetRoundDirective } from '@shared/forms/planet-round.directive';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
-
-import { MatCheckbox } from '@angular/material/checkbox';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+
+import { HealthService } from './health.service';
+import { conditions, conditionAndTreatmentFields } from './health.constants';
+import { CustomValidators } from '../validators/custom-validators';
 
 interface HealthEventFormControls {
   temperature: FormControl<number | null>;

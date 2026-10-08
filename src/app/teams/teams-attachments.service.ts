@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+
 import { CouchService } from '@shared/database/couchdb.service';
 import { AttachmentInputState, ExistingAttachment, PendingAttachment } from '@shared/forms/file-upload.component';
+
+import { environment } from '../../environments/environment';
 
 export interface TeamsAttachmentUploadResult {
   latestRev: string;

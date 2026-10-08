@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
+
 import { CouchService } from '@shared/database/couchdb.service';
 import { deepEqual } from '@shared/utils';
 import { StateService } from '@shared/state.service';

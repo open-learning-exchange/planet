@@ -1,11 +1,12 @@
 import { Component, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatButton } from '@angular/material/button';
+
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+
 import { ResourcesComponent } from './resources.component';
 import { ResourcesAddComponent } from './resources-add.component';
-import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { CdkScrollable } from '@angular/cdk/scrolling';
-
-import { MatButton } from '@angular/material/button';
 
 @Component({
   templateUrl: 'resources-picker-dialog.component.html',

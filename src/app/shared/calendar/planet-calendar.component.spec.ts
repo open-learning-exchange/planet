@@ -2,8 +2,9 @@ import { vi } from 'vitest';
 import { ElementRef } from '@angular/core';
 import { of, Subject, throwError } from 'rxjs';
 
-import { PlanetCalendarComponent } from './planet-calendar.component';
 import { styleVariables } from '@shared/utils';
+
+import { PlanetCalendarComponent } from './planet-calendar.component';
 
 describe('PlanetCalendarComponent read-only behavior', () => {
   const createComponent = () => {

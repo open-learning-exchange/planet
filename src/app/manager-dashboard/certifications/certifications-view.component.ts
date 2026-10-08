@@ -2,15 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { Subject, combineLatest } from 'rxjs';
 import { switchMap, takeUntil, auditTime } from 'rxjs/operators';
-import { CertificationsService } from '@shared/certifications/certifications.service';
-import { TableState, UsersTableComponent } from '../../users/users-table.component';
-import { CoursesService } from '../../courses/courses.service';
-import { UsersService } from '../../users/users.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 
+import { CertificationsService } from '@shared/certifications/certifications.service';
+
+import { TableState, UsersTableComponent } from '../../users/users-table.component';
+import { CoursesService } from '../../courses/courses.service';
+import { UsersService } from '../../users/users.service';
 import { CoursesComponent } from '../../courses/courses.component';
 
 @Component({

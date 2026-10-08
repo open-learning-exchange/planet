@@ -8,6 +8,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
+
 import { AvatarComponent } from '@shared/ui/avatar.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 

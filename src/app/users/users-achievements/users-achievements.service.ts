@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { CouchService } from '@shared/database/couchdb.service';
 
 @Injectable({

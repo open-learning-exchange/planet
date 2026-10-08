@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './login.component';
-import { LoginRouterModule } from './login-router.module';
+
 import { MaterialModule } from '@shared/material.module';
 import { PlanetFormsModule } from '@shared/forms/planet-forms.module';
+import { SharedComponentsModule } from '@shared/shared-components.module';
+
+import { LoginComponent } from './login.component';
+import { LoginRouterModule } from './login-router.module';
 import { LoginFormComponent } from './login-form.component';
 import { ConfigurationGuard } from '../configuration/configuration.guard';
 import { ConfigurationModule } from '../configuration/configuration.module';
-import { SharedComponentsModule } from '@shared/shared-components.module';
 import { LoginDialogComponent } from './login-dialog.component';
 
 @NgModule({

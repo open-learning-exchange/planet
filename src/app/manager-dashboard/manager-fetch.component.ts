@@ -2,9 +2,6 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
-import { CouchService } from '@shared/database/couchdb.service';
-import { StateService } from '@shared/state.service';
-import { ManagerService } from './manager.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -12,16 +9,21 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { findByIdInArray } from '@shared/utils';
-import { commonSortingDataAccessor, isAllVisibleSelected, toggleVisibleSelection } from '@shared/tables/table.helpers';
-import { SyncService } from '@shared/database/sync.service';
-import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { findByIdInArray } from '@shared/utils';
+import { commonSortingDataAccessor, isAllVisibleSelected, toggleVisibleSelection } from '@shared/tables/table.helpers';
+import { SyncService } from '@shared/database/sync.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
+import { ManagerService } from './manager.service';
 
 @Component({
   templateUrl: './manager-fetch.component.html',
