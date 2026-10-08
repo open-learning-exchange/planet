@@ -39,6 +39,13 @@
         <planet-markdown-textbox class="full-width" [formControl]="stepForm.controls.description" imageGroup="community"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      @if (activeStep?.exam?.questions?.length) {
+        <div class="step-progression-setting">
+          <mat-slide-toggle formControlName="passingRequired" color="primary" class="km-step-passing-required-toggle">
+            <span i18n>Require passing score to unlock next step</span>
+          </mat-slide-toggle>
+        </div>
+      }
     </form>
     @if (activeStep?.resources?.length) {
       <span i18n class="margin-lr-4">Attached Resources: </span>
