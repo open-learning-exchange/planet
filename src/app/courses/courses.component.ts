@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
+import { map, switchMap, takeUntil, catchError, finalize } from 'rxjs/operators';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
   commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid,
@@ -630,7 +630,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   sendCourse() {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
         const childType = {
           center: selected.length > 1 ? 'nations' : 'nation',
           nation: selected.length > 1 ? 'communities' : 'community'

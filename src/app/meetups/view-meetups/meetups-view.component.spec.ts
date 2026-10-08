@@ -21,6 +21,7 @@ describe('MeetupsViewComponent authorization', () => {
       { get: vi.fn(() => ({ name: 'ann' })) } as any,
       {} as any,
       {} as any,
+      {} as any,
       {} as any
     );
     component.meetupDetail = meetupDetail;

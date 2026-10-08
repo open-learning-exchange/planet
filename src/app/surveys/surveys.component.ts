@@ -9,8 +9,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, Observable, Subject, throwError } from 'rxjs';
-import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { EMPTY, forkJoin, Observable, Subject, throwError } from 'rxjs';
+import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/database/couchdb.service';
 import { AiChatService } from '../shared/ai/ai-chat.service';
 import {
@@ -465,22 +465,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   adoptSurvey(survey) {
-    this.couchService.get('teams/' + this.routeTeamId).subscribe(
-      team => {
-        this.createTeamSurveyFromSource(survey, {
-          _id: team._id,
-          name: team.name
-        }).subscribe(() => {
-          this.planetMessageService.showMessage($localize`Survey adopted`);
-          this.loadSurveys();
-        }, () => {
-          this.planetMessageService.showAlert($localize`Error adopting survey.`);
-        });
-      },
-      error => {
+    this.dialogsLoadingService.start();
+    this.couchService.get('teams/' + this.routeTeamId).pipe(
+      catchError(error => {
         this.planetMessageService.showAlert($localize`Error adopting survey: ${error.message}`);
-      }
-    );
+        return EMPTY;
+      }),
+      switchMap(team => this.createTeamSurveyFromSource(survey, {
+        _id: team._id,
+        name: team.name
+      })),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
+      this.planetMessageService.showMessage($localize`Survey adopted`);
+      this.loadSurveys();
+    }, () => {
+      this.planetMessageService.showAlert($localize`Error adopting survey.`);
+    });
   }
 
   sendSurvey(survey: any, users: any[]): Observable<void> {

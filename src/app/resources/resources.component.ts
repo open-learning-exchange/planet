@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, finalize } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
 import { CouchService } from '../shared/database/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -525,7 +525,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendResource() {
     return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
         const childType = {
           center: selectedPlanets.length > 1 ? 'nations' : 'nation',
           nation: selectedPlanets.length > 1 ? 'communities' : 'community'

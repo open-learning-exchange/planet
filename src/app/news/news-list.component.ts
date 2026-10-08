@@ -4,7 +4,7 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -471,8 +471,15 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
       });
     } else {
-      const okClick = (planets) =>
-        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog?.close());
+      const okClick = (planets) => {
+        this.dialogsLoadingService.start();
+        this.newsService.shareNews(news, planets.map(planet => planet.doc)).pipe(
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(
+          () => this.shareDialog?.close(),
+          () => this.planetMessageService.showAlert($localize`There was a problem sharing this message.`)
+        );
+      };
       this.dialogGuard.open('share-news', () => of(this.dialog.open(CommunityListDialogComponent, {
         data: {
           okClick,
