@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, finalize } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
 import { CouchService } from '../shared/database/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -236,12 +236,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             resource.doc.private !== true)
       );
       this.resources.paginator = this.paginator;
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    }, () => {
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    });
+      this.stopLoading();
+    }, () => this.stopLoading());
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
@@ -275,6 +271,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.clear();
   }
 
+  // The listener emits on every update, so only the first emission ends the start() in ngOnInit
+  private stopLoading() {
+    if (this.isLoading) {
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }
+  }
+
   ngAfterViewInit() {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
@@ -284,6 +288,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.stopLoading();
     if (this.filterDialogRef) {
       this.filterDialogRef.close();
     }
@@ -520,7 +525,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendResource() {
     return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
         const childType = {
           center: selectedPlanets.length > 1 ? 'nations' : 'nation',
           nation: selectedPlanets.length > 1 ? 'communities' : 'community'

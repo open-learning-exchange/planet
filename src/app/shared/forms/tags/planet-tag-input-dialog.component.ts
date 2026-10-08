@@ -18,6 +18,7 @@ import { mapToArray, isInMap } from '../../utils';
 import { DialogsLoadingService } from '../../dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../dialogs/dialogs-prompt.component';
 import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
@@ -226,14 +227,17 @@ export class PlanetTagInputDialogComponent {
   addLabel() {
     if (this.addTagForm.valid) {
       const { name, attachedTo } = this.addTagForm.getRawValue();
-      this.tagsService.updateTag({ name, attachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
+      this.dialogsLoadingService.start();
+      this.tagsService.updateTag({ name, attachedTo, db: this.data.db, docType: 'definition' }).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe((res) => {
         this.newTagInfo = { id: res[0].id, parentId: attachedTo };
         this.planetMessageService.showMessage($localize`New collection added`);
         this.forEachTagControl(this.addTagForm, (_, control) => control.updateValueAndValidity());
         this.data.initTags();
         this.addTagForm.controls.name.reset('');
         this.addTagForm.controls.attachedTo.reset('');
-      });
+      }, () => this.planetMessageService.showAlert($localize`There was a problem adding this collection.`));
     } else {
       this.forEachTagControl(this.addTagForm, (_, control) => control.markAsTouched({ onlySelf: true }));
     }
