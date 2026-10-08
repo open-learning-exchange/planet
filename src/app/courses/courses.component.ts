@@ -259,12 +259,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    }, () => {
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    });
+      this.stopLoading();
+    }, () => this.stopLoading());
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
@@ -291,6 +287,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnDestroy() {
+    this.stopLoading();
     if (this.filterDialogRef) {
       this.filterDialogRef.close();
     }
@@ -313,6 +310,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   private isInCertification(courseId: string): boolean {
     return this.certifications.some(certification => certification.courseIds?.includes(courseId));
+  }
+
+  // The listener emits on every update, so only the first emission ends the constructor's start()
+  private stopLoading() {
+    if (this.isLoading) {
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }
   }
 
   getCourses() {
