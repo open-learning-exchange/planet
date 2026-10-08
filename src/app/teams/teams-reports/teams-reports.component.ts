@@ -24,11 +24,13 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-sp
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix, MatPrefix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from '../teams-table-pdf-export.service';
 import { filterSpecificFieldsHybrid } from '../../shared/tables/table.helpers';
+import { endOfDay } from '../../manager-dashboard/reports/reports.utils';
 
 interface NewReportForm {
   _id?: string;
@@ -65,7 +67,12 @@ interface NewReportForm {
     MatFormField,
     MatLabel,
     MatSuffix,
+    MatPrefix,
+    MatError,
     MatInput,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
     FormsModule,
     DatePipe,
     CurrencyPipe
@@ -83,6 +90,13 @@ export class TeamsReportsComponent implements OnChanges {
   reportCards: any[] = [];
   filteredCards: any[] = [];
   filter = '';
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  labelFilter = '';
+
+  get hasActiveFilters(): boolean {
+    return !!(this.startDate || this.endDate || this.labelFilter.trim() || this.filter.trim());
+  }
 
   ngOnChanges() {
     this.reportCards = (this.reports || [])
@@ -103,13 +117,61 @@ export class TeamsReportsComponent implements OnChanges {
           isLoss: net < 0
         };
       });
-    this.applyFilter(this.filter);
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    const searchText = (this.labelFilter || this.filter || '').trim();
+    const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
+
+    const fromDate = this.startDate ? this.startDate.getTime() : -Infinity;
+    const toDate = this.endDate ? endOfDay(this.endDate).getTime() : Infinity;
+
+    this.filteredCards = this.reportCards.filter(card => {
+      const report = card.report;
+      const reportStart = typeof report.startDate === 'number' ? report.startDate : new Date(report.startDate).getTime();
+      const reportEnd = typeof report.endDate === 'number' ? report.endDate : new Date(report.endDate).getTime();
+
+      if (fromDate !== -Infinity) {
+        const end = !Number.isNaN(reportEnd) ? reportEnd : reportStart;
+        if (!Number.isNaN(end) && end < fromDate) {
+          return false;
+        }
+      }
+
+      if (toDate !== Infinity) {
+        const start = !Number.isNaN(reportStart) ? reportStart : reportEnd;
+        if (!Number.isNaN(start) && start > toDate) {
+          return false;
+        }
+      }
+
+      if (searchText && !matchesFilter(card, searchText)) {
+        return false;
+      }
+
+      return true;
+    });
   }
 
   applyFilter(filter: string) {
     this.filter = filter;
-    const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
-    this.filteredCards = this.reportCards.filter(card => matchesFilter(card, filter));
+    this.labelFilter = filter;
+    this.applyFilters();
+  }
+
+  clearLabelFilter() {
+    this.labelFilter = '';
+    this.filter = '';
+    this.applyFilters();
+  }
+
+  clearAllFilters() {
+    this.startDate = undefined;
+    this.endDate = undefined;
+    this.labelFilter = '';
+    this.filter = '';
+    this.applyFilters();
   }
 
   private searchableText(report) {
@@ -386,7 +448,7 @@ export class TeamsReportsComponent implements OnChanges {
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
-    const filter = this.filter.trim();
+    const filter = (this.labelFilter || this.filter || '').trim();
     return {
       data,
       title: filter ?

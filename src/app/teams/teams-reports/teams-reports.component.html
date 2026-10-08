@@ -9,15 +9,36 @@
         <mat-icon>description</mat-icon>
         <span><strong>{{ filteredCards.length }}</strong>&nbsp;<ng-container i18n>reports</ng-container></span>
       </span>
-      @if (reportCards.length > 0 || filter) {
-        <mat-form-field subscriptSizing="dynamic" class="reports-filter font-size-1">
-          <mat-label i18n>Filter by label or date...</mat-label>
-          <input matInput [ngModel]="filter" (ngModelChange)="applyFilter($event)">
-          <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="filter ? 'visible' : 'hidden'"
-            matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-            <mat-icon>close</mat-icon>
-          </button>
+      @if (reportCards.length > 0 || hasActiveFilters) {
+        <mat-form-field appearance="outline" subscriptSizing="fixed" class="reports-date-field">
+          <mat-label i18n>Start date</mat-label>
+          <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="applyFilters()" [max]="endDate">
+          <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
+          <mat-datepicker #dateFilterStart></mat-datepicker>
+          @if (startDate && endDate && startDate > endDate) {
+            <mat-error i18n>Start date must be before end date</mat-error>
+          }
         </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="fixed" class="reports-date-field">
+          <mat-label i18n>End date</mat-label>
+          <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="applyFilters()" [min]="startDate">
+          <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
+          <mat-datepicker #dateFilterEnd></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="fixed" class="reports-label-field font-size-1">
+          <mat-label i18n>Search by label...</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [(ngModel)]="labelFilter" (ngModelChange)="applyFilters()">
+          @if (labelFilter) {
+            <button type="button" mat-icon-button matSuffix (click)="clearLabelFilter()"
+              matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+        @if (hasActiveFilters) {
+          <button class="reports-reset-btn" mat-button color="primary" (click)="clearAllFilters()" i18n>Clear Filters</button>
+        }
       }
       <span class="spacer"></span>
       @if (filteredCards.length > 0) {
@@ -39,7 +60,11 @@
       <p class="reports-empty" i18n>No reports available at the moment.</p>
     }
     @if (reportCards.length > 0 && filteredCards.length === 0) {
-      <p class="reports-empty" i18n>No reports match your search.</p>
+      <div class="reports-empty-state">
+        <mat-icon class="reports-empty-icon">search_off</mat-icon>
+        <p class="reports-empty" i18n>No reports match your filters.</p>
+        <button mat-stroked-button color="primary" (click)="clearAllFilters()" i18n>Clear Filters</button>
+      </div>
     }
     @if (filteredCards.length > 0) {
       <div class="reports-grid">

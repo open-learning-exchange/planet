@@ -100,6 +100,100 @@ describe('TeamsReportsComponent', () => {
 
       expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'a', 'e' ]);
     });
+
+    it('filters reports by start date bound', () => {
+      component.reports = [
+        report({ _id: 'jan', startDate: Date.UTC(2026, 0, 1), endDate: Date.UTC(2026, 0, 31) }),
+        report({ _id: 'feb', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(Date.UTC(2026, 1, 1));
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'mar', 'feb' ]);
+    });
+
+    it('filters reports by end date bound', () => {
+      component.reports = [
+        report({ _id: 'jan', startDate: Date.UTC(2026, 0, 1), endDate: Date.UTC(2026, 0, 31) }),
+        report({ _id: 'feb', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.endDate = new Date(Date.UTC(2026, 1, 15));
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'feb', 'jan' ]);
+    });
+
+    it('filters reports overlapping both start and end date bounds', () => {
+      component.reports = [
+        report({ _id: 'jan', startDate: Date.UTC(2026, 0, 1), endDate: Date.UTC(2026, 0, 31) }),
+        report({ _id: 'feb', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(Date.UTC(2026, 1, 1));
+      component.endDate = new Date(Date.UTC(2026, 1, 28));
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'feb' ]);
+    });
+
+    it('combines date bounds and label search filtering', () => {
+      component.reports = [
+        report({ _id: 'feb-audit', label: 'Audit', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'feb-sales', label: 'Sales', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28) }),
+        report({ _id: 'mar-audit', label: 'Audit', startDate: Date.UTC(2026, 2, 1), endDate: Date.UTC(2026, 2, 31) })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(Date.UTC(2026, 1, 1));
+      component.endDate = new Date(Date.UTC(2026, 1, 28));
+      component.labelFilter = 'Audit';
+      component.applyFilters();
+
+      expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'feb-audit' ]);
+    });
+
+    it('clears all filters and restores full report list', () => {
+      component.reports = [
+        report({ _id: 'a', label: 'Q1' }),
+        report({ _id: 'b', label: 'Q2' })
+      ];
+      component.ngOnChanges();
+
+      component.startDate = new Date(2026, 0, 1);
+      component.endDate = new Date(2026, 0, 31);
+      component.labelFilter = 'Q1';
+      component.applyFilters();
+
+      expect(component.hasActiveFilters).toBe(true);
+      expect(component.filteredCards.length).toBe(1);
+
+      component.clearAllFilters();
+
+      expect(component.hasActiveFilters).toBe(false);
+      expect(component.startDate).toBeUndefined();
+      expect(component.endDate).toBeUndefined();
+      expect(component.labelFilter).toBe('');
+      expect(component.filteredCards.length).toBe(2);
+    });
+
+    it('clears only label search when clearLabelFilter is called', () => {
+      component.startDate = new Date(2026, 0, 1);
+      component.labelFilter = 'Q1';
+      component.applyFilters();
+
+      component.clearLabelFilter();
+
+      expect(component.labelFilter).toBe('');
+      expect(component.startDate).toBeDefined();
+    });
   });
 
   it('lists the latest period first, then the most recently created', () => {
