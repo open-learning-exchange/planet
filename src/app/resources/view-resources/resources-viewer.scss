@@ -31,12 +31,17 @@ $full-height: 100cqh;
       width: calc(#{v.$dashboard-height} + 20rem);
     }
 
+    // Material's dialog content cap, less its padding
+    img, video {
+      display: block;
+      max-height: calc(65vh - 40px);
+    }
+
     img {
-      max-height: 100%;
       max-width: min(100%, calc(#{v.$dashboard-height} + 20rem));
     }
 
-    video, .csv-container {
+    .csv-container {
       max-height: 100%;
     }
 
