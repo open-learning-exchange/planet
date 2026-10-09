@@ -31,13 +31,13 @@ import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/tags/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/dialogs/submit.directive';
 import { FileUploadComponent, AttachmentInputState, ExistingAttachment, PendingAttachment } from '../../shared/forms/file-upload.component';
-import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
+import {
+  attachmentStubs, couchAttachmentUrl, normalizeImage, NormalizedImage, UNPROCESSABLE_IMAGE_ERROR, withImageAttachment
+} from '../../shared/utils';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-
-const unprocessableCoverError = 'unprocessable-cover';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -348,41 +348,20 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     }
     const newCourse: any = {
       ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps),
-      ...this.documentInfo
+      ...this.documentInfo,
+      coverFileName: this.savedCourse?.coverFileName,
+      _attachments: this.savedCourse?._attachments
     };
     const addedCover = this.coverState?.added[0];
-    const retainedCover = this.coverState?.retained[0];
-    const existingAttachmentNames = Object.keys(this.savedCourse?._attachments || {});
-    (addedCover ? from(this.normalizedCover(addedCover.file, existingAttachmentNames)) : of(null)).pipe(
-      switchMap(normalizedCover => {
-        if (addedCover && !normalizedCover) {
-          throw new Error(unprocessableCoverError);
-        }
-        if (normalizedCover) {
-          return this.saveCourseWithNewCover(newCourse, normalizedCover);
-        }
-        if (retainedCover && this.savedCourse?._attachments?.[retainedCover.name]) {
-          newCourse.coverFileName = retainedCover.name;
-          newCourse._attachments = { ...this.savedCourse._attachments };
-        } else {
-          const attachments = { ...(this.savedCourse?._attachments || {}) };
-          if (this.savedCourse?.coverFileName) {
-            delete attachments[this.savedCourse.coverFileName];
-          }
-          delete newCourse.coverFileName;
-          if (Object.keys(attachments).length) {
-            newCourse._attachments = attachments;
-          }
-        }
-        return this.saveCourseDocument(newCourse);
-      })
+    from(withImageAttachment(newCourse, 'coverFileName', this.coverState, (file, usedNames) => this.normalizedCover(file, usedNames))).pipe(
+      switchMap(course => this.saveCourseDocument(course))
     ).subscribe(([ courseRes ]) => {
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, courseRes, shouldNavigate);
       this.preserveCoverStateUntilSubmit = false;
     }, (err) => {
       this.preserveCoverStateUntilSubmit = false;
-      if (err?.message === unprocessableCoverError && addedCover && this.rejectAddedCover(addedCover)) {
+      if (err?.message === UNPROCESSABLE_IMAGE_ERROR && addedCover && this.rejectAddedCover(addedCover)) {
         return;
       }
       this.planetMessageService.showAlert($localize`There was an error saving this course`);
@@ -402,39 +381,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       ])
     )
     );
-  }
-
-  private saveCourseWithNewCover(course: any, normalizedCover: NormalizedImage) {
-    const existingCourseId = this.documentInfo._id;
-    const existingCourseRev = this.documentInfo._rev;
-    const courseWithoutCover = { ...course };
-    delete courseWithoutCover.coverFileName;
-    const upload$ = existingCourseId && existingCourseRev ?
-      this.couchService.putAttachment(
-        `${this.dbName}/${existingCourseId}/${normalizedCover.fileName}?rev=${existingCourseRev}`,
-        normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
-      ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${existingCourseId}`))) :
-      this.couchService.updateDocument(
-        this.dbName, { ...courseWithoutCover, updatedDate: this.couchService.datePlaceholder }
-      ).pipe(
-        switchMap((res: any) => this.couchService.putAttachment(
-          `${this.dbName}/${res.id}/${normalizedCover.fileName}?rev=${res.rev}`,
-          normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
-        ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${res.id}`))))
-      );
-    return upload$.pipe(switchMap((uploadedDoc: any) => {
-      const attachments = { ...(uploadedDoc._attachments || {}) };
-      if (this.savedCourse?.coverFileName && this.savedCourse.coverFileName !== normalizedCover.fileName) {
-        delete attachments[this.savedCourse.coverFileName];
-      }
-      return this.saveCourseDocument({
-        ...course,
-        _id: uploadedDoc._id,
-        _rev: uploadedDoc._rev,
-        coverFileName: normalizedCover.fileName,
-        _attachments: attachments
-      });
-    }));
   }
 
   onSubmit(shouldNavigate = true) {
@@ -462,6 +408,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.isSaved = false;
     this.courseId = response.id;
     this.setDocumentInfo(response.doc);
+    this.savedCourse = { ...response.doc, _attachments: attachmentStubs(response.doc._attachments) };
+    this.coverUploadComponent?.clear();
+    this.setExistingCover(this.savedCourse);
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
     if (this.pageType === 'Add') {
