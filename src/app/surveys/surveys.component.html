@@ -50,9 +50,9 @@
     <mat-table #table class="responsive-table min-width-table" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
+            [checked]="selection.hasValue() && pageSelection.isAllSelected()"
+            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -92,7 +92,7 @@
               <div [matTooltip]="getActionTooltip(element, 'edit')">
                 <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)" [disabled]="element.isArchived">
                   <mat-icon>edit</mat-icon>
-                  @if (!isMobile) {
+                  @if (!isMobile()) {
                     <label i18n> Edit</label>
                   }
                 </button>
@@ -102,7 +102,7 @@
               <div [matTooltip]="getActionTooltip(element, 'send')">
                 <button mat-raised-button color="primary" [matMenuTriggerFor]="sendMenu" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
                   <mat-icon>send</mat-icon>
-                  @if (!isMobile) {
+                  @if (!isMobile()) {
                     <label i18n> Send</label>
                   }
                 </button>
@@ -115,7 +115,7 @@
             <div [matTooltip]="getActionTooltip(element, 'record')">
               <button mat-raised-button color="primary" (click)="recordSurvey(element)" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
                 <mat-icon>fiber_manual_record</mat-icon>
-                @if (!isMobile) {
+                @if (!isMobile()) {
                   <label i18n> Record</label>
                 }
               </button>
@@ -124,7 +124,7 @@
               <div [matTooltip]="getActionTooltip(element, 'public')">
                 <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="!element.questions?.length || element.isArchived">
                   <mat-icon>{{ element.publicAccess === true ? 'link' : 'public' }}</mat-icon>
-                  @if (!isMobile) {
+                  @if (!isMobile()) {
                     @if (element.publicAccess === true) {
                       <label i18n>Copy Public Link</label>
                     } @else {
@@ -138,10 +138,10 @@
               <div [matTooltip]="getActionTooltip(element, 'revoke')">
                 <button mat-raised-button color="accent" type="button" (click)="revokeSurveyPublicAccess(element)" [disabled]="element.isArchived">
                   <mat-icon>close</mat-icon>
-                  @if (!isMobile) {
+                  @if (!isMobile()) {
                     <label i18n>Revoke Public Link</label>
                   }
-                  @if (isMobile) {
+                  @if (isMobile()) {
                     <label i18n>Revoke</label>
                   }
                 </button>
@@ -151,7 +151,7 @@
               <div [matTooltip]="getActionTooltip(element, 'archive')">
                 <button mat-raised-button color="primary" (click)="archiveSurvey(element)" [disabled]="element.isArchived">
                   <mat-icon>archive</mat-icon>
-                  @if (!isMobile) {
+                  @if (!isMobile()) {
                     <label i18n> Archive</label>
                   }
                 </button>
@@ -161,7 +161,7 @@
               <div [matTooltip]="getActionTooltip(element, 'submissions')">
                 <button mat-raised-button color="primary" (click)="viewSurveySubmissions(element)" [disabled]="!element.questions?.length || !element.taken">
                   <mat-icon>insert_drive_file</mat-icon>
-                  @if (!isMobile) {
+                  @if (!isMobile()) {
                     <label i18n> Submissions</label>
                   }
                 </button>
@@ -172,7 +172,7 @@
             <div [matTooltip]="getActionTooltip(element, 'adopt')">
               <button mat-raised-button color="primary" (click)="adoptSurvey(element)">
                 <mat-icon>get_app</mat-icon>
-                @if (!isMobile) {
+                @if (!isMobile()) {
                   <label i18n> Adopt</label>
                 }
               </button>
@@ -182,7 +182,7 @@
             <div [matTooltip]="getActionTooltip(element, 'export')">
               <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu">
                 <mat-icon>move_to_inbox</mat-icon>
-                @if (!isMobile) {
+                @if (!isMobile()) {
                   <label i18n> Export</label>
                 }
               </button>
@@ -206,7 +206,7 @@
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
+      (page)="pageSelection.onPageChange()">
     </mat-paginator>
   </div>
 </div>

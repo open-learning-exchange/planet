@@ -25,6 +25,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 - `cd gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.
+- `npm test` — type-check, then Vitest. Install root dependencies first; Vitest resolves from the root.
 - `npm run lint` / `npm run lint-fix` — uses legacy ESLint config (`ESLINT_USE_FLAT_CONFIG=false`); the root app uses flat config (`eslint.config.mjs`), so don't try to unify them casually.
 - Only one `gateway` instance can bind the port at a time; stop the Docker gateway container before `npm run dev`.
 
@@ -46,7 +47,7 @@ Planet Learning is an Angular 20 + CouchDB learning platform. There are two tier
   - `database/` — `couchdb.service.ts` (HTTP wrapper; every request goes through `setOpts` / `couchDBReq`, which injects `withCredentials` and surfaces 403s via `PlanetMessageService` — prefer it over raw `HttpClient`), `mango-queries.ts`, `sync.service.ts`, and the PouchDB mirror `pouch.service.ts` + `pouch-auth.service.ts` for offline-capable data (no databases are currently registered for mirroring; register new offline databases in the `databases` Set so `configureDBs()` creates the local mirror).
   - `dialogs/` — the generic dialog framework (form, prompt, view, list, loading); only these take the `Dialogs` prefix. Put a dialog tied to a capability in that capability's folder, even when other features open it, and name it after that capability (`challenges/challenges-announcement-dialog.component.ts`, `chat/chat-share-dialog.component.ts`).
   - `export/` — CSV and PDF generation. `forms/` — inputs and validation directives, with `tags/` for the tag inputs.
-  - `language/`, `markdown/`, `tables/`, `text/` (formatting pipes and text overflow detection), `ui/` (display primitives, `device-info.service.ts` breakpoints and `planet-message.service.ts`), `unsaved-changes/`.
+  - `language/`, `markdown/`, `tables/`, `text/` (formatting pipes), `ui/` (display primitives, `device-info.service.ts` breakpoints and `planet-message.service.ts`), `unsaved-changes/`.
   - Only `utils.ts`, `state.service.ts`, `material.module.ts` and `shared-components.module.ts` stay at the root.
   - Code that belongs to one feature lives in that feature even when others use it, as `news/` holds the voice labels that `community/` and `teams/` open.
   - Per `Style-Guide.md`, keep each bucket under ~9 distinct concerns; split it rather than letting it sprawl.

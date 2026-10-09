@@ -2,6 +2,7 @@ import * as papa from 'papaparse';
 import { of } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 
+import { ExportToCsv } from 'export-to-csv/build';
 import { CSV_PREVIEW_MAX_ROWS, CsvService } from './csv.service';
 import { MarkdownRenderService } from '../markdown/markdown-render.service';
 
@@ -126,6 +127,38 @@ describe('CsvService', () => {
 
     it('keeps text literally when the data is not Markdown', () => {
       expect(exportedRows([ { Label: '**Urgent**' }, { Label: '<Q1>' } ], false)).toEqual([ { Label: '**Urgent**' }, { Label: '<Q1>' } ]);
+    });
+  });
+
+  describe('generated CSV', () => {
+    afterEach(() => vi.restoreAllMocks());
+
+    const exportedCsv = (run: () => void) => {
+      const generateCsv = ExportToCsv.prototype.generateCsv;
+      let csv = '';
+      vi.spyOn(ExportToCsv.prototype, 'generateCsv').mockImplementation(function(this: ExportToCsv, rows) {
+        csv = generateCsv.call(this, rows, true);
+      });
+      run();
+      // export-to-csv ends the title with "\r\n\n", which papaparse can't split on one newline style
+      return papa.parse(csv.replace(/\r\n/g, '\n'), { skipEmptyLines: true }).data;
+    };
+
+    it('neutralizes cells a spreadsheet would run as formulas', () => {
+      const labels = [ '=1+1', '@SUM(A1)', '-2+3', '-500', 'Q1' ];
+
+      const csv = exportedCsv(() => service.exportCSV({ data: labels.map(label => ({ '=Label': label })), title: 'Report' }));
+
+      expect(csv).toEqual([ [ 'Report' ], [ '\'=Label' ], [ '\'=1+1' ], [ '\'@SUM(A1)' ], [ '\'-2+3' ], [ '-500' ], [ 'Q1' ] ]);
+    });
+
+    it('keeps each title line and header in one cell', () => {
+      const csv = exportedCsv(() => service.exportCSV({
+        data: [ { 'Question 1: yes, "no"': 'yes' } ],
+        title: 'Intro,=1+1, "Basics"\n=HYPERLINK("x")'
+      }));
+
+      expect(csv).toEqual([ [ 'Intro,=1+1, "Basics"' ], [ '\'=HYPERLINK("x")' ], [ 'Question 1: yes, "no"' ], [ 'yes' ] ]);
     });
   });
 

@@ -3,6 +3,7 @@ import { ElementRef } from '@angular/core';
 import { of, Subject, throwError } from 'rxjs';
 
 import { PlanetCalendarComponent } from './planet-calendar.component';
+import { DialogGuardService } from '../dialogs/dialog-guard.service';
 import { styleVariables } from '../utils';
 
 describe('PlanetCalendarComponent read-only behavior', () => {
@@ -22,7 +23,8 @@ describe('PlanetCalendarComponent read-only behavior', () => {
       new ElementRef(document.createElement('div')),
       { runOutsideAngular: (fn: () => void) => fn() } as any,
       { canEditMeetup: () => false } as any,
-      {} as any
+      {} as any,
+      new DialogGuardService()
     );
     component.editable = false;
 
@@ -63,6 +65,29 @@ describe('PlanetCalendarComponent read-only behavior', () => {
     expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(dialog.open).not.toHaveBeenCalled();
   });
+
+  it('opens one add-event dialog for clicks made while the auth check is pending', () => {
+    const { authGuard, component, dialog } = createComponent();
+    const select = component.calendarOptions.select as (event: any) => void;
+    const selection = { start: new Date('2026-01-01'), end: new Date('2026-01-02') };
+    const auth = new Subject<boolean>();
+    const closed = new Subject<void>();
+    authGuard.checkAuthenticationStatus.mockReturnValueOnce(auth);
+    dialog.open.mockReturnValue({ afterClosed: () => closed });
+    component.editable = true;
+
+    select(selection);
+    select(selection);
+    auth.next(true);
+
+    expect(authGuard.checkAuthenticationStatus).toHaveBeenCalledOnce();
+    expect(dialog.open).toHaveBeenCalledOnce();
+
+    closed.next();
+    select(selection);
+
+    expect(dialog.open).toHaveBeenCalledTimes(2);
+  });
 });
 
 describe('PlanetCalendarComponent', () => {
@@ -93,7 +118,8 @@ describe('PlanetCalendarComponent', () => {
     new ElementRef(element),
     { runOutsideAngular: (fn: () => void) => fn() } as any,
     meetupService,
-    notificationsService
+    notificationsService,
+    {} as any
   );
 
   const authorized = { canEditMeetup: () => true };

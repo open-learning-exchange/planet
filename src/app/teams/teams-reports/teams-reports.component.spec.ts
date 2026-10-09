@@ -28,7 +28,8 @@ describe('TeamsReportsComponent', () => {
       {} as any,
       { configuration: { currency: {} } } as any as StateService,
       {} as any,
-      'en-US'
+      'en-US',
+      {} as any
     );
   });
 

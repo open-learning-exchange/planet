@@ -1,5 +1,5 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
-  <mat-drawer #drawer mode="side" [opened]="deviceType === deviceTypes.DESKTOP || deviceType === deviceTypes.TABLET">
+  <mat-drawer #drawer mode="side" [opened]="!isMobile()">
 
     <div class="header-container">
       <div class="header flex-vertical-center">
@@ -7,7 +7,7 @@
           <mat-icon>add</mat-icon>
           <span i18n>Start New Chat</span>
         </button>
-        @if (deviceType === deviceTypes.DESKTOP) {
+        @if (deviceType() === deviceTypes.DESKTOP) {
           <button class="icon-button" mat-mini-fab (click)="drawer.toggle()">
             <mat-icon class="material-icons">chevron_left</mat-icon>
           </button>
@@ -101,7 +101,7 @@
     <div class="window-box">
       <div class="expand-button">
         <button mat-mini-fab (click)="drawer.toggle()">
-          <mat-icon class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+          <mat-icon class="material-icons">{{ drawer.opened && deviceType() !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</mat-icon>
         </button>
       </div>
       <planet-chat-window [isEditing]="isEditing"></planet-chat-window>

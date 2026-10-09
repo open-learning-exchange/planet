@@ -129,7 +129,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reportsCount = 0;
   financesCount = 0;
   configuration = this.stateService.configuration;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   get requestBadgeDescription(): string {
@@ -155,11 +156,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private stateService: StateService,
     private tasksService: TasksService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
@@ -605,10 +602,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.planetMessageService.showMessage(
-        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe({
+      next: (updatedTeam) => {
+        this.team = updatedTeam;
+        this.planetMessageService.showMessage(
+          (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      },
+      error: (err) => this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err))
     });
   }
 
@@ -807,6 +807,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       autoFocus: false
     });
+  }
+
+  coverImageUrl(): string {
+    return this.teamsService.coverImageUrl(this.team);
   }
 
 }

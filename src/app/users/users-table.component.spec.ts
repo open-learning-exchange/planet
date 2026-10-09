@@ -79,14 +79,14 @@ describe('UsersTableComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.renderedData).toEqual(users.slice(0, 50));
-    component.masterToggle();
+    expect(component.pageSelection.renderedRows).toEqual(users.slice(0, 50));
+    component.pageSelection.masterToggle();
     component.paginator.nextPage();
     fixture.detectChanges();
     await fixture.whenStable();
 
     expect(component.paginator.pageIndex).toBe(1);
-    expect(component.renderedData).toEqual(users.slice(50));
+    expect(component.pageSelection.renderedRows).toEqual(users.slice(50));
     expect(component.selection.selected).toEqual(users.slice(0, 50).map(row => row.doc));
   });
 

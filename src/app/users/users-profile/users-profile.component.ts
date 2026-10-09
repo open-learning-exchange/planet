@@ -8,7 +8,8 @@ import { UsersAchievementsService } from '../users-achievements/users-achievemen
 import { findDocuments } from '../../shared/database/mango-queries';
 import { StateService } from '../../shared/state.service';
 import { educationLevel } from '../users.constants';
-import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
+import { userDocPath, userRelationship } from '../users.utils';
+import { DeviceInfoService } from '../../shared/ui/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
@@ -59,7 +60,6 @@ import { FullNamePipe } from '../../shared/text/full-name.pipe';
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
-  private dbName = '_users';
   user: any = {};
   userDetail: any = {};
   urlName = '';
@@ -68,8 +68,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   totalLogins = 0;
   lastLogin = 0;
   educationLevel = educationLevel;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   teams: any[] = [];
   enterprises: any[] = [];
   private onDestroy$ = new Subject<void>();
@@ -86,12 +85,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private teamsService: TeamsService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.user = this.userService.get();
@@ -136,11 +130,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   profileView() {
-    const relationship = this.userRelationship(this.planetCode);
-    const dbName = relationship === 'local' ? this.dbName : `${relationship}_users`;
-    const userId = relationship === 'local' || relationship === 'parent'
-      ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.couchService.get(dbName + '/' + userId).subscribe((response) => {
+    const relationship = userRelationship(this.planetCode, this.stateService.configuration);
+    this.couchService.get(userDocPath(this.urlName, this.planetCode, this.stateService.configuration)).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
       this.editable = relationship === 'local' && (
@@ -151,14 +142,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     }, (error) => {
       console.log(error);
     });
-  }
-
-  userRelationship(planetCode: string) {
-    return planetCode === this.stateService.configuration.parentCode ?
-      'parent' :
-      planetCode === null || planetCode === this.stateService.configuration.code ?
-        'local' :
-        'child';
   }
 
   goBack() {

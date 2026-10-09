@@ -11,7 +11,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { composeFilterFunctions, filterDropdowns, isAllVisibleSelected, toggleVisibleSelection } from '../tables/table.helpers';
+import { composeFilterFunctions, filterDropdowns } from '../tables/table.helpers';
+import { PaginatedSelection } from '../tables/paginated-selection.helpers';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
@@ -22,7 +23,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { fullName } from '../utils';
 
 @Component({
@@ -70,6 +70,7 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
   tableData = new MatTableDataSource();
   tableColumns: string[] = [];
   selection = new SelectionModel(false, []);
+  pageSelection: PaginatedSelection<any, string>;
   pageEvent: PageEvent;
   disableRowClick: boolean;
   emptySubmit: boolean;
@@ -79,7 +80,6 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
   tooltipText = '';
   @ViewChild('paginator') paginator: MatPaginator;
   private rowsByIdentifier = new Map<string, any>();
-  private renderedRows: any[] = [];
   private onDestroy$ = new Subject<void>();
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
@@ -104,6 +104,9 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
     // Saved selections can outlive their rows (deleted docs, resources that lost their attachment), so drop the stale ids
     const initialSelection = (this.data.initialSelection || []).filter(id => this.rowsByIdentifier.has(id));
     this.selection = new SelectionModel(this.data.allowMulti || false, initialSelection);
+    this.pageSelection = new PaginatedSelection(this.selection, {
+      selectValue: row => this.selectIdentifier(row), keepAcrossPages: true
+    });
     this.tableData.data = tableData;
     this.tableColumns = this.data.columns;
     this.disableRowClick = this.data.disableSelection || false;
@@ -117,7 +120,7 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.tableData.paginator = this.paginator;
-    this.tableData.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.tableData, this.onDestroy$);
   }
 
   ngOnDestroy() {
@@ -150,13 +153,11 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
     if (this.tableData.filteredData.length === 0) {
       return 'hidden';
     }
-    return isAllVisibleSelected(this.selection, this.renderedRows, {
-      selectValue: row => this.selectIdentifier(row)
-    }) ? 'yes' : 'no';
+    return this.pageSelection.isAllSelected() ? 'yes' : 'no';
   }
 
   masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, { selectValue: row => this.selectIdentifier(row) });
+    this.pageSelection.masterToggle();
     this.updateTooltip();
   }
 

@@ -1,9 +1,9 @@
+import { signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { SurveysComponent } from './surveys.component';
-import { DeviceType } from '../shared/ui/device-info.service';
 
 describe('SurveysComponent', () => {
   let couchService: any;
@@ -31,8 +31,9 @@ describe('SurveysComponent', () => {
     { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
     {} as any,
     new FormBuilder().nonNullable,
-    { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any,
-    linkCopyService
+    { isMobile: signal(false) } as any,
+    linkCopyService,
+    {} as any
   );
 
   beforeEach(() => {
