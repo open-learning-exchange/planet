@@ -63,7 +63,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
-  progress = [ { stepNum: 1 } ];
+  progress: any[] = [ { stepNum: 1 } ];
   fullView = 'on';
   currentView: string;
   courseId: string;
@@ -101,7 +101,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
           ...step,
           resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
-          progress: progress.find((p: any) => p.stepNum === (index + 1))
+          progress: progress.find((p: any) => p.stepNum === (index + 1) && p.passed) || progress.find((p: any) => p.stepNum === (index + 1))
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
@@ -161,13 +161,43 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
     const stepClicked = this.courseDetail.steps[stepClickedNum];
-    const isTestTaken = attempts > 0 || (stepNum === 0 && step.exam === undefined);
-    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
+    const prevProg = (this.progress || []).find((p: any) => p.stepNum === (stepNum + 1) && p.passed) ||
+      (this.progress || []).find((p: any) => p.stepNum === (stepNum + 1));
+    const isSatisfied = step.passingRequired ?
+      !!prevProg?.passed :
+      (attempts > 0 || !!prevProg?.passed || (stepNum === 0 && step.exam === undefined));
+    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isSatisfied) || stepClicked.isPreviousTestTaken;
+  }
+
+  isStepLocked(stepIndex: number): boolean {
+    if (this.canManage || this.parent || stepIndex <= 0) {
+      return false;
+    }
+    for (let i = 0; i < stepIndex; i++) {
+      const prevStep = this.courseDetail.steps[i];
+      if (prevStep?.exam?.questions?.length && prevStep.passingRequired) {
+        const prevProg = (this.progress || []).find((p: any) => p.stepNum === (i + 1) && p.passed) ||
+          (this.progress || []).find((p: any) => p.stepNum === (i + 1));
+        if (!prevProg?.passed) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   viewStep() {
-    const latestStep = this.progress.reduce((stepNum, prog) => prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
-    this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
+    const latestReached = (this.progress || []).reduce((stepNum: number, prog: any) =>
+      prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
+    let targetStep = 1;
+    for (let i = 0; i < latestReached; i++) {
+      if (!this.isStepLocked(i)) {
+        targetStep = i + 1;
+      } else {
+        break;
+      }
+    }
+    this.router.navigate([ './step/' + targetStep ], { relativeTo: this.route });
   }
 
   goToSurvey(stepNum, preview = false) {
