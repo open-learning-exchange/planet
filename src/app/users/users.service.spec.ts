@@ -126,3 +126,30 @@ describe('UsersService community account deletion', () => {
     ]);
   });
 });
+
+describe('UsersService toggleAdminStatus', () => {
+  it('calls demoteFromAdmin when user.isUserAdmin is true', () => {
+    const service = new UsersService({} as any, {} as any, { couchStateListener: () => NEVER } as any, {} as any, {} as any);
+    const demoteSpy = vi.spyOn(service, 'demoteFromAdmin').mockReturnValue(of({} as any));
+    const promoteSpy = vi.spyOn(service, 'promoteToAdmin').mockReturnValue(of({} as any));
+
+    const user = { name: 'adminUser', isUserAdmin: true, roles: [] };
+    service.toggleAdminStatus(user);
+
+    expect(demoteSpy).toHaveBeenCalledWith(user);
+    expect(promoteSpy).not.toHaveBeenCalled();
+  });
+
+  it('calls promoteToAdmin when user.isUserAdmin is false even if roles are empty', () => {
+    const service = new UsersService({} as any, {} as any, { couchStateListener: () => NEVER } as any, {} as any, {} as any);
+    const demoteSpy = vi.spyOn(service, 'demoteFromAdmin').mockReturnValue(of({} as any));
+    const promoteSpy = vi.spyOn(service, 'promoteToAdmin').mockReturnValue(of({} as any));
+
+    const deactivatedUser = { name: 'inactiveUser', isUserAdmin: false, roles: [] };
+    service.toggleAdminStatus(deactivatedUser);
+
+    expect(promoteSpy).toHaveBeenCalledWith(deactivatedUser);
+    expect(demoteSpy).not.toHaveBeenCalled();
+  });
+});
+
