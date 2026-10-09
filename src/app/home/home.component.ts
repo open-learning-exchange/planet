@@ -185,7 +185,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   syncToolbarLayout() {
-    const needsModern = window.innerWidth < this.classicToolbarWidth || this.isShortViewport;
+    const needsModern = document.documentElement.clientWidth < this.classicToolbarWidth || this.isShortViewport;
     if (this.forceModern !== needsModern) {
       this.forceModern = needsModern;
     }
