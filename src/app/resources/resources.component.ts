@@ -29,7 +29,7 @@ import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.c
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { couchAttachmentPath, findByIdInArray } from '../shared/utils';
-import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
+import { formatResourceAttachmentSize, resourceAttachmentFilename, resourceFileTypeValue } from './resources.utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
@@ -169,7 +169,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions(
     [
-      filterAdvancedSearch(this.searchSelection),
+      filterAdvancedSearch(this.searchSelection, { fileType: resourceFileTypeValue }),
       filterTags(this.tagFilter),
       filterSpecificFieldsHybrid([ 'doc.title' ]),
       filterShelf({ value: this.myView === 'myLibrary' ? 'on' : 'off' }, 'libraryInfo')

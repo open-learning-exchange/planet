@@ -22,6 +22,8 @@ npm install
 npm run dev
 ```
 
+To run the gateway tests, install the repository root dependencies first, then run `npm test` here. Vitest resolves from the root's `node_modules` rather than the gateway's.
+
 ## Modules
 
 - `modules/chatapi`: chat HTTP + WebSocket flow served through `/ml/`
