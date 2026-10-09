@@ -270,6 +270,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       // without a target team, include surveys that are original rather than derived copies
       return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
+    this.selection.deselect(...this.selection.selected.filter(id => !findByIdInArray(this.surveys.data, id)));
   }
 
   createParentSurveys(submissions) {
