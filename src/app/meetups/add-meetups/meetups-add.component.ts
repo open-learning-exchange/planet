@@ -279,8 +279,14 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       this.showEditDenied();
       return;
     }
+    // Ownership and placement stay with the stored meetup; form defaults and route inputs would otherwise rewrite them
+    const { createdBy, sourcePlanet, link, sync } = this.meetupBeingEdited;
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
+      createdBy,
+      sourcePlanet,
+      link,
+      sync,
       _id: this.id,
       _rev: this.revision,
       startDate: this.parseDateValue(meetupInfo.startDate),

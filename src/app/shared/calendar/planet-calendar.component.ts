@@ -1,4 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Inject, Input, LOCALE_ID, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, Inject, Input, LOCALE_ID, NgZone, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -20,8 +22,9 @@ import { DialogGuardService } from '../dialogs/dialog-guard.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { MeetupService } from '../../meetups/meetups.service';
 import { NotificationsService } from '../../notifications/notifications.service';
-import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { UserService } from '../auth/user.service';
+import { catchError, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { of, Subject, Subscription } from 'rxjs';
 import { MatTooltip } from '@angular/material/tooltip';
 
 const taskEventColors = {
@@ -67,7 +70,7 @@ const taskEventColors = {
     `,
   imports: [FullCalendarModule, MatTooltip]
 })
-export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   @ViewChild('calendar') calendar: any;
   @Input() link: any = {};
@@ -148,6 +151,9 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
   private resizeObserver: ResizeObserver | null = null;
   private resizeFrameId: number | null = null;
   private calendarWidth: number;
+  private onDestroy$ = new Subject<void>();
+  private meetupsRequest?: Subscription;
+  private tasksRequest?: Subscription;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -163,13 +169,36 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     private ngZone: NgZone,
     private meetupService: MeetupService,
     private notificationsService: NotificationsService,
+    private userService: UserService,
     private dialogGuard: DialogGuardService
   ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    // The team page is reused across teams, so drop the previous team's events before permissions are reapplied
+    if (changes.link && !changes.link.firstChange) {
+      this.meetups = [];
+      this.tasks = [];
+      this.updateVisibleEvents();
+      this.getMeetups();
+      this.getTasks();
+    }
+    if (changes.editable || changes.leaderOfTeamId) {
+      this.refreshEditability();
+    }
+  }
 
   ngOnInit() {
     this.calendarOptions.locale = this.localeId;
     this.getMeetups();
     this.getTasks();
+    this.setAddEventButton();
+    this.calendarOptions.headerToolbar = this.header;
+    this.calendarOptions.buttonText = this.buttonText;
+    this.calendarOptions.events = [ ...this.events ];
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => this.refreshEditability());
+  }
+
+  private setAddEventButton() {
     this.buttons = this.editable ?
       {
         addEventButton: {
@@ -178,10 +207,16 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
         }
       } :
       {};
-    this.calendarOptions.headerToolbar = this.header;
-    this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
-    this.calendarOptions.events = [ ...this.events ];
+  }
+
+  // Permissions change affordances, not data, so the cached events are rebuilt without a refetch
+  private refreshEditability() {
+    this.setAddEventButton();
+    const refresh = (events: any[]) => events.map(event => ({ ...event, startEditable: this.canDragEvent(event.extendedProps.meetup) }));
+    this.meetups = refresh(this.meetups);
+    this.tasks = refresh(this.tasks);
+    this.updateVisibleEvents();
   }
 
   ngAfterViewInit() {
@@ -199,6 +234,8 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     if (this.resizeFrameId !== null) {
       cancelAnimationFrame(this.resizeFrameId);
     }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private onCalendarResize(width?: number) {
@@ -233,8 +270,10 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     this.calendarOptions.events = this.events;
   }
 
+  // A newer request replaces an older one, so a slow response cannot overwrite fresher events
   getMeetups() {
-    this.fetchMeetups().subscribe();
+    this.meetupsRequest?.unsubscribe();
+    this.meetupsRequest = this.fetchMeetups().subscribe();
   }
 
   private fetchMeetups() {
@@ -255,7 +294,8 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   getTasks() {
-    this.fetchTasks().subscribe();
+    this.tasksRequest?.unsubscribe();
+    this.tasksRequest = this.fetchTasks().subscribe();
   }
 
   private fetchTasks() {
@@ -270,6 +310,14 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
 
   canEditMeetup(meetup: any): boolean {
     return this.meetupService.canEditMeetup(meetup, { leaderOfTeamId: this.leaderOfTeamId, readOnly: !this.editable });
+  }
+
+  private canDragEvent(meetup: any): boolean {
+    if (meetup.isTask) {
+      return this.editable;
+    }
+    const isRecurring = meetup.recurring && meetup.recurring !== 'none';
+    return this.canEditMeetup(meetup) && !isRecurring;
   }
 
   eventObject(
@@ -292,17 +340,12 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
       end = timedEnd > start ? timedEnd : undefined;
     }
 
-    const isRecurring = meetup.recurring && meetup.recurring !== 'none';
-    const editable = meetup.isTask
-      ? this.editable
-      : (this.canEditMeetup(meetup) && !isRecurring);
-
     return {
       title: meetup.title,
       start,
       ...(end ? { end } : {}),
       allDay,
-      startEditable: editable,
+      startEditable: this.canDragEvent(meetup),
       // A bare editable would expand to durationEditable too, and resizing has no persistence path
       durationEditable: false,
       classNames: [ 'cursor-pointer' ],
