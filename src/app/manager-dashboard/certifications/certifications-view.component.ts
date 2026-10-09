@@ -20,6 +20,11 @@ import { CoursesComponent } from '../../courses/courses.component';
       margin-top: 20px;
       display: block;
     }
+
+    planet-users-table {
+      display: block;
+      height: 100%;
+    }
   `],
   imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, MatTabGroup, MatTab, CoursesComponent, UsersTableComponent]
 })
