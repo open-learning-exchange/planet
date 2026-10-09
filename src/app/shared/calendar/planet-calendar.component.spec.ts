@@ -2,9 +2,10 @@ import { vi } from 'vitest';
 import { ElementRef, SimpleChange } from '@angular/core';
 import { of, Subject, throwError } from 'rxjs';
 
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { styleVariables } from '@shared/utils';
+
 import { PlanetCalendarComponent } from './planet-calendar.component';
-import { DialogGuardService } from '../dialogs/dialog-guard.service';
-import { styleVariables } from '../utils';
 
 describe('PlanetCalendarComponent read-only behavior', () => {
   const createComponent = () => {

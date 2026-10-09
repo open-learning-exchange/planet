@@ -1,9 +1,10 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { TagsService } from './tags.service';
-import { DeviceInfoService, DeviceType } from '../../ui/device-info.service';
-import { truncateText } from '../../utils';
-
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { truncateText } from '@shared/utils';
+
+import { TagsService } from './tags.service';
 
   @Component({
     template: `

@@ -4,25 +4,27 @@ import { NonNullableFormBuilder, FormControl, FormGroup, ReactiveFormsModule } f
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CoursesService } from '../courses.service';
-import { ResourcesPickerDialogComponent } from '../../resources/resources-picker-dialog.component';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
+import { MatIcon } from '@angular/material/icon';
+
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import {
   PlanetStepListComponent,
   PlanetStepListItemComponent,
   PlanetStepListNumberDirective,
   PlanetStepListFormDirective,
   PlanetStepListActionsDirective
-} from '../../shared/forms/planet-step-list.component';
-import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+} from '@shared/forms/planet-step-list.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { CoursesService } from '../courses.service';
+import { ResourcesPickerDialogComponent } from '../../resources/resources-picker-dialog.component';
 import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { PlanetMarkdownTextboxComponent } from '../../shared/markdown/planet-markdown-textbox.component';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
-import { MatIcon } from '@angular/material/icon';
-import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
 import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 interface CoursesStepForm {

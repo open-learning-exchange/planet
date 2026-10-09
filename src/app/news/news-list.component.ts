@@ -5,24 +5,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { NewsService } from './news.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { UserService } from '../shared/auth/user.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { AuthGuard } from '../shared/auth/auth.guard';
-import { trackById } from '../shared/tables/table.helpers';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
-
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { NewsListItemComponent } from './news-list-item.component';
 import { MatDivider } from '@angular/material/list';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatPaginator } from '@angular/material/paginator';
@@ -33,7 +18,23 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { LabelComponent } from '../shared/ui/label.component';
+
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { trackById } from '@shared/tables/table.helpers';
+import { LabelComponent } from '@shared/ui/label.component';
+
+import { NewsService } from './news.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
+import { NewsListItemComponent } from './news-list-item.component';
 
 @Component({
   selector: 'planet-news-list',

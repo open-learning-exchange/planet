@@ -1,7 +1,9 @@
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+
+import { IMAGE_MAX_FALLBACK_BYTES } from '@shared/utils';
+
 import { TeamsService } from './teams.service';
-import { IMAGE_MAX_FALLBACK_BYTES } from '../shared/utils';
 
 describe('TeamsService membership writes', () => {
   const successfulBulkResponse = { res: [ { id: 'membership-1', ok: true, rev: '2-membership' } ] };

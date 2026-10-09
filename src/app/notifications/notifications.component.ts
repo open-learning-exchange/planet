@@ -1,15 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { filterDropdowns } from '../shared/tables/table.helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationsService, notificationUserFilter } from './notifications.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -17,7 +11,14 @@ import { MatSelect } from '@angular/material/select';
 import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { filterDropdowns } from '@shared/tables/table.helpers';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+
+import { NotificationsService, notificationUserFilter } from './notifications.service';
 
 @Component({
   templateUrl: './notifications.component.html',

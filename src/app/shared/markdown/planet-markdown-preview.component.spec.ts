@@ -1,8 +1,10 @@
 import { vi } from 'vitest';
 import { NgZone } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { StateService } from '@shared/state.service';
+
 import { PlanetMarkdownPreviewComponent } from './planet-markdown-preview.component';
-import { StateService } from '../state.service';
 
 describe('PlanetMarkdownPreviewComponent', () => {
   let resize: () => void;

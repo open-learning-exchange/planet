@@ -1,8 +1,9 @@
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { TagsService } from '@shared/forms/tags/tags.service';
+
 import { CoursesService } from './courses.service';
-import { TagsService } from '../shared/forms/tags/tags.service';
 
 describe('CoursesService', () => {
   describe('course admission', () => {

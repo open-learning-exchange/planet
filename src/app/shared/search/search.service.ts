@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
-import { CouchService } from '../database/couchdb.service';
-import { deepEqual } from '../utils';
-import { StateService } from '../state.service';
-import { UserService } from '../auth/user.service';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { deepEqual } from '@shared/utils';
+import { StateService } from '@shared/state.service';
+import { UserService } from '@shared/auth/user.service';
 
 @Injectable({
   providedIn: 'root'

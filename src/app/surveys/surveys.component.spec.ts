@@ -3,6 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { SurveysComponent } from './surveys.component';
 
 describe('SurveysComponent', () => {

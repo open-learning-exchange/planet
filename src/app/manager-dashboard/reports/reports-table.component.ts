@@ -5,11 +5,13 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { commonSortingDataAccessor, deepSortingDataAccessor } from '../../shared/tables/table.helpers';
-import { ReportsService } from './reports.service';
 import { RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { DatePipe } from '@angular/common';
+
+import { commonSortingDataAccessor, deepSortingDataAccessor } from '@shared/tables/table.helpers';
+
+import { ReportsService } from './reports.service';
 
 @Component({
   selector: 'planet-reports-table',

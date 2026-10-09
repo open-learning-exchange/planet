@@ -1,28 +1,30 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../shared/auth/user.service';
-import { StateService } from '../shared/state.service';
-import { NewsService } from './news.service';
-import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
-import { AuthGuard } from '../shared/auth/auth.guard';
-import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
-import { DeviceInfoService } from '../shared/ui/device-info.service';
 import { Subject } from 'rxjs';
 import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { LabelComponent } from '../shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '@shared/utils';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { LabelComponent } from '@shared/ui/label.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+
+import { NewsService } from './news.service';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
-import { FullNamePipe } from '../shared/text/full-name.pipe';
-import { LinkCopyService } from '../shared/ui/link-copy.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({

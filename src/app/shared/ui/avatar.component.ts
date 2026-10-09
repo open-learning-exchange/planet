@@ -1,10 +1,12 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { NgClass } from '@angular/common';
 import { Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
-import { StateService } from '../state.service';
-import { couchAttachmentUrl } from '../utils';
+
+import { StateService } from '@shared/state.service';
+import { couchAttachmentUrl } from '@shared/utils';
+
+import { environment } from '../../../environments/environment';
 
 interface AvatarSource {
   db: '_users' | 'attachments';

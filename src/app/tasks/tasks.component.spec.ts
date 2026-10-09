@@ -1,16 +1,18 @@
 import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
 import { MatDialog } from '@angular/material/dialog';
+import { TestBed } from '@angular/core/testing';
+
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+
 import { TasksComponent } from './tasks.component';
 import { TasksService } from './tasks.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
-import { StateService } from '../shared/state.service';
-import { TestBed } from '@angular/core/testing';
 import { TasksAssigneesDialogComponent } from './tasks-assignees-dialog.component';
 
 describe('TasksComponent', () => {

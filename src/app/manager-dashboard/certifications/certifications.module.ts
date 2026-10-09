@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CertificationsComponent } from './certifications.component';
-import { CertificationsRouterModule } from './certifications-router.module';
-import { MaterialModule } from '../../shared/material.module';
-import { PlanetFormsModule } from '../../shared/forms/planet-forms.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { SharedComponentsModule } from '../../shared/shared-components.module';
-import { PlanetDialogsModule } from '../../shared/dialogs/planet-dialogs.module';
+
+import { MaterialModule } from '@shared/material.module';
+import { PlanetFormsModule } from '@shared/forms/planet-forms.module';
+import { SharedComponentsModule } from '@shared/shared-components.module';
+import { PlanetDialogsModule } from '@shared/dialogs/planet-dialogs.module';
+import { TablesAddDialogModule } from '@shared/tables/tables-add-dialog.module';
+
+import { CertificationsComponent } from './certifications.component';
+import { CertificationsRouterModule } from './certifications-router.module';
 import { CertificationsAddComponent } from './certifications-add.component';
 import { CoursesModule } from '../../courses/courses.module';
-import { TablesAddDialogModule } from '../../shared/tables/tables-add-dialog.module';
 import { CertificationsViewComponent } from './certifications-view.component';
 import { UsersModule } from '../../users/users.module';
 

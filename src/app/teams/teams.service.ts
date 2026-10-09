@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
 import { of, empty, forkJoin, throwError, from } from 'rxjs';
 import { switchMap, map, take, catchError, finalize } from 'rxjs/operators';
-import { CouchService } from '../shared/database/couchdb.service';
-import { UserService } from '../shared/auth/user.service';
-import { DialogsFormService, DialogField } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { CustomValidators } from '../validators/custom-validators';
-import { StateService } from '../shared/state.service';
-import { ValidatorService } from '../validators/validator.service';
-import { UsersService } from '../users/users.service';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { DialogsFormService, DialogField } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
 import {
   fullName, planetAndParentId, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
-} from '../shared/utils';
-import { AttachmentInputState, ExistingAttachment } from '../shared/forms/file-upload.component';
+} from '@shared/utils';
+import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
+
+import { CustomValidators } from '../validators/custom-validators';
+import { ValidatorService } from '../validators/validator.service';
+import { UsersService } from '../users/users.service';
 import { environment } from '../../environments/environment';
 
 const nameField = {

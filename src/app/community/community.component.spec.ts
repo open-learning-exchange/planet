@@ -3,9 +3,10 @@ import { convertToParamMap } from '@angular/router';
 import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { CommunityComponent } from './community.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
-import { DeviceType } from '../shared/ui/device-info.service';
 
 describe('CommunityComponent custom labels', () => {
   it('allows community leaders and planet managers to manage community labels', () => {

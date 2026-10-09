@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../../database/couchdb.service';
 import { of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { StateService } from '../../state.service';
-import { findDocuments } from '../../database/mango-queries';
-import { fuzzyWordMatch } from '../../search/fuzzy-search';
-import { createDeleteArray } from '../../tables/table.helpers';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { fuzzyWordMatch } from '@shared/search/fuzzy-search';
+import { createDeleteArray } from '@shared/tables/table.helpers';
 
 @Injectable({
   providedIn: 'root'

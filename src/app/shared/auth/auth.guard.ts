@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { UserService } from './user.service';
 import { Observable, of } from 'rxjs';
 import { filter, switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateFn } from '@angular/router';
-import { PouchAuthService } from '../database/pouch-auth.service';
 import { MatDialog } from '@angular/material/dialog';
+
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { StateService } from '@shared/state.service';
+
+import { UserService } from './user.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { StateService } from '../state.service';
 
 @Injectable({
   providedIn: 'root'

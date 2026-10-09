@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/database/couchdb.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { UserService } from '../shared/auth/user.service';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { StateService } from '../shared/state.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 
 export interface MeetupAuthorizationContext {
   leaderOfTeamId?: string;

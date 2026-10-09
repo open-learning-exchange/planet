@@ -1,26 +1,28 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Optional } from '@angular/core';
-import { CouchService } from '../../shared/database/couchdb.service';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { map, takeUntil } from 'rxjs/operators';
-import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
-import { UserService } from '../../shared/auth/user.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
-import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
-import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
-import { filterSpecificFields } from '../../shared/tables/table.helpers';
-import { findDocuments } from '../../shared/database/mango-queries';
-import { StateService } from '../../shared/state.service';
-import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { NgClass, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
+import { filterSpecificFields } from '@shared/tables/table.helpers';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+
+import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { assigneeKey, assigneeName, effectiveAssignees } from '../../tasks/tasks.utils';
 
 @Component({

@@ -3,10 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { StateService } from '../state.service';
-import { CouchService } from '../database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { planetAndParentId } from '@shared/utils';
+
 import { ChallengesAnnouncementDialogComponent } from './challenges-announcement-dialog.component';
-import { planetAndParentId } from '../utils';
 
 const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
 

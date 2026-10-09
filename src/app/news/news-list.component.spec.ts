@@ -1,7 +1,9 @@
 import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+
 import { NewsListComponent } from './news-list.component';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 
 const createComponent = (items: any[] = []) => {
   const component = Object.create(NewsListComponent.prototype) as any;

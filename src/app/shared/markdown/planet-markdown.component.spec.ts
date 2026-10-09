@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+
+import { StateService } from '@shared/state.service';
+
 import { PlanetMarkdownComponent } from './planet-markdown.component';
-import { StateService } from '../state.service';
 import { MarkdownRenderService } from './markdown-render.service';
 
 describe('PlanetMarkdownComponent', () => {

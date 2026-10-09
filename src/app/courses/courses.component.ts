@@ -13,52 +13,54 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
 import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
-import {
-  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
-} from '../shared/tables/table.helpers';
-import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
-import * as constants from './courses.constants';
-import { CertificationsService } from '../shared/certifications/certifications.service';
-import { languages } from '../shared/language/languages';
-import { SyncService } from '../shared/database/sync.service';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { TagsService } from '../shared/forms/tags/tags.service';
-import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
-import { SearchService } from '../shared/search/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/ui/device-info.service';
-import { CoursesSearchComponent } from './search-courses/courses-search.component';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { PlanetFilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
-import { PlanetTagSelectedInputComponent } from '../shared/forms/tags/planet-tag-selected-input.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
-import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PlanetMarkdownPreviewComponent } from '../shared/markdown/planet-markdown-preview.component';
-import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
+
+import {
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
+} from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { languages } from '@shared/language/languages';
+import { SyncService } from '@shared/database/sync.service';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { dedupeShelfReduce, findByIdInArray } from '@shared/utils';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { TagsService } from '@shared/forms/tags/tags.service';
+import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
+import { SearchService } from '@shared/search/search.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '@shared/ui/device-info.service';
+import { PlanetFilteredAmountComponent } from '@shared/tables/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '@shared/forms/tags/planet-tag-selected-input.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetMarkdownPreviewComponent } from '@shared/markdown/planet-markdown-preview.component';
+import { PlanetLocalStatusComponent } from '@shared/database/planet-local-status.component';
+import { PlanetRatingDialogDirective } from '@shared/ratings/planet-rating-dialog.component';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
+import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import * as constants from './courses.constants';
+import { CoursesService } from './courses.service';
+import { CoursesSearchComponent } from './search-courses/courses-search.component';
+import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
-import { LanguageLabelComponent } from '../shared/language/language-label.component';
-import { PlanetRatingComponent } from '../shared/ratings/planet-rating.component';
-import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 
 @Component({
   selector: 'planet-courses',

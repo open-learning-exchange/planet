@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { UnsavedChangesGuard } from '@shared/unsaved-changes/unsaved-changes.guard';
+
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
@@ -11,8 +15,6 @@ import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './home-router.constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import { AuthGuard } from '../shared/auth/auth.guard';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes/unsaved-changes.guard';
 
 const dashboardPath = (route): string => `${myDashboardRoute}/${route}`;
 

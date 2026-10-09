@@ -1,21 +1,23 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CouchService } from '../shared/database/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { forkJoin, interval } from 'rxjs';
 import { switchMap, takeWhile, map, finalize } from 'rxjs/operators';
-import { SyncService } from '../shared/database/sync.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { ConfigurationService } from './configuration.service';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { LowercaseDirective } from '../shared/forms/lowercase.directive';
-import { RestrictDiacriticsDirective } from '../shared/forms/restrict-diacritics.directive';
 import { MatButton } from '@angular/material/button';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { SyncService } from '@shared/database/sync.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { LowercaseDirective } from '@shared/forms/lowercase.directive';
+import { RestrictDiacriticsDirective } from '@shared/forms/restrict-diacritics.directive';
+
+import { CustomValidators } from '../validators/custom-validators';
+import { ConfigurationService } from './configuration.service';
 
 const removeProtocol = (str: string) =>
   // RegEx grabs the fragment of the string between '//' and last character
