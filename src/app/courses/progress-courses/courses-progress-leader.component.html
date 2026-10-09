@@ -12,12 +12,12 @@
 
 <mat-toolbar class="primary-color font-size-1">
   <h3 class="ellipsis-title margin-lr-3">{{ headingStart | truncateText:140 }}</h3>
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (deviceType() === deviceTypes.DESKTOP) {
     <span class="toolbar-fill"></span>
     <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
     <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
   }
-  @if (deviceType !== deviceTypes.DESKTOP) {
+  @if (deviceType() !== deviceTypes.DESKTOP) {
     <span class="toolbar-fill"></span>
     @if (chartData?.length) {
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>

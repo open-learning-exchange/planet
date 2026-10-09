@@ -1,3 +1,4 @@
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -15,12 +16,13 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
 import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '../../shared/ui/device-info.service';
 import { LinkCopyService } from '../../shared/ui/link-copy.service';
 
 describe('ResourcesViewComponent', () => {
 
   let component: ResourcesViewComponent;
+  const deviceType = signal(DeviceType.DESKTOP);
   let fixture: ComponentFixture<ResourcesViewComponent>;
   let statusElement;
   let testimage;
@@ -62,6 +64,7 @@ describe('ResourcesViewComponent', () => {
   };
 
   beforeEach(() => {
+    deviceType.set(DeviceType.DESKTOP);
     resourcesServiceMock.resourcesListener.mockReturnValue(of([]));
     linkCopyServiceMock.copyLink.mockReset();
     TestBed.configureTestingModule({
@@ -73,7 +76,7 @@ describe('ResourcesViewComponent', () => {
         { provide: UserService, useValue: userServiceMock },
         { provide: ResourcesService, useValue: resourcesServiceMock },
         { provide: PlanetMessageService, useValue: planetMessageServiceMock },
-        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(DeviceType.DESKTOP) } },
+        { provide: DeviceInfoService, useValue: { deviceType, isMobile: computed(() => isMobileOrSmaller(deviceType())) } },
         { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: CouchService, useValue: couchServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },
@@ -125,7 +128,7 @@ describe('ResourcesViewComponent', () => {
   });
 
   it('renders a labeled menu item for link copying on smaller screens', async () => {
-    component.deviceType = DeviceType.MOBILE;
+    deviceType.set(DeviceType.MOBILE);
     resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
     fixture.detectChanges();
 
