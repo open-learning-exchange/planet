@@ -1,4 +1,4 @@
-import { filterSpecificFieldsByWord, filterSpecificFieldsHybrid } from './table.helpers';
+import { filterAdvancedSearch, filterSpecificFieldsByWord, filterSpecificFieldsHybrid } from './table.helpers';
 
 describe('filterSpecificFieldsHybrid', () => {
   const filter = filterSpecificFieldsHybrid([ 'doc.courseTitle', 'doc.description' ]);
@@ -33,5 +33,23 @@ describe('filterSpecificFieldsByWord', () => {
   it('matches each word exactly, in any order', () => {
     expect(filter(user, 'garcia maria')).toBe(true);
     expect(filter(user, 'mario')).toBe(false);
+  });
+});
+
+describe('filterAdvancedSearch', () => {
+  const resource = (subject: string[], filename: string) => ({ doc: { subject, filename } });
+  const extension = (doc: any) => doc.filename.split('.').pop();
+
+  it('matches fields on the document by default', () => {
+    const filter = filterAdvancedSearch({ subject: [ 'Arts' ] });
+    expect(filter(resource([ 'Arts', 'History' ], 'notes.pdf'), '')).toBe(true);
+    expect(filter(resource([ 'History' ], 'notes.pdf'), '')).toBe(false);
+  });
+
+  it('matches a field through its value function', () => {
+    const filter = filterAdvancedSearch({ subject: [ 'Arts' ], extension: [ 'pdf' ] }, { extension });
+    expect(filter(resource([ 'Arts' ], 'notes.pdf'), '')).toBe(true);
+    expect(filter(resource([ 'Arts' ], 'clip.mp4'), '')).toBe(false);
+    expect(filter(resource([ 'History' ], 'notes.pdf'), '')).toBe(false);
   });
 });

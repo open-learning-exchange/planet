@@ -99,7 +99,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode = this.route.snapshot.paramMap.get('code');
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes = DeviceType;
   newsLoading = true;
   teamLoading = true;
@@ -152,11 +152,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
     private challengesService: ChallengesService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();
