@@ -59,7 +59,7 @@ interface MeetupFormControls {
       width: inherit;
     }
     .view-container form {
-      min-width: 385px;
+      min-width: min(385px, 100%);
       max-width: 750px;
     }
   `],
