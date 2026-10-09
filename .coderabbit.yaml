@@ -64,7 +64,7 @@ reviews:
 
   auto_review:
     enabled: false
-    labels: ["review"]
+    labels: ["coderabbit"]
     auto_incremental_review: true
     drafts: true
 
