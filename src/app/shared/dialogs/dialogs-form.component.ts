@@ -60,6 +60,10 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-change
       display: block;
       height: 24px;
     }
+
+    div:not(:last-child) > .file-upload-wrapper {
+      margin-bottom: 20px;
+    }
   `],
   imports: [
     FormsModule,

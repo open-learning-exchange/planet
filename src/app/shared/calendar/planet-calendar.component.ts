@@ -18,11 +18,12 @@ import { TasksService } from '../../tasks/tasks.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { PlanetMessageService } from '../ui/planet-message.service';
 import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
+import { DialogGuardService } from '../dialogs/dialog-guard.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { MeetupService } from '../../meetups/meetups.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { UserService } from '../auth/user.service';
-import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { of, Subject, Subscription } from 'rxjs';
 import { MatTooltip } from '@angular/material/tooltip';
 
@@ -141,12 +142,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
     firstDay: 6,
     dayMaxEventRows: 2,
     selectable: true,
-    select: (arg) => {
-      if (!this.editable) {
-        return;
-      }
-      this.authGuard.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
-    },
+    select: (arg) => this.addEvent(arg),
     eventClick: this.eventClick.bind(this),
     eventDurationEditable: false,
     eventDrop: this.eventDrop.bind(this)
@@ -173,7 +169,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
     private ngZone: NgZone,
     private meetupService: MeetupService,
     private notificationsService: NotificationsService,
-    private userService: UserService
+    private userService: UserService,
+    private dialogGuard: DialogGuardService
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -206,12 +203,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
       {
         addEventButton: {
           text: $localize`Add Event`,
-          click: (arg) => {
-            if (!this.editable) {
-              return;
-            }
-            this.authGuard.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
-          }
+          click: (arg) => this.addEvent(arg)
         }
       } :
       {};
@@ -403,6 +395,15 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
     return events;
   }
 
+  private addEvent(arg) {
+    if (!this.editable) {
+      return;
+    }
+    this.dialogGuard.open('calendar-add-event', () =>
+      this.authGuard.checkAuthenticationStatus().pipe(map(() => this.openAddEventDialog(arg)))
+    ).subscribe();
+  }
+
   openAddEventDialog(event) {
     if (!this.editable) {
       return;
@@ -417,7 +418,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
         startDate: today,
         endDate: today,
       };
-    this.dialog.open(MeetupsAddDialogComponent, {
+    return this.dialog.open(MeetupsAddDialogComponent, {
       data: {
         meetup,
         link: this.link,
