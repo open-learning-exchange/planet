@@ -1168,14 +1168,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.planetMessageService.showAlert($localize`No comparison data available`);
       return;
     }
-    const week1Header = this.week1Label.replace(/,/g, '');
-    const week2Header = this.week2Label.replace(/,/g, '');
-
     const data = this.comparisonTableData.map(row => ({
       [$localize`Metric`]: row.metric,
-      [week1Header]: row.week1,
-      [week2Header]: row.week2,
-      [$localize`Net Change`]: row.change
+      [this.week1Label]: row.week1,
+      [this.week2Label]: row.week2,
+      [$localize`Net Change`]: row.changeValue
     }));
 
     this.csvService.exportCSV({

@@ -78,7 +78,7 @@
 </ng-template>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
-  <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog, 'no-toolbar': !isDialog && !showCourseHeader }">
+  <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog }">
     <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog"
       [class.no-name-column]="!displayedColumns.includes('name')" [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">

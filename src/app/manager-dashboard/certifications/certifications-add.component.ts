@@ -24,6 +24,12 @@ interface CertificationFormControls {
 
 @Component({
   templateUrl: './certifications-add.component.html',
+  styles: [`
+    .view-container {
+      display: flex;
+      flex-direction: column;
+    }
+  `],
   imports: [
     MatToolbar,
     MatIconButton,

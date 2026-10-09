@@ -229,7 +229,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
-      this.isUserEnrolled = !this.isUserEnrolled;
+      this.isUserEnrolled = true;
     }, (error) => ((error)));
   }
 

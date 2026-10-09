@@ -340,7 +340,7 @@
             </div>
           }
           @if (!comparisonLoading && !summaryLoading && comparisonTableData.length === 0) {
-            <div class="view-container view-full-height loading-message" i18n>
+            <div class="view-container loading-message" i18n>
             Select dates and click Compare to view comparison data
           </div>
           }
@@ -351,7 +351,7 @@
           <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
         }
         @if (!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)) {
-          <div class="view-container view-full-height loading-message" i18n>
+          <div class="view-container loading-message" i18n>
           No data found
         </div>
         }
@@ -371,7 +371,7 @@
           <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
         }
         @if (!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)) {
-          <div class="view-container view-full-height loading-message" i18n>
+          <div class="view-container loading-message" i18n>
           No data found
         </div>
         }
@@ -392,7 +392,7 @@
           <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
         }
         @if (healthTab.isActive && !healthLoading && healthNoData) {
-          <div class="view-container view-full-height loading-message" i18n>
+          <div class="view-container loading-message" i18n>
           No data found
         </div>
         }
@@ -412,7 +412,7 @@
           <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
         }
         @if (!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)) {
-          <div class="view-container view-full-height loading-message" i18n>
+          <div class="view-container loading-message" i18n>
           No data found
         </div>
         }

@@ -98,8 +98,8 @@
       </div>
     }
     @if (showExpand) {
-      <div class="full-width text-center" (click)="showLess = !showLess">
-        <button mat-icon-button>
+      <div class="full-width text-center">
+        <button mat-icon-button type="button" [attr.aria-expanded]="!showLess" i18n-aria-label aria-label="Full message" (click)="showLess = !showLess">
           <mat-icon>{{showLess ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}}</mat-icon>
         </button>
       </div>

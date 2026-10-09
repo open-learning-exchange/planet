@@ -32,7 +32,8 @@ describe('SurveysComponent', () => {
     {} as any,
     new FormBuilder().nonNullable,
     { isMobile: signal(false) } as any,
-    linkCopyService
+    linkCopyService,
+    {} as any
   );
 
   beforeEach(() => {

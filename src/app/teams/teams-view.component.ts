@@ -602,10 +602,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.planetMessageService.showMessage(
-        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe({
+      next: (updatedTeam) => {
+        this.team = updatedTeam;
+        this.planetMessageService.showMessage(
+          (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      },
+      error: (err) => this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err))
     });
   }
 
@@ -804,6 +807,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       autoFocus: false
     });
+  }
+
+  coverImageUrl(): string {
+    return this.teamsService.coverImageUrl(this.team);
   }
 
 }

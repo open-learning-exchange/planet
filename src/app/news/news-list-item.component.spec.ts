@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -29,7 +29,8 @@ describe('NewsListItemComponent read-only behavior', () => {
       {} as any,
       authGuard as any,
       linkCopyService as any,
-      { isMobile: signal(false) } as any
+      { isMobile: signal(false) } as any,
+      {} as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
@@ -211,6 +212,23 @@ describe('NewsListItemComponent label choices', () => {
   });
 });
 
+describe('NewsListItemComponent preview expansion', () => {
+  it('keeps a voice the reader expanded open when the list refreshes it', () => {
+    const component = Object.create(NewsListItemComponent.prototype) as NewsListItemComponent;
+    const refreshedVoice = () => ({ _id: 'voice', doc: { message: 'Long message '.repeat(60) } });
+    component.previewLimit = 500;
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+    component.showLess = false;
+
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+
+    expect(component.showExpand).toBe(true);
+    expect(component.showLess).toBe(false);
+  });
+});
+
 describe('voice label display', () => {
   it('does not resolve custom labels through inherited object properties', () => {
     const component = new LabelComponent();
@@ -236,7 +254,8 @@ describe('NewsListItemComponent emoji reactions', () => {
       {} as any,
       authGuard as any,
       { copyLink: vi.fn() } as any,
-      { isMobile: signal(false) } as any
+      { isMobile: signal(false) } as any,
+      {} as any
     );
     component.item = {
       _id: 'voice-1',
@@ -332,7 +351,7 @@ describe('NewsListItemComponent emoji reactions', () => {
     const { component, authGuard, newsService } = setupReactions();
     component.currentUser = {};
     const previousReactions = component.item.doc.reactions;
-    authGuard.checkAuthenticationStatus.mockReturnValue(throwError(new Error('Not authorized')));
+    authGuard.checkAuthenticationStatus.mockReturnValue(EMPTY);
 
     component.toggleReaction(component.item.doc, '🔥');
 

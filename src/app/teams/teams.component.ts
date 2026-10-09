@@ -277,9 +277,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
             : $localize`:@@team-created-success:Team created successfully`);
         this.planetMessageService.showMessage(msg);
       },
-      error: () => {
+      error: (err) => {
         this.getTeams();
-        this.planetMessageService.showAlert($localize`There was a problem saving your changes.`);
+        this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err));
       }
     });
   }
@@ -470,6 +470,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   getTeamTypeLabel(team: any): string {
     return team.doc.type === 'enterprise' ? $localize`enterprise` : $localize`team`;
+  }
+
+  coverImageUrl(team: any): string {
+    return this.teamsService.coverImageUrl(team);
   }
 
 }
