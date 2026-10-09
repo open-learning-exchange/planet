@@ -132,7 +132,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   user: any = {};
   private onDestroy$ = new Subject<void>();
   users = [];
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
 
@@ -147,11 +148,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private usersService: UsersService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     if (this.stateService.configuration.planetType === 'community') {

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, HostListener } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
@@ -33,7 +33,7 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   @Input() allTags: any[] = [];
 
   tooltipLabels = '';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
@@ -45,18 +45,14 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
     this.setTooltipLabels(this.selectedIds, this.allTags);
   }
 
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
   setTooltipLabels(selectedIds, allTags) {
     const tagsNames = selectedIds.map((tag: any) => this.tagsService.findTag(tag, allTags).name);
     this.tooltipLabels = tagsNames.join(', ');
   }
 
   getTruncatedTooltip(): string {
-    const maxLength = this.deviceType === this.deviceTypes.DESKTOP ? 50 :
-      this.deviceType === this.deviceTypes.TABLET ? 35 : 20;
+    const maxLength = this.deviceType() === this.deviceTypes.DESKTOP ? 50 :
+      this.deviceType() === this.deviceTypes.TABLET ? 35 : 20;
     return truncateText(this.tooltipLabels, maxLength);
   }
 

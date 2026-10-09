@@ -74,7 +74,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   private searchChange = new Subject<string>();
   configuration = this.stateService.configuration;
   tableState = new TableState();
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
   isLoading = true;
@@ -91,9 +91,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
   }
 
   ngOnInit() {

@@ -64,8 +64,6 @@ export const isSelectedMember = (item, members) => members.length === 0 ||
 
 export const filterByMember = (array, members = []) => array.filter(item => isSelectedMember(item, members));
 
-export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
-
 export const getDomainParams = (configuration, isHub) => isHub ?
   { planetCode: configuration.parentCode, domain: configuration.parentDomain } :
   { planetCode: undefined, domain: undefined };

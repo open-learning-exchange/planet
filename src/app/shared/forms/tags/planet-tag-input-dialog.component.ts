@@ -1,5 +1,4 @@
-import { Component, DestroyRef, Inject, Input, forwardRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Inject, Input, forwardRef } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors,
   ValidatorFn, FormsModule, ReactiveFormsModule
@@ -24,7 +23,6 @@ import { MatIcon } from '@angular/material/icon';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { UserService } from '@shared/auth/user.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { mapToArray, isInMap } from '@shared/utils';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
@@ -104,8 +102,6 @@ export class PlanetTagInputToggleIconComponent {
   ]
 })
 export class PlanetTagInputDialogComponent {
-  private readonly destroyRef = inject(DestroyRef);
-
   deleteDialog: any;
   tags: any[] = [];
   selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
@@ -128,8 +124,6 @@ export class PlanetTagInputDialogComponent {
   get okClickValue() {
     return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
   }
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -142,7 +136,6 @@ export class PlanetTagInputDialogComponent {
     private userService: UserService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
-    private deviceInfoService: DeviceInfoService,
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
@@ -162,11 +155,6 @@ export class PlanetTagInputDialogComponent {
       attachedTo: ['']
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-      });
   }
 
   dataInit() {

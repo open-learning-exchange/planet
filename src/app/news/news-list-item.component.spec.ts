@@ -1,12 +1,13 @@
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
 import { LabelComponent } from '@shared/ui/label.component';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
@@ -29,7 +30,8 @@ describe('NewsListItemComponent read-only behavior', () => {
       {} as any,
       authGuard as any,
       linkCopyService as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { isMobile: signal(false) } as any,
+      {} as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
@@ -113,7 +115,7 @@ describe('NewsListItemComponent read-only template', () => {
         { provide: MatDialog, useValue: {} },
         { provide: AuthGuard, useValue: {} },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
-        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(deviceType) } },
+        { provide: DeviceInfoService, useValue: { isMobile: signal(isMobileOrSmaller(deviceType)) } },
         provideNoopAnimations()
       ]
     }).compileComponents();
@@ -211,6 +213,23 @@ describe('NewsListItemComponent label choices', () => {
   });
 });
 
+describe('NewsListItemComponent preview expansion', () => {
+  it('keeps a voice the reader expanded open when the list refreshes it', () => {
+    const component = Object.create(NewsListItemComponent.prototype) as NewsListItemComponent;
+    const refreshedVoice = () => ({ _id: 'voice', doc: { message: 'Long message '.repeat(60) } });
+    component.previewLimit = 500;
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+    component.showLess = false;
+
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+
+    expect(component.showExpand).toBe(true);
+    expect(component.showLess).toBe(false);
+  });
+});
+
 describe('voice label display', () => {
   it('does not resolve custom labels through inherited object properties', () => {
     const component = new LabelComponent();
@@ -236,7 +255,8 @@ describe('NewsListItemComponent emoji reactions', () => {
       {} as any,
       authGuard as any,
       { copyLink: vi.fn() } as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { isMobile: signal(false) } as any,
+      {} as any
     );
     component.item = {
       _id: 'voice-1',
@@ -332,7 +352,7 @@ describe('NewsListItemComponent emoji reactions', () => {
     const { component, authGuard, newsService } = setupReactions();
     component.currentUser = {};
     const previousReactions = component.item.doc.reactions;
-    authGuard.checkAuthenticationStatus.mockReturnValue(throwError(new Error('Not authorized')));
+    authGuard.checkAuthenticationStatus.mockReturnValue(EMPTY);
 
     component.toggleReaction(component.item.doc, '🔥');
 
@@ -390,7 +410,7 @@ describe('NewsListItemComponent reactions template', () => {
         { provide: MatDialog, useValue: {} },
         { provide: AuthGuard, useValue: { checkAuthenticationStatus: () => of(undefined) } },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
-        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(DeviceType.DESKTOP) } },
+        { provide: DeviceInfoService, useValue: { isMobile: signal(false) } },
         provideNoopAnimations()
       ]
     }).compileComponents();

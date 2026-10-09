@@ -17,7 +17,7 @@ import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
 import { StateService } from '@shared/state.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 
 import { ValidatorService } from '../../validators/validator.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -61,8 +61,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   shownStatus = 'pending';
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   showFilterRow = false;
   get childType() {
     return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
@@ -78,12 +77,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private managerService: ManagerService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(

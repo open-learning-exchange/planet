@@ -1,5 +1,4 @@
 import { FormControl, AbstractControl } from '@angular/forms';
-import { SelectionModel } from '@angular/cdk/collections';
 
 import { fuzzyWordMatch, normalizeSearchString, splitSearchWords } from '@shared/search/fuzzy-search';
 
@@ -89,8 +88,10 @@ const matchAllItems = (filterItems: string[], propItems: string[]) => {
   return filterItems.every(filter => propSet.has(filter));
 };
 
-const filterArrayField = (filterField: string, filterItems: string[]) => (data: unknown, _filter: string) => {
-  const raw = getProperty(data, filterField);
+const filterArrayField = (
+  filterField: string, filterItems: string[], fieldValue = (data: unknown) => getProperty(data, filterField)
+) => (data: unknown, _filter: string) => {
+  const raw = fieldValue(data);
   const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
 
   return matchAllItems(filterItems, propItems);
@@ -100,9 +101,11 @@ export const filterTags = (filterControl: FormControl) => (data: any, filter: st
   filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter)
 );
 
-export const filterAdvancedSearch = (searchObj: any) => (data: any, filter: string) => Object.entries(searchObj).reduce(
+export const filterAdvancedSearch = (
+  searchObj: any, fieldValues: { [field: string]: (doc: any) => unknown } = {}
+) => (data: any, filter: string) => Object.entries(searchObj).reduce(
   (isMatch, [ field, val ]: any[]) => (
-    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val)(data.doc, filter))
+    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val, fieldValues[field])(data.doc, filter))
   ),
   true
 );
@@ -177,72 +180,3 @@ export const showFormErrors = <T extends { [K in keyof T]: AbstractControl }>(co
 export const filterIds = (filterObj: { ids: string[] }) => (data: any, filter: string) => (
   filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true
 );
-
-const selectableVisibleValues = <T, S>(
-  visibleRows: T[], selectValue: (row: T) => S, isSelectable: (row: T) => boolean
-) => visibleRows.filter(row => isSelectable(row)).map(row => selectValue(row));
-
-const allValuesSelected = <S>(selection: SelectionModel<S>, values: S[]) => (
-  values.length > 0 && values.every(value => selection.isSelected(value))
-);
-
-interface VisibleSelectionOptions<T, S> {
-  selectValue?: (row: T) => S;
-  isSelectable?: (row: T) => boolean;
-}
-
-export const isAllVisibleSelected = <T, S>(
-  selection: SelectionModel<S>,
-  visibleRows: T[],
-  {
-    selectValue = (row: any) => row._id,
-    isSelectable = () => true
-  }: VisibleSelectionOptions<T, S> = {}
-) => {
-  let hasSelectable = false;
-  for (const row of visibleRows) {
-    if (!isSelectable(row)) {
-      continue;
-    }
-    if (!selection.isSelected(selectValue(row))) {
-      return false;
-    }
-    hasSelectable = true;
-  }
-  return hasSelectable;
-};
-
-export const toggleVisibleSelection = <T, S>(
-  selection: SelectionModel<S>,
-  visibleRows: T[],
-  options: VisibleSelectionOptions<T, S> & {
-    clearAllOnDeselect?: boolean;
-  } = {}
-) => {
-  const {
-    selectValue = (row: any) => row._id,
-    isSelectable = () => true,
-    clearAllOnDeselect = false
-  } = options;
-  const values = selectableVisibleValues(visibleRows, selectValue, isSelectable);
-  if (allValuesSelected(selection, values)) {
-    if (clearAllOnDeselect) {
-      selection.clear();
-    } else {
-      selection.deselect(...values);
-    }
-  } else {
-    selection.select(...values);
-  }
-};
-
-export const removeFilteredFromSelection = <T, S>(
-  selection: SelectionModel<S>,
-  visibleRows: () => T[],
-  { selectValue = (row: any) => row._id }: Pick<VisibleSelectionOptions<T, S>, 'selectValue'> = {}
-) => {
-  queueMicrotask(() => {
-    const visibleValues = new Set(visibleRows().map(row => selectValue(row)));
-    selection.deselect(...selection.selected.filter(value => !visibleValues.has(value)));
-  });
-};

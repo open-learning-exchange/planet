@@ -13,12 +13,12 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
+import { planetAndParentId } from '@shared/utils';
 
 import { CoursesService } from '../../courses/courses.service';
 import { NewsService } from '../../news/news.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ChallengesUserStatusService } from './challenges-user-status.service';
-import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 import { ChallengesService, PlanetChallenge } from './challenges.service';
 
 @Component({
@@ -284,7 +284,7 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
           (post.doc.viewIn || []).find(
             (view) =>
               view._id ===
-              `${this.configuration.code}@${this.configuration.parentCode}`
+              planetAndParentId(this.configuration)
           ) || {}
         ).public,
       }));

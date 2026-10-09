@@ -1,7 +1,8 @@
 import { vi } from 'vitest';
-import { ElementRef } from '@angular/core';
+import { ElementRef, SimpleChange } from '@angular/core';
 import { of, Subject, throwError } from 'rxjs';
 
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { styleVariables } from '@shared/utils';
 
 import { PlanetCalendarComponent } from './planet-calendar.component';
@@ -23,7 +24,9 @@ describe('PlanetCalendarComponent read-only behavior', () => {
       new ElementRef(document.createElement('div')),
       { runOutsideAngular: (fn: () => void) => fn() } as any,
       { canEditMeetup: () => false } as any,
-      {} as any
+      {} as any,
+      { userChange$: new Subject() } as any,
+      new DialogGuardService()
     );
     component.editable = false;
 
@@ -64,6 +67,29 @@ describe('PlanetCalendarComponent read-only behavior', () => {
     expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(dialog.open).not.toHaveBeenCalled();
   });
+
+  it('opens one add-event dialog for clicks made while the auth check is pending', () => {
+    const { authGuard, component, dialog } = createComponent();
+    const select = component.calendarOptions.select as (event: any) => void;
+    const selection = { start: new Date('2026-01-01'), end: new Date('2026-01-02') };
+    const auth = new Subject<boolean>();
+    const closed = new Subject<void>();
+    authGuard.checkAuthenticationStatus.mockReturnValueOnce(auth);
+    dialog.open.mockReturnValue({ afterClosed: () => closed });
+    component.editable = true;
+
+    select(selection);
+    select(selection);
+    auth.next(true);
+
+    expect(authGuard.checkAuthenticationStatus).toHaveBeenCalledOnce();
+    expect(dialog.open).toHaveBeenCalledOnce();
+
+    closed.next();
+    select(selection);
+
+    expect(dialog.open).toHaveBeenCalledTimes(2);
+  });
 });
 
 describe('PlanetCalendarComponent', () => {
@@ -80,7 +106,8 @@ describe('PlanetCalendarComponent', () => {
     tasksService: any = {},
     notificationsService: any = { notifyMeetupChange: vi.fn(() => of({ ok: true })) },
     dialog: any = {},
-    element = document.createElement('div')
+    element = document.createElement('div'),
+    userService: any = { userChange$: new Subject() }
   ) => new PlanetCalendarComponent(
     document,
     'en',
@@ -94,7 +121,9 @@ describe('PlanetCalendarComponent', () => {
     new ElementRef(element),
     { runOutsideAngular: (fn: () => void) => fn() } as any,
     meetupService,
-    notificationsService
+    notificationsService,
+    userService,
+    new DialogGuardService()
   );
 
   const authorized = { canEditMeetup: () => true };
@@ -489,6 +518,83 @@ describe('PlanetCalendarComponent', () => {
     expect(dialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
       data: expect.objectContaining({ leaderOfTeamId: 'team-1', meetup: linkedMeetup })
     }));
+  });
+
+  describe('Reactive editability', () => {
+    const recurring = { ...meetup, _id: 'm2', title: 'Recurring', recurring: 'daily', recurringNumber: 1 };
+    const task = { _id: 't1', title: 'Task', deadline: meetup.startDate, completed: false };
+    const createLoadedCalendar = (canEditMeetup: (meetup: any, context: any) => boolean, editable = true) => {
+      const couchService = { findAll: vi.fn((db: string) => of(db === 'meetups' ? [ meetup, recurring ] : [ task ])) };
+      const userChange$ = new Subject<any>();
+      const meetupService = { canEditMeetup: vi.fn(canEditMeetup) };
+      const component = createComponent(couchService, meetupService, undefined, undefined, undefined, undefined, undefined, undefined, {
+        userChange$
+      });
+      component.editable = editable;
+      component.ngOnInit();
+      return { component, couchService, userChange$ };
+    };
+    const draggable = (component: PlanetCalendarComponent) =>
+      Object.fromEntries(component.calendarOptions.events.map((event: any) => [ event.title, event.startEditable ]));
+    const change = (previousValue: any, currentValue: any) => new SimpleChange(previousValue, currentValue, false);
+
+    it('turns on dragging and the add button from the cached events when the calendar becomes editable', () => {
+      const { component, couchService } = createLoadedCalendar((_, context) => !context.readOnly, false);
+      const renderedEvents = component.calendarOptions.events;
+      expect(draggable(component)).toEqual({ Meetup: false, Recurring: false, Task: false });
+      expect(component.calendarOptions.customButtons).toEqual({});
+
+      component.editable = true;
+      component.ngOnChanges({ editable: change(false, true) });
+
+      expect(draggable(component)).toEqual({ Meetup: true, Recurring: false, Task: true });
+      expect(component.calendarOptions.customButtons).toEqual({ addEventButton: expect.any(Object) });
+      expect(component.calendarOptions.events).not.toBe(renderedEvents);
+      expect(couchService.findAll).toHaveBeenCalledTimes(2);
+    });
+
+    it('rebuilds meetup dragging when team leadership changes', () => {
+      const { component } = createLoadedCalendar((_, context) => context.leaderOfTeamId === 'team-1');
+      expect(draggable(component)).toEqual({ Meetup: false, Recurring: false, Task: true });
+
+      component.leaderOfTeamId = 'team-1';
+      component.ngOnChanges({ leaderOfTeamId: change(undefined, 'team-1') });
+
+      expect(draggable(component)).toEqual({ Meetup: true, Recurring: false, Task: true });
+    });
+
+    it('rebuilds meetup dragging when the signed-in user changes', () => {
+      let signedIn = false;
+      const { component, userChange$ } = createLoadedCalendar(() => signedIn);
+      expect(draggable(component).Meetup).toBe(false);
+
+      signedIn = true;
+      userChange$.next({ _id: 'org.couchdb.user:ann' });
+
+      expect(draggable(component).Meetup).toBe(true);
+    });
+
+    it('shows only the new team\'s events once the team changes, even if the old fetch answers late', () => {
+      const responses: { [key: string]: Subject<any[]> } = {};
+      const couchService = { findAll: vi.fn((db: string, query: any) => {
+        const key = `${query.selector.link.teams} ${db}`;
+        responses[key] = responses[key] || new Subject<any[]>();
+        return responses[key];
+      }) };
+      const component = createComponent(couchService);
+      component.link = { teams: 'team-a' };
+      component.ngOnInit();
+
+      component.link = { teams: 'team-b' };
+      component.ngOnChanges({ link: change({ teams: 'team-a' }, component.link) });
+      responses['team-a meetups'].next([ meetup ]);
+      responses['team-a tasks'].next([ task ]);
+      expect(component.calendarOptions.events).toEqual([ {} ]);
+
+      responses['team-b meetups'].next([ { ...meetup, title: 'Team B' } ]);
+      responses['team-b tasks'].next([]);
+      expect(component.calendarOptions.events.map((event: any) => event.title)).toEqual([ 'Team B' ]);
+    });
   });
 
   describe('Event filtering', () => {

@@ -7,10 +7,9 @@ import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { findDocuments } from '@shared/database/mango-queries';
-import { dedupeObjectArray } from '@shared/utils';
+import { dedupeObjectArray, planetAndParentId } from '@shared/utils';
 
 import { environment } from '../../environments/environment';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -121,11 +120,11 @@ export class NewsService {
 
   shareNews(news, planets?: any[], successMessage = $localize`Message has been successfully shared`) {
     const viewInObject = (planet) => (
-      { _id: `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
+      { _id: planetAndParentId(planet), section: 'community', sharedDate: this.couchService.datePlaceholder }
     );
     const existingPlanetIds = (news.viewIn || []).map(view => view._id);
     const newPlanets = planets ? planets
-      .filter(planet => !existingPlanetIds.includes(`${planet.code}@${planet.parentCode}`))
+      .filter(planet => !existingPlanetIds.includes(planetAndParentId(planet)))
       .map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     if (newPlanets.length === 0) {
       return of(undefined);

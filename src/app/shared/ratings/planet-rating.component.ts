@@ -11,7 +11,7 @@ import { PlanetStackedBarComponent } from '@shared/charts/planet-stacked-bar.com
 
 import { RatingInfo, RatingService, RatingType } from './rating.service';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
-import { ratingFormFields, RatingFormModel, RatingFormValue } from './rating-form';
+import { disableCommentWhenUnrated, ratingFormFields, RatingFormModel, RatingFormValue } from './rating-form';
 
 interface RateFormModel {
   rate: FormControl<number>;
@@ -53,6 +53,7 @@ export class PlanetRatingComponent implements OnChanges {
   ) {
     this.rateForm = this.fb.group({ rate: 0 });
     this.popupForm = this.fb.group({ rate: 0, comment: '' });
+    disableCommentWhenUnrated(this.popupForm);
   }
 
   ngOnChanges() {

@@ -20,7 +20,6 @@ import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
 import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
-import { PreviewOverflowDirective } from '@shared/text/preview-overflow.directive';
 
 import { MaterialModule } from './material.module';
 
@@ -43,8 +42,7 @@ import { MaterialModule } from './material.module';
     RestrictDiacriticsDirective,
     TruncateTextPipe,
     FullNamePipe,
-    TimeAgoPipe,
-    PreviewOverflowDirective
+    TimeAgoPipe
   ],
   exports: [
     PlanetLocalStatusComponent,
@@ -64,8 +62,7 @@ import { MaterialModule } from './material.module';
     OverlayModule,
     TruncateTextPipe,
     FullNamePipe,
-    TimeAgoPipe,
-    PreviewOverflowDirective
+    TimeAgoPipe
   ]
 })
 export class SharedComponentsModule {}

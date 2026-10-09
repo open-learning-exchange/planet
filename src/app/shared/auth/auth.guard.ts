@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { filter, switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateFn } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -89,14 +89,7 @@ export class AuthGuard {
   }
 
   checkAuthenticationStatus(): Observable<boolean> {
-    return this.checkUser('/', []).pipe(
-      map(isLoggedIn => {
-        if (!isLoggedIn) {
-          throw new Error('Not authorized');
-        }
-        return isLoggedIn;
-      })
-    );
+    return this.checkUser('/', []).pipe(filter(isLoggedIn => isLoggedIn));
   }
 
   static centerLandingGuard: CanActivateFn = (route, state) => {

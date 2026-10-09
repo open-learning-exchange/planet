@@ -29,6 +29,7 @@ import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner
 import { PlanetCalendarComponent } from '@shared/calendar/planet-calendar.component';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { planetAndParentId } from '@shared/utils';
 
 import { TeamsService } from './teams.service';
 import { NewsService } from '../news/news.service';
@@ -38,7 +39,6 @@ import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
 import { CustomValidators } from '../validators/custom-validators';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { NewsListComponent } from '../news/news-list.component';
@@ -131,7 +131,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reportsCount = 0;
   financesCount = 0;
   configuration = this.stateService.configuration;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   get requestBadgeDescription(): string {
@@ -157,11 +158,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private stateService: StateService,
     private tasksService: TasksService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
@@ -607,10 +604,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.planetMessageService.showMessage(
-        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe({
+      next: (updatedTeam) => {
+        this.team = updatedTeam;
+        this.planetMessageService.showMessage(
+          (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      },
+      error: (err) => this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err))
     });
   }
 
@@ -809,6 +809,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       autoFocus: false
     });
+  }
+
+  coverImageUrl(): string {
+    return this.teamsService.coverImageUrl(this.team);
   }
 
 }

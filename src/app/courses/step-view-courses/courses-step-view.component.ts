@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -15,7 +15,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { AiChatService } from '@shared/ai/ai-chat.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { coursesStepPrompt } from '@shared/ai/ai-prompts.constants';
 import { ChallengesService } from '@shared/challenges/challenges.service';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
@@ -79,7 +79,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   showChat = false;
   isOpenai = false;
   isLoading = true;
-  deviceType: DeviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   constructor(
@@ -94,17 +94,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
     private challengesService: ChallengesService,
-  ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  get isMobile(): boolean {
-    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-  }
+  ) {}
 
   get hasActionButtons(): boolean {
     const hasExam = !!this.stepDetail?.exam?.questions.length;

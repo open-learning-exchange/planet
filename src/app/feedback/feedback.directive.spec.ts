@@ -37,7 +37,8 @@ describe('FeedbackDirective', () => {
       { showMessage: vi.fn(), showAlert: vi.fn() } as any,
       { configuration: { code: 'planet', parentCode: 'nation' } } as any,
       {} as any,
-      dialogsLoadingService
+      dialogsLoadingService,
+      {} as any
     );
   });
 

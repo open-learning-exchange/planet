@@ -67,7 +67,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   planetCodes: string[] = [];
   selectedPlanetCode: string;
   configuration: any = {};
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes = DeviceType;
   isLoading = false;
 
@@ -80,11 +80,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private usersProfileDialogService: UsersProfileDialogService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;

@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { finalize, switchMap, takeUntil } from 'rxjs/operators';
+import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
@@ -14,12 +14,13 @@ import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { AuthGuard } from '@shared/auth/auth.guard';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '@shared/utils';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { LabelComponent } from '@shared/ui/label.component';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
@@ -82,10 +83,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   labels = { listed: [], all: [ ...DEFAULT_VOICE_LABELS ] };
   teamLabels = [];
   previewLimit = 500;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
   reactionSaving = false;
+  private expansionKey: string;
 
   constructor(
     private router: Router,
@@ -96,15 +97,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private authGuard: AuthGuard,
     private linkCopyService: LinkCopyService,
     private deviceInfoService: DeviceInfoService,
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
-    });
-  }
+    private dialogGuard: DialogGuardService
+  ) {}
 
   ngOnInit() {
-    this.handleItemExpansion();
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.currentUser = this.userService.get();
     });
@@ -161,27 +157,25 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
     const label = this.formLabel(news);
-    this.authGuard.checkAuthenticationStatus().subscribe(() => {
-      this.updateNews.emit({
-        title: $localize`Reply to ${label}`,
-        placeholder:  $localize`Your ${label}`,
-        initialValue: '',
-        news: {
-          replyTo: news._id,
-          messagePlanetCode: news.messagePlanetCode,
-          messageType: news.messageType,
-          viewIn: news.viewIn
-        }
-      });
+    this.updateNews.emit({
+      title: $localize`Reply to ${label}`,
+      placeholder:  $localize`Your ${label}`,
+      initialValue: '',
+      news: {
+        replyTo: news._id,
+        messagePlanetCode: news.messagePlanetCode,
+        messageType: news.messageType,
+        viewIn: news.viewIn
+      }
     });
   }
 
   handleItemExpansion() {
-    if (this.item.latestMessage) {
-      this.showExpand = true;
-      this.showLess = false;
-    } else {
-      this.showLess = true;
+    // A refreshed copy of the same voice keeps the reader's expanded state
+    const expansionKey = `${this.item._id}:${this.item.latestMessage === true}`;
+    if (expansionKey !== this.expansionKey) {
+      this.expansionKey = expansionKey;
+      this.showLess = !this.item.latestMessage;
     }
     if (this.item.doc.news?.conversations?.length > 1) {
       this.showExpand = true;
@@ -246,12 +240,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       event.stopPropagation();
       event.preventDefault();
     }
-    this.authGuard.checkAuthenticationStatus().subscribe(() => {
+    this.dialogGuard.open('member-profile', () => this.authGuard.checkAuthenticationStatus().pipe(map(() =>
       this.usersProfileDialogService.open(
         { member: { ...member, userPlanetCode: member.planetCode } },
         { restoreFocus: false }
-      );
-    });
+      )
+    ))).subscribe();
   }
 
   addTeamLabelsFromViewIn() {

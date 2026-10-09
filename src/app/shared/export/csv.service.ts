@@ -15,6 +15,12 @@ import { monthDataLabels } from '../../manager-dashboard/reports/reports.utils';
 export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
 export const CSV_PREVIEW_MAX_ROWS = 5000;
 
+const formulaPrefix = /^[=+\-@\t\r]/;
+const neutralizeFormula = (value: any) =>
+  typeof value === 'string' && formulaPrefix.test(value) && isNaN(Number(value)) ? `'${value}` : value;
+// export-to-csv writes the title and headers as is, so they have to arrive as quoted cells
+const quotedCell = (text: string) => `"${neutralizeFormula(text).replace(/"/g, '""')}"`;
+
 export interface CsvPreview {
   columns: string[];
   rows: Array<Record<string, string>>;
@@ -41,7 +47,12 @@ export class CsvService {
 
   private generate(data, options?) {
     if (data.length > 0) {
-      new ExportToCsv({ ...this.default, ...options }).generateCsv(data);
+      const csvOptions = { ...this.default, ...options };
+      const title = csvOptions.title?.split(/\r?\n/).map(quotedCell).join('\r\n');
+      const rows = data.map(row => Object.fromEntries(
+        Object.entries(row).map(([ key, value ]) => [ quotedCell(key), neutralizeFormula(value) ])
+      ));
+      new ExportToCsv({ ...csvOptions, title }).generateCsv(rows);
     }
   }
 

@@ -45,6 +45,8 @@ export const resourceFileType = (doc?: ResourceDocumentWithAttachments | null) =
   return isWebBundle ? fileTypeFor('html') : attachmentFileType(doc, filename);
 };
 
+export const resourceFileTypeValue = (doc?: ResourceDocumentWithAttachments | null) => resourceFileType(doc)?.value;
+
 export const formatResourceAttachmentSize = (
   doc?: ResourceDocumentWithAttachments | null,
   filename?: string

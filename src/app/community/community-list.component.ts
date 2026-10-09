@@ -9,10 +9,11 @@ import { MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 
 import { CouchService } from '@shared/database/couchdb.service';
+import { planetAndParentId } from '@shared/utils';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId, sortPlanet } from '../manager-dashboard/reports/reports.utils';
+import { arrangePlanetsIntoHubs, attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-community-list',

@@ -74,7 +74,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
@@ -87,11 +88,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -234,7 +231,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
-      this.isUserEnrolled = !this.isUserEnrolled;
+      this.isUserEnrolled = true;
     }, (error) => ((error)));
   }
 

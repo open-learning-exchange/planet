@@ -20,12 +20,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
-  isAllVisibleSelected, toggleVisibleSelection
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
 } from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
@@ -122,13 +122,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   selection = new SelectionModel(true, [], true,
     (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
   );
-  renderedData: any[] = [];
+  pageSelection = new PaginatedSelection(this.selection, { selectValue: (row: any) => row.doc, keepAcrossPages: true });
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
   promptDialog: MatDialogRef<DialogsPromptComponent>;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   trackById = trackById;
 
   constructor(
@@ -141,12 +140,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -163,8 +157,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
     this.usersTable.filterPredicate = this.filterPredicate();
+    this.pageSelection.connect(this.usersTable, this.onDestroy$);
     this.usersTable.connect().pipe(takeUntil(this.onDestroy$)).subscribe(data => {
-      this.renderedData = data;
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
@@ -191,16 +185,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersTable.paginator = this.paginator;
   }
 
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
-  }
-
   onlyManagerSelected() {
     return this.selection.selected.every((user) => user.isUserAdmin === true);
-  }
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
   }
 
   gotoProfileView(userName: string, event?: Event) {

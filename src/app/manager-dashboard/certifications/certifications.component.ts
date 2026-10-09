@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -65,8 +64,6 @@ import { CertificationsManagerService } from './certifications-manager.service';
   ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
-  private readonly destroyRef = inject(DestroyRef);
-
   certifications = new MatTableDataSource();
   selection = new SelectionModel(true, []);
   displayedColumns = [
@@ -75,7 +72,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
   isLoading = true;
@@ -85,13 +82,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
     private certificationsManagerService: CertificationsManagerService,
     private deviceInfoService: DeviceInfoService,
     private dialogsLoadingService: DialogsLoadingService
-  ) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-      });
-  }
+  ) {}
 
   ngOnInit() {
     this.getCertifications();

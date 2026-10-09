@@ -352,7 +352,7 @@ export class SubmissionsService {
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text).replace(/"/g, '""')}"`]:
+              [`${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text)}`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };

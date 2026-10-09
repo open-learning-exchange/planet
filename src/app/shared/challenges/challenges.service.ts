@@ -5,9 +5,9 @@ import { catchError, map } from 'rxjs/operators';
 
 import { StateService } from '@shared/state.service';
 import { CouchService } from '@shared/database/couchdb.service';
+import { planetAndParentId } from '@shared/utils';
 
 import { ChallengesAnnouncementDialogComponent } from './challenges-announcement-dialog.component';
-import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
 

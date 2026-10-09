@@ -20,6 +20,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
 import { findDocuments } from '@shared/database/mango-queries';
+import { planetAndParentId } from '@shared/utils';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { ChallengesAnnouncementSuccessDialogComponent } from '@shared/challenges/challenges-announcement-dialog.component';
 import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
@@ -35,7 +36,6 @@ import { TeamsService } from '../teams/teams.service';
 import { UsersService } from '../users/users.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { ConfigurationCheckService } from '../configuration/configuration-check.service';
 import { NewsListComponent } from '../news/news-list.component';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
@@ -95,17 +95,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
   reports: any[] = [];
   deleteMode = false;
   onDestroy$ = new Subject<void>();
-  communityDataRequest$ = new Subject<void>();
+  communityDataRequest$ = new Subject<boolean>();
   newsRequestSubscription?: Subscription;
   isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
   planetCode = this.route.snapshot.paramMap.get('code');
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes = DeviceType;
   newsLoading = true;
   teamLoading = true;
   teamLoaded = false;
+  private communityReady = false;
+  private loggedOut$ = new Subject<void>();
   private challengeChecked = false;
   currentTab = 0;
   activeReplyId: string | null = null;
@@ -152,29 +154,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
     private challengesService: ChallengesService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();
     this.communityDataRequest$.pipe(
-      tap(() => {
-        this.teamLoading = true;
-        this.teamLoaded = false;
-        this.newsLoading = true;
-        this.communityDataLoading = true;
-        this.activeReplyId = null;
-        this.news = [];
-        this.links = [];
-        this.finances = [];
-        this.reports = [];
-        this.councillors = [];
-        this.newsRequestSubscription?.unsubscribe();
-      }),
-      switchMap(() => this.loadCommunityData()),
+      switchMap(withNews => withNews ? this.loadCommunityData() : this.loadMemberData()),
       takeUntil(this.onDestroy$)
     ).subscribe(team => {
       this.team = team;
@@ -223,8 +208,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
       this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
-      if (this.isLoggedIn) {
-        this.getCommunityData();
+      if (!this.isLoggedIn) {
+        this.loggedOut$.next();
+        this.clearMemberData();
+      } else if (!this.teamLoaded) {
+        this.getCommunityData(!this.communityReady);
       }
     });
   }
@@ -253,11 +241,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.couchService.updateDocument('notifications', data);
   }
 
-  getCommunityData() {
-    this.communityDataRequest$.next();
+  getCommunityData(withNews = true) {
+    this.communityDataRequest$.next(withNews);
   }
 
   private loadCommunityData() {
+    this.communityReady = false;
+    this.teamLoading = true;
+    this.newsLoading = true;
+    this.communityDataLoading = true;
+    this.activeReplyId = null;
+    this.news = [];
+    this.councillors = [];
+    this.clearMemberData();
+    this.newsRequestSubscription?.unsubscribe();
     const planetCode = this.planetCode;
     const localConfiguration = this.stateService.configuration || {};
     const childPlanetType = this.getChildPlanetType(localConfiguration.planetType);
@@ -276,15 +273,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
         };
         this.team = requestedTeam;
         this.teamId = this.team._id;
-        this.requestNewsAndUsers(planetCode);
-        this.communityDataLoading = true;
-        return this.getLinks(planetCode);
-      }),
-      switchMap((res) => {
-        this.setLinksAndFinances(res);
-        return this.couchService.get(`teams/${requestedTeam._id}`).pipe(
-          catchError(err => err.status === 404 ? of(requestedTeam) : throwError(err))
-        );
+        this.communityReady = true;
+        this.requestNews(planetCode);
+        this.requestUsers(planetCode);
+        if (!this.isLoggedIn) {
+          this.teamLoading = false;
+          this.communityDataLoading = false;
+          return EMPTY;
+        }
+        return this.loadMemberData();
       }),
       catchError(() => {
         this.teamLoading = false;
@@ -295,11 +292,41 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
+  private loadMemberData() {
+    const stopLoading = () => {
+      this.teamLoading = false;
+      this.communityDataLoading = false;
+    };
+    this.teamLoading = true;
+    this.communityDataLoading = true;
+    return this.getLinks().pipe(
+      switchMap((res) => {
+        this.setLinksAndFinances(res);
+        return this.couchService.get(`teams/${this.team._id}`).pipe(
+          catchError(err => err.status === 404 ? of(this.team) : throwError(err))
+        );
+      }),
+      catchError(() => {
+        stopLoading();
+        return EMPTY;
+      }),
+      takeUntil(this.loggedOut$.pipe(tap(stopLoading)))
+    );
+  }
+
+  private clearMemberData() {
+    this.links = [];
+    this.finances = [];
+    this.reports = [];
+    this.team = this.teamObject(this.planetCode);
+    this.teamLoaded = false;
+  }
+
   private getChildPlanetType(planetType: string): 'community' | 'nation' | undefined {
     return planetType === 'center' ? 'nation' : planetType === 'nation' ? 'community' : undefined;
   }
 
-  requestNewsAndUsers(planetCode?: string) {
+  private requestNews(planetCode?: string) {
     this.newsRequestSubscription = this.newsService.requestNews({
       selectors: {
         $or: [
@@ -309,6 +336,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       },
       viewId: this.teamId
     });
+  }
+
+  private requestUsers(planetCode?: string) {
     if (planetCode) {
       this.stateService.requestData('child_users', 'local');
     } else {
@@ -390,12 +420,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamObject(planetCode?: string) {
     const code = planetCode || this.stateService.configuration.code;
     const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
-    const teamId = `${code}@${parentCode}`;
+    const teamId = planetAndParentId({ code, parentCode });
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
 
-  getLinks(planetCode?) {
-    return this.teamsService.getTeamMembers(this.team || this.teamObject(planetCode), true).pipe(map((docs) => {
+  getLinks() {
+    return this.teamsService.getTeamMembers(this.team, true).pipe(map((docs) => {
       const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => {
         if (!docObject[doc.docType]) {
           docObject[doc.docType] = [];

@@ -85,7 +85,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   fullTextSearch = false;
   searchType: 'questions' | 'responses' | null = null;
   overlayOpen = false;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: Record<string, FormGroup<TitleForm>> = {};
   trackByFn = trackById;
@@ -100,9 +101,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private userService: UserService
   ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
     this.lastRenderedConversation = -1;
   }
 
