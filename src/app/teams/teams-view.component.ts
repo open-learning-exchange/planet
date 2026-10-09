@@ -21,7 +21,7 @@ import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
 import { CustomValidators } from '../validators/custom-validators';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { planetAndParentId } from '../shared/utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
@@ -129,7 +129,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reportsCount = 0;
   financesCount = 0;
   configuration = this.stateService.configuration;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   get requestBadgeDescription(): string {
@@ -155,11 +156,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private stateService: StateService,
     private tasksService: TasksService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;

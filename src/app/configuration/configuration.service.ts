@@ -7,7 +7,7 @@ import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { findDocuments } from '../shared/database/mango-queries';
 import { StateService } from '../shared/state.service';
 import { SyncService } from '../shared/database/sync.service';
-import { dedupeShelfReduce, deepObjectPatch, stringToHex } from '../shared/utils';
+import { dedupeShelfReduce, deepObjectPatch, planetAndParentId, stringToHex } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +70,7 @@ export class ConfigurationService {
     };
     const meetupReplicator = {
       dbSource: 'meetups', db: 'community_meetups',
-      selector: { link: { teams: { $eq: `${configuration.code}@${configuration.parentCode}` } } },
+      selector: { link: { teams: { $eq: planetAndParentId(configuration) } } },
       continuous: true, type: 'internal'
     };
     return forkJoin([

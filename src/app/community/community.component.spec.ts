@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { convertToParamMap } from '@angular/router';
 import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
@@ -78,7 +79,7 @@ describe('CommunityComponent remote exchange behavior', () => {
     const currentUser: any = { value: user };
     const userService = { get: vi.fn(() => currentUser.value), userChange$ };
     const usersService = { usersListener: vi.fn(() => EMPTY), requestUsers: vi.fn() };
-    const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
+    const deviceInfoService = { deviceType: signal(DeviceType.DESKTOP) };
     const component = new CommunityComponent(
       dialog as any,
       router as any,

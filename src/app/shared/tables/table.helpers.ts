@@ -87,8 +87,10 @@ const matchAllItems = (filterItems: string[], propItems: string[]) => {
   return filterItems.every(filter => propSet.has(filter));
 };
 
-const filterArrayField = (filterField: string, filterItems: string[]) => (data: unknown, _filter: string) => {
-  const raw = getProperty(data, filterField);
+const filterArrayField = (
+  filterField: string, filterItems: string[], fieldValue = (data: unknown) => getProperty(data, filterField)
+) => (data: unknown, _filter: string) => {
+  const raw = fieldValue(data);
   const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
 
   return matchAllItems(filterItems, propItems);
@@ -98,9 +100,11 @@ export const filterTags = (filterControl: FormControl) => (data: any, filter: st
   filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter)
 );
 
-export const filterAdvancedSearch = (searchObj: any) => (data: any, filter: string) => Object.entries(searchObj).reduce(
+export const filterAdvancedSearch = (
+  searchObj: any, fieldValues: { [field: string]: (doc: any) => unknown } = {}
+) => (data: any, filter: string) => Object.entries(searchObj).reduce(
   (isMatch, [ field, val ]: any[]) => (
-    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val)(data.doc, filter))
+    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val, fieldValues[field])(data.doc, filter))
   ),
   true
 );

@@ -18,7 +18,7 @@ import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { planetAndParentId } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { ChallengesAnnouncementSuccessDialogComponent } from '../shared/challenges/challenges-announcement-dialog.component';
 import { ChallengesUserStatusService } from '../shared/challenges/challenges-user-status.service';
@@ -99,7 +99,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode = this.route.snapshot.paramMap.get('code');
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes = DeviceType;
   newsLoading = true;
   teamLoading = true;
@@ -152,11 +152,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
     private challengesService: ChallengesService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();
@@ -422,7 +418,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamObject(planetCode?: string) {
     const code = planetCode || this.stateService.configuration.code;
     const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
-    const teamId = `${code}@${parentCode}`;
+    const teamId = planetAndParentId({ code, parentCode });
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
 

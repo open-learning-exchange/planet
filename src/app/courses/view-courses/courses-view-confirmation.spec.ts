@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -12,7 +13,7 @@ describe('CoursesViewComponent enrollment', () => {
       coursesService,
       {} as any,
       { configuration: {} } as any,
-      { watchDeviceType: vi.fn().mockReturnValue(of(undefined)) } as any,
+      { deviceType: signal(undefined) } as any,
       dialog
     );
     component.courseDetail = { courseTitle: 'Course 1' };

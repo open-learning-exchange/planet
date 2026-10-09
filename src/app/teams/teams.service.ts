@@ -10,9 +10,8 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import {
-  fullName, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
+  fullName, planetAndParentId, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
 } from '../shared/utils';
 import { AttachmentInputState, ExistingAttachment } from '../shared/forms/file-upload.component';
 import { environment } from '../../environments/environment';
@@ -529,7 +528,7 @@ export class TeamsService {
   createServicesDoc() {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      _id: `${code}@${parentCode}`,
+      _id: planetAndParentId(this.stateService.configuration),
       createdDate: this.couchService.datePlaceholder,
       teamPlanetCode: `${code}`,
       parentCode: `${parentCode}`,
@@ -548,7 +547,7 @@ export class TeamsService {
   createServicesLink({ title, route, teamType, icon }) {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      teamId: `${code}@${parentCode}`,
+      teamId: planetAndParentId(this.stateService.configuration),
       createdDate: this.couchService.datePlaceholder,
       teamPlanetCode: `${code}`,
       parentCode: `${parentCode}`,

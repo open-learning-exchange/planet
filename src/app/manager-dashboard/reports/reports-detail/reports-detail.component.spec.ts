@@ -1,8 +1,9 @@
 import { vi } from 'vitest';
-import { of } from 'rxjs';
+import { signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
 import { ReportsDetailComponent } from './reports-detail.component';
+import { DeviceType } from '../../../shared/ui/device-info.service';
 import { ReportsService } from '../reports.service';
 
 describe('ReportsDetailComponent exports', () => {
@@ -23,7 +24,7 @@ describe('ReportsDetailComponent exports', () => {
       {} as any,
       {} as any,
       new FormBuilder().nonNullable,
-      { watchDeviceType: () => of('desktop') } as any,
+      { deviceType: signal(DeviceType.DESKTOP) } as any,
       {} as any,
       'en-US'
     );

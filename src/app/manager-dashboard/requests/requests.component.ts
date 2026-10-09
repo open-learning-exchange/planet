@@ -12,7 +12,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
+import { DeviceInfoService } from '../../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -59,8 +59,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   shownStatus = 'pending';
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   showFilterRow = false;
   get childType() {
     return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
@@ -76,12 +75,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private managerService: ManagerService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(
