@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -20,7 +19,7 @@ import {
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { DeviceInfoService } from '../shared/ui/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -77,8 +76,6 @@ import { enterpriseJoinAgreement } from './teams.utils';
   ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
-  private readonly destroyRef = inject(DestroyRef);
-
   teams = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -112,8 +109,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
   filter: string;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   userNotInShelf = false;
   showFiltersRow = false;
   selection = new SelectionModel(true, []);
@@ -133,14 +129,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private stateService: StateService,
     private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-        this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-      });
-  }
+  ) {}
 
   ngOnInit() {
     this.getTeams();

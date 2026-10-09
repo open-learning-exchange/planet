@@ -27,7 +27,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
 import { ExamsService } from '../exams/exams.service';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { DeviceInfoService } from '../shared/ui/device-info.service';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
@@ -128,8 +128,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
   availableAIProviders: any[] = [];
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
 
   get teamSurveyMode() {
     return !!(this.teamId || this.routeTeamId);
@@ -152,12 +151,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private linkCopyService: LinkCopyService,
     private dialogGuard: DialogGuardService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.useDialogLoading = !this.teamId && !this.routeTeamId;

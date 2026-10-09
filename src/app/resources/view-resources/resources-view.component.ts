@@ -80,7 +80,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceId: string;
   constantsOptions = constants;
   languageOptions = languages;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
@@ -93,11 +94,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
     private linkCopyService: LinkCopyService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
