@@ -18,9 +18,9 @@ import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { UserService } from '../shared/auth/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById,
-  isAllVisibleSelected, removeFilteredFromSelection, toggleVisibleSelection
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
 } from '../shared/tables/table.helpers';
+import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { SyncService } from '../shared/database/sync.service';
@@ -28,7 +28,7 @@ import { FormControl } from '@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { couchAttachmentPath, findByIdInArray } from '../shared/utils';
 import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -51,8 +51,7 @@ import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.direct
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PreviewOverflowDirective } from '../shared/text/preview-overflow.directive';
-import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
+import { PlanetMarkdownPreviewComponent } from '../shared/markdown/planet-markdown-preview.component';
 import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
@@ -105,8 +104,7 @@ import { ResourcesIconComponent } from './resources-icon.component';
     MatTooltip,
     MatChipSet,
     MatChip,
-    PreviewOverflowDirective,
-    PlanetMarkdownComponent,
+    PlanetMarkdownPreviewComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
     PlanetRatingDialogDirective,
@@ -125,7 +123,6 @@ import { ResourcesIconComponent } from './resources-icon.component';
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
   resources = new MatTableDataSource();
-  private renderedRows: any[] = [];
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -140,6 +137,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
@@ -160,7 +158,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
+    this.pageSelection.removeFiltered();
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -186,8 +184,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.showFilters && !this.isTabletOrSmaller;
   }
   expandedElement: any = null;
-  private previewHasHiddenContent = new Map<string, boolean>();
-  private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -248,10 +244,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      removeFilteredFromSelection(this.selection, () => this.renderedRows);
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
-    this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.resources, this.onDestroy$);
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
   }
@@ -271,10 +266,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
   ngAfterViewInit() {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
@@ -292,16 +283,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.recordSearch(true);
   }
 
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedRows);
-  }
-
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
-  }
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedRows, { clearAllOnDeselect: true });
   }
 
   updateResource(resource) {
@@ -402,7 +385,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           okClick: {
             request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
             onNext: () => {
-              removeFilteredFromSelection(this.selection, () => this.renderedRows);
+              this.pageSelection.removeFiltered();
               this.onSelectionChange(this.selection.selected);
               dialogRef.close();
             },
@@ -413,7 +396,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
-      removeFilteredFromSelection(this.selection, () => this.renderedRows);
+      this.pageSelection.removeFiltered();
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -440,7 +423,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    removeFilteredFromSelection(this.selection, () => this.renderedRows);
   }
 
   toggleFiltersRow() {
@@ -555,29 +537,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return arr.map(s => s.trim()).filter(Boolean)
       .map(value => levelList.find(option => option.value === value)?.label || value)
       .join(', ');
-  }
-
-  showPreviewExpand(element: any): boolean {
-    const description = element?.doc?.description;
-    if (!description) {
-      return false;
-    }
-    const previewKey = this.getPreviewKey(element);
-    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
-    if (hasHiddenContent === undefined) {
-      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
-      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
-    }
-    // isExpanded check keeps the collapse button visible after the preview div unmounts
-    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
-  }
-
-  getPreviewKey(element: any): string {
-    return element?._id || '';
-  }
-
-  setPreviewOverflow(element: any, hasOverflow: boolean) {
-    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }

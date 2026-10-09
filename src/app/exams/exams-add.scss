@@ -1,15 +1,8 @@
-@use '../variables' as v;
-
 :host {
 
   .view-container {
     display: grid;
     grid-auto-rows: 1fr;
-
-    &.view-container.view-full-height {
-      height: v.$view-container-height-no-toolbar;
-    }
-
   }
 
   form {

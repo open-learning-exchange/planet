@@ -32,7 +32,8 @@ describe('SurveysComponent', () => {
     {} as any,
     new FormBuilder().nonNullable,
     { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any,
-    linkCopyService
+    linkCopyService,
+    {} as any
   );
 
   beforeEach(() => {

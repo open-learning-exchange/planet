@@ -5,9 +5,9 @@
   <mat-table #table class="responsive-table" [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc" [class.hidden]="isLoading" [class.min-width-table]="displayedColumns.includes('action')">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
+          [checked]="selection.hasValue() && pageSelection.isAllSelected()"
+          [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">

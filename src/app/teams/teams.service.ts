@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin, throwError } from 'rxjs';
-import { switchMap, map, take, catchError } from 'rxjs/operators';
+import { of, empty, forkJoin, throwError, from } from 'rxjs';
+import { switchMap, map, take, catchError, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/database/couchdb.service';
 import { UserService } from '../shared/auth/user.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsFormService, DialogField } from '../shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
-import { fullName, planetAndParentId, truncateText } from '../shared/utils';
+import {
+  fullName, planetAndParentId, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
+} from '../shared/utils';
+import { AttachmentInputState, ExistingAttachment } from '../shared/forms/file-upload.component';
+import { environment } from '../../environments/environment';
 
 const nameField = {
   type: 'textbox',
@@ -57,6 +62,7 @@ export class TeamsService {
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private usersService: UsersService,
     private stateService: StateService,
@@ -82,6 +88,7 @@ export class TeamsService {
     } : {};
     const formGroup = {
       ...nameControl,
+      coverImage: [ { retained: this.existingCoverAttachments(team), removed: [], added: [] } ],
       description: team.description || '',
       services: team.services || '',
       rules: team.rules || '',
@@ -89,24 +96,30 @@ export class TeamsService {
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
     };
-    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
+    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type, team), formGroup, true)
       .pipe(
-        switchMap((response: any) => response !== undefined ?
-          this.updateTeam(
-            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
-          ) :
-          empty()
-        ),
-        switchMap((response) => !team._id ?
-          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
-          of(response)
-        )
+        switchMap((response: any) => {
+          if (response === undefined) {
+            return empty();
+          }
+          const { coverImage, ...changes } = response;
+          this.dialogsLoadingService.start();
+          return this.saveTeamWithCover({
+            limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
+            parentCode: configuration.parentCode, createdBy: userId, ...team, ...changes, type
+          }, coverImage).pipe(
+            switchMap((savedTeam) => !team._id ?
+              this.toggleTeamMembership(savedTeam, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
+              of(savedTeam)
+            ),
+            finalize(() => this.dialogsLoadingService.stop())
+          );
+        })
       );
   }
 
-  addTeamFields(configuration, type) {
-    const typeField = {
+  addTeamFields(configuration, type, team: any = {}) {
+    const typeField: DialogField = {
       type: 'selectbox',
       name: 'teamType',
       placeholder: $localize`Team Type`,
@@ -118,12 +131,55 @@ export class TeamsService {
         { value: 'local', name: $localize`Local team` }
       ]
     };
+    const coverField: DialogField = {
+      type: 'file-upload',
+      name: 'coverImage',
+      placeholder: $localize`Cover image`,
+      fileUpload: {
+        accept: 'image/*',
+        existingAttachments: this.existingCoverAttachments(team),
+        hint: $localize`Recommended: a square image. Covers are cropped to fit.`,
+        imagePreview: true,
+        maxFiles: 1,
+        multiple: false,
+        typePills: [ 'IMG' ]
+      }
+    };
     return [
       type === 'services' ? [] : nameField,
       type === 'enterprise' ? enterpriseDescField : descriptionField,
+      type === 'services' ? [] : coverField,
       type === 'team' ? typeField : [],
       publicField
     ].flat();
+  }
+
+  existingCoverAttachments(team: any): ExistingAttachment[] {
+    const fileName = team?.coverFileName;
+    const attachment = team?._attachments?.[fileName];
+    return fileName && attachment ? [ {
+      name: fileName,
+      contentType: attachment.content_type,
+      url: this.coverImageUrl(team),
+      size: attachment.length
+    } ] : [];
+  }
+
+  coverImageUrl(team: any): string {
+    return team?._id && team.coverFileName ? couchAttachmentUrl(environment.couchAddress, this.dbName, team._id, team.coverFileName) : '';
+  }
+
+  saveTeamWithCover(team: any, coverState: AttachmentInputState) {
+    return from(withImageAttachment(team, 'coverFileName', coverState)).pipe(
+      switchMap(teamDoc => this.updateTeam(teamDoc)),
+      map(savedTeam => ({ ...savedTeam, _attachments: attachmentStubs(savedTeam._attachments) }))
+    );
+  }
+
+  saveErrorMessage(err: any): string {
+    return err?.message === UNPROCESSABLE_IMAGE_ERROR ?
+      $localize`Cover image could not be processed. Please choose a JPEG or PNG image.` :
+      $localize`There was a problem saving your changes.`;
   }
 
   updateTeam(team: any) {
