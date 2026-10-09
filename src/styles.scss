@@ -687,6 +687,20 @@ body {
     max-height: calc(90vh - 96px);
   }
 
+  // Material's dialog copies this with max-height: inherit, where the overlay's default 100% can't resolve.
+  .cdk-overlay-pane.mat-mdc-dialog-panel {
+    max-height: var(--planet-vh);
+  }
+
+  @media (max-width: v.$screen-sm) {
+    // Material writes each dialog's size inline from its open() config; only !important beats that.
+    .cdk-overlay-pane.mat-mdc-dialog-panel {
+      width: calc(100vw - 32px) !important;
+      min-width: 0 !important;
+      max-width: calc(100vw - 32px) !important;
+    }
+  }
+
   mat-row mat-cell {
     flex-wrap: wrap;
     .mat-mdc-raised-button {

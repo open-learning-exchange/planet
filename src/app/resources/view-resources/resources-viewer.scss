@@ -33,7 +33,7 @@ $full-height: 100cqh;
 
     img {
       max-height: 100%;
-      max-width: calc(#{v.$dashboard-height} + 20rem);
+      max-width: min(100%, calc(#{v.$dashboard-height} + 20rem));
     }
 
     video, .csv-container {
