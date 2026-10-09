@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { UserService } from '../shared/auth/user.service';
+import { findDocuments } from '../shared/database/mango-queries';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -16,7 +16,7 @@ import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/mat
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DatePipe, KeyValuePipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -24,7 +24,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import {
   FEEDBACK_SCREENSHOT_TYPES, getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType
 } from './feedback.utils';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { environment } from '../../environments/environment';
 import { ExistingAttachment } from '../shared/forms/file-upload.component';
 

@@ -5,14 +5,14 @@ import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { StateService } from '../../../shared/state.service';
-import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { PlanetMessageService } from '../../../shared/ui/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
-import { CouchService } from '../../../shared/couchdb.service';
+import { CouchService } from '../../../shared/database/couchdb.service';
 import { attachNamesToPlanets, getDomainParams, areNoChildren, endOfDay } from '../reports.utils';
-import { findDocuments } from '../../../shared/mangoQueries';
-import { CsvService } from '../../../shared/csv.service';
-import { filterSpecificFieldsHybrid } from '../../../shared/table-helpers';
+import { findDocuments } from '../../../shared/database/mango-queries';
+import { CsvService } from '../../../shared/export/csv.service';
+import { filterSpecificFieldsHybrid } from '../../../shared/tables/table.helpers';
 import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
@@ -21,8 +21,8 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
-import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
-import { appSourceLabel, appSourceOf } from '../../../shared/app-source';
+import { PlanetLoadingSpinnerComponent } from '../../../shared/ui/planet-loading-spinner.component';
+import { appSourceLabel, appSourceOf } from '../../../shared/android/app-source';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
@@ -39,7 +39,8 @@ import { appSourceLabel, appSourceOf } from '../../../shared/app-source';
     MatExpansionPanelTitle,
     MyPlanetTableComponent,
     PlanetLoadingSpinnerComponent
-  ]
+  ],
+  providers: [ TimePipe ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

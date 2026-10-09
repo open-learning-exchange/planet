@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { defaultIfEmpty, map } from 'rxjs/operators';
-import { findDocuments } from '../mangoQueries';
-import { UserService } from '../user.service';
+import { findDocuments } from '../database/mango-queries';
+import { UserService } from '../auth/user.service';
 import { StateService } from '../state.service';
-import { CouchService } from '../couchdb.service';
-import { filterSpecificFields } from '../table-helpers';
+import { CouchService } from '../database/couchdb.service';
+import { filterSpecificFields } from '../tables/table.helpers';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 
 const listColumns = {

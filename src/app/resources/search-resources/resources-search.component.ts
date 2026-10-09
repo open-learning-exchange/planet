@@ -2,10 +2,11 @@ import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
 import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
-import * as constants from '../resources-constants';
-import { languages } from '../../shared/languages';
+import * as constants from '../resources.constants';
+import { resourceFileTypeValue } from '../resources.utils';
+import { languages } from '../../shared/language/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
-import { trackByCategory } from '../../shared/table-helpers';
+import { trackByCategory } from '../../shared/tables/table.helpers';
 
 
 @Component({
@@ -14,6 +15,7 @@ import { trackByCategory } from '../../shared/table-helpers';
       subject {Subject}
       language {Language}
       medium {Medium}
+      fileType {File Type}
       level {Level}
     }
     </span>
@@ -85,6 +87,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
     { label: 'subject', options: constants.subjectList },
     { label: 'language', options: languages },
     { label: 'medium', options: constants.media },
+    { label: 'fileType', options: constants.fileTypes, docValue: resourceFileTypeValue },
     { label: 'level', options: constants.levelList }
   ];
 
@@ -108,9 +111,10 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   }
 
   createSearchList(category, data) {
+    const docValue = category.docValue ?? ((doc) => doc[category.label]);
     return ({
       category: category.label,
-      items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
+      items: data.reduce((list, { doc }) => list.concat(docValue(doc)), []).reduce(dedupeShelfReduce, []).filter(item => item)
         .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
         .filter(item => item)
     });

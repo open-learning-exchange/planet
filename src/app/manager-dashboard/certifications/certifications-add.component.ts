@@ -5,11 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from '../../shared/certifications/certifications.service';
 import { CertificationsManagerService } from './certifications-manager.service';
-import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
+import { TablesAddDialogComponent } from '../../shared/tables/tables-add-dialog.component';
 import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '../../shared/table-helpers';
+import { showFormErrors } from '../../shared/tables/table.helpers';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -24,6 +24,12 @@ interface CertificationFormControls {
 
 @Component({
   templateUrl: './certifications-add.component.html',
+  styles: [`
+    .view-container {
+      display: flex;
+      flex-direction: column;
+    }
+  `],
   imports: [
     MatToolbar,
     MatIconButton,
@@ -124,7 +130,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   openCourseDialog() {
     const initialCourseIds = this.courseIds || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {

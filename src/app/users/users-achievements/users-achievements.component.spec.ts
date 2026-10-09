@@ -1,19 +1,19 @@
-import { ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, ParamMap, Router, RouterLink } from '@angular/router';
 
 import { UsersAchievementsComponent } from './users-achievements.component';
 import { UsersAchievementsService } from './users-achievements.service';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
+import { CouchService } from '../../shared/database/couchdb.service';
+import { UserService } from '../../shared/auth/user.service';
 import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../shared/certifications/certifications.service';
-import { PdfService } from '../../shared/pdf.service';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
-import { LinkCopyService } from '../../shared/link-copy.service';
+import { PdfService } from '../../shared/export/pdf.service';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
+import { LinkCopyService } from '../../shared/ui/link-copy.service';
 
 // The real spinner keeps nested SCSS in its inline styles, which JSDOM cannot parse
 @Component({ selector: 'planet-loading-spinner', template: '' })
@@ -154,18 +154,32 @@ describe('UsersAchievementsComponent', () => {
     component.ngOnDestroy();
   });
 
-  it('delegates achievement links to the shared copy service', () => {
-    component.user = { name: 'learner' };
+  it('delegates achievement links to the shared copy service with the routed planet code', () => {
+    navigate('learner', 'parent');
 
     component.copyLink();
 
     expect(linkCopyService.copyLink).toHaveBeenCalledWith(
-      [ '/profile', 'learner', 'achievements', { planet: 'local' } ],
+      [ '/profile', 'learner', 'achievements', { planet: 'parent' } ],
       {
         success: 'Achievements link copied to clipboard',
         failure: 'Failed to copy achievements link'
       }
     );
+  });
+
+  it('copies achievement links that name the planet of the viewed user', () => {
+    const copiedLink = () => linkCopyService.copyLink.mock.lastCall[0];
+
+    navigate('alice');
+    component.copyLink();
+
+    expect(copiedLink()).toEqual([ '/profile', 'alice', 'achievements', { planet: 'local' } ]);
+
+    navigate(null);
+    component.copyLink();
+
+    expect(copiedLink()).toEqual([ '/profile', 'carl', 'achievements', { planet: 'local' } ]);
   });
 
   it('shows the user and achievements of the routed user', () => {
@@ -330,9 +344,9 @@ describe('UsersAchievementsComponent', () => {
     expect(couchService.get).not.toHaveBeenCalledWith('achievements/org.couchdb.user:alice@null');
   });
 
-  it('waits for the local configuration before constructing route requests', () => {
+  it('waits for the local configuration when the route has no planet code', () => {
     createComponent({ initialConfiguration: {} });
-    navigate('alice', 'local');
+    navigate('alice');
 
     expect(requestData).toHaveBeenCalledWith('configurations', 'local');
     expect(couchService.get).not.toHaveBeenCalled();
@@ -344,28 +358,72 @@ describe('UsersAchievementsComponent', () => {
     expect(couchService.get).toHaveBeenCalledWith(achievementsUrl('alice'));
   });
 
+  it('finishes loading a public link with a planet code while the configuration is unavailable', () => {
+    createComponent({ currentUser: {}, requiresAuth: false, initialConfiguration: {} });
+    navigate('alice', 'local');
+    request(achievementsUrl('alice')).next(achievementsDoc({ purpose: 'alice purpose' }));
+
+    expect(component.achievements.purpose).toBe('alice purpose');
+    expect(component.isLoading).toBe(false);
+  });
+
+  it('waits for the local configuration before looking up the user of a routed planet code', () => {
+    createComponent({ currentUser: {}, requiresAuth: false, initialConfiguration: {} });
+    navigate('alice', 'parent');
+
+    expect(couchService.get).toHaveBeenCalledTimes(1);
+    expect(couchService.get).toHaveBeenCalledWith(achievementsUrl('alice', 'parent'));
+
+    configuration = { code: 'local', parentCode: 'parent' };
+    configurationUpdates$.next({ db: 'configurations' });
+
+    expect(couchService.get).toHaveBeenCalledWith('parent_users/org.couchdb.user:alice');
+  });
+
+  it('cancels the previous route while the next route waits for the local configuration', () => {
+    createComponent({ currentUser: {}, requiresAuth: false, initialConfiguration: {} });
+    navigate('alice', 'local');
+    const aliceAchievements = request(achievementsUrl('alice'));
+    navigate('bob');
+
+    expect(aliceAchievements.observers.length).toBe(0);
+    expect(component.userName).toBeUndefined();
+  });
+
+  it('drops the user lookup of a previous route that was still waiting for the local configuration', () => {
+    createComponent({ currentUser: {}, requiresAuth: false, initialConfiguration: {} });
+    navigate('alice', 'parent');
+    navigate('bob', 'parent');
+
+    configuration = { code: 'local', parentCode: 'parent' };
+    configurationUpdates$.next({ db: 'configurations' });
+
+    expect(couchService.get).not.toHaveBeenCalledWith('parent_users/org.couchdb.user:alice');
+    expect(couchService.get).toHaveBeenCalledWith('parent_users/org.couchdb.user:bob');
+  });
+
+  it('waits for the local configuration to resolve ownership for a signed-in user without a planet code', () => {
+    createComponent({ currentUser: { _id: 'org.couchdb.user:carl', name: 'carl' }, initialConfiguration: {} });
+    navigate('carl', 'local');
+
+    expect(couchService.get).not.toHaveBeenCalled();
+
+    configuration = { code: 'local', parentCode: 'parent' };
+    configurationUpdates$.next({ db: 'configurations' });
+
+    expect(component.ownAchievements).toBe(true);
+
+    request(achievementsUrl('carl')).error({ status: 404 });
+
+    expect(couchService.get).toHaveBeenCalledWith('achievements/org.couchdb.user:carl');
+  });
+
   it('uses an already loaded local configuration without requesting it again', () => {
     navigate('alice', 'local');
 
     expect(requestData).not.toHaveBeenCalled();
     expect(couchService.get).toHaveBeenCalledWith('_users/org.couchdb.user:alice');
     expect(couchService.get).toHaveBeenCalledWith(achievementsUrl('alice'));
-  });
-
-  describe('userRelationship', () => {
-    it('distinguishes local, parent, and child planet codes', () => {
-      expect(component.userRelationship('local')).toBe('local');
-      expect(component.userRelationship(null)).toBe('local');
-      expect(component.userRelationship(undefined)).toBe('local');
-      expect(component.userRelationship('parent')).toBe('parent');
-      expect(component.userRelationship('child')).toBe('child');
-    });
-
-    it('returns local for a missing planet code when the parent code is also missing', () => {
-      configuration = { code: 'local', parentCode: undefined };
-
-      expect(component.userRelationship(undefined)).toBe('local');
-    });
   });
 
   it('shows an alert when the achievements request fails without a 404', () => {
@@ -475,15 +533,24 @@ describe('UsersAchievementsComponent template loading', () => {
   let fixture: ComponentFixture<UsersAchievementsComponent>;
   let paramMap$: ReplaySubject<ParamMap>;
   let achievements$: Subject<any>;
+  let currentUser: any;
+
+  const render = () => {
+    fixture = TestBed.createComponent(UsersAchievementsComponent);
+    fixture.detectChanges();
+  };
+
+  const printButton = () => fixture.nativeElement.querySelector('.km-print-achievements');
 
   beforeEach(() => {
     paramMap$ = new ReplaySubject<ParamMap>(1);
     achievements$ = new Subject<any>();
+    currentUser = {};
     TestBed.configureTestingModule({
       imports: [ UsersAchievementsComponent ],
       providers: [
         { provide: CouchService, useValue: { get: vi.fn(() => new Subject<any>()) } },
-        { provide: UserService, useValue: { get: () => ({}), isBetaEnabled: () => false } },
+        { provide: UserService, useValue: { get: () => currentUser, isBetaEnabled: () => false } },
         {
           provide: StateService,
           useValue: {
@@ -499,14 +566,14 @@ describe('UsersAchievementsComponent template loading', () => {
         {
           provide: CoursesService,
           useValue: {
-            coursesListener$: vi.fn(() => new Subject<any[]>()),
-            progressListener$: vi.fn(() => new Subject<any[]>()),
+            coursesListener$: vi.fn(() => new BehaviorSubject<any[]>([])),
+            progressListener$: vi.fn(() => new BehaviorSubject<any[]>([])),
             requestCourses: vi.fn()
           }
         },
         {
           provide: CertificationsService,
-          useValue: { getCertifications: vi.fn(() => new Subject<any[]>()), isCourseCompleted: vi.fn() }
+          useValue: { getCertifications: vi.fn(() => of([])), isCourseCompleted: vi.fn() }
         },
         { provide: PlanetMessageService, useValue: { showAlert: vi.fn() } },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
@@ -516,16 +583,18 @@ describe('UsersAchievementsComponent template loading', () => {
       ]
     });
     TestBed.overrideComponent(UsersAchievementsComponent, {
-      remove: { imports: [ PlanetLoadingSpinnerComponent ] },
+      remove: { imports: [ PlanetLoadingSpinnerComponent, RouterLink ] },
       add: { imports: [ TestLoadingSpinnerComponent ] }
     });
-    fixture = TestBed.createComponent(UsersAchievementsComponent);
-    fixture.detectChanges();
   });
 
-  afterEach(() => fixture.destroy());
+  afterEach(() => {
+    vi.useRealTimers();
+    fixture.destroy();
+  });
 
   it('removes the visible spinner when a public achievement request completes', () => {
+    render();
     paramMap$.next(convertToParamMap({ name: 'alice', planet: 'local' }));
     fixture.detectChanges();
 
@@ -535,5 +604,43 @@ describe('UsersAchievementsComponent template loading', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('planet-loading-spinner')).toBeNull();
+  });
+
+  it('hides Print Achievements until the own achievements and certifications have loaded', () => {
+    vi.useFakeTimers();
+    currentUser = loggedInUser;
+    render();
+    paramMap$.next(convertToParamMap({}));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.ownAchievements).toBe(true);
+    expect(printButton()).toBeNull();
+
+    achievements$.next(achievementsDoc());
+    fixture.detectChanges();
+
+    expect(printButton()).toBeNull();
+
+    vi.advanceTimersByTime(600);
+    fixture.detectChanges();
+
+    expect(printButton()).not.toBeNull();
+  });
+
+  it('hides Print Achievements while the own achievements are still loading after certifications', () => {
+    vi.useFakeTimers();
+    currentUser = loggedInUser;
+    render();
+    paramMap$.next(convertToParamMap({}));
+    vi.advanceTimersByTime(600);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.isLoading).toBe(false);
+    expect(printButton()).toBeNull();
+
+    achievements$.next(achievementsDoc());
+    fixture.detectChanges();
+
+    expect(printButton()).not.toBeNull();
   });
 });

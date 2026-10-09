@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { Subject, forkJoin, of } from 'rxjs';
-import { UserService } from '../shared/user.service';
-import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map, filter, take } from 'rxjs/operators';
-import { RatingService } from '../shared/forms/rating.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
+import { findDocuments, inSelector } from '../shared/database/mango-queries';
+import { switchMap, map, filter, take, tap } from 'rxjs/operators';
+import { RatingService } from '../shared/ratings/rating.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { StateService } from '../shared/state.service';
-import { TagsService } from '../shared/forms/tags.service';
+import { TagsService } from '../shared/forms/tags/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
-import { MarkdownService } from '../shared/markdown.service';
+import { MarkdownImagesService } from '../shared/markdown/markdown-images.service';
 import { UsersService } from '../users/users.service';
 
 export interface CourseAuthorizationContext {
@@ -51,7 +51,7 @@ export class CoursesService {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private tagsService: TagsService,
-    private markdownService: MarkdownService,
+    private markdownImagesService: MarkdownImagesService,
     private usersService: UsersService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
@@ -238,20 +238,16 @@ export class CoursesService {
   }
 
   courseResignAdmission(courseId, type, courseTitle?) {
-    const title = courseTitle ? courseTitle : this.getCourseNameFromId(courseId);
-    const courseIds: any = [ ...this.userService.shelf.courseIds ];
-    if (type === 'resign') {
-      const myCourseIndex = courseIds.indexOf(courseId);
-      courseIds.splice(myCourseIndex, 1);
-    } else {
-      courseIds.push(courseId);
-    }
-    return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign'
-        ? $localize`Removed from myCourses: ${title}`
-        : $localize`Course added to your dashboard: ${title}`;
-      this.planetMessageService.showMessage(admissionMessage);
-      return res;
+    const title = courseTitle || this.getCourseNameFromId(courseId) || $localize`Selected course`;
+    const remove = type === 'resign';
+    const changedIds = this.changedCourseIds([ courseId ], remove);
+    return this.updateCourseShelf(changedIds, remove, title).pipe(map((shelf) => {
+      if (changedIds.length) {
+        this.planetMessageService.showMessage(
+          remove ? $localize`Removed from myCourses: ${title}` : $localize`Course added to your dashboard: ${title}`
+        );
+      }
+      return shelf;
     }));
   }
 
@@ -260,15 +256,36 @@ export class CoursesService {
   }
 
   courseAdmissionMany(courseIds, type, parent = false) {
-    return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
-      const prefix = countChanged > 1 ?
-        $localize`${countChanged} courses` :
-        this.getCourseNameFromId(courseIds[courseIds.length - 1], parent) || $localize`Selected course`;
-      const message = type === 'remove' ? $localize`Removed from myCourses: ${prefix}` :
-        $localize`Added to myCourses: ${prefix} `;
-      this.planetMessageService.showMessage(message);
+    const remove = type === 'remove';
+    const changedIds = this.changedCourseIds(courseIds, remove);
+    const prefix = changedIds.length > 1 ?
+      $localize`${changedIds.length} courses` :
+      this.getCourseNameFromId(changedIds[0], parent) || $localize`Selected course`;
+    return this.updateCourseShelf(changedIds, remove, prefix).pipe(map((shelf) => {
+      if (changedIds.length) {
+        this.planetMessageService.showMessage(
+          remove ? $localize`Removed from myCourses: ${prefix}` : $localize`Added to myCourses: ${prefix} `
+        );
+      }
       return shelf;
     }));
+  }
+
+  private changedCourseIds(courseIds: string[], remove: boolean) {
+    const shelfIds: string[] = this.userService.shelf.courseIds;
+    return courseIds.filter((id, index) => courseIds.indexOf(id) === index && shelfIds.includes(id) === remove);
+  }
+
+  private updateCourseShelf(changedIds: string[], remove: boolean, label: string) {
+    if (changedIds.length === 0) {
+      return of(this.userService.shelf);
+    }
+    return this.userService.changeShelf(changedIds, 'courseIds', remove ? 'remove' : 'add').pipe(
+      map(({ shelf }) => shelf),
+      tap({ error: () => this.planetMessageService.showAlert(
+        remove ? $localize`There was an error removing ${label}` : $localize`There was an error adding ${label}`
+      ) })
+    );
   }
 
   stepResourceSort(a: { title: string }, b: { title: string }) {
@@ -301,7 +318,8 @@ export class CoursesService {
 
   storeMarkdownImages(course) {
     const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
-    const imagesArray = (item: { description: any }) => this.markdownService.createImagesArray(item, markdownText(item), 'description');
+    const imagesArray = (item: { description: any }) =>
+      this.markdownImagesService.createImagesArray(item, markdownText(item), 'description');
     const images = dedupeObjectArray(
       [ course.images || [], imagesArray(course), course.steps.map(step => imagesArray(step)) ].flat(2),
       [ 'resourceId' ]
@@ -310,7 +328,9 @@ export class CoursesService {
       ...course,
       description: markdownText(course),
       steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
-      images: this.markdownService.filterMissingImages([ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images)
+      images: this.markdownImagesService.filterMissingImages(
+        [ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images
+      )
     };
   }
 

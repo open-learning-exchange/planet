@@ -2,28 +2,29 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
+import { CouchService } from '../../shared/database/couchdb.service';
+import { UserService } from '../../shared/auth/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
-import { findDocuments } from '../../shared/mangoQueries';
+import { findDocuments } from '../../shared/database/mango-queries';
 import { StateService } from '../../shared/state.service';
-import { educationLevel } from '../user-constants';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { educationLevel } from '../users.constants';
+import { userDocPath, userRelationship } from '../users.utils';
+import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { ChangePasswordDirective } from '../../shared/dialogs/change-password.directive';
+import { ChangePasswordDirective } from '../../shared/auth/change-password.directive';
 import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } from '@angular/material/list';
-import { LanguageLabelComponent } from '../../shared/language-label.component';
+import { LanguageLabelComponent } from '../../shared/language/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
-import { AvatarComponent } from '../../shared/avatar.component';
-import { FullNamePipe } from '../../shared/full-name.pipe';
+import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/ui/avatar.component';
+import { FullNamePipe } from '../../shared/text/full-name.pipe';
 
 @Component({
   selector: 'planet-users-profile',
@@ -59,7 +60,6 @@ import { FullNamePipe } from '../../shared/full-name.pipe';
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
-  private dbName = '_users';
   user: any = {};
   userDetail: any = {};
   urlName = '';
@@ -136,11 +136,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   profileView() {
-    const relationship = this.userRelationship(this.planetCode);
-    const dbName = relationship === 'local' ? this.dbName : `${relationship}_users`;
-    const userId = relationship === 'local' || relationship === 'parent'
-      ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.couchService.get(dbName + '/' + userId).subscribe((response) => {
+    const relationship = userRelationship(this.planetCode, this.stateService.configuration);
+    this.couchService.get(userDocPath(this.urlName, this.planetCode, this.stateService.configuration)).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
       this.editable = relationship === 'local' && (
@@ -151,14 +148,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     }, (error) => {
       console.log(error);
     });
-  }
-
-  userRelationship(planetCode: string) {
-    return planetCode === this.stateService.configuration.parentCode ?
-      'parent' :
-      planetCode === null || planetCode === this.stateService.configuration.code ?
-        'local' :
-        'child';
   }
 
   goBack() {

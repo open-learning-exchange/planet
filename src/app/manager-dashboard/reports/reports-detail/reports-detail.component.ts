@@ -7,14 +7,14 @@ import { Location, NgTemplateOutlet, NgClass } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take, finalize } from 'rxjs/operators';
 import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
-import { loadChart } from '../../../shared/chart-utils';
+import { loadChart } from '../../../shared/charts/chart.utils';
 import { ReportsService } from '../reports.service';
 import { StateService } from '../../../shared/state.service';
 import { styleVariables, formatDate } from '../../../shared/utils';
 import { DialogsLoadingService } from '../../../shared/dialogs/dialogs-loading.service';
-import { CsvService } from '../../../shared/csv.service';
+import { CsvService } from '../../../shared/export/csv.service';
 import { DialogsFormService } from '../../../shared/dialogs/dialogs-form.service';
-import { CouchService } from '../../../shared/couchdb.service';
+import { CouchService } from '../../../shared/database/couchdb.service';
 import { CustomValidators } from '../../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
@@ -22,16 +22,16 @@ import {
   sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, formatDemographicsForCsv,
   demographicsForCsv
 } from '../reports.utils';
-import { DialogsResourcesViewerComponent } from '../../../shared/dialogs/dialogs-resources-viewer.component';
+import { ResourcesViewerDialogComponent } from '../../../resources/view-resources/resources-viewer-dialog.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
-import { AppSourceFilter, appSourceLabel, appSources } from '../../../shared/app-source';
+import { AppSourceFilter, appSourceLabel, appSources } from '../../../shared/android/app-source';
 import { UsersService } from '../../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from '../reports-health.component';
 import { UsersProfileDialogService } from '../../../users/users-profile/users-profile-dialog.service';
-import { findDocuments } from '../../../shared/mangoQueries';
-import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
-import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { findDocuments } from '../../../shared/database/mango-queries';
+import { DeviceInfoService, DeviceType } from '../../../shared/ui/device-info.service';
+import { PlanetMessageService } from '../../../shared/ui/planet-message.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -45,7 +45,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../../shared/ui/planet-loading-spinner.component';
 import {
   MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
@@ -935,7 +935,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   openResourceView(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
+    this.dialog.open(ResourcesViewerDialogComponent, { data: { resourceId }, autoFocus: false });
   }
 
   openMemberView(user, event?: Event) {
@@ -1171,14 +1171,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.planetMessageService.showAlert($localize`No comparison data available`);
       return;
     }
-    const week1Header = this.week1Label.replace(/,/g, '');
-    const week2Header = this.week2Label.replace(/,/g, '');
-
     const data = this.comparisonTableData.map(row => ({
       [$localize`Metric`]: row.metric,
-      [week1Header]: row.week1,
-      [week2Header]: row.week2,
-      [$localize`Net Change`]: row.change
+      [this.week1Label]: row.week1,
+      [this.week2Label]: row.week2,
+      [$localize`Net Change`]: row.changeValue
     }));
 
     this.csvService.exportCSV({

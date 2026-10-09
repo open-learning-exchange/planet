@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { CouchService } from './database/couchdb.service';
+import { findDocuments } from './database/mango-queries';
 import { Subject } from 'rxjs';
 import { map, switchMap, filter, catchError } from 'rxjs/operators';
 

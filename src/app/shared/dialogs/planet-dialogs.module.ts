@@ -12,11 +12,13 @@ import { FeedbackDirective } from '../../feedback/feedback.directive';
 import { DialogsListComponent } from './dialogs-list.component';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsLoadingComponent } from './dialogs-loading.component';
-import { ChangePasswordDirective } from './change-password.directive';
+import { ChangePasswordDirective } from '../auth/change-password.directive';
 import { SyncDirective } from '../../manager-dashboard/sync.directive';
-import { DialogsImagesComponent } from './dialogs-images.component';
-import { DialogsAnnouncementComponent, DialogsAnnouncementSuccessComponent } from './dialogs-announcement.component';
-import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
+import { MarkdownImagesDialogComponent } from '../markdown/markdown-images-dialog.component';
+import {
+  ChallengesAnnouncementDialogComponent, ChallengesAnnouncementSuccessDialogComponent
+} from '../challenges/challenges-announcement-dialog.component';
+import { PlanetRatingDialogComponent, PlanetRatingDialogDirective } from '../ratings/planet-rating-dialog.component';
 
 @NgModule({
   imports: [
@@ -32,13 +34,13 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     FeedbackDirective,
     DialogsListComponent,
     DialogsLoadingComponent,
-    DialogsImagesComponent,
-    DialogsRatingsComponent,
-    DialogsRatingsDirective,
+    MarkdownImagesDialogComponent,
+    PlanetRatingDialogComponent,
+    PlanetRatingDialogDirective,
     ChangePasswordDirective,
     SyncDirective,
-    DialogsAnnouncementComponent,
-    DialogsAnnouncementSuccessComponent
+    ChallengesAnnouncementDialogComponent,
+    ChallengesAnnouncementSuccessDialogComponent
   ],
   exports: [
     DialogsFormComponent,
@@ -47,9 +49,9 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     FeedbackDirective,
     DialogsListComponent,
     DialogsLoadingComponent,
-    DialogsImagesComponent,
-    DialogsRatingsComponent,
-    DialogsRatingsDirective,
+    MarkdownImagesDialogComponent,
+    PlanetRatingDialogComponent,
+    PlanetRatingDialogDirective,
     ChangePasswordDirective,
     SyncDirective
   ],

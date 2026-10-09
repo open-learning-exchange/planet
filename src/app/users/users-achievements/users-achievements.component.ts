@@ -1,8 +1,8 @@
 import { Component, Inject, LOCALE_ID, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CouchService } from '../../shared/database/couchdb.service';
+import { UserService } from '../../shared/auth/user.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { catchError, auditTime, filter, map, shareReplay, switchMap, take, takeUntil } from 'rxjs/operators';
 import { throwError, combineLatest, defer, EMPTY, merge, of, Observable, Subject } from 'rxjs';
@@ -10,21 +10,22 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../shared/certifications/certifications.service';
-import { PdfService } from '../../shared/pdf.service';
+import { PdfService } from '../../shared/export/pdf.service';
 import { NgClass, DatePipe, formatDate } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
-import { PlanetBetaDirective } from '../../shared/beta.directive';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
-import { AvatarComponent } from '../../shared/avatar.component';
+import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
+import { PlanetBetaDirective } from '../../shared/auth/planet-beta.directive';
+import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/ui/avatar.component';
 import { fullName } from '../../shared/utils';
-import { FullNamePipe } from '../../shared/full-name.pipe';
-import { LinkCopyService } from '../../shared/link-copy.service';
+import { FullNamePipe } from '../../shared/text/full-name.pipe';
+import { LinkCopyService } from '../../shared/ui/link-copy.service';
+import { userDocPath } from '../users.utils';
 
 interface AchievementsRoute {
   achievementsId: string | null;
@@ -98,11 +99,18 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.localPlanetCode().pipe(
-      switchMap((localPlanetCode: string) => this.route.paramMap.pipe(
-        map((params: ParamMap) => this.initRoute(params, localPlanetCode))
-      )),
-      switchMap((achievementsRoute: AchievementsRoute) => this.routeUpdates(achievementsRoute)),
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        this.resetRouteState();
+        const routedPlanetCode = params.get('name') === null ? null : params.get('planet');
+        // Only a public view shows achievements before the configuration loads; signed-in views need it for ownership
+        const planetCode$ = this.publicView && routedPlanetCode ?
+          of(routedPlanetCode) :
+          this.localPlanetCode().pipe(map((localPlanetCode: string) => routedPlanetCode || localPlanetCode));
+        return planetCode$.pipe(
+          switchMap((planetCode: string) => this.routeUpdates(this.initRoute(params, planetCode)))
+        );
+      }),
       takeUntil(this.onDestroy$)
     ).subscribe((update: AchievementsUpdate) => this.applyUpdate(update));
   }
@@ -131,22 +139,19 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Clears state from the previously viewed user and describes the requests the new route needs
-  private initRoute(params: ParamMap, localPlanetCode: string): AchievementsRoute {
+  private initRoute(params: ParamMap, planetCode: string): AchievementsRoute {
     const currentUser = this.userService.get();
     const nameParam = params.get('name');
-    const currentUserPlanetCode = currentUser.planetCode || localPlanetCode;
+    const currentUserPlanetCode = currentUser.planetCode || this.stateService.configuration.code;
     let achievementsId: string | null;
     let userRequest: { name: string, planetCode: string } | null = null;
-    this.resetRouteState();
     if (nameParam === null) {
-      achievementsId = currentUser._id ? currentUser._id + '@' + localPlanetCode : null;
+      achievementsId = currentUser._id ? currentUser._id + '@' + planetCode : null;
       this.user = currentUser;
       this.userName = currentUser.name;
       this.userPlanetCode = currentUserPlanetCode;
     } else {
       const name = nameParam.split('@')[0];
-      const planetCode = params.get('planet') || localPlanetCode;
       achievementsId = 'org.couchdb.user:' + name + '@' + planetCode;
       // Set synchronously so the name and avatar of the newly routed user show while its document is still loading
       this.userName = name;
@@ -223,11 +228,10 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Even a routed planet code needs the configuration to tell local, parent and child users apart
   private userUpdates(name: string, planetCode: string): Observable<AchievementsUpdate> {
-    const relationship = this.userRelationship(planetCode);
-    const db = relationship === 'local' ? '_users' : relationship + '_users';
-    const id = relationship === 'child' ? name + '@' + planetCode : 'org.couchdb.user:' + name;
-    return this.couchService.get(db + '/' + id).pipe(
+    return this.localPlanetCode().pipe(
+      switchMap(() => this.couchService.get(userDocPath(name, planetCode, this.stateService.configuration))),
       map((user): AchievementsUpdate => ({ type: 'user', user })),
       catchError(() => of<AchievementsUpdate>({ type: 'userError' }))
     );
@@ -269,14 +273,6 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     if (this.publicView) {
       this.isLoading = false;
     }
-  }
-
-  userRelationship(planetCode?: string | null): 'local' | 'parent' | 'child' {
-    const { code, parentCode } = this.stateService.configuration;
-    if (!planetCode || planetCode === code) {
-      return 'local';
-    }
-    return planetCode === parentCode ? 'parent' : 'child';
   }
 
   goBack() {
@@ -321,7 +317,7 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
 
   copyLink() {
     this.linkCopyService.copyLink(
-      [ '/profile', this.user.name, 'achievements', { planet: this.stateService.configuration.code } ],
+      [ '/profile', this.user.name, 'achievements', { planet: this.userPlanetCode } ],
       {
         success: $localize`Achievements link copied to clipboard`,
         failure: $localize`Failed to copy achievements link`

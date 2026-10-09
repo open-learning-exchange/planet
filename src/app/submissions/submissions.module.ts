@@ -9,7 +9,7 @@ import { MaterialModule } from '../shared/material.module';
 import { SubmissionsComponent } from './submissions.component';
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { ExamsModule } from '../exams/exams.module';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesGuard } from '../shared/unsaved-changes/unsaved-changes.guard';
 
 const routes: Routes = [
   { path: '', component: SubmissionsComponent },

@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -7,17 +7,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { NewsListItemComponent } from './news-list-item.component';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { LabelComponent } from '../shared/label.component';
-import { UserService } from '../shared/user.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { LabelComponent } from '../shared/ui/label.component';
+import { UserService } from '../shared/auth/user.service';
 import { NewsService } from './news.service';
 import { StateService } from '../shared/state.service';
-import { AuthService } from '../shared/auth-guard.service';
-import { LinkCopyService } from '../shared/link-copy.service';
+import { AuthGuard } from '../shared/auth/auth.guard';
+import { LinkCopyService } from '../shared/ui/link-copy.service';
 
 describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {
-    const authService = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
+    const authGuard = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
     const linkCopyService = { copyLink: vi.fn() };
     const router = { url: '/' };
     const component = new NewsListItemComponent(
@@ -26,18 +26,19 @@ describe('NewsListItemComponent read-only behavior', () => {
       {} as any,
       { configuration: { code: 'local', planetType: 'nation' } } as any,
       {} as any,
-      authService as any,
+      authGuard as any,
       linkCopyService as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any,
+      {} as any
     );
     component.item = { doc: { _id: 'voice', labels: [], user: { _id: 'user', name: 'user' }, viewIn: [] } };
     component.readOnly = true;
 
-    return { authService, component, linkCopyService, router };
+    return { authGuard, component, linkCopyService, router };
   };
 
   it('blocks every mutating action while retaining label filtering', () => {
-    const { authService, component } = createComponent();
+    const { authGuard, component } = createComponent();
     const updateSpy = vi.spyOn(component.updateNews, 'emit');
     const deleteSpy = vi.spyOn(component.deleteNews, 'emit');
     const shareSpy = vi.spyOn(component.shareNews, 'emit');
@@ -49,7 +50,7 @@ describe('NewsListItemComponent read-only behavior', () => {
     component.shareStory(component.item.doc);
     component.labelClick('help', 'add');
 
-    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(updateSpy).not.toHaveBeenCalled();
     expect(deleteSpy).not.toHaveBeenCalled();
     expect(shareSpy).not.toHaveBeenCalled();
@@ -110,7 +111,7 @@ describe('NewsListItemComponent read-only template', () => {
         { provide: NewsService, useValue: { postSharedWithCommunity: vi.fn(() => false) } },
         { provide: StateService, useValue: { configuration: { code: 'local', planetType: 'nation' } } },
         { provide: MatDialog, useValue: {} },
-        { provide: AuthService, useValue: {} },
+        { provide: AuthGuard, useValue: {} },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
         { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(deviceType) } },
         provideNoopAnimations()
@@ -210,6 +211,23 @@ describe('NewsListItemComponent label choices', () => {
   });
 });
 
+describe('NewsListItemComponent preview expansion', () => {
+  it('keeps a voice the reader expanded open when the list refreshes it', () => {
+    const component = Object.create(NewsListItemComponent.prototype) as NewsListItemComponent;
+    const refreshedVoice = () => ({ _id: 'voice', doc: { message: 'Long message '.repeat(60) } });
+    component.previewLimit = 500;
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+    component.showLess = false;
+
+    component.item = refreshedVoice();
+    component.handleItemExpansion();
+
+    expect(component.showExpand).toBe(true);
+    expect(component.showLess).toBe(false);
+  });
+});
+
 describe('voice label display', () => {
   it('does not resolve custom labels through inherited object properties', () => {
     const component = new LabelComponent();
@@ -221,7 +239,7 @@ describe('voice label display', () => {
 
 describe('NewsListItemComponent emoji reactions', () => {
   const setupReactions = (currentUserId = 'user-1') => {
-    const authService = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
+    const authGuard = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
     const newsService = {
       saveReaction: vi.fn(() => of({ ok: true })),
       postSharedWithCommunity: vi.fn(() => false)
@@ -233,9 +251,10 @@ describe('NewsListItemComponent emoji reactions', () => {
       newsService as any,
       { configuration: { code: 'local', planetType: 'nation' } } as any,
       {} as any,
-      authService as any,
+      authGuard as any,
       { copyLink: vi.fn() } as any,
-      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
+      { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any,
+      {} as any
     );
     component.item = {
       _id: 'voice-1',
@@ -247,7 +266,7 @@ describe('NewsListItemComponent emoji reactions', () => {
         viewIn: []
       }
     };
-    return { component, authService, newsService, userService };
+    return { component, authGuard, newsService, userService };
   };
 
   it('extracts reaction entries with counts and users', () => {
@@ -283,12 +302,12 @@ describe('NewsListItemComponent emoji reactions', () => {
   });
 
   it('toggles reaction, updates _rev on success, and checks auth', () => {
-    const { component, authService, newsService } = setupReactions('user-1');
+    const { component, authGuard, newsService } = setupReactions('user-1');
     newsService.saveReaction.mockReturnValue(of({ ok: true, rev: '2-rev' }));
 
     component.toggleReaction(component.item.doc, '🔥');
 
-    expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).toHaveBeenCalled();
     expect(newsService.saveReaction).toHaveBeenCalledWith(expect.objectContaining({ _id: 'voice-1' }));
     expect(component.item.doc.reactions).toEqual({
       '👍': ['user-2'],
@@ -300,38 +319,38 @@ describe('NewsListItemComponent emoji reactions', () => {
   });
 
   it('restores previous reactions when saveReaction fails', () => {
-    const { component, authService, newsService } = setupReactions('user-1');
+    const { component, authGuard, newsService } = setupReactions('user-1');
     const previousReactions = { '👍': ['user-1', 'user-2'], '❤️': ['user-3'] };
     newsService.saveReaction.mockReturnValue(throwError(new Error('Network error')));
 
     component.toggleReaction(component.item.doc, '🔥');
 
-    expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).toHaveBeenCalled();
     expect(component.item.doc.reactions).toEqual(previousReactions);
     expect(component.reactionSaving).toBe(false);
   });
 
   it('asks a logged-out visitor to log in and saves the reaction as the user who logged in', () => {
-    const { component, authService, newsService, userService } = setupReactions();
+    const { component, authGuard, newsService, userService } = setupReactions();
     userService.get.mockReturnValue({});
     component.currentUser = {};
-    authService.checkAuthenticationStatus.mockImplementation(() => {
+    authGuard.checkAuthenticationStatus.mockImplementation(() => {
       userService.get.mockReturnValue({ _id: 'user-9', name: 'Sam' });
       return of(undefined);
     });
 
     component.toggleReaction(component.item.doc, '🔥');
 
-    expect(authService.checkAuthenticationStatus).toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).toHaveBeenCalled();
     expect(component.item.doc.reactions).toEqual({ '👍': [ 'user-1', 'user-2' ], '❤️': [ 'user-3' ], '🔥': [ 'user-9' ] });
     expect(newsService.saveReaction).toHaveBeenCalled();
   });
 
   it('leaves reactions unchanged when the login dialog is cancelled', () => {
-    const { component, authService, newsService } = setupReactions();
+    const { component, authGuard, newsService } = setupReactions();
     component.currentUser = {};
     const previousReactions = component.item.doc.reactions;
-    authService.checkAuthenticationStatus.mockReturnValue(throwError(new Error('Not authorized')));
+    authGuard.checkAuthenticationStatus.mockReturnValue(EMPTY);
 
     component.toggleReaction(component.item.doc, '🔥');
 
@@ -341,32 +360,32 @@ describe('NewsListItemComponent emoji reactions', () => {
   });
 
   it('ignores toggle calls while reactionSaving is true', () => {
-    const { component, authService, newsService } = setupReactions('user-1');
+    const { component, authGuard, newsService } = setupReactions('user-1');
     component.reactionSaving = true;
 
     component.toggleReaction(component.item.doc, '👍');
 
-    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(newsService.saveReaction).not.toHaveBeenCalled();
   });
 
   it('does not toggle reaction when in readOnly mode', () => {
-    const { component, authService, newsService } = setupReactions('user-1');
+    const { component, authGuard, newsService } = setupReactions('user-1');
     component.readOnly = true;
 
     component.toggleReaction(component.item.doc, '👍');
 
-    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(newsService.saveReaction).not.toHaveBeenCalled();
   });
 
   it('does not toggle reaction on a non-public voice the user cannot edit', () => {
-    const { component, authService, newsService } = setupReactions('user-1');
+    const { component, authGuard, newsService } = setupReactions('user-1');
     component.editable = false;
 
     component.toggleReaction(component.item.doc, '👍');
 
-    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(authGuard.checkAuthenticationStatus).not.toHaveBeenCalled();
     expect(newsService.saveReaction).not.toHaveBeenCalled();
   });
 });
@@ -387,7 +406,7 @@ describe('NewsListItemComponent reactions template', () => {
         },
         { provide: StateService, useValue: { configuration: { code: 'local', planetType: 'nation' } } },
         { provide: MatDialog, useValue: {} },
-        { provide: AuthService, useValue: { checkAuthenticationStatus: () => of(undefined) } },
+        { provide: AuthGuard, useValue: { checkAuthenticationStatus: () => of(undefined) } },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
         { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(DeviceType.DESKTOP) } },
         provideNoopAnimations()

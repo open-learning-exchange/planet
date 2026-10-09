@@ -13,22 +13,22 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
-  isAllVisibleSelected, toggleVisibleSelection
-} from '../shared/table-helpers';
-import { UserService } from '../shared/user.service';
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
+} from '../shared/tables/table.helpers';
+import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
+import { UserService } from '../shared/auth/user.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { PlanetRoleComponent } from '../shared/auth/planet-role.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 
@@ -120,7 +120,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   selection = new SelectionModel(true, [], true,
     (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
   );
-  renderedData: any[] = [];
+  pageSelection = new PaginatedSelection(this.selection, { selectValue: (row: any) => row.doc, keepAcrossPages: true });
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
@@ -161,8 +161,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
     this.usersTable.filterPredicate = this.filterPredicate();
+    this.pageSelection.connect(this.usersTable, this.onDestroy$);
     this.usersTable.connect().pipe(takeUntil(this.onDestroy$)).subscribe(data => {
-      this.renderedData = data;
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
@@ -189,16 +189,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersTable.paginator = this.paginator;
   }
 
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
-  }
-
   onlyManagerSelected() {
     return this.selection.selected.every((user) => user.isUserAdmin === true);
-  }
-
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
   }
 
   gotoProfileView(userName: string, event?: Event) {

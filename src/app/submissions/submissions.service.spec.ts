@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 
 import { SubmissionsService } from './submissions.service';
-import { MarkdownRenderService } from '../shared/markdown-render.service';
+import { MarkdownRenderService } from '../shared/markdown/markdown-render.service';
 
 describe('SubmissionsService survey exports', () => {
   let service: SubmissionsService;

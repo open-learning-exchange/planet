@@ -4,49 +4,49 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError, distinctUntilChanged, skip } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/database/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/user.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '../shared/database/mango-queries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
-import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
-import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
+import { ResourcesPickerDialogComponent } from '../resources/resources-picker-dialog.component';
+import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
-import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
+import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
-import { PlanetCalendarComponent } from '../shared/calendar.component';
+import { PlanetCalendarComponent } from '../shared/calendar/planet-calendar.component';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { ResourcesIconComponent } from '../resources/resources-icon.component';
-import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
@@ -104,7 +104,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   isUserLeader = false;
   onDestroy$ = new Subject<void>();
   currentUserId = this.userService.get()._id;
-  dialogRef: MatDialogRef<DialogsAddTableComponent>;
+  dialogRef: MatDialogRef<TablesAddDialogComponent>;
   user = this.userService.get();
   news: any[] = [];
   private readonly emptyVoiceLabels: string[] = [];
@@ -605,15 +605,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.planetMessageService.showMessage(
-        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe({
+      next: (updatedTeam) => {
+        this.team = updatedTeam;
+        this.planetMessageService.showMessage(
+          (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      },
+      error: (err) => this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err))
     });
   }
 
   openInviteMemberDialog() {
-    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -669,7 +672,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseDialog() {
     const initialCourses = this.team.courses || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -717,7 +720,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openManageLabelsDialog() {
-    this.dialog.open(DialogsVoiceLabelsComponent, {
+    this.dialog.open(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
       data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }
@@ -729,7 +732,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openResourcesDialog(resource?) {
-    const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+    const dialogRef = this.dialog.open(ResourcesPickerDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -800,13 +803,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openResource(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, {
+    this.dialog.open(ResourcesViewerDialogComponent, {
       data: {
         resourceId,
         returnState: { route: `${this.mode}s/view/${this.teamId}` }
       },
       autoFocus: false
     });
+  }
+
+  coverImageUrl(): string {
+    return this.teamsService.coverImageUrl(this.team);
   }
 
 }

@@ -9,16 +9,18 @@ import {
 } from '@angular/material/table';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/auth/user.service';
+import { CouchService } from '../shared/database/couchdb.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
-import { filterSpecificFieldsHybrid, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
+import {
+  filterSpecificFieldsHybrid, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
+} from '../shared/tables/table.helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -30,8 +32,8 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
+import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { enterpriseJoinAgreement } from './teams.utils';
 
 @Component({
@@ -286,9 +288,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
             : $localize`:@@team-created-success:Team created successfully`);
         this.planetMessageService.showMessage(msg);
       },
-      error: () => {
+      error: (err) => {
         this.getTeams();
-        this.planetMessageService.showAlert($localize`There was a problem saving your changes.`);
+        this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err));
       }
     });
   }
@@ -479,6 +481,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   getTeamTypeLabel(team: any): string {
     return team.doc.type === 'enterprise' ? $localize`enterprise` : $localize`team`;
+  }
+
+  coverImageUrl(team: any): string {
+    return this.teamsService.coverImageUrl(team);
   }
 
 }

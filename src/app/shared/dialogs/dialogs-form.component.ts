@@ -6,7 +6,7 @@ import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { DialogGuardService } from './dialog-guard.service';
 import { map } from 'rxjs/operators';
-import { UserService } from '../user.service';
+import { UserService } from '../auth/user.service';
 import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { MatIcon } from '@angular/material/icon';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -20,16 +20,16 @@ import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
-import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
+import { PlanetRatingStarsComponent } from '../ratings/planet-rating-stars.component';
+import { PlanetMarkdownTextboxComponent } from '../markdown/planet-markdown-textbox.component';
 import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '../forms/file-upload.component';
-import { AuthorizedRolesDirective } from '../authorized-roles.directive';
+import { AuthorizedRolesDirective } from '../auth/authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { SubmitDirective } from '../submit.directive';
+import { SubmitDirective } from './submit.directive';
 import { deepEqual } from '../utils';
-import { filterSpecificFieldsHybrid } from '../table-helpers';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
+import { filterSpecificFieldsHybrid } from '../tables/table.helpers';
+import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes-prompt.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -59,6 +59,10 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
     .rating-input planet-rating-stars {
       display: block;
       height: 24px;
+    }
+
+    div:not(:last-child) > .file-upload-wrapper {
+      margin-bottom: 20px;
     }
   `],
   imports: [

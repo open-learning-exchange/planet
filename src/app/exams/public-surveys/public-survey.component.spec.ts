@@ -9,7 +9,7 @@ import { vi } from 'vitest';
 import { PublicSurveyComponent } from './public-survey.component';
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { PublicSurveysService } from './public-surveys.service';
-import { AndroidAppPromptService } from '../../shared/android-app-prompt.service';
+import { AndroidAppPromptService } from '../../shared/android/android-app-prompt.service';
 
 describe('PublicSurveyComponent', () => {
   let fixture: ComponentFixture<PublicSurveyComponent>;

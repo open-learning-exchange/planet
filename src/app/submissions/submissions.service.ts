@@ -2,23 +2,23 @@ import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
-import { findDocuments } from '../shared/mangoQueries';
-import { appSourceLabel } from '../shared/app-source';
-import { CouchService } from '../shared/couchdb.service';
+import { findDocuments } from '../shared/database/mango-queries';
+import { appSourceLabel } from '../shared/android/app-source';
+import { CouchService } from '../shared/database/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { ageFromUser, dedupeShelfReduce, localizedGender, toProperCase } from '../shared/utils';
-import { CsvService } from '../shared/csv.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { CsvService } from '../shared/export/csv.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { ChatService } from '../shared/chat.service';
-import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
-import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import { PdfService } from '../shared/pdf.service';
-import { MarkdownRenderService } from '../shared/markdown-render.service';
+import { AiChatService } from '../shared/ai/ai-chat.service';
+import { surveyAnalysisPrompt } from '../shared/ai/ai-prompts.constants';
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/charts/chart.utils';
+import { PdfService } from '../shared/export/pdf.service';
+import { MarkdownRenderService } from '../shared/markdown/markdown-render.service';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +44,7 @@ export class SubmissionsService {
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private pdfService: PdfService,
     private markdownRenderer: MarkdownRenderService,
     @Inject(LOCALE_ID) private localeId: string
@@ -350,7 +350,7 @@ export class SubmissionsService {
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text).replace(/"/g, '""')}"`]:
+              [`${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text)}`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };

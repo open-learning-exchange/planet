@@ -7,9 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { TableState, UsersTableComponent } from './users-table.component';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/auth/user.service';
 import { UsersService } from './users.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 describe('UsersTableComponent', () => {
@@ -79,14 +79,14 @@ describe('UsersTableComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.renderedData).toEqual(users.slice(0, 50));
-    component.masterToggle();
+    expect(component.pageSelection.renderedRows).toEqual(users.slice(0, 50));
+    component.pageSelection.masterToggle();
     component.paginator.nextPage();
     fixture.detectChanges();
     await fixture.whenStable();
 
     expect(component.paginator.pageIndex).toBe(1);
-    expect(component.renderedData).toEqual(users.slice(50));
+    expect(component.pageSelection.renderedRows).toEqual(users.slice(50));
     expect(component.selection.selected).toEqual(users.slice(0, 50).map(row => row.doc));
   });
 

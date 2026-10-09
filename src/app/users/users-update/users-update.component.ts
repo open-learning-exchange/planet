@@ -7,17 +7,17 @@ import { MatDialog, MatDialogContent, MatDialogActions, MatDialogClose } from '@
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 import { FileUploadComponent } from '../../shared/forms/file-upload.component';
-import { UserService } from '../../shared/user.service';
+import { UserService } from '../../shared/auth/user.service';
 import { environment } from '../../../environments/environment';
-import { languages } from '../../shared/languages';
+import { languages } from '../../shared/language/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
-import { showFormErrors } from '../../shared/table-helpers';
-import { educationLevel } from '../user-constants';
-import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes.component';
-import { CouchService } from '../../shared/couchdb.service';
+import { showFormErrors } from '../../shared/tables/table.helpers';
+import { educationLevel } from '../users.constants';
+import { CanComponentDeactivate } from '../../shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '../../shared/unsaved-changes/unsaved-changes-prompt.component';
+import { CouchService } from '../../shared/database/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 import { MatToolbar } from '@angular/material/toolbar';
 
@@ -33,7 +33,7 @@ import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
-import { SubmitDirective } from '../../shared/submit.directive';
+import { SubmitDirective } from '../../shared/dialogs/submit.directive';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 
 interface UsersUpdateFormGroup {

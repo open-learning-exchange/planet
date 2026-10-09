@@ -416,7 +416,6 @@ body {
   }
 
   .view-container.view-full-height {
-    height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
 
@@ -425,8 +424,8 @@ body {
     }
   }
 
-  // Keep this path bounded so nested dialog and tab views retain their own sizing.
-  mat-sidenav-content > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height) {
+  // Keep these paths bounded so views inside tabs retain their own sizing.
+  :is(mat-sidenav-content, .mat-mdc-dialog-content) > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height, > * > .space-container > .view-full-height) {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -451,6 +450,11 @@ body {
       flex: 1 1 0;
       min-height: v.$view-container-min-height;
     }
+  }
+
+  // Dialog content has only a max-height; this height is clamped to it so the list or media inside can fill it.
+  .mat-mdc-dialog-content:has(> * > .view-full-height, > * > .space-container > .view-full-height, > * > .space-container > * > .view-full-height, > planet-resources-viewer :is(video, img, iframe, .csv-container)) {
+    height: 100vh;
   }
 
   .view-container.view-full-height.view-table {
@@ -588,15 +592,6 @@ body {
       justify-content: center;
     }
 
-    .preview-content {
-      height: 9rem;
-      overflow: hidden;
-    }
-
-    .preview-toggle {
-      text-align: center;
-    }
-
     .expanded-row .content {
       max-height: none;
     }
@@ -646,10 +641,6 @@ body {
     }
   }
 
-  .view-container.view-full-height.no-toolbar {
-    height: v.$view-container-height-no-toolbar;
-  }
-
   .form-width-3 {
     width: 550px;
   }
@@ -664,7 +655,7 @@ body {
   }
 
   mat-toolbar:first-child > mat-form-field,
-  mat-toolbar:first-child > planet-selector,
+  mat-toolbar:first-child > planet-courses-progress-planet-selector,
   .mat-toolbar form .mat-mdc-form-field,
   .input-icon {
     &.mat-form-field-type-no-underline {

@@ -1,26 +1,27 @@
-import { Component, Inject, Input, LOCALE_ID, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { CouchService } from '../../shared/couchdb.service';
+import { CouchService } from '../../shared/database/couchdb.service';
 import { TeamsService } from '../teams.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { finalize, map, switchMap, tap } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { forkJoin, of, Subject } from 'rxjs';
 import { convertUtcDate } from '../teams.utils';
-import { CsvService } from '../../shared/csv.service';
+import { CsvService } from '../../shared/export/csv.service';
 import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { fullLabel } from '../../manager-dashboard/reports/reports.utils';
 import { AttachmentInputState } from '../../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from '../teams-attachments.service';
 import { formatDate, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -28,7 +29,7 @@ import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { PdfImageSection, TeamsTablePdfExportService } from '../teams-table-pdf-export.service';
-import { filterSpecificFieldsHybrid } from '../../shared/table-helpers';
+import { filterSpecificFieldsHybrid } from '../../shared/tables/table.helpers';
 
 interface NewReportForm {
   _id?: string;
@@ -71,7 +72,7 @@ interface NewReportForm {
     CurrencyPipe
   ]
 })
-export class TeamsReportsComponent implements OnChanges {
+export class TeamsReportsComponent implements OnChanges, OnDestroy {
 
   @Input() reports: any[];
   @Input() editable = false;
@@ -83,6 +84,7 @@ export class TeamsReportsComponent implements OnChanges {
   reportCards: any[] = [];
   filteredCards: any[] = [];
   filter = '';
+  private onDestroy$ = new Subject<void>();
 
   ngOnChanges() {
     this.reportCards = (this.reports || [])
@@ -156,17 +158,23 @@ export class TeamsReportsComponent implements OnChanges {
     private teamsTablePdfExportService: TeamsTablePdfExportService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    @Inject(LOCALE_ID) private localeId: string
+    @Inject(LOCALE_ID) private localeId: string,
+    private dialogGuard: DialogGuardService
   ) {}
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
     const dialogTitle = isEdit ? $localize`:@@edit-report-dialog-title:Edit Report` : $localize`:@@add-report-dialog-title:Add Report`;
 
-    this.couchService.currentTime().subscribe((time: number) => {
+    this.dialogGuard.open('team-report', () => this.couchService.currentTime().pipe(map((time: number) => {
       const currentDate = new Date(time);
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
       const lastMonthEnd = currentDate.setDate(0);
-      this.dialogsFormService.openDialogsForm(
+      return this.dialogsFormService.openDialogsForm(
         dialogTitle,
         [
           {
@@ -225,7 +233,7 @@ export class TeamsReportsComponent implements OnChanges {
           })
         }
       );
-    });
+    }))).pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   openDeleteReportDialog(report) {
