@@ -124,6 +124,9 @@ jobs:
             -t $repo .
           actual_arch="$(docker image inspect "$repo" --format '{{.Architecture}}')"
           [ "$actual_arch" = '${{ matrix.arch }}' ] || { echo "architecture mismatch: expected ${{ matrix.arch }}, got ${actual_arch:-<none>}"; exit 1; }
+          docker run -d --name gateway-check -p 127.0.0.1:5000:5000 $repo
+          timeout 90 sh -c 'until curl -sf http://127.0.0.1:5000/; do sleep 2; done' || { docker logs gateway-check; exit 1; }
+          docker rm -f gateway-check
           docker images
           docker tag $repo $branchrepo
           docker push $repo

@@ -15,6 +15,7 @@ COPY ./gateway/tsconfig.json ./
 
 RUN npm run build
 RUN --mount=type=cache,id=npm-builder,target=/root/.npm npm prune --omit=dev
+RUN ! find node_modules -name '*.node' | grep .
 
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
