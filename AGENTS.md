@@ -25,6 +25,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 - `cd gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.
+- `npm test` — type-check, then Vitest. Install root dependencies first; Vitest resolves from the root.
 - `npm run lint` / `npm run lint-fix` — uses legacy ESLint config (`ESLINT_USE_FLAT_CONFIG=false`); the root app uses flat config (`eslint.config.mjs`), so don't try to unify them casually.
 - Only one `gateway` instance can bind the port at a time; stop the Docker gateway container before `npm run dev`.
 
