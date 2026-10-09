@@ -21,7 +21,7 @@ import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
 import { CustomValidators } from '../validators/custom-validators';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { planetAndParentId } from '../shared/utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';

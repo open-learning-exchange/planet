@@ -18,7 +18,7 @@ import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/database/mango-queries';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { planetAndParentId } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { ChallengesAnnouncementSuccessDialogComponent } from '../shared/challenges/challenges-announcement-dialog.component';
 import { ChallengesUserStatusService } from '../shared/challenges/challenges-user-status.service';
@@ -418,7 +418,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamObject(planetCode?: string) {
     const code = planetCode || this.stateService.configuration.code;
     const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
-    const teamId = `${code}@${parentCode}`;
+    const teamId = planetAndParentId({ code, parentCode });
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
 
