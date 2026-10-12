@@ -1,8 +1,8 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
-
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
-import { isAcceptableFile, normalizedContentType, safeAttachmentName, truncateText } from '../utils';
+
+import { isAcceptableFile, normalizedContentType, safeAttachmentName, truncateText } from '@shared/utils';
 
 interface FileMeta {
   icon: string;
@@ -60,8 +60,8 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
   private readonly fileTypeMap: { [ext: string]: FileMeta } = {
     pdf: { icon: 'picture_as_pdf', label: $localize`PDF` },
-    zip: { icon: 'folder_zip', label: $localize`ZIP` },
-    epub: { icon: 'menu_book', label: $localize`EPUB` },
+    zip: { icon: 'archive', label: $localize`ZIP` },
+    epub: { icon: 'import_contacts', label: $localize`EPUB` },
     mp3: { icon: 'audiotrack', label: $localize`Audio` },
     wav: { icon: 'audiotrack', label: $localize`Audio` },
     mp4: { icon: 'movie', label: $localize`Video` },
@@ -75,7 +75,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     docx: { icon: 'description', label: $localize`Document` },
     ppt: { icon: 'slideshow', label: $localize`Slides` },
     pptx: { icon: 'slideshow', label: $localize`Slides` },
-    txt: { icon: 'article', label: $localize`Text` }
+    txt: { icon: 'subject', label: $localize`Text` }
   };
 
   ngOnChanges(changes: SimpleChanges) {

@@ -1,30 +1,33 @@
-import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
-import { CoursesService } from '../courses.service';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { ResourcesService } from '../../resources/resources.service';
-import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
-import { StateService } from '../../shared/state.service';
-import { ChatService } from '../../shared/chat.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
-import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
-import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { coursesStepPrompt } from '@shared/ai/ai-prompts.constants';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
+import { CoursesService } from '../courses.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { ResourcesService } from '../../resources/resources.service';
+import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
+import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -48,7 +51,8 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatButtonToggle,
     MatTooltip,
     ResourcesViewerComponent,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    ResourcesIconComponent
   ]
 })
 
@@ -75,11 +79,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   showChat = false;
   isOpenai = false;
   isLoading = true;
-  deviceType: DeviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private coursesService: CoursesService,
     private dialog: MatDialog,
     private resourcesService: ResourcesService,
@@ -90,17 +94,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
     private challengesService: ChallengesService,
-  ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  get isMobile(): boolean {
-    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-  }
+  ) {}
 
   get hasActionButtons(): boolean {
     const hasExam = !!this.stepDetail?.exam?.questions.length;
@@ -230,10 +224,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 
   setResourceUrl(resourceUrl: string) {
@@ -273,7 +268,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   openReviewDialog() {
-    this.dialog.open(DialogsSubmissionsComponent, {
+    this.dialog.open(CoursesStepAttemptsDialogComponent, {
       minWidth: '500px',
       maxWidth: '90vw',
       maxHeight: '90vh',

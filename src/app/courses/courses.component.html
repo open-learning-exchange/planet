@@ -133,13 +133,13 @@
     }
   </ng-template>
 
-  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm, 'view-with-search': showInlineFilters && !isForm }">
+  <div class="card-table view-container view-full-height view-table" [ngClass]="{ 'fill-parent': isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
+            [checked]="selection.hasValue() && pageSelection.isAllSelected()"
+            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row" class="table-selection-top">
@@ -211,16 +211,7 @@
             }
           </mat-chip-set>
           <div class="content">
-            <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
-              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
-            </div>
-            @if (showPreviewExpand(element)) {
-              <div class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
-                <button mat-icon-button>
-                  <mat-icon>{{isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
-                </button>
-              </div>
-            }
+            <planet-markdown-preview [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [expanded]="isExpanded(element)" (expandedChange)="toggleRow(element)"></planet-markdown-preview>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           @if (!parent && !isDialog && !isForm) {
@@ -277,7 +268,7 @@
                 <span i18n>Delete</span>
               </button>
             }
-            <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
+            <button mat-menu-item [planetRatingDialog]="element" [disabled]="element.rating.totalRating === 0">
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>
@@ -328,7 +319,7 @@
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
+      (page)="pageSelection.onPageChange()">
     </mat-paginator>
   </div>
 </div>

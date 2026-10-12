@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, Observable, forkJoin } from 'rxjs';
 import { catchError, defaultIfEmpty, switchMap } from 'rxjs/operators';
+
+import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
+
 import { PouchService } from './pouch.service';
-import { CouchService } from '../couchdb.service';
-import { UserChallengeStatusService } from '../user-challenge-status.service';
+import { CouchService } from './couchdb.service';
 
 interface SessionInfo {
   userCtx: {
@@ -20,7 +22,7 @@ export class PouchAuthService {
   constructor(
     private pouchService: PouchService,
     private couchService: CouchService,
-    private userStatusService: UserChallengeStatusService
+    private userStatusService: ChallengesUserStatusService
   ) {
     this.authDB = this.pouchService.getAuthDB();
   }

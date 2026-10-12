@@ -1,6 +1,7 @@
-import { millisecondsToDay } from '../../meetups/constants';
-import type { CsvService } from '../../shared/csv.service';
-import { localizedGender } from '../../shared/utils';
+import type { CsvService } from '@shared/export/csv.service';
+import { localizedGender } from '@shared/utils';
+
+import { millisecondsToDay } from '../../meetups/meetups.constants';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -62,8 +63,6 @@ export const isSelectedMember = (item, members) => members.length === 0 ||
   members.some(member => (member.userId === item.userId || member.userId.split(':')[1] === item.user));
 
 export const filterByMember = (array, members = []) => array.filter(item => isSelectedMember(item, members));
-
-export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
 export const getDomainParams = (configuration, isHub) => isHub ?
   { planetCode: configuration.parentCode, domain: configuration.parentDomain } :

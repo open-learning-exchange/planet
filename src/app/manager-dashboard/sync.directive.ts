@@ -1,15 +1,18 @@
 import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { forkJoin, throwError, of } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
-import { SyncService } from '../shared/sync.service';
-import { findDocuments } from '../shared/mangoQueries';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { SyncService } from '@shared/database/sync.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { planetAndParentId } from '@shared/utils';
+
 import { ManagerService } from './manager.service';
-import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Directive({ selector: '[planetSync]' })
 export class SyncDirective {
@@ -66,7 +69,7 @@ export class SyncDirective {
       { db: 'teams', selector: { $or: [ { teamType: 'sync' }, { docType: 'link' } ], teamPlanetCode: this.planetConfiguration.code } },
       { db: 'news', selector: { $or: [
         { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code },
-        { viewIn: { $elemMatch: { _id: `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } }
+        { viewIn: { $elemMatch: { _id: planetAndParentId(this.planetConfiguration) } } }
       ] } },
       { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
       { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
@@ -79,7 +82,7 @@ export class SyncDirective {
       {
         dbSource: 'meetups',
         db: 'community_meetups',
-        selector: { link: { teams: { $eq: `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } },
+        selector: { link: { teams: { $eq: planetAndParentId(this.planetConfiguration) } } },
         continuous: true
       }
     ];

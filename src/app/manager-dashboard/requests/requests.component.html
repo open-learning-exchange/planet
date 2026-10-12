@@ -4,16 +4,16 @@
   </button>
   <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
   <span class="toolbar-fill"></span>
-  @if (!isMobile) {
+  @if (!isMobile()) {
     <ng-container *ngTemplateOutlet="filterItems"></ng-container>
   }
-  @if (isMobile) {
+  @if (isMobile()) {
     <button mat-icon-button (click)="toggleMobileFilterList()">
       <mat-icon>filter_list</mat-icon>
     </button>
   }
 </mat-toolbar>
-@if (isMobile && showFilterRow) {
+@if (isMobile() && showFilterRow) {
   <mat-toolbar class="mobile-filter-toolbar">
     <div class="mobile-filter-row">
       <ng-container *ngTemplateOutlet="filterItems"></ng-container>

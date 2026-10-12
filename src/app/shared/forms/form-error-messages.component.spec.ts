@@ -53,6 +53,11 @@ describe('FormErrorMessagesComponent', () => {
     expect(component.date).toEqual(new Date(1700000000000));
     expect(component.number).toBeUndefined();
 
+    const lengthControl = new FormControl('abcdef', Validators.maxLength(5));
+    component.control = lengthControl;
+    expect(component.error).toBe('maxlength');
+    expect(component.number).toBe(5);
+
     const intControl = new FormControl('abc', () => ({ invalidInt: true }));
     component.control = intControl;
     expect(component.error).toBe('invalidInt');

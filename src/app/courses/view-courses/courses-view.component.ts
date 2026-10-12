@@ -3,18 +3,10 @@ import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
-import { CoursesService } from '../courses.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
-import { CoursesViewDetailComponent } from './courses-view-detail.component';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
@@ -22,12 +14,22 @@ import {
   MatExpansionPanelDescription,
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
-import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
-import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { trackByIndex } from '@shared/tables/table.helpers';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+
+import { CoursesService } from '../courses.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
+import { CoursesViewDetailComponent } from './courses-view-detail.component';
+import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
+import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -72,7 +74,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
@@ -85,11 +88,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -232,7 +231,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
-      this.isUserEnrolled = !this.isUserEnrolled;
+      this.isUserEnrolled = true;
     }, (error) => ((error)));
   }
 

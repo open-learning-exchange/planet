@@ -6,30 +6,32 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { EMPTY, Observable, Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
-import { CoursesService } from '../courses/courses.service';
-import { UserService } from '../shared/user.service';
-import { SubmissionsService } from '../submissions/submissions.service';
-import { CouchService } from '../shared/couchdb.service';
-import { Exam, ExamQuestion } from './exams.model';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { ChallengesService } from '../shared/challenges/challenges.service';
 import { DatePipe, Location } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+
+import { CoursesService } from '../courses/courses.service';
+import { SubmissionsService } from '../submissions/submissions.service';
+import { Exam, ExamQuestion } from './exams.model';
 import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -313,9 +315,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         this.currentAnswer = null;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
-        const challenge = isFinish ? this.challengesService.getActiveChallengeForCourse(this.courseId) : undefined;
-        if (challenge) {
-          this.challengesService.openChallengeDialog(this.dialog, challenge);
+        if (isFinish) {
+          this.challengesService.getActiveChallengeForCourse(this.courseId).subscribe(challenge => {
+            if (challenge) {
+              this.challengesService.openChallengeDialog(this.dialog, challenge);
+            }
+          });
         }
       }
     }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));

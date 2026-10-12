@@ -48,6 +48,7 @@ import { Subscription } from 'rxjs';
       bp {Blood Pressure should be systolic/diastolic}
       notFileMatch {File not found in list}
       invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/}
+      maxlength {Maximum characters allowed:}
     }</span>{{number === undefined ? '' : ' ' + number}}
       @if (error === 'matDatepickerMin' || error === 'matDatepickerMax') {
         {{date === undefined ? '' : ' ' + (date | date)}}
@@ -111,7 +112,7 @@ export class FormErrorMessagesComponent implements OnDestroy {
     const errorType = Object.keys(this.targetControl.errors)[0];
     const number = this.targetControl.errors[errorType]?.min !== undefined || this.targetControl.errors[errorType]?.max !== undefined ?
       this.targetControl.errors[errorType].min || this.targetControl.errors[errorType].max || 0 :
-      undefined;
+      this.targetControl.errors[errorType]?.requiredLength;
     if (errorType.indexOf('Datepicker') > -1) {
       this.date = new Date(number);
     } else {
