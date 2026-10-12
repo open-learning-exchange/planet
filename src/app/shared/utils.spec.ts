@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import {
   ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
   genderBucket, hasMarkdownImages, IMAGE_MAX_FALLBACK_BYTES, localizedGender, normalizeImage,
-  normalizeMarkdownWhitespace, scaledDimensions
+  normalizeMarkdownWhitespace, safeAttachmentName, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -16,6 +16,16 @@ describe('utils', () => {
       expect(couchAttachmentUrl('http://localhost:2200/', '/resources/', 'doc/id', 'site/index.html')).toBe(
         'http://localhost:2200/resources/doc%2Fid/site/index.html'
       );
+    });
+
+  });
+
+  describe('safeAttachmentName', () => {
+
+    it('strips leading underscores, which CouchDB rejects in attachment names', () => {
+      expect(safeAttachmentName('_DSC1234.JPG')).toBe('DSC1234.JPG');
+      expect(safeAttachmentName('/cover.png')).toBe('cover.png');
+      expect(safeAttachmentName('___')).toBe('attachment');
     });
 
   });

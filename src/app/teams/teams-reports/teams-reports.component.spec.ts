@@ -1,4 +1,5 @@
-import { StateService } from '../../shared/state.service';
+import { StateService } from '@shared/state.service';
+
 import { TeamsAttachmentsService } from '../teams-attachments.service';
 import { TeamsReportsComponent } from './teams-reports.component';
 
@@ -28,7 +29,8 @@ describe('TeamsReportsComponent', () => {
       {} as any,
       { configuration: { currency: {} } } as any as StateService,
       {} as any,
-      'en-US'
+      'en-US',
+      {} as any
     );
   });
 

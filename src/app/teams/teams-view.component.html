@@ -5,6 +5,9 @@
 <div class="space-container teams-view">
   <mat-toolbar class="primary-color font-size-1">
     @if (team !== undefined) {
+      @if (team?.coverFileName) {
+        <img class="team-toolbar-cover" [src]="coverImageUrl()" alt="" />
+      }
       <h3 class="margin-lr-3 ellipsis-title">
         {{team.name}} @if (mode==='enterprise') {
         <ng-container i18n>Office</ng-container>
@@ -14,11 +17,11 @@
   @if (mode==='services') {
     <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
   }
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (deviceType() === deviceTypes.DESKTOP) {
     <ng-container *ngTemplateOutlet="editDetails"></ng-container>
     <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
   }
-  @if ( deviceType === deviceTypes.TABLET) {
+  @if ( deviceType() === deviceTypes.TABLET) {
     <ng-container *ngTemplateOutlet="editDetails"></ng-container>
     <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
       <mat-icon>more_vert</mat-icon>
@@ -27,7 +30,7 @@
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
     </mat-menu>
   }
-  @if (deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE) {
+  @if (isMobile()) {
     <span class="toolbar-fill"></span>
     <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
       <mat-icon>more_vert</mat-icon>
@@ -109,6 +112,9 @@
       <ng-template mat-tab-label i18n>
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
         </ng-template>
+      @if (team?.coverFileName) {
+        <img class="team-cover" [src]="coverImageUrl()" alt="" />
+      }
       @if ((team?.description || team?.services || team?.rules)) {
         @if (team?.description && mode === 'enterprise') {
           <div class="mat-headline-6" i18n>What is your enterprise's Mission?</div>

@@ -1,21 +1,22 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { environment } from '../../environments/environment';
-import { CouchService } from '../shared/database/couchdb.service';
 import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ManagerService } from '../manager-dashboard/manager.service';
-import { StateService } from '../shared/state.service';
-import { SyncService } from '../shared/database/sync.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-
 import { MatProgressBar } from '@angular/material/progress-bar';
 import {
   MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions
 } from '@angular/material/card';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { SyncService } from '@shared/database/sync.service';
+
+import { environment } from '../../environments/environment';
+import { ManagerService } from '../manager-dashboard/manager.service';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @Component({
