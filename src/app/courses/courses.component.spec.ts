@@ -5,23 +5,23 @@ import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
+import { CouchService } from '@shared/database/couchdb.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { SyncService } from '@shared/database/sync.service';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { TagsService } from '@shared/forms/tags/tags.service';
+import { SearchService } from '@shared/search/search.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+
 import { CoursesComponent } from './courses.component';
-import { CouchService } from '../shared/couchdb.service';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { CoursesService } from './courses.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
-import { SyncService } from '../shared/sync.service';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { TagsService } from '../shared/forms/tags.service';
-import { SearchService } from '../shared/forms/search.service';
-import { DeviceInfoService } from '../shared/device-info.service';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -34,7 +34,7 @@ describe('CoursesComponent', () => {
   let coursedata2;
   let coursearray;
 
-  const completionService = new CertificationsService({} as any, {} as any, {} as any);
+  const completionService = new CertificationsService({} as any);
   const certificationsServiceMock = {
     getCertifications: vi.fn().mockReturnValue(of([])),
     isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
@@ -95,7 +95,6 @@ describe('CoursesComponent', () => {
         { provide: TagsService, useValue: { updateManyTags: vi.fn().mockReturnValue(of({})) } },
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
-        FuzzySearchService,
         { provide: CertificationsService, useValue: certificationsServiceMock },
         { provide: MatDialog, useValue: dialogMock },
         {

@@ -1,0 +1,120 @@
+@if (isLoading) {
+  <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
+}
+
+@if (!isLoading) {
+  <div class="reports-container">
+    <div class="reports-toolbar">
+      <span class="reports-count">
+        <mat-icon>description</mat-icon>
+        <span><strong>{{ filteredCards.length }}</strong>&nbsp;<ng-container i18n>reports</ng-container></span>
+      </span>
+      @if (reportCards.length > 0 || filter) {
+        <mat-form-field subscriptSizing="dynamic" class="reports-filter font-size-1">
+          <mat-label i18n>Filter by label or date...</mat-label>
+          <input matInput [ngModel]="filter" (ngModelChange)="applyFilter($event)">
+          <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="filter ? 'visible' : 'hidden'"
+            matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      }
+      <span class="spacer"></span>
+      @if (filteredCards.length > 0) {
+        <button mat-stroked-button [matMenuTriggerFor]="reportsExportMenu">
+          <mat-icon>file_download</mat-icon><span i18n>Export</span>
+        </button>
+        <mat-menu #reportsExportMenu="matMenu">
+          <button mat-menu-item (click)="exportReports()" i18n>CSV</button>
+          <button mat-menu-item (click)="exportReportsPdf()" i18n>PDF</button>
+        </mat-menu>
+      }
+      @if (editable) {
+        <button mat-raised-button color="primary" (click)="openAddReportDialog(false)">
+          <mat-icon>add</mat-icon><span i18n>Add Report</span>
+        </button>
+      }
+    </div>
+    @if (reportCards.length === 0) {
+      <p class="reports-empty" i18n>No reports available at the moment.</p>
+    }
+    @if (reportCards.length > 0 && filteredCards.length === 0) {
+      <p class="reports-empty" i18n>No reports match your search.</p>
+    }
+    @if (filteredCards.length > 0) {
+      <div class="reports-grid">
+        @for (card of filteredCards; track trackByReport($index, card)) {
+          <mat-card class="report-card"
+            role="button" tabindex="0"
+            (click)="openReportCard($event, card.report)"
+            (keydown.enter)="openReportCard($event, card.report)"
+            (keydown.space)="openReportCard($event, card.report)">
+            <mat-card-content>
+              <div class="report-card-header">
+                <div class="report-card-title">
+                  <div class="report-card-eyebrow-row">
+                    <span class="report-card-eyebrow" i18n>Financial Report</span>
+                    @if (card.report.label) {
+                      <span class="report-card-label" [matTooltip]="card.report.label">{{ card.report.label }}</span>
+                    }
+                  </div>
+                  <div class="report-card-range">
+                    {{ card.report.startDate | date : 'mediumDate' : '+0000' }} &ndash;
+                    {{ card.report.endDate | date : 'mediumDate' : '+0000' }}
+                  </div>
+                </div>
+                <span class="report-card-chip" [ngClass]="card.isLoss ? 'loss' : 'profit'">
+                  <mat-icon>{{ card.isLoss ? 'trending_down' : 'trending_up' }}</mat-icon>
+                  @if (card.isLoss) {
+                    <span i18n>Loss</span>
+                  }
+                  @if (!card.isLoss) {
+                    <span i18n>Profit</span>
+                  }
+                </span>
+              </div>
+              <div class="report-card-hero">
+                <div class="report-card-hero-label" i18n>Net (Profit / Loss)</div>
+                <div class="report-card-hero-value" [ngClass]="card.isLoss ? 'debit' : 'credit'">
+                  {{ card.net | currency:curCode?.code:curCode?.symbol:'1.0-2' }}
+                </div>
+              </div>
+              <div class="report-card-stats">
+                <div class="report-card-stat credit">
+                  <div class="report-card-stat-label" i18n>Credit</div>
+                  <div class="report-card-stat-value">{{ card.income | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</div>
+                </div>
+                <div class="report-card-stat debit">
+                  <div class="report-card-stat-label" i18n>Debit</div>
+                  <div class="report-card-stat-value">{{ card.expenses | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</div>
+                </div>
+              </div>
+              <div class="report-card-balance">
+                <span i18n>Ending Balance</span>
+                <span class="num">{{ card.endingBalance | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</span>
+              </div>
+              @if (card.receiptImageCount > 0) {
+                <div class="report-card-receipt-images">
+                  <mat-icon>photo_library</mat-icon>
+                  <span i18n>{card.receiptImageCount, plural, =1 {1 attached image} other {{{card.receiptImageCount}} attached images}}</span>
+                </div>
+              }
+            </mat-card-content>
+            <mat-card-actions class="report-card-actions">
+              @if (editable) {
+                <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(card.report, true)"
+                  i18n-aria-label aria-label="Edit" matTooltip="Edit" i18n-matTooltip><mat-icon>edit</mat-icon></button>
+                  <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(card.report)"
+                    i18n-aria-label aria-label="Delete" matTooltip="Delete" i18n-matTooltip><mat-icon>delete_outline</mat-icon></button>
+                  }
+                  <span class="spacer"></span>
+                  <button mat-raised-button color="primary" (click)="$event.stopPropagation(); openReportDialog(card.report)">
+                    <span i18n>View Report</span><mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            }
+          </div>
+        }
+      </div>
+    }

@@ -1,10 +1,12 @@
+import { signal } from '@angular/core';
 import { convertToParamMap } from '@angular/router';
-import { BehaviorSubject, EMPTY, Subscription, of } from 'rxjs';
+import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { CommunityComponent } from './community.component';
-import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
-import { DeviceType } from '../shared/device-info.service';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
 
 describe('CommunityComponent custom labels', () => {
   it('allows community leaders and planet managers to manage community labels', () => {
@@ -21,31 +23,33 @@ describe('CommunityComponent custom labels', () => {
     expect(component.canManageLabels).toBe(true);
   });
 
-  it('passes current labels to the dialog and applies the saved vocabulary locally', () => {
+  it('passes the services doc labels to the dialog and applies the saved vocabulary locally', () => {
     const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    const team = { _id: 'local@parent', customVoiceLabels: [ 'Announcement', 'Event' ] };
     component.planetCode = null;
-    component.configuration = { customVoiceLabels: [ 'Announcement', 'Event' ] };
-    component.customVoiceLabels = [ 'Announcement', 'Event' ];
+    component.team = team;
     const open = vi.fn().mockReturnValue({ afterClosed: () => of([ 'Event' ]) });
     (component as any).dialog = {
       open
     };
-    vi.spyOn(component, 'requestNewsAndUsers').mockImplementation(() => undefined);
 
     component.openManageLabelsDialog();
 
-    expect(open).toHaveBeenCalledWith(DialogsVoiceLabelsComponent, {
+    expect(open).toHaveBeenCalledWith(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
-      data: { target: 'community', customLabels: [ 'Announcement', 'Event' ] }
+      data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }
     });
     expect(component.customVoiceLabels).toEqual([ 'Event' ]);
-    expect(component.requestNewsAndUsers).not.toHaveBeenCalled();
   });
 });
 
 describe('CommunityComponent remote exchange behavior', () => {
-  const createComponent = (localPlanetType: 'center' | 'nation' = 'nation') => {
+  const createComponent = (
+    localPlanetType: 'center' | 'nation' = 'nation',
+    code: string | null = 'remote',
+    user: any = { _id: 'user', isUserAdmin: false, roles: [] }
+  ) => {
     const configuration = {
       _id: 'configuration',
       code: 'local',
@@ -53,9 +57,10 @@ describe('CommunityComponent remote exchange behavior', () => {
       planetType: localPlanetType
     };
     const router = { navigate: vi.fn() };
-    const routeParamMap = new BehaviorSubject(convertToParamMap({ code: 'remote' }));
+    const params = convertToParamMap(code ? { code } : {});
+    const routeParamMap = new BehaviorSubject(params);
     const route = {
-      snapshot: { paramMap: convertToParamMap({ code: 'remote' }) },
+      snapshot: { paramMap: params },
       paramMap: routeParamMap
     };
     const stateService = {
@@ -71,9 +76,11 @@ describe('CommunityComponent remote exchange behavior', () => {
       findAll: vi.fn(() => of([])),
       get: vi.fn(() => of({ _id: 'remote@local', description: '' }))
     };
-    const userService = { get: vi.fn(() => ({ _id: 'user', isUserAdmin: false, roles: [] })), userChange$: EMPTY };
-    const usersService = { usersListener: vi.fn(() => EMPTY) };
-    const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
+    const userChange$ = new Subject<any>();
+    const currentUser: any = { value: user };
+    const userService = { get: vi.fn(() => currentUser.value), userChange$ };
+    const usersService = { usersListener: vi.fn(() => EMPTY), requestUsers: vi.fn() };
+    const deviceInfoService = { deviceType: signal(DeviceType.DESKTOP) };
     const component = new CommunityComponent(
       dialog as any,
       router as any,
@@ -91,11 +98,103 @@ describe('CommunityComponent remote exchange behavior', () => {
       deviceInfoService as any,
       {} as any,
       { checkConfiguration: vi.fn(() => of(undefined)) } as any,
-      { getActiveChallenge: vi.fn(() => null) } as any
+      { getActiveChallenge: vi.fn(() => of(undefined)), activeChallengeIn: vi.fn() } as any
     );
 
-    return { component, couchService, dialog, dialogsFormService, routeParamMap, router, stateService };
+    return {
+      component, couchService, dialog, dialogsFormService, newsService, routeParamMap, router, stateService, teamsService, userChange$,
+      currentUser
+    };
   };
+
+  it('treats a missing team doc as a community without one', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 404, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.servicesDescriptionLabel).toBe('Add');
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('keeps label editing off when the team doc fails to load', () => {
+    const { component, couchService } = createComponent();
+    couchService.get = vi.fn(() => throwError({ status: 500, statusText: '' }));
+
+    component.ngOnInit();
+
+    expect(component.teamLoading).toBe(false);
+    expect(component.teamLoaded).toBe(false);
+  });
+
+  it('loads member data, not voices, when a guest logs in', () => {
+    const { component, couchService, newsService, teamsService, userChange$, currentUser } = createComponent('nation', null, { name: '' });
+    component.ngOnInit();
+    expect(teamsService.getTeamMembers).not.toHaveBeenCalled();
+    expect(component.teamLoaded).toBe(false);
+
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [ 'learner' ] };
+    userChange$.next(currentUser.value);
+
+    expect(newsService.requestNews).toHaveBeenCalledTimes(1);
+    expect(teamsService.getTeamMembers).toHaveBeenCalledTimes(1);
+    expect(couchService.get).toHaveBeenCalledWith('teams/local@parent');
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('restarts a remote load when a login lands before its configuration', () => {
+    const { component, couchService, newsService, teamsService, userChange$, currentUser } = createComponent();
+    const configuration$ = new Subject<any[]>();
+    couchService.findAll = vi.fn(() => configuration$);
+    component.ngOnInit();
+
+    userChange$.next(currentUser.value);
+    configuration$.next([ { code: 'remote', name: 'Remote' } ]);
+
+    expect(newsService.requestNews).toHaveBeenCalledTimes(1);
+    expect(component.teamId).toBe('remote@local');
+    expect(teamsService.getTeamMembers).toHaveBeenCalledWith(expect.objectContaining({ _id: 'remote@local' }), true);
+    expect(component.teamLoaded).toBe(true);
+  });
+
+  it('drops member data still loading when the user logs out', () => {
+    const { component, couchService, teamsService, userChange$, currentUser } = createComponent('nation', null, { name: '' });
+    const servicesDoc$ = new Subject<any>();
+    teamsService.getTeamMembers.mockReturnValue(of([ { docType: 'link', title: 'Clinic' } ]));
+    couchService.get = vi.fn(() => servicesDoc$);
+    component.ngOnInit();
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [ 'learner' ] };
+    userChange$.next(currentUser.value);
+
+    currentUser.value = { name: '' };
+    userChange$.next(currentUser.value);
+    servicesDoc$.next({ _id: 'local@parent', _rev: '1-a' });
+
+    expect(component.links).toEqual([]);
+    expect(component.teamLoaded).toBe(false);
+    expect(component.teamLoading).toBe(false);
+  });
+
+  it('clears member data on logout and reloads only that on the next login', () => {
+    const { component, newsService, teamsService, userChange$, currentUser } = createComponent('nation', null);
+    teamsService.getTeamMembers.mockReturnValue(of([ { docType: 'link', title: 'Clinic' } ]));
+    component.ngOnInit();
+    expect(component.links.length).toBe(1);
+
+    currentUser.value = { name: '' };
+    userChange$.next(currentUser.value);
+    expect(component.links).toEqual([]);
+    expect(component.teamLoaded).toBe(false);
+
+    currentUser.value = { _id: 'user-2', isUserAdmin: false, roles: [ 'learner' ] };
+    userChange$.next(currentUser.value);
+    userChange$.next(currentUser.value);
+
+    expect(component.links.length).toBe(1);
+    expect(teamsService.getTeamMembers).toHaveBeenCalledTimes(2);
+    expect(newsService.requestNews).toHaveBeenCalledTimes(1);
+  });
 
   it('sets remote exchange mode synchronously from the route snapshot', () => {
     const { component } = createComponent();

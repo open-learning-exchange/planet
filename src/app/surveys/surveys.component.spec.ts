@@ -1,9 +1,11 @@
+import { signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { SurveysComponent } from './surveys.component';
-import { DeviceType } from '../shared/device-info.service';
 
 describe('SurveysComponent', () => {
   let couchService: any;
@@ -31,8 +33,9 @@ describe('SurveysComponent', () => {
     { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
     {} as any,
     new FormBuilder().nonNullable,
-    { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any,
-    linkCopyService
+    { isMobile: signal(false) } as any,
+    linkCopyService,
+    {} as any
   );
 
   beforeEach(() => {
@@ -160,6 +163,15 @@ describe('SurveysComponent', () => {
     component.toggleSurveysView();
 
     expect(component.surveys.data).toEqual([ archivedSurvey ]);
+  });
+
+  it('clears the selection when switching views', () => {
+    component.selection.select('survey-1');
+    component.currentFilter.viewMode = 'adopt';
+
+    component.toggleSurveysView();
+
+    expect(component.selection.isEmpty()).toBe(true);
   });
 
   it('explains question-dependent actions when a survey has no questions', () => {

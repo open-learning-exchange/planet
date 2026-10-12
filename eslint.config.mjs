@@ -309,7 +309,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "prefer-const": "error",
     },
 }, {
-    files: ["src/app/shared/markdown-render.service.ts"],
+    files: ["src/app/shared/markdown/markdown-render.service.ts"],
     rules: {
         "no-restricted-imports": "off",
     },

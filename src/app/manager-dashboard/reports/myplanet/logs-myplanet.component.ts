@@ -2,22 +2,23 @@ import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { CouchService } from '../../../shared/couchdb.service';
-import { StateService } from '../../../shared/state.service';
-import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatButton } from '@angular/material/button';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { CsvService } from '@shared/export/csv.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
 import { ManagerService } from '../../manager.service';
-import { filterSpecificFields } from '../../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
-import { CsvService } from '../../../shared/csv.service';
 import { ReportsService } from '../reports.service';
 import { MyPlanetFiltersBase } from './filter.base';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-
-import { MatButton } from '@angular/material/button';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
-import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
@@ -140,7 +141,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
 
   applyFilters() {
     this.apklogs = this.allPlanets
-      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .filter(planet => !this.searchValue || filterSpecificFieldsHybrid([ 'name' ], [ 'doc.code' ])(planet, this.searchValue))
       .map(planet => ({
         ...planet,
         children: this.filterLogs(planet.children)
