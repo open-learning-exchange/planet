@@ -146,7 +146,7 @@ describe('UsersTableComponent', () => {
     expect(planetMessageService.showMessage).not.toHaveBeenCalled();
   });
 
-  it('displays the Promote button for active non-admin users', async () => {
+  it('shows admins the Promote button for active non-admin users', async () => {
     component.tableState = new TableState();
     fixture.componentRef.setInput('users', [
       { doc: { ...mockUser, isUserAdmin: false, roles: [ 'learner' ] } }
