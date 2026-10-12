@@ -3,21 +3,23 @@ import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFo
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
-import { CustomValidators } from '../../validators/custom-validators';
-import { CertificationsService } from '../../shared/certifications/certifications.service';
-import { CertificationsManagerService } from './certifications-manager.service';
-import { TablesAddDialogComponent } from '../../shared/tables/tables-add-dialog.component';
-import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '../../shared/tables/table.helpers';
-import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+import { CustomValidators } from '../../validators/custom-validators';
+import { CertificationsManagerService } from './certifications-manager.service';
+import { CoursesComponent } from '../../courses/courses.component';
+import { ValidatorService } from '../../validators/validator.service';
 
 
 interface CertificationFormControls {
@@ -26,6 +28,12 @@ interface CertificationFormControls {
 
 @Component({
   templateUrl: './certifications-add.component.html',
+  styles: [`
+    .view-container {
+      display: flex;
+      flex-direction: column;
+    }
+  `],
   imports: [
     MatToolbar,
     MatIconButton,

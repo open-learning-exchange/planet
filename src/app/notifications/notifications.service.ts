@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { findDocuments } from '../shared/database/mango-queries';
 import { switchMap, map, catchError, filter } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { findDocuments } from '@shared/database/mango-queries';
 
 /**
  * Supports raw or replicated user docs and team-member rows. Callers holding a

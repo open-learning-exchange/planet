@@ -1,10 +1,12 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatButton } from '@angular/material/button';
+
+import { couchAttachmentUrl } from '@shared/utils';
+
 import { environment } from '../../../environments/environment';
 import { ResourcesViewerDialogComponent } from './resources-viewer-dialog.component';
-import { couchAttachmentUrl } from '../../shared/utils';
-import { MatButton } from '@angular/material/button';
 
 
 @Component({
