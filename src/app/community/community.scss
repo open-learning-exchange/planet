@@ -1,10 +1,6 @@
 @use '../variables' as v;
 
 .view-container.community-view {
-  &.view-full-height {
-    height: calc(#{v.$view-container-height-no-toolbar} + 64px);
-  }
-
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-areas: "news calendar";

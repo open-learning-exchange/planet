@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { EMPTY, Observable } from 'rxjs';
-import { finalize, take, tap } from 'rxjs/operators';
+import { defer, EMPTY, Observable } from 'rxjs';
+import { filter, finalize, take, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class DialogGuardService {
@@ -17,7 +17,8 @@ export class DialogGuardService {
     }
     this.active.add(key);
     let opened = false;
-    return work().pipe(
+    return defer(work).pipe(
+      filter(ref => !!ref),
       take(1),
       tap(ref => {
         opened = true;

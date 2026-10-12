@@ -1,28 +1,30 @@
 import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { findDocuments } from '../shared/database/mango-queries';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { filterSpecificFields, createDeleteArray } from '../shared/tables/table.helpers';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { CoursesService } from '../courses/courses.service';
-import { ConfigurationService } from '../configuration/configuration.service';
-import { ManagerService } from './manager.service';
-import { StateService } from '../shared/state.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
-import { PlanetBetaDirective } from '../shared/auth/planet-beta.directive';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { filterSpecificFields, createDeleteArray } from '@shared/tables/table.helpers';
+import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
+import { StateService } from '@shared/state.service';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
+
+import { CoursesService } from '../courses/courses.service';
+import { ConfigurationService } from '../configuration/configuration.service';
+import { ManagerService } from './manager.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',

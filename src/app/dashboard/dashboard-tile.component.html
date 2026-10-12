@@ -37,7 +37,7 @@
               [ngClass]="{
                 'bg-grey': even,
                 'accordion-item': isAccordionMode,
-                'has-course-cover': cardType === 'myCourses' && item.coverFileName
+                'has-course-cover': hasCover(item)
               }"
               cdkDrag
               cdkDragPreviewClass="mat-elevation-z8"
@@ -49,9 +49,9 @@
                 [routerLink]="recentlyDragged ? null : item.link"
                 [state]="item.returnState ? { returnState: item.returnState } : undefined"
                 [matTooltip]="item.tooltip">
-                @if (cardType === 'myCourses' && item.coverFileName) {
+                @if (hasCover(item)) {
                   <div class="dashboard-course-cover">
-                    <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt loading="lazy" decoding="async">
+                    <img [src]="coverImageUrl(item)" alt="" loading="lazy" decoding="async">
                   </div>
                 }
                 @if (item.firstLine || item.badge) {

@@ -2,16 +2,18 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+
 import { TableState, UsersTableComponent } from './users-table.component';
-import { UserService } from '../shared/auth/user.service';
 import { UsersService } from './users.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { By } from '@angular/platform-browser';
 
 describe('UsersTableComponent', () => {
   let component: UsersTableComponent;
@@ -80,14 +82,14 @@ describe('UsersTableComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.renderedData).toEqual(users.slice(0, 50));
-    component.masterToggle();
+    expect(component.pageSelection.renderedRows).toEqual(users.slice(0, 50));
+    component.pageSelection.masterToggle();
     component.paginator.nextPage();
     fixture.detectChanges();
     await fixture.whenStable();
 
     expect(component.paginator.pageIndex).toBe(1);
-    expect(component.renderedData).toEqual(users.slice(50));
+    expect(component.pageSelection.renderedRows).toEqual(users.slice(50));
     expect(component.selection.selected).toEqual(users.slice(0, 50).map(row => row.doc));
   });
 
