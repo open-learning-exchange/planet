@@ -160,13 +160,13 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search': showInlineFilters, 'my-personals-view': myView === 'myPersonals'}">
+  <div class="view-container view-full-height view-table card-table" [ngClass]="{'my-personals-view': myView === 'myPersonals'}">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
+            [checked]="selection.hasValue() && pageSelection.isAllSelected()"
+            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row" class="table-selection-top">
@@ -220,16 +220,7 @@
             }
           </mat-chip-set>
           <div class="content">
-            <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
-              <planet-markdown [content]="resourceDescription(element)" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
-            </div>
-            @if (showPreviewExpand(element)) {
-              <div class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
-                <button mat-icon-button>
-                  <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
-                </button>
-              </div>
-            }
+            <planet-markdown-preview [content]="resourceDescription(element)" [imageSource]="parent ? 'parent' : 'local'" [expanded]="isExpanded(element)" (expandedChange)="toggleRow(element)"></planet-markdown-preview>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           @if (!parent && !isDialog) {
@@ -320,7 +311,7 @@
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
+      (page)="pageSelection.onPageChange()">
     </mat-paginator>
   </div>
 </div>

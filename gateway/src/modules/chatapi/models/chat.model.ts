@@ -10,6 +10,7 @@ interface Providers {
   perplexity?: string;
   deepseek?: string;
   gemini?: string;
+  currency?: string;
 }
 
 interface Assistant {

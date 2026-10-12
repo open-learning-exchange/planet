@@ -15,6 +15,12 @@ import { MatButton } from '@angular/material/button';
       <button mat-raised-button color="primary" (click)="viewResources()" i18n>View Resource</button>
     </mat-dialog-actions>
   `,
+  styles: [`
+    planet-resources-viewer {
+      display: block;
+      height: 100%;
+    }
+  `],
   imports: [CdkScrollable, MatDialogContent, ResourcesViewerComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class ResourcesViewerDialogComponent {

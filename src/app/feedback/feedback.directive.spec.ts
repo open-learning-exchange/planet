@@ -1,7 +1,8 @@
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { urlToParamObject } from '../shared/utils';
+import { urlToParamObject } from '@shared/utils';
+
 import { FeedbackDirective } from './feedback.directive';
 
 describe('FeedbackDirective', () => {
@@ -36,7 +37,8 @@ describe('FeedbackDirective', () => {
       { showMessage: vi.fn(), showAlert: vi.fn() } as any,
       { configuration: { code: 'planet', parentCode: 'nation' } } as any,
       {} as any,
-      dialogsLoadingService
+      dialogsLoadingService,
+      {} as any
     );
   });
 
