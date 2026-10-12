@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 
 import { NewsLabelsDialogComponent } from './news-labels-dialog.component';
-import { DEFAULT_LABEL_COLOR, LABEL_TINT_COLORS } from './news-labels';
+import { DEFAULT_LABEL_COLOR } from './news-labels';
 
 describe('NewsLabelsDialogComponent', () => {
   let dialogRef: any;
@@ -56,7 +56,7 @@ describe('NewsLabelsDialogComponent', () => {
   });
 
   it('sanitizes and deduplicates stored labels when opening', () => {
-    const component = createComponent({ target: 'community', customLabels: [ 'Event', null, 'event', 'News' ] });
+    const component = createComponent({ target: 'community', customLabels: [ 'Event', null, { name: 42 }, 'event', 'News' ] });
 
     component.ngOnInit();
 
@@ -77,7 +77,7 @@ describe('NewsLabelsDialogComponent', () => {
       customLabels: [ { name: 'Current label', color: DEFAULT_LABEL_COLOR } ]
     });
     component.ngOnInit();
-    component.selectedColor = LABEL_TINT_COLORS[1]; // green tint
+    component.selectedColor = component.colorPalette[1].value;
     component.newLabelInput = 'New label';
     component.addLabel();
 
@@ -91,13 +91,13 @@ describe('NewsLabelsDialogComponent', () => {
       description: 'About us',
       customVoiceLabels: [
         { name: 'Current label', color: DEFAULT_LABEL_COLOR },
-        { name: 'New label', color: LABEL_TINT_COLORS[1] }
+        { name: 'New label', color: '#c8e6c9' }
       ]
     });
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalledWith([
       { name: 'Current label', color: DEFAULT_LABEL_COLOR },
-      { name: 'New label', color: LABEL_TINT_COLORS[1] }
+      { name: 'New label', color: '#c8e6c9' }
     ]);
   });
 
@@ -119,15 +119,15 @@ describe('NewsLabelsDialogComponent', () => {
   it('adds valid pending input with selected color before saving', () => {
     const component = createComponent({ target: 'community', team: communityTeam, customLabels: [] });
     component.ngOnInit();
-    component.selectedColor = LABEL_TINT_COLORS[2]; // amber tint
+    component.selectedColor = component.colorPalette[2].value;
     component.newLabelInput = 'Event';
 
     component.save();
 
     expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
-      customVoiceLabels: [ { name: 'Event', color: LABEL_TINT_COLORS[2] } ]
+      customVoiceLabels: [ { name: 'Event', color: '#ffecb3' } ]
     }));
-    expect(dialogRef.close).toHaveBeenCalledWith([ { name: 'Event', color: LABEL_TINT_COLORS[2] } ]);
+    expect(dialogRef.close).toHaveBeenCalledWith([ { name: 'Event', color: '#ffecb3' } ]);
   });
 
   it('persists a display-casing change', () => {

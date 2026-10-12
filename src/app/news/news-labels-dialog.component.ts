@@ -22,7 +22,6 @@ import {
   DEFAULT_VOICE_LABELS,
   SHARED_CHAT_LABEL,
   DEFAULT_LABEL_COLOR,
-  LABEL_TINT_COLORS,
   dedupeCustomVoiceLabels,
   getVoiceLabelName
 } from './news-labels';
@@ -54,7 +53,7 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
   newLabelInput = '';
   selectedColor: string = DEFAULT_LABEL_COLOR;
   colorPalette = [
-    { value: '#bbdefb', name: $localize`Blue` },
+    { value: DEFAULT_LABEL_COLOR, name: $localize`Blue` },
     { value: '#c8e6c9', name: $localize`Green` },
     { value: '#ffecb3', name: $localize`Amber` },
     { value: '#ffcdd2', name: $localize`Coral` },
@@ -64,7 +63,6 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     { value: '#ffe0b2', name: $localize`Orange` },
     { value: '#f8bbd0', name: $localize`Pink` }
   ];
-  defaultColor = DEFAULT_LABEL_COLOR;
   errorMessage = '';
   isSaving = false;
   isConfirmingClose = false;
@@ -122,13 +120,10 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
   }
 
   get labelsChanged(): boolean {
-    if (this.initialCustomLabels.length !== this.customLabels.length) {
-      return true;
-    }
-    return this.initialCustomLabels.some((label, index) => {
-      const current = this.customLabels[index];
-      return label.name !== current?.name || (label.color || DEFAULT_LABEL_COLOR) !== (current?.color || DEFAULT_LABEL_COLOR);
-    });
+    return this.initialCustomLabels.length !== this.customLabels.length ||
+      this.initialCustomLabels.some((label, index) =>
+        label.name !== this.customLabels[index].name || label.color !== this.customLabels[index].color
+      );
   }
 
   addLabel(): void {
@@ -163,7 +158,7 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.customLabels.push({ name: value, color: this.selectedColor || DEFAULT_LABEL_COLOR });
+    this.customLabels.push({ name: value, color: this.selectedColor });
     this.newLabelInput = '';
   }
 

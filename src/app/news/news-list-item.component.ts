@@ -130,7 +130,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  getLabelColor(label: string): string {
+  getLabelColor(label: string): string | undefined {
     return getVoiceLabelColor(label, this.customLabels);
   }
 

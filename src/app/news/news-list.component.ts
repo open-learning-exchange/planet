@@ -33,7 +33,7 @@ import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
+import { CustomVoiceLabel, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
 import { NewsListItemComponent } from './news-list-item.component';
 
 @Component({
@@ -73,7 +73,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
-  @Input() customLabels: string[] = [];
+  @Input() customLabels: (string | CustomVoiceLabel)[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @ViewChild('anchor', { static: false }) anchor: any;
   @ViewChild('listContent', { static: false }) listContent: ElementRef<HTMLElement>;
@@ -537,16 +537,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (action === 'select' || this.readOnly) {
       return;
     }
-    let labels: any[];
-    if (action === 'remove') {
-      labels = (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label));
-    } else {
-      const existing = news.labels || [];
-      const customMatch = (this.customLabels || []).find(c => voiceLabelsEqual(c, label));
-      const labelToAdd = customMatch || label;
-      const alreadyPresent = existing.some(existingLabel => voiceLabelsEqual(existingLabel, labelToAdd));
-      labels = alreadyPresent ? existing : [ ...existing, labelToAdd ];
-    }
+    const labels = action === 'remove' ?
+      (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
+      dedupeVoiceLabels([ ...(news.labels || []), label ]);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 
