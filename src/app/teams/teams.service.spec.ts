@@ -473,20 +473,21 @@ describe('TeamsService membership writes', () => {
     };
 
     it('writes a request when the user has none', () => {
-      const { couchService } = requestToJoin([]);
+      const { couchService, next } = requestToJoin([]);
 
       expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({ selector: requestSelector, limit: 1 }));
       expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
         ...requestSelector,
         teamType: team.teamType
       }));
+      expect(next).toHaveBeenCalledWith(true);
     });
 
     it('keeps an existing request instead of adding another', () => {
       const { couchService, next } = requestToJoin([ { _id: 'request-1' } ]);
 
       expect(couchService.updateDocument).not.toHaveBeenCalled();
-      expect(next).toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(false);
     });
 
     it('removes requests made before the team type changed', () => {

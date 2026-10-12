@@ -376,11 +376,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   joinRequest$(team: any) {
     return this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
-      switchMap(() => this.teamsService.getTeamMembers(team)),
-      switchMap((docs) => this.teamsService.sendNotifications('request', docs, {
-        team,
-        url: this.router.url + '/view/' + team._id
-      })),
+      switchMap((requested) => requested ? this.teamsService.getTeamMembers(team).pipe(
+        switchMap((docs) => this.teamsService.sendNotifications('request', docs, {
+          team,
+          url: this.router.url + '/view/' + team._id
+        }))
+      ) : of({})),
       switchMap(() => this.getMembershipStatus())
     );
   }

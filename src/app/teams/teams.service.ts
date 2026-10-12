@@ -193,11 +193,13 @@ export class TeamsService {
   requestToJoinTeam(team, user) {
     const memberInfo = { userId: user._id, userPlanetCode: this.stateService.configuration.code };
     return this.couchService.post(`${this.dbName}/_find`, findDocuments(this.requestSelector(team, memberInfo), [ '_id' ], 0, 1)).pipe(
-      switchMap(({ docs }: any) => docs.length > 0 ? of({}) : this.couchService.updateDocument(this.dbName, {
+      switchMap(({ docs }: any) => docs.length > 0 ? of(false) : this.couchService.updateDocument(this.dbName, {
         createdDate: this.couchService.datePlaceholder,
         ...this.membershipProps(team, memberInfo, 'request')
-      })),
-      switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
+      }).pipe(
+        switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({})),
+        map(() => true)
+      ))
     );
   }
 
