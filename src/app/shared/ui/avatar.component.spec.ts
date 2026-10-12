@@ -1,9 +1,10 @@
 import { SimpleChange, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
-import { environment } from '../../../environments/environment';
 
+import { couchAttachmentUrl } from '@shared/utils';
+
+import { environment } from '../../../environments/environment';
 import { AvatarComponent } from './avatar.component';
-import { couchAttachmentUrl } from '../utils';
 
 describe('AvatarComponent', () => {
   let component: AvatarComponent;

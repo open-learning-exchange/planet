@@ -3,21 +3,22 @@ import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { CustomValidators } from '../validators/custom-validators';
-import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';
-import { ValidatorService } from '../validators/validator.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
-
 import { MatOption } from '@angular/material/autocomplete';
-import { TeamsComponent } from '../teams/teams.component';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+import { CustomValidators } from '../validators/custom-validators';
+import { TeamsService } from '../teams/teams.service';
+import { ValidatorService } from '../validators/validator.service';
+import { TeamsComponent } from '../teams/teams.component';
 
 interface CommunityLinkForm {
   title: FormControl<string>;

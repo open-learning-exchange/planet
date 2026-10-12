@@ -10,6 +10,7 @@
 
 
   .view-container {
+    container-type: size;
     display: grid;
     grid-template-columns: minmax(15rem, 1fr) minmax(0, 2fr);
     grid-template-areas: "detail view";
