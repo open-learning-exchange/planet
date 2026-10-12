@@ -170,4 +170,3 @@ describe('UsersTableComponent', () => {
     expect(promoteButton).toBeNull();
   });
 });
-

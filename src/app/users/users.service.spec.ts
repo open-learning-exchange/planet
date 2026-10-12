@@ -152,4 +152,3 @@ describe('UsersService toggleAdminStatus', () => {
     expect(demoteSpy).not.toHaveBeenCalled();
   });
 });
-

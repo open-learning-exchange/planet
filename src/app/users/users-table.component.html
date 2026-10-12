@@ -158,7 +158,7 @@
                 }
               </button>
             }
-            @if (!element.doc.isUserAdmin && element.doc.roles?.length > 0 && filterType === 'local') {
+            @if (!element.doc.isUserAdmin && element.doc.roles.length > 0) {
               <button class="km-promote-button" (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary">
                 <mat-icon>vertical_align_top</mat-icon>
                 @if (!isMobile()) {
