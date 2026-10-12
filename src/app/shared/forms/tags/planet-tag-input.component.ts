@@ -8,14 +8,16 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
-import { TagsService } from './tags.service';
-import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
-import { dedupeShelfReduce } from '../../utils';
 import { NgClass } from '@angular/common';
-import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
 import { MatButton } from '@angular/material/button';
 import { MatChip, MatChipRemove, MatChipSet } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
+
+import { dedupeShelfReduce } from '@shared/utils';
+
+import { TagsService } from './tags.service';
+import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
+import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
 
 interface SelectedDialogTag { tagId: string, indeterminate: boolean }
 type DialogStartingTag = string | SelectedDialogTag;

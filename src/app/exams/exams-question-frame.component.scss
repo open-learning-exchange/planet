@@ -1,7 +1,15 @@
 @use '../variables' as v;
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+
+  > .space-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+  }
 
   mat-toolbar.primary-color > span {
     display: inline-flex;
@@ -29,8 +37,7 @@
   }
 
   .view-container.view-full-height {
-    height: auto;
-    min-height: calc(#{v.$view-container-height} - 4px);
+    flex: 1 0 auto;
   }
 
   .progress-bar-track {

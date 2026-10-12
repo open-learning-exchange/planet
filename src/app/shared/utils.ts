@@ -30,7 +30,8 @@ export const isAcceptableFile = (file: File, accept?: string): boolean => {
 };
 
 export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
-  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_') || 'attachment';
+  // CouchDB rejects attachment names that start with an underscore
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_').replace(/^_+/, '') || 'attachment';
   if (usedNames.indexOf(trimmed) === -1) {
     return trimmed;
   }
@@ -58,6 +59,7 @@ export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: strin
 };
 
 export const IMAGE_MAX_FALLBACK_BYTES = 2 * 1024 * 1024;
+export const UNPROCESSABLE_IMAGE_ERROR = 'unprocessable-image';
 
 export interface NormalizeImageOptions {
   maxDimension?: number;
@@ -156,8 +158,51 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
   }
 };
 
+const blobToBase64 = (blob: Blob): Promise<string> => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve((reader.result as string).split(',')[1]);
+  reader.onerror = () => reject(reader.error);
+  reader.readAsDataURL(blob);
+});
+
+// Saves one image in the same write as its doc: the replaced image is dropped and a new one is inlined as base64
+export const withImageAttachment = async (
+  doc: any, field: string, state: { retained: { name: string }[], added: { file: File }[] },
+  normalize = (file: File, usedNames: string[]) => normalizeImage(file, { usedNames })
+): Promise<any> => {
+  const { [field]: currentName, _attachments, ...rest } = doc;
+  const attachments = { ..._attachments };
+  const added = state.added[0];
+  let name = !added && state.retained.some(attachment => attachment.name === currentName) ? currentName : undefined;
+  if (currentName !== name) {
+    delete attachments[currentName];
+  }
+  if (added) {
+    const image = await normalize(added.file, Object.keys(_attachments || {}));
+    if (!image) {
+      throw new Error(UNPROCESSABLE_IMAGE_ERROR);
+    }
+    attachments[image.fileName] = { content_type: image.contentType, data: await blobToBase64(image.file) };
+    name = image.fileName;
+  }
+  return {
+    ...rest,
+    ...(name ? { [field]: name } : {}),
+    ...(Object.keys(attachments).length ? { _attachments: attachments } : {})
+  };
+};
+
+// After a write with inlined attachments, keeps stubs on the doc so the next save doesn't send the data again
+export const attachmentStubs = (attachments?: Record<string, any>) => attachments && Object.fromEntries(
+  Object.entries(attachments).map(([ name, { data, ...attachment } ]) =>
+    [ name, data ? { ...attachment, length: atob(data).length, stub: true } : attachment ]
+  )
+);
+
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
+
+export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
 export const dedupeShelfReduce = (ids, id) => {
   if (ids.indexOf(id) > -1) {
@@ -175,14 +220,6 @@ export const removeFromArray = (startArray = [], removeArray = []) => startArray
 export const addToArray = (startArray = [], addArray = []) => startArray.concat(addArray).reduce(dedupeShelfReduce, []);
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
-
-/*
- * styleVariables was previously imported from SCSS files as an ECMA module
- * Angular as of v14 throws an error when trying to do this
- * There might be a way to rework this, but with the low frequency of change
- * working on other priorities for now.
- * See https://github.com/angular/angular-cli/issues/23273
- */
 
 export const styleVariables: any = {
   primary: '#2196f3',
@@ -301,6 +338,54 @@ export const deepEqual = (item1: any, item2: any) => {
     return Object.keys({ ...item1, ...item2 }).every((key) => deepEqual(item1[key], item2[key])) ;
   }
   return item1 === item2;
+};
+
+const isNullish = (value) => value === undefined || value === null;
+
+/*
+ * Deeply patches an object with the 'patchObject'.
+ * Assumes objects have roughly the same structure, including arrays.
+ * i.e. If old object includes an array of objects (or mixed) it will assume
+ * patch object has a similar array of objects structure.
+ * When property is an array in old object and not in patch object,
+ * ignores patch and maintains old object structure.
+ */
+export const deepObjectPatch = (oldObject: any, patchObject: any): any => {
+  const newObject: any = {};
+  const deepArrayPatch = (oldArray: any[], patchArray: any[]) => (
+    Array.isArray(patchArray) ? [
+      ...oldArray.map((oldValue: any, index: number): any[] => (
+        Array.isArray(oldValue) ?
+          deepArrayPatch(oldValue, patchArray[index]) :
+          typeof oldValue === 'object' ?
+            deepObjectPatch(oldValue, patchArray[index]) :
+            patchArray[index]
+      )),
+      ...patchArray.slice(oldArray.length)
+    ] : oldArray);
+  const patchObjectProp = (prop: string) => {
+    if (isNullish(patchObject) || isNullish(patchObject[prop])) {
+      return oldObject[prop];
+    }
+    if (Array.isArray(oldObject[prop])) {
+      return deepArrayPatch(oldObject[prop], patchObject[prop]);
+    }
+    if (typeof oldObject[prop] === 'object') {
+      return deepObjectPatch(oldObject[prop], patchObject[prop]);
+    }
+    return patchObject[prop];
+  };
+  for (const prop in oldObject) {
+    if (Object.prototype.hasOwnProperty.call(oldObject, prop)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
+  for (const prop in patchObject) {
+    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && (newObject[prop] === undefined || newObject[prop] === null)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
+  return newObject;
 };
 
 export const fullName = (user: any) =>

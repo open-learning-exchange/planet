@@ -3,17 +3,19 @@ import { formatDate } from '@angular/common';
 import { zip } from 'rxjs';
 import { switchMap, take, finalize } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { UsersService } from '../../users/users.service';
-import { CoursesService } from '../courses.service';
-import { TableState, UsersTableComponent } from '../../users/users-table.component';
-import { StateService } from '../../shared/state.service';
-import { ManagerService } from '../../manager-dashboard/manager.service';
-import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
-import { CsvService } from '../../shared/export/csv.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { CsvService } from '@shared/export/csv.service';
+
+import { UsersService } from '../../users/users.service';
+import { CoursesService } from '../courses.service';
+import { TableState, UsersTableComponent } from '../../users/users-table.component';
+import { ManagerService } from '../../manager-dashboard/manager.service';
+import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './courses-enroll.component.html',
