@@ -1,17 +1,27 @@
 export interface CustomVoiceLabel {
   name: string;
-  color?: string;
+  color: string;
 }
 
 export const DEFAULT_VOICE_LABELS: readonly string[] = [ 'help', 'offer', 'advice' ];
 export const SHARED_CHAT_LABEL = 'shared chat';
-export const DEFAULT_LABEL_COLOR = '#bbdefb';
+export const DEFAULT_LABEL_COLOR = 'default';
+
+// Keys must match $label-colors in _variables.scss
+export const LABEL_COLORS = [
+  { key: DEFAULT_LABEL_COLOR, name: $localize`Default` },
+  { key: 'green', name: $localize`Green` },
+  { key: 'teal', name: $localize`Teal` },
+  { key: 'purple', name: $localize`Purple` },
+  { key: 'pink', name: $localize`Pink` },
+  { key: 'lime', name: $localize`Lime` },
+  { key: 'brown', name: $localize`Brown` }
+];
 
 export const getVoiceLabelName = (label: unknown): string =>
   typeof label === 'string' ? label : typeof (label as any)?.name === 'string' ? (label as any).name : '';
 
-export const normalizeVoiceLabel = (label: unknown): string =>
-  getVoiceLabelName(label).toLowerCase();
+export const normalizeVoiceLabel = (label: unknown): string => getVoiceLabelName(label).toLowerCase();
 
 export const voiceLabelsEqual = (firstLabel: unknown, secondLabel: unknown): boolean => {
   const normFirst = normalizeVoiceLabel(firstLabel);
@@ -19,12 +29,13 @@ export const voiceLabelsEqual = (firstLabel: unknown, secondLabel: unknown): boo
   return Boolean(normFirst && normSecond && normFirst === normSecond);
 };
 
-export const normalizeCustomVoiceLabel = (label: unknown): CustomVoiceLabel | null => {
+const normalizeCustomVoiceLabel = (label: unknown): CustomVoiceLabel | null => {
   const name = getVoiceLabelName(label).trim();
   if (!name) {
     return null;
   }
-  return { name, color: (label as any)?.color || DEFAULT_LABEL_COLOR };
+  const color = (label as any)?.color;
+  return { name, color: LABEL_COLORS.some(({ key }) => key === color) ? color : DEFAULT_LABEL_COLOR };
 };
 
 export const dedupeVoiceLabels = (labels: unknown[]): string[] => {
@@ -55,5 +66,4 @@ export const dedupeCustomVoiceLabels = (labels: unknown[]): CustomVoiceLabel[] =
     });
 };
 
-export const getVoiceLabelColor = (label: string, customLabels: (string | CustomVoiceLabel)[] = []): string | undefined =>
-  (customLabels.find(custom => voiceLabelsEqual(custom, label)) as CustomVoiceLabel)?.color;
+export const labelColorClass = (color = DEFAULT_LABEL_COLOR) => `label-color-${color}`;

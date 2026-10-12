@@ -56,7 +56,10 @@ describe('NewsLabelsDialogComponent', () => {
   });
 
   it('sanitizes and deduplicates stored labels when opening', () => {
-    const component = createComponent({ target: 'community', customLabels: [ 'Event', null, { name: 42 }, 'event', 'News' ] });
+    const component = createComponent({
+      target: 'community',
+      customLabels: [ 'Event', null, { name: 42 }, 'event', { name: 'News', color: '#bbdefb' } ]
+    });
 
     component.ngOnInit();
 
@@ -77,7 +80,7 @@ describe('NewsLabelsDialogComponent', () => {
       customLabels: [ { name: 'Current label', color: DEFAULT_LABEL_COLOR } ]
     });
     component.ngOnInit();
-    component.selectedColor = component.colorPalette[1].value;
+    component.selectedColor = component.labelColors[1].key;
     component.newLabelInput = 'New label';
     component.addLabel();
 
@@ -91,13 +94,13 @@ describe('NewsLabelsDialogComponent', () => {
       description: 'About us',
       customVoiceLabels: [
         { name: 'Current label', color: DEFAULT_LABEL_COLOR },
-        { name: 'New label', color: '#c8e6c9' }
+        { name: 'New label', color: 'green' }
       ]
     });
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalledWith([
       { name: 'Current label', color: DEFAULT_LABEL_COLOR },
-      { name: 'New label', color: '#c8e6c9' }
+      { name: 'New label', color: 'green' }
     ]);
   });
 
@@ -119,15 +122,15 @@ describe('NewsLabelsDialogComponent', () => {
   it('adds valid pending input with selected color before saving', () => {
     const component = createComponent({ target: 'community', team: communityTeam, customLabels: [] });
     component.ngOnInit();
-    component.selectedColor = component.colorPalette[2].value;
+    component.selectedColor = component.labelColors[2].key;
     component.newLabelInput = 'Event';
 
     component.save();
 
     expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
-      customVoiceLabels: [ { name: 'Event', color: '#ffecb3' } ]
+      customVoiceLabels: [ { name: 'Event', color: 'teal' } ]
     }));
-    expect(dialogRef.close).toHaveBeenCalledWith([ { name: 'Event', color: '#ffecb3' } ]);
+    expect(dialogRef.close).toHaveBeenCalledWith([ { name: 'Event', color: 'teal' } ]);
   });
 
   it('persists a display-casing change', () => {

@@ -8,6 +8,7 @@ import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 import { Subject, of, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
 
@@ -22,8 +23,9 @@ import {
   DEFAULT_VOICE_LABELS,
   SHARED_CHAT_LABEL,
   DEFAULT_LABEL_COLOR,
+  LABEL_COLORS,
   dedupeCustomVoiceLabels,
-  getVoiceLabelName
+  labelColorClass
 } from './news-labels';
 
 @Component({
@@ -42,6 +44,7 @@ import {
     MatIcon,
     MatButton,
     FormsModule,
+    NgClass,
     LabelComponent
   ]
 })
@@ -51,18 +54,9 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
   initialCustomLabels: CustomVoiceLabel[] = [];
   customLabels: CustomVoiceLabel[] = [];
   newLabelInput = '';
-  selectedColor: string = DEFAULT_LABEL_COLOR;
-  colorPalette = [
-    { value: DEFAULT_LABEL_COLOR, name: $localize`Blue` },
-    { value: '#c8e6c9', name: $localize`Green` },
-    { value: '#ffecb3', name: $localize`Amber` },
-    { value: '#ffcdd2', name: $localize`Coral` },
-    { value: '#e1bee7', name: $localize`Purple` },
-    { value: '#b2dfdb', name: $localize`Teal` },
-    { value: '#b2ebf2', name: $localize`Cyan` },
-    { value: '#ffe0b2', name: $localize`Orange` },
-    { value: '#f8bbd0', name: $localize`Pink` }
-  ];
+  selectedColor = DEFAULT_LABEL_COLOR;
+  labelColors = LABEL_COLORS;
+  labelColorClass = labelColorClass;
   errorMessage = '';
   isSaving = false;
   isConfirmingClose = false;
@@ -90,7 +84,7 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     this.target = this.data?.target || 'community';
     this.team = this.data?.team;
 
-    let configuredLabels: any[] = [];
+    let configuredLabels: unknown[] = [];
     if (Array.isArray(this.data?.customLabels)) {
       configuredLabels = this.data.customLabels;
     } else if (this.team && Array.isArray(this.team.customVoiceLabels)) {
@@ -162,12 +156,11 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     this.newLabelInput = '';
   }
 
-  removeLabel(label: CustomVoiceLabel | string): void {
+  removeLabel(label: CustomVoiceLabel): void {
     if (this.isSaving) {
       return;
     }
-    const labelName = getVoiceLabelName(label).toLowerCase();
-    const index = this.customLabels.findIndex(l => l.name.toLowerCase() === labelName);
+    const index = this.customLabels.indexOf(label);
     if (index >= 0) {
       this.customLabels.splice(index, 1);
     }

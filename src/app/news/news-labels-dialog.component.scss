@@ -41,9 +41,7 @@
 }
 
 .color-picker-label {
-  font-size: 0.8125rem;
   color: v.$grey-text;
-  font-weight: 500;
 }
 
 .color-swatches {
@@ -63,11 +61,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-  &:hover {
-    transform: scale(1.15);
-  }
 
   &.selected {
     border: 2px solid v.$primary;
