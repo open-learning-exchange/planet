@@ -208,7 +208,7 @@ export const withImageAttachment = async (
 // After a write with inlined attachments, keeps stubs on the doc so the next save doesn't send the data again
 export const attachmentStubs = (attachments?: Record<string, any>) => attachments && Object.fromEntries(
   Object.entries(attachments).map(([ name, { data, ...attachment } ]) =>
-    [ name, data ? { ...attachment, length: atob(data).length, stub: true } : attachment ]
+    [ name, data ? { ...attachment, length: Math.floor(data.replace(/=+$/, '').length * 3 / 4), stub: true } : attachment ]
   )
 );
 
