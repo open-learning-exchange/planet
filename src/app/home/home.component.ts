@@ -30,7 +30,7 @@ import { ANDROID_APPS } from '@shared/android/android-apps';
 
 import { environment } from '../../environments/environment';
 import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
-import { LoginDialogComponent } from '../login/login-dialog.component';
+import { LoginDialogComponent, loginDialogId } from '../login/login-dialog.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { SyncDirective } from '../manager-dashboard/sync.directive';
 import { PulsateIconDirective } from './pulsate-icon.directive';
@@ -302,7 +302,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   openLoginDialog() {
-    this.dialog.open(LoginDialogComponent);
+    if (!this.dialog.getDialogById(loginDialogId)) {
+      this.dialog.open(LoginDialogComponent, { id: loginDialogId });
+    }
   }
 
   openAnnouncementDialog(notification) {
