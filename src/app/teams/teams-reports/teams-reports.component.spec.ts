@@ -1,3 +1,6 @@
+import { of } from 'rxjs';
+import { vi } from 'vitest';
+
 import { StateService } from '@shared/state.service';
 
 import { TeamsAttachmentsService } from '../teams-attachments.service';
@@ -166,6 +169,52 @@ describe('TeamsReportsComponent', () => {
       component.ngOnChanges();
 
       expect(component['reportLabels']()).toEqual([ 'Audit' ]);
+    });
+  });
+
+  describe('saving an edit', () => {
+    const oldReport = report({
+      _id: 'old', _rev: '1-a', _attachments: { 'receipt.jpg': { content_type: 'image/jpeg', length: 4, stub: true } }
+    });
+    const editedValues = {
+      startDate: new Date(Date.UTC(2026, 0, 1)),
+      endDate: new Date(Date.UTC(2026, 0, 31)),
+      beginningBalance: 0, sales: 120, otherIncome: 0, wages: 40, otherExpenses: 0
+    };
+    let updateAdditionalDocs: ReturnType<typeof vi.fn>;
+    let attachmentsService: TeamsAttachmentsService;
+
+    beforeEach(() => {
+      const couchService = { getAttachment: vi.fn().mockReturnValue(of(new Blob([ 'kept' ], { type: 'image/jpeg' }))) };
+      attachmentsService = new TeamsAttachmentsService(couchService as any);
+      updateAdditionalDocs = vi.fn().mockReturnValue(of({ res: [ { ok: true }, { ok: true } ] }));
+      component = new TeamsReportsComponent(
+        couchService as any, {} as any, {} as any, { stop: vi.fn() } as any, { updateAdditionalDocs } as any, attachmentsService,
+        {} as any, {} as any, { configuration: { currency: {} } } as any as StateService, {} as any, 'en-US', {} as any
+      );
+    });
+
+    const save = (added: File[] = []) => component.updateReport(oldReport, {
+      ...editedValues,
+      receiptImages: { ...attachmentsService.attachmentStateForDoc(oldReport), added: added.map(file => ({ file })) as any }
+    }).toPromise();
+
+    it('carries the kept receipts unchanged into the new report, in the same bulk write as the archived one', async () => {
+      await save([ new File([ 'new' ], 'new.png', { type: 'image/png' }) ]);
+
+      expect(updateAdditionalDocs).toHaveBeenCalledOnce();
+      const [ archived, edited ] = updateAdditionalDocs.mock.calls[0][0];
+      expect(archived).toEqual(expect.objectContaining({ _id: 'old', status: 'archived' }));
+      expect(edited._attachments).toEqual({
+        'receipt.jpg': { content_type: 'image/jpeg', data: btoa('kept') },
+        'new.png': { content_type: 'image/png', data: btoa('new') }
+      });
+    });
+
+    it('fails when the bulk write rejects the new report', async () => {
+      updateAdditionalDocs.mockReturnValue(of({ res: [ { ok: true }, { error: 'forbidden', reason: 'Invalid report' } ] }));
+
+      await expect(save()).rejects.toThrow('Invalid report');
     });
   });
 });

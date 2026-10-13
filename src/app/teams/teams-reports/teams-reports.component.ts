@@ -224,8 +224,8 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
               this.dialogsFormService.closeDialogsForm();
               const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
               this.planetMessageService.showMessage($localize`Report ${action}`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be uploaded.`);
+              if (result?.skippedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be included.`);
               }
             },
             error: () => {
@@ -315,21 +315,24 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
       }),
       {}
     ) as any;
-    const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
-    const newDocIndex = docs.length - 1;
-    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(
-      switchMap((response: any) => {
-        const savedReport = response.res?.[newDocIndex];
-        return savedReport ?
-          this.teamsAttachmentsService.uploadReceiptImages(savedReport.id, savedReport.rev, receiptImages)
-            .pipe(map(uploadResult => ({ uploadResult }))) :
-          of({ uploadResult: { failedAttachments: [] } });
+    return this.teamsAttachmentsService.carriedReceipts(receiptImages).pipe(
+      switchMap(carried => this.teamsAttachmentsService.withReceiptImages({ ...newDoc, _attachments: carried }, receiptImages)),
+      switchMap(({ doc, skipped }) => {
+        const docs = [ { ...oldReport, status: 'archived' }, doc ].filter(report => report.startDate !== undefined);
+        return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(
+          // _bulk_docs saves each doc on its own, so a failed new report comes back as an error in its row
+          map((response: any) => {
+            if (response.res?.[docs.length - 1]?.error) {
+              throw new Error(response.res[docs.length - 1].reason);
+            }
+            return { skippedAttachments: skipped };
+          })
+        );
       }),
       tap(() => {
         this.reportsChanged.emit();
         this.dialogsLoadingService.stop();
-      }),
-      map(({ uploadResult }) => ({ failedAttachments: uploadResult.failedAttachments }))
+      })
     );
   }
 

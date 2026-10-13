@@ -1,16 +1,12 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { defer, forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
-import { AttachmentInputState, ExistingAttachment, PendingAttachment } from '@shared/forms/file-upload.component';
+import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
+import { inlineAttachment, normalizeImage, withImageAttachments } from '@shared/utils';
 
 import { environment } from '../../environments/environment';
-
-export interface TeamsAttachmentUploadResult {
-  latestRev: string;
-  failedAttachments: string[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -70,51 +66,29 @@ export class TeamsAttachmentsService {
     return attachments;
   }
 
-  uploadReceiptImages(
-    docId: string,
-    startingRev: string,
-    state: AttachmentInputState,
-    includeRetained = true
-  ): Observable<TeamsAttachmentUploadResult> {
-    const attachments = [
-      ...(includeRetained ? state.retained : []),
-      ...state.added
-    ];
-    return attachments.reduce((request$, attachment) => request$.pipe(
-      switchMap(result => this.uploadReceiptImage(docId, result.latestRev, attachment).pipe(
-        map((response: any) => ({ ...result, latestRev: response.rev })),
-        catchError(() => of({
-          ...result,
-          failedAttachments: [ ...result.failedAttachments, this.attachmentName(attachment) ]
-        }))
-      ))
-    ), of({ latestRev: startingRev, failedAttachments: [] }));
-  }
-
-  private uploadReceiptImage(docId: string, rev: string, attachment: ExistingAttachment | PendingAttachment) {
-    return this.receiptFile(attachment).pipe(switchMap(({ file, name, contentType }) =>
-      this.couchService.putAttachment(`teams/${docId}/${encodeURIComponent(name)}?rev=${rev}`, file, {
-        headers: { 'Content-Type': contentType }
-      })
+  // 1920px keeps printed text on receipts readable
+  withReceiptImages(doc: any, state: AttachmentInputState) {
+    return defer(() => withImageAttachments(
+      doc, { added: state.added }, (file, usedNames) => normalizeImage(file, { maxDimension: 1920, usedNames })
     ));
   }
 
-  private receiptFile(attachment: ExistingAttachment | PendingAttachment) {
-    if ('file' in attachment) {
-      return of({ file: attachment.file, name: attachment.safeName, contentType: attachment.contentType || attachment.file.type });
-    }
+  // A report edit writes a new doc, so kept receipts are copied from the old one as they are, not resized again
+  carriedReceipts(state: AttachmentInputState): Observable<Record<string, any>> {
+    return state.retained.length ? forkJoin(state.retained.map(attachment => this.receiptFile(attachment).pipe(
+      switchMap(({ blob, contentType }) => inlineAttachment(blob, contentType)),
+      map((data): [ string, any ] => [ attachment.name, data ])
+    ))).pipe(map(entries => Object.fromEntries(entries))) : of({});
+  }
+
+  private receiptFile(attachment: ExistingAttachment) {
     if (!attachment.url) {
       return throwError(() => new Error('Existing attachment is missing a URL'));
     }
-    return this.couchService.getAttachment(attachment.url).pipe(map((blob) => ({
-      file: new File([ blob ], attachment.name, { type: attachment.contentType || blob.type }),
-      name: attachment.name,
+    return this.couchService.getAttachment(attachment.url).pipe(map((blob: Blob) => ({
+      blob,
       contentType: attachment.contentType || blob.type
     })));
-  }
-
-  private attachmentName(attachment: ExistingAttachment | PendingAttachment) {
-    return 'file' in attachment ? attachment.safeName : attachment.name;
   }
 
   private blobToDataUrl(blob: Blob): Observable<string> {
