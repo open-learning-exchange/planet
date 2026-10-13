@@ -63,7 +63,7 @@ import { SubmitDirective } from './submit.directive';
       height: 24px;
     }
 
-    div:not(:last-child) > .file-upload-wrapper {
+    .file-upload-spaced {
       margin-bottom: 20px;
     }
   `],
