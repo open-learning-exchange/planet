@@ -4,20 +4,13 @@ planet-tasks {
   mat-list {
     .mat-mdc-list-item {
       align-items: center;
-
-      // Every row has trailing meta; this matches Material's selector so it outranks its 16px start padding, which
-      // only a leading avatar cancels.
-      &.mdc-list-item--with-trailing-meta {
-        padding-inline-start: 0;
-      }
     }
 
-    img {
-      order: 2;
-    }
-
-    button {
-      order: 3;
+    .task-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      vertical-align: middle;
     }
 
     .task-title-row {
@@ -41,7 +34,6 @@ planet-tasks {
       display: inline-flex;
       align-items: center;
       flex: none;
-      justify-content: center;
       padding: 2px 8px;
       border: 0;
       border-radius: 12px;
@@ -55,20 +47,6 @@ planet-tasks {
         height: 16px;
         margin-right: -4px;
         font-size: 16px;
-      }
-
-      &:is(button) {
-        cursor: pointer;
-        transition: filter 0.15s ease-in-out;
-
-        &:hover {
-          filter: brightness(0.95);
-        }
-
-        &:focus-visible {
-          outline: 2px solid v.$primary;
-          outline-offset: 2px;
-        }
       }
 
       &.status-to_do {

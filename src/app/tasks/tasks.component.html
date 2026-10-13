@@ -35,7 +35,7 @@
             (keydown.enter)="openTaskDetailFromKeyboard($event, task)"
             (keydown.space)="openTaskDetailFromKeyboard($event, task)">{{task.title}}</span>
           @if (editable) {
-            <button type="button" class="task-status-badge km-status-badge" [ngClass]="'status-' + taskView.status"
+            <button type="button" class="task-status-badge km-status-badge cursor-pointer" [ngClass]="'status-' + taskView.status"
               matTooltip="Change status" i18n-matTooltip [matMenuTriggerFor]="statusMenu" [matMenuTriggerData]="{ taskView }"
               (click)="$event.stopPropagation()">
               {{taskView.statusLabel}}<mat-icon>arrow_drop_down</mat-icon>
@@ -50,15 +50,15 @@
         @if (task.completed) {
           <span matListItemLine><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
         }
-        @if (taskView.assignees.length === 1 && taskView.assignee; as assignee) {
-          <img matListItemAvatar
-            (click)="openMemberDialog(assignee); $event.stopPropagation()"
-            (error)="useDefaultAvatar(taskView)"
-            alt="{{assignee | assigneeName}}"
-            matTooltip="{{assignee | assigneeName}}"
-            [src]="taskView.avatarSrc">
-        }
         <ng-container matListItemMeta>
+          @if (taskView.assignees.length === 1 && taskView.assignee; as assignee) {
+            <img class="task-avatar"
+              (click)="openMemberDialog(assignee); $event.stopPropagation()"
+              (error)="useDefaultAvatar(taskView)"
+              alt="{{assignee | assigneeName}}"
+              matTooltip="{{assignee | assigneeName}}"
+              [src]="taskView.avatarSrc">
+          }
           @if (taskView.assignees.length > 1) {
             <button mat-icon-button class="km-view-assignees" matTooltip="View Assignees" i18n-matTooltip
               (click)="openAssigneesPopup(taskView.assignees); $event.stopPropagation()"><mat-icon>visibility</mat-icon></button>

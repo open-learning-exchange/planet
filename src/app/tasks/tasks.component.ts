@@ -6,7 +6,7 @@ import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import {
-  MatList, MatListItem, MatListItemTitle, MatListItemLine, MatListItemAvatar, MatListItemMeta
+  MatList, MatListItem, MatListItemTitle, MatListItemLine, MatListItemMeta
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
@@ -63,7 +63,6 @@ interface AssigneeUpdateState {
     MatListItemTitle,
     MatListItemLine,
     NgClass,
-    MatListItemAvatar,
     MatTooltip,
     MatListItemMeta,
     MatIconButton,
