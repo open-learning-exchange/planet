@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { defer, forkJoin, Observable, of, throwError } from 'rxjs';
+import { defer, forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
-import { inlineAttachment, normalizeImage, withImageAttachments } from '@shared/utils';
+import { normalizeImage, withImageAttachments } from '@shared/utils';
 
 import { environment } from '../../environments/environment';
 
@@ -71,24 +71,6 @@ export class TeamsAttachmentsService {
     return defer(() => withImageAttachments(
       doc, { added: state.added }, (file, usedNames) => normalizeImage(file, { maxDimension: 1920, usedNames })
     ));
-  }
-
-  // A report edit writes a new doc, so kept receipts are copied from the old one as they are, not resized again
-  carriedReceipts(state: AttachmentInputState): Observable<Record<string, any>> {
-    return state.retained.length ? forkJoin(state.retained.map(attachment => this.receiptFile(attachment).pipe(
-      switchMap(({ blob, contentType }) => inlineAttachment(blob, contentType)),
-      map((data): [ string, any ] => [ attachment.name, data ])
-    ))).pipe(map(entries => Object.fromEntries(entries))) : of({});
-  }
-
-  private receiptFile(attachment: ExistingAttachment) {
-    if (!attachment.url) {
-      return throwError(() => new Error('Existing attachment is missing a URL'));
-    }
-    return this.couchService.getAttachment(attachment.url).pipe(map((blob: Blob) => ({
-      blob,
-      contentType: attachment.contentType || blob.type
-    })));
   }
 
   private blobToDataUrl(blob: Blob): Observable<string> {

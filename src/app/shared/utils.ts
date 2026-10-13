@@ -165,7 +165,7 @@ const blobToBase64 = (blob: Blob): Promise<string> => new Promise((resolve, reje
   reader.readAsDataURL(blob);
 });
 
-export const inlineAttachment = async (blob: Blob, contentType: string) => ({ content_type: contentType, data: await blobToBase64(blob) });
+const inlineAttachment = async (blob: Blob, contentType: string) => ({ content_type: contentType, data: await blobToBase64(blob) });
 
 type ImageNormalizer = (file: File, usedNames: string[]) => Promise<NormalizedImage | null>;
 

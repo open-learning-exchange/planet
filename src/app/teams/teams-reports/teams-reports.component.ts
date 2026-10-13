@@ -247,7 +247,7 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
         type: 'report',
         displayName: report.label ? `${report.label} (${dateRange})` : dateRange,
         okClick: {
-          request: this.updateReport(report),
+          request: this.archiveReport(report),
           onNext: () => {
             this.planetMessageService.showMessage($localize`Report deleted`);
             this.dialogsLoadingService.stop();
@@ -297,7 +297,7 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
         () => {};
   }
 
-  updateReport(oldReport, newReport: NewReportForm | {} = {}) {
+  updateReport(oldReport, newReport: NewReportForm | {}) {
     const dateFields = [ 'startDate', 'endDate' ];
     const numberFields = [ 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
     const transformFields = (key: string, value: string | Date | number) => dateFields.indexOf(key) > -1 ?
@@ -308,26 +308,35 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
           ((value as string) || '').trim() :
           value;
     const { receiptImages = this.teamsAttachmentsService.emptyAttachmentState(), ...reportFields } = newReport as NewReportForm;
-    const { _id, _rev, _attachments, ...newDoc } = Object.entries(reportFields).reduce(
+    const { _id, _rev, _attachments, ...fields } = Object.entries(reportFields).reduce(
       (obj, [ key, value ]: [ string, string | Date | number ]) => ({
         ...obj,
         [key]: transformFields(key, value)
       }),
       {}
     ) as any;
-    return this.teamsAttachmentsService.carriedReceipts(receiptImages).pipe(
-      switchMap(carried => this.teamsAttachmentsService.withReceiptImages({ ...newDoc, _attachments: carried }, receiptImages)),
-      switchMap(({ doc, skipped }) => {
-        const docs = [ { ...oldReport, status: 'archived' }, doc ].filter(report => report.startDate !== undefined);
-        return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(
-          // _bulk_docs saves each doc on its own, so a failed new report comes back as an error in its row
-          map((response: any) => {
-            if (response.res?.[docs.length - 1]?.error) {
-              throw new Error(response.res[docs.length - 1].reason);
-            }
-            return { skippedAttachments: skipped };
-          })
-        );
+    const report = {
+      ...fields,
+      ...(oldReport._id ? { _id: oldReport._id, _rev: oldReport._rev } : {}),
+      _attachments: this.teamsAttachmentsService.retainSelectedAttachments(oldReport, receiptImages)
+    };
+    return this.teamsAttachmentsService.withReceiptImages(report, receiptImages).pipe(
+      switchMap(({ doc, skipped }) => this.saveReport(doc, { utcKeys: dateFields }).pipe(map(() => ({ skippedAttachments: skipped }))))
+    );
+  }
+
+  archiveReport(report) {
+    return this.saveReport({ ...report, status: 'archived' });
+  }
+
+  // _bulk_docs answers a conflict in the doc's row instead of failing the request
+  private saveReport(report, opts?: any) {
+    return this.teamsService.updateAdditionalDocs([ report ], this.team, 'report', opts).pipe(
+      map((response: any) => {
+        const [ row ] = response.res || [];
+        if (row?.error) {
+          throw new Error(row.reason);
+        }
       }),
       tap(() => {
         this.reportsChanged.emit();
