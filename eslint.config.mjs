@@ -101,7 +101,10 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
-        "@typescript-eslint/member-ordering": "error",
+        "@typescript-eslint/member-ordering": [
+          "error",
+          { "classes": [ "field", "constructor", "method"] }
+        ],
         "@typescript-eslint/naming-convention": [
           "error",
           {
