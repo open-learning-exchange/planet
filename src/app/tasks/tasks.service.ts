@@ -10,7 +10,7 @@ import { findDocuments } from '@shared/database/mango-queries';
 
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
-import { assigneeMatches, effectiveAssignees, effectiveTaskStatus, storedAssignee } from './tasks.utils';
+import { assigneeMatches, effectiveAssignees, effectiveTaskStatus, storedAssignee, TaskStatus } from './tasks.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -62,7 +62,7 @@ export class TasksService {
       ...newTask,
       deadline,
       ...additionalFields,
-      status: task.status || 'to_do',
+      status: effectiveTaskStatus(task),
       assignee: assignees[0] || '',
       assignees,
       deadlineTime: undefined
@@ -100,12 +100,14 @@ export class TasksService {
     };
   }
 
+  setTaskStatus(task, status: TaskStatus) {
+    return this.addTask({ ...task, status, completed: status === 'completed' });
+  }
+
   addTask(task) {
-    const status = effectiveTaskStatus(task);
-    const completed = status === 'completed';
+    const completed = task.completed ?? task.status === 'completed';
     return this.couchService.updateDocument(this.dbName, {
       ...task,
-      status,
       completed,
       completedTime: completed ? (task.completedTime || this.couchService.datePlaceholder) : undefined
     }).pipe(
