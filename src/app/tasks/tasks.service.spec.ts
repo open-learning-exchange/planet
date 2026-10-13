@@ -34,11 +34,6 @@ describe('TasksService assignee cleanup', () => {
     expect(couchService.updateDocument.mock.calls[1][1]).toEqual(expect.objectContaining({ status: 'completed', completed: true }));
   });
 
-  it('keeps a task completed by status alone when it is saved for another reason', () => {
-    service.addTask({ _id: 'task-1', status: 'completed', title: 'Renamed' }).subscribe();
-    expect(couchService.updateDocument.mock.calls[0][1]).toEqual(expect.objectContaining({ completed: true, completedTime: 0 }));
-  });
-
   it('keeps completion when archiving a finished task', () => {
     service.archiveTask({ _id: 'task-1', completed: true, completedTime: 1, status: 'completed' })().subscribe();
     expect(couchService.updateDocument.mock.calls[0][1]).toEqual(expect.objectContaining({

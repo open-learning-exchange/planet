@@ -64,6 +64,7 @@ describe('task status utilities', () => {
     expect(effectiveTaskStatus({ status: 'in_progress' })).toBe('in_progress');
     expect(effectiveTaskStatus({ status: 'to_do', completed: false })).toBe('to_do');
     expect(effectiveTaskStatus({ status: 'completed', completed: false })).toBe('to_do');
+    expect(effectiveTaskStatus({ status: 'completed' })).toBe('to_do');
     expect(effectiveTaskStatus({})).toBe('to_do');
     expect(effectiveTaskStatus(null)).toBe('to_do');
   });

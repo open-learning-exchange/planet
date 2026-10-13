@@ -48,19 +48,10 @@ export const effectiveTaskStatus = (task: any): TaskStatus => {
   if (task?.status === 'archived') {
     return 'archived';
   }
-  if (task?.completed === true) {
+  if (task?.completed) {
     return 'completed';
   }
-  if (task?.completed === false && task?.status === 'completed') {
-    return 'to_do';
-  }
-  if (task?.status === 'in_progress') {
-    return 'in_progress';
-  }
-  if (task?.status === 'completed') {
-    return 'completed';
-  }
-  return 'to_do';
+  return task?.status === 'in_progress' ? 'in_progress' : 'to_do';
 };
 
 export const taskStatusBadgeLabel = (status: TaskStatus | string): string => {

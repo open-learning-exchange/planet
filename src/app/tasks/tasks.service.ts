@@ -105,11 +105,10 @@ export class TasksService {
   }
 
   addTask(task) {
-    const completed = task.completed ?? task.status === 'completed';
     return this.couchService.updateDocument(this.dbName, {
       ...task,
-      completed,
-      completedTime: completed ? (task.completedTime || this.couchService.datePlaceholder) : undefined
+      completed: task.completed || false,
+      completedTime: task.completed ? (task.completedTime || this.couchService.datePlaceholder) : undefined
     }).pipe(
       map(res => {
         this.getTasks();
