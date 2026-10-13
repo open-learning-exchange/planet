@@ -20,6 +20,11 @@ export class CouchService {
   private reqNum = 0;
   datePlaceholder = new DatePlaceholder();
 
+  constructor(
+    private http: HttpClient,
+    private planetMessageService: PlanetMessageService
+  ) {}
+
   private setOpts(opts: any = {}) {
     const { domain, protocol, ...httpOpts } = opts;
     return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
@@ -36,11 +41,6 @@ export class CouchService {
     this.reqNum++;
     return this.formatHttpReq(httpReq);
   }
-
-  constructor(
-    private http: HttpClient,
-    private planetMessageService: PlanetMessageService
-  ) {}
 
   formatHttpReq(httpReq: Observable<any>) {
     return httpReq

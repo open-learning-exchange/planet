@@ -5,10 +5,10 @@ import { DialogsLoadingComponent } from './dialogs-loading.component';
 @Directive({ selector: '[planetSubmit]' })
 export class SubmitDirective implements OnChanges, OnDestroy {
 
-  constructor(public dialog: MatDialog) { }
-
   @Input('planetSubmit') validSubmit: boolean;
   spinnerDialog: MatDialogRef<DialogsLoadingComponent>;
+
+  constructor(public dialog: MatDialog) { }
 
   @HostListener('click') submit() {
     if (this.validSubmit) {

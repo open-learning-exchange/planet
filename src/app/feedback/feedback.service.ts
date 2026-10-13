@@ -15,14 +15,14 @@ export class FeedbackService {
   private feedbackUpdate = new Subject<any[]>();
   feedbackUpdate$ = this.feedbackUpdate.asObservable();
 
-  setFeedback() {
-    this.feedbackUpdate.next();
-  }
-
   constructor(
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService
   ) {}
+
+  setFeedback() {
+    this.feedbackUpdate.next();
+  }
 
   openFeedback(feedback: any) {
     return this.modifyFeedback(

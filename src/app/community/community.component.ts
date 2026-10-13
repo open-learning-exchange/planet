@@ -130,12 +130,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
 
-  localLinkTooltip(link: any): string {
-    return link.teamType === 'sync' || !this.isRemoteExchange
-      ? ''
-      : $localize`${link.title}:linkTitle: is only available on ${this.configuration.name}:planetName:`;
-  }
-
   constructor(
     private dialog: MatDialog,
     private router: Router,
@@ -155,6 +149,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private configurationCheckService: ConfigurationCheckService,
     private challengesService: ChallengesService
   ) {}
+
+  localLinkTooltip(link: any): string {
+    return link.teamType === 'sync' || !this.isRemoteExchange
+      ? ''
+      : $localize`${link.title}:linkTitle: is only available on ${this.configuration.name}:planetName:`;
+  }
 
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();

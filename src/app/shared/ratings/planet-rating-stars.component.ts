@@ -41,14 +41,6 @@ export class PlanetRatingStarsComponent implements ControlValueAccessor {
   }
   #value = 0;
 
-  onChange(_: any) {}
-
-  constructor(@Optional() @Self() public ngControl: NgControl) {
-    if (this.ngControl) {
-      this.ngControl.valueAccessor = this;
-    }
-  }
-
   @Input()
   get required() {
     return this.#required;
@@ -64,6 +56,14 @@ export class PlanetRatingStarsComponent implements ControlValueAccessor {
   set disabled(dis) {
     this.#disabled = coerceBooleanProperty(dis);
   }
+
+  constructor(@Optional() @Self() public ngControl: NgControl) {
+    if (this.ngControl) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
+
+  onChange(_: any) {}
 
   onStarClick(rating: number): void {
     if (!this.#disabled) {

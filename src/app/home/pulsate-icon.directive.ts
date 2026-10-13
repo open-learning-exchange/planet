@@ -5,9 +5,9 @@ import { take } from 'rxjs/operators';
 @Directive({ selector: '[planetPulsateIcon]' })
 export class PulsateIconDirective {
 
-  constructor() {}
-
   @HostBinding('class.pulsate') isPulsating = false;
+
+  constructor() {}
 
   // On click, set class to pulsate for one second
   // pulsate class triggers a one second animation (which will repeat if not removed)
