@@ -1,22 +1,14 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MeetupService } from './meetups.service';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findByIdInArray } from '../shared/utils';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -24,8 +16,19 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { NgClass, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { findByIdInArray } from '@shared/utils';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+
+import { MeetupService } from './meetups.service';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @Component({
@@ -87,11 +90,9 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   meetups = new MatTableDataSource();
-  private renderedRows: any[] = [];
   message = '';
-  readonly dbName = 'meetups';
-  deleteDialog: any;
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection);
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -127,16 +128,13 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogsLoadingService.stop();
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
-    this.meetups.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'title' ]),
-      filterSpecificFields([ 'description' ])
-    ]);
+    this.meetups.filterPredicate = filterSpecificFieldsHybrid([ 'title', 'description' ]);
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectedShelf(source.selected);
     });
     this.couchService.checkAuthorization('meetups').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.meetups.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.meetups, this.onDestroy$);
   }
 
   ngAfterViewInit() {
@@ -144,28 +142,13 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetups.sort = this.sort;
   }
 
-  isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
-  }
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
+  canEditMeetup(meetup: any): boolean {
+    return this.meetupService.canEditMeetup(meetup, { readOnly: this.parent });
   }
 
   applyFilter(filterValue: string) {
     this.meetups.filter = filterValue;
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
+    this.pageSelection.removeFiltered();
   }
 
   ngOnDestroy() {
@@ -184,24 +167,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(meetup) {
-    this.meetupService.openDeleteDialog(meetup, this.deleteCallback());
-  }
-
-  deleteMeetups(meetupIds) {
-    const deleteMeetupArr = meetupIds.map((meetupId) => {
-      const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
-      return { _id: meetup._id, _rev: meetup._rev, _deleted: true };
-    });
-    return {
-      request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr }),
-      onNext: (data) => {
-        this.meetupService.updateMeetups();
-        this.selection.clear();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted selected meetups`);
-      },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting these meetups.`)
-    };
+    this.meetupService.openDeleteDialog(meetup, this.deleteCallback(), { readOnly: this.parent });
   }
 
   deleteSelected() {
@@ -209,11 +175,15 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
       return { ...meetup, _deleted: true };
     });
-    this.meetupService.openDeleteDialog(meetups, this.deleteCallback());
+    this.meetupService.openDeleteDialog(meetups, this.deleteCallback(), { readOnly: this.parent });
   }
 
   goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+    if (this.parent) {
+      this.router.navigate([ '/manager' ]);
+    } else {
+      this.router.navigate([ '/' ]);
+    }
   }
 
   upcomingMeetups(ids: any) {

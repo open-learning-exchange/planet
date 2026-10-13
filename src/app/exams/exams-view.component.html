@@ -123,29 +123,31 @@
         {examType, select, survey {Finish Survey} exam {Finish Test}}
       </button>
         }
-        <span class="action-buttons-status small">
-          @switch (statusMessage) {
-            @case ('incorrect') {
-              <div class="warn-text-color">
-                <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
-              </div>
+        @if (statusMessage) {
+          <span class="action-buttons-status small">
+            @switch (statusMessage) {
+              @case ('incorrect') {
+                <div class="warn-text-color">
+                  <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
+                </div>
+              }
+              @case ('complete') {
+                <div class="primary-text-color">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>
+                    <ng-container i18n>{examType, select, survey {Survey is complete.} exam {Test is complete.}}</ng-container>
+                    {{' '}}
+                    @if (previewMode) {
+                      <ng-container i18n>You can close the preview.</ng-container>
+                    } @else {
+                      <ng-container i18n>{examType, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</ng-container>
+                    }
+                  </span>
+                </div>
+              }
             }
-            @case ('complete') {
-              <div class="primary-text-color">
-                <mat-icon>check_circle</mat-icon>
-                <span>
-                  <ng-container i18n>{examType, select, survey {Survey is complete.} exam {Test is complete.}}</ng-container>
-                  {{' '}}
-                  @if (previewMode) {
-                    <ng-container i18n>You can close the preview.</ng-container>
-                  } @else {
-                    <ng-container i18n>{examType, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</ng-container>
-                  }
-                </span>
-              </div>
-            }
-          }
-        </span>
+          </span>
+        }
       </div>
     </div>
   } @else {

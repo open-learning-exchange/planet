@@ -1,6 +1,6 @@
 @if (!isForm) {
   <mat-toolbar>
-    @if (deviceType === deviceTypes.TABLET || deviceType === deviceTypes.DESKTOP) {
+    @if (!isMobile) {
       <mat-toolbar-row>
         @if (!isDialog) {
           <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
@@ -22,26 +22,26 @@
           <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
         </mat-form-field>
         <span class="toolbar-fill"></span>
-        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+        <button mat-icon-button (click)="toggleFiltersRow()" aria-label="Toggle filter controls" i18n-aria-label><mat-icon>filter_list</mat-icon></button>
       </mat-toolbar-row>
       @if (showFiltersRow) {
-        <mat-toolbar-row>
+        <mat-toolbar-row class="filter-row">
           <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
         </mat-toolbar-row>
       }
     }
-    @if (showFilters) {
+    @if (showInlineFilters) {
       <mat-toolbar-row class="search-bar">
-        <planet-courses-search [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
+        <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
       </mat-toolbar-row>
     }
   </mat-toolbar>
 }
 
 <ng-template #filterOptions>
-  <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
-  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters">Filter</button>
-  <mat-form-field class="font-size-1 margin-lr-4 mdc-toolbar-input">
+  <span class="font-size-1 margin-lr-4 search-by-label" i18n>Search by:</span>
+  <button mat-stroked-button i18n (click)="toggleFilters()">Filter</button>
+  <mat-form-field subscriptSizing="dynamic" class="font-size-1 search-title-input">
     <mat-label i18n>Title</mat-label>
     <input matInput [(ngModel)]="titleSearch">
     <button type="button" mat-icon-button matSuffix (click)="titleSearch = ''" [style.visibility]="titleSearch ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
@@ -68,7 +68,7 @@
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
           </button>
         }
-        @if (!parent && deviceType !== deviceTypes.DESKTOP) {
+        @if (!parent && isTabletOrSmaller) {
           <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
@@ -76,7 +76,7 @@
             <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
           </mat-menu>
         }
-        @if (!parent && deviceType === deviceTypes.DESKTOP) {
+        @if (!parent && !isTabletOrSmaller) {
           <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
         }
       }
@@ -133,13 +133,13 @@
     }
   </ng-template>
 
-  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm, 'view-with-search': showFilters && !isForm }">
+  <div class="card-table view-container view-full-height view-table" [ngClass]="{ 'fill-parent': isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
+            [checked]="selection.hasValue() && pageSelection.isAllSelected()"
+            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row" class="table-selection-top">
@@ -172,6 +172,17 @@
                     <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
                   }
                 </span>
+                @if (element.isCompleted && !isForm) {
+                  <mat-icon
+                    class="margin-lr-3"
+                    [ngClass]="{ 'primary-text-color': element.inCertification, 'grey-text-color': !element.inCertification }"
+                    fontSet="fa"
+                    fontIcon="fa-star"
+                    [inline]="true"
+                    i18n-matTooltip
+                    matTooltip="Completed">
+                  </mat-icon>
+                }
               }
             </ng-template>
           </h3>
@@ -200,16 +211,7 @@
             }
           </mat-chip-set>
           <div class="content">
-            <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
-              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
-            </div>
-            @if (showPreviewExpand(element)) {
-              <div class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
-                <button mat-icon-button>
-                  <mat-icon>{{isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
-                </button>
-              </div>
-            }
+            <planet-markdown-preview [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [expanded]="isExpanded(element)" (expandedChange)="toggleRow(element)"></planet-markdown-preview>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           @if (!parent && !isDialog && !isForm) {
@@ -255,14 +257,18 @@
                 <mat-icon>person</mat-icon>
                 <span i18n>Enroll List</span>
               </a>
-            }
-            @if (element.canManage) {
+              @if (!parent) {
+                <a mat-menu-item [routerLink]="['/courses/submissions', element._id]" class="km-course-submissions-btn">
+                  <mat-icon>assignment_turned_in</mat-icon>
+                  <span i18n>Submissions & Grading</span>
+                </a>
+              }
               <button mat-menu-item (click)="deleteClick(element.doc)">
                 <mat-icon>delete_forever</mat-icon>
                 <span i18n>Delete</span>
               </button>
             }
-            <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
+            <button mat-menu-item [planetRatingDialog]="element" [disabled]="element.rating.totalRating === 0">
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>
@@ -313,7 +319,21 @@
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
+      (page)="pageSelection.onPageChange()">
     </mat-paginator>
   </div>
 </div>
+
+<ng-template #searchFilters>
+  <planet-courses-search [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
+</ng-template>
+
+<ng-template #filterDialog>
+  <h2 mat-dialog-title i18n>Filter</h2>
+  <mat-dialog-content>
+    <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" mat-dialog-close i18n>Close</button>
+  </mat-dialog-actions>
+</ng-template>

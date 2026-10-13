@@ -1,21 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterLink, RouterStateSnapshot } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Observable, Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
-import { CoursesService } from '../courses.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { RatingService } from '../../shared/forms/rating.service';
-import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
-import { CoursesViewDetailComponent } from './courses-view-detail.component';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
@@ -23,12 +14,23 @@ import {
   MatExpansionPanelDescription,
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
-import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
-import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { trackByIndex } from '@shared/tables/table.helpers';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { RatingService } from '@shared/ratings/rating.service';
+
+import { CoursesService } from '../courses.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
+import { CoursesViewDetailComponent } from './courses-view-detail.component';
+import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
+import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -52,6 +54,8 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     PlanetMarkdownComponent,
     MatExpansionPanelActionRow,
     ResourcesMenuComponent,
+    MatAnchor,
+    RouterLink,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
   ]
@@ -71,7 +75,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
@@ -86,11 +91,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
     private ratingService: RatingService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -106,9 +107,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
-        this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
-          this.courseDetail.creator !== undefined &&
-          (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
+        this.canManage = this.coursesService.canManageCourse(this.courseDetail, { readOnly: this.parent });
         return this.stateService.getCouchState('exams', 'local');
       }),
       takeUntil(this.onDestroy$)
@@ -116,6 +115,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
       this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
     }, () => this.isLoading = false);
+    this.coursesService.courseTagsListener$(this.parent).pipe(
+      filter(({ courseId }) => courseId === this.courseDetail._id),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
       this.promptedForRating = false;
@@ -232,7 +235,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
-      this.isUserEnrolled = !this.isUserEnrolled;
+      this.isUserEnrolled = true;
     }, (error) => ((error)));
   }
 

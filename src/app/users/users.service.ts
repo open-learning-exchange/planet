@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Subject, combineLatest, of, throwError } from 'rxjs';
 import { switchMap, map, catchError, filter } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { fullName } from '@shared/utils';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+
 import { environment } from '../../environments/environment';
-import { CouchService } from '../shared/couchdb.service';
-import { fullName } from '../shared/utils';
-import { UserService } from '../shared/user.service';
-import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
+import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -188,14 +191,35 @@ export class UsersService {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    return this.couchService.get('shelf/' + userId).pipe(
+    const taskIdentities = assigneeIdentityCandidates(user, this.stateService.configuration.code);
+    const taskPlanetCodes = taskIdentities.map(({ userPlanetCode }) => userPlanetCode)
+      .filter((code): code is string => !!code);
+    return this.deleteCommunityRegistration(user).pipe(
+      switchMap(() => this.couchService.get('shelf/' + userId)),
       switchMap(shelfUser => forkJoin([
         this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
         this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
         this.deleteUserFromTeams(user),
-        this.tasksService.removeAssigneeFromTasks(user._id)
+        this.tasksService.removeAssigneeFromTasks(
+          taskIdentities[0]?.userId || user._id,
+          taskPlanetCodes.length > 0 ? taskPlanetCodes : undefined
+        )
       ])),
       map(() => this.requestUsers(true))
+    );
+  }
+
+  // Promoted admins share the community's requestId, so only deleting its registered admin disconnects it
+  private deleteCommunityRegistration(user) {
+    if (!user.requestId) {
+      return of({});
+    }
+    const registrationId = 'communityregistrationrequests/' + user.requestId;
+    return this.couchService.get(registrationId).pipe(
+      catchError(error => error.status === 404 ? of({}) : throwError(error)),
+      switchMap((registration: any) => registration.adminName === user.name ?
+        this.couchService.delete(registrationId + '?rev=' + registration._rev) :
+        of({}))
     );
   }
 

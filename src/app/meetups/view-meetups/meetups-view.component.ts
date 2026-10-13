@@ -1,26 +1,29 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Optional } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { map, takeUntil } from 'rxjs/operators';
-import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
-import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
-import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
-import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
-import { filterSpecificFields } from '../../shared/table-helpers';
-import { findDocuments } from '../../shared/mangoQueries';
-import { StateService } from '../../shared/state.service';
-import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { NgClass, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
+import { filterSpecificFields } from '@shared/tables/table.helpers';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+
+import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
+import { assigneeKey, assigneeName, effectiveAssignees } from '../../tasks/tasks.utils';
 
 @Component({
   selector: 'planet-meetups-view',
@@ -50,9 +53,18 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   @Input() meetupDetail: any;
   @Input() isDialog = false;
   @Input() editable = true;
+  @Input() leaderOfTeamId?: string;
   @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
-  canManage = false;
+  get canManage(): boolean {
+    return this.meetupService.canEditMeetup(this.meetupDetail, this.authorizationContext);
+  }
+  private get authorizationContext(): MeetupAuthorizationContext {
+    return {
+      leaderOfTeamId: this.leaderOfTeamId,
+      readOnly: this.parent || !this.editable
+    };
+  }
   members = [];
   parent = this.route.snapshot.data.parent;
   listDialogRef: MatDialogRef<DialogsListComponent>;
@@ -78,7 +90,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.canManage = this.userService.get()?._id;
     this.getEnrolledUsers();
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
@@ -195,15 +206,11 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         this.switchView.emit('close');
       }
     };
-    this.meetupService.openDeleteDialog(this.meetupDetail, callback);
+    this.meetupService.openDeleteDialog(this.meetupDetail, callback, this.authorizationContext);
   }
 
   openCreatorProfile(event?: Event) {
     this.openProfile(this.meetupDetail?.createdBy, this.meetupDetail?.sourcePlanet || this.meetupDetail?.sync?.planetCode, event);
-  }
-
-  openAssigneeProfile(event?: Event) {
-    this.openProfile(this.meetupDetail?.assignee?.name, this.meetupDetail?.assignee?.userPlanetCode, event);
   }
 
   openProfile(username, planetCode, event?: Event) {
@@ -218,6 +225,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       member: { name: username, userPlanetCode: planetCode },
       dialogRef: this.dialogRef
     });
+  }
+
+  effectiveAssignees = effectiveAssignees;
+  assigneeName = assigneeName;
+
+  assigneeTrackKey(assignee): string {
+    return assigneeKey(assignee, this.stateService.configuration?.code);
   }
 
   editTask() {

@@ -5,17 +5,41 @@
   </div>
 }
 
-@if (survey && !isSubmitted && !showDemographics) {
+@if (isLoading) {
+  <planet-loading-spinner text="Loading survey..." i18n-text></planet-loading-spinner>
+}
+
+@if (survey && step === 'intro') {
+  <div class="state-view">
+    <mat-card class="survey-intro km-survey-intro">
+      <mat-icon aria-hidden="true" class="survey-intro-icon primary-text-color">assignment</mat-icon>
+      <p class="survey-intro-text grey-text-color" i18n>You have been invited to take the following survey</p>
+      <h1 class="survey-intro-name km-survey-name">{{ survey.name }}</h1>
+      @if (team?.name) {
+        <p class="survey-intro-text grey-text-color" i18n>Shared by {{ team.name }}</p>
+      }
+      <p class="survey-intro-meta grey-text-color">
+        <mat-icon aria-hidden="true">help_outline</mat-icon>
+        <span i18n>{maxQuestions, plural, =1 {1 question} other {{{maxQuestions}} questions}}</span>
+      </p>
+      @if (survey.description) {
+        <planet-markdown class="survey-intro-description" [content]="survey.description"></planet-markdown>
+      }
+      <button mat-raised-button color="primary" class="survey-intro-start km-start-survey" (click)="startSurvey()" i18n>Start Survey</button>
+    </mat-card>
+  </div>
+}
+
+@if (survey && step === 'questions') {
   <planet-exams-question-frame
     [title]="survey.name"
     [questionNum]="questionNum"
     [maxQuestions]="maxQuestions"
-    [isLoading]="isLoading"
-    [disablePrevious]="isLoading || questionNum === 1"
-    [disableNext]="isLoading || questionNum === maxQuestions"
+    [disablePrevious]="questionNum === 1"
+    [disableNext]="questionNum === maxQuestions || !answer.valid"
     (previous)="moveQuestion(-1)"
     (next)="moveQuestion(1)">
-    <planet-markdown class="question-body" [content]="question?.body"></planet-markdown>
+    <planet-markdown class="question-body km-question-body" [content]="question?.body"></planet-markdown>
     <planet-exams-take-widget [question]="question" [answer]="answer" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
     <div class="action-buttons action-buttons--split">
       <div class="action-buttons__left">
@@ -23,7 +47,7 @@
           mat-stroked-button
           color="primary"
           (click)="moveQuestion(-1)"
-          [disabled]="isLoading || questionNum === 1"
+          [disabled]="questionNum === 1"
           i18n>
           Previous
         </button>
@@ -48,7 +72,7 @@
   </planet-exams-question-frame>
 }
 
-@if (survey && showDemographics && !isSubmitted) {
+@if (survey && step === 'demographics') {
   <div class="state-view">
     <div [formGroup]="demographicsForm" class="demographics-form">
       <mat-radio-group formControlName="gender">
@@ -63,7 +87,7 @@
         <mat-error i18n>Enter a valid past year</mat-error>
       </mat-form-field>
       <div class="demographics-actions">
-        <button mat-stroked-button color="primary" (click)="showDemographics = false" i18n>Previous</button>
+        <button mat-stroked-button color="primary" (click)="step = 'questions'" i18n>Previous</button>
         <button mat-raised-button color="accent" (click)="submitSurvey()" [disabled]="!canSubmit()" i18n>Finish Survey</button>
       </div>
       @if (errorMessage) {
@@ -76,7 +100,7 @@
   </div>
 }
 
-@if (survey && isSubmitted) {
+@if (survey && step === 'submitted') {
   <div class="state-view primary-text-color">
     <mat-icon>check_circle</mat-icon>
     <div class="state-message" i18n>Survey is complete. Your response has been submitted.</div>

@@ -2,19 +2,22 @@ import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } fro
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { CustomValidators } from '../../validators/custom-validators';
-import { CertificationsService } from './certifications.service';
-import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
-import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '../../shared/table-helpers';
-import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+import { CustomValidators } from '../../validators/custom-validators';
+import { CertificationsManagerService } from './certifications-manager.service';
+import { CoursesComponent } from '../../courses/courses.component';
+import { ValidatorService } from '../../validators/validator.service';
 
 
 interface CertificationFormControls {
@@ -23,6 +26,12 @@ interface CertificationFormControls {
 
 @Component({
   templateUrl: './certifications-add.component.html',
+  styles: [`
+    .view-container {
+      display: flex;
+      flex-direction: column;
+    }
+  `],
   imports: [
     MatToolbar,
     MatIconButton,
@@ -54,6 +63,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private certificationsService: CertificationsService,
+    private certificationsManagerService: CertificationsManagerService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private cdRef: ChangeDetectorRef
@@ -105,7 +115,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       return;
     }
     const certificateFormValue = this.certificateForm.getRawValue();
-    this.certificationsService.addCertification({
+    this.certificationsManagerService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds
@@ -122,7 +132,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   openCourseDialog() {
     const initialCourseIds = this.courseIds || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {

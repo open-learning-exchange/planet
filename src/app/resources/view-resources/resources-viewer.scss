@@ -1,6 +1,7 @@
 @use '../../variables' as v;
 
-$full-height: calc(#{v.$view-container-height} - 2rem);
+// Content height of the enclosing view; resources-view and courses-step-view make it a size container.
+$full-height: 100cqh;
 
 :host {
   * {
@@ -19,15 +20,24 @@ $full-height: calc(#{v.$view-container-height} - 2rem);
   }
 
   .dialog-view {
+    height: 100%;
+
+    > div {
+      height: 100%;
+    }
 
     iframe {
-      height: calc(#{v.$dashboard-height});
+      height: 100%;
       width: calc(#{v.$dashboard-height} + 20rem);
     }
 
     img {
-      max-height: calc(#{v.$dashboard-height});
+      max-height: 100%;
       max-width: calc(#{v.$dashboard-height} + 20rem);
+    }
+
+    video, .csv-container {
+      max-height: 100%;
     }
 
   }

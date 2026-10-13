@@ -3,48 +3,53 @@ import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/user.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { TeamsService } from './teams.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { NewsService } from '../news/news.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { ReportsService } from '../manager-dashboard/reports/reports.service';
-import { StateService } from '../shared/state.service';
-import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
-import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
-import { environment } from '../../environments/environment';
-import { TasksService } from '../tasks/tasks.service';
-import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
-import { CustomValidators } from '../validators/custom-validators';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { takeUntil, switchMap, finalize, map, tap, catchError, distinctUntilChanged, skip } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { NewsListComponent } from '../news/news-list.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
-import { TasksComponent } from '../tasks/tasks.component';
-import { PlanetCalendarComponent } from '../shared/calendar.component';
-import { TeamsViewFinancesComponent } from './teams-view-finances.component';
-import { TeamsReportsComponent } from './teams-reports.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { PlanetCalendarComponent } from '@shared/calendar/planet-calendar.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { planetAndParentId } from '@shared/utils';
+
+import { TeamsService } from './teams.service';
+import { NewsService } from '../news/news.service';
+import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { ResourcesPickerDialogComponent } from '../resources/resources-picker-dialog.component';
+import { environment } from '../../environments/environment';
+import { TasksService } from '../tasks/tasks.service';
+import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
+import { CustomValidators } from '../validators/custom-validators';
+import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
+import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
+import { NewsListComponent } from '../news/news-list.component';
+import { TeamsMemberComponent } from './teams-member.component';
+import { TasksComponent } from '../tasks/tasks.component';
+import { TeamsViewFinancesComponent } from './teams-view-finances.component';
+import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { SurveysComponent } from '../surveys/surveys.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { ResourcesIconComponent } from '../resources/resources-icon.component';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -83,7 +88,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatMenuItem,
     SurveysComponent,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    ResourcesIconComponent
   ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -100,13 +106,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   isUserLeader = false;
   onDestroy$ = new Subject<void>();
   currentUserId = this.userService.get()._id;
-  dialogRef: MatDialogRef<DialogsAddTableComponent>;
+  dialogRef: MatDialogRef<TablesAddDialogComponent>;
   user = this.userService.get();
   news: any[] = [];
+  private readonly emptyVoiceLabels: string[] = [];
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
-  isRoot = true;
   visits: any = {};
   leader: any = {};
   planetCode: string;
@@ -125,7 +131,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reportsCount = 0;
   financesCount = 0;
   configuration = this.stateService.configuration;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   get requestBadgeDescription(): string {
@@ -151,17 +158,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private stateService: StateService,
     private tasksService: TasksService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
     this.route.paramMap.pipe(takeUntil(this.onDestroy$), map((params: ParamMap) =>
       params.get('teamId') || planetAndParentId(this.stateService.configuration)
-    ), tap((teamId) => {
+    ), distinctUntilChanged(), tap((teamId) => {
       this.teamId = teamId;
       this.initTeam(teamId);
       this.tasksService.getTasks();
@@ -170,6 +173,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$), skip(1)).subscribe(params => this.selectLinkedTab(params));
   }
 
   ngAfterViewChecked() {
@@ -179,6 +183,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position;
         this.initTab = activeTab.position === 0 ? '' : this.initTab;
       }, 0);
+    }
+  }
+
+  selectLinkedTab(params: ParamMap) {
+    if (params.get('voice')) {
+      this.initTab = '';
+      this.tabSelectedIndex = 0;
+    } else if (params.get('activeTab') && this.userStatus === 'member') {
+      this.initTab = params.get('activeTab');
     }
   }
 
@@ -315,7 +328,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
-      this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+      this.reports = docs.filter(doc => doc.docType === 'report');
       this.reportsCount = this.reports.length;
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
@@ -326,20 +339,20 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
       ...member,
-      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+      tasks: this.tasksService.sortedTasks(tasks.filter(task => isTaskAssignedTo(task, member, this.planetCode)), member.tasks)
     }));
     if (this.userStatus === 'member') {
-      const tasksForCount = this.isUserLeader ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      const currentMember = this.members.find(member => assigneeMatches(member, {
+        userId: this.user._id,
+        userPlanetCode: this.planetCode
+      }, this.planetCode));
+      const tasksForCount = this.isUserLeader ? tasks : currentMember?.tasks || [];
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
   }
 
   resetData() {
     this.getMembers().subscribe();
-  }
-
-  toggleAdd(data) {
-    this.isRoot = data._id === 'root';
   }
 
   setStatus(team, leader, user) {
@@ -349,14 +362,27 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
     this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
-    this.isUserLeader = user._id === leader.userId && user.planetCode === leader.userPlanetCode;
+    this.isUserLeader = !!leader && memberCompare(leader, { userId: user._id, userPlanetCode: user.planetCode });
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
   }
 
+  get canManageLabels(): boolean {
+    const canManageLocalTeams = this.team?.teamPlanetCode === this.planetCode &&
+      (this.user.isUserAdmin || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
+    return this.isUserLeader || canManageLocalTeams;
+  }
+
+  get customVoiceLabels(): string[] {
+    return this.team?.customVoiceLabels || this.emptyVoiceLabels;
+  }
+
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
+    return memberDocs.some((memberDoc: any) => assigneeMatches(memberDoc, {
+      userId: user._id,
+      userPlanetCode: this.planetCode
+    }, this.planetCode));
   }
 
   toggleMembership(team, leaveTeam) {
@@ -459,7 +485,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           membershipWriteCompleted = true;
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-        switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
+        switchMap(() => type === 'removed' ?
+          this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
@@ -495,7 +522,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           type: 'enterprise',
           displayName: this.team.name,
           rules: this.team.rules,
-          extraMessage: enterpriseJoinAgreement()
+          extraMessage: enterpriseJoinAgreement(),
+          extraMessageType: 'supplementary'
         }
       });
       return;
@@ -576,15 +604,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.planetMessageService.showMessage(
-        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe({
+      next: (updatedTeam) => {
+        this.team = updatedTeam;
+        this.planetMessageService.showMessage(
+          (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      },
+      error: (err) => this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err))
     });
   }
 
   openInviteMemberDialog() {
-    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    this.dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -592,6 +623,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         okClick: (selected: any[]) => this.addMembers(selected),
         excludeIds: this.members.map(user => user.userId),
         hideChildren: true,
+        noSpinner: true,
         mode: 'users'
       }
     });
@@ -639,7 +671,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseDialog() {
     const initialCourses = this.team.courses || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -686,8 +718,20 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  openManageLabelsDialog() {
+    this.dialog.open(NewsLabelsDialogComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }
+    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+      if (updatedLabels) {
+        this.team = { ...this.team, customVoiceLabels: updatedLabels };
+      }
+    });
+  }
+
   openResourcesDialog(resource?) {
-    const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+    const dialogRef = this.dialog.open(ResourcesPickerDialogComponent, {
       width: '80vw',
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
@@ -758,13 +802,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openResource(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, {
+    this.dialog.open(ResourcesViewerDialogComponent, {
       data: {
         resourceId,
         returnState: { route: `${this.mode}s/view/${this.teamId}` }
       },
       autoFocus: false
     });
+  }
+
+  coverImageUrl(): string {
+    return this.teamsService.coverImageUrl(this.team);
   }
 
 }

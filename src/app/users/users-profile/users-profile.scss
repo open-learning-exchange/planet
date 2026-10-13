@@ -29,13 +29,20 @@
   .cards-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 16px;
     margin-top: 10px;
 
     mat-card {
-      flex: 1;
+      flex: 1 1 260px;
       width: 100%;
-      min-width: 300px;
+      min-width: 0;
+    }
+
+    .mat-mdc-list-item-title {
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   }
 
@@ -70,6 +77,10 @@
 
     .cards-container {
       flex-direction: column;
+
+      mat-card {
+        flex-basis: auto;
+      }
     }
 
     .profile-list-lt, .profile-list-rt {

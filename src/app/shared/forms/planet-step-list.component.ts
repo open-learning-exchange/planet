@@ -4,14 +4,15 @@ import { Component, Input, EventEmitter, Output, Directive, ContentChildren, Vie
 import { of, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
-import { uniqueId } from '../utils';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
+
+import { uniqueId } from '@shared/utils';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 
 export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
@@ -94,6 +95,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
   @Input() confirmDelete = false;
+  @Input() deletePromptMessage?: string;
   @Output() stepClicked = new EventEmitter<number>();
   @Output() stepsChange = new EventEmitter<unknown[]>();
 
@@ -153,9 +155,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   promptDeleteStep(index: number) {
     const { steps } = this;
-    const stepItem = Array.isArray(steps)
-      ? steps[index]
-      : (steps instanceof FormArray ? steps.at(index)?.value : null);
+    const stepControl = steps instanceof FormArray ? steps.at(index) : null;
+    const stepItem = Array.isArray(steps) ? steps[index] : stepControl?.value;
+    const stepValue = stepControl?.value;
 
     const titleVal = stepItem && this.nameProp && typeof stepItem[this.nameProp] === 'string' && stepItem[this.nameProp].trim()
       ? stepItem[this.nameProp].trim()
@@ -168,7 +170,15 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
           request: of(true),
           onNext: () => {
             dialogRef.close();
-            this.performStepMove(index, 0);
+            const targetUnchanged = this.steps === steps && (Array.isArray(steps)
+              ? index >= 0 && index < steps.length && steps[index] === stepItem
+              : steps instanceof FormArray && steps.at(index) === stepControl && stepControl?.value === stepValue);
+            if (!targetUnchanged) {
+              return;
+            }
+            if (!this.performStepMove(index, 0)) {
+              return;
+            }
             if (!this.listMode) {
               if (this.openIndex === index) {
                 this.toList();
@@ -180,22 +190,31 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
           onError: () => {}
         },
         showMainParagraph: false,
-        extraMessage: $localize`Are you sure you want to delete the following step?`,
+        spinnerOn: false,
+        extraMessage: this.deletePromptMessage || $localize`Are you sure you want to delete the following step?`,
         displayName: stepTitle
       }
     });
   }
 
-  performStepMove(index: number, direction: number) {
+  performStepMove(index: number, direction: number): boolean {
     const { steps } = this;
     if (Array.isArray(steps)) {
+      if (index < 0 || index >= steps.length) {
+        return false;
+      }
       this.moveArrayStep(index, direction, steps);
       this.stepsChange.emit(steps);
-      return;
+      return true;
     }
     if (steps instanceof FormArray) {
-      this.moveFormArrayStep(index, direction, steps);
+      const stepMoved = this.moveFormArrayStep(index, direction, steps);
+      if (stepMoved) {
+        this.stepsChange.emit(steps.value);
+      }
+      return stepMoved;
     }
+    return false;
   }
 
   moveArrayStep(index: number, direction: number, steps: unknown[]) {
@@ -205,15 +224,16 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
   }
 
-  moveFormArrayStep<TControl extends PlanetStepControl>(index: number, direction: number, steps: FormArray<TControl>) {
+  moveFormArrayStep<TControl extends PlanetStepControl>(index: number, direction: number, steps: FormArray<TControl>): boolean {
     const step = steps.at(index) as TControl | null;
     if (!step) {
-      return;
+      return false;
     }
     steps.removeAt(index);
     if (direction !== 0) {
       steps.insert(index + direction, step);
     }
+    return true;
   }
 
   changeStep(direction: number) {

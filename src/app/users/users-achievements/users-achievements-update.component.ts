@@ -3,34 +3,38 @@ import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, 
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, forkJoin, Subject, interval, merge, of, race } from 'rxjs';
 import { catchError, takeUntil, debounce, filter, startWith, take, switchMap } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { UsersAchievementsService } from './users-achievements.service';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { StateService } from '../../shared/state.service';
-import { CustomValidators } from '../../validators/custom-validators';
-import { ValidatorService } from '../../validators/validator.service';
-import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
-import { showFormErrors } from '../../shared/table-helpers';
-import { normalizedContentType } from '../../shared/utils';
-import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes.component';
-import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-
+import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
-import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { SubmitDirective } from '../../shared/submit.directive';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
-import { FullNamePipe } from '../../shared/full-name.pipe';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+import { PlanetStepListComponent, PlanetStepListItemComponent } from '@shared/forms/planet-step-list.component';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { normalizedContentType } from '@shared/utils';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { FileUploadComponent } from '@shared/forms/file-upload.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
+
+import { UsersAchievementsService } from './users-achievements.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -105,6 +109,7 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatListItemMeta,
     MatButton,
     MatCheckbox,
+    MatTooltip,
     SubmitDirective,
     FileUploadComponent,
     TruncateTextPipe,
@@ -154,7 +159,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.createProfileForm();
@@ -194,10 +199,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.captureInitialState();
         this.onFormChanges();
       });
-
-    this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
-      () => this.editForm.controls.dateSortOrder.setValue('none')
-    );
   }
 
   private captureInitialState() {
@@ -384,6 +385,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.achievements.setValue(this.sortDate(this.achievements.value, sort));
   }
 
+  resetAchievementSort() {
+    this.editForm.controls.dateSortOrder.setValue('none');
+  }
+
   sortDate(achievements: any[], sortOrder: DateSortOrder = 'none') {
     if (sortOrder === 'none') {
       return achievements;
@@ -435,9 +440,24 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   removeExistingResume() {
-    this.resumeMarkedForDeletion = true;
-    this.currentResumeFileName = '';
-    this.clearResumeSelection();
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            dialogRef.close();
+            this.resumeMarkedForDeletion = true;
+            this.currentResumeFileName = '';
+            this.updateUnsavedChangesFlag();
+          },
+          onError: () => {}
+        },
+        showMainParagraph: false,
+        spinnerOn: false,
+        extraMessage: $localize`Are you sure you want to remove the existing CV/Resume?`,
+        displayName: this.currentResumeFileName
+      }
+    });
   }
 
   onSubmit() {
