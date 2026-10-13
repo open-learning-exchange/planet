@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import {
   ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
   genderBucket, hasMarkdownImages, IMAGE_MAX_FALLBACK_BYTES, localizedGender, normalizeImage,
-  normalizeMarkdownWhitespace, safeAttachmentName, scaledDimensions
+  normalizeMarkdownWhitespace, safeAttachmentName, scaledDimensions, withImageAttachments
 } from './utils';
 
 describe('utils', () => {
@@ -339,6 +339,30 @@ ${'\t'.repeat(18)}
 
       expect(await normalizeImage(file, { maxFallbackBytes: 1024 })).toBeNull();
       expect(await normalizeImage(file, { maxFallbackBytes: 4096 })).not.toBeNull();
+    });
+
+  });
+
+  describe('withImageAttachments', () => {
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it('skips an image that can no longer be read and keeps the others', async () => {
+      const readAsDataURL = FileReader.prototype.readAsDataURL;
+      vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function(this: FileReader, blob: Blob) {
+        return (blob as File).name === 'gone.png' ? this.onerror(new ProgressEvent('error')) : readAsDataURL.call(this, blob);
+      });
+      const added = [ 'gone.png', 'kept.png' ].map(name => ({ file: new File([ 'data' ], name, { type: 'image/png' }) }));
+
+      const result = await withImageAttachments({ _id: 'doc' }, { added }, async file => ({
+        file, contentType: 'image/png', fileName: file.name
+      }));
+
+      expect(result).toEqual({
+        doc: { _id: 'doc', _attachments: { 'kept.png': { content_type: 'image/png', data: btoa('data') } } },
+        added: [ 'kept.png' ],
+        skipped: [ 'gone.png' ]
+      });
     });
 
   });

@@ -169,7 +169,7 @@ const inlineAttachment = async (blob: Blob, contentType: string) => ({ content_t
 
 type ImageNormalizer = (file: File, usedNames: string[]) => Promise<NormalizedImage | null>;
 
-// An image that can't be normalized is skipped and named in the result, so each caller decides whether that fails the save
+// An image that can't be read or normalized is skipped and named in the result, so each caller decides whether that fails the save
 export const withImageAttachments = async (
   doc: any, state: { removed?: { name: string }[], added: { file: File }[] },
   normalize: ImageNormalizer = (file, usedNames) => normalizeImage(file, { usedNames })
@@ -185,7 +185,12 @@ export const withImageAttachments = async (
       skipped.push(file.name);
       continue;
     }
-    attachments[image.fileName] = await inlineAttachment(image.file, image.contentType);
+    try {
+      attachments[image.fileName] = await inlineAttachment(image.file, image.contentType);
+    } catch {
+      skipped.push(file.name);
+      continue;
+    }
     added.push(image.fileName);
   }
   return { doc: { ...rest, ...(Object.keys(attachments).length ? { _attachments: attachments } : {}) }, added, skipped };
