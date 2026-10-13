@@ -28,23 +28,21 @@
   @for (taskView of filteredTaskViews; track trackById($index, taskView.task)) {
     @let task = taskView.task;
     <mat-list-item class="km-task-row" [class.cursor-pointer]="editable" (click)="editable && openTaskDetail(task)">
-      <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable"
-        (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
-      <span matListItemTitle class="task-title-row">
-        <span class="task-title km-task-title" [attr.role]="editable ? 'button' : null" [attr.tabindex]="editable ? 0 : null"
-          [class.cursor-pointer]="editable" (click)="$event.stopPropagation(); editable && openTaskDetail(task)"
-          (keydown.enter)="openTaskDetailFromKeyboard($event, task)"
-          (keydown.space)="openTaskDetailFromKeyboard($event, task)">{{task.title}}</span>
-        <span class="task-status-badge km-status-badge status-{{effectiveTaskStatus(task)}}"
-          [class.interactive]="editable"
-          [attr.role]="editable ? 'button' : null"
-          [attr.tabindex]="editable ? 0 : null"
-          [attr.aria-label]="taskStatusBadgeLabel(effectiveTaskStatus(task))"
-          [matTooltip]="taskStatusTooltip(task)"
-          (click)="cycleTaskStatus(task, $event)"
-          (keydown.enter)="cycleTaskStatusFromKeyboard($event, task)"
-          (keydown.space)="cycleTaskStatusFromKeyboard($event, task)">
-          {{taskStatusBadgeLabel(effectiveTaskStatus(task))}}
+      <span matListItemTitle>
+        <span class="task-title-row">
+          <span class="task-title km-task-title" [attr.role]="editable ? 'button' : null" [attr.tabindex]="editable ? 0 : null"
+            [class.cursor-pointer]="editable" (click)="$event.stopPropagation(); editable && openTaskDetail(task)"
+            (keydown.enter)="openTaskDetailFromKeyboard($event, task)"
+            (keydown.space)="openTaskDetailFromKeyboard($event, task)">{{task.title}}</span>
+          @if (editable) {
+            <button type="button" class="task-status-badge km-status-badge" [ngClass]="'status-' + taskView.status"
+              matTooltip="Change status" i18n-matTooltip [matMenuTriggerFor]="statusMenu" [matMenuTriggerData]="{ taskView }"
+              (click)="$event.stopPropagation()">
+              {{taskView.statusLabel}}<mat-icon>arrow_drop_down</mat-icon>
+            </button>
+          } @else {
+            <span class="task-status-badge km-status-badge" [ngClass]="'status-' + taskView.status">{{taskView.statusLabel}}</span>
+          }
         </span>
       </span>
     <span matListItemLine class="km-task-deadline" [ngClass]="{'deadline-soon': isTaskDueSoon(task),
@@ -85,3 +83,16 @@
       </mat-list-item>
     }
   </mat-list>
+  @if (tasks.length > 0 && filteredTaskViews.length === 0) {
+    <p i18n>No tasks match this filter.</p>
+  }
+  <mat-menu #statusMenu="matMenu">
+    <ng-template matMenuContent let-taskView="taskView">
+      @for (option of statusOptions; track option.status) {
+        <button mat-menu-item role="menuitemradio" [attr.aria-checked]="option.status === taskView.status"
+          (click)="setTaskStatus(taskView.task, option.status)">
+          <mat-icon>{{option.status === taskView.status ? 'check' : ''}}</mat-icon>{{option.label}}
+        </button>
+      }
+    </ng-template>
+  </mat-menu>

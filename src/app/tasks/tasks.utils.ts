@@ -63,19 +63,6 @@ export const effectiveTaskStatus = (task: any): TaskStatus => {
   return 'to_do';
 };
 
-export const nextTaskStatus = (status: TaskStatus | string): TaskStatus => {
-  switch (status) {
-    case 'to_do':
-      return 'in_progress';
-    case 'in_progress':
-      return 'completed';
-    case 'completed':
-      return 'to_do';
-    default:
-      return 'to_do';
-  }
-};
-
 export const taskStatusBadgeLabel = (status: TaskStatus | string): string => {
   switch (status) {
     case 'to_do':

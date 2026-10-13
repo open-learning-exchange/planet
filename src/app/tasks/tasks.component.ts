@@ -1,14 +1,13 @@
 import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import {
-  MatList, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemLine, MatListItemAvatar, MatListItemMeta
+  MatList, MatListItem, MatListItemTitle, MatListItemLine, MatListItemAvatar, MatListItemMeta
 } from '@angular/material/list';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
@@ -29,8 +28,10 @@ import { MeetupsAddDialogComponent } from '../meetups/meetups-add-dialog.compone
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import {
   assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees,
-  effectiveTaskStatus, nextTaskStatus, storedAssignee, TaskStatus, taskStatusBadgeLabel
+  effectiveTaskStatus, storedAssignee, TaskStatus, taskStatusBadgeLabel
 } from './tasks.utils';
+
+type TaskFilter = 'self' | 'all' | 'to_do' | 'in_progress' | 'completed';
 
 @Pipe({ name: 'assigneeName' })
 export class AssigneeNamePipe implements PipeTransform {
@@ -59,8 +60,6 @@ interface AssigneeUpdateState {
     MatButtonToggle,
     MatList,
     MatListItem,
-    MatCheckbox,
-    MatListItemIcon,
     MatListItemTitle,
     MatListItemLine,
     NgClass,
@@ -113,14 +112,15 @@ export class TasksComponent implements OnInit {
   taskViews: any[] = [];
   filteredTaskViews: any[] = [];
   imgUrlPrefix = environment.couchAddress;
-  filter: 'self' | 'all' | 'to_do' | 'in_progress' | 'completed' = 'self';
+  filter: TaskFilter = 'self';
   trackById = trackById;
-  effectiveTaskStatus = effectiveTaskStatus;
-  taskStatusBadgeLabel = taskStatusBadgeLabel;
+  statusOptions = ([ 'to_do', 'in_progress', 'completed' ] as TaskStatus[])
+    .map(status => ({ status, label: taskStatusBadgeLabel(status) }));
   private assigneesList: any[] = [];
   private currentAssignees = new Map<string, any>();
   private failedAvatarSources = new Map<string, string>();
   private assigneeUpdates = new Map<string, AssigneeUpdateState>();
+  private statusSaves = new Set<string>();
 
   constructor(
     private tasksService: TasksService,
@@ -223,34 +223,24 @@ export class TasksComponent implements OnInit {
     this.tasksService.getTasks();
   }
 
-  toggleTaskComplete(task) {
-    const completed = !task.completed;
-    const status: TaskStatus = completed ? 'completed' : 'to_do';
-    this.tasksService.addTask({ ...task, status, completed }).subscribe(() => {
-      this.tasksService.getTasks();
-    });
-  }
-
-  cycleTaskStatus(task: any, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-    }
-    if (!this.editable) {
+  // A save already in flight for this task holds the current _rev, so a second one would 409; it is dropped.
+  setTaskStatus(task: any, status: TaskStatus) {
+    if (this.statusSaves.has(task._id) || this.assigneeUpdates.has(task._id) || status === effectiveTaskStatus(task)) {
       return;
     }
-    const nextStatus = nextTaskStatus(effectiveTaskStatus(task));
-    const completed = nextStatus === 'completed';
-    this.tasksService.addTask({ ...task, status: nextStatus, completed }).subscribe(() => {
-      this.tasksService.getTasks();
+    this.statusSaves.add(task._id);
+    this.tasksService.setTaskStatus(task, status).pipe(
+      finalize(() => this.statusSaves.delete(task._id))
+    ).subscribe({
+      next: res => {
+        this.replaceTask(res.doc);
+        this.refreshTaskViews();
+      },
+      error: () => {
+        this.tasksService.getTasks();
+        this.planetMessageService.showAlert($localize`There was a problem updating the task status.`);
+      }
     });
-  }
-
-  cycleTaskStatusFromKeyboard(event: KeyboardEvent, task: any) {
-    if (this.editable) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.cycleTaskStatus(task);
-    }
   }
 
   openAssigneeMenu(event) {
@@ -259,6 +249,9 @@ export class TasksComponent implements OnInit {
 
   toggleAssignee(task, assignee) {
     const taskId = task._id;
+    if (this.statusSaves.has(taskId)) {
+      return;
+    }
     const state = this.assigneeUpdates.get(taskId) || {
       task,
       assignees: effectiveAssignees(task).map(item => storedAssignee(item, this.localPlanetCode)),
@@ -316,8 +309,8 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  // The saved doc carries the new revision and assignees, so swap it in rather than waiting for the
-  // tasks refresh — the next toggle would otherwise post a stale _rev.
+  // The saved doc carries the new revision, so swap it in rather than waiting for the tasks refresh —
+  // the next save would otherwise post a stale _rev.
   private replaceTask(task: any) {
     const index = this.tasks.findIndex(({ _id }) => _id === task?._id);
     if (index > -1) {
@@ -353,24 +346,16 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  setFilter(newFilter: 'self' | 'all' | 'to_do' | 'in_progress' | 'completed') {
+  setFilter(newFilter: TaskFilter) {
     this.filter = newFilter;
     this.filterTasks();
   }
 
   filterTasks() {
-    let filteredTasks = this.tasks;
-    if (this.filter === 'self') {
-      filteredTasks = this.myTasks;
-    } else if (this.filter === 'to_do') {
-      filteredTasks = this.tasks.filter(task => effectiveTaskStatus(task) === 'to_do');
-    } else if (this.filter === 'in_progress') {
-      filteredTasks = this.tasks.filter(task => effectiveTaskStatus(task) === 'in_progress');
-    } else if (this.filter === 'completed') {
-      filteredTasks = this.tasks.filter(task => effectiveTaskStatus(task) === 'completed');
-    }
-    const filteredTaskIds = new Set(filteredTasks.map(task => task._id));
-    this.filteredTaskViews = this.taskViews.filter(({ task }) => filteredTaskIds.has(task._id));
+    const myTaskIds = new Set(this.myTasks.map(task => task._id));
+    this.filteredTaskViews = this.taskViews.filter(({ task, status }) =>
+      this.filter === 'all' || (this.filter === 'self' ? myTaskIds.has(task._id) : status === this.filter)
+    );
   }
 
   sendNotifications(assignee: any = '') {
@@ -407,15 +392,6 @@ export class TasksComponent implements OnInit {
 
   getAssignTooltip(task: any): string {
     return this.taskAssignees(task).length > 0 ? $localize`Reassign Task` : $localize`Assign Task`;
-  }
-
-  taskStatusTooltip(task: any): string {
-    if (!this.editable) {
-      return taskStatusBadgeLabel(effectiveTaskStatus(task));
-    }
-    const nextStatus = nextTaskStatus(effectiveTaskStatus(task));
-    const nextLabel = taskStatusBadgeLabel(nextStatus);
-    return $localize`Move to "${nextLabel}"`;
   }
 
   isAssigneeSelected(task, assignee): boolean {
@@ -469,11 +445,14 @@ export class TasksComponent implements OnInit {
       if (failureKey && failedAvatarSrc && failedAvatarSrc !== avatarSrc) {
         this.failedAvatarSources.delete(failureKey);
       }
+      const status = effectiveTaskStatus(task);
       return {
         task,
         assignees,
         assignee,
-        avatarSrc: failedAvatarSrc === avatarSrc ? 'assets/image.png' : avatarSrc
+        avatarSrc: failedAvatarSrc === avatarSrc ? 'assets/image.png' : avatarSrc,
+        status,
+        statusLabel: taskStatusBadgeLabel(status)
       };
     });
   }

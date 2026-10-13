@@ -4,11 +4,12 @@ planet-tasks {
   mat-list {
     .mat-mdc-list-item {
       align-items: center;
-    }
 
-    .mat-mdc-checkbox {
-      order: -1;
-      margin-right: 0.5rem;
+      // Every row has trailing meta; this matches Material's selector so it outranks its 16px start padding, which
+      // only a leading avatar cancels.
+      &.mdc-list-item--with-trailing-meta {
+        padding-inline-start: 0;
+      }
     }
 
     img {
@@ -19,15 +20,16 @@ planet-tasks {
       order: 3;
     }
 
-    .mat-mdc-list-item.mdc-list-item--with-leading-avatar .mdc-list-item__content {
-      margin-left: -16px;
-    }
-
     .task-title-row {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      flex-wrap: wrap;
+      max-width: 100%;
+    }
+
+    .task-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .task-title:focus-visible {
@@ -38,18 +40,25 @@ planet-tasks {
     .task-status-badge {
       display: inline-flex;
       align-items: center;
+      flex: none;
       justify-content: center;
-      margin-left: 0.5rem;
       padding: 2px 8px;
+      border: 0;
       border-radius: 12px;
+      font: inherit;
       font-size: 12px;
       font-weight: 500;
       line-height: 16px;
-      vertical-align: middle;
 
-      &.interactive {
+      .mat-icon {
+        width: 16px;
+        height: 16px;
+        margin-right: -4px;
+        font-size: 16px;
+      }
+
+      &:is(button) {
         cursor: pointer;
-        user-select: none;
         transition: filter 0.15s ease-in-out;
 
         &:hover {
@@ -89,6 +98,8 @@ planet-tasks {
 
   mat-button-toggle-group {
     font-size: 14px;
+    max-width: 100%;
+    overflow-x: auto;
     mat-button-toggle {
       line-height: 34px;
     }

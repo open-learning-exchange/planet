@@ -1,6 +1,6 @@
 import {
   assigneeIdentityCandidates, assigneeKey, assigneeMatches, effectiveAssignees,
-  effectiveTaskStatus, isTaskAssignedTo, nextTaskStatus, storedAssignee, taskStatusBadgeLabel
+  effectiveTaskStatus, isTaskAssignedTo, storedAssignee, taskStatusBadgeLabel
 } from './tasks.utils';
 
 describe('task assignee utilities', () => {
@@ -66,14 +66,6 @@ describe('task status utilities', () => {
     expect(effectiveTaskStatus({ status: 'completed', completed: false })).toBe('to_do');
     expect(effectiveTaskStatus({})).toBe('to_do');
     expect(effectiveTaskStatus(null)).toBe('to_do');
-  });
-
-  it('cycles through task status transitions', () => {
-    expect(nextTaskStatus('to_do')).toBe('in_progress');
-    expect(nextTaskStatus('in_progress')).toBe('completed');
-    expect(nextTaskStatus('completed')).toBe('to_do');
-    expect(nextTaskStatus('archived')).toBe('to_do');
-    expect(nextTaskStatus('unknown')).toBe('to_do');
   });
 
   it('provides human-readable status badge labels', () => {

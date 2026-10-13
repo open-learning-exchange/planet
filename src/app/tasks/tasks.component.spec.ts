@@ -1,4 +1,4 @@
-import { Subject, of } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { MatDialog } from '@angular/material/dialog';
 import { TestBed } from '@angular/core/testing';
@@ -23,6 +23,7 @@ describe('TasksComponent', () => {
     sortedTasks: ReturnType<typeof vi.fn>;
     getTasks: ReturnType<typeof vi.fn>;
     addTask: ReturnType<typeof vi.fn>;
+    setTaskStatus: ReturnType<typeof vi.fn>;
   };
   let userService: { get: ReturnType<typeof vi.fn> };
   let dialog: { open: ReturnType<typeof vi.fn> };
@@ -36,7 +37,8 @@ describe('TasksComponent', () => {
       tasksListener: vi.fn().mockReturnValue(taskUpdates),
       sortedTasks: vi.fn((tasks) => tasks),
       getTasks: vi.fn(),
-      addTask: vi.fn().mockReturnValue(of({}))
+      addTask: vi.fn().mockReturnValue(of({})),
+      setTaskStatus: vi.fn((task, status) => of({ doc: { ...task, status, _rev: 'saved' } }))
     };
     userService = {
       get: vi.fn().mockReturnValue({
@@ -555,34 +557,66 @@ describe('TasksComponent', () => {
     expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
   });
 
-  it('cycles task status through workflow states', () => {
-    const task = { _id: 'task-1', status: 'to_do', completed: false };
-    component.cycleTaskStatus(task);
-    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'in_progress', completed: false });
+  it('saves the chosen status and ignores the current one', () => {
+    component.setTaskStatus({ _id: 'task-1', status: 'to_do', completed: false }, 'in_progress');
+    expect(tasksService.setTaskStatus).toHaveBeenLastCalledWith(expect.anything(), 'in_progress');
 
-    component.cycleTaskStatus({ _id: 'task-1', status: 'in_progress', completed: false });
-    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'completed', completed: true });
-
-    component.cycleTaskStatus({ _id: 'task-1', status: 'completed', completed: true });
-    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'to_do', completed: false });
+    component.setTaskStatus({ _id: 'task-2', completed: true }, 'completed');
+    expect(tasksService.setTaskStatus).toHaveBeenCalledTimes(1);
   });
 
-  it('synchronizes status when toggling task completion', () => {
-    component.toggleTaskComplete({ _id: 'task-1', completed: false, status: 'to_do' });
-    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'completed', completed: true });
+  it('drops status choices while a save is pending and continues from the saved revision', () => {
+    const save = new Subject<any>();
+    tasksService.setTaskStatus.mockReturnValueOnce(save);
+    component.ngOnInit();
+    taskUpdates.next([ { _id: 'task-1', _rev: '1-a', status: 'to_do', completed: false } ]);
 
-    component.toggleTaskComplete({ _id: 'task-1', completed: true, status: 'completed' });
-    expect(tasksService.addTask).toHaveBeenCalledWith({ _id: 'task-1', status: 'to_do', completed: false });
+    component.setTaskStatus(component.tasks[0], 'in_progress');
+    component.setTaskStatus(component.tasks[0], 'completed');
+    expect(tasksService.setTaskStatus).toHaveBeenCalledTimes(1);
+
+    save.next({ doc: { _id: 'task-1', _rev: '2-b', status: 'in_progress', completed: false } });
+    save.complete();
+    expect(component.filteredTaskViews[0].status).toBe('in_progress');
+
+    component.setTaskStatus(component.tasks[0], 'completed');
+    expect(tasksService.setTaskStatus).toHaveBeenLastCalledWith(expect.objectContaining({ _rev: '2-b' }), 'completed');
   });
 
-  it('provides a descriptive tooltip for moving to the next status', () => {
-    component.editable = true;
-    expect(component.taskStatusTooltip({ status: 'to_do', completed: false })).toBe('Move to "In Progress"');
-    expect(component.taskStatusTooltip({ status: 'in_progress', completed: false })).toBe('Move to "Completed"');
-    expect(component.taskStatusTooltip({ status: 'completed', completed: true })).toBe('Move to "To Do"');
+  it('keeps status and assignee saves on the same task from overlapping', () => {
+    const assigneeSave = new Subject<any>();
+    tasksService.addTask.mockReturnValueOnce(assigneeSave);
+    const task = { _id: 'task-1', _rev: '1-a', status: 'to_do', completed: false, assignees: [] };
+    component.toggleAssignee(task, { userId: 'org.couchdb.user:sam', userPlanetCode: 'planet-a', name: 'sam' });
+    component.setTaskStatus(task, 'in_progress');
+    expect(tasksService.setTaskStatus).not.toHaveBeenCalled();
 
-    component.editable = false;
-    expect(component.taskStatusTooltip({ status: 'to_do', completed: false })).toBe('To Do');
+    assigneeSave.next({ doc: { ...task, _rev: '2-b' } });
+    tasksService.setTaskStatus.mockReturnValueOnce(new Subject<any>());
+    component.setTaskStatus(task, 'in_progress');
+    component.toggleAssignee(task, { userId: 'org.couchdb.user:kim', userPlanetCode: 'planet-a', name: 'kim' });
+    expect(tasksService.addTask).toHaveBeenCalledTimes(1);
+  });
+
+  it('alerts and refreshes when a status save fails', () => {
+    tasksService.setTaskStatus.mockReturnValueOnce(throwError(() => new Error('409')));
+    component.setTaskStatus({ _id: 'task-1', status: 'to_do', completed: false }, 'in_progress');
+
+    expect(planetMessageService.showAlert).toHaveBeenCalled();
+    expect(tasksService.getTasks).toHaveBeenCalled();
+    component.setTaskStatus({ _id: 'task-1', status: 'to_do', completed: false }, 'in_progress');
+    expect(tasksService.setTaskStatus).toHaveBeenCalledTimes(2);
+  });
+
+  it('labels each task view with its status', () => {
+    component.ngOnInit();
+    taskUpdates.next([
+      { _id: 'to-do', status: 'to_do', completed: false },
+      { _id: 'in-progress', status: 'in_progress', completed: false },
+      { _id: 'done', status: 'completed', completed: true }
+    ]);
+
+    expect(component.taskViews.map(({ statusLabel }) => statusLabel)).toEqual([ 'To Do', 'In Progress', 'Completed' ]);
   });
 });
 
@@ -643,7 +677,7 @@ describe('TasksComponent read-only template', () => {
     const viewAssignees: HTMLButtonElement = fixture.nativeElement.querySelector('.km-view-assignees');
     expect(row).toBeTruthy();
     expect(title.getAttribute('tabindex')).toBeNull();
-    expect(badge.getAttribute('tabindex')).toBeNull();
+    expect(badge.tagName).toBe('SPAN');
     expect(badge.textContent?.trim()).toBe('To Do');
     expect(viewAssignees.disabled).toBe(false);
 
