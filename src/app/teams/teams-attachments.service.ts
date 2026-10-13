@@ -110,11 +110,12 @@ export class TeamsAttachmentsService {
 
   private receiptBlobToPdfDataUrl(blob: Blob, contentType?: string): Observable<string> {
     return (contentType || blob.type).toLowerCase() === 'image/webp' ?
-      this.webpBlobToPngDataUrl(blob) :
+      this.webpBlobToJpegDataUrl(blob) :
       this.blobToDataUrl(blob);
   }
 
-  private webpBlobToPngDataUrl(blob: Blob): Observable<string> {
+  // pdfmake can't embed WebP. JPEG keeps photos small where PNG bloats them; it has no transparency, hence the white fill
+  private webpBlobToJpegDataUrl(blob: Blob): Observable<string> {
     return new Observable(observer => {
       const url = URL.createObjectURL(blob);
       const image = new Image();
@@ -128,8 +129,10 @@ export class TeamsAttachmentsService {
           observer.error(new Error('Unable to convert WebP receipt image'));
           return;
         }
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0);
-        observer.next(canvas.toDataURL('image/png'));
+        observer.next(canvas.toDataURL('image/jpeg', 0.85));
         observer.complete();
       };
       image.onerror = () => {
