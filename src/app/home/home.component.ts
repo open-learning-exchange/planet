@@ -63,6 +63,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   @ViewChild('mobileSidenav') mobileSidenav: MatSidenav;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
+  // Material measures a newly shown drawer before sidenavState sets its width, and keeps the side margin after switching to overlay.
+  @ViewChild(MatSidenav) set shownSidenav(sidenav: MatSidenav | undefined) {
+    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
+  }
   private onDestroy$ = new Subject<void>();
   notifications = [];
   user: any = {};
@@ -119,13 +123,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
     this.deviceInfoService.watchViewport().pipe(takeUntil(this.onDestroy$)).subscribe(({ deviceType, isShortViewport }) => {
-      const usedOverlayNav = this.usesOverlayNav;
       this.deviceType = deviceType;
       this.isMobile = isMobileOrSmaller(deviceType);
       this.isShortViewport = isShortViewport;
-      if (this.usesOverlayNav !== usedOverlayNav) {
-        this.resetContentMargins();
-      }
     });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
@@ -191,11 +191,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     if (this.forceModern !== needsModern) {
       this.forceModern = needsModern;
     }
-  }
-
-  // Material can retain the side drawer's content margin after switching to overlay.
-  private resetContentMargins() {
-    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
   }
 
   openLanguageSelector(): void {
