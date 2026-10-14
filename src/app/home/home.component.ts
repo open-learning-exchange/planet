@@ -292,9 +292,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
-  // An interrupted toggle reports done after the next toggle has started its interval.
+  // An interrupted toggle reports done after the next toggle has started its interval; a removed drawer reports void.
   sidenavAnimationDone({ toState }: AnimationEvent) {
-    if (toState === this.sidenavState) {
+    if (toState === this.sidenavState || toState === 'void') {
       this.endAnimation();
     }
   }
