@@ -61,7 +61,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     user: this.userService.get().name,
     content: '',
     aiProvider: { name: 'openai' },
-    assistant: true,
     context: '',
   };
   providers: AIProvider[] = [];
@@ -259,13 +258,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitPrompt() {
     const content = this.promptForm.controls.prompt.value;
-    this.data = { ...this.data, content, aiProvider: this.provider, assistant: this.provider?.name === 'openai' };
+    this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
     }
 
