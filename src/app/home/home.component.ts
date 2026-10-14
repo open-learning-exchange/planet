@@ -276,10 +276,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.notificationsService.setNotificationsAsRead(this.notifications);
   }
 
-  sizeChange(forceModern: boolean) {
-    this.forceModern = forceModern;
-  }
-
   toggleNav() {
     if (this.usesOverlayNav) {
       this.mobileSidenav?.toggle();
