@@ -32,6 +32,7 @@ describe('ResourcesViewComponent', () => {
 
   const ratingServiceMock = {
     promptRating: vi.fn().mockReturnValue(of(true)),
+    resetRatingInteraction: vi.fn(),
     normalizeRatingInfo: vi.fn(rating => ({
       rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [], ...rating
     }))
@@ -194,32 +195,32 @@ describe('ResourcesViewComponent', () => {
     expect(component.formattedFileSize).toBe('');
   });
 
-  it('delegates to ratingService.promptRating on canDeactivate', () => {
+  it('starts a new rating visit and prompts on leaving', () => {
+    ratingServiceMock.resetRatingInteraction.mockClear();
+    component.ngOnInit();
+    expect(ratingServiceMock.resetRatingInteraction).toHaveBeenCalledWith('id');
     component.resource = { _id: 'r-1' };
     component.canManage = false;
-    component.promptedForRating = false;
 
-    const result = component.canDeactivate();
+    const result = component.canDeactivate(undefined, undefined, { url: '/resources' } as any);
     (result as Observable<boolean>).subscribe(val => expect(val).toBe(true));
 
-    expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource', component.parent);
-    expect(component.promptedForRating).toBe(true);
+    expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource');
   });
 
-  it('skips promptRating when navigating to edit/update or if already prompted', () => {
+  it('never prompts on a parent view or for a manager', () => {
     component.resource = { _id: 'r-1' };
-    component.canManage = false;
-    component.promptedForRating = false;
     ratingServiceMock.promptRating.mockClear();
 
-    const editResult = component.canDeactivate(undefined, undefined, { url: '/resources/update/r-1' } as any);
-    expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
-    expect(editResult).toBe(true);
+    component.parent = true;
+    component.canManage = false;
+    expect(component.canDeactivate()).toBe(true);
 
-    component.promptedForRating = true;
-    const promptedResult = component.canDeactivate();
+    component.parent = false;
+    component.canManage = true;
+    expect(component.canDeactivate()).toBe(true);
+
     expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
-    expect(promptedResult).toBe(true);
   });
 
 

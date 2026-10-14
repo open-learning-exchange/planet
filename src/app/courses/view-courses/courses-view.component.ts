@@ -80,7 +80,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
-  promptedForRating = false;
   constructor(
     private router: Router,
     private userService: UserService,
@@ -121,7 +120,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
-      this.promptedForRating = false;
+      this.ratingService.resetRatingInteraction(this.courseId);
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
     });
   }
@@ -265,22 +264,18 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     currentState?: RouterStateSnapshot,
     nextState?: RouterStateSnapshot
   ): Observable<boolean> | boolean {
-    const nextUrl = nextState?.url || '';
-    if (
-      this.promptedForRating ||
-      !this.courseDetail?._id ||
-      this.canManage ||
-      nextUrl.includes('/update') ||
-      nextUrl.includes('/step/') ||
-      nextUrl.includes('/exam') ||
-      nextUrl.includes('/survey') ||
-      nextUrl.includes('/progress/') ||
-      nextUrl.includes('/enrolled/')
-    ) {
+    if (this.parent || this.canManage || this.isOwnRoute(nextState?.url)) {
       return true;
     }
-    this.promptedForRating = true;
-    return this.ratingService.promptRating(this.courseDetail, 'course', this.parent);
+    return this.ratingService.promptRating(this.courseDetail, 'course');
+  }
+
+  // By segments because step links are absolute even under myCourses, and progress/enrolled are siblings of view
+  private isOwnRoute(url = '') {
+    const segments = url.split(/[?#]/)[0].split('/').map(segment => segment.split(';')[0]);
+    return segments.some((segment, index) =>
+      [ 'view', 'progress', 'enrolled' ].includes(segment) && segments[index + 1] === this.courseDetail._id
+    );
   }
 
 }

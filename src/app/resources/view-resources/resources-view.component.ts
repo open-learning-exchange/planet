@@ -87,8 +87,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
-  promptedForRating = false;
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -108,7 +106,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
-        this.promptedForRating = false;
+        this.ratingService.resetRatingInteraction(this.resourceId);
         this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
@@ -206,17 +204,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     currentState?: RouterStateSnapshot,
     nextState?: RouterStateSnapshot
   ): Observable<boolean> | boolean {
-    const nextUrl = nextState?.url || '';
-    if (
-      this.promptedForRating ||
-      !this.resource?._id ||
-      this.canManage ||
-      nextUrl.includes('/update') ||
-      nextUrl.includes('/add')
-    ) {
+    if (this.parent || this.canManage) {
       return true;
     }
-    this.promptedForRating = true;
-    return this.ratingService.promptRating(this.resource, 'resource', this.parent);
+    return this.ratingService.promptRating(this.resource, 'resource');
   }
 }

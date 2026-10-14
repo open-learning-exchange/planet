@@ -15,6 +15,7 @@ export const ratingFormFields: DialogField[] = [
     type: 'textarea',
     name: 'comment',
     placeholder: $localize`Would you like to leave a comment?`,
+    disabledHint: $localize`Select a rating to leave a comment`,
     required: false
   }
 ];
