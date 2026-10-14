@@ -194,8 +194,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   meetupsToggle(meetupIds, type) {
+    const ids = type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds;
     this.dialogsLoadingService.start();
-    this.meetupService.attendMeetups(type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds, type).pipe(
+    this.meetupService.attendMeetups(ids, type).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       this.countSelectedShelf(this.selection.selected);
@@ -207,7 +208,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   attendMeetup(meetup) {
     const meetupDate = (meetup.endDate || meetup.startDate);
     if ((meetupDate < this.dateNow && meetup.participate) || (meetupDate > this.dateNow)) {
-      this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
+      this.dialogsLoadingService.start();
+      this.meetupService.attendMeetup(meetup._id, meetup.participate).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe((res) => {
         const msg = res.participate ? $localize`left` : $localize`joined`;
         meetup.participate = !res.participate;
         this.countSelectedShelf(this.selection.selected);

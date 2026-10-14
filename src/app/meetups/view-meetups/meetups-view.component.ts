@@ -138,6 +138,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   joinMeetup() {
+    if (!this.meetupDetail) {
+      return;
+    }
     this.dialogsLoadingService.start();
     this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).pipe(
       finalize(() => this.dialogsLoadingService.stop())
