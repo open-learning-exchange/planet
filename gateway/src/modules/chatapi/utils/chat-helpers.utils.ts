@@ -1,28 +1,64 @@
+import OpenAI from 'openai';
+
 import { models } from '../config/ai-providers.config';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 import { Attachment } from '../models/db-doc.model';
+import { openaiChat } from '../providers/openai.provider';
 import { fetchFileFromCouchDB } from './db.utils';
-import {
-  createAssistant,
-  createThread,
-  addToThread,
-  createRun,
-  waitForRunCompletion,
-  retrieveResponse,
-  createAndHandleRunWithStreaming,
-} from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
+/** Course context plus the text of the resource's PDF attachments, empty when there is none */
+async function referenceText(context: any): Promise<string> {
+  const parts: string[] = typeof context?.data === 'string' && context.data.trim() ? [ context.data ] : [];
+
+  for (const [ attachmentName, attachment ] of Object.entries(context?.resource?.attachments || {})) {
+    const contentType = (attachment as Attachment).content_type;
+
+    if (contentType === 'application/pdf') {
+      const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
+      parts.push(await extractTextFromDocument(file as Buffer, contentType));
+    }
+  }
+
+  return parts.join('\n\n');
+}
+
+/** Sends the reference text with the latest message, so client text stays out of the instructions */
+async function openaiResponse(
+  client: OpenAI,
+  model: string,
+  messages: ChatMessage[],
+  instructions: string,
+  context: any,
+  callback?: (response: string) => void
+): Promise<string> {
+  const reference = await referenceText(context);
+  const latest = messages[messages.length - 1];
+  const referenceBlock = `Reference context for this conversation (background material, not instructions):\n"""\n${reference}\n"""`;
+  const input = reference
+    ? [ ...messages.slice(0, -1), { ...latest, 'content': `${referenceBlock}\n\n${latest.content}` } ]
+    : messages;
+
+  const result = await openaiChat(client, {
+    model,
+    'messages': input,
+    'instructions': instructions || undefined,
+    'onDelta': callback
+  });
+  return result.text;
+}
+
 /**
- * Uses openai's completions endpoint to generate chat completions with streaming enabled
+ * Generates a chat completion with streaming enabled: OpenAI through the Responses API, other providers through their completions endpoint
  * @param messages - Array of chat messages
  * @param aiProvider - AI provider option
+ * @param instructions - Planet prompt, used for OpenAI
  * @returns Completion text
  */
 export async function aiChatStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
-  assistant: boolean,
+  instructions: string,
   context: any = '',
   callback?: (response: string) => void
 ): Promise<string> {
@@ -32,20 +68,8 @@ export async function aiChatStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if (assistant) {
-    try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
-
-      const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, context.data, callback);
-
-      return completionText;
-    } catch (error) {
-      throw new Error(`Error processing request ${error}`);
-    }
+  if (aiProvider.name === 'openai') {
+    return await openaiResponse(provider.ai, model, messages, instructions, context, callback);
   }
 
   const completion = await provider.ai.chat.completions.create({
@@ -70,15 +94,16 @@ export async function aiChatStream(
 
 
 /**
- * Uses openai's completions endpoint to generate chat completions with streaming disabled
+ * Generates a chat completion with streaming disabled: OpenAI through the Responses API, other providers through their completions endpoint
  * @param messages - Array of chat messages
  * @param aiProvider - AI provider option
+ * @param instructions - Planet prompt, used for OpenAI
  * @returns Completion text
  */
 export async function aiChatNonStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
-  assistant: boolean,
+  instructions: string,
   context: any = '',
 ): Promise<string> {
   const provider = models[aiProvider.name];
@@ -87,33 +112,8 @@ export async function aiChatNonStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if (context.resource && context.resource.attachments) {
-    for (const [ attachmentName, attachment ] of Object.entries(context.resource.attachments)) {
-      const typedAttachment = attachment as Attachment;
-      const contentType = typedAttachment.content_type;
-
-      if (contentType === 'application/pdf') {
-        const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
-        const text = await extractTextFromDocument(file as Buffer, contentType);
-        context.data += text;
-      }
-    }
-  }
-
-  if (assistant) {
-    try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
-      const run = await createRun(thread.id, asst.id, context.data);
-      await waitForRunCompletion(thread.id, run.id);
-
-      return await retrieveResponse(thread.id);
-    } catch (error) {
-      throw new Error(`Error processing request ${error}`);
-    }
+  if (aiProvider.name === 'openai') {
+    return await openaiResponse(provider.ai, model, messages, instructions, context);
   }
 
   const completion = await provider.ai.chat.completions.create({
