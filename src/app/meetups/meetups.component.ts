@@ -8,7 +8,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -194,7 +194,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   meetupsToggle(meetupIds, type) {
-    this.meetupService.attendMeetups(type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds, type).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.meetupService.attendMeetups(type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds, type).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.countSelectedShelf(this.selection.selected);
     }, (error) => ((error)));
   }
