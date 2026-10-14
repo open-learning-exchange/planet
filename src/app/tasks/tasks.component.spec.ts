@@ -600,5 +600,9 @@ describe('TasksComponent read-only template', () => {
       data: { assignees },
       autoFocus: false
     });
+
+    const icon: HTMLElement = viewAssignees.querySelector('mat-icon');
+    expect(icon).toBeTruthy();
+    expect(icon.textContent.trim()).toBe('visibility');
   });
 });
