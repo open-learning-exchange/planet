@@ -179,10 +179,10 @@ describe('RatingService promptRating', () => {
     expect(dialogForms[0].controls.comment.disabled).toBe(true);
     dialogForms[0].controls.rate.setValue(4);
     expect(dialogForms[0].controls.comment.enabled).toBe(true);
-    expect(dialogs.confirm).toHaveBeenCalledWith(
-      'How would you rate this resource?', expect.any(Array), dialogForms[0], false, false,
-      { cancelLabel: 'Not now', submitLabel: 'Done' }
-    );
+    const actions = dialogs.confirm.mock.calls[0][5];
+    expect(actions).toMatchObject({ cancelLabel: 'Not now', submitLabel: 'Done' });
+    expect(actions.hideCancel({ rate: 0 })).toBe(false);
+    expect(actions.hideCancel({ rate: 4 })).toBe(true);
   });
 
   it('auto-saves stars and updates the same rating with a submitted comment', () => {

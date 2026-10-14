@@ -68,6 +68,7 @@ export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormVal
   confirmUnsavedChanges?: boolean;
   cancelLabel?: string;
   submitLabel?: string;
+  hideCancel?: (value: T) => boolean;
   [key: string]: unknown;
 }
 
@@ -93,13 +94,13 @@ export class DialogsFormService {
     formGroup: DialogFormGroupInput<T>,
     autoFocus = false,
     confirmUnsavedChanges = false,
-    labels: Pick<DialogsFormOptions, 'cancelLabel' | 'submitLabel'> = {}
+    actions: Pick<DialogsFormOptions<T>, 'cancelLabel' | 'submitLabel' | 'hideCancel'> = {}
   ): Observable<T | undefined> {
     const dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
       width: '600px',
       autoFocus,
       disableClose: confirmUnsavedChanges,
-      data: { title, fields, formGroup, closeOnSubmit: true, confirmUnsavedChanges, ...labels }
+      data: { title, fields, formGroup, closeOnSubmit: true, confirmUnsavedChanges, ...actions }
     });
     return new Observable<T | undefined>(observer => {
       const subscription = dialogRef.afterClosed().subscribe(observer);

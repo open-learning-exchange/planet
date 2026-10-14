@@ -299,7 +299,8 @@ export class RatingService {
         $localize`How would you rate this course?` :
         $localize`How would you rate this resource?`;
       subscriptions.add(this.dialogsFormService.confirm<RatingFormValue>(
-        title, ratingFormFields, formGroup, false, false, { cancelLabel: $localize`Not now`, submitLabel: $localize`Done` }
+        title, ratingFormFields, formGroup, false, false,
+        { cancelLabel: $localize`Not now`, submitLabel: $localize`Done`, hideCancel: ({ rate }) => rate > 0 }
       ).subscribe(result => {
         formSubscriptions.unsubscribe();
         subscriptions.add(this.completeRatingPrompt(item, type, formGroup, !result).pipe(
