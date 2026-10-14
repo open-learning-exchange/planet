@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MatDialogRef, MatDialog, MatDialogState } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
 import { AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlState, FormGroup, ValidatorFn } from '@angular/forms';
 
@@ -23,6 +23,7 @@ export interface DialogField<TName extends string = string> {
   suggestions?: string[];
   planetBeta?: boolean;
   tooltip?: string;
+  disabledHint?: string;
   reset?: boolean;
   text?: string;
   authorizedRoles?: string | string[];
@@ -65,6 +66,8 @@ export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormVal
   formOptions?: AbstractControlOptions;
   closeOnSubmit?: boolean;
   confirmUnsavedChanges?: boolean;
+  cancelLabel?: string;
+  submitLabel?: string;
   [key: string]: unknown;
 }
 
@@ -89,15 +92,24 @@ export class DialogsFormService {
     fields: DialogField[],
     formGroup: DialogFormGroupInput<T>,
     autoFocus = false,
-    confirmUnsavedChanges = false
+    confirmUnsavedChanges = false,
+    labels: Pick<DialogsFormOptions, 'cancelLabel' | 'submitLabel'> = {}
   ): Observable<T | undefined> {
     const dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
       width: '600px',
       autoFocus,
       disableClose: confirmUnsavedChanges,
-      data: { title, fields, formGroup, closeOnSubmit: true, confirmUnsavedChanges }
+      data: { title, fields, formGroup, closeOnSubmit: true, confirmUnsavedChanges, ...labels }
     });
-    return dialogRef.afterClosed() as Observable<T | undefined>;
+    return new Observable<T | undefined>(observer => {
+      const subscription = dialogRef.afterClosed().subscribe(observer);
+      return () => {
+        subscription.unsubscribe();
+        if (dialogRef.getState() === MatDialogState.OPEN) {
+          dialogRef.close();
+        }
+      };
+    });
   }
 
   openDialogsForm<T extends DialogFormValueMap = DialogFormValueMap>(

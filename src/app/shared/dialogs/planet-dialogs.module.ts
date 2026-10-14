@@ -12,7 +12,6 @@ import {
 } from '@shared/challenges/challenges-announcement-dialog.component';
 import { PlanetRatingDialogComponent, PlanetRatingDialogDirective } from '@shared/ratings/planet-rating-dialog.component';
 
-import { DialogsFormService } from './dialogs-form.service';
 import { DialogsFormComponent } from './dialogs-form.component';
 import { DialogsPromptComponent } from './dialogs-prompt.component';
 import { DialogsViewComponent } from './dialogs-view.component';
@@ -58,7 +57,6 @@ import { SyncDirective } from '../../manager-dashboard/sync.directive';
     SyncDirective
   ],
   providers: [
-    DialogsFormService,
     DialogsListService
   ]
 })
