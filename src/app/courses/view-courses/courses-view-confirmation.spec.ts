@@ -14,7 +14,8 @@ describe('CoursesViewComponent enrollment', () => {
       {} as any,
       { configuration: {} } as any,
       { deviceType: signal(undefined) } as any,
-      dialog
+      dialog,
+      { start: vi.fn(), stop: vi.fn() } as any
     );
     component.courseDetail = { courseTitle: 'Course 1' };
     return component;

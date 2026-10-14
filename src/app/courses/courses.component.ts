@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
+import { map, switchMap, takeUntil, catchError, finalize } from 'rxjs/operators';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -435,7 +435,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       return;
     }
     const validIds = courseIds.filter(id => this.hasSteps(id));
-    this.coursesService.courseAdmissionMany(validIds, type, this.parent).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.coursesService.courseAdmissionMany(validIds, type, this.parent).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
@@ -569,7 +572,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       });
       return;
     }
-    this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.coursesService.courseResignAdmission(courseId, type, courseTitle).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
