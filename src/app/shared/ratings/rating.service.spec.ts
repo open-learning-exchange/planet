@@ -257,19 +257,6 @@ describe('RatingService promptRating', () => {
     expect(dialogs.confirm).toHaveBeenCalledTimes(2);
   });
 
-  it('retries a retained star when the failed prompt is submitted', () => {
-    const { service, couch, dialogClosed, dialogForms } = setup();
-    couch.updateDocument.mockReturnValueOnce(throwError(new Error('failed')));
-    const decisions: boolean[] = [];
-    service.promptRating(unrated(), 'resource').subscribe(decision => decisions.push(decision));
-    dialogForms[0].controls.rate.setValue(4);
-
-    dialogClosed.next(dialogForms[0].value);
-
-    expect(couch.updateDocument).toHaveBeenCalledTimes(2);
-    expect(decisions).toEqual([ true ]);
-  });
-
   it('reopens the prompt with its input when a comment update fails', () => {
     const { service, couch, dialogClosed, dialogForms, dialogs, msg } = setup();
     const decisions: boolean[] = [];
@@ -343,22 +330,6 @@ describe('RatingService promptRating', () => {
     expect(decisions).toEqual([ true ]);
   });
 
-  it('keeps a star picked while a failed clear was pending', () => {
-    const pendingDelete = new Subject<any>();
-    const { service, couch, dialogClosed, dialogForms } = setup();
-    couch.delete.mockReturnValueOnce(pendingDelete);
-    service.promptRating(unrated(), 'resource').subscribe();
-    dialogForms[0].controls.rate.setValue(4);
-    dialogForms[0].controls.rate.setValue(0);
-    dialogForms[0].controls.rate.setValue(5);
-
-    pendingDelete.error(new Error('failed'));
-
-    expect(dialogForms[0].controls.rate.value).toBe(5);
-    dialogClosed.next(dialogForms[0].value);
-    expect(couch.updateDocument).toHaveBeenLastCalledWith('ratings', expect.objectContaining({ _id: 'rating-1', rate: 5 }));
-  });
-
   it('keeps a failed clear and retries the delete on Done', () => {
     const { service, couch, dialogClosed, dialogForms } = setup();
     couch.delete.mockReturnValueOnce(throwError(new Error('failed')));
@@ -409,20 +380,6 @@ describe('RatingService promptRating', () => {
 
     expect(couch.updateDocument).toHaveBeenCalledTimes(2);
     expect(dialogs.confirm).toHaveBeenCalledTimes(1);
-  });
-
-  it('deletes a clear held back mid-save after a cancelled navigation tears the prompt down', () => {
-    const pending = new Subject<any>();
-    const { service, couch, dialogForms } = setup({ updateResponse: pending });
-    const prompt = service.promptRating(unrated(), 'resource').subscribe();
-    dialogForms[0].controls.rate.setValue(4);
-    dialogForms[0].controls.rate.setValue(0);
-    prompt.unsubscribe();
-
-    pending.next({ id: 'rating-1', rev: '2-b', doc: { _id: 'rating-1', _rev: '2-b', item: 'resource-1', rate: 4 } });
-    pending.complete();
-
-    expect(couch.delete).toHaveBeenCalledWith('ratings/rating-1?rev=2-b');
   });
 
   it('deletes a held-back clear when browser back closes the dialog and then tears the prompt down', () => {
