@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, On
 import {
   Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
 } from '@angular/router';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { AnimationEvent, trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
@@ -293,6 +293,13 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   endAnimation() {
     if (this.animDisp) {
       this.animDisp.unsubscribe();
+    }
+  }
+
+  // An interrupted toggle reports done after the next toggle has started its interval.
+  sidenavAnimationDone({ toState }: AnimationEvent) {
+    if (toState === this.sidenavState) {
+      this.endAnimation();
     }
   }
 
