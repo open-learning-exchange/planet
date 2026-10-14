@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { Subject, defer } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -20,6 +20,7 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 import { LanguageLabelComponent } from '@shared/language/language-label.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
 
 import { environment } from '../../../environments/environment';
@@ -95,7 +96,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
-    private linkCopyService: LinkCopyService
+    private linkCopyService: LinkCopyService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -164,7 +166,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.resourcesService.libraryAddRemove([ resourceId ], type).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
   }

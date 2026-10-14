@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, finalize } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -397,7 +397,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       return;
     }
-    this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.resourcesService.libraryAddRemove(resourceIds, type).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.pageSelection.removeFiltered();
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
