@@ -199,7 +199,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       this.countSelectedShelf(this.selection.selected);
-    }, (error) => ((error)));
+    }, () => this.planetMessageService.showAlert(
+      type === 'remove' ? $localize`There was a problem leaving these meetups` : $localize`There was a problem joining these meetups`
+    ));
   }
 
   attendMeetup(meetup) {
@@ -210,7 +212,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
         meetup.participate = !res.participate;
         this.countSelectedShelf(this.selection.selected);
         this.planetMessageService.showMessage($localize`You have ${msg} meetup.`);
-      });
+      }, () => this.planetMessageService.showAlert(
+        meetup.participate ? $localize`There was a problem leaving this meetup` : $localize`There was a problem joining this meetup`
+      ));
     } else {
       this.planetMessageService.showMessage($localize`You cannot join an old meetup.`);
     }

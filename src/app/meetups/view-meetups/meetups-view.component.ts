@@ -146,7 +146,10 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       this.meetupDetail.participate = !res.participate;
       this.planetMessageService.showMessage($localize`You have ${msg} meetup.`);
       this.fixEnrolledList(res.participate, this.userService.get().name);
-    });
+    }, () => this.planetMessageService.showAlert(this.meetupDetail.participate ?
+      $localize`There was a problem leaving this meetup` :
+      $localize`There was a problem joining this meetup`
+    ));
   }
 
   openInviteMemberDialog() {

@@ -171,7 +171,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
-    }, (error) => ((error)));
+    }, () => this.planetMessageService.showAlert($localize`There was a problem adding this resource to myLibrary.`));
   }
 
   copyLink() {

@@ -403,7 +403,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((res) => {
       this.pageSelection.removeFiltered();
       this.onSelectionChange(this.selection.selected);
-    }, (error) => ((error)));
+    }, () => this.planetMessageService.showAlert($localize`There was a problem adding to myLibrary.`));
   }
 
   shareResource(type, resources) {
