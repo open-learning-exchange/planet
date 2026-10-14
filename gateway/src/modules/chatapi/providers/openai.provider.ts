@@ -49,6 +49,7 @@ const requireUsableResponse = (response: OpenAI.Responses.Response, text: string
 const buildParams = (request: ProviderChatRequest): OpenAI.Responses.ResponseCreateParamsNonStreaming => ({
   'model': request.model,
   'store': false,
+  'truncation': 'auto',
   'input': toInput(request.messages),
   'instructions': request.instructions,
   'tools': request.vectorStoreIds?.length

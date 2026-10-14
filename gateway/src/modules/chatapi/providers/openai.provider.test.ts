@@ -10,13 +10,14 @@ const baseRequest = (): ProviderChatRequest => ({
 });
 
 describe('OpenAI Responses provider', () => {
-  it('sends basic chat without retaining the response', async () => {
+  it('sends basic chat without retaining the response, truncating history that outgrows the context', async () => {
     const create = vi.fn().mockResolvedValue({ 'id': 'resp_1', 'status': 'completed', 'output_text': 'answer' });
     const result = await openaiChat({ 'responses': { create } } as any, baseRequest());
     expect(create).toHaveBeenCalledWith(
       {
         'model': 'gpt-test',
         'store': false,
+        'truncation': 'auto',
         'input': [ { 'role': 'user', 'content': 'hello' } ],
         'instructions': 'BE HELPFUL'
       },

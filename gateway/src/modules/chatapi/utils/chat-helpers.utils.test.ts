@@ -82,6 +82,30 @@ describe('OpenAI chat turns', () => {
     expect(mocks.create.mock.calls[0][0].input[2].content).toContain('PDF TEXT');
   });
 
+  it('answers without an attachment that cannot be read', async () => {
+    mocks.create.mockResolvedValue({ 'status': 'completed', 'output_text': 'answer' });
+    mocks.fetchFile.mockResolvedValue({ 'error': 'Unable to retrieve file from CouchDB' });
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const text = await aiChatNonStream(history, { 'name': 'openai' }, 'PLANET PROMPT', courseContext);
+
+    expect(text).toEqual('answer');
+    expect(mocks.extractText).not.toHaveBeenCalled();
+    expect(mocks.create.mock.calls[0][0].input[2].content).toContain('Course step: Water');
+  });
+
+  it('cuts reference text past the cap, keeping the course step', async () => {
+    mocks.create.mockResolvedValue({ 'status': 'completed', 'output_text': 'answer' });
+    mocks.extractText.mockResolvedValue('x'.repeat(100000));
+
+    await aiChatNonStream(history, { 'name': 'openai' }, 'PLANET PROMPT', courseContext);
+
+    const content: string = mocks.create.mock.calls[0][0].input[2].content;
+    expect(content).toContain('Course step: Water');
+    expect(content).toContain('[The rest of this material was cut to fit.]');
+    expect(content.length).toBeLessThan(61000);
+  });
+
   it('sends a turn without context or a prompt as it is', async () => {
     mocks.create.mockResolvedValue({ 'status': 'completed', 'output_text': 'answer' });
 

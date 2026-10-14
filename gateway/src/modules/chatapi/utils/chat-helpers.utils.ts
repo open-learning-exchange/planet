@@ -7,7 +7,10 @@ import { openaiChat } from '../providers/openai.provider';
 import { fetchFileFromCouchDB } from './db.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
-/** Course context plus the text of the resource's PDF attachments, empty when there is none */
+// Characters, about 15k tokens: one long PDF must not overflow the model or bill the whole book every turn
+const REFERENCE_MAX_LENGTH = 60000;
+
+/** Course context plus the text of the resource's PDF attachments, capped, empty when there is none */
 async function referenceText(context: any): Promise<string> {
   const parts: string[] = typeof context?.data === 'string' && context.data.trim() ? [ context.data ] : [];
 
@@ -15,12 +18,23 @@ async function referenceText(context: any): Promise<string> {
     const contentType = (attachment as Attachment).content_type;
 
     if (contentType === 'application/pdf') {
-      const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
-      parts.push(await extractTextFromDocument(file as Buffer, contentType));
+      try {
+        const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
+        if (!Buffer.isBuffer(file)) {
+          throw new Error(file.error);
+        }
+        parts.push(await extractTextFromDocument(file, contentType));
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Skipping attachment ${attachmentName} of resource ${context.resource.id}: ${error}`);
+      }
     }
   }
 
-  return parts.join('\n\n');
+  const text = parts.join('\n\n');
+  return text.length > REFERENCE_MAX_LENGTH
+    ? `${text.slice(0, REFERENCE_MAX_LENGTH)}\n[The rest of this material was cut to fit.]`
+    : text;
 }
 
 /** Sends the reference text with the latest message, so client text stays out of the instructions */
