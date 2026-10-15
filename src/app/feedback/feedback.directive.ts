@@ -1,20 +1,22 @@
 import { Directive, HostListener, Input } from '@angular/core';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
 import { Validators } from '@angular/forms';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
-import { FeedbackService } from './feedback.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { AuthGuard } from '../shared/auth/auth.guard';
 import { from, Observable, of } from 'rxjs';
 import { catchError, concatMap, filter, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { PendingAttachment } from '../shared/forms/file-upload.component';
-import { couchAttachmentPath, NormalizedImage, normalizeImage } from '../shared/utils';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { PendingAttachment } from '@shared/forms/file-upload.component';
+import { couchAttachmentPath, NormalizedImage, normalizeImage } from '@shared/utils';
+
+import { FeedbackService } from './feedback.service';
+import { CustomValidators } from '../validators/custom-validators';
 import {
   FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_SCREENSHOT_TYPES, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
   normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,

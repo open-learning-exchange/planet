@@ -1,6 +1,4 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -10,24 +8,28 @@ import {
 } from '@angular/material/table';
 import { map, switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields, sortNumberOrString } from '../../shared/tables/table.helpers';
-import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
-import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
-import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { AbstractControl, NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { CustomValidators } from '../../validators/custom-validators';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
-import { ValidatorService } from '../../validators/validator.service';
-import { ReportsService } from '../reports/reports.service';
-import { findDocuments } from '../../shared/database/mango-queries';
-import { DeviceInfoService } from '../../shared/ui/device-info.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { filterSpecificFields, sortNumberOrString } from '@shared/tables/table.helpers';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
+import { ReportsService } from '../reports/reports.service';
 
 interface EditChildNameFormControls {
   name: FormControl<string>;

@@ -1,28 +1,32 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../shared/auth/user.service';
-import { StateService } from '../shared/state.service';
-import { NewsService } from './news.service';
-import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
-import { AuthGuard } from '../shared/auth/auth.guard';
-import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
-import { DeviceInfoService } from '../shared/ui/device-info.service';
 import { Subject } from 'rxjs';
 import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { LabelComponent } from '../shared/ui/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TimeAgoPipe } from '../shared/text/time-ago.pipe';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
-import { FullNamePipe } from '../shared/text/full-name.pipe';
-import { LinkCopyService } from '../shared/ui/link-copy.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '@shared/utils';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { LabelComponent } from '@shared/ui/label.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+
+import { NewsService } from './news.service';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
+import {
+  CustomVoiceLabel, DEFAULT_VOICE_LABELS, dedupeCustomVoiceLabels, dedupeVoiceLabels, labelColorClass, normalizeVoiceLabel, voiceLabelsEqual
+} from './news-labels';
 import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
@@ -69,7 +73,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Input() customLabels: string[] = [];
+  @Input() customLabels: (string | CustomVoiceLabel)[] = [];
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
@@ -79,6 +83,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ ...DEFAULT_VOICE_LABELS ] };
+  labelColors = new Map<string, string>();
   teamLabels = [];
   previewLimit = 500;
   readonly isMobile = this.deviceInfoService.isMobile;
@@ -126,6 +131,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.labels.listed = this.labels.all.filter(label =>
       !(this.item.doc.labels || []).some(itemLabel => voiceLabelsEqual(itemLabel, label))
     );
+    this.labelColors = new Map(dedupeCustomVoiceLabels(this.customLabels).map(({ name, color }) => [ name.toLowerCase(), color ]));
+  }
+
+  labelColorClass(label: string): string {
+    return labelColorClass(this.labelColors.get(normalizeVoiceLabel(label)));
   }
 
   get canEditLabels(): boolean {

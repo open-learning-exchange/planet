@@ -3,6 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { SurveysComponent } from './surveys.component';
 
 describe('SurveysComponent', () => {
@@ -161,6 +163,15 @@ describe('SurveysComponent', () => {
     component.toggleSurveysView();
 
     expect(component.surveys.data).toEqual([ archivedSurvey ]);
+  });
+
+  it('clears the selection when switching views', () => {
+    component.selection.select('survey-1');
+    component.currentFilter.viewMode = 'adopt';
+
+    component.toggleSurveysView();
+
+    expect(component.selection.isEmpty()).toBe(true);
   });
 
   it('explains question-dependent actions when a survey has no questions', () => {

@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/database/couchdb.service';
 import { finalize, map, switchMap } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { addDateAndTime, getClockTime } from '@shared/utils';
+import { findDocuments } from '@shared/database/mango-queries';
+
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { StateService } from '../shared/state.service';
-import { of, Subject } from 'rxjs';
-import { addDateAndTime, getClockTime } from '../shared/utils';
-import { findDocuments } from '../shared/database/mango-queries';
-import { assigneeMatches, effectiveAssignees, storedAssignee } from './tasks.utils';
+import { assigneeMatches, effectiveAssignees, effectiveTaskStatus, storedAssignee, TaskStatus } from './tasks.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +62,7 @@ export class TasksService {
       ...newTask,
       deadline,
       ...additionalFields,
+      status: effectiveTaskStatus(task),
       assignee: assignees[0] || '',
       assignees,
       deadlineTime: undefined
@@ -95,6 +98,10 @@ export class TasksService {
         description: task.description || ''
       }
     };
+  }
+
+  setTaskStatus(task, status: TaskStatus) {
+    return this.addTask({ ...task, status, completed: status === 'completed' });
   }
 
   addTask(task) {

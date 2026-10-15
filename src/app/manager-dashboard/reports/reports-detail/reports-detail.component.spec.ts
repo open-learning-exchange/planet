@@ -2,8 +2,9 @@ import { vi } from 'vitest';
 import { signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { ReportsDetailComponent } from './reports-detail.component';
-import { DeviceType } from '../../../shared/ui/device-info.service';
 import { ReportsService } from '../reports.service';
 
 describe('ReportsDetailComponent exports', () => {

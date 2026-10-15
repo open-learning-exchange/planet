@@ -2,10 +2,12 @@ import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
 import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
+
+import { languages } from '@shared/language/languages';
+import { dedupeShelfReduce } from '@shared/utils';
+import { trackByCategory } from '@shared/tables/table.helpers';
+
 import * as constants from '../courses.constants';
-import { languages } from '../../shared/language/languages';
-import { dedupeShelfReduce } from '../../shared/utils';
-import { trackByCategory } from '../../shared/tables/table.helpers';
 
 
 @Component({

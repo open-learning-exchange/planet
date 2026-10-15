@@ -8,20 +8,8 @@ import {
 } from '@angular/material/table';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
-import {
-  filterSpecificFieldsHybrid, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
-} from '../shared/tables/table.helpers';
-import { TeamsService } from './teams.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService } from '../shared/ui/device-info.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -30,9 +18,23 @@ import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import {
+  filterSpecificFieldsHybrid, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
+} from '@shared/tables/table.helpers';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { TeamsService } from './teams.service';
+import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
-import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { enterpriseJoinAgreement } from './teams.utils';
 
 @Component({
@@ -374,11 +376,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   joinRequest$(team: any) {
     return this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
-      switchMap(() => this.teamsService.getTeamMembers(team)),
-      switchMap((docs) => this.teamsService.sendNotifications('request', docs, {
-        team,
-        url: this.router.url + '/view/' + team._id
-      })),
+      switchMap((requested) => requested ? this.teamsService.getTeamMembers(team).pipe(
+        switchMap((docs) => this.teamsService.sendNotifications('request', docs, {
+          team,
+          url: this.router.url + '/view/' + team._id
+        }))
+      ) : of({})),
       switchMap(() => this.getMembershipStatus())
     );
   }

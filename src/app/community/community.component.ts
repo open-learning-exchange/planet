@@ -4,43 +4,46 @@ import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { EMPTY, Subject, Subscription, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, take, filter } from 'rxjs/operators';
-import { StateService } from '../shared/state.service';
-import { NewsService } from '../news/news.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { CommunityLinkDialogComponent } from './community-link-dialog.component';
-import { TeamsService } from '../teams/teams.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { UserService } from '../shared/auth/user.service';
-import { UsersService } from '../users/users.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { CustomValidators } from '../validators/custom-validators';
-import { environment } from '../../environments/environment';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
-import { ChallengesAnnouncementSuccessDialogComponent } from '../shared/challenges/challenges-announcement-dialog.component';
-import { ChallengesUserStatusService } from '../shared/challenges/challenges-user-status.service';
-import { ConfigurationCheckService } from '../configuration/configuration-check.service';
-import { ChallengesService } from '../shared/challenges/challenges.service';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
-import { NewsListComponent } from '../news/news-list.component';
 import { MatIcon } from '@angular/material/icon';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { TeamsMemberComponent } from '../teams/teams-member.component';
-import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import {
   MatNavList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { StateService } from '@shared/state.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { planetAndParentId } from '@shared/utils';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { ChallengesAnnouncementSuccessDialogComponent } from '@shared/challenges/challenges-announcement-dialog.component';
+import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetCalendarComponent } from '@shared/calendar/planet-calendar.component';
+
+import { NewsService } from '../news/news.service';
+import { CommunityLinkDialogComponent } from './community-link-dialog.component';
+import { TeamsService } from '../teams/teams.service';
+import { UsersService } from '../users/users.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { environment } from '../../environments/environment';
+import { ConfigurationCheckService } from '../configuration/configuration-check.service';
+import { NewsListComponent } from '../news/news-list.component';
+import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { CommunityListComponent } from './community-list.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { CustomVoiceLabel } from '../news/news-labels';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports/teams-reports.component';
-import { PlanetCalendarComponent } from '../shared/calendar/planet-calendar.component';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -80,7 +83,7 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
-  private readonly emptyVoiceLabels: string[] = [];
+  private readonly emptyVoiceLabels: CustomVoiceLabel[] = [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -418,7 +421,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamObject(planetCode?: string) {
     const code = planetCode || this.stateService.configuration.code;
     const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
-    const teamId = `${code}@${parentCode}`;
+    const teamId = planetAndParentId({ code, parentCode });
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
 
@@ -662,7 +665,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.currentTab = index;
   }
 
-  get customVoiceLabels(): string[] {
+  get customVoiceLabels(): (string | CustomVoiceLabel)[] {
     return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
@@ -679,7 +682,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       width: '500px',
       autoFocus: false,
       data: { target: 'community', team: this.team, customLabels: this.customVoiceLabels }
-    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+    }).afterClosed().subscribe((updatedLabels?: CustomVoiceLabel[]) => {
       if (updatedLabels) {
         this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }

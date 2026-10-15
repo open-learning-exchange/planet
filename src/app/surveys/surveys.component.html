@@ -52,7 +52,8 @@
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
             [checked]="selection.hasValue() && pageSelection.isAllSelected()"
-            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
+            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()"
+            [disabled]="currentFilter.viewMode === 'adopt'">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">

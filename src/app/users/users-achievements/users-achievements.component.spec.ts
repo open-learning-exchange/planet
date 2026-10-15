@@ -3,17 +3,18 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, ParamMap, Router, RouterLink } from '@angular/router';
 
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { PdfService } from '@shared/export/pdf.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+
 import { UsersAchievementsComponent } from './users-achievements.component';
 import { UsersAchievementsService } from './users-achievements.service';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { UserService } from '../../shared/auth/user.service';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { CoursesService } from '../../courses/courses.service';
-import { CertificationsService } from '../../shared/certifications/certifications.service';
-import { PdfService } from '../../shared/export/pdf.service';
-import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
-import { LinkCopyService } from '../../shared/ui/link-copy.service';
 
 // The real spinner keeps nested SCSS in its inline styles, which JSDOM cannot parse
 @Component({ selector: 'planet-loading-spinner', template: '' })

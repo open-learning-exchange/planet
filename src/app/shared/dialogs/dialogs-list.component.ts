@@ -11,8 +11,6 @@ import {
   MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { composeFilterFunctions, filterDropdowns } from '../tables/table.helpers';
-import { PaginatedSelection } from '../tables/paginated-selection.helpers';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
@@ -23,7 +21,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
-import { fullName } from '../utils';
+
+import { composeFilterFunctions, filterDropdowns } from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { fullName } from '@shared/utils';
 
 @Component({
   templateUrl: './dialogs-list.component.html',

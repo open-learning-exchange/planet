@@ -1,10 +1,11 @@
 import * as papa from 'papaparse';
 import { of } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
-
 import { ExportToCsv } from 'export-to-csv/build';
+
+import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+
 import { CSV_PREVIEW_MAX_ROWS, CsvService } from './csv.service';
-import { MarkdownRenderService } from '../markdown/markdown-render.service';
 
 describe('CsvService', () => {
   let service: CsvService;

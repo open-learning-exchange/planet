@@ -3,19 +3,20 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { UserService } from '@shared/auth/user.service';
 
 import { RequestsComponent } from './requests.component';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
-import { DeviceInfoService } from '../../shared/ui/device-info.service';
-import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
-import { UserService } from '../../shared/auth/user.service';
 
 describe('RequestsComponent', () => {
   let component: RequestsComponent;
