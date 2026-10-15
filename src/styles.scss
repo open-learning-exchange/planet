@@ -424,7 +424,6 @@ body {
     }
   }
 
-  // Keep these paths bounded so views inside tabs retain their own sizing.
   :is(mat-sidenav-content, .mat-mdc-dialog-content) > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height, > * > .space-container > .view-full-height) {
     display: flex;
     flex-direction: column;
@@ -452,7 +451,6 @@ body {
     }
   }
 
-  // Dialog content has only a max-height; this height is clamped to it so the list or media inside can fill it.
   .mat-mdc-dialog-content:has(> * > .view-full-height, > * > .space-container > .view-full-height, > * > .space-container > * > .view-full-height, > planet-resources-viewer :is(iframe, .csv-container)) {
     height: 100vh;
   }
@@ -687,12 +685,10 @@ body {
     max-height: calc(90vh - 96px);
   }
 
-  // Material's dialog copies this with max-height: inherit, where the overlay's default 100% can't resolve.
   .cdk-overlay-pane.mat-mdc-dialog-panel {
     max-height: var(--planet-vh);
   }
 
-  // Material writes each dialog's size inline from its open() config; only !important beats that.
   @media (max-width: v.$screen-sm) {
     .cdk-overlay-pane.mat-mdc-dialog-panel {
       min-width: 0 !important;
