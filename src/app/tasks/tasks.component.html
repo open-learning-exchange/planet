@@ -38,8 +38,8 @@
         }
         <ng-container matListItemMeta>
           @if (taskView.assignees.length > 1) {
-            <button mat-icon-button class="km-view-assignees" matTooltip="View Assignees" i18n-matTooltip
-              (click)="openAssigneesPopup(taskView.assignees); $event.stopPropagation()"><mat-icon>visibility</mat-icon></button>
+            <button mat-icon-button class="view-assignees km-view-assignees" matTooltip="View Assignees" i18n-matTooltip
+              (click)="openAssigneesPopup(taskView.assignees); $event.stopPropagation()"><mat-icon>group</mat-icon></button>
           }
           @if (editable) {
             <button mat-icon-button matTooltip="Edit Task" i18n-matTooltip (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>

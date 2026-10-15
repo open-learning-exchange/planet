@@ -594,6 +594,8 @@ describe('TasksComponent read-only template', () => {
     expect(row).toBeTruthy();
     expect(title.getAttribute('tabindex')).toBeNull();
     expect(viewAssignees.disabled).toBe(false);
+    expect(viewAssignees.classList.contains('view-assignees')).toBe(true);
+    expect(viewAssignees.querySelector('mat-icon')?.textContent?.trim()).toBe('group');
 
     viewAssignees.click();
     expect(dialog.open).toHaveBeenCalledWith(TasksAssigneesDialogComponent, {

@@ -19,6 +19,28 @@ planet-tasks {
       order: 3;
     }
 
+    .view-assignees {
+      order: 2;
+      --mdc-icon-button-icon-size: 24px;
+      --mdc-icon-button-state-layer-size: 40px;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 50%;
+      background-color: v.$light-grey;
+      color: v.$grey-text;
+
+      &:hover {
+        background-color: v.$medium-grey;
+      }
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
     .mat-mdc-list-item.mdc-list-item--with-leading-avatar .mdc-list-item__content {
       margin-left: -16px;
     }
