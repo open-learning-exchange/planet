@@ -1,0 +1,296 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import cors from 'cors';
+
+vi.mock('../config/couch.config', () => ({ 'couchBaseUrl': 'http://couchdb:5984' }));
+
+import {
+  allowedOrigins,
+  authenticateUpgrade,
+  authSessionCookie,
+  browserCorsOptions,
+  isTrustedOrigin,
+  requestScheme,
+  requireSession,
+  requireSessionExcept,
+  SessionValidationBusyError,
+  validateSession
+} from './auth';
+
+const validSession = (name = 'amara', roles: string[] = [], headers = new Headers()) => ({
+  'ok': true,
+  headers,
+  'json': async () => ({ 'userCtx': { name, roles } })
+});
+
+const mockResponse = () => {
+  const res: any = { 'locals': {} };
+  res.status = vi.fn().mockReturnValue(res);
+  res.json = vi.fn().mockReturnValue(res);
+  return res;
+};
+
+const corsHeaders = async (origin: string, scheme?: string) => {
+  const headers = new Map<string, unknown>();
+  const req: any = { 'method': 'GET', 'headers': { origin, 'host': 'planet.local:5000' } };
+  const res: any = {
+    'getHeader': (name: string) => headers.get(name.toLowerCase()),
+    'setHeader': (name: string, value: unknown) => headers.set(name.toLowerCase(), value)
+  };
+  const middleware = cors((request, callback) => {
+    callback(null, browserCorsOptions(request.headers.origin, request.headers.host, scheme));
+  });
+  await new Promise<void>((resolve, reject) => middleware(req, res, (error?: unknown) => error ? reject(error) : resolve()));
+  return headers;
+};
+
+const mockSocket = () => {
+  const socket: any = {};
+  socket.on = vi.fn().mockReturnValue(socket);
+  socket.once = vi.fn().mockReturnValue(socket);
+  socket.removeListener = vi.fn().mockReturnValue(socket);
+  socket.end = vi.fn();
+  socket.destroy = vi.fn();
+  return socket;
+};
+
+const upgrade = async (headers: Record<string, string>, ws: unknown = {}) => {
+  const socket = mockSocket();
+  const wss = {
+    'handleUpgrade': vi.fn((request: unknown, upgradeSocket: unknown, head: unknown, done: (client: unknown) => void) => done(ws)),
+    'emit': vi.fn()
+  };
+  const req: any = { 'headers': { 'host': 'planet.local', ...headers } };
+  await authenticateUpgrade(wss as any)(req, socket, Buffer.alloc(0));
+  return { req, socket, wss };
+};
+
+describe('gateway authentication', () => {
+  const fetchMock = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    fetchMock.mockReset();
+    vi.stubGlobal('fetch', fetchMock);
+    delete process.env.CORS_ORIGINS;
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    delete process.env.CORS_ORIGINS;
+  });
+
+  it('extracts only an exact non-empty AuthSession cookie', () => {
+    expect(authSessionCookie('theme=dark; AuthSession=; AuthSession= deadbeef ; mode=compact')).toEqual('deadbeef');
+    expect(authSessionCookie('AuthSessionId=wrong; MapAuthSession=wrong')).toBeUndefined();
+    expect(authSessionCookie('AuthSession=   ')).toBeUndefined();
+    expect(authSessionCookie(undefined)).toBeUndefined();
+  });
+
+  it('parses only configured cross-origin additions, normalized to browser origins', () => {
+    expect(allowedOrigins()).toEqual([]);
+    process.env.CORS_ORIGINS = ' http://localhost:3000/, https://planet.example:443 , not-a-url, ';
+    expect(allowedOrigins()).toEqual([ 'http://localhost:3000', 'https://planet.example' ]);
+  });
+
+  it('trusts the exact request host, port included, and configured origins only', () => {
+    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example:8443', 'https')).toEqual(true);
+    expect(isTrustedOrigin('https://planet.example:8443', 'Planet.Example:8443', undefined)).toEqual(true);
+    expect(isTrustedOrigin('https://planet.example', 'planet.example:443', 'https')).toEqual(true);
+    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example', 'https')).toEqual(false);
+    process.env.CORS_ORIGINS = 'https://planet.example:8443';
+    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example', 'https')).toEqual(true);
+    expect(isTrustedOrigin('not a URL', 'planet.example', 'https')).toEqual(false);
+  });
+
+  it('requires a matching scheme only when a proxy reports one', () => {
+    expect(isTrustedOrigin('http://planet.example', 'planet.example', 'https')).toEqual(false);
+    expect(isTrustedOrigin('https://planet.example', 'planet.example', undefined)).toEqual(true);
+  });
+
+  it('reads the first forwarded scheme and nothing when there is none', () => {
+    expect(requestScheme({ 'x-forwarded-proto': 'https, http' })).toEqual('https');
+    expect(requestScheme({ 'x-forwarded-proto': 'wss' })).toEqual('https');
+    expect(requestScheme({})).toBeUndefined();
+  });
+
+  it('reflects trusted CORS origins and emits no wildcard for untrusted origins', async () => {
+    process.env.CORS_ORIGINS = 'http://localhost:3000';
+    const trusted = await corsHeaders('http://localhost:3000');
+    const untrusted = await corsHeaders('http://evil.test');
+
+    expect(trusted.get('access-control-allow-origin')).toEqual('http://localhost:3000');
+    expect(trusted.get('access-control-allow-credentials')).toEqual('true');
+    expect(untrusted.has('access-control-allow-origin')).toEqual(false);
+  });
+
+  it('does not reflect a same-host origin with the wrong scheme', async () => {
+    const headers = await corsHeaders('http://planet.local:5000', 'https');
+    expect(headers.has('access-control-allow-origin')).toEqual(false);
+  });
+
+  it('rejects requests without credentials before calling CouchDB', async () => {
+    const res = mockResponse();
+    const next = vi.fn();
+    await requireSession({ 'headers': { 'cookie': 'theme=dark', 'authorization': 'Bearer token' } } as any, res, next);
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(next).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects an invalid session', async () => {
+    fetchMock.mockResolvedValue({ 'ok': true, 'json': async () => ({ 'userCtx': { 'name': null } }) });
+    const res = mockResponse();
+    const next = vi.fn();
+    await requireSession({ 'headers': { 'cookie': 'AuthSession=deadbeef' } } as any, res, next);
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('forwards only the session cookie and exposes the session', async () => {
+    const timeout = vi.spyOn(AbortSignal, 'timeout');
+    fetchMock.mockResolvedValue(validSession('amara', [ 'manager' ]));
+    const res = mockResponse();
+    const next = vi.fn();
+    await requireSession({ 'headers': { 'cookie': 'theme=dark; AuthSession=deadbeef' } } as any, res, next);
+    expect(fetchMock).toHaveBeenCalledWith('http://couchdb:5984/_session', {
+      'headers': { 'cookie': 'AuthSession=deadbeef' },
+      'signal': expect.any(AbortSignal)
+    });
+    expect(timeout).toHaveBeenCalledWith(10000);
+    expect(res.locals).toEqual({ 'session': { 'name': 'amara', 'roles': [ 'manager' ] } });
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('passes CouchDB\'s renewed session cookie back to the browser', async () => {
+    const renewed = 'AuthSession=renewed; Version=1; Path=/; HttpOnly';
+    fetchMock.mockResolvedValue(validSession('amara', [], new Headers({ 'set-cookie': renewed })));
+    const res = mockResponse();
+    res.append = vi.fn();
+    await requireSession({ 'headers': { 'cookie': 'AuthSession=deadbeef' } } as any, res, vi.fn());
+    expect(res.append).toHaveBeenCalledWith('Set-Cookie', renewed);
+  });
+
+  it('forwards Basic credentials, as myPlanet sends them', async () => {
+    fetchMock.mockResolvedValue(validSession());
+    const next = vi.fn();
+    await requireSession({ 'headers': { 'authorization': 'Basic YW1hcmE6c2VjcmV0' } } as any, mockResponse(), next);
+    expect(fetchMock).toHaveBeenCalledWith('http://couchdb:5984/_session', {
+      'headers': { 'authorization': 'Basic YW1hcmE6c2VjcmV0' },
+      'signal': expect.any(AbortSignal)
+    });
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('returns 503 when CouchDB session validation is unavailable', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    fetchMock.mockRejectedValue(new Error('connection refused'));
+    const res = mockResponse();
+    const next = vi.fn();
+    await requireSession({ 'headers': { 'cookie': 'AuthSession=deadbeef' } } as any, res, next);
+    expect(res.status).toHaveBeenCalledWith(503);
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('bounds concurrent CouchDB session validation for HTTP and WebSocket callers', async () => {
+    const resolvers: Array<(response: any) => void> = [];
+    fetchMock.mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)));
+    const validations = Array.from({ 'length': 8 }, (unused, index) => {
+      void unused;
+      return validateSession({ 'cookie': `AuthSession=${index}` });
+    });
+    await vi.waitFor(() => expect(resolvers).toHaveLength(8));
+    await expect(validateSession({ 'cookie': 'AuthSession=overflow' })).rejects.toBeInstanceOf(SessionValidationBusyError);
+    resolvers.forEach((resolve) => resolve(validSession()));
+    await Promise.all(validations);
+  });
+
+  it.each([ 408, 429 ])('returns 503 when CouchDB session validation responds with %s', async (status) => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    fetchMock.mockResolvedValue({ 'ok': false, status });
+    const res = mockResponse();
+    const next = vi.fn();
+
+    await requireSession({ 'headers': { 'cookie': 'AuthSession=deadbeef' } } as any, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(503);
+    expect(next).not.toHaveBeenCalled();
+    expect(log).toHaveBeenCalledWith(expect.stringContaining(`CouchDB status ${status}`));
+  });
+
+  it.each([ 400, 401, 403 ])('treats CouchDB status %s as an invalid session', async (status) => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    fetchMock.mockResolvedValue({ 'ok': false, status });
+    const res = mockResponse();
+    const next = vi.fn();
+
+    await requireSession({ 'headers': { 'cookie': 'AuthSession=deadbeef' } } as any, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(next).not.toHaveBeenCalled();
+    expect(log).not.toHaveBeenCalled();
+  });
+
+  describe('default-deny guard', () => {
+    const guard = requireSessionExcept([
+      { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i },
+      { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/public\/surveys\//i }
+    ]);
+    const request = (method: string, path: string): any => ({ method, path, 'headers': {} });
+
+    it.each([
+      [ 'GET', '/checkproviders' ],
+      [ 'GET', '/checkProviders/' ],
+      [ 'POST', '/public/surveys/team/survey/submissions' ]
+    ])('lets %s %s through without a session', (method, path) => {
+      const next = vi.fn();
+      guard(request(method, path), mockResponse(), next);
+      expect(next).toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      [ 'POST', '/' ],
+      [ 'POST', '/checkproviders' ],
+      [ 'GET', '/currency/1700000000000' ],
+      [ 'GET', '/a-route-added-later' ]
+    ])('requires a session for %s %s', async (method, path) => {
+      const res = mockResponse();
+      const next = vi.fn();
+      guard(request(method, path), res, next);
+      await vi.waitFor(() => expect(res.status).toHaveBeenCalledWith(401));
+      expect(next).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('WebSocket upgrade', () => {
+    it('refuses an untrusted origin before checking the session', async () => {
+      const { socket, wss } = await upgrade({ 'origin': 'http://evil.test', 'cookie': 'AuthSession=deadbeef' });
+      expect(socket.end).toHaveBeenCalledWith(expect.stringMatching(/^HTTP\/1\.1 403 /));
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(wss.handleUpgrade).not.toHaveBeenCalled();
+    });
+
+    it('refuses a missing session with 401 and never opens the socket', async () => {
+      const { socket, wss } = await upgrade({ 'origin': 'http://planet.local' });
+      expect(socket.end).toHaveBeenCalledWith(expect.stringMatching(/^HTTP\/1\.1 401 /));
+      expect(wss.handleUpgrade).not.toHaveBeenCalled();
+    });
+
+    it('refuses with 503 when CouchDB is unavailable', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      fetchMock.mockRejectedValue(new Error('connection refused'));
+      const { socket, wss } = await upgrade({ 'cookie': 'AuthSession=deadbeef' });
+      expect(socket.end).toHaveBeenCalledWith(expect.stringMatching(/^HTTP\/1\.1 503 /));
+      expect(wss.handleUpgrade).not.toHaveBeenCalled();
+    });
+
+    it('opens the socket with the session for a trusted origin', async () => {
+      fetchMock.mockResolvedValue(validSession());
+      const ws = {};
+      const { req, socket, wss } = await upgrade({ 'origin': 'http://planet.local', 'cookie': 'AuthSession=deadbeef' }, ws);
+      expect(socket.end).not.toHaveBeenCalled();
+      expect(wss.emit).toHaveBeenCalledWith('connection', ws, req, { 'name': 'amara', 'roles': [] });
+    });
+  });
+});
