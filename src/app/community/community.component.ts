@@ -41,6 +41,7 @@ import { NewsListComponent } from '../news/news-list.component';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { CommunityListComponent } from './community-list.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { CustomVoiceLabel } from '../news/news-labels';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports/teams-reports.component';
 
@@ -82,7 +83,7 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
-  private readonly emptyVoiceLabels: string[] = [];
+  private readonly emptyVoiceLabels: CustomVoiceLabel[] = [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -664,7 +665,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.currentTab = index;
   }
 
-  get customVoiceLabels(): string[] {
+  get customVoiceLabels(): (string | CustomVoiceLabel)[] {
     return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
@@ -681,7 +682,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       width: '500px',
       autoFocus: false,
       data: { target: 'community', team: this.team, customLabels: this.customVoiceLabels }
-    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+    }).afterClosed().subscribe((updatedLabels?: CustomVoiceLabel[]) => {
       if (updatedLabels) {
         this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }

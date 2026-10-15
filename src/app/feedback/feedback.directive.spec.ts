@@ -22,8 +22,7 @@ describe('FeedbackDirective', () => {
   beforeEach(() => {
     couchService = {
       getDocumentByID: vi.fn().mockReturnValue(throwError(() => ({ status: 404 }))),
-      updateDocument: vi.fn().mockReturnValue(of({})),
-      putAttachment: vi.fn()
+      updateDocument: vi.fn().mockReturnValue(of({}))
     };
     router = { url: '/' };
     dialogsFormService = { openDialogsForm: vi.fn(), closeDialogsForm: vi.fn(), showErrorMessage: vi.fn() };
@@ -129,31 +128,20 @@ describe('FeedbackDirective', () => {
     expect(feedback.titleContext).toEqual({ kind: 'section', state: 'users' });
   });
 
-  it('saves the feedback, then uploads each screenshot against the latest revision', async () => {
+  it('inlines the screenshots in the single write that creates the feedback', async () => {
     couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
-    couchService.putAttachment.mockReturnValueOnce(of({ rev: '2-b' })).mockReturnValueOnce(of({ rev: '3-c' }));
 
     directive.addFeedback({ ...post, attachments: { retained: [], removed: [], added: [ screenshot(), screenshot() ] } });
     await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
 
+    expect(couchService.updateDocument).toHaveBeenCalledOnce();
     const feedback = couchService.updateDocument.mock.calls[0][1];
     expect(feedback.attachments).toBeUndefined();
     expect(feedback.messages[0].attachments).toEqual([ 'screen_shot.png', 'screen_shot-1.png' ]);
-    expect(couchService.putAttachment.mock.calls.map(([ path ]) => path)).toEqual([
-      'feedback/feedback-1/screen_shot.png?rev=1-a',
-      'feedback/feedback-1/screen_shot-1.png?rev=2-b'
-    ]);
-  });
-
-  it('warns when the feedback is saved but a screenshot upload fails', async () => {
-    couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
-    couchService.putAttachment.mockReturnValueOnce(throwError(new Error('offline'))).mockReturnValueOnce(of({ rev: '2-b' }));
-
-    directive.addFeedback({ ...post, attachments: { added: [ screenshot('a.png'), screenshot('b.png') ] } });
-    await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
-
-    expect(couchService.putAttachment.mock.calls[1][0]).toBe('feedback/feedback-1/b.png?rev=1-a');
-    expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be included'));
+    expect(feedback._attachments).toEqual({
+      'screen_shot.png': { content_type: 'image/png', data: btoa('image') },
+      'screen_shot-1.png': { content_type: 'image/png', data: btoa('image') }
+    });
   });
 
   it('submits feedback without a screenshot that cannot be normalized', async () => {
@@ -171,7 +159,6 @@ describe('FeedbackDirective', () => {
     URL.createObjectURL = vi.fn().mockReturnValue('blob:screenshot');
     URL.revokeObjectURL = vi.fn();
     couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
-    couchService.putAttachment.mockReturnValue(of({ rev: '2-b' }));
 
     try {
       const large = { file: new File([ new Uint8Array(2 * 1024 * 1024 + 1) ], 'bad.png', { type: 'image/png' }) };
@@ -180,9 +167,7 @@ describe('FeedbackDirective', () => {
 
       const feedback = couchService.updateDocument.mock.calls[0][1];
       expect(feedback.messages[0].attachments).toEqual([ 'good.png' ]);
-      expect(couchService.putAttachment.mock.calls.map(([ path ]) => path)).toEqual([
-        'feedback/feedback-1/good.png?rev=1-a'
-      ]);
+      expect(Object.keys(feedback._attachments)).toEqual([ 'good.png' ]);
       expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(
         expect.stringContaining('could not be included')
       );
