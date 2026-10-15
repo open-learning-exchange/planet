@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { tap, switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
 
@@ -47,14 +47,11 @@ export class ConfigurationCheckService {
     return of(undefined);
   }
 
+  // True only in CouchDB's admin party: until a server admin exists, an anonymous session gets the _admin role
   checkAdminExistence() {
-    return this.couchService.get('_users/_all_docs').pipe(
-      tap((data) =>
-        true // user can see data so there is no admin
-      ),
-      catchError((error) =>
-        of(false) // user doesn't have permission so there is an admin
-      )
+    return this.couchService.get('_session').pipe(
+      map(({ userCtx }) => !userCtx.name && userCtx.roles.includes('_admin')),
+      catchError(() => of(false))
     );
   }
 

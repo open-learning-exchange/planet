@@ -15,7 +15,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { forkJoin, of, Subject } from 'rxjs';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { CouchService } from '@shared/database/couchdb.service';
@@ -216,8 +216,8 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
           onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
             next: (result: any) => {
               this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
+              if (result?.skippedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be included.`);
               }
               this.dialogsFormService.closeDialogsForm();
             },
@@ -248,19 +248,18 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
       teamType,
       teamPlanetCode
     };
-    if (receiptImages) {
-      transaction._attachments = this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages);
-    }
-    return this.teamsService.updateTeam(transaction).pipe(
-      switchMap(savedTransaction => receiptImages ?
-        this.teamsAttachmentsService.uploadReceiptImages(savedTransaction._id, savedTransaction._rev, receiptImages, false) :
-        of({ failedAttachments: [] })
-      ),
+    const transaction$: Observable<{ doc: any, skipped: string[] }> = receiptImages ?
+      this.teamsAttachmentsService.withReceiptImages(
+        { ...transaction, _attachments: this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages) },
+        receiptImages
+      ) :
+      of({ doc: transaction, skipped: [] });
+    return transaction$.pipe(
+      switchMap(({ doc, skipped }) => this.teamsService.updateTeam(doc).pipe(map(() => ({ skippedAttachments: skipped })))),
       tap(() => {
         this.financesChanged.emit();
         this.dialogsLoadingService.stop();
-      }),
-      map(uploadResult => ({ failedAttachments: uploadResult.failedAttachments }))
+      })
     );
   }
 

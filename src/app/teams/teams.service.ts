@@ -1,22 +1,24 @@
 import { Injectable } from '@angular/core';
+
 import { of, empty, forkJoin, throwError, from } from 'rxjs';
 import { switchMap, map, take, catchError, finalize } from 'rxjs/operators';
 
-import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsFormService, DialogField } from '@shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { findDocuments } from '@shared/database/mango-queries';
+import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
 import { StateService } from '@shared/state.service';
 import {
   fullName, planetAndParentId, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
 } from '@shared/utils';
-import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
 
+import { environment } from '../../environments/environment';
+import { UsersService } from '../users/users.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
-import { UsersService } from '../users/users.service';
-import { environment } from '../../environments/environment';
+import { memberCompare } from './teams.utils';
 
 const nameField = {
   type: 'textbox',
@@ -189,19 +191,28 @@ export class TeamsService {
   }
 
   requestToJoinTeam(team, user) {
-    const userPlanetCode = this.stateService.configuration.code;
-    return this.couchService.updateDocument(this.dbName, {
-      createdDate: this.couchService.datePlaceholder,
-      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
-    }).pipe(
-      switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
+    const memberInfo = { userId: user._id, userPlanetCode: this.stateService.configuration.code };
+    return this.couchService.post(`${this.dbName}/_find`, findDocuments(this.requestSelector(team, memberInfo), [ '_id' ], 0, 1)).pipe(
+      switchMap(({ docs }: any) => docs.length > 0 ? of(false) : this.couchService.updateDocument(this.dbName, {
+        createdDate: this.couchService.datePlaceholder,
+        ...this.membershipProps(team, memberInfo, 'request')
+      }).pipe(
+        switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({})),
+        map(() => true)
+      ))
     );
   }
 
   removeFromRequests(team, memberInfo) {
-    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, memberInfo, 'request'))).pipe(
+    return this.couchService.findAll(this.dbName, findDocuments(this.requestSelector(team, memberInfo))).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
     );
+  }
+
+  // teamId already names the team, and editing an enterprise can change its teamType after requests were made
+  private requestSelector(team, memberInfo) {
+    const { teamType, ...selector } = this.membershipProps(team, memberInfo, 'request');
+    return selector;
   }
 
   cancelJoinRequest(team) {
@@ -261,12 +272,12 @@ export class TeamsService {
     if (selected.some(user => !user?._id)) {
       return throwError(new Error('Membership user ID is required.'));
     }
-    const selectedUserIds = new Set(selected.map(user => user._id));
     const newMembershipDocs = selected.map(user =>
       this.membershipProps(team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    const requestsToDelete = requests.filter(request => selectedUserIds.has(request.userId))
-      .map(({ _id, _rev }) => ({ _id, _rev, _deleted: true }));
+    // Deletions keep the request's fields so they still match the teams replication selector
+    const requestsToDelete = requests.filter(request => newMembershipDocs.some(membership => memberCompare(membership, request)))
+      .map(request => this.membershipWriteDoc(request, { _deleted: true }));
     return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
   }
 

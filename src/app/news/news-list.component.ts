@@ -33,7 +33,7 @@ import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
+import { CustomVoiceLabel, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
 import { NewsListItemComponent } from './news-list-item.component';
 
 @Component({
@@ -73,7 +73,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
-  @Input() customLabels: string[] = [];
+  @Input() customLabels: (string | CustomVoiceLabel)[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @ViewChild('anchor', { static: false }) anchor: any;
   @ViewChild('listContent', { static: false }) listContent: ElementRef<HTMLElement>;
