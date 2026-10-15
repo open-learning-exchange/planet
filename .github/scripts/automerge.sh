@@ -4,7 +4,7 @@
 # $PRIORITY_LABEL first, then lowest number within each tier:
 #
 #   1. merge $BASE into the PR branch          (a conflict relabels it and moves on)
-#   2. bump the version on the PR branch
+#   2. bump the version on the PR branch       (and package-lock.json's two root copies)
 #   3. push, and wait for the builders on that prepared commit (red relabels too)
 #   4. wait for $BASE to be settled and green, then squash merge
 #   5. tag the merge and publish its release
@@ -45,6 +45,8 @@ PRIORITY_LABEL="${PRIORITY_LABEL-priority}"
 CONFLICT_LABEL="${CONFLICT_LABEL-conflict}"
 FAILING_LABEL="${FAILING_LABEL-failing}"
 PKG_FILE="${PKG_FILE:?}"
+# Blank = no lock file; set, the bump moves its two root versions with PKG_FILE.
+LOCK_FILE="${LOCK_FILE-}"
 VERSION_SH="${VERSION_SH:?}"
 COAUTHORS_SH="${COAUTHORS_SH:?}"
 REQUIRE_CHECKS="${REQUIRE_CHECKS:-true}"
@@ -343,27 +345,61 @@ base_already_failed() {
     return 0
 }
 
+changed_lines() {
+    git diff --unified=0 "$1" "$2" -- "$3" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)' || true
+}
+
 verify_version_only_diff() {
-    local from=$1 to=$2 files bad allowed='"version"'
+    local from=$1 to=$2 files file bad allowed='"version"' lines tmp pkg_ver
 
     [ -z "$MYPLANET_LATEST" ] || allowed="$allowed|\"latest\""
     [ -z "$MYPLANET_MIN" ]    || allowed="$allowed|\"min\""
 
     files=$(git diff --name-only "$from" "$to")
-    if [ "$files" != "$PKG_FILE" ]; then
-        log "  bump touched unexpected files: ${files//$'\n'/, }"
-        return 1
-    fi
+    for file in $files; do
+        if [ "$file" != "$PKG_FILE" ] && { [ -z "$LOCK_FILE" ] || [ "$file" != "$LOCK_FILE" ]; }; then
+            log "  bump touched unexpected files: ${files//$'\n'/, }"
+            return 1
+        fi
+    done
 
-    bad=$(git diff --unified=0 "$from" "$to" -- "$PKG_FILE" \
-          | grep -E '^[+-]' \
-          | grep -vE '^(\+\+\+|---)' \
+    bad=$(changed_lines "$from" "$to" "$PKG_FILE" \
           | grep -vcE "^[+-][[:space:]]*($allowed)[[:space:]]*:" || true)
     if [ "${bad:-0}" -ne 0 ]; then
         log "  bump changed $bad non-version line(s)"
         return 1
     fi
+
+    if [ -n "$LOCK_FILE" ] && grep -qxF "$LOCK_FILE" <<<"$files"; then
+        # Exactly the two root versions: one out and one in for each.
+        lines=$(changed_lines "$from" "$to" "$LOCK_FILE")
+        if [ "$(grep -cE '^-[[:space:]]*"version"[[:space:]]*:' <<<"$lines")" -ne 2 ] \
+           || [ "$(grep -cE '^\+[[:space:]]*"version"[[:space:]]*:' <<<"$lines")" -ne 2 ] \
+           || [ "$(wc -l <<<"$lines")" -ne 4 ]; then
+            log "  bump changed $LOCK_FILE beyond its two root \"version\" lines:"
+            printf '%s\n' "$lines" | sed 's/^/    /'
+            return 1
+        fi
+        # ...and they are the root ones, now level with $PKG_FILE.
+        tmp="${RUNNER_TEMP:-/tmp}/verify-version"
+        git show "$to:$PKG_FILE"  > "$tmp-pkg"
+        git show "$to:$LOCK_FILE" > "$tmp-lock"
+        pkg_ver=$("$VERSION_SH" read "$tmp-pkg")
+        if [ "$("$VERSION_SH" read-lock "$tmp-lock")" != "top=${pkg_ver#name=}"$'\n'"root=${pkg_ver#name=}" ]; then
+            log "  $LOCK_FILE root versions do not match $PKG_FILE ${pkg_ver#name=}"
+            return 1
+        fi
+    fi
     log "  bump is version-only ($from -> $to)"
+}
+
+# "0.24.62 / 0.24.62" from the lock file in the work tree, for the log.
+lock_versions() {
+    local v
+    v=$("$VERSION_SH" read-lock "$LOCK_FILE")
+    v=${v//$'\n'/ \/ }
+    v=${v//top=/}
+    printf '%s' "${v//root=/}"
 }
 
 merge_with_retry() {
@@ -517,7 +553,22 @@ while :; do
     if [ "$DRY_RUN" = 'true' ]; then
         git checkout --quiet --detach "origin/$HEAD"
         if git merge --quiet --no-edit "origin/$BASE"; then
+            # Bump a throwaway commit on the detached head, so the dry run
+            # proves the same version-only check a real run makes.
+            dry_pre=$(git rev-parse HEAD)
+            [ -z "$LOCK_FILE" ] || dry_lock=$(lock_versions)
+            "$VERSION_SH" apply "$PKG_FILE" "$new_name" ${LOCK_FILE:+"$LOCK_FILE"}
             log "  dry run: merges cleanly with $BASE, would bump to $new_name,"
+            [ -z "$LOCK_FILE" ] \
+                || log "           $LOCK_FILE too ($dry_lock -> $new_name):"
+            git diff --unified=0 -- "$PKG_FILE" ${LOCK_FILE:+"$LOCK_FILE"} \
+                | grep -E '^[+-][^+-]' | sed 's/^/             /' || true
+            if ! git diff --quiet; then
+                git add "$PKG_FILE" ${LOCK_FILE:+"$LOCK_FILE"}
+                git commit --quiet -m "dry run: version: bump to $new_name"
+                verify_version_only_diff "$dry_pre" HEAD \
+                    || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: bump would not be version-only |"; exit 1; }
+            fi
             if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
                 log "           pin myplanet latest=${MYPLANET_LATEST:-unchanged} min=${MYPLANET_MIN:-unchanged},"
             fi
@@ -548,7 +599,14 @@ while :; do
     fi
 
     pre_bump_sha=$(git rev-parse HEAD)
-    "$VERSION_SH" apply "$PKG_FILE" "$new_name"
+    if [ -n "$LOCK_FILE" ]; then
+        lock_before=$(lock_versions)
+        "$VERSION_SH" apply "$PKG_FILE" "$new_name" "$LOCK_FILE"
+        [ "$lock_before" = "$new_name / $new_name" ] \
+            || log "  $LOCK_FILE: $lock_before -> $new_name"
+    else
+        "$VERSION_SH" apply "$PKG_FILE" "$new_name"
+    fi
 
     bump_msg="version: bump to $new_name"
     if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
@@ -564,10 +622,10 @@ while :; do
     fi
 
     merge_sha="$pre_bump_sha"
-    if git diff --quiet -- "$PKG_FILE"; then
-        log "  $PKG_FILE already at $new_name, nothing to commit"
+    if git diff --quiet -- "$PKG_FILE" ${LOCK_FILE:+"$LOCK_FILE"}; then
+        log "  $PKG_FILE${LOCK_FILE:+ and $LOCK_FILE} already at $new_name, nothing to commit"
     else
-        git add "$PKG_FILE"
+        git add "$PKG_FILE" ${LOCK_FILE:+"$LOCK_FILE"}
         git commit --quiet -m "$bump_msg"
         merge_sha=$(git rev-parse HEAD)
         verify_version_only_diff "$pre_bump_sha" "$merge_sha" \

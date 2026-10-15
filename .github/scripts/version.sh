@@ -8,8 +8,13 @@
 # It also owns the two myplanet pins in the same file, which name the apk
 # planets offer and the oldest one they still accept.
 #
+# Given a lock file, apply also moves package-lock.json's two copies of the
+# version (top-level and packages[""]) so npm install on a PR branch has
+# nothing to rewrite there, and so nothing to conflict on.
+#
 #   version.sh {read|next} <package-file>
-#   version.sh apply <package-file> <name>
+#   version.sh apply <package-file> <name> [<lock-file>]
+#   version.sh read-lock <lock-file>                    (prints top= and root=)
 #   version.sh myplanet <package-file> <latest> <min>   (blank = leave as is)
 #   version.sh check-myplanet <version>                 (prints it normalized)
 #
@@ -65,6 +70,42 @@ apply_version() {
 
     read_version "$file"
     [ "$cur_name" = "$name" ] || die "failed to write version $name into $file"
+}
+
+# Every dependency entry in the lock file carries a "version" too, and those
+# must stay byte-identical, so both patterns are pinned by npm's two-space
+# indent: the top-level key sits at depth 1, packages[""]'s own at depth 3
+# inside the "": { ... } block that closes at depth 2.
+LOCK_ROOT_RANGE='/^    ""[[:space:]]*:[[:space:]]*\{$/,/^    \},?$/'
+LOCK_TOP_KEY='^(  "version"[[:space:]]*:[[:space:]]*")'
+LOCK_ROOT_KEY='^(      "version"[[:space:]]*:[[:space:]]*")'
+
+read_lock() {
+    local file=$1
+    [ -f "$file" ] || die "no such file: $file"
+
+    lock_top=$(sed -nE "s/${LOCK_TOP_KEY}([^\"]+)\".*/\\2/p" "$file")
+    lock_root=$(sed -nE "${LOCK_ROOT_RANGE} s/${LOCK_ROOT_KEY}([^\"]+)\".*/\\2/p" "$file")
+
+    # One each, or the patterns are reading something other than the root.
+    [ -n "$lock_top" ]  && [ "$(wc -l <<<"$lock_top")" -eq 1 ] \
+        || die "could not find exactly one top-level \"version\" in $file"
+    [ -n "$lock_root" ] && [ "$(wc -l <<<"$lock_root")" -eq 1 ] \
+        || die "could not find exactly one packages[\"\"].version in $file"
+}
+
+apply_lock() {
+    local file=$1 name=$2
+    [ -f "$file" ] || die "no such file: $file"
+
+    sed -i -E \
+        -e "s/${LOCK_TOP_KEY}[^\"]+\"/\\1${name}\"/" \
+        -e "${LOCK_ROOT_RANGE} s/${LOCK_ROOT_KEY}[^\"]+\"/\\1${name}\"/" \
+        "$file"
+
+    read_lock "$file"
+    [ "$lock_top" = "$name" ]  || die "failed to write version $name into $file (top-level)"
+    [ "$lock_root" = "$name" ] || die "failed to write version $name into $file (packages[\"\"])"
 }
 
 normalize_myplanet() {
@@ -124,6 +165,12 @@ case "${1:-}" in
         ;;
     apply)
         apply_version "${2:?package file required}" "${3:?name required}"
+        [ -z "${4:-}" ] || apply_lock "$4" "$3"
+        ;;
+    read-lock)
+        read_lock "${2:?lock file required}"
+        echo "top=$lock_top"
+        echo "root=$lock_root"
         ;;
     myplanet)
         apply_myplanet "${2:?package file required}" "${3-}" "${4-}"
@@ -133,6 +180,6 @@ case "${1:-}" in
         echo
         ;;
     *)
-        die "usage: version.sh {read|next|apply|myplanet|check-myplanet} <package-file|version> [args]"
+        die "usage: version.sh {read|next|apply|read-lock|myplanet|check-myplanet} <package-file|version> [args]"
         ;;
 esac

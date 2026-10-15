@@ -52,6 +52,7 @@ concurrency:
 env:
   BASE: master                                                                   # 🌿 branch the queue merges into
   PKG_FILE: package.json                                                         # 📄 file the version bump edits
+  LOCK_FILE: package-lock.json                                                   # 🔒 its two root versions follow (blank = leave it)
   OWNER_LOGIN: dogi                                                              # 🙏 credited on PRs they did not author
   MYPLANET_REPO: open-learning-exchange/myplanet                                 # 📦 where the apk pins are checked
   REQUIRE_CHECKS: 'true'                                                         # ✅ never merge an unverified commit
