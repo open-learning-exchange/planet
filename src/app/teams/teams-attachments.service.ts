@@ -1,16 +1,12 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { defer, forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
-import { AttachmentInputState, ExistingAttachment, PendingAttachment } from '@shared/forms/file-upload.component';
+import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
+import { normalizeImage, withImageAttachments } from '@shared/utils';
 
 import { environment } from '../../environments/environment';
-
-export interface TeamsAttachmentUploadResult {
-  latestRev: string;
-  failedAttachments: string[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -70,51 +66,11 @@ export class TeamsAttachmentsService {
     return attachments;
   }
 
-  uploadReceiptImages(
-    docId: string,
-    startingRev: string,
-    state: AttachmentInputState,
-    includeRetained = true
-  ): Observable<TeamsAttachmentUploadResult> {
-    const attachments = [
-      ...(includeRetained ? state.retained : []),
-      ...state.added
-    ];
-    return attachments.reduce((request$, attachment) => request$.pipe(
-      switchMap(result => this.uploadReceiptImage(docId, result.latestRev, attachment).pipe(
-        map((response: any) => ({ ...result, latestRev: response.rev })),
-        catchError(() => of({
-          ...result,
-          failedAttachments: [ ...result.failedAttachments, this.attachmentName(attachment) ]
-        }))
-      ))
-    ), of({ latestRev: startingRev, failedAttachments: [] }));
-  }
-
-  private uploadReceiptImage(docId: string, rev: string, attachment: ExistingAttachment | PendingAttachment) {
-    return this.receiptFile(attachment).pipe(switchMap(({ file, name, contentType }) =>
-      this.couchService.putAttachment(`teams/${docId}/${encodeURIComponent(name)}?rev=${rev}`, file, {
-        headers: { 'Content-Type': contentType }
-      })
+  // 1920px keeps printed text on receipts readable
+  withReceiptImages(doc: any, state: AttachmentInputState) {
+    return defer(() => withImageAttachments(
+      doc, { added: state.added }, (file, usedNames) => normalizeImage(file, { maxDimension: 1920, usedNames })
     ));
-  }
-
-  private receiptFile(attachment: ExistingAttachment | PendingAttachment) {
-    if ('file' in attachment) {
-      return of({ file: attachment.file, name: attachment.safeName, contentType: attachment.contentType || attachment.file.type });
-    }
-    if (!attachment.url) {
-      return throwError(() => new Error('Existing attachment is missing a URL'));
-    }
-    return this.couchService.getAttachment(attachment.url).pipe(map((blob) => ({
-      file: new File([ blob ], attachment.name, { type: attachment.contentType || blob.type }),
-      name: attachment.name,
-      contentType: attachment.contentType || blob.type
-    })));
-  }
-
-  private attachmentName(attachment: ExistingAttachment | PendingAttachment) {
-    return 'file' in attachment ? attachment.safeName : attachment.name;
   }
 
   private blobToDataUrl(blob: Blob): Observable<string> {
@@ -136,11 +92,12 @@ export class TeamsAttachmentsService {
 
   private receiptBlobToPdfDataUrl(blob: Blob, contentType?: string): Observable<string> {
     return (contentType || blob.type).toLowerCase() === 'image/webp' ?
-      this.webpBlobToPngDataUrl(blob) :
+      this.webpBlobToJpegDataUrl(blob) :
       this.blobToDataUrl(blob);
   }
 
-  private webpBlobToPngDataUrl(blob: Blob): Observable<string> {
+  // pdfmake can't embed WebP. JPEG keeps photos small where PNG bloats them; it has no transparency, hence the white fill
+  private webpBlobToJpegDataUrl(blob: Blob): Observable<string> {
     return new Observable(observer => {
       const url = URL.createObjectURL(blob);
       const image = new Image();
@@ -154,8 +111,10 @@ export class TeamsAttachmentsService {
           observer.error(new Error('Unable to convert WebP receipt image'));
           return;
         }
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0);
-        observer.next(canvas.toDataURL('image/png'));
+        observer.next(canvas.toDataURL('image/jpeg', 0.85));
         observer.complete();
       };
       image.onerror = () => {

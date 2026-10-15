@@ -1,3 +1,6 @@
+import { of } from 'rxjs';
+import { vi } from 'vitest';
+
 import { StateService } from '@shared/state.service';
 
 import { TeamsAttachmentsService } from '../teams-attachments.service';
@@ -166,6 +169,47 @@ describe('TeamsReportsComponent', () => {
       component.ngOnChanges();
 
       expect(component['reportLabels']()).toEqual([ 'Audit' ]);
+    });
+  });
+
+  describe('saving an edit', () => {
+    const stub = { content_type: 'image/jpeg', length: 4, stub: true };
+    const oldReport = report({ _id: 'old', _rev: '1-a', _attachments: { 'receipt.jpg': stub } });
+    const editedValues = {
+      startDate: new Date(Date.UTC(2026, 0, 1)),
+      endDate: new Date(Date.UTC(2026, 0, 31)),
+      beginningBalance: 0, sales: 120, otherIncome: 0, wages: 40, otherExpenses: 0
+    };
+    let updateAdditionalDocs: ReturnType<typeof vi.fn>;
+    let attachmentsService: TeamsAttachmentsService;
+
+    beforeEach(() => {
+      attachmentsService = new TeamsAttachmentsService({} as any);
+      updateAdditionalDocs = vi.fn().mockReturnValue(of({ res: [ { ok: true } ] }));
+      component = new TeamsReportsComponent(
+        {} as any, {} as any, {} as any, { stop: vi.fn() } as any, { updateAdditionalDocs } as any, attachmentsService,
+        {} as any, {} as any, { configuration: { currency: {} } } as any as StateService, {} as any, 'en-US', {} as any
+      );
+    });
+
+    const save = (added: File[] = []) => component.updateReport(oldReport, {
+      ...editedValues,
+      receiptImages: { ...attachmentsService.attachmentStateForDoc(oldReport), added: added.map(file => ({ file })) as any }
+    }).toPromise();
+
+    it('updates the report in place, keeping receipts as stubs and inlining new ones', async () => {
+      await save([ new File([ 'new' ], 'new.png', { type: 'image/png' }) ]);
+
+      expect(updateAdditionalDocs).toHaveBeenCalledOnce();
+      const [ [ edited ] ] = updateAdditionalDocs.mock.calls[0];
+      expect(edited).toEqual(expect.objectContaining({ _id: 'old', _rev: '1-a', sales: 120 }));
+      expect(edited._attachments).toEqual({ 'receipt.jpg': stub, 'new.png': { content_type: 'image/png', data: btoa('new') } });
+    });
+
+    it('fails when the report changed since it was loaded', async () => {
+      updateAdditionalDocs.mockReturnValue(of({ res: [ { error: 'conflict', reason: 'Document update conflict.' } ] }));
+
+      await expect(save()).rejects.toThrow('Document update conflict.');
     });
   });
 });
