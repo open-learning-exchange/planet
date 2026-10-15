@@ -10,7 +10,7 @@ import { findDocuments } from '@shared/database/mango-queries';
 
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
-import { assigneeMatches, effectiveAssignees, storedAssignee } from './tasks.utils';
+import { assigneeMatches, effectiveAssignees, effectiveTaskStatus, storedAssignee, TaskStatus } from './tasks.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +62,7 @@ export class TasksService {
       ...newTask,
       deadline,
       ...additionalFields,
+      status: effectiveTaskStatus(task),
       assignee: assignees[0] || '',
       assignees,
       deadlineTime: undefined
@@ -97,6 +98,10 @@ export class TasksService {
         description: task.description || ''
       }
     };
+  }
+
+  setTaskStatus(task, status: TaskStatus) {
+    return this.addTask({ ...task, status, completed: status === 'completed' });
   }
 
   addTask(task) {

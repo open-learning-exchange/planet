@@ -224,8 +224,8 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
               this.dialogsFormService.closeDialogsForm();
               const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
               this.planetMessageService.showMessage($localize`Report ${action}`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be uploaded.`);
+              if (result?.skippedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be included.`);
               }
             },
             error: () => {
@@ -247,7 +247,7 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
         type: 'report',
         displayName: report.label ? `${report.label} (${dateRange})` : dateRange,
         okClick: {
-          request: this.updateReport(report),
+          request: this.archiveReport(report),
           onNext: () => {
             this.planetMessageService.showMessage($localize`Report deleted`);
             this.dialogsLoadingService.stop();
@@ -297,7 +297,7 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
         () => {};
   }
 
-  updateReport(oldReport, newReport: NewReportForm | {} = {}) {
+  updateReport(oldReport, newReport: NewReportForm | {}) {
     const dateFields = [ 'startDate', 'endDate' ];
     const numberFields = [ 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
     const transformFields = (key: string, value: string | Date | number) => dateFields.indexOf(key) > -1 ?
@@ -308,28 +308,40 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
           ((value as string) || '').trim() :
           value;
     const { receiptImages = this.teamsAttachmentsService.emptyAttachmentState(), ...reportFields } = newReport as NewReportForm;
-    const { _id, _rev, _attachments, ...newDoc } = Object.entries(reportFields).reduce(
+    const { _id, _rev, _attachments, ...fields } = Object.entries(reportFields).reduce(
       (obj, [ key, value ]: [ string, string | Date | number ]) => ({
         ...obj,
         [key]: transformFields(key, value)
       }),
       {}
     ) as any;
-    const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
-    const newDocIndex = docs.length - 1;
-    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(
-      switchMap((response: any) => {
-        const savedReport = response.res?.[newDocIndex];
-        return savedReport ?
-          this.teamsAttachmentsService.uploadReceiptImages(savedReport.id, savedReport.rev, receiptImages)
-            .pipe(map(uploadResult => ({ uploadResult }))) :
-          of({ uploadResult: { failedAttachments: [] } });
+    const report = {
+      ...fields,
+      ...(oldReport._id ? { _id: oldReport._id, _rev: oldReport._rev } : {}),
+      _attachments: this.teamsAttachmentsService.retainSelectedAttachments(oldReport, receiptImages)
+    };
+    return this.teamsAttachmentsService.withReceiptImages(report, receiptImages).pipe(
+      switchMap(({ doc, skipped }) => this.saveReport(doc, { utcKeys: dateFields }).pipe(map(() => ({ skippedAttachments: skipped }))))
+    );
+  }
+
+  archiveReport(report) {
+    return this.saveReport({ ...report, status: 'archived' });
+  }
+
+  // _bulk_docs answers a conflict in the doc's row instead of failing the request
+  private saveReport(report, opts?: any) {
+    return this.teamsService.updateAdditionalDocs([ report ], this.team, 'report', opts).pipe(
+      map((response: any) => {
+        const [ row ] = response.res || [];
+        if (row?.error) {
+          throw new Error(row.reason);
+        }
       }),
       tap(() => {
         this.reportsChanged.emit();
         this.dialogsLoadingService.stop();
-      }),
-      map(({ uploadResult }) => ({ failedAttachments: uploadResult.failedAttachments }))
+      })
     );
   }
 
