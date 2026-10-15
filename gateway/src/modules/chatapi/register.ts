@@ -1,7 +1,8 @@
 import { Express } from 'express';
 import WebSocket from 'ws';
 
-import { chat, chatNoSave } from './services/chat.service';
+import { SessionInfo } from '../../middleware/auth';
+import { chat, chatNoSave, ConversationAccessError } from './services/chat.service';
 import { keys } from './config/ai-providers.config';
 
 const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
@@ -22,13 +23,16 @@ export function registerChatApiRoutes(app: Express) {
           'chat': response
         });
       }
-      const response = await chat(data, false);
+      const response = await chat(data, res.locals.session, false);
       return res.status(201).json({
         'status': 'Success',
         'chat': response?.completionText,
         'couchDBResponse': response?.couchSaveResponse
       });
     } catch (error: any) {
+      if (error instanceof ConversationAccessError) {
+        return res.status(403).json({ 'error': 'Forbidden', 'message': error.message });
+      }
       if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
         return res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
       }
@@ -48,7 +52,11 @@ export function registerChatApiRoutes(app: Express) {
 }
 
 export function registerChatApiWebSocket(wss: WebSocket.Server) {
-  wss.on('connection', (ws) => {
+  wss.on('connection', (ws, req, session?: SessionInfo) => {
+    if (!session) {
+      ws.close(1008, 'A valid Planet session is required');
+      return;
+    }
     ws.on('message', async (data) => {
       try {
         const payload = JSON.parse(data.toString());
@@ -57,7 +65,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           return;
         }
 
-        const chatResponse = await chat(payload, true, (response) => {
+        const chatResponse = await chat(payload, session, true, (response) => {
           ws.send(JSON.stringify({ 'type': 'partial', response }));
         });
 
@@ -69,7 +77,9 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           }));
         }
       } catch (error: any) {
-        if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
+        if (error instanceof ConversationAccessError) {
+          ws.send(JSON.stringify({ 'error': 'Forbidden', 'message': error.message }));
+        } else if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
           ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
         } else {
           ws.send(JSON.stringify({ 'error': 'Internal Server Error', 'message': error.message }));
