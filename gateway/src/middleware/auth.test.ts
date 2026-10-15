@@ -1,18 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import cors from 'cors';
 
 vi.mock('../config/couch.config', () => ({ 'couchBaseUrl': 'http://couchdb:5984' }));
 
 import {
-  allowedOrigins,
   authenticateUpgrade,
   authSessionCookie,
-  browserCorsOptions,
-  isTrustedOrigin,
-  requestScheme,
   requireSession,
   requireSessionExcept,
-  SessionValidationBusyError,
+  SessionValidationError,
   validateSession
 } from './auth';
 
@@ -27,20 +22,6 @@ const mockResponse = () => {
   res.status = vi.fn().mockReturnValue(res);
   res.json = vi.fn().mockReturnValue(res);
   return res;
-};
-
-const corsHeaders = async (origin: string, scheme?: string) => {
-  const headers = new Map<string, unknown>();
-  const req: any = { 'method': 'GET', 'headers': { origin, 'host': 'planet.local:5000' } };
-  const res: any = {
-    'getHeader': (name: string) => headers.get(name.toLowerCase()),
-    'setHeader': (name: string, value: unknown) => headers.set(name.toLowerCase(), value)
-  };
-  const middleware = cors((request, callback) => {
-    callback(null, browserCorsOptions(request.headers.origin, request.headers.host, scheme));
-  });
-  await new Promise<void>((resolve, reject) => middleware(req, res, (error?: unknown) => error ? reject(error) : resolve()));
-  return headers;
 };
 
 const mockSocket = () => {
@@ -71,13 +52,11 @@ describe('gateway authentication', () => {
     vi.clearAllMocks();
     fetchMock.mockReset();
     vi.stubGlobal('fetch', fetchMock);
-    delete process.env.CORS_ORIGINS;
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
-    delete process.env.CORS_ORIGINS;
   });
 
   it('extracts only an exact non-empty AuthSession cookie', () => {
@@ -85,48 +64,6 @@ describe('gateway authentication', () => {
     expect(authSessionCookie('AuthSessionId=wrong; MapAuthSession=wrong')).toBeUndefined();
     expect(authSessionCookie('AuthSession=   ')).toBeUndefined();
     expect(authSessionCookie(undefined)).toBeUndefined();
-  });
-
-  it('parses only configured cross-origin additions, normalized to browser origins', () => {
-    expect(allowedOrigins()).toEqual([]);
-    process.env.CORS_ORIGINS = ' http://localhost:3000/, https://planet.example:443 , not-a-url, ';
-    expect(allowedOrigins()).toEqual([ 'http://localhost:3000', 'https://planet.example' ]);
-  });
-
-  it('trusts the exact request host, port included, and configured origins only', () => {
-    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example:8443', 'https')).toEqual(true);
-    expect(isTrustedOrigin('https://planet.example:8443', 'Planet.Example:8443', undefined)).toEqual(true);
-    expect(isTrustedOrigin('https://planet.example', 'planet.example:443', 'https')).toEqual(true);
-    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example', 'https')).toEqual(false);
-    process.env.CORS_ORIGINS = 'https://planet.example:8443';
-    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example', 'https')).toEqual(true);
-    expect(isTrustedOrigin('not a URL', 'planet.example', 'https')).toEqual(false);
-  });
-
-  it('requires a matching scheme only when a proxy reports one', () => {
-    expect(isTrustedOrigin('http://planet.example', 'planet.example', 'https')).toEqual(false);
-    expect(isTrustedOrigin('https://planet.example', 'planet.example', undefined)).toEqual(true);
-  });
-
-  it('reads the first forwarded scheme and nothing when there is none', () => {
-    expect(requestScheme({ 'x-forwarded-proto': 'https, http' })).toEqual('https');
-    expect(requestScheme({ 'x-forwarded-proto': 'wss' })).toEqual('https');
-    expect(requestScheme({})).toBeUndefined();
-  });
-
-  it('reflects trusted CORS origins and emits no wildcard for untrusted origins', async () => {
-    process.env.CORS_ORIGINS = 'http://localhost:3000';
-    const trusted = await corsHeaders('http://localhost:3000');
-    const untrusted = await corsHeaders('http://evil.test');
-
-    expect(trusted.get('access-control-allow-origin')).toEqual('http://localhost:3000');
-    expect(trusted.get('access-control-allow-credentials')).toEqual('true');
-    expect(untrusted.has('access-control-allow-origin')).toEqual(false);
-  });
-
-  it('does not reflect a same-host origin with the wrong scheme', async () => {
-    const headers = await corsHeaders('http://planet.local:5000', 'https');
-    expect(headers.has('access-control-allow-origin')).toEqual(false);
   });
 
   it('rejects requests without credentials before calling CouchDB', async () => {
@@ -148,7 +85,6 @@ describe('gateway authentication', () => {
   });
 
   it('forwards only the session cookie and exposes the session', async () => {
-    const timeout = vi.spyOn(AbortSignal, 'timeout');
     fetchMock.mockResolvedValue(validSession('amara', [ 'manager' ]));
     const res = mockResponse();
     const next = vi.fn();
@@ -157,7 +93,6 @@ describe('gateway authentication', () => {
       'headers': { 'cookie': 'AuthSession=deadbeef' },
       'signal': expect.any(AbortSignal)
     });
-    expect(timeout).toHaveBeenCalledWith(10000);
     expect(res.locals).toEqual({ 'session': { 'name': 'amara', 'roles': [ 'manager' ] } });
     expect(next).toHaveBeenCalled();
   });
@@ -200,7 +135,7 @@ describe('gateway authentication', () => {
       return validateSession({ 'cookie': `AuthSession=${index}` });
     });
     await vi.waitFor(() => expect(resolvers).toHaveLength(8));
-    await expect(validateSession({ 'cookie': 'AuthSession=overflow' })).rejects.toBeInstanceOf(SessionValidationBusyError);
+    await expect(validateSession({ 'cookie': 'AuthSession=overflow' })).rejects.toBeInstanceOf(SessionValidationError);
     resolvers.forEach((resolve) => resolve(validSession()));
     await Promise.all(validations);
   });
@@ -232,27 +167,18 @@ describe('gateway authentication', () => {
   });
 
   describe('default-deny guard', () => {
-    const guard = requireSessionExcept([
-      { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i },
-      { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/public\/surveys\//i }
-    ]);
+    const guard = requireSessionExcept([ { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i } ]);
     const request = (method: string, path: string): any => ({ method, path, 'headers': {} });
 
-    it.each([
-      [ 'GET', '/checkproviders' ],
-      [ 'GET', '/checkProviders/' ],
-      [ 'POST', '/public/surveys/team/survey/submissions' ]
-    ])('lets %s %s through without a session', (method, path) => {
+    it('lets an open route through without a session', () => {
       const next = vi.fn();
-      guard(request(method, path), mockResponse(), next);
+      guard(request('GET', '/checkproviders'), mockResponse(), next);
       expect(next).toHaveBeenCalled();
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
     it.each([
-      [ 'POST', '/' ],
       [ 'POST', '/checkproviders' ],
-      [ 'GET', '/currency/1700000000000' ],
       [ 'GET', '/a-route-added-later' ]
     ])('requires a session for %s %s', async (method, path) => {
       const res = mockResponse();

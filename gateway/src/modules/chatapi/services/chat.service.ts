@@ -14,7 +14,6 @@ export class ConversationAccessError extends Error {
   }
 }
 
-/** Only the owner adds turns to a conversation; anyone else forks a shared copy instead. */
 export const canContinue = (doc: Pick<DbDoc, 'user'>, session: SessionInfo): boolean => doc.user === session.name;
 
 // nano sends `_design`/`_local` ids unencoded, so `_design/../<id>` would read one doc and then write a design doc

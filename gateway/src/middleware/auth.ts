@@ -4,6 +4,7 @@ import { Duplex } from 'stream';
 import WebSocket from 'ws';
 
 import { couchBaseUrl } from '../config/couch.config';
+import { isAllowedOrigin } from './origin';
 
 export interface SessionInfo {
   name: string;
@@ -22,66 +23,10 @@ export class SessionValidationError extends Error {
   }
 }
 
-export class SessionValidationBusyError extends SessionValidationError {}
-
 const SESSION_TIMEOUT_MS = 10000;
 const UNAVAILABLE_SESSION_STATUSES = new Set([ 408, 429 ]);
 const MAX_CONCURRENT_SESSION_VALIDATIONS = 8;
 let sessionValidationsInFlight = 0;
-
-const WEBSOCKET_SCHEMES = new Map([ [ 'ws', 'http' ], [ 'wss', 'https' ] ]);
-
-const normalizedOrigin = (value: string): string | undefined => {
-  try {
-    const origin = new URL(value).origin;
-    return origin === 'null' ? undefined : origin;
-  } catch (error) {
-    return undefined;
-  }
-};
-
-/** Browser origins trusted besides the gateway's own host, such as `ng serve` in development. */
-export const allowedOrigins = (): string[] =>
-  (process.env.CORS_ORIGINS || '').split(',')
-    .map((origin) => normalizedOrigin(origin.trim()))
-    .filter((origin): origin is string => !!origin);
-
-/** The browser-facing scheme, when a proxy in front of the gateway reports one (some report `wss` for sockets). */
-export const requestScheme = (headers: IncomingHttpHeaders): string | undefined => {
-  const forwarded = headers['x-forwarded-proto'];
-  const value = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-  const scheme = value?.split(',', 1)[0].trim().toLowerCase();
-  return scheme ? WEBSOCKET_SCHEMES.get(scheme) || scheme : undefined;
-};
-
-// Read Host with the origin's scheme, so a proxy's `planet.example:443` still equals `https://planet.example`
-const isSameHost = (origin: URL, host: string): boolean => {
-  try {
-    return new URL(`${origin.protocol}//${host}`).host === origin.host;
-  } catch (error) {
-    return false;
-  }
-};
-
-/** Same host and port as the request (and the same scheme when it's known), or listed in `CORS_ORIGINS`. */
-export const isTrustedOrigin = (origin: string, host: string | undefined, scheme: string | undefined): boolean => {
-  let parsed: URL;
-  try {
-    parsed = new URL(origin);
-  } catch (error) {
-    return false;
-  }
-  if (host && (!scheme || parsed.protocol === `${scheme}:`) && isSameHost(parsed, host)) {
-    return true;
-  }
-  return allowedOrigins().includes(parsed.origin);
-};
-
-/** Credentialed CORS for trusted origins only, without letting `cors` read false as a wildcard. */
-export const browserCorsOptions = (origin: string | undefined, host: string | undefined, scheme: string | undefined) => ({
-  'origin': !origin || isTrustedOrigin(origin, host, scheme) ? true : [],
-  'credentials': true
-});
 
 export const authSessionCookie = (cookieHeader: string | undefined): string | undefined => {
   for (const cookie of cookieHeader?.split(';') || []) {
@@ -96,7 +41,6 @@ export const authSessionCookie = (cookieHeader: string | undefined): string | un
   return undefined;
 };
 
-/** The CouchDB credentials a request carries: the browser's session cookie and/or Basic credentials from apps. */
 const sessionCredentials = (headers: IncomingHttpHeaders): Record<string, string> | undefined => {
   const credentials: Record<string, string> = {};
   const cookie = authSessionCookie(headers.cookie);
@@ -151,7 +95,7 @@ async function checkSession(headers: IncomingHttpHeaders): Promise<SessionCheck>
     return { 'session': null };
   }
   if (sessionValidationsInFlight >= MAX_CONCURRENT_SESSION_VALIDATIONS) {
-    throw new SessionValidationBusyError();
+    throw new SessionValidationError();
   }
   sessionValidationsInFlight += 1;
   try {
@@ -184,7 +128,6 @@ export async function requireSession(req: Request, res: Response, next: NextFunc
   next();
 }
 
-/** Every route needs a session unless it's listed, so a new route stays closed until someone opens it on purpose. */
 export const requireSessionExcept = (openRoutes: OpenRoute[]) => (req: Request, res: Response, next: NextFunction) => {
   if (openRoutes.some((route) => route.methods.includes(req.method) && route.path.test(req.path))) {
     next();
@@ -204,8 +147,7 @@ export const authenticateUpgrade = (wss: WebSocket.Server) => async (req: Incomi
     console.error(`gateway: WebSocket upgrade failed: ${error.message}`); // eslint-disable-line no-console
   };
   socket.on('error', onSocketError);
-  const origin = req.headers.origin;
-  if (origin && !isTrustedOrigin(origin, req.headers.host, requestScheme(req.headers))) {
+  if (!isAllowedOrigin(req.headers)) {
     rejectUpgrade(socket, 403);
     return;
   }

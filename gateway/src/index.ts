@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
 import http from 'http';
 import WebSocket from 'ws';
 
-import { authenticateUpgrade, browserCorsOptions, OpenRoute, requestScheme, requireSessionExcept } from './middleware/auth';
+import { authenticateUpgrade, OpenRoute, requireSessionExcept } from './middleware/auth';
+import { browserCors } from './middleware/origin';
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
 import { registerCurrencyRoutes } from './modules/currency/register';
@@ -22,9 +22,7 @@ const openRoutes: OpenRoute[] = [
   { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/public\/surveys\//i }
 ];
 
-app.use(cors((req, callback) => {
-  callback(null, browserCorsOptions(req.headers.origin, req.headers.host, requestScheme(req.headers)));
-}));
+app.use(browserCors);
 app.use(requireSessionExcept(openRoutes));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
