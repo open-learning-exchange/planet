@@ -41,7 +41,7 @@ import { NewsListComponent } from '../news/news-list.component';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { CommunityListComponent } from './community-list.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
-import { CustomVoiceLabel } from '../news/news-labels';
+import { CustomVoiceLabel } from '../news/news.utils';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports/teams-reports.component';
 

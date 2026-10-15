@@ -16,7 +16,7 @@ import { LinkCopyService } from '@shared/ui/link-copy.service';
 
 import { NewsListItemComponent } from './news-list-item.component';
 import { NewsService } from './news.service';
-import { CustomVoiceLabel } from './news-labels';
+import { CustomVoiceLabel } from './news.utils';
 
 describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {
