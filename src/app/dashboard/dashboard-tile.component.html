@@ -22,12 +22,14 @@
     </div>
   }
   <div class="right-tile" #items
+    cdkScrollable
     [id]="cardType + '-dashboard-items'"
     [attr.inert]="isAccordionMode && !isExpanded ? '' : null">
     <div class="dashboard-items"
       [ngClass]="{'dashboard-empty': itemData.length === 0, 'accordion-list': isAccordionMode}"
       cdkDropList
       [cdkDropListOrientation]="isAccordionMode ? 'vertical' : 'horizontal'"
+      [cdkDropListAutoScrollStep]="10"
       (cdkDropListDropped)="drop($event)">
       @if (!isLoading) {
         @for (item of itemData; track item; let even = $even) {

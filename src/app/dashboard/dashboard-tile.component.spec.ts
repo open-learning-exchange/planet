@@ -8,6 +8,11 @@ import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
 
+import { provideRouter } from '@angular/router';
+import { By } from '@angular/platform-browser';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { CdkDropList } from '@angular/cdk/drag-drop';
+
 import { CoursesService } from '../courses/courses.service';
 import { TeamsService } from '../teams/teams.service';
 import { DashboardTileComponent } from './dashboard-tile.component';
@@ -148,4 +153,29 @@ describe('DashboardTileComponent', () => {
     expect(dialogRef.close).not.toHaveBeenCalled();
     expect(messageService.showMessage).not.toHaveBeenCalled();
   });
+
+  it('attaches cdkScrollable to right-tile and configures drop list auto-scroll step', () => {
+    TestBed.configureTestingModule({
+      imports: [ DashboardTileComponent ],
+      providers: [
+        provideRouter([]),
+        { provide: CoursesService, useValue: {} },
+        { provide: DeviceInfoService, useValue: { watchDeviceType: vi.fn().mockReturnValue(of(undefined)) } },
+        { provide: MatDialog, useValue: {} },
+        { provide: PlanetMessageService, useValue: {} },
+        { provide: TeamsService, useValue: {} },
+        { provide: UserService, useValue: { get: vi.fn().mockReturnValue({}), shelf: {} } }
+      ]
+    });
+    const fixture = TestBed.createComponent(DashboardTileComponent);
+    fixture.componentInstance.itemData = [];
+    fixture.detectChanges();
+
+    const rightTile = fixture.debugElement.query(By.css('.right-tile'));
+    expect(rightTile.injector.get(CdkScrollable)).toBeTruthy();
+
+    const dropList = fixture.debugElement.query(By.css('.dashboard-items')).injector.get(CdkDropList);
+    expect(dropList.autoScrollStep).toBe(10);
+  });
 });
+

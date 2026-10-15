@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatCard } from '@angular/material/card';
 import { NgClass, NgStyle } from '@angular/common';
@@ -55,6 +56,7 @@ export class DashboardTileTitleComponent {
     forwardRef(() => DashboardTileTitleComponent),
     MatIcon,
     CdkDropList,
+    CdkScrollable,
     NgClass,
     AuthorizedRolesDirective,
     CdkDrag,
