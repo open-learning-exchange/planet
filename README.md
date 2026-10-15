@@ -87,6 +87,11 @@ npm run dev
 Visit localhost:3000 to access the Planet app.
 If port 3000 is in use, try ```ng serve --port 3001``` or ```npm run dev -- --port 3001``` when using generated environment values.
 
+The gateway only answers browsers on its own host or listed origins, and chat needs a signed-in Planet session. For AI chat under `ng serve`, add the app's origin to the chatapi service's `environment:` in `planet-dev.yml`, then run `docker compose -f planet-dev.yml -p planet-dev up -d` again:
+```
+      - CORS_ORIGINS=http://localhost:3000
+```
+
 ## Gateway Notes
 
 Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB. 

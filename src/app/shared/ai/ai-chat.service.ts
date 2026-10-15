@@ -92,7 +92,7 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
     return this.httpClient.post(`${this.baseUrl}/`, {
       data,
       save,
-    });
+    }, { withCredentials: true });
   }
 
   // Subscribe to stream updates
