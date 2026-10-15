@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { Subject, forkJoin, of } from 'rxjs';
-import { UserService } from '../shared/user.service';
-import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map, filter, take } from 'rxjs/operators';
-import { RatingService } from '../shared/forms/rating.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { TagsService } from '../shared/forms/tags.service';
-import { dedupeObjectArray } from '../shared/utils';
-import { MarkdownService } from '../shared/markdown.service';
+import { switchMap, map, filter, take, tap } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments, inSelector } from '@shared/database/mango-queries';
+import { RatingService } from '@shared/ratings/rating.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { TagsService } from '@shared/forms/tags/tags.service';
+import { dedupeObjectArray } from '@shared/utils';
+import { MarkdownImagesService } from '@shared/markdown/markdown-images.service';
+
 import { UsersService } from '../users/users.service';
+
+export interface CourseAuthorizationContext {
+  readOnly?: boolean;
+}
 
 // Service for updating and storing active course for single course views.
 @Injectable({
@@ -19,16 +25,17 @@ import { UsersService } from '../users/users.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  #course: any = {};
+  private activeCourse: any = {};
   get course() {
-    return this.#course;
+    return this.activeCourse;
   }
   set course(newCourse: any) {
-    this.#course = { ...this.#course, ...newCourse };
+    this.activeCourse = { ...this.activeCourse, ...newCourse };
   }
   progress: any;
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
+  private courseTagsUpdated = new Subject<{ courseId: string, planetField: string, tags: any[] }>();
   private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
   private progressUpdated = new Subject<{ parent: boolean, planetField: string, progress: any[] }>();
   progressUpdateInProgress = false;
@@ -37,6 +44,7 @@ export class CoursesService {
   local = { courses: [], ratings: [], tags: [], courses_progress: [] };
   parent = { courses: [], ratings: [], tags: [], courses_progress: [] };
   isReady = { local: false, parent: false };
+  private tagsLoaded = { local: false, parent: false };
 
   constructor(
     private couchService: CouchService,
@@ -45,7 +53,7 @@ export class CoursesService {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private tagsService: TagsService,
-    private markdownService: MarkdownService,
+    private markdownImagesService: MarkdownImagesService,
     private usersService: UsersService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
@@ -62,9 +70,27 @@ export class CoursesService {
         this.mergeData(this[planetField], planetField, res.parent);
       }
     });
-    this.stateService.couchStateListener('tags').subscribe((res: any) => handleStateRes(res, 'tags'));
+    this.stateService.couchStateListener('tags').subscribe((res: any) => {
+      handleStateRes(res, 'tags');
+      if (res !== undefined) {
+        this.tagsLoaded[res.planetField] = true;
+        if (this.activeCourse._id) {
+          this.courseTagsUpdated.next({
+            courseId: this.activeCourse._id, planetField: res.planetField, tags: this.courseTags(this.activeCourse, res.newData)
+          });
+        }
+      }
+    });
     this.stateService.couchStateListener(this.dbName).subscribe((res: any) => handleStateRes(res, this.dbName));
     this.stateService.couchStateListener(this.progressDb).subscribe((res: any) => handleStateRes(res, this.progressDb));
+  }
+
+  canManageCourse(course: any, context: CourseAuthorizationContext = {}): boolean {
+    if (!course || context.readOnly) {
+      return false;
+    }
+    const user = this.userService.get();
+    return user.isUserAdmin === true || course.creator === `${user.name}@${this.stateService.configuration.code}`;
   }
 
   requestCourses(parent = false) {
@@ -82,7 +108,7 @@ export class CoursesService {
       _rev: course._rev,
       progress: courses_progress.filter((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || [],
       rating: this.ratingService.createItemList([ course ], ratings)[0].rating,
-      tags: this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags
+      tags: this.courseTags(course, tags)
     }));
     this.coursesUpdated.next({ courses: data, planetField, parent });
     this.progressUpdated.next({ progress: courses_progress, planetField, parent });
@@ -97,6 +123,10 @@ export class CoursesService {
 
   progressListener$(reqParent = false) {
     return this.progressUpdated.pipe(filter(res => res.parent === reqParent), map(res => res.progress));
+  }
+
+  courseTagsListener$(reqParent = false) {
+    return this.courseTagsUpdated.pipe(filter(res => res.planetField === (reqParent ? 'parent' : 'local')));
   }
 
   progressLearnerListener$(parent = false) {
@@ -115,6 +145,7 @@ export class CoursesService {
   // Or will get new version if forceLatest set to true
   // Always queries CouchDB for the latest progress by the logged in user
   requestCourse({ courseId, forceLatest = false, parent = false }, opts: any = {}) {
+    const planetField = parent ? 'parent' : 'local';
     opts = { ...opts, domain: parent ? this.stateService.configuration.parentDomain : '' };
     const obs = [ parent ? of([]) : this.findOneCourseProgress(courseId) ];
     if (!forceLatest && courseId === this.course._id) {
@@ -127,13 +158,23 @@ export class CoursesService {
     forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
       this.progress = progress;
       course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
-      this.updateCourse({ progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
+      this.updateCourse({
+        progress,
+        course: { ...this.ratingService.createItemList([ course ], ratings)[0], tags: this.courseTags(course, this[planetField].tags) }
+      });
     });
+    if (!this.tagsLoaded[planetField]) {
+      this.stateService.requestData('tags', planetField);
+    }
     this.usersService.requestUserData();
   }
 
+  private courseTags(course: any, tags: any[]) {
+    return this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags;
+  }
+
   reset() {
-    this.#course = {};
+    this.activeCourse = {};
     this.stepIndex = -1;
     this.returnUrl = '';
   }
@@ -199,20 +240,16 @@ export class CoursesService {
   }
 
   courseResignAdmission(courseId, type, courseTitle?) {
-    const title = courseTitle ? courseTitle : this.getCourseNameFromId(courseId);
-    const courseIds: any = [ ...this.userService.shelf.courseIds ];
-    if (type === 'resign') {
-      const myCourseIndex = courseIds.indexOf(courseId);
-      courseIds.splice(myCourseIndex, 1);
-    } else {
-      courseIds.push(courseId);
-    }
-    return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign'
-        ? $localize`Removed from myCourses: ${title}`
-        : $localize`Course added to your dashboard: ${title}`;
-      this.planetMessageService.showMessage(admissionMessage);
-      return res;
+    const title = courseTitle || this.getCourseNameFromId(courseId) || $localize`Selected course`;
+    const remove = type === 'resign';
+    const changedIds = this.changedCourseIds([ courseId ], remove);
+    return this.updateCourseShelf(changedIds, remove, title).pipe(map((shelf) => {
+      if (changedIds.length) {
+        this.planetMessageService.showMessage(
+          remove ? $localize`Removed from myCourses: ${title}` : $localize`Course added to your dashboard: ${title}`
+        );
+      }
+      return shelf;
     }));
   }
 
@@ -221,15 +258,36 @@ export class CoursesService {
   }
 
   courseAdmissionMany(courseIds, type, parent = false) {
-    return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
-      const prefix = countChanged > 1 ?
-        $localize`${countChanged} courses` :
-        this.getCourseNameFromId(courseIds[courseIds.length - 1], parent) || $localize`Selected course`;
-      const message = type === 'remove' ? $localize`Removed from myCourses: ${prefix}` :
-        $localize`Added to myCourses: ${prefix} `;
-      this.planetMessageService.showMessage(message);
+    const remove = type === 'remove';
+    const changedIds = this.changedCourseIds(courseIds, remove);
+    const prefix = changedIds.length > 1 ?
+      $localize`${changedIds.length} courses` :
+      this.getCourseNameFromId(changedIds[0], parent) || $localize`Selected course`;
+    return this.updateCourseShelf(changedIds, remove, prefix).pipe(map((shelf) => {
+      if (changedIds.length) {
+        this.planetMessageService.showMessage(
+          remove ? $localize`Removed from myCourses: ${prefix}` : $localize`Added to myCourses: ${prefix} `
+        );
+      }
       return shelf;
     }));
+  }
+
+  private changedCourseIds(courseIds: string[], remove: boolean) {
+    const shelfIds: string[] = this.userService.shelf.courseIds;
+    return courseIds.filter((id, index) => courseIds.indexOf(id) === index && shelfIds.includes(id) === remove);
+  }
+
+  private updateCourseShelf(changedIds: string[], remove: boolean, label: string) {
+    if (changedIds.length === 0) {
+      return of(this.userService.shelf);
+    }
+    return this.userService.changeShelf(changedIds, 'courseIds', remove ? 'remove' : 'add').pipe(
+      map(({ shelf }) => shelf),
+      tap({ error: () => this.planetMessageService.showAlert(
+        remove ? $localize`There was an error removing ${label}` : $localize`There was an error adding ${label}`
+      ) })
+    );
   }
 
   stepResourceSort(a: { title: string }, b: { title: string }) {
@@ -262,7 +320,8 @@ export class CoursesService {
 
   storeMarkdownImages(course) {
     const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
-    const imagesArray = (item: { description: any }) => this.markdownService.createImagesArray(item, markdownText(item), 'description');
+    const imagesArray = (item: { description: any }) =>
+      this.markdownImagesService.createImagesArray(item, markdownText(item), 'description');
     const images = dedupeObjectArray(
       [ course.images || [], imagesArray(course), course.steps.map(step => imagesArray(step)) ].flat(2),
       [ 'resourceId' ]
@@ -271,7 +330,9 @@ export class CoursesService {
       ...course,
       description: markdownText(course),
       steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
-      images: this.markdownService.filterMissingImages([ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images)
+      images: this.markdownImagesService.filterMissingImages(
+        [ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images
+      )
     };
   }
 

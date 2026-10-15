@@ -1,54 +1,48 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
-import { EMPTY, Subject, Subscription, forkJoin, iif, of } from 'rxjs';
-import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take, filter } from 'rxjs/operators';
-import { StateService } from '../shared/state.service';
-import { NewsService } from '../news/news.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { CommunityLinkDialogComponent } from './community-link-dialog.component';
-import { TeamsService } from '../teams/teams.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
-import { UsersService } from '../users/users.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { CustomValidators } from '../validators/custom-validators';
-import { environment } from '../../environments/environment';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { DialogsAnnouncementSuccessComponent } from '../shared/dialogs/dialogs-announcement.component';
-import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
-import { ConfigurationCheckService } from '../shared/configuration-check.service';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { EMPTY, Subject, Subscription, forkJoin, iif, of, throwError } from 'rxjs';
+import { takeUntil, finalize, switchMap, map, catchError, tap, take, filter } from 'rxjs/operators';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { NgClass } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { NewsListComponent } from '../news/news-list.component';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
-import { MatSelect, MatSelectTrigger } from '@angular/material/select';
-import { LabelComponent } from '../shared/label.component';
-import { MatOption } from '@angular/material/autocomplete';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { TeamsMemberComponent } from '../teams/teams-member.component';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import {
   MatNavList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { StateService } from '@shared/state.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { planetAndParentId } from '@shared/utils';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { ChallengesAnnouncementSuccessDialogComponent } from '@shared/challenges/challenges-announcement-dialog.component';
+import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetCalendarComponent } from '@shared/calendar/planet-calendar.component';
+
+import { NewsService } from '../news/news.service';
+import { CommunityLinkDialogComponent } from './community-link-dialog.component';
+import { TeamsService } from '../teams/teams.service';
+import { UsersService } from '../users/users.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { environment } from '../../environments/environment';
+import { ConfigurationCheckService } from '../configuration/configuration-check.service';
+import { NewsListComponent } from '../news/news-list.component';
+import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { CommunityListComponent } from './community-list.component';
-import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
+import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
-import { TeamsReportsComponent } from '../teams/teams-reports.component';
-import { PlanetCalendarComponent } from '../shared/calendar.component';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voice-labels';
+import { TeamsReportsComponent } from '../teams/teams-reports/teams-reports.component';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -65,19 +59,7 @@ interface CommunityDescriptionForm {
     MatTab,
     PlanetLoadingSpinnerComponent,
     NewsListComponent,
-    MatToolbar,
-    NgClass,
-    MatFormField,
-    MatLabel,
     MatIcon,
-    MatPrefix,
-    MatSuffix,
-    MatInput,
-    FormsModule,
-    MatSelect,
-    MatSelectTrigger,
-    LabelComponent,
-    MatOption,
     AuthorizedRolesDirective,
     MatButton,
     MatIconButton,
@@ -100,40 +82,36 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
-  customVoiceLabels: string[] = this.configuration.customVoiceLabels || [];
+  private readonly emptyVoiceLabels: string[] = [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
   isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
-  filteredNews: any[] = [];
   links: any[] = [];
   finances: any[] = [];
   communityDataLoading = false;
   councillors: any[] = [];
   reports: any[] = [];
-  showNewsButton = true;
   deleteMode = false;
   onDestroy$ = new Subject<void>();
-  communityDataRequest$ = new Subject<void>();
+  communityDataRequest$ = new Subject<boolean>();
   newsRequestSubscription?: Subscription;
   isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
   planetCode = this.route.snapshot.paramMap.get('code');
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes = DeviceType;
   newsLoading = true;
   teamLoading = true;
+  teamLoaded = false;
+  private communityReady = false;
+  private loggedOut$ = new Subject<void>();
+  private challengeChecked = false;
   currentTab = 0;
   activeReplyId: string | null = null;
   lastReplyId: string | null = null;
-  voiceSearch = '';
-  voiceSearch$ = new Subject<string>();
-  availableLabels: string[] = [];
-  private viewLabelNames = new Set<string>();
-  selectedLabel = '';
-  pinned = false;
   attachmentMap: Record<string, any> = {};
 
   get isRemoteExchange(): boolean {
@@ -150,10 +128,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
-  }
-
-  get voicesToolbarPinTooltip(): string {
-    return this.pinned ? $localize`Unpin Voices Toolbar` : $localize`Pin Voices Toolbar`;
   }
 
   localLinkTooltip(link: any): string {
@@ -175,39 +149,27 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private userStatusService: UserChallengeStatusService,
+    private userStatusService: ChallengesUserStatusService,
     private deviceInfoService: DeviceInfoService,
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
     private challengesService: ChallengesService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().pipe(takeUntil(this.onDestroy$)).subscribe();
     this.communityDataRequest$.pipe(
-      tap(() => {
-        this.teamLoading = true;
-        this.newsLoading = true;
-        this.communityDataLoading = true;
-        this.activeReplyId = null;
-        this.news = [];
-        this.filteredNews = [];
-        this.links = [];
-        this.finances = [];
-        this.reports = [];
-        this.councillors = [];
-        this.newsRequestSubscription?.unsubscribe();
-      }),
-      switchMap(() => this.loadCommunityData()),
+      switchMap(withNews => withNews ? this.loadCommunityData() : this.loadMemberData()),
       takeUntil(this.onDestroy$)
     ).subscribe(team => {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
       this.teamLoading = false;
+      this.teamLoaded = true;
+      if (!this.challengeChecked) {
+        this.challengeChecked = true;
+        this.communityChallenge();
+      }
     });
     // planetCode is seeded from the route snapshot; the configuration listener below performs the initial load.
     // This subscription only reloads data when Angular reuses the component for a different community code.
@@ -219,21 +181,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.planetCode = planetCode;
       this.getCommunityData();
     });
-    this.voiceSearch$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      takeUntil(this.onDestroy$)
-    ).subscribe(searchValue => {
-      this.voiceSearch = searchValue;
-      this.applyFilters();
-    });
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
-      this.filteredNews = this.news;
-      this.availableLabels = this.getAvailableLabels(this.news);
       this.newsLoading = false;
-      this.applyFilters();
     }, () => this.newsLoading = false);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.isRemoteExchange) {
@@ -246,7 +197,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.communityChallenge();
     iif(
       () => this.stateService.configuration?._id !== undefined,
       of(this.stateService.configuration),
@@ -258,7 +208,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
       this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
-      this.getCommunityData();
+      if (!this.isLoggedIn) {
+        this.loggedOut$.next();
+        this.clearMemberData();
+      } else if (!this.teamLoaded) {
+        this.getCommunityData(!this.communityReady);
+      }
     });
   }
 
@@ -269,16 +224,16 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const challenge = this.challengesService.getActiveChallenge();
-    if (!challenge) {
-      return;
-    }
-    const dialogRef = this.challengesService.openChallengeDialog(this.dialog, challenge);
-    dialogRef.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      if (!this.userStatusService.getCompleteChallenge()) {
-        this.sendChallengeNotification(this.user, challenge).pipe(takeUntil(this.onDestroy$)).subscribe();
-      }
-    });
+    const challenge$ = this.isRemoteExchange ?
+      this.challengesService.getActiveChallenge() :
+      of(this.challengesService.activeChallengeIn(this.team));
+    challenge$.pipe(
+      filter(challenge => !!challenge),
+      switchMap(challenge => this.challengesService.openChallengeDialog(this.dialog, challenge).afterClosed().pipe(map(() => challenge))),
+      filter(() => !this.userStatusService.getCompleteChallenge()),
+      switchMap(challenge => this.sendChallengeNotification(this.user, challenge)),
+      takeUntil(this.onDestroy$)
+    ).subscribe();
   }
 
   sendChallengeNotification(user, challenge) {
@@ -286,11 +241,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.couchService.updateDocument('notifications', data);
   }
 
-  getCommunityData() {
-    this.communityDataRequest$.next();
+  getCommunityData(withNews = true) {
+    this.communityDataRequest$.next(withNews);
   }
 
   private loadCommunityData() {
+    this.communityReady = false;
+    this.teamLoading = true;
+    this.newsLoading = true;
+    this.communityDataLoading = true;
+    this.activeReplyId = null;
+    this.news = [];
+    this.councillors = [];
+    this.clearMemberData();
+    this.newsRequestSubscription?.unsubscribe();
     const planetCode = this.planetCode;
     const localConfiguration = this.stateService.configuration || {};
     const childPlanetType = this.getChildPlanetType(localConfiguration.planetType);
@@ -307,21 +271,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
           name: planetCode,
           planetType: childPlanetType || 'community'
         };
-        this.customVoiceLabels = this.configuration.customVoiceLabels || [];
         this.team = requestedTeam;
         this.teamId = this.team._id;
-        this.requestNewsAndUsers(planetCode);
-        this.communityDataLoading = true;
-        return this.getLinks(planetCode);
-      }),
-      switchMap((res) => {
-        this.setLinksAndFinances(res);
-        return this.couchService.get(`teams/${requestedTeam._id}`);
-      }),
-      catchError(err => {
-        if (err.statusText === 'Object Not Found') {
-          return of(requestedTeam);
+        this.communityReady = true;
+        this.requestNews(planetCode);
+        this.requestUsers(planetCode);
+        if (!this.isLoggedIn) {
+          this.teamLoading = false;
+          this.communityDataLoading = false;
+          return EMPTY;
         }
+        return this.loadMemberData();
+      }),
+      catchError(() => {
         this.teamLoading = false;
         this.communityDataLoading = false;
         this.newsLoading = false;
@@ -330,11 +292,41 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
+  private loadMemberData() {
+    const stopLoading = () => {
+      this.teamLoading = false;
+      this.communityDataLoading = false;
+    };
+    this.teamLoading = true;
+    this.communityDataLoading = true;
+    return this.getLinks().pipe(
+      switchMap((res) => {
+        this.setLinksAndFinances(res);
+        return this.couchService.get(`teams/${this.team._id}`).pipe(
+          catchError(err => err.status === 404 ? of(this.team) : throwError(err))
+        );
+      }),
+      catchError(() => {
+        stopLoading();
+        return EMPTY;
+      }),
+      takeUntil(this.loggedOut$.pipe(tap(stopLoading)))
+    );
+  }
+
+  private clearMemberData() {
+    this.links = [];
+    this.finances = [];
+    this.reports = [];
+    this.team = this.teamObject(this.planetCode);
+    this.teamLoaded = false;
+  }
+
   private getChildPlanetType(planetType: string): 'community' | 'nation' | undefined {
     return planetType === 'center' ? 'nation' : planetType === 'nation' ? 'community' : undefined;
   }
 
-  requestNewsAndUsers(planetCode?: string) {
+  private requestNews(planetCode?: string) {
     this.newsRequestSubscription = this.newsService.requestNews({
       selectors: {
         $or: [
@@ -344,6 +336,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       },
       viewId: this.teamId
     });
+  }
+
+  private requestUsers(planetCode?: string) {
     if (planetCode) {
       this.stateService.requestData('child_users', 'local');
     } else {
@@ -389,14 +384,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
-      const challenge = this.challengesService.getActiveChallenge();
+      const challenge = this.challengesService.activeChallengeIn(this.team);
       if (
         challenge &&
         this.userStatusService.getStatus('joinedCourse') &&
         this.userStatusService.getStatus('surveyComplete') &&
         !this.userStatusService.getStatus('hasPost')
       ) {
-        this.dialog.open(DialogsAnnouncementSuccessComponent, {
+        this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
           width: '50vw',
           maxHeight: '100vh',
           data: challenge
@@ -425,12 +420,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamObject(planetCode?: string) {
     const code = planetCode || this.stateService.configuration.code;
     const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
-    const teamId = `${code}@${parentCode}`;
+    const teamId = planetAndParentId({ code, parentCode });
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
 
-  getLinks(planetCode?) {
-    return this.teamsService.getTeamMembers(this.team || this.teamObject(planetCode), true).pipe(map((docs) => {
+  getLinks() {
+    return this.teamsService.getTeamMembers(this.team, true).pipe(map((docs) => {
       const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => {
         if (!docObject[doc.docType]) {
           docObject[doc.docType] = [];
@@ -561,7 +556,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   toggleShowButton(data) {
     this.activeReplyId = data._id === 'root' ? null : data._id;
-    this.showNewsButton = data._id === 'root';
   }
 
   toggleDeleteMode() {
@@ -670,54 +664,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.currentTab = index;
   }
 
-  onLabelFilterChange(label: string): void {
-    this.selectedLabel = label;
-    this.applyFilters();
-  }
-
-  applyFilters(): void {
-    let filtered = this.news;
-    if (this.selectedLabel) {
-      filtered = filtered.filter(item =>
-        (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel))
-          || (item.doc.viewIn || []).some(view => view.name && voiceLabelsEqual(view.name, this.selectedLabel))
-          || (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true));
-    }
-    if (this.voiceSearch) {
-      const lower = this.voiceSearch.toLowerCase();
-      filtered = filtered.filter(item => {
-        if (typeof item.doc.messageLower !== 'string') {
-          item.doc.messageLower = (item.doc.message || '').toLowerCase();
-        }
-        return item.doc.messageLower.includes(lower);
-      });
-    }
-    this.filteredNews = filtered;
-  }
-
-  getAvailableLabels(news: any[]): string[] {
-    const labels: string[] = [];
-    this.viewLabelNames = new Set<string>();
-    news.forEach(item => {
-      labels.push(...(item.doc.labels || []));
-      (item.doc.viewIn || []).forEach(view => {
-        if (view.name) {
-          labels.push(view.name);
-          this.viewLabelNames.add(normalizeVoiceLabel(view.name));
-        }
-      });
-      if (item.doc.chat === true) {
-        labels.push(SHARED_CHAT_LABEL);
-      }
-    });
-
-    return dedupeVoiceLabels(labels);
-  }
-
-  getLabelIcon(label: string): string {
-    return voiceLabelsEqual(label, SHARED_CHAT_LABEL) ? 'question_answer'
-      : this.viewLabelNames.has(normalizeVoiceLabel(label)) ? 'groups'
-      : 'label_important';
+  get customVoiceLabels(): string[] {
+    return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
   get canManageLabels(): boolean {
@@ -725,24 +673,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
       (this.isCommunityLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
   }
 
-  changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
-    this.selectedLabel = action === 'select' ?
-      this.availableLabels.find(availableLabel => voiceLabelsEqual(availableLabel, label)) || label : '';
-    this.applyFilters();
-  }
-
   openManageLabelsDialog() {
     if (this.planetCode) {
       return;
     }
-    this.dialog.open(DialogsVoiceLabelsComponent, {
+    this.dialog.open(NewsLabelsDialogComponent, {
       width: '500px',
       autoFocus: false,
-      data: { target: 'community', customLabels: this.customVoiceLabels }
+      data: { target: 'community', team: this.team, customLabels: this.customVoiceLabels }
     }).afterClosed().subscribe((updatedLabels?: string[]) => {
       if (updatedLabels) {
-        this.customVoiceLabels = updatedLabels;
-        this.configuration = { ...this.configuration, customVoiceLabels: updatedLabels };
+        this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }
     });
   }

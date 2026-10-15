@@ -10,10 +10,10 @@ export default defineConfig({
     globals: true,
     reporters: [ 'default' ],
     server: {
-      // Covalent imports Showdown's CommonJS API as an ESM namespace. Let Vite
-      // transform both packages so named exports such as `Converter` survive.
+      // MarkdownRenderService imports Showdown's CommonJS API as an ESM namespace.
+      // Let Vite transform it so named exports such as `Converter` survive.
       deps: {
-        inline: [ '@covalent/markdown', 'showdown' ],
+        inline: [ 'showdown' ],
       },
     },
   },

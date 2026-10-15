@@ -4,10 +4,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { LoginComponent } from './login.component';
-import { CouchService } from '../shared/couchdb.service';
-import { MaterialModule } from '../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { MaterialModule } from '@shared/material.module';
+
+import { LoginComponent } from './login.component';
 
 describe('Login', () => {
 

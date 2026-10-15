@@ -5,11 +5,11 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{courseDetail.courseTitle}}</h3>
-    @if (deviceType === deviceTypes.DESKTOP) {
+    @if (deviceType() === deviceTypes.DESKTOP) {
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
     }
-    @if ( deviceType === deviceTypes.TABLET) {
+    @if ( deviceType() === deviceTypes.TABLET) {
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
@@ -18,7 +18,7 @@
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
       </mat-menu>
     }
-    @if (deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE) {
+    @if (isMobile()) {
       <span class="toolbar-fill"></span>
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
@@ -43,19 +43,26 @@
   </ng-template>
 
   <ng-template #actionButtons>
+    @if (canManage && !parent) {
+      <a mat-raised-button color="accent" [routerLink]="['/courses/submissions', courseDetail._id]" class="margin-lr-3 km-course-submissions-btn" i18n>
+        Submissions & Grading
+      </a>
+    }
     @if (!parent) {
       @if (!isUserEnrolled && courseDetail.steps.length) {
         <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3">
           Join
         </button>
       }
+    }
+    <button class="view-step-button margin-lr-3" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
+    @if (!parent) {
       @if (isUserEnrolled && courseDetail.steps.length) {
-        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3">
+        <button mat-raised-button color="warn" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3">
           Leave
         </button>
       }
     }
-    <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </ng-template>
 
   <div class="view-container view-full-height">

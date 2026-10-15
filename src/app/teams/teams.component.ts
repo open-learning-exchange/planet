@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -9,18 +8,8 @@ import {
 } from '@angular/material/table';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
-import { filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
-import { TeamsService } from './teams.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -29,9 +18,23 @@ import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import {
+  filterSpecificFieldsHybrid, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
+} from '@shared/tables/table.helpers';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { TeamsService } from './teams.service';
+import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { enterpriseJoinAgreement } from './teams.utils';
 
 @Component({
@@ -75,8 +78,6 @@ import { enterpriseJoinAgreement } from './teams.utils';
   ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
-  private readonly destroyRef = inject(DestroyRef);
-
   teams = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -110,8 +111,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
   filter: string;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   userNotInShelf = false;
   showFiltersRow = false;
   selection = new SelectionModel(true, []);
@@ -131,19 +131,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private stateService: StateService,
     private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-        this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-      });
-  }
+  ) {}
 
   ngOnInit() {
     this.getTeams();
     this.teams.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'doc.name' ]),
+      filterSpecificFieldsHybrid([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
     this.teams.sortingDataAccessor = deepSortingDataAccessor;
@@ -286,9 +279,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
             : $localize`:@@team-created-success:Team created successfully`);
         this.planetMessageService.showMessage(msg);
       },
-      error: () => {
+      error: (err) => {
         this.getTeams();
-        this.planetMessageService.showAlert($localize`There was a problem saving your changes.`);
+        this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err));
       }
     });
   }
@@ -414,7 +407,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         type: 'enterprise',
         displayName,
         rules: team.rules,
-        extraMessage: enterpriseJoinAgreement()
+        extraMessage: enterpriseJoinAgreement(),
+        extraMessageType: 'supplementary'
       }
     });
   }
@@ -478,6 +472,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   getTeamTypeLabel(team: any): string {
     return team.doc.type === 'enterprise' ? $localize`enterprise` : $localize`team`;
+  }
+
+  coverImageUrl(team: any): string {
+    return this.teamsService.coverImageUrl(team);
   }
 
 }

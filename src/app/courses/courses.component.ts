@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input, OnChange
 import {
   MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
 } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
@@ -12,59 +12,64 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
-import {
-  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
-} from '../shared/table-helpers';
-import * as constants from './constants';
-import { languages } from '../shared/languages';
-import { SyncService } from '../shared/sync.service';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { TagsService } from '../shared/forms/tags.service';
-import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
-import { SearchService } from '../shared/forms/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/device-info.service';
-import { CoursesSearchComponent } from './search-courses/courses-search.component';
+import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
-import { PlanetTagSelectedInputComponent } from '../shared/forms/planet-tag-selected-input.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
-import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PreviewOverflowDirective } from '../shared/preview-overflow.directive';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { PlanetLocalStatusComponent } from '../shared/planet-local-status.component';
+
+import {
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
+} from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { languages } from '@shared/language/languages';
+import { SyncService } from '@shared/database/sync.service';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { dedupeShelfReduce, findByIdInArray } from '@shared/utils';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { TagsService } from '@shared/forms/tags/tags.service';
+import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
+import { SearchService } from '@shared/search/search.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '@shared/ui/device-info.service';
+import { PlanetFilteredAmountComponent } from '@shared/tables/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '@shared/forms/tags/planet-tag-selected-input.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetMarkdownPreviewComponent } from '@shared/markdown/planet-markdown-preview.component';
+import { PlanetLocalStatusComponent } from '@shared/database/planet-local-status.component';
+import { PlanetRatingDialogDirective } from '@shared/ratings/planet-rating-dialog.component';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
+import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import * as constants from './courses.constants';
+import { CoursesService } from './courses.service';
+import { CoursesSearchComponent } from './search-courses/courses-search.component';
+import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
-import { LanguageLabelComponent } from '../shared/language-label.component';
-import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.scss'],
   encapsulation: ViewEncapsulation.None,
+  host: {
+    '[class.embedded]': 'isForm'
+  },
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -87,7 +92,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     NgClass,
     MatMiniFabButton,
     RouterLink,
-    FilteredAmountComponent,
+    PlanetFilteredAmountComponent,
     PlanetTagSelectedInputComponent,
     MatMenuTrigger,
     MatMenu,
@@ -106,11 +111,10 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     CoursesProgressBarComponent,
     MatChipSet,
     MatChip,
-    PreviewOverflowDirective,
-    PlanetMarkdownComponent,
+    PlanetMarkdownPreviewComponent,
     PlanetLocalStatusComponent,
     FeedbackDirective,
-    DialogsRatingsDirective,
+    PlanetRatingDialogDirective,
     LanguageLabelComponent,
     PlanetRatingComponent,
     MatHeaderRowDef,
@@ -127,6 +131,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   isLoading = true;
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
   selectedLocal = 0;
@@ -134,7 +139,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     return this.courses;
   }
   courses = new MatTableDataSource();
-  private renderedRows: any[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(CoursesSearchComponent) searchComponent: CoursesSearchComponent;
@@ -171,7 +175,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.courses.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    this.removeFilteredFromSelection();
+    this.pageSelection.removeFiltered();
   }
   user = this.userService.get();
   userShelf: any = [];
@@ -184,7 +188,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
-    filterSpecificFieldsHybrid([ 'doc.courseTitle' ], this.fuzzySearchService),
+    filterSpecificFieldsHybrid([ 'doc.courseTitle' ]),
     filterShelf(this.myCoursesFilter, 'admission'),
     filterIds(this.filterIds)
   ]);
@@ -197,8 +201,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     return this.showFilters && !this.isMobile;
   }
   expandedElement: any = null;
-  private previewHasHiddenContent = new Map<string, boolean>();
-  private previewOverflow = new Map<string, boolean>();
+  certifications: any[] = [];
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -219,7 +222,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private certificationsService: CertificationsService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -242,7 +245,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = commonSortingDataAccessor;
-    this.courses.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
+    this.pageSelection.connect(this.courses, this.onDestroy$);
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
       switchMap((courses: any) => this.parent && courses !== undefined ?
@@ -267,10 +270,18 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.countSelectNotEnrolled(source.selected);
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    if (!this.parent && !this.isDialog && !this.isForm) {
+      this.certificationsService.getCertifications().pipe(
+        catchError(() => of([])),
+        takeUntil(this.onDestroy$)
+      ).subscribe((certifications: any[]) => {
+        this.certifications = certifications;
+        this.courses.data.forEach((course: any) => course.inCertification = this.isInCertification(course._id));
+      });
+    }
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
-      this.removeFilteredFromSelection();
     });
   }
 
@@ -291,11 +302,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   setupList(courseRes, myCourses) {
     return courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
-      course.canManage = this.user.isUserAdmin ||
-        (course.doc.creator === this.user.name + '@' + this.planetConfiguration.code);
+      course.canManage = this.coursesService.canManageCourse(course.doc);
       course.admission = myCourseIndex > -1;
+      course.inCertification = this.isInCertification(course._id);
+      course.isCompleted = course.doc.steps?.length > 0 &&
+        this.certificationsService.isCourseCompleted(course, this.user);
       return course;
     });
+  }
+
+  private isInCertification(courseId: string): boolean {
+    return this.certifications.some(certification => certification.courseIds?.includes(courseId));
   }
 
   getCourses() {
@@ -308,10 +325,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (this.tagInputComponent) {
       this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
     }
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
   }
 
   searchFilter(filterValue: string) {
@@ -429,20 +442,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }, (error) => ((error)));
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
-    }
-  }
-
   countSelectNotEnrolled(selected: any) {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected.filter(id => this.hasSteps(id)), 'courseIds');
     this.selectedEnrolled = inShelf;
@@ -464,14 +463,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // titleSearch set runs dropdownsFill and recordSearch
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
-  }
-
-  removeFilteredFromSelection() {
-    queueMicrotask(() => {
-      const visible = new Set(this.renderedRows.map((row: any) => row._id));
-      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
-    });
   }
 
   onSearchChange({ items, category }) {
@@ -480,7 +471,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
-    this.removeFilteredFromSelection();
   }
 
   toggleFiltersRow() {
@@ -654,29 +644,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
-  }
-
-  showPreviewExpand(element: any): boolean {
-    const description = element?.doc?.description;
-    if (!description) {
-      return false;
-    }
-    const previewKey = this.getPreviewKey(element);
-    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
-    if (hasHiddenContent === undefined) {
-      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
-      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
-    }
-    // isExpanded check keeps the collapse button visible after the preview div unmounts
-    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
-  }
-
-  getPreviewKey(element: any): string {
-    return element?._id || '';
-  }
-
-  setPreviewOverflow(element: any, hasOverflow: boolean) {
-    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }

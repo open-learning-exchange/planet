@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map, switchMap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { PouchService } from '../shared/database/pouch.service';
-import { SyncService } from '../shared/sync.service';
-import { StateService } from '../shared/state.service';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PouchService } from '@shared/database/pouch.service';
+import { SyncService } from '@shared/database/sync.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { dedupeObjectArray } from '@shared/utils';
+
 import { HealthService } from '../health/health.service';
 import { SubmissionsService } from '../submissions/submissions.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
-import { findDocuments } from '../shared/mangoQueries';
-import { dedupeObjectArray } from '../shared/utils';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -34,6 +36,7 @@ export class LoginTasksService {
 
   postLoginTasks$(name: string, password: string, isCreate: boolean, userId: string, configuration: any) {
     return forkJoin(this.pouchService.replicateFromRemoteDBs()).pipe(
+      defaultIfEmpty([]),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
@@ -87,13 +90,13 @@ export class LoginTasksService {
     return obsArr;
   }
 
-  private createParentSession({ name, password }: { name: string; password: string }) {
+  private createParentSession({ name, password }: { name: string, password: string }) {
     return this.couchService.post('_session',
       { name, password },
       { withCredentials: true, domain: this.stateService.configuration.parentDomain });
   }
 
-  private getConfigurationSyncDown(configuration: { code: string }, credentials: { name: string; password: string }) {
+  private getConfigurationSyncDown(configuration: { code: string }, credentials: { name: string, password: string }) {
     return this.syncService.sync({
       dbSource: 'communityregistrationrequests',
       dbTarget: 'configurations',

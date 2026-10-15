@@ -15,7 +15,9 @@ export const FEEDBACK_STATUS_OPTIONS = [
   { label: $localize`Closed`, value: 'closed' }
 ] as const;
 
-interface FeedbackOption { label: string; value: string }
+export const FEEDBACK_SCREENSHOT_TYPES = [ 'image/png', 'image/jpeg', 'image/webp' ];
+
+interface FeedbackOption { label: string, value: string }
 
 export interface FeedbackTitleContext {
   kind: 'home' | 'section' | 'item' | 'path';
@@ -66,7 +68,7 @@ export const getFeedbackTypeIcon = (value: unknown) => {
   }
 };
 
-export const getFeedbackDisplayTitle = (feedback: { title?: string; titleContext?: FeedbackTitleContext; type?: string; url?: string }) => {
+export const getFeedbackDisplayTitle = (feedback: { title?: string, titleContext?: FeedbackTitleContext, type?: string, url?: string }) => {
   // Keep explicit (manually edited) titles untouched. Older auto-generated titles also remain as saved;
   if (feedback.title?.trim()) {
     return feedback.title;

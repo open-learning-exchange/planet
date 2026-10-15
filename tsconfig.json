@@ -11,7 +11,10 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "target": "ES2022",
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@shared/*": [ "./src/app/shared/*" ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

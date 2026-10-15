@@ -5,17 +5,9 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
-import { SubmissionsService } from './submissions.service';
-import { UserService } from '../shared/user.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { CoursesService } from '../courses/courses.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
@@ -28,6 +20,17 @@ import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { appSourceLabel } from '@shared/android/app-source';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+
+import { SubmissionsService } from './submissions.service';
+import { CoursesService } from '../courses/courses.service';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -85,8 +88,12 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
+  @Input() courseId: string;
+  @Input() courseTitle: string;
+  @Input() showCourseHeader = false;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
+  @Output() backClick = new EventEmitter<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
@@ -182,7 +189,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.submissions.data = submissions.map(submission => ({
         ...submission,
         submittedBy: this.submissionsService.submissionName(submission.user),
-        docSource: submission.androidId ? 'myPlanet' : 'planet'
+        docSource: appSourceLabel(submission)
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
@@ -216,6 +223,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.filter.type = 'survey';
       return { surveyId: this.surveyId, type: 'survey' as const };
     }
+    if (this.courseId) {
+      const escapedCourseId = this.courseId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return { query: findDocuments({ parentId: { $regex: `@${escapedCourseId}$` } }) };
+    }
     switch (this.mode) {
       case 'survey':
         return { query: findDocuments({
@@ -238,7 +249,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   setupTable() {
     this.submissions.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'parent.name' ]),
+      filterSpecificFieldsHybrid([ 'parent.name' ]),
       filterDropdowns(this.filter)
     ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {
@@ -273,6 +284,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
+    // A host that scopes the list to a course owns the route it came from.
+    if (this.courseId) {
+      this.backClick.emit();
+      return;
+    }
     this.router.navigate([ '../' ], { relativeTo: this.route.parent });
   }
 

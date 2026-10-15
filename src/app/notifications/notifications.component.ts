@@ -1,15 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { filterDropdowns } from '../shared/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationsService, notificationUserFilter } from './notifications.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -17,7 +11,14 @@ import { MatSelect } from '@angular/material/select';
 import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { filterDropdowns } from '@shared/tables/table.helpers';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+
+import { NotificationsService, notificationUserFilter } from './notifications.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -77,7 +78,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   getNotifications() {
     const userFilter = notificationUserFilter(this.userService.get());
-    this.couchService.findAll('notifications/_find', findDocuments(
+    this.couchService.findAll('notifications', findDocuments(
       { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
         time: { $gt: 0 }
@@ -114,12 +115,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     this.notificationsService.setNotificationsAsRead(this.notifications.data);
   }
 
-  openAnnouncementDialog(notification?: any) {
-    const challenge = notification ?
-      this.challengesService.getChallengeForNotification(notification) :
-      this.challengesService.getActiveChallenge();
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+  openAnnouncementDialog(notification: any) {
+    this.challengesService.getChallengeForNotification(notification).subscribe(challenge => {
+      if (challenge) {
+        this.challengesService.openChallengeDialog(this.dialog, challenge);
+      }
+    });
   }
 }

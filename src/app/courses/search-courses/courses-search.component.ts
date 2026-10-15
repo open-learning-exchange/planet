@@ -2,10 +2,12 @@ import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
 import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
-import * as constants from '../constants';
-import { languages } from '../../shared/languages';
-import { dedupeShelfReduce } from '../../shared/utils';
-import { trackByCategory } from '../../shared/table-helpers';
+
+import { languages } from '@shared/language/languages';
+import { dedupeShelfReduce } from '@shared/utils';
+import { trackByCategory } from '@shared/tables/table.helpers';
+
+import * as constants from '../courses.constants';
 
 
 @Component({
@@ -116,8 +118,9 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
       category: category.label,
       items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
         .filter(item => typeof item === 'string' && item.trim() !== '')
-        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
+        .map(item => category.options.find(opt => opt.value === item))
         .filter(item => item)
+        .sort((a, b) => category.options.indexOf(a) - category.options.indexOf(b))
     });
   }
 

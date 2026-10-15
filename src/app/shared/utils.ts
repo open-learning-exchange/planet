@@ -1,7 +1,4 @@
-import * as showdown from 'showdown';
 import mime from 'mime';
-showdown.setOption('strikethrough', true);
-export const converter = new showdown.Converter();
 
 // File.type can be empty for some browsers / file sources; fall back to the
 // filename extension via the mime package so callers don't reject valid files.
@@ -33,7 +30,8 @@ export const isAcceptableFile = (file: File, accept?: string): boolean => {
 };
 
 export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
-  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_') || 'attachment';
+  // CouchDB rejects attachment names that start with an underscore
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_').replace(/^_+/, '') || 'attachment';
   if (usedNames.indexOf(trimmed) === -1) {
     return trimmed;
   }
@@ -60,10 +58,14 @@ export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: strin
   return `${trimmedBaseUrl}/${trimmedDbName}/${couchAttachmentPath(docId, attachmentName)}`;
 };
 
+export const IMAGE_MAX_FALLBACK_BYTES = 2 * 1024 * 1024;
+export const UNPROCESSABLE_IMAGE_ERROR = 'unprocessable-image';
+
 export interface NormalizeImageOptions {
   maxDimension?: number;
   quality?: number;
   usedNames?: string[];
+  maxFallbackBytes?: number;
 }
 
 export interface NormalizedImage {
@@ -72,7 +74,7 @@ export interface NormalizedImage {
   fileName: string;
 }
 
-export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number; height: number } => {
+export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number, height: number } => {
   const scale = Math.min(1, maxDimension / Math.max(width, height));
   return {
     width: Math.max(1, Math.round(width * scale)),
@@ -105,11 +107,11 @@ const encodedImage = async (canvas: HTMLCanvasElement, quality: number): Promise
   return jpeg?.type === 'image/jpeg' ? { blob: jpeg, contentType: 'image/jpeg', extension: 'jpg' } : null;
 };
 
-// Browser-side cover/image normalization: bounds replicated payloads while keeping upload UX permissive.
-export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {}): Promise<NormalizedImage> => {
+export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {}): Promise<NormalizedImage | null> => {
   const maxDimension = opts.maxDimension ?? 600;
   const quality = opts.quality ?? 0.82;
-  const fallback = (): NormalizedImage => ({
+  const maxFallbackBytes = opts.maxFallbackBytes ?? IMAGE_MAX_FALLBACK_BYTES;
+  const fallback = (): NormalizedImage | null => (file.size > maxFallbackBytes ? null : {
     file,
     contentType: normalizedContentType(file),
     fileName: safeAttachmentName(file.name, opts.usedNames)
@@ -156,8 +158,51 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
   }
 };
 
+const blobToBase64 = (blob: Blob): Promise<string> => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve((reader.result as string).split(',')[1]);
+  reader.onerror = () => reject(reader.error);
+  reader.readAsDataURL(blob);
+});
+
+// Saves one image in the same write as its doc: the replaced image is dropped and a new one is inlined as base64
+export const withImageAttachment = async (
+  doc: any, field: string, state: { retained: { name: string }[], added: { file: File }[] },
+  normalize = (file: File, usedNames: string[]) => normalizeImage(file, { usedNames })
+): Promise<any> => {
+  const { [field]: currentName, _attachments, ...rest } = doc;
+  const attachments = { ..._attachments };
+  const added = state.added[0];
+  let name = !added && state.retained.some(attachment => attachment.name === currentName) ? currentName : undefined;
+  if (currentName !== name) {
+    delete attachments[currentName];
+  }
+  if (added) {
+    const image = await normalize(added.file, Object.keys(_attachments || {}));
+    if (!image) {
+      throw new Error(UNPROCESSABLE_IMAGE_ERROR);
+    }
+    attachments[image.fileName] = { content_type: image.contentType, data: await blobToBase64(image.file) };
+    name = image.fileName;
+  }
+  return {
+    ...rest,
+    ...(name ? { [field]: name } : {}),
+    ...(Object.keys(attachments).length ? { _attachments: attachments } : {})
+  };
+};
+
+// After a write with inlined attachments, keeps stubs on the doc so the next save doesn't send the data again
+export const attachmentStubs = (attachments?: Record<string, any>) => attachments && Object.fromEntries(
+  Object.entries(attachments).map(([ name, { data, ...attachment } ]) =>
+    [ name, data ? { ...attachment, length: atob(data).length, stub: true } : attachment ]
+  )
+);
+
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
+
+export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
 export const dedupeShelfReduce = (ids, id) => {
   if (ids.indexOf(id) > -1) {
@@ -175,14 +220,6 @@ export const removeFromArray = (startArray = [], removeArray = []) => startArray
 export const addToArray = (startArray = [], addArray = []) => startArray.concat(addArray).reduce(dedupeShelfReduce, []);
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
-
-/*
- * styleVariables was previously imported from SCSS files as an ECMA module
- * Angular as of v14 throws an error when trying to do this
- * There might be a way to rework this, but with the low frequency of change
- * working on other priorities for now.
- * See https://github.com/angular/angular-cli/issues/23273
- */
 
 export const styleVariables: any = {
   primary: '#2196f3',
@@ -231,16 +268,57 @@ export const stringToHex = (string: string) => string.split('').map(char => char
 
 export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
-export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
+const calendarDate = (date: string | number | Date) => {
+  const parsed = new Date(date);
+  const parts = typeof date === 'string' ? date.match(/^(\d{4})-(\d{2})-(\d{2})/) : null;
+  if (!parts || isNaN(parsed.getTime())) {
+    return parsed;
+  }
+  const [ year, month, day ] = parts.slice(1).map(Number);
+  const calendar = new Date(year, month - 1, day);
+  return calendar.getMonth() === month - 1 && calendar.getDate() === day ? calendar : new Date(NaN);
+};
+
+export const ageFromBirthDate = (currentTime: number | Date, birthDate: string | number | Date) => {
+  if (birthDate === undefined || birthDate === null || birthDate === '') {
+    return null;
+  }
   const now = new Date(currentTime);
-  const birth = new Date(birthDate);
+  const birth = calendarDate(birthDate);
+  if (isNaN(now.getTime()) || isNaN(birth.getTime())) {
+    return null;
+  }
   const yearDiff = now.getFullYear() - birth.getFullYear();
-  const afterBirthDay = now.getMonth() < birth.getMonth() ?
-    false :
-    now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
-      false :
-      true;
+  const afterBirthDay = now.getMonth() > birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
   return yearDiff - (afterBirthDay ? 0 : 1);
+};
+
+export const ageFromUser = (
+  currentTime: number | Date,
+  user?: { age?: number | '' | null, birthDate?: string | number | Date | null }
+) => {
+  const age = ageFromBirthDate(currentTime, user?.birthDate) ?? user?.age;
+  return age === undefined || age === null || age === '' ? null : age;
+};
+
+export const genderBucket = (gender?: unknown) => {
+  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
+  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
+};
+
+export const localizedGender = (gender?: unknown, fallback = '') => {
+  if (typeof gender !== 'string' || !gender) {
+    return fallback;
+  }
+  switch (gender.toLowerCase()) {
+    case 'male':
+      return $localize`Male`;
+    case 'female':
+      return $localize`Female`;
+    default:
+      return toProperCase(gender);
+  }
 };
 
 export const formatStringDate = (date: string) =>
@@ -262,13 +340,52 @@ export const deepEqual = (item1: any, item2: any) => {
   return item1 === item2;
 };
 
-export const markdownToPlainText = (markdown: any) => {
-  if (typeof markdown !== 'string') {
-    return markdown;
+const isNullish = (value) => value === undefined || value === null;
+
+/*
+ * Deeply patches an object with the 'patchObject'.
+ * Assumes objects have roughly the same structure, including arrays.
+ * i.e. If old object includes an array of objects (or mixed) it will assume
+ * patch object has a similar array of objects structure.
+ * When property is an array in old object and not in patch object,
+ * ignores patch and maintains old object structure.
+ */
+export const deepObjectPatch = (oldObject: any, patchObject: any): any => {
+  const newObject: any = {};
+  const deepArrayPatch = (oldArray: any[], patchArray: any[]) => (
+    Array.isArray(patchArray) ? [
+      ...oldArray.map((oldValue: any, index: number): any[] => (
+        Array.isArray(oldValue) ?
+          deepArrayPatch(oldValue, patchArray[index]) :
+          typeof oldValue === 'object' ?
+            deepObjectPatch(oldValue, patchArray[index]) :
+            patchArray[index]
+      )),
+      ...patchArray.slice(oldArray.length)
+    ] : oldArray);
+  const patchObjectProp = (prop: string) => {
+    if (isNullish(patchObject) || isNullish(patchObject[prop])) {
+      return oldObject[prop];
+    }
+    if (Array.isArray(oldObject[prop])) {
+      return deepArrayPatch(oldObject[prop], patchObject[prop]);
+    }
+    if (typeof oldObject[prop] === 'object') {
+      return deepObjectPatch(oldObject[prop], patchObject[prop]);
+    }
+    return patchObject[prop];
+  };
+  for (const prop in oldObject) {
+    if (Object.prototype.hasOwnProperty.call(oldObject, prop)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
   }
-  const html = document.createElement('div');
-  html.innerHTML = converter.makeHtml(markdown);
-  return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
+  for (const prop in patchObject) {
+    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && (newObject[prop] === undefined || newObject[prop] === null)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
+  return newObject;
 };
 
 export const fullName = (user: any) =>

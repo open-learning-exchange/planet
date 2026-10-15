@@ -2,30 +2,15 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, 
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormControl, NonNullableFormBuilder, FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { ChatService } from '../shared/chat.service';
-import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
-import { SubmissionsService } from '../submissions/submissions.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findByIdInArray, filterById } from '../shared/utils';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/user.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
-import { ExamsService } from '../exams/exams.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { forkJoin, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
@@ -33,11 +18,31 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray } from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { findByIdInArray, filterById } from '@shared/utils';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+
+import { SubmissionsService } from '../submissions/submissions.service';
+import { ExamsService } from '../exams/exams.service';
 
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
@@ -98,8 +103,8 @@ interface SurveyFilterForm {
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
+  pageSelection = new PaginatedSelection(this.selection, { isSelectable: row => this.isRowSelectable(row) });
   surveys = new MatTableDataSource<any>();
-  private renderedRows: any[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() surveyCount = new EventEmitter<number>();
@@ -109,7 +114,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
     return (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(surveyColumns);
   }
-  dialogRef: MatDialogRef<DialogsAddTableComponent>;
+  dialogRef: MatDialogRef<TablesAddDialogComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   isAuthorized = false;
@@ -125,8 +130,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
   availableAIProviders: any[] = [];
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
 
   get teamSurveyMode() {
     return !!(this.teamId || this.routeTeamId);
@@ -143,29 +147,26 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+    private deviceInfoService: DeviceInfoService,
+    private linkCopyService: LinkCopyService,
+    private dialogGuard: DialogGuardService
+  ) {}
 
   ngOnInit() {
     this.useDialogLoading = !this.teamId && !this.routeTeamId;
     if (this.useDialogLoading) {
       this.dialogsLoadingService.start();
     }
-    this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
+    this.surveys.filterPredicate = filterSpecificFieldsHybrid([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
     this.couchService.checkAuthorization(this.dbName)
       .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.pageSelection.connect(this.surveys, this.onDestroy$);
     this.surveys.connect().pipe(takeUntil(this.onDestroy$)).subscribe(surveys => {
-      this.renderedRows = surveys;
       this.parentCount = surveys.filter(survey => survey.parent === true).length;
       this.surveyCount.emit(surveys.length);
     });
@@ -177,10 +178,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.surveys.sort = this.sort;
     this.surveys.paginator = this.paginator;
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
   }
 
   ngOnDestroy() {
@@ -200,7 +197,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const targetTeamId = this.teamId || this.routeTeamId;
 
-      const submissionsBySurvey: Record<string, Array<{ status: string; teamId: string | null; parent?: any }>> = {};
+      const submissionsBySurvey: Record<string, Array<{ status: string, teamId: string | null, parent?: any }>> = {};
       submissions.forEach(row => {
         const [baseSurveyId] = row.key;
         (submissionsBySurvey[baseSurveyId] ||= []).push(row.value);
@@ -273,6 +270,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       // without a target team, include surveys that are original rather than derived copies
       return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
+    this.selection.deselect(...this.selection.selected.filter(id => !findByIdInArray(this.surveys.data, id)));
   }
 
   createParentSurveys(submissions) {
@@ -303,31 +301,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
     this.surveys.filter = filterValue;
-    queueMicrotask(() => {
-      const visibleSelection = new Set(this.renderedRows.map(row => row._id));
-      this.selection.deselect(...this.selection.selected.filter(selectedId => !visibleSelection.has(selectedId)));
-    });
-  }
-
-  isAllSelected() {
-    const selectableRowsInPage = this.renderedRows.filter(row => this.isRowSelectable(row));
-    return selectableRowsInPage.length > 0 && selectableRowsInPage.every(row => this.selection.isSelected(row._id));
+    this.pageSelection.removeFiltered();
   }
 
   isRowSelectable(row: any): boolean {
     return row.parent !== true && this.currentFilter.viewMode !== 'adopt';
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.renderedRows.forEach((row: any) => {
-        if (this.isRowSelectable(row)) {
-          this.selection.select(row._id);
-        }
-      });
-    }
   }
 
   deleteSelected() {
@@ -406,11 +384,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendSurveyToUsersDialog(survey) {
-    this.submissionsService.getSubmissions(
+    this.dialogGuard.open('send-survey', () => this.submissionsService.getSubmissions(
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
-    ).subscribe((submissions: any[]) => {
+    ).pipe(map((submissions: any[]) => {
       const excludeIds = submissions.map((submission: any) => submission.user._id);
-      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+      return this.dialog.open(TablesAddDialogComponent, {
         width: '80vw',
         data: {
           okClick: (selection: any[]) => {
@@ -423,7 +401,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           mode: 'users'
         }
       });
-    });
+    }))).pipe(takeUntil(this.onDestroy$)).subscribe(dialogRef => this.dialogRef = dialogRef);
   }
 
   private createTeamSurveyFromSource(sourceSurvey: any, team: { _id: string, name: string }): Observable<any> {
@@ -440,7 +418,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyToTeamsDialog(survey) {
     const excludeIds = survey.teamIds || [];
-    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    this.dialogGuard.open('send-survey', () => of(this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (selection: any[]) => {
@@ -461,7 +439,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         excludeIds,
         mode: 'teams'
       }
-    });
+    }))).pipe(takeUntil(this.onDestroy$)).subscribe(dialogRef => this.dialogRef = dialogRef);
   }
 
   adoptSurvey(survey) {
@@ -502,32 +480,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  private getRecordTeam(): Observable<any> {
-    const targetTeamId = this.teamId || this.routeTeamId;
-    if (!targetTeamId) {
-      return of(null);
-    }
-    return this.couchService.get('teams/' + targetTeamId);
-  }
-
   recordSurvey(survey: any) {
-    this.dialogsLoadingService.start();
-    this.getRecordTeam().pipe(
-      switchMap((team: any) => {
-        const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
-        const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
-        return this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo);
-      }),
-      takeUntil(this.onDestroy$),
-      finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe((res: any) => {
-      this.router.navigate([
-        this.teamId ? 'surveys/dispense' : 'dispense',
-        { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
-      ], { relativeTo: this.route });
-    }, () => {
-      this.planetMessageService.showAlert($localize`There was a problem recording the survey.`);
-    });
+    const targetTeamId = this.teamId || this.routeTeamId;
+    const { teamIds, taken, courseTitle, course, parent, ...recordingSurvey } = survey;
+    this.router.navigate([
+      this.teamId ? 'surveys/dispense' : 'dispense',
+      {
+        questionNum: 1,
+        surveyId: survey._id,
+        mode: 'take',
+        snap: this.route.snapshot.url,
+        ...(targetTeamId ? { surveyTeamId: targetTeamId } : {})
+      }
+    ], { relativeTo: this.route, state: { recordingSurvey } });
   }
 
   toggleSurveyPublicAccess(survey: any) {
@@ -556,12 +521,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const link = `${window.location.origin}/survey/${targetTeamId}/${survey._id}`;
-    navigator.clipboard.writeText(link).then(() => {
-      this.planetMessageService.showMessage($localize`Public survey link copied`);
-    }).catch(() => {
-      this.planetMessageService.showAlert($localize`Failed to copy public survey link`);
-    });
+    this.linkCopyService.copyLink(
+      [ '/survey', targetTeamId, survey._id ],
+      {
+        success: $localize`Public survey link copied`,
+        failure: $localize`Failed to copy public survey link`
+      }
+    );
   }
 
   exportCSV(survey) {

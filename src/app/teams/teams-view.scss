@@ -1,4 +1,11 @@
+@use "../mixins" as m;
+
 .teams-view {
+
+  .new-message-btn {
+    flex: 0 0 auto;
+    align-self: center;
+  }
 
   .card-grid {
     display: grid;
@@ -34,6 +41,13 @@
   .mat-subtitle-1 {
     margin: 5px 25px 10px 15px;
 
+    .resource-title-wrapper {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      vertical-align: middle;
+    }
+
     b {
       display: inline-block;
       max-width: 100%;
@@ -49,6 +63,18 @@
 
   > mat-toolbar .team-edit-button {
     margin-inline-start: 8px;
+  }
+
+  .team-toolbar-cover {
+    @include m.cover-thumbnail(36px);
+    flex-shrink: 0;
+    margin-inline-end: 8px;
+  }
+
+  .team-cover {
+    @include m.cover-thumbnail(180px);
+    display: block;
+    margin-bottom: 1rem;
   }
 
 }

@@ -1,10 +1,10 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.24.49",
+  "version": "0.25.20",
   "myplanet": {
-    "latest": "v0.69.36",
-    "min": "v0.65.55"
+    "latest": "v0.75.64",
+    "min": "v0.72.96"
   },
   "scripts": {
     "ng": "ng",
@@ -39,7 +39,6 @@
     "@angular/platform-browser": "21.2.22",
     "@angular/router": "21.2.22",
     "@angular/service-worker": "21.2.22",
-    "@covalent/markdown": "^11.19.5",
     "@covalent/text-editor": "^11.19.5",
     "@fullcalendar/angular": "^6.1.21",
     "@fullcalendar/core": "^6.1.21",
@@ -102,11 +101,6 @@
   "overrides": {
     "@typescript-eslint/visitor-keys": {
       "eslint-visitor-keys": "4.2.1"
-    },
-    "@covalent/markdown": {
-      "@angular/core": "$@angular/core",
-      "@angular/common": "$@angular/common",
-      "@angular/platform-browser": "$@angular/platform-browser"
     },
     "@covalent/text-editor": {
       "@angular/core": "$@angular/core",

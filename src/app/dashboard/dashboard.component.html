@@ -33,18 +33,27 @@
     <p>{{dateNow | date:'longDate'}}</p>
   </div>
   <div class="badges">
-    @for (badgeGroup of badgeGroups; track badgeGroup) {
-      <div class="badge-group">
-        @for (course of badgesCourses[badgeGroup]; track course) {
-          <span class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
-            <mat-icon
-              [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
-              fontSet="fa"
-              [fontIcon]="badgeIcons[badgeGroup]">
-            </mat-icon>
-          </span>
+    @for (course of visibleBadges; track course._id) {
+      <button type="button" class="badge-button" (click)="openCourseView(course)"
+        aria-label="View course {{ course.doc.courseTitle }}" i18n-aria-label
+        [matTooltip]="course.doc.courseTitle">
+        <mat-icon
+          [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
+          fontSet="fa"
+          fontIcon="fa-star">
+        </mat-icon>
+      </button>
+    }
+    @if (remainingBadgesCount > 0) {
+      <button type="button" class="more-badges-chip" [matMenuTriggerFor]="moreBadgesMenu"
+        [attr.aria-label]="moreBadgesLabel">
+        +{{ remainingBadgesCount }}
+      </button>
+      <mat-menu #moreBadgesMenu="matMenu">
+        @for (course of hiddenBadges; track course._id) {
+          <button mat-menu-item type="button" (click)="openCourseView(course)">{{ course.doc.courseTitle }}</button>
         }
-      </div>
+      </mat-menu>
     }
   </div>
 </div>

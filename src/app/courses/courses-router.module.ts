@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { UnsavedChangesGuard } from '@shared/unsaved-changes/unsaved-changes.guard';
+
 import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CoursesComponent } from './courses.component';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
@@ -9,7 +11,7 @@ import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
+import { CoursesSubmissionsComponent } from './submissions-courses/courses-submissions.component';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
@@ -24,7 +26,9 @@ const routes: Routes = [
   { path: 'update/exam/:id', component: ExamsAddComponent },
   { path: 'update/survey/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },
-  { path: 'enrolled/:id', component: CoursesEnrollComponent }
+  { path: 'enrolled/:id', component: CoursesEnrollComponent },
+  { path: 'submissions/:id', component: CoursesSubmissionsComponent },
+  { path: 'submissions/:id/exam', component: ExamsViewComponent, canDeactivate: [UnsavedChangesGuard] }
 ];
 
 @NgModule({

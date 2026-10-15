@@ -8,11 +8,13 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { vi } from 'vitest';
-import { MaterialModule } from '../shared/material.module';
-import { UsersComponent } from './users.component';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
 import { of } from 'rxjs';
+
+import { MaterialModule } from '@shared/material.module';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+
+import { UsersComponent } from './users.component';
 
 describe('Users', () => {
 

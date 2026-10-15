@@ -7,6 +7,10 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.customDeviceName || element.deviceName}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="source">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="source" i18n>Source</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.source}}</mat-cell>
+  </ng-container>
   <ng-container matColumnDef="last_synced">
     <mat-header-cell *matHeaderCellDef mat-sort-header="last_synced" i18n>Last Synced</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.time || element.last_synced | date: 'mediumDate'}}</mat-cell>

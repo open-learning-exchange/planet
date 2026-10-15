@@ -66,8 +66,9 @@
                   accept="image/*"
                   [imagePreview]="true"
                   [maxFiles]="1"
+                  [maxSizeMb]="10"
                   [typePills]="['IMG']"
-                  hint="Recommended: a square image. Covers are cropped to fit." i18n-hint
+                  hint="Recommended: a square image under 10 MB. Covers are cropped to fit." i18n-hint
                   [existingAttachments]="existingCoverAttachments"
                   (stateChange)="onCoverStateChange($event)">
                 </planet-file-upload>
