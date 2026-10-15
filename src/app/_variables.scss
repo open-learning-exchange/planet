@@ -71,6 +71,18 @@ $initials-palette: (
   mat.m2-get-color-from-palette(mat.$m2-blue-grey-palette, 700)
 );
 
+// Fills for custom voice labels, keyed by the name stored on each label (LABEL_COLORS in
+// news-labels.ts). Leaves out the accent and warn tints so labels never read as team or alert chips.
+$label-colors: (
+  default: $primary-lighter,
+  green: mat.m2-get-color-from-palette(mat.$m2-green-palette, 100),
+  teal: mat.m2-get-color-from-palette(mat.$m2-teal-palette, 100),
+  purple: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 100),
+  pink: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 100),
+  lime: mat.m2-get-color-from-palette(mat.$m2-lime-palette, 100),
+  brown: mat.m2-get-color-from-palette(mat.$m2-brown-palette, 100)
+);
+
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
 $disabled-button: map.get(mat.$m2-light-theme-background-palette, 'disabled-button');

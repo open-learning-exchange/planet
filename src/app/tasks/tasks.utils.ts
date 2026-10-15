@@ -41,3 +41,29 @@ export const storedAssignee = (assignee: any, localPlanetCode?: string): any => 
   name: assignee?.name,
   userDoc: assignee?.userDoc?.fullName ? { fullName: assignee.userDoc.fullName } : undefined
 });
+
+export type TaskStatus = 'to_do' | 'in_progress' | 'completed' | 'archived';
+
+export const effectiveTaskStatus = (task: any): TaskStatus => {
+  if (task?.status === 'archived') {
+    return 'archived';
+  }
+  if (task?.completed) {
+    return 'completed';
+  }
+  return task?.status === 'in_progress' ? 'in_progress' : 'to_do';
+};
+
+export const taskStatusBadgeLabel = (status: TaskStatus | string): string => {
+  switch (status) {
+    case 'to_do':
+      return $localize`To Do`;
+    case 'in_progress':
+      return $localize`In Progress`;
+    case 'completed':
+      return $localize`Completed`;
+    default:
+      return $localize`To Do`;
+  }
+};
+
