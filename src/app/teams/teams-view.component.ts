@@ -326,7 +326,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(requestDateCompare);
-      this.disableAddingMembers = this.members.length >= this.team.limit;
+      // Teams created on myPlanet are stored with a limit of 0, and the services directory has none
+      this.disableAddingMembers = this.team.limit > 0 && this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
       this.reports = docs.filter(doc => doc.docType === 'report');
@@ -480,16 +481,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
       let membershipWriteCompleted = false;
+      let notify = true;
       return changeObject.obs.pipe(
         catchError(error => this.refreshMembersOnError(error)),
-        tap(() => {
+        tap((result) => {
           membershipWriteCompleted = true;
+          notify = type !== 'request' || result === true;
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ?
           this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
-        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
+        switchMap(() => notify ? this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] }) : of({})),
         map(() => changeObject.message),
         catchError(error => membershipWriteCompleted ?
           this.refreshMembersOnError(error) : throwError(error)),
