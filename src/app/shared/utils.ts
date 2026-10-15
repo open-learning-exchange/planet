@@ -165,37 +165,55 @@ const blobToBase64 = (blob: Blob): Promise<string> => new Promise((resolve, reje
   reader.readAsDataURL(blob);
 });
 
-// Saves one image in the same write as its doc: the replaced image is dropped and a new one is inlined as base64
-export const withImageAttachment = async (
-  doc: any, field: string, state: { retained: { name: string }[], added: { file: File }[] },
-  normalize = (file: File, usedNames: string[]) => normalizeImage(file, { usedNames })
-): Promise<any> => {
-  const { [field]: currentName, _attachments, ...rest } = doc;
+const inlineAttachment = async (blob: Blob, contentType: string) => ({ content_type: contentType, data: await blobToBase64(blob) });
+
+type ImageNormalizer = (file: File, usedNames: string[]) => Promise<NormalizedImage | null>;
+
+// An image that can't be read or normalized is skipped and named in the result, so each caller decides whether that fails the save
+export const withImageAttachments = async (
+  doc: any, state: { removed?: { name: string }[], added: { file: File }[] },
+  normalize: ImageNormalizer = (file, usedNames) => normalizeImage(file, { usedNames })
+): Promise<{ doc: any, added: string[], skipped: string[] }> => {
+  const { _attachments, ...rest } = doc;
   const attachments = { ..._attachments };
-  const added = state.added[0];
-  let name = !added && state.retained.some(attachment => attachment.name === currentName) ? currentName : undefined;
-  if (currentName !== name) {
-    delete attachments[currentName];
-  }
-  if (added) {
-    const image = await normalize(added.file, Object.keys(_attachments || {}));
+  (state.removed || []).forEach(({ name }) => delete attachments[name]);
+  const added: string[] = [];
+  const skipped: string[] = [];
+  for (const { file } of state.added) {
+    const image = await normalize(file, [ ...Object.keys(_attachments || {}), ...added ]);
     if (!image) {
-      throw new Error(UNPROCESSABLE_IMAGE_ERROR);
+      skipped.push(file.name);
+      continue;
     }
-    attachments[image.fileName] = { content_type: image.contentType, data: await blobToBase64(image.file) };
-    name = image.fileName;
+    try {
+      attachments[image.fileName] = await inlineAttachment(image.file, image.contentType);
+    } catch {
+      skipped.push(file.name);
+      continue;
+    }
+    added.push(image.fileName);
   }
-  return {
-    ...rest,
-    ...(name ? { [field]: name } : {}),
-    ...(Object.keys(attachments).length ? { _attachments: attachments } : {})
-  };
+  return { doc: { ...rest, ...(Object.keys(attachments).length ? { _attachments: attachments } : {}) }, added, skipped };
+};
+
+export const withImageAttachment = async (
+  doc: any, field: string, state: { retained: { name: string }[], added: { file: File }[] }, normalize?: ImageNormalizer
+): Promise<any> => {
+  const { [field]: currentName, ...rest } = doc;
+  const kept = !state.added.length && state.retained.some(attachment => attachment.name === currentName);
+  const removed = kept || !currentName ? [] : [ { name: currentName } ];
+  const result = await withImageAttachments(rest, { removed, added: state.added.slice(0, 1) }, normalize);
+  if (result.skipped.length) {
+    throw new Error(UNPROCESSABLE_IMAGE_ERROR);
+  }
+  const name = result.added[0] ?? (kept ? currentName : undefined);
+  return { ...result.doc, ...(name ? { [field]: name } : {}) };
 };
 
 // After a write with inlined attachments, keeps stubs on the doc so the next save doesn't send the data again
 export const attachmentStubs = (attachments?: Record<string, any>) => attachments && Object.fromEntries(
   Object.entries(attachments).map(([ name, { data, ...attachment } ]) =>
-    [ name, data ? { ...attachment, length: atob(data).length, stub: true } : attachment ]
+    [ name, data ? { ...attachment, length: Math.floor(data.replace(/=+$/, '').length * 3 / 4), stub: true } : attachment ]
   )
 );
 
