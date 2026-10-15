@@ -14,7 +14,7 @@
       <mat-icon class="margin-lr-5" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
     }
     <span class="toolbar-fill"></span>
-    @if (isMobile) {
+    @if (isMobile()) {
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
       </button>

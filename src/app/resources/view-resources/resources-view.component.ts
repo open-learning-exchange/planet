@@ -2,29 +2,31 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, defer } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { UserService } from '../../shared/auth/user.service';
-import { ResourcesService } from '../resources.service';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
-import { languages } from '../../shared/language/languages';
-import * as constants from '../resources.constants';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { PlanetRatingComponent } from '../../shared/ratings/planet-rating.component';
-import { PlanetMarkdownComponent } from '../../shared/markdown/planet-markdown.component';
-import { LanguageLabelComponent } from '../../shared/language/language-label.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
-import { ResourcesViewerComponent } from './resources-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { languages } from '@shared/language/languages';
+import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+
+import { environment } from '../../../environments/environment';
+import { ResourcesService } from '../resources.service';
+import * as constants from '../resources.constants';
+import { ResourcesViewerComponent } from './resources-viewer.component';
 import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../resources.utils';
-import { LinkCopyService } from '../../shared/ui/link-copy.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -80,7 +82,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceId: string;
   constantsOptions = constants;
   languageOptions = languages;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
@@ -93,11 +96,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
     private linkCopyService: LinkCopyService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;

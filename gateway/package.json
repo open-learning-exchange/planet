@@ -7,6 +7,7 @@
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "dev": "nodemon --exec ts-node src/index.ts",
+    "test": "tsc --noEmit -p tsconfig.spec.json && vitest run",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts",
     "lint-fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts --fix"
   },

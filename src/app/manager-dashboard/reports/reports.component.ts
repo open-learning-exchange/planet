@@ -2,18 +2,19 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { ReportsService } from './reports.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { ManagerService } from '../manager.service';
-import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
-import { StateService } from '../../shared/state.service';
-import { trackById } from '../../shared/tables/table.helpers';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { trackById } from '@shared/tables/table.helpers';
+
+import { ReportsService } from './reports.service';
+import { ManagerService } from '../manager.service';
+import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { ReportsTableComponent } from './reports-table.component';
 
 @Component({

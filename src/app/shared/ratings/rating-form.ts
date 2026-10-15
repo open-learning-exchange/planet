@@ -1,6 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { startWith } from 'rxjs/operators';
-import { DialogField, DialogFormValueMap } from '../dialogs/dialogs-form.service';
+
+import { DialogField, DialogFormValueMap } from '@shared/dialogs/dialogs-form.service';
 
 export const ratingFormFields: DialogField[] = [
   {

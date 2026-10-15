@@ -1,14 +1,16 @@
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+
+import { IMAGE_MAX_FALLBACK_BYTES } from '@shared/utils';
+
 import { TeamsService } from './teams.service';
-import { IMAGE_MAX_FALLBACK_BYTES } from '../shared/utils';
 
 describe('TeamsService membership writes', () => {
   const successfulBulkResponse = { res: [ { id: 'membership-1', ok: true, rev: '2-membership' } ] };
 
   afterEach(() => vi.restoreAllMocks());
 
-  const createService = (couchOverrides: any = {}) => {
+  const createService = (couchOverrides: any = {}, stateService: any = {}) => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([])),
       get: vi.fn().mockReturnValue(of({})),
@@ -21,7 +23,7 @@ describe('TeamsService membership writes', () => {
       {} as any,
       {} as any,
       {} as any,
-      {} as any,
+      stateService,
       {} as any
     );
     return { service, couchService };
@@ -168,7 +170,7 @@ describe('TeamsService membership writes', () => {
     } ]);
   });
 
-  it('validates mixed add-member writes and reduces request deletions to tombstones', () => {
+  it('validates mixed add-member writes and deletes requests with only their persisted fields', () => {
     const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
     const request = {
       ...membership,
@@ -197,8 +199,19 @@ describe('TeamsService membership writes', () => {
         userPlanetCode: selected[0].planetCode,
         docType: 'membership'
       },
-      { _id: request._id, _rev: request._rev, _deleted: true }
+      { ...membership, _id: request._id, _rev: request._rev, userId: selected[0]._id, docType: 'request', _deleted: true }
     ]);
+  });
+
+  it('keeps a request from the same user ID on another planet', () => {
+    const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-b', docType: 'request' };
+    const bulkDocs = vi.fn().mockReturnValue(of({ res: [ { id: 'membership-new', rev: '1-new' } ] }));
+    const { service } = createService({ bulkDocs });
+
+    service.addMembers(team, selected, [ request ]).subscribe();
+
+    expect(bulkDocs.mock.calls[0][1]).toHaveLength(1);
   });
 
   it('reports an individual add-member bulk failure', () => {
@@ -215,7 +228,7 @@ describe('TeamsService membership writes', () => {
 
   it('accepts an add-member write when only request cleanup conflicts', () => {
     const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
-    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id };
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
     const bulkDocs = vi.fn().mockReturnValue(of({
       res: [
         { id: 'membership-new', rev: '1-new' },
@@ -237,7 +250,7 @@ describe('TeamsService membership writes', () => {
       { _id: 'org.couchdb.user:first', planetCode: 'planet-a' },
       { _id: 'org.couchdb.user:second', planetCode: 'planet-a' }
     ];
-    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id };
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
     const bulkDocs = vi.fn().mockImplementation((_dbName: string, docs: any[]) => of({
       res: docs.map((doc, index) => {
         if (doc._deleted) {
@@ -438,6 +451,52 @@ describe('TeamsService membership writes', () => {
       _rev: shelf._rev,
       isLeader: true
     }));
+  });
+
+  describe('join requests', () => {
+    const user = { _id: 'org.couchdb.user:sam' };
+    const requestSelector = {
+      teamId: team._id,
+      userId: user._id,
+      teamPlanetCode: team.teamPlanetCode,
+      userPlanetCode: 'planet-a',
+      docType: 'request'
+    };
+    const requestToJoin = (existingRequests: any[]) => {
+      const { service, couchService } = createService({
+        post: vi.fn().mockReturnValue(of({ docs: existingRequests })),
+        updateDocument: vi.fn().mockReturnValue(of({ id: 'request-1', rev: '1-request' }))
+      }, { configuration: { code: 'planet-a' } });
+      const next = vi.fn();
+      service.requestToJoinTeam(team, user).subscribe(next);
+      return { couchService, next };
+    };
+
+    it('writes a request when the user has none', () => {
+      const { couchService, next } = requestToJoin([]);
+
+      expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({ selector: requestSelector, limit: 1 }));
+      expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
+        ...requestSelector,
+        teamType: team.teamType
+      }));
+      expect(next).toHaveBeenCalledWith(true);
+    });
+
+    it('keeps an existing request instead of adding another', () => {
+      const { couchService, next } = requestToJoin([ { _id: 'request-1' } ]);
+
+      expect(couchService.updateDocument).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(false);
+    });
+
+    it('removes requests made before the team type changed', () => {
+      const { service, couchService } = createService();
+
+      service.removeFromRequests({ ...team, teamType: 'sync' }, { userId: user._id, userPlanetCode: 'planet-a' }).subscribe();
+
+      expect(couchService.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({ selector: requestSelector }));
+    });
   });
 
   it('sanitizes membership deletion writes', () => {

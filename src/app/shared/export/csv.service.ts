@@ -3,11 +3,13 @@ import { formatDate as formatLocaleDate } from '@angular/common';
 import { ExportToCsv } from 'export-to-csv/build';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { couchAttachmentPath, formatDate } from '@shared/utils';
+import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+
 import { ReportsService } from '../../manager-dashboard/reports/reports.service';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { CouchService } from '../database/couchdb.service';
-import { couchAttachmentPath, formatDate } from '../utils';
-import { MarkdownRenderService } from '../markdown/markdown-render.service';
 import { monthDataLabels } from '../../manager-dashboard/reports/reports.utils';
 
 export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;

@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { UserService } from './user.service';
 import { Observable, of } from 'rxjs';
 import { filter, switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateFn } from '@angular/router';
-import { PouchAuthService } from '../database/pouch-auth.service';
 import { MatDialog } from '@angular/material/dialog';
-import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { StateService } from '../state.service';
+
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { StateService } from '@shared/state.service';
+
+import { UserService } from './user.service';
+import { LoginDialogComponent, loginDialogId } from '../../login/login-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +42,7 @@ export class AuthGuard {
           }
         }
         this.userService.unset();
-        const dialogRef = this.dialog.open(LoginDialogComponent);
+        const dialogRef = this.dialog.getDialogById(loginDialogId) ?? this.dialog.open(LoginDialogComponent, { id: loginDialogId });
         return dialogRef.afterClosed().pipe(switchMap(loginState => {
           if (loginState === undefined) {
             // If the current routerState snapshot url is a blank string, the user got here via

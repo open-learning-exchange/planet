@@ -9,16 +9,18 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { PlanetStepListComponent } from '@shared/forms/planet-step-list.component';
+
 import { UsersAchievementsUpdateComponent } from './users-achievements-update.component';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { UserService } from '../../shared/auth/user.service';
 import { UsersAchievementsService } from './users-achievements.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMarkdownTextboxComponent } from '../../shared/markdown/planet-markdown-textbox.component';
-import { PlanetStepListComponent } from '../../shared/forms/planet-step-list.component';
 
 describe('UsersAchievementsUpdateComponent', () => {
   let component: UsersAchievementsUpdateComponent;

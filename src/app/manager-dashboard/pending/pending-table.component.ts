@@ -4,11 +4,12 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 @Component({
   selector: 'planet-pending-table',

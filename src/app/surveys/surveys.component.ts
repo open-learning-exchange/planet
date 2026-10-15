@@ -9,25 +9,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap, takeUntil } from 'rxjs/operators';
-import { CouchService } from '../shared/database/couchdb.service';
-import { AiChatService } from '../shared/ai/ai-chat.service';
-import { filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray } from '../shared/tables/table.helpers';
-import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
-import { SubmissionsService } from '../submissions/submissions.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findByIdInArray, filterById } from '../shared/utils';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/auth/user.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
-import { ExamsService } from '../exams/exams.service';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
+import { EMPTY, forkJoin, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
@@ -35,12 +18,31 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
-import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { LinkCopyService } from '../shared/ui/link-copy.service';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { filterSpecificFieldsHybrid, sortNumberOrString, createDeleteArray } from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { findByIdInArray, filterById } from '@shared/utils';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+
+import { SubmissionsService } from '../submissions/submissions.service';
+import { ExamsService } from '../exams/exams.service';
 
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
@@ -128,8 +130,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
   availableAIProviders: any[] = [];
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
 
   get teamSurveyMode() {
     return !!(this.teamId || this.routeTeamId);
@@ -152,12 +153,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private linkCopyService: LinkCopyService,
     private dialogGuard: DialogGuardService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.useDialogLoading = !this.teamId && !this.routeTeamId;
@@ -274,6 +270,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       // without a target team, include surveys that are original rather than derived copies
       return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
+    this.selection.deselect(...this.selection.selected.filter(id => !findByIdInArray(this.surveys.data, id)));
   }
 
   createParentSurveys(submissions) {
@@ -446,22 +443,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   adoptSurvey(survey) {
-    this.couchService.get('teams/' + this.routeTeamId).subscribe(
-      team => {
-        this.createTeamSurveyFromSource(survey, {
-          _id: team._id,
-          name: team.name
-        }).subscribe(() => {
-          this.planetMessageService.showMessage($localize`Survey adopted`);
-          this.loadSurveys();
-        }, () => {
-          this.planetMessageService.showAlert($localize`Error adopting survey.`);
-        });
-      },
-      error => {
+    this.dialogsLoadingService.start();
+    this.couchService.get('teams/' + this.routeTeamId).pipe(
+      catchError(error => {
         this.planetMessageService.showAlert($localize`Error adopting survey: ${error.message}`);
-      }
-    );
+        return EMPTY;
+      }),
+      switchMap(team => this.createTeamSurveyFromSource(survey, {
+        _id: team._id,
+        name: team.name
+      })),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
+      this.planetMessageService.showMessage($localize`Survey adopted`);
+      this.loadSurveys();
+    }, () => {
+      this.planetMessageService.showAlert($localize`Error adopting survey.`);
+    });
   }
 
   sendSurvey(survey: any, users: any[]): Observable<void> {

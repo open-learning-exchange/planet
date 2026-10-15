@@ -6,17 +6,6 @@ import {
 } from '@angular/material/table';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { TeamsService } from './teams.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { StateService } from '../shared/state.service';
-import { CsvService } from '../shared/export/csv.service';
-import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -26,11 +15,24 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
-import { AttachmentInputState } from '../shared/forms/file-upload.component';
-import { TeamsAttachmentsService } from './teams-attachments.service';
-import { forkJoin, of, Subject } from 'rxjs';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { StateService } from '@shared/state.service';
+import { CsvService } from '@shared/export/csv.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { AttachmentInputState } from '@shared/forms/file-upload.component';
+
+import { TeamsService } from './teams.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { TeamsAttachmentsService } from './teams-attachments.service';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface TransactionForm {
@@ -214,8 +216,8 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
           onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
             next: (result: any) => {
               this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
+              if (result?.skippedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be included.`);
               }
               this.dialogsFormService.closeDialogsForm();
             },
@@ -246,19 +248,18 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
       teamType,
       teamPlanetCode
     };
-    if (receiptImages) {
-      transaction._attachments = this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages);
-    }
-    return this.teamsService.updateTeam(transaction).pipe(
-      switchMap(savedTransaction => receiptImages ?
-        this.teamsAttachmentsService.uploadReceiptImages(savedTransaction._id, savedTransaction._rev, receiptImages, false) :
-        of({ failedAttachments: [] })
-      ),
+    const transaction$: Observable<{ doc: any, skipped: string[] }> = receiptImages ?
+      this.teamsAttachmentsService.withReceiptImages(
+        { ...transaction, _attachments: this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages) },
+        receiptImages
+      ) :
+      of({ doc: transaction, skipped: [] });
+    return transaction$.pipe(
+      switchMap(({ doc, skipped }) => this.teamsService.updateTeam(doc).pipe(map(() => ({ skippedAttachments: skipped })))),
       tap(() => {
         this.financesChanged.emit();
         this.dialogsLoadingService.stop();
-      }),
-      map(uploadResult => ({ failedAttachments: uploadResult.failedAttachments }))
+      })
     );
   }
 

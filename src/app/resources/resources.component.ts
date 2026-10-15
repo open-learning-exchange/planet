@@ -10,33 +10,9 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, finalize } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
-import { CouchService } from '../shared/database/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { UserService } from '../shared/auth/user.service';
-import {
-  filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
-} from '../shared/tables/table.helpers';
-import { PaginatedSelection } from '../shared/tables/paginated-selection.helpers';
-import { ResourcesService } from './resources.service';
-import { environment } from '../../environments/environment';
-import { SyncService } from '../shared/database/sync.service';
 import { FormControl } from '@angular/forms';
-import { PlanetTagInputComponent } from '../shared/forms/tags/planet-tag-input.component';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { couchAttachmentPath, findByIdInArray } from '../shared/utils';
-import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { ResourcesSearchComponent } from './search-resources/resources-search.component';
-import { levelList } from './resources.constants';
-import { SearchService } from '../shared/search/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -44,19 +20,45 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
-import { PlanetFilteredAmountComponent } from '../shared/tables/planet-filtered-amount.component';
-import { PlanetTagSelectedInputComponent } from '../shared/forms/tags/planet-tag-selected-input.component';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { PlanetMarkdownPreviewComponent } from '../shared/markdown/planet-markdown-preview.component';
-import { PlanetLocalStatusComponent } from '../shared/database/planet-local-status.component';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import {
+  filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
+} from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { SyncService } from '@shared/database/sync.service';
+import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
+import { couchAttachmentPath, findByIdInArray } from '@shared/utils';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { SearchService } from '@shared/search/search.service';
+import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '@shared/ui/device-info.service';
+import { PlanetFilteredAmountComponent } from '@shared/tables/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '@shared/forms/tags/planet-tag-selected-input.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetMarkdownPreviewComponent } from '@shared/markdown/planet-markdown-preview.component';
+import { PlanetLocalStatusComponent } from '@shared/database/planet-local-status.component';
+import { PlanetRatingDialogDirective } from '@shared/ratings/planet-rating-dialog.component';
+import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { ResourcesService } from './resources.service';
+import { environment } from '../../environments/environment';
+import { formatResourceAttachmentSize, resourceAttachmentFilename, resourceFileTypeValue } from './resources.utils';
+import { ResourcesSearchComponent } from './search-resources/resources-search.component';
+import { levelList } from './resources.constants';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { PlanetRatingDialogDirective } from '../shared/ratings/planet-rating-dialog.component';
-import { PlanetRatingComponent } from '../shared/ratings/planet-rating.component';
-import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { ResourcesIconComponent } from './resources-icon.component';
 
 @Component({
@@ -169,7 +171,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions(
     [
-      filterAdvancedSearch(this.searchSelection),
+      filterAdvancedSearch(this.searchSelection, { fileType: resourceFileTypeValue }),
       filterTags(this.tagFilter),
       filterSpecificFieldsHybrid([ 'doc.title' ]),
       filterShelf({ value: this.myView === 'myLibrary' ? 'on' : 'off' }, 'libraryInfo')
@@ -232,12 +234,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             resource.doc.private !== true)
       );
       this.resources.paginator = this.paginator;
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    }, () => {
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    });
+      this.stopLoading();
+    }, () => this.stopLoading());
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
@@ -266,6 +264,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // The listener emits on every update, so only the first emission ends the start() in ngOnInit
+  private stopLoading() {
+    if (this.isLoading) {
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }
+  }
+
   ngAfterViewInit() {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
@@ -275,6 +281,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.stopLoading();
     if (this.filterDialogRef) {
       this.filterDialogRef.close();
     }
@@ -502,7 +509,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendResource() {
     return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
         const childType = {
           center: selectedPlanets.length > 1 ? 'nations' : 'nation',
           nation: selectedPlanets.length > 1 ? 'communities' : 'community'

@@ -7,11 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { vi } from 'vitest';
-import { MaterialModule } from '../shared/material.module';
-import { UsersComponent } from './users.component';
-import { CouchService } from '../shared/database/couchdb.service';
-import { UserService } from '../shared/auth/user.service';
 import { of } from 'rxjs';
+
+import { MaterialModule } from '@shared/material.module';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+
+import { UsersComponent } from './users.component';
 
 describe('Users', () => {
 

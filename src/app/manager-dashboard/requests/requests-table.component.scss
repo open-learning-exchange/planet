@@ -1,5 +1,10 @@
 @use '../../mixins' as m;
 
+// Exposes the table and paginator to the view's grid so the paginator stays pinned.
+:host {
+  display: contents;
+}
+
 .mat-column-name {
   @include m.table-column-grow;
 }

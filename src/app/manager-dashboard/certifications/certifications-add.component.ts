@@ -2,20 +2,24 @@ import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } fro
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { CustomValidators } from '../../validators/custom-validators';
-import { CertificationsService } from '../../shared/certifications/certifications.service';
-import { CertificationsManagerService } from './certifications-manager.service';
-import { TablesAddDialogComponent } from '../../shared/tables/tables-add-dialog.component';
-import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '../../shared/tables/table.helpers';
-import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
+import { finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+import { CustomValidators } from '../../validators/custom-validators';
+import { CertificationsManagerService } from './certifications-manager.service';
+import { CoursesComponent } from '../../courses/courses.component';
+import { ValidatorService } from '../../validators/validator.service';
 
 
 interface CertificationFormControls {
@@ -64,7 +68,8 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private certificationsManagerService: CertificationsManagerService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.certificateForm = this.fb.group({
       name: this.fb.control('', {
@@ -113,11 +118,12 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       return;
     }
     const certificateFormValue = this.certificateForm.getRawValue();
+    this.dialogsLoadingService.start();
     this.certificationsManagerService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds
-    }).subscribe((res) => {
+    }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(
         this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`
@@ -125,7 +131,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       if (reroute) {
         this.goBack();
       }
-    });
+    }, () => this.planetMessageService.showAlert($localize`There was an error saving the certification`));
   }
 
   openCourseDialog() {

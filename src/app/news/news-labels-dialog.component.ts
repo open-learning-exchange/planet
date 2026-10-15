@@ -8,14 +8,25 @@ import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { LabelComponent } from '../shared/ui/label.component';
-import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from './news-labels';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
+import { NgClass } from '@angular/common';
 import { Subject, of, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { LabelComponent } from '@shared/ui/label.component';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+
+import {
+  CustomVoiceLabel,
+  DEFAULT_VOICE_LABELS,
+  SHARED_CHAT_LABEL,
+  DEFAULT_LABEL_COLOR,
+  LABEL_COLORS,
+  dedupeCustomVoiceLabels,
+  labelColorClass
+} from './news-labels';
 
 @Component({
   templateUrl: './news-labels-dialog.component.html',
@@ -33,15 +44,19 @@ import { catchError, filter, finalize, switchMap, take, takeUntil } from 'rxjs/o
     MatIcon,
     MatButton,
     FormsModule,
+    NgClass,
     LabelComponent
   ]
 })
 export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
 
   systemLabels = DEFAULT_VOICE_LABELS;
-  initialCustomLabels: string[] = [];
-  customLabels: string[] = [];
+  initialCustomLabels: CustomVoiceLabel[] = [];
+  customLabels: CustomVoiceLabel[] = [];
   newLabelInput = '';
+  selectedColor = DEFAULT_LABEL_COLOR;
+  labelColors = LABEL_COLORS;
+  labelColorClass = labelColorClass;
   errorMessage = '';
   isSaving = false;
   isConfirmingClose = false;
@@ -69,14 +84,14 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     this.target = this.data?.target || 'community';
     this.team = this.data?.team;
 
-    let configuredLabels: string[] = [];
+    let configuredLabels: unknown[] = [];
     if (Array.isArray(this.data?.customLabels)) {
       configuredLabels = this.data.customLabels;
     } else if (this.team && Array.isArray(this.team.customVoiceLabels)) {
       configuredLabels = this.team.customVoiceLabels;
     }
 
-    const uniqueLabels = dedupeVoiceLabels(configuredLabels);
+    const uniqueLabels = dedupeCustomVoiceLabels(configuredLabels);
     this.initialCustomLabels = [ ...uniqueLabels ];
     this.customLabels = [ ...uniqueLabels ];
   }
@@ -100,7 +115,9 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
 
   get labelsChanged(): boolean {
     return this.initialCustomLabels.length !== this.customLabels.length ||
-      this.initialCustomLabels.some((label, index) => label !== this.customLabels[index]);
+      this.initialCustomLabels.some((label, index) =>
+        label.name !== this.customLabels[index].name || label.color !== this.customLabels[index].color
+      );
   }
 
   addLabel(): void {
@@ -125,7 +142,7 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.customLabels.some(l => l.toLowerCase() === lowerValue)) {
+    if (this.customLabels.some(l => l.name.toLowerCase() === lowerValue)) {
       this.errorMessage = $localize`"${value}" already exists in custom labels.`;
       return;
     }
@@ -135,11 +152,11 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.customLabels.push(value);
+    this.customLabels.push({ name: value, color: this.selectedColor });
     this.newLabelInput = '';
   }
 
-  removeLabel(label: string): void {
+  removeLabel(label: CustomVoiceLabel): void {
     if (this.isSaving) {
       return;
     }

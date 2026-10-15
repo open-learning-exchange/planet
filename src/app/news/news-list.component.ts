@@ -4,25 +4,10 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { NewsService } from './news.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { UserService } from '../shared/auth/user.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { AuthGuard } from '../shared/auth/auth.guard';
-import { trackById } from '../shared/tables/table.helpers';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
-
+import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { NewsListItemComponent } from './news-list-item.component';
 import { MatDivider } from '@angular/material/list';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatPaginator } from '@angular/material/paginator';
@@ -33,7 +18,23 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { LabelComponent } from '../shared/ui/label.component';
+
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { trackById } from '@shared/tables/table.helpers';
+import { LabelComponent } from '@shared/ui/label.component';
+
+import { NewsService } from './news.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
+import { CustomVoiceLabel, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
+import { NewsListItemComponent } from './news-list-item.component';
 
 @Component({
   selector: 'planet-news-list',
@@ -72,7 +73,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
-  @Input() customLabels: string[] = [];
+  @Input() customLabels: (string | CustomVoiceLabel)[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @ViewChild('anchor', { static: false }) anchor: any;
   @ViewChild('listContent', { static: false }) listContent: ElementRef<HTMLElement>;
@@ -478,8 +479,15 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
       });
     } else {
-      const okClick = (planets) =>
-        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog?.close());
+      const okClick = (planets) => {
+        this.dialogsLoadingService.start();
+        this.newsService.shareNews(news, planets.map(planet => planet.doc)).pipe(
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(
+          () => this.shareDialog?.close(),
+          () => this.planetMessageService.showAlert($localize`There was a problem sharing this message.`)
+        );
+      };
       this.dialogGuard.open('share-news', () => of(this.dialog.open(CommunityListDialogComponent, {
         data: {
           okClick,

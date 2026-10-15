@@ -1,5 +1,5 @@
 <mat-toolbar>
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (deviceType() === deviceTypes.DESKTOP) {
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="backBtn"></ng-container>
       @if (showCustomDateFields) {

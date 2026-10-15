@@ -3,7 +3,9 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, 
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../utils';
+
+import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '@shared/utils';
+
 import { PlanetMarkdownComponent } from './planet-markdown.component';
 
 @Component({

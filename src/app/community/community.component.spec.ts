@@ -1,10 +1,12 @@
+import { signal } from '@angular/core';
 import { convertToParamMap } from '@angular/router';
 import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { CommunityComponent } from './community.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
-import { DeviceType } from '../shared/ui/device-info.service';
 
 describe('CommunityComponent custom labels', () => {
   it('allows community leaders and planet managers to manage community labels', () => {
@@ -78,7 +80,7 @@ describe('CommunityComponent remote exchange behavior', () => {
     const currentUser: any = { value: user };
     const userService = { get: vi.fn(() => currentUser.value), userChange$ };
     const usersService = { usersListener: vi.fn(() => EMPTY), requestUsers: vi.fn() };
-    const deviceInfoService = { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) };
+    const deviceInfoService = { deviceType: signal(DeviceType.DESKTOP) };
     const component = new CommunityComponent(
       dialog as any,
       router as any,

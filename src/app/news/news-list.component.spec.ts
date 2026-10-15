@@ -1,7 +1,9 @@
 import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+
 import { NewsListComponent } from './news-list.component';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 
 const createComponent = (items: any[] = []) => {
   const component = Object.create(NewsListComponent.prototype) as any;
@@ -69,6 +71,20 @@ describe('NewsListComponent labels', () => {
     expect(component.newsService.postNews).toHaveBeenCalledWith(
       { ...news, labels: [] },
       'Label removed'
+    );
+  });
+
+  it('stores a colored custom label by name only', () => {
+    const component = createComponent();
+    component.customLabels = [ { name: 'Meeting', color: '#e1bee7' } ];
+    component.newsService = { postNews: vi.fn().mockReturnValue(of({})) };
+    const news = { _id: 'news-1', labels: [ 'legacy-label' ] };
+
+    component.changeLabels({ news, label: 'Meeting', action: 'add' });
+
+    expect(component.newsService.postNews).toHaveBeenCalledWith(
+      { ...news, labels: [ 'legacy-label', 'Meeting' ] },
+      'Label added'
     );
   });
 

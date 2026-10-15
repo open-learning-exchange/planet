@@ -2,8 +2,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+
 import { AndroidAppPromptService } from './android-app-prompt.service';
-import { DeviceInfoService } from '../ui/device-info.service';
 import { AndroidAppDialogComponent } from './android-app-dialog.component';
 
 describe('AndroidAppPromptService', () => {

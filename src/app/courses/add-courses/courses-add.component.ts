@@ -3,41 +3,42 @@ import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, Reacti
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
-
-import { environment } from '../../../environments/environment';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { CustomValidators } from '../../validators/custom-validators';
-import { ValidatorService } from '../../validators/validator.service';
-import * as constants from '../courses.constants';
-import { languages } from '../../shared/language/languages';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { CoursesService } from '../courses.service';
-import { UserService } from '../../shared/auth/user.service';
-import { StateService } from '../../shared/state.service';
-import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
-import { CoursesStepComponent } from './courses-step.component';
-import { PouchService } from '../../shared/database/pouch.service';
-import { TagsService } from '../../shared/forms/tags/tags.service';
-import { showFormErrors } from '../../shared/tables/table.helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { PlanetMarkdownTextboxComponent } from '../../shared/markdown/planet-markdown-textbox.component';
 import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/material/autocomplete';
 import { MatSelect } from '@angular/material/select';
-import { PlanetTagInputComponent } from '../../shared/forms/tags/planet-tag-input.component';
-import { SubmitDirective } from '../../shared/dialogs/submit.directive';
-import { FileUploadComponent, AttachmentInputState, ExistingAttachment, PendingAttachment } from '../../shared/forms/file-upload.component';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { languages } from '@shared/language/languages';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PlanetStepListService } from '@shared/forms/planet-step-list.component';
+import { PouchService } from '@shared/database/pouch.service';
+import { TagsService } from '@shared/forms/tags/tags.service';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { FileUploadComponent, AttachmentInputState, ExistingAttachment, PendingAttachment } from '@shared/forms/file-upload.component';
 import {
   attachmentStubs, couchAttachmentUrl, normalizeImage, NormalizedImage, UNPROCESSABLE_IMAGE_ERROR, withImageAttachment
-} from '../../shared/utils';
-import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+} from '@shared/utils';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+
+import { environment } from '../../../environments/environment';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
+import * as constants from '../courses.constants';
+import { CoursesService } from '../courses.service';
+import { CoursesStepComponent } from './courses-step.component';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;

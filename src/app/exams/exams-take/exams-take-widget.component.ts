@@ -1,6 +1,5 @@
 import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -8,12 +7,13 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+
 import { ExamQuestion } from '../exams.model';
 import {
   ExamAnswerOption, ExamAnswerValue, addCheckedAnswer, createOtherAnswerOption, isExamAnswerOption,
   isOtherAnswerOption, restoreExamAnswer
 } from './exam-answer.helpers';
-import { PlanetMarkdownTextboxComponent } from '../../shared/markdown/planet-markdown-textbox.component';
 
 @Component({
   selector: 'planet-exams-take-widget',
