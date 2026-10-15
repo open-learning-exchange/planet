@@ -14,6 +14,7 @@ import {
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { SyncService } from '@shared/database/sync.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -57,7 +58,8 @@ export class UpgradeComponent {
     private couchService: CouchService,
     private stateService: StateService,
     private managerService: ManagerService,
-    private syncService: SyncService
+    private syncService: SyncService,
+    public dialogGuard: DialogGuardService
   ) {
     this.mode = this.route.snapshot.data.myPlanet === true ? 'myPlanet' : 'planet';
     this.addLine($localize`Not started`);
@@ -81,7 +83,7 @@ export class UpgradeComponent {
 
   upgradePlanet() {
     let parentVersion: string;
-    this.getParentVersion().pipe(
+    this.dialogGuard.run('upgrade', () => this.getParentVersion().pipe(
       switchMap((pVersion: string) => {
         parentVersion = pVersion;
         return this.syncService.openPasswordConfirmation();
@@ -93,7 +95,7 @@ export class UpgradeComponent {
         const requestParams = new HttpParams().set('v', parentVersion.trim());
         return this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams });
       })
-    ).subscribe(result => this.handleResult(result), err => this.handleError(err));
+    )).subscribe(result => this.handleResult(result), err => this.handleError(err));
   }
 
   handleResult(result) {
