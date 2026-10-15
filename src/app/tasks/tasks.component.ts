@@ -1,14 +1,13 @@
 import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import {
-  MatList, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemLine, MatListItemAvatar, MatListItemMeta
+  MatList, MatListItem, MatListItemTitle, MatListItemLine, MatListItemMeta
 } from '@angular/material/list';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
@@ -28,8 +27,11 @@ import { NotificationsService, notificationRecipient } from '../notifications/no
 import { MeetupsAddDialogComponent } from '../meetups/meetups-add-dialog.component';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import {
-  assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees, storedAssignee
+  assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees,
+  effectiveTaskStatus, storedAssignee, TaskStatus, taskStatusBadgeLabel
 } from './tasks.utils';
+
+type TaskFilter = 'self' | 'all' | 'to_do' | 'in_progress' | 'completed';
 
 @Pipe({ name: 'assigneeName' })
 export class AssigneeNamePipe implements PipeTransform {
@@ -58,12 +60,9 @@ interface AssigneeUpdateState {
     MatButtonToggle,
     MatList,
     MatListItem,
-    MatCheckbox,
-    MatListItemIcon,
     MatListItemTitle,
     MatListItemLine,
     NgClass,
-    MatListItemAvatar,
     MatTooltip,
     MatListItemMeta,
     MatIconButton,
@@ -112,12 +111,15 @@ export class TasksComponent implements OnInit {
   taskViews: any[] = [];
   filteredTaskViews: any[] = [];
   imgUrlPrefix = environment.couchAddress;
-  filter: 'self' | 'all' = 'self';
+  filter: TaskFilter = 'self';
   trackById = trackById;
+  statusOptions = ([ 'to_do', 'in_progress', 'completed' ] as TaskStatus[])
+    .map(status => ({ status, label: taskStatusBadgeLabel(status) }));
   private assigneesList: any[] = [];
   private currentAssignees = new Map<string, any>();
   private failedAvatarSources = new Map<string, string>();
   private assigneeUpdates = new Map<string, AssigneeUpdateState>();
+  private statusSaves = new Set<string>();
 
   constructor(
     private tasksService: TasksService,
@@ -135,7 +137,7 @@ export class TasksComponent implements OnInit {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
       this.setMyTasks();
-      this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
+      this.filter = this.filter === 'self' && this.myTasks.length === 0 ? 'all' : this.filter;
       this.setTaskViews();
       this.filterTasks();
     });
@@ -220,9 +222,23 @@ export class TasksComponent implements OnInit {
     this.tasksService.getTasks();
   }
 
-  toggleTaskComplete(task) {
-    this.tasksService.addTask({ ...task, completed: !task.completed }).subscribe((res) => {
-      this.tasksService.getTasks();
+  // A save already in flight for this task holds the current _rev, so a second one would 409; it is dropped.
+  setTaskStatus(task: any, status: TaskStatus) {
+    if (this.statusSaves.has(task._id) || this.assigneeUpdates.has(task._id) || status === effectiveTaskStatus(task)) {
+      return;
+    }
+    this.statusSaves.add(task._id);
+    this.tasksService.setTaskStatus(task, status).pipe(
+      finalize(() => this.statusSaves.delete(task._id))
+    ).subscribe({
+      next: res => {
+        this.replaceTask(res.doc);
+        this.refreshTaskViews();
+      },
+      error: () => {
+        this.tasksService.getTasks();
+        this.planetMessageService.showAlert($localize`There was a problem updating the task status.`);
+      }
     });
   }
 
@@ -232,6 +248,9 @@ export class TasksComponent implements OnInit {
 
   toggleAssignee(task, assignee) {
     const taskId = task._id;
+    if (this.statusSaves.has(taskId)) {
+      return;
+    }
     const state = this.assigneeUpdates.get(taskId) || {
       task,
       assignees: effectiveAssignees(task).map(item => storedAssignee(item, this.localPlanetCode)),
@@ -289,8 +308,8 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  // The saved doc carries the new revision and assignees, so swap it in rather than waiting for the
-  // tasks refresh — the next toggle would otherwise post a stale _rev.
+  // The saved doc carries the new revision, so swap it in rather than waiting for the tasks refresh —
+  // the next save would otherwise post a stale _rev.
   private replaceTask(task: any) {
     const index = this.tasks.findIndex(({ _id }) => _id === task?._id);
     if (index > -1) {
@@ -326,15 +345,16 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  setFilter(newFilter: 'self' | 'all') {
+  setFilter(newFilter: TaskFilter) {
     this.filter = newFilter;
     this.filterTasks();
   }
 
   filterTasks() {
-    const filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
-    const filteredTaskIds = new Set(filteredTasks.map(task => task._id));
-    this.filteredTaskViews = this.taskViews.filter(({ task }) => filteredTaskIds.has(task._id));
+    const myTaskIds = new Set(this.myTasks.map(task => task._id));
+    this.filteredTaskViews = this.taskViews.filter(({ task, status }) =>
+      this.filter === 'all' || (this.filter === 'self' ? myTaskIds.has(task._id) : status === this.filter)
+    );
   }
 
   sendNotifications(assignee: any = '') {
@@ -424,11 +444,14 @@ export class TasksComponent implements OnInit {
       if (failureKey && failedAvatarSrc && failedAvatarSrc !== avatarSrc) {
         this.failedAvatarSources.delete(failureKey);
       }
+      const status = effectiveTaskStatus(task);
       return {
         task,
         assignees,
         assignee,
-        avatarSrc: failedAvatarSrc === avatarSrc ? 'assets/image.png' : avatarSrc
+        avatarSrc: failedAvatarSrc === avatarSrc ? 'assets/image.png' : avatarSrc,
+        status,
+        statusLabel: taskStatusBadgeLabel(status)
       };
     });
   }

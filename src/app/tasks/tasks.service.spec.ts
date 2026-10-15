@@ -9,7 +9,8 @@ describe('TasksService assignee cleanup', () => {
     couchService = {
       findAll: vi.fn(),
       bulkDocs: vi.fn().mockReturnValue(of([])),
-      updateDocument: vi.fn().mockReturnValue(of({ doc: {} }))
+      updateDocument: vi.fn().mockReturnValue(of({ doc: {} })),
+      datePlaceholder: 0
     };
     service = new TasksService(
       couchService,
@@ -21,6 +22,23 @@ describe('TasksService assignee cleanup', () => {
         requestData: vi.fn()
       } as any
     );
+  });
+
+  it('keeps completion in step with the status it sets', () => {
+    service.setTaskStatus({ _id: 'task-1', completed: true, completedTime: 1, status: 'completed' }, 'to_do').subscribe();
+    expect(couchService.updateDocument.mock.calls[0][1]).toEqual(expect.objectContaining({
+      status: 'to_do', completed: false, completedTime: undefined
+    }));
+
+    service.setTaskStatus({ _id: 'task-1', completed: false, status: 'in_progress' }, 'completed').subscribe();
+    expect(couchService.updateDocument.mock.calls[1][1]).toEqual(expect.objectContaining({ status: 'completed', completed: true }));
+  });
+
+  it('keeps completion when archiving a finished task', () => {
+    service.archiveTask({ _id: 'task-1', completed: true, completedTime: 1, status: 'completed' })().subscribe();
+    expect(couchService.updateDocument.mock.calls[0][1]).toEqual(expect.objectContaining({
+      status: 'archived', completed: true, completedTime: 1
+    }));
   });
 
   it('preserves a legacy assignment when editing a task', () => {
