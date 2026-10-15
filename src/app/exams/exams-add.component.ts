@@ -13,7 +13,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -27,6 +27,7 @@ import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import {
   PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
 } from '@shared/forms/planet-step-list.component';
@@ -34,7 +35,6 @@ import { MarkdownRenderService } from '@shared/markdown/markdown-render.service'
 import { findDocuments } from '@shared/database/mango-queries';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
-import { SubmitDirective } from '@shared/dialogs/submit.directive';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
 
@@ -83,7 +83,6 @@ interface ExamDocumentInfo {
     ReactiveFormsModule,
     NgClass,
     MatButton,
-    SubmitDirective,
     MatMenuTrigger,
     MatCheckbox,
     MatMenu,
@@ -151,7 +150,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     private planetStepListService: PlanetStepListService,
     private dialog: MatDialog,
     private submissionsService: SubmissionsService,
-    private markdownRenderer: MarkdownRenderService
+    private markdownRenderer: MarkdownRenderService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     const typeParam = this.route.snapshot.paramMap.get('type');
     this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
@@ -235,12 +235,13 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
 
   addExam(examInfo: ExamInfo, reRoute: boolean) {
     const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
+    this.dialogsLoadingService.start();
     this.couchService.findAll(this.dbName,
       { selector: { type: this.examForm.controls.type.value, name: { $regex: namePrefix } } }
     ).pipe(switchMap((exams: Array<{ name: string }>) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.examsService.createExamDocument(examInfo);
-    })).subscribe((res) => {
+    }), finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       this.initialFormState = JSON.stringify(this.examForm.getRawValue());
       this.hasUnsavedChanges = false;
@@ -251,10 +252,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
         this.goBack();
       }
       this.planetMessageService.showMessage(this.successMessage);
-    }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
-    });
+    }, () => this.planetMessageService.showAlert(
+      this.examType === 'survey' ? $localize`There was an error saving the survey` : $localize`There was an error saving the test`
+    ));
   }
 
   appendToCourse(info: ExamInfo, type: 'exam' | 'survey') {
