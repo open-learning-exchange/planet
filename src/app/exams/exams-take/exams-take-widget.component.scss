@@ -93,7 +93,7 @@
       max-width: 532px;
     }
 
-    @media (max-width: v.$screen-xs) {
+    @media (max-width: v.$screen-sm) {
       &--grid {
         margin-inline: auto;
       }
