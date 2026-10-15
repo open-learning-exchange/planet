@@ -24,7 +24,7 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 
 import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
 import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
-import { assigneeKey, assigneeName, effectiveAssignees } from '../../tasks/tasks.utils';
+import { assigneeKey, assigneeName as assigneeNameImport, effectiveAssignees as effectiveAssigneesImport } from '../../tasks/tasks.utils';
 
 @Component({
   selector: 'planet-meetups-view',
@@ -71,6 +71,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   listDialogRef: MatDialogRef<DialogsListComponent>;
   currentUserName = this.userService.get().name;
   dateNow: any;
+  effectiveAssignees = effectiveAssigneesImport;
+  assigneeName = assigneeNameImport;
 
   constructor(
     public dialog: MatDialog,
@@ -240,9 +242,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       dialogRef: this.dialogRef
     });
   }
-
-  effectiveAssignees = effectiveAssignees;
-  assigneeName = assigneeName;
 
   assigneeTrackKey(assignee): string {
     return assigneeKey(assignee, this.stateService.configuration?.code);
