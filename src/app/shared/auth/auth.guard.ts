@@ -8,7 +8,7 @@ import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
 
 import { UserService } from './user.service';
-import { LoginDialogComponent } from '../../login/login-dialog.component';
+import { LoginDialogComponent, loginDialogId } from '../../login/login-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,7 @@ export class AuthGuard {
           }
         }
         this.userService.unset();
-        const dialogRef = this.dialog.open(LoginDialogComponent);
+        const dialogRef = this.dialog.getDialogById(loginDialogId) ?? this.dialog.open(LoginDialogComponent, { id: loginDialogId });
         return dialogRef.afterClosed().pipe(switchMap(loginState => {
           if (loginState === undefined) {
             // If the current routerState snapshot url is a blank string, the user got here via
