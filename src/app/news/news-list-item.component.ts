@@ -24,7 +24,9 @@ import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
-import { DEFAULT_VOICE_LABELS, dedupeVoiceLabels, voiceLabelsEqual } from './news-labels';
+import {
+  CustomVoiceLabel, DEFAULT_VOICE_LABELS, dedupeCustomVoiceLabels, dedupeVoiceLabels, labelColorClass, normalizeVoiceLabel, voiceLabelsEqual
+} from './news-labels';
 import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
 
 @Component({
@@ -71,7 +73,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Input() customLabels: string[] = [];
+  @Input() customLabels: (string | CustomVoiceLabel)[] = [];
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
@@ -81,6 +83,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ ...DEFAULT_VOICE_LABELS ] };
+  labelColors = new Map<string, string>();
   teamLabels = [];
   previewLimit = 500;
   readonly isMobile = this.deviceInfoService.isMobile;
@@ -128,6 +131,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.labels.listed = this.labels.all.filter(label =>
       !(this.item.doc.labels || []).some(itemLabel => voiceLabelsEqual(itemLabel, label))
     );
+    this.labelColors = new Map(dedupeCustomVoiceLabels(this.customLabels).map(({ name, color }) => [ name.toLowerCase(), color ]));
+  }
+
+  labelColorClass(label: string): string {
+    return labelColorClass(this.labelColors.get(normalizeVoiceLabel(label)));
   }
 
   get canEditLabels(): boolean {

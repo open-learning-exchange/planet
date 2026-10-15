@@ -6,26 +6,63 @@ planet-tasks {
       align-items: center;
     }
 
-    .mat-mdc-checkbox {
-      order: -1;
-      margin-right: 0.5rem;
+    .task-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      vertical-align: middle;
     }
 
-    img {
-      order: 2;
+    .task-title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 100%;
     }
 
-    button {
-      order: 3;
-    }
-
-    .mat-mdc-list-item.mdc-list-item--with-leading-avatar .mdc-list-item__content {
-      margin-left: -16px;
+    .task-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .task-title:focus-visible {
       outline: 2px solid v.$primary;
       outline-offset: 2px;
+    }
+
+    .task-status-badge {
+      display: inline-flex;
+      align-items: center;
+      flex: none;
+      padding: 2px 8px;
+      border: 0;
+      border-radius: 12px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 16px;
+
+      .mat-icon {
+        width: 16px;
+        height: 16px;
+        margin-right: -4px;
+        font-size: 16px;
+      }
+
+      &.status-to_do {
+        background-color: v.$primary-lighter;
+        color: v.$primary-lighter-text;
+      }
+
+      &.status-in_progress {
+        background-color: v.$accent-lighter;
+        color: v.$accent-lighter-text;
+      }
+
+      &.status-completed {
+        background-color: v.$planet-green-lighter;
+        color: v.$planet-green-dark;
+      }
     }
   }
 
@@ -39,6 +76,8 @@ planet-tasks {
 
   mat-button-toggle-group {
     font-size: 14px;
+    max-width: 100%;
+    overflow-x: auto;
     mat-button-toggle {
       line-height: 34px;
     }
