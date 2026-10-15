@@ -78,7 +78,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
         }
       } catch (error: any) {
         if (error instanceof ConversationAccessError) {
-          ws.send(JSON.stringify({ 'error': 'Forbidden', 'message': error.message }));
+          ws.send(JSON.stringify({ 'type': 'error', 'error': error.message }));
         } else if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
           ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
         } else {
