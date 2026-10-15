@@ -131,15 +131,15 @@ describe('CoursesAddComponent', () => {
       component.updateCourse(component.courseForm.getRawValue(), true);
       await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledOnce());
 
-      expect(saveCourse.mock.calls[0][0].coverFileName).toBe('cover-1.png');
-      expect(Object.keys(saveCourse.mock.calls[0][0]._attachments)).toEqual([ 'cover.png', 'cover-1.png' ]);
+      expect((saveCourse.mock.calls[0][0] as any).coverFileName).toBe('cover-1.png');
+      expect(Object.keys((saveCourse.mock.calls[0][0] as any)._attachments)).toEqual([ 'cover.png', 'cover-1.png' ]);
       expect(URL.createObjectURL).toHaveBeenCalledOnce();
 
       component.savedCourse._attachments['cover-1.png'] = {};
       component.updateCourse(component.courseForm.getRawValue(), true);
       await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledTimes(2));
 
-      expect(saveCourse.mock.calls[1][0].coverFileName).toBe('cover-2.png');
+      expect((saveCourse.mock.calls[1][0] as any).coverFileName).toBe('cover-2.png');
       expect(URL.createObjectURL).toHaveBeenCalledTimes(2);
     } finally {
       restoreImage();

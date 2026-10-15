@@ -258,7 +258,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.fromSubmission = false;
     this.initialLoad = true;
     this.isLoading = true;
-    const recordingSurvey = this.router.getCurrentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
+    const recordingSurvey = this.router.currentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
     const survey$ = this.couchService.get(`exams/${surveyId}`).pipe(catchError(error => {
       if (error.status !== 404) {
         return throwError(error);

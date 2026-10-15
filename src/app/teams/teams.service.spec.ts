@@ -577,6 +577,15 @@ describe('TeamsService membership writes', () => {
 
 describe('TeamsService cover image handling', () => {
   afterEach(() => vi.restoreAllMocks());
+  // JSDOM never settles an image load, so fail it and take the raw-file fallback
+  beforeEach(() => vi.stubGlobal('Image', class {
+    onerror: () => void = () => {};
+
+    set src(_value: string) {
+      setTimeout(() => this.onerror());
+    }
+  }));
+  afterEach(() => vi.unstubAllGlobals());
 
   const createService = () => {
     const couchService = {

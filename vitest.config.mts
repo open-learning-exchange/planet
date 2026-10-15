@@ -1,17 +1,12 @@
-/// <reference types="vitest" />
-
 import { defineConfig } from 'vitest/config';
 
-// The `@angular/build:unit-test` builder owns the spec list, jsdom environment and
-// setup files (see the `test` target in angular.json); it only reads this file for
-// options it does not expose itself.
+// Runner options the angular.json test target can't set; it owns the spec list and environment
 export default defineConfig({
   test: {
     globals: true,
     reporters: [ 'default' ],
     server: {
-      // MarkdownRenderService imports Showdown's CommonJS API as an ESM namespace.
-      // Let Vite transform it so named exports such as `Converter` survive.
+      // Showdown is CommonJS; inlining keeps the named exports MarkdownRenderService uses
       deps: {
         inline: [ 'showdown' ],
       },

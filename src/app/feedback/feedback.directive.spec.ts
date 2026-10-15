@@ -19,6 +19,16 @@ describe('FeedbackDirective', () => {
   };
   const screenshot = (name = 'screen shot.png') => ({ file: new File([ 'image' ], name, { type: 'image/png' }) });
 
+  // JSDOM never settles an image load, so fail it and take the raw-file fallback
+  beforeEach(() => vi.stubGlobal('Image', class {
+    onerror: () => void = () => {};
+
+    set src(_value: string) {
+      setTimeout(() => this.onerror());
+    }
+  }));
+  afterEach(() => vi.unstubAllGlobals());
+
   beforeEach(() => {
     couchService = {
       getDocumentByID: vi.fn().mockReturnValue(throwError(() => ({ status: 404 }))),

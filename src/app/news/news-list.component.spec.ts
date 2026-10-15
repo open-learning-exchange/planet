@@ -231,7 +231,7 @@ describe('NewsListComponent filtering', () => {
   });
 
   it('marks only the newest visible root as the latest message', () => {
-    const items = thread();
+    const items: any[] = thread();
     const component = createComponent(items);
     component.messageSearch = 'lunch';
 
