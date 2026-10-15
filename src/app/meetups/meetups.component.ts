@@ -8,7 +8,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -194,20 +194,31 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   meetupsToggle(meetupIds, type) {
-    this.meetupService.attendMeetups(type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds, type).subscribe((res) => {
+    const ids = type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds;
+    this.dialogsLoadingService.start();
+    this.meetupService.attendMeetups(ids, type).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.countSelectedShelf(this.selection.selected);
-    }, (error) => ((error)));
+    }, () => this.planetMessageService.showAlert(
+      type === 'remove' ? $localize`There was a problem leaving these meetups` : $localize`There was a problem joining these meetups`
+    ));
   }
 
   attendMeetup(meetup) {
     const meetupDate = (meetup.endDate || meetup.startDate);
     if ((meetupDate < this.dateNow && meetup.participate) || (meetupDate > this.dateNow)) {
-      this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
+      this.dialogsLoadingService.start();
+      this.meetupService.attendMeetup(meetup._id, meetup.participate).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe((res) => {
         const msg = res.participate ? $localize`left` : $localize`joined`;
         meetup.participate = !res.participate;
         this.countSelectedShelf(this.selection.selected);
         this.planetMessageService.showMessage($localize`You have ${msg} meetup.`);
-      });
+      }, () => this.planetMessageService.showAlert(
+        meetup.participate ? $localize`There was a problem leaving this meetup` : $localize`There was a problem joining this meetup`
+      ));
     } else {
       this.planetMessageService.showMessage($localize`You cannot join an old meetup.`);
     }

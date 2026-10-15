@@ -402,10 +402,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       return;
     }
-    this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.resourcesService.libraryAddRemove(resourceIds, type).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.pageSelection.removeFiltered();
       this.onSelectionChange(this.selection.selected);
-    }, (error) => ((error)));
+    }, () => this.planetMessageService.showAlert($localize`There was a problem adding to myLibrary.`));
   }
 
   shareResource(type, resources) {
