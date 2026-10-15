@@ -294,7 +294,7 @@
           <ng-container i18n>Courses</ng-container> ({{visibleCourses.length}})
         </ng-template>
         @if (visibleCourses.length < 1) {
-          <p i18n>There are no courses associated with this team.</p>
+          <p i18n>There are no courses associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
         } @else {
           <div class="card-grid">
             @for (course of visibleCourses; track course) {
