@@ -49,6 +49,7 @@ import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { ResourcesIconComponent } from '../resources/resources-icon.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { CustomVoiceLabel } from '../news/news-labels';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
@@ -109,7 +110,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogRef: MatDialogRef<TablesAddDialogComponent>;
   user = this.userService.get();
   news: any[] = [];
-  private readonly emptyVoiceLabels: string[] = [];
+  private readonly emptyVoiceLabels: CustomVoiceLabel[] = [];
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
@@ -375,7 +376,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.isUserLeader || canManageLocalTeams;
   }
 
-  get customVoiceLabels(): string[] {
+  get customVoiceLabels(): (string | CustomVoiceLabel)[] {
     return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
@@ -726,7 +727,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       width: '500px',
       autoFocus: false,
       data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }
-    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+    }).afterClosed().subscribe((updatedLabels?: CustomVoiceLabel[]) => {
       if (updatedLabels) {
         this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }
