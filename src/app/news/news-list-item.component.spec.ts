@@ -16,6 +16,7 @@ import { LinkCopyService } from '@shared/ui/link-copy.service';
 
 import { NewsListItemComponent } from './news-list-item.component';
 import { NewsService } from './news.service';
+import { CustomVoiceLabel } from './news-labels';
 
 describe('NewsListItemComponent read-only behavior', () => {
   const createComponent = () => {
@@ -164,7 +165,7 @@ describe('NewsListItemComponent read-only template', () => {
 });
 
 describe('NewsListItemComponent label choices', () => {
-  const createComponent = (customLabels: string[] = []) => {
+  const createComponent = (customLabels: (string | CustomVoiceLabel)[] = []) => {
     const component = Object.create(NewsListItemComponent.prototype) as NewsListItemComponent;
     component.item = { doc: { labels: [], user: { name: 'author' }, createdOn: 'local' } };
     component.customLabels = customLabels;
@@ -190,6 +191,16 @@ describe('NewsListItemComponent label choices', () => {
     component.updateLabelsAll();
 
     expect(component.labels.listed).not.toContain('event');
+  });
+
+  it('colors attached labels from the configured labels regardless of case', () => {
+    const component = createComponent([ { name: 'Event', color: 'green' }, 'News' ]);
+
+    component.updateLabelsAll();
+
+    expect(component.labelColorClass('event')).toBe('label-color-green');
+    expect(component.labelColorClass('News')).toBe('label-color-default');
+    expect(component.labelColorClass('help')).toBe('label-color-default');
   });
 
   it('allows label editing only on locally created messages', () => {

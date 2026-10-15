@@ -146,7 +146,7 @@
 
 <mat-sidenav-container class="main-content" #content>
   @if (!usesOverlayNav && (layout === 'modern' || forceModern)) {
-    <mat-sidenav #sidenav mode="side" class="primary-color nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
+    <mat-sidenav mode="side" class="primary-color nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="sidenavAnimationDone($event)">
       <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
     </mat-sidenav>
   }

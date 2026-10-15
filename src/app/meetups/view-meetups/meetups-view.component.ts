@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Optional } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { map, takeUntil } from 'rxjs/operators';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { NgClass, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
@@ -13,6 +13,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
@@ -84,7 +85,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private dialogsListService: DialogsListService,
     private stateService: StateService,
-    private dialogGuard: DialogGuardService
+    private dialogGuard: DialogGuardService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
@@ -169,10 +171,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   sendInvitations(selected: string[]) {
     const invites = selected.map((user: any) => this.inviteNotification(user._id, this.meetupDetail));
-    this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
+    this.dialogsLoadingService.start();
+    this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(res => {
       this.listDialogRef.close();
       this.planetMessageService.showMessage($localize`Invitation${(invites.length > 1 ? 's' : '')} sent successfully`);
-    });
+    }, () => this.planetMessageService.showAlert($localize`There was an error sending these invitations`));
   }
 
   inviteNotification(userId, meetupDetail) {

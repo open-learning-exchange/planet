@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil, catchError } from 'rxjs/operators';
+import { map, switchMap, takeUntil, catchError, finalize } from 'rxjs/operators';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -260,12 +260,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    }, () => {
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    });
+      this.stopLoading();
+    }, () => this.stopLoading());
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
@@ -291,6 +287,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnDestroy() {
+    this.stopLoading();
     if (this.filterDialogRef) {
       this.filterDialogRef.close();
     }
@@ -313,6 +310,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   private isInCertification(courseId: string): boolean {
     return this.certifications.some(certification => certification.courseIds?.includes(courseId));
+  }
+
+  // The listener emits on every update, so only the first emission ends the constructor's start()
+  private stopLoading() {
+    if (this.isLoading) {
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }
   }
 
   getCourses() {
@@ -585,8 +590,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const courses = courseIds.map(courseId => ({ item: findByIdInArray(this.courses.data, courseId), db: this.dbName }));
     const msg = (type === 'pull' ? 'fetch' : 'send');
     const parentType = type === 'pull' ? 'parent' : 'local';
-    this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(switchMap(replicators =>
-      this.syncService.confirmPasswordAndRunReplicators(replicators)
+    this.dialogGuard.run('share-course', () => this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(
+      switchMap(replicators => this.syncService.confirmPasswordAndRunReplicators(replicators))
     )).subscribe(() => {
       this.planetMessageService.showMessage($localize`${courses.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));
@@ -611,7 +616,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   sendCourse() {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
         const childType = {
           center: selected.length > 1 ? 'nations' : 'nation',
           nation: selected.length > 1 ? 'communities' : 'community'

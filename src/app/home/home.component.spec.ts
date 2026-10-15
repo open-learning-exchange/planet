@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AnimationEvent } from '@angular/animations';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -124,7 +125,7 @@ describe('Home', () => {
     expect(comp.animDisp).toBeUndefined();
   });
 
-  it('should stop the content margin interval when the desktop nav finishes animating', () => {
+  it('should stop the content margin interval only when the current toggle finishes or the side nav goes away', () => {
     const { comp } = renderNav(false);
 
     comp.toggleNav();
@@ -133,8 +134,23 @@ describe('Home', () => {
     comp.toggleNav();
 
     expect(firstRun.closed).toBe(true);
-    comp.endAnimation();
+    comp.sidenavAnimationDone({ toState: 'open' } as AnimationEvent);
+    expect(comp.animDisp.closed).toBe(false);
+    comp.sidenavAnimationDone({ toState: 'closed' } as AnimationEvent);
     expect(comp.animDisp.closed).toBe(true);
+    comp.toggleNav();
+    comp.sidenavAnimationDone({ toState: 'void' } as AnimationEvent);
+    expect(comp.animDisp.closed).toBe(true);
+  });
+
+  it('should re-measure the content margins after the shown nav changes', () => {
+    const { fixture, comp } = renderNav(false);
+    const updateContentMargins = vi.spyOn(comp['mainContent'], 'updateContentMargins');
+
+    comp.isMobile = true;
+    fixture.detectChanges();
+
+    expect(updateContentMargins).toHaveBeenCalled();
   });
 
   it('should use the overlay nav on a short viewport that is too wide to count as mobile', () => {

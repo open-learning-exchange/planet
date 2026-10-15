@@ -808,6 +808,13 @@ body {
     background-color: v.$light-grey;
   }
 
+  @each $key, $color in v.$label-colors {
+    .label-color-#{$key},
+    .mat-mdc-chip.label-color-#{$key} {
+      background-color: $color;
+    }
+  }
+
   .form-container {
     width: calc(#{v.$form-width-3} + 20px);
   }
