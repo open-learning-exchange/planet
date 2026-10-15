@@ -15,7 +15,6 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ 'noServer': true });
 
-// Status checks and public surveys stay open; every other route, including new ones, needs a Planet session
 const openRoutes: OpenRoute[] = [
   { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/$/ },
   { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i },

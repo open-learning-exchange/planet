@@ -6,9 +6,7 @@ import {
   authenticateUpgrade,
   authSessionCookie,
   requireSession,
-  requireSessionExcept,
-  SessionValidationError,
-  validateSession
+  requireSessionExcept
 } from './auth';
 
 const validSession = (name = 'amara', roles: string[] = [], headers = new Headers()) => ({
@@ -36,13 +34,21 @@ const mockSocket = () => {
 
 const upgrade = async (headers: Record<string, string>, ws: unknown = {}) => {
   const socket = mockSocket();
+  const responseHeaders: string[] = [];
+  let onHeaders: (headers: string[], request: unknown) => void = () => undefined;
   const wss = {
-    'handleUpgrade': vi.fn((request: unknown, upgradeSocket: unknown, head: unknown, done: (client: unknown) => void) => done(ws)),
+    'on': vi.fn((event: string, listener: typeof onHeaders) => {
+      onHeaders = listener;
+    }),
+    'handleUpgrade': vi.fn((request: unknown, upgradeSocket: unknown, head: unknown, done: (client: unknown) => void) => {
+      onHeaders(responseHeaders, request);
+      done(ws);
+    }),
     'emit': vi.fn()
   };
   const req: any = { 'headers': { 'host': 'planet.local', ...headers } };
   await authenticateUpgrade(wss as any)(req, socket, Buffer.alloc(0));
-  return { req, socket, wss };
+  return { req, responseHeaders, socket, wss };
 };
 
 describe('gateway authentication', () => {
@@ -130,14 +136,16 @@ describe('gateway authentication', () => {
   it('bounds concurrent CouchDB session validation for HTTP and WebSocket callers', async () => {
     const resolvers: Array<(response: any) => void> = [];
     fetchMock.mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)));
-    const validations = Array.from({ 'length': 8 }, (unused, index) => {
+    const checks = Array.from({ 'length': 8 }, (unused, index) => {
       void unused;
-      return validateSession({ 'cookie': `AuthSession=${index}` });
+      return requireSession({ 'headers': { 'cookie': `AuthSession=${index}` } } as any, mockResponse(), vi.fn());
     });
     await vi.waitFor(() => expect(resolvers).toHaveLength(8));
-    await expect(validateSession({ 'cookie': 'AuthSession=overflow' })).rejects.toBeInstanceOf(SessionValidationError);
+    const res = mockResponse();
+    await requireSession({ 'headers': { 'cookie': 'AuthSession=overflow' } } as any, res, vi.fn());
+    expect(res.status).toHaveBeenCalledWith(503);
     resolvers.forEach((resolve) => resolve(validSession()));
-    await Promise.all(validations);
+    await Promise.all(checks);
   });
 
   it.each([ 408, 429 ])('returns 503 when CouchDB session validation responds with %s', async (status) => {
@@ -217,6 +225,13 @@ describe('gateway authentication', () => {
       const { req, socket, wss } = await upgrade({ 'origin': 'http://planet.local', 'cookie': 'AuthSession=deadbeef' }, ws);
       expect(socket.end).not.toHaveBeenCalled();
       expect(wss.emit).toHaveBeenCalledWith('connection', ws, req, { 'name': 'amara', 'roles': [] });
+    });
+
+    it('passes CouchDB\'s renewed session cookie back on the 101 response', async () => {
+      const renewed = 'AuthSession=renewed; Version=1; Path=/; HttpOnly';
+      fetchMock.mockResolvedValue(validSession('amara', [], new Headers({ 'set-cookie': renewed })));
+      const { responseHeaders } = await upgrade({ 'cookie': 'AuthSession=deadbeef' });
+      expect(responseHeaders).toEqual([ `Set-Cookie: ${renewed}` ]);
     });
   });
 });

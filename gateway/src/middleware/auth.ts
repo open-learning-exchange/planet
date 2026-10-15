@@ -16,7 +16,7 @@ export interface OpenRoute {
   path: RegExp;
 }
 
-export class SessionValidationError extends Error {
+class SessionValidationError extends Error {
   constructor(public readonly upstreamStatus?: number) {
     super('Planet session validation is unavailable');
     this.name = 'SessionValidationError';
@@ -75,7 +75,6 @@ async function fetchSession(credentials: Record<string, string>): Promise<Sessio
     if (!body.userCtx?.name) {
       return { 'session': null };
     }
-    // CouchDB renews an ageing session cookie on use; chatting would otherwise outlive the browser's copy
     return {
       'session': { 'name': body.userCtx.name, 'roles': body.userCtx.roles || [] },
       'renewedCookie': response.headers.get('set-cookie') || undefined
@@ -88,7 +87,6 @@ async function fetchSession(credentials: Record<string, string>): Promise<Sessio
   }
 }
 
-/** Ask CouchDB who the request belongs to, with a bound on concurrent checks so bogus credentials can't pile up work. */
 async function checkSession(headers: IncomingHttpHeaders): Promise<SessionCheck> {
   const credentials = sessionCredentials(headers);
   if (!credentials) {
@@ -103,10 +101,6 @@ async function checkSession(headers: IncomingHttpHeaders): Promise<SessionCheck>
   } finally {
     sessionValidationsInFlight -= 1;
   }
-}
-
-export async function validateSession(headers: IncomingHttpHeaders): Promise<SessionInfo | null> {
-  return (await checkSession(headers)).session;
 }
 
 export async function requireSession(req: Request, res: Response, next: NextFunction) {
@@ -141,27 +135,40 @@ const rejectUpgrade = (socket: Duplex, status: number) => {
   socket.end(`HTTP/1.1 ${status} ${STATUS_CODES[status]}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
 };
 
-/** Check the origin and session before the WebSocket opens, so no frame arrives before authentication. */
-export const authenticateUpgrade = (wss: WebSocket.Server) => async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
-  const onSocketError = (error: Error) => {
-    console.error(`gateway: WebSocket upgrade failed: ${error.message}`); // eslint-disable-line no-console
+export const authenticateUpgrade = (wss: WebSocket.Server) => {
+  const renewedCookies = new WeakMap<IncomingMessage, string>();
+  wss.on('headers', (headers, req) => {
+    const cookie = renewedCookies.get(req);
+    if (cookie) {
+      headers.push(`Set-Cookie: ${cookie}`);
+    }
+  });
+
+  return async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+    const onSocketError = (error: Error) => {
+      console.error(`gateway: WebSocket upgrade failed: ${error.message}`); // eslint-disable-line no-console
+    };
+    socket.on('error', onSocketError);
+    if (!isAllowedOrigin(req.headers)) {
+      rejectUpgrade(socket, 403);
+      return;
+    }
+    let check: SessionCheck;
+    try {
+      check = await checkSession(req.headers);
+    } catch (error) {
+      rejectUpgrade(socket, 503);
+      return;
+    }
+    const { session, renewedCookie } = check;
+    if (!session) {
+      rejectUpgrade(socket, 401);
+      return;
+    }
+    if (renewedCookie) {
+      renewedCookies.set(req, renewedCookie);
+    }
+    socket.removeListener('error', onSocketError);
+    wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req, session));
   };
-  socket.on('error', onSocketError);
-  if (!isAllowedOrigin(req.headers)) {
-    rejectUpgrade(socket, 403);
-    return;
-  }
-  let session: SessionInfo | null;
-  try {
-    session = await validateSession(req.headers);
-  } catch (error) {
-    rejectUpgrade(socket, 503);
-    return;
-  }
-  if (!session) {
-    rejectUpgrade(socket, 401);
-    return;
-  }
-  socket.removeListener('error', onSocketError);
-  wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req, session));
 };

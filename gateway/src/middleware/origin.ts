@@ -12,13 +12,11 @@ const normalizedOrigin = (value: string): string | undefined => {
   }
 };
 
-/** Browser origins trusted besides the gateway's own host, such as `ng serve` in development. */
 export const allowedOrigins = (): string[] =>
   (process.env.CORS_ORIGINS || '').split(',')
     .map((origin) => normalizedOrigin(origin.trim()))
     .filter((origin): origin is string => !!origin);
 
-/** The browser-facing scheme, when a proxy in front of the gateway reports one (some report `wss` for sockets). */
 export const requestScheme = (headers: IncomingHttpHeaders): string | undefined => {
   const forwarded = headers['x-forwarded-proto'];
   const value = Array.isArray(forwarded) ? forwarded[0] : forwarded;
@@ -26,7 +24,7 @@ export const requestScheme = (headers: IncomingHttpHeaders): string | undefined 
   return scheme ? WEBSOCKET_SCHEMES.get(scheme) || scheme : undefined;
 };
 
-// Read Host with the origin's scheme, so a proxy's `planet.example:443` still equals `https://planet.example`
+// Parsed with the origin's scheme, so a Host of `planet.example:443` matches `https://planet.example`
 const isSameHost = (origin: URL, host: string): boolean => {
   try {
     return new URL(`${origin.protocol}//${host}`).host === origin.host;
@@ -48,11 +46,11 @@ export const isTrustedOrigin = (origin: string, host: string | undefined, scheme
   return allowedOrigins().includes(parsed.origin);
 };
 
-// Browsers send Origin on every cross-origin request and WebSocket handshake, so a request without one isn't from another site's page
+// Browsers send Origin on every cross-origin request and WebSocket handshake, so no Origin means no other site's page
 export const isAllowedOrigin = (headers: IncomingHttpHeaders): boolean =>
   !headers.origin || isTrustedOrigin(headers.origin, headers.host, requestScheme(headers));
 
-// `[]` rather than `false`, so cors still answers an untrusted preflight and varies on Origin, allowing no origin
+// `[]`, not `false`: cors still answers the preflight, allowing nothing, and sends `Vary: Origin`
 export const browserCors = cors((req, callback) => {
   callback(null, { 'origin': isAllowedOrigin(req.headers) ? true : [], 'credentials': true });
 });
