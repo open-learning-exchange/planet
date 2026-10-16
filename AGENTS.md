@@ -9,7 +9,7 @@ Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be
 ### Angular app (root)
 
 - `npm install` — install dependencies.
-- `npm run install-hooks` — copy `git-hooks/*` into `.git/hooks`. The `pre-push` hook runs `npm run lint` in both the root and `gateway/`. It is a copy, so re-run this command whenever `git-hooks/` changes.
+- `npm run install-hooks` — points `core.hooksPath` at `git-hooks/`, so hook changes apply on checkout without reinstalling. The `pre-push` hook runs `npm run lint` in both the root and `gateway/`.
 - `npm start` / `ng serve` — dev server on port 3000 (host `0.0.0.0`). If 3000 is taken, use `ng serve --port 3001`.
 - `npm run dev` — runs `scripts/dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when chatapi or CouchDB are on non-default ports.
 - `npm run build` — production build via `ng-high-memory` (`--max_old_space_size=4096`); large builds OOM without it.

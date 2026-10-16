@@ -21,9 +21,16 @@
     "lint:html": "htmlhint-ng2 --config .htmlhintrc",
     "lint:styles": "sass-lint -c ./sass-lint.yml -v -q",
     "lint-all": "npm run lint:styles && npm run lint && npm run lint:html",
-    "install-hooks": "cp -a git-hooks/. .git/hooks/"
+    "install-hooks": "git config core.hooksPath git-hooks"
   },
   "private": true,
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead",
+    "not IE 9-11"
+  ],
   "dependencies": {
     "@angular/animations": "20.3.21",
     "@angular/cdk": "20.2.14",
