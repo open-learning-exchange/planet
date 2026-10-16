@@ -77,8 +77,9 @@ export const getConfiguration = async (): Promise<Configuration> => (await curre
 export const getCurrentConfiguration = async (): Promise<Configuration> => {
   const doc = await readDocument().catch((error) => {
     console.error(`Error reading the planet configuration: ${error}`);
+    throw new ConfigurationUnavailableError();
   });
-  return doc ? toSnapshot(doc).configuration : getConfiguration();
+  return toSnapshot(doc || {}).configuration;
 };
 
 export const getKeys = async (): Promise<Record<string, string>> => (await currentSnapshot()).keys;

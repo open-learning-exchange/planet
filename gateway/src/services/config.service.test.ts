@@ -80,7 +80,7 @@ describe('configuration service', () => {
     expect(mocks.find).toHaveBeenCalledTimes(1);
   });
 
-  it('reads the current code and parent for submissions, falling back to the kept configuration', async () => {
+  it('reads the current code and parent for submissions, and answers 503 rather than stamping old ones', async () => {
     mocks.find
       .mockResolvedValueOnce(found(planetDoc))
       .mockResolvedValueOnce(found({ ...planetDoc, 'parentCode': 'new-nation' }))
@@ -89,7 +89,7 @@ describe('configuration service', () => {
 
     await getConfiguration();
     expect((await getCurrentConfiguration()).parentCode).toEqual('new-nation');
-    expect((await getCurrentConfiguration()).parentCode).toEqual('earth');
+    await expect(getCurrentConfiguration()).rejects.toMatchObject({ 'statusCode': 503 });
     expect((await getConfiguration()).parentCode).toEqual('earth');
   });
 
