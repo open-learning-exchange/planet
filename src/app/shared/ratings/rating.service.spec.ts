@@ -13,7 +13,7 @@ const startingRating = () => ({
 });
 
 const setup = ({ inShelf = true, updateResponse }: { inShelf?: boolean, updateResponse?: Observable<any> } = {}) => {
-  const dialogClosed = new Subject<any>();
+  const dialogResults: Subject<any>[] = [];
   const dialogForms: FormGroup[] = [];
   const couch = {
     findAll: vi.fn().mockReturnValue(of([])),
@@ -33,13 +33,15 @@ const setup = ({ inShelf = true, updateResponse }: { inShelf?: boolean, updateRe
   const dialogs = {
     confirm: vi.fn((_title, _fields, formGroup) => {
       dialogForms.push(formGroup);
-      return dialogClosed;
+      dialogResults.push(new Subject<any>());
+      return dialogResults[dialogResults.length - 1];
     })
   };
   const msg = { showMessage: vi.fn(), showAlert: vi.fn() };
   const loading = { start: vi.fn(), stop: vi.fn() };
   const service = new RatingService(couch as any, user as any, state as any, dialogs as any, msg as any, loading as any);
-  return { service, couch, dialogClosed, dialogForms, dialogs, loading, msg };
+  const closeDialog = (result: any) => dialogResults[dialogResults.length - 1].next(result);
+  return { service, couch, closeDialog, dialogForms, dialogs, loading, msg };
 };
 
 const unrated = (extra = {}) => ({ _id: 'resource-1', title: 'Resource', rating: { userRating: {}, allRatings: [] }, ...extra });
@@ -172,79 +174,60 @@ describe('RatingService promptRating', () => {
     expect(rated.dialogs.confirm).not.toHaveBeenCalled();
   });
 
-  it('opens with the comment disabled and enables it on the first star', () => {
+  it('opens with the comment disabled and confirms before discarding input', () => {
     const { service, dialogForms, dialogs } = setup();
     service.promptRating(unrated(), 'resource').subscribe();
 
     expect(dialogForms[0].controls.comment.disabled).toBe(true);
     dialogForms[0].controls.rate.setValue(4);
     expect(dialogForms[0].controls.comment.enabled).toBe(true);
-    const actions = dialogs.confirm.mock.calls[0][5];
-    expect(actions).toMatchObject({ cancelLabel: 'Not now', submitLabel: 'Done' });
-    expect(actions.hideCancel({ rate: 0 })).toBe(false);
-    expect(actions.hideCancel({ rate: 4 })).toBe(true);
+    const [ , , , , confirmUnsavedChanges, actions ] = dialogs.confirm.mock.calls[0];
+    expect(confirmUnsavedChanges).toBe(true);
+    expect(actions).toEqual({ cancelLabel: 'Not now', submitLabel: 'Done' });
   });
 
-  it('auto-saves stars and updates the same rating with a submitted comment', () => {
-    const { service, couch, dialogClosed, dialogForms, loading, msg } = setup();
+  it('saves the stars and comment once, on Done', () => {
+    const { service, couch, closeDialog, dialogForms, msg } = setup();
     const decisions: boolean[] = [];
-    service.promptRating(unrated({ doc: { title: 'Wrapped resource' }, title: undefined }), 'resource')
-      .subscribe(decision => decisions.push(decision));
+    const item = unrated({ doc: { title: 'Wrapped resource' }, title: undefined });
+    service.promptRating(item, 'resource').subscribe(decision => decisions.push(decision));
 
     dialogForms[0].controls.rate.setValue(4);
-    expect(couch.updateDocument).toHaveBeenCalledTimes(1);
-    expect(loading.start).not.toHaveBeenCalled();
-    expect(couch.updateDocument).toHaveBeenLastCalledWith('ratings', expect.objectContaining({
-      title: 'Wrapped resource',
-      rate: 4,
-      comment: ''
-    }));
-    expect(couch.findAll).toHaveBeenCalledWith('ratings', expect.any(Object), {});
-
     dialogForms[0].controls.comment.setValue('Useful');
-    dialogClosed.next(dialogForms[0].value);
+    expect(couch.updateDocument).not.toHaveBeenCalled();
+    closeDialog(dialogForms[0].value);
 
-    expect(couch.updateDocument).toHaveBeenCalledTimes(2);
-    expect(couch.updateDocument).toHaveBeenLastCalledWith('ratings', expect.objectContaining({
-      _id: 'rating-1',
+    expect(couch.updateDocument).toHaveBeenCalledTimes(1);
+    expect(couch.updateDocument).toHaveBeenCalledWith('ratings', expect.objectContaining({
+      item: 'resource-1',
+      title: 'Wrapped resource',
       rate: 4,
       comment: 'Useful'
     }));
-    expect(msg.showMessage).toHaveBeenCalledWith('Thank you for your additional comments');
+    expect(couch.findAll).toHaveBeenCalledWith('ratings', expect.any(Object), {});
+    expect(item.rating.userRating).toMatchObject({ _id: 'rating-1', rate: 4 });
+    expect(msg.showMessage).toHaveBeenCalledWith('Thank you, your rating is submitted!');
     expect(decisions).toEqual([ true ]);
   });
 
-  it('suppresses another prompt after dismissal until the visit is reset', () => {
-    const { service, dialogClosed, dialogs } = setup();
+  it('writes nothing when dismissed or done without stars, and suppresses another prompt until the visit is reset', () => {
+    const { service, couch, closeDialog, dialogForms, dialogs } = setup();
     const item = unrated();
-    service.promptRating(item, 'resource').subscribe();
-    dialogClosed.next(undefined);
-
-    service.promptRating(item, 'resource').subscribe();
-    expect(dialogs.confirm).toHaveBeenCalledTimes(1);
-
-    service.resetRatingInteraction('resource-1');
-    service.promptRating(item, 'resource').subscribe();
-    expect(dialogs.confirm).toHaveBeenCalledTimes(2);
-  });
-
-  it('makes a replacement prompt wait for a write its torn-down predecessor started', () => {
-    const pending = new Subject<any>();
-    const { service, couch, dialogForms, dialogs } = setup({ updateResponse: pending });
-    const item = unrated();
-    const first = service.promptRating(item, 'resource').subscribe();
-    dialogForms[0].controls.rate.setValue(4);
-    first.unsubscribe();
     const decisions: boolean[] = [];
+    service.promptRating(item, 'resource').subscribe(decision => decisions.push(decision));
+    dialogForms[0].controls.rate.setValue(4);
+    closeDialog(undefined);
 
     service.promptRating(item, 'resource').subscribe(decision => decisions.push(decision));
     expect(dialogs.confirm).toHaveBeenCalledTimes(1);
-    pending.next({ id: 'rating-1', rev: '2-b', doc: { _id: 'rating-1', _rev: '2-b', item: 'resource-1', rate: 4 } });
-    pending.complete();
 
-    expect(couch.updateDocument).toHaveBeenCalledTimes(1);
-    expect(dialogs.confirm).toHaveBeenCalledTimes(1);
-    expect(decisions).toEqual([ true ]);
+    service.resetRatingInteraction('resource-1');
+    service.promptRating(item, 'resource').subscribe(decision => decisions.push(decision));
+    closeDialog({ rate: 0 });
+
+    expect(dialogs.confirm).toHaveBeenCalledTimes(2);
+    expect(couch.updateDocument).not.toHaveBeenCalled();
+    expect(decisions).toEqual([ true, true, true ]);
   });
 
   it('prompts again after a cancelled navigation tears the prompt down', () => {
@@ -257,175 +240,37 @@ describe('RatingService promptRating', () => {
     expect(dialogs.confirm).toHaveBeenCalledTimes(2);
   });
 
-  it('reopens the prompt with its input when a comment update fails', () => {
-    const { service, couch, dialogClosed, dialogForms, dialogs, msg } = setup();
+  it('reopens with the input kept when the save fails, and Not now still leaves', () => {
+    const { service, couch, closeDialog, dialogForms, dialogs, msg } = setup();
+    couch.updateDocument.mockReturnValueOnce(throwError(new Error('failed')));
     const decisions: boolean[] = [];
     service.promptRating(unrated(), 'resource').subscribe(decision => decisions.push(decision));
     dialogForms[0].controls.rate.setValue(4);
     dialogForms[0].controls.comment.setValue('Keep this comment');
-    couch.updateDocument.mockReturnValueOnce(throwError(new Error('failed')));
 
-    dialogClosed.next(dialogForms[0].value);
+    closeDialog(dialogForms[0].value);
 
+    expect(msg.showAlert).toHaveBeenCalledWith('There was an issue updating your rating');
     expect(dialogs.confirm).toHaveBeenCalledTimes(2);
     expect(dialogForms[1]).toBe(dialogForms[0]);
-    expect(dialogForms[1].controls.comment.value).toBe('Keep this comment');
-    expect(msg.showAlert).toHaveBeenCalled();
+    expect(dialogForms[1].getRawValue()).toEqual({ rate: 4, comment: 'Keep this comment' });
     expect(decisions).toEqual([]);
-  });
 
-  it('retries the same star after a failed save', () => {
-    const { service, couch, dialogForms } = setup();
-    couch.updateDocument.mockReturnValueOnce(throwError(new Error('failed')));
-    service.promptRating(unrated(), 'resource').subscribe();
-
-    dialogForms[0].controls.rate.setValue(4);
-    dialogForms[0].controls.rate.setValue(4);
-
-    expect(couch.updateDocument).toHaveBeenCalledTimes(2);
-  });
-
-  it('drops a star change made mid-save and reconciles it on submit', () => {
-    const pending = new Subject<any>();
-    const { service, couch, dialogClosed, dialogForms } = setup({ updateResponse: pending });
-    service.promptRating(unrated(), 'resource').subscribe();
-
-    dialogForms[0].controls.rate.setValue(4);
-    dialogForms[0].controls.rate.setValue(5);
+    closeDialog(undefined);
 
     expect(couch.updateDocument).toHaveBeenCalledTimes(1);
-    pending.next({ id: 'rating-1', rev: '2-b', doc: { _id: 'rating-1', _rev: '2-b', rate: 4, comment: '' } });
-    pending.complete();
-
-    dialogClosed.next(dialogForms[0].value);
-    expect(couch.updateDocument).toHaveBeenCalledTimes(2);
-    expect(couch.updateDocument).toHaveBeenLastCalledWith('ratings', expect.objectContaining({ _id: 'rating-1', rate: 5 }));
-  });
-
-  it('saves a star change dropped mid-save when the prompt is dismissed', () => {
-    const pending = new Subject<any>();
-    const { service, couch, dialogClosed, dialogForms } = setup({ updateResponse: pending });
-    service.promptRating(unrated(), 'resource').subscribe();
-    dialogForms[0].controls.rate.setValue(3);
-    dialogForms[0].controls.comment.setValue('Unsaved');
-    dialogForms[0].controls.rate.setValue(5);
-    pending.next({ id: 'rating-1', rev: '2-b', doc: { _id: 'rating-1', _rev: '2-b', rate: 3, comment: '' } });
-    pending.complete();
-
-    dialogClosed.next(undefined);
-
-    expect(couch.updateDocument).toHaveBeenLastCalledWith('ratings', expect.objectContaining({ _id: 'rating-1', rate: 5, comment: '' }));
-  });
-
-  it('lets the learner leave when the save on dismissal fails', () => {
-    const { service, dialogClosed, dialogForms, dialogs, msg } = setup({ updateResponse: throwError(new Error('failed')) });
-    const decisions: boolean[] = [];
-    service.promptRating(unrated(), 'resource').subscribe(decision => decisions.push(decision));
-    dialogForms[0].controls.rate.setValue(4);
-
-    dialogClosed.next(undefined);
-
-    expect(dialogs.confirm).toHaveBeenCalledTimes(1);
-    expect(msg.showAlert).toHaveBeenCalled();
     expect(decisions).toEqual([ true ]);
   });
 
-  it('keeps a failed clear and retries the delete on Done', () => {
-    const { service, couch, dialogClosed, dialogForms } = setup();
-    couch.delete.mockReturnValueOnce(throwError(new Error('failed')));
-    const decisions: boolean[] = [];
-    service.promptRating(unrated(), 'resource').subscribe(decision => decisions.push(decision));
-    dialogForms[0].controls.rate.setValue(4);
-
-    dialogForms[0].controls.rate.setValue(0);
-    expect(dialogForms[0].controls.rate.value).toBe(0);
-    dialogClosed.next(dialogForms[0].value);
-
-    expect(couch.delete).toHaveBeenCalledTimes(2);
-    expect(decisions).toEqual([ true ]);
-  });
-
-  it('waits for a pending inline save before deciding whether to prompt', () => {
-    const pending = new Subject<any>();
-    const { service, dialogs } = setup({ updateResponse: pending });
+  it('does not prompt while an inline save for the item is still in flight', () => {
+    const { service, dialogs } = setup({ updateResponse: new Subject<any>() });
     const item = unrated();
     const decisions: boolean[] = [];
     service.saveRating({ item, type: 'resource', rate: 4, ratingInfo: item.rating }).subscribe();
 
     service.promptRating(item, 'resource').subscribe(decision => decisions.push(decision));
-    expect(dialogs.confirm).not.toHaveBeenCalled();
-    pending.next({ id: 'rating-1', rev: '1-a', doc: { _id: 'rating-1', _rev: '1-a', item: 'resource-1', rate: 4 } });
-    pending.complete();
 
     expect(dialogs.confirm).not.toHaveBeenCalled();
     expect(decisions).toEqual([ true ]);
-  });
-
-  it('keeps waiting on a retry started when the write it replaced failed', () => {
-    const first = new Subject<any>();
-    const retry = new Subject<any>();
-    const { service, couch, dialogClosed, dialogForms, dialogs } = setup();
-    couch.updateDocument.mockReturnValueOnce(first).mockReturnValueOnce(retry);
-    const item = unrated();
-    const prompt = service.promptRating(item, 'resource').subscribe();
-    dialogForms[0].controls.rate.setValue(4);
-    dialogClosed.next(dialogForms[0].value);
-    first.error(new Error('failed'));
-    prompt.unsubscribe();
-
-    service.promptRating(item, 'resource').subscribe();
-    expect(dialogs.confirm).toHaveBeenCalledTimes(1);
-    retry.next({ id: 'rating-1', rev: '1-a', doc: { _id: 'rating-1', _rev: '1-a', item: 'resource-1', rate: 4 } });
-    retry.complete();
-
-    expect(couch.updateDocument).toHaveBeenCalledTimes(2);
-    expect(dialogs.confirm).toHaveBeenCalledTimes(1);
-  });
-
-  it('deletes a held-back clear when browser back closes the dialog and then tears the prompt down', () => {
-    const pending = new Subject<any>();
-    const { service, couch, dialogClosed, dialogForms } = setup({ updateResponse: pending });
-    const prompt = service.promptRating(unrated(), 'resource').subscribe();
-    dialogForms[0].controls.rate.setValue(4);
-    dialogForms[0].controls.rate.setValue(0);
-    dialogClosed.next(undefined);
-    prompt.unsubscribe();
-
-    pending.next({ id: 'rating-1', rev: '2-b', doc: { _id: 'rating-1', _rev: '2-b', item: 'resource-1', rate: 4 } });
-    pending.complete();
-
-    expect(couch.delete).toHaveBeenCalledTimes(1);
-    expect(couch.delete).toHaveBeenCalledWith('ratings/rating-1?rev=2-b');
-  });
-
-  it('deletes a rating cleared while its save was still pending', () => {
-    const pending = new Subject<any>();
-    const { service, couch, dialogClosed, dialogForms } = setup({ updateResponse: pending });
-    service.promptRating(unrated(), 'resource').subscribe();
-
-    dialogForms[0].controls.rate.setValue(4);
-    dialogForms[0].controls.rate.setValue(0);
-    pending.next({ id: 'rating-1', rev: '2-b', doc: { _id: 'rating-1', _rev: '2-b', item: 'resource-1', rate: 4 } });
-    pending.complete();
-    expect(couch.delete).not.toHaveBeenCalled();
-
-    dialogClosed.next(undefined);
-
-    expect(couch.delete).toHaveBeenCalledWith('ratings/rating-1?rev=2-b');
-  });
-
-  it('deletes a cleared prompt rating and suppresses another prompt', () => {
-    const { service, couch, dialogForms, dialogClosed, dialogs } = setup();
-    const item = unrated();
-    service.promptRating(item, 'resource').subscribe();
-    dialogForms[0].controls.rate.setValue(4);
-    dialogForms[0].controls.comment.setValue('Nice');
-    dialogForms[0].controls.rate.setValue(0);
-    dialogClosed.next(undefined);
-
-    expect(couch.delete).toHaveBeenCalledWith('ratings/rating-1?rev=2-b');
-    expect(dialogForms[0].controls.comment.disabled).toBe(true);
-    service.promptRating(item, 'resource').subscribe();
-    expect(dialogs.confirm).toHaveBeenCalledTimes(1);
   });
 });

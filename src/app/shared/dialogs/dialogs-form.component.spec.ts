@@ -97,21 +97,17 @@ describe('DialogsFormComponent', () => {
     vi.restoreAllMocks();
   });
 
-  it('uses custom action labels and hides cancel while hideCancel holds', () => {
+  it('uses custom action labels', () => {
     createComponent({
       title: 'Prompt',
       fields: [ { type: 'textbox', name: 'rate', placeholder: 'Rate' } ],
       formGroup: { rate: [ 0 ] },
       cancelLabel: 'Not now',
-      submitLabel: 'Done',
-      hideCancel: ({ rate }) => rate > 0
+      submitLabel: 'Done'
     });
-    const buttons = () => fixture.debugElement.queryAll(By.css('mat-dialog-actions button')).map(b => b.nativeElement.textContent.trim());
+    const buttons = fixture.debugElement.queryAll(By.css('mat-dialog-actions button')).map(b => b.nativeElement.textContent.trim());
 
-    expect(buttons()).toEqual([ 'Not now', 'Done' ]);
-    component.modalForm.controls.rate.setValue(4);
-    fixture.detectChanges();
-    expect(buttons()).toEqual([ 'Done' ]);
+    expect(buttons).toEqual([ 'Not now', 'Done' ]);
   });
 
   it('renders required asterisks on required radio labels', () => {
