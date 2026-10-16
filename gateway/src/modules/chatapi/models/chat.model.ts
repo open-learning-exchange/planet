@@ -5,25 +5,6 @@ export interface AIProvider {
   model?: string;
 }
 
-interface Providers {
-  openai?: string;
-  perplexity?: string;
-  deepseek?: string;
-  gemini?: string;
-  currency?: string;
-}
-
-interface Assistant {
-  name: string;
-  instructions: string;
-}
-
-export interface ModelsDocument {
-  models: Providers;
-  keys: Providers;
-  assistant?: Assistant;
-}
-
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
