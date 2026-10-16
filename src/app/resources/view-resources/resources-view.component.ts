@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil, finalize } from 'rxjs/operators';
 import { Observable, Subject, defer } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -204,11 +204,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
-  canDeactivate(
-    currentRoute?: ActivatedRouteSnapshot,
-    currentState?: RouterStateSnapshot,
-    nextState?: RouterStateSnapshot
-  ): Observable<boolean> | boolean {
+  canDeactivate(): Observable<boolean> | boolean {
     if (this.parent || this.canManage) {
       return true;
     }

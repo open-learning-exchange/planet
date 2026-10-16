@@ -202,7 +202,7 @@ describe('ResourcesViewComponent', () => {
     component.resource = { _id: 'r-1' };
     component.canManage = false;
 
-    const result = component.canDeactivate(undefined, undefined, { url: '/resources' } as any);
+    const result = component.canDeactivate();
     (result as Observable<boolean>).subscribe(val => expect(val).toBe(true));
 
     expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource');

@@ -1,4 +1,5 @@
 import { signal } from '@angular/core';
+import { DefaultUrlSerializer } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -7,7 +8,7 @@ import { CoursesViewComponent } from './courses-view.component';
 describe('CoursesViewComponent enrollment', () => {
   const createComponent = (coursesService: any, dialog: any = { open: vi.fn() }, ratingService: any = {}) => {
     const component = new CoursesViewComponent(
-      { navigate: vi.fn() } as any,
+      { navigate: vi.fn(), parseUrl: (url: string) => new DefaultUrlSerializer().parse(url) } as any,
       { get: vi.fn().mockReturnValue({}), shelf: { courseIds: [ 'course-1' ] } } as any,
       { snapshot: { data: { parent: false } } } as any,
       coursesService,

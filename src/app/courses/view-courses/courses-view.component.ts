@@ -277,7 +277,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   // By segments because step links are absolute even under myCourses, and progress/enrolled are siblings of view
   private isOwnRoute(url = '') {
-    const segments = url.split(/[?#]/)[0].split('/').map(segment => segment.split(';')[0]);
+    const segments = this.router.parseUrl(url).root.children.primary?.segments.map(({ path }) => path) || [];
     return segments.some((segment, index) =>
       [ 'view', 'progress', 'enrolled' ].includes(segment) && segments[index + 1] === this.courseDetail._id
     );
