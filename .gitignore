@@ -51,5 +51,5 @@ planet.yml
 environment.dev.ts
 
 # PouchDB test databases
-courses_new/
-local-*/
+/courses_new/
+/local-*/

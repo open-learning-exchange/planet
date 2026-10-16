@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -d "./design" ]; then
+  echo "Run this script from the directory containing design/ (the repository root)." >&2
+  exit 1
+fi
+
 # Function for upsert of design & other configuration docs
 upsert_doc() {
   DB=$1
