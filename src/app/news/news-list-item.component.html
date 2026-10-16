@@ -4,7 +4,7 @@
       <div class="label-panel">
         <mat-chip-set class="tags-list" aria-label="Labels" i18n-aria-label>
           @for (label of item.doc.labels || []; track $index) {
-            <mat-chip class="planet-chip-label chip-outline-primary">
+            <mat-chip class="planet-chip-label" [ngClass]="labelColorClass(label)">
               <a matChipAction type="button" (click)="labelClick(label, 'select')">
                 <mat-icon class="small-icon">label_important</mat-icon>
                 <planet-label [label]="label"></planet-label>
@@ -208,19 +208,22 @@
 </ng-template>
 
 <mat-menu #reactionMenu="matMenu" class="reaction-menu">
-  <div class="emoji-picker-grid">
-    @for (emoji of commonEmojis; track emoji) {
-      <button
-        mat-menu-item
-        type="button"
-        role="menuitemradio"
-        class="emoji-picker-item"
-        [class.active]="hasUserReacted(item.doc, emoji)"
-        [attr.aria-label]="reactionLabel(emoji)"
-        [attr.aria-checked]="hasUserReacted(item.doc, emoji)"
-        (click)="toggleReaction(item.doc, emoji)">
-        {{emoji}}
-      </button>
-    }
-  </div>
+  <ng-template matMenuContent>
+    <div class="emoji-picker-grid">
+      @for (emoji of commonEmojis; track emoji) {
+        @let active = hasUserReacted(item.doc, emoji);
+        <button
+          mat-menu-item
+          type="button"
+          role="menuitemradio"
+          class="emoji-picker-item"
+          [class.active]="active"
+          [attr.aria-label]="reactionLabel(emoji)"
+          [attr.aria-checked]="active"
+          (click)="toggleReaction(item.doc, emoji)">
+          {{emoji}}
+        </button>
+      }
+    </div>
+  </ng-template>
 </mat-menu>

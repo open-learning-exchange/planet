@@ -8,6 +8,7 @@ export interface UserAttachment {
 }
 
 export interface UserDocument {
+  [key: string]: unknown;
   _id?: string;
   _rev?: string;
   _attachments?: Record<string, UserAttachment>;
@@ -25,7 +26,6 @@ export interface UserDocument {
   level?: string;
   middleName?: string;
   phoneNumber?: string;
-  [key: string]: unknown;
 }
 
 export interface UsersUpdateFormValue {

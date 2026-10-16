@@ -6,6 +6,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { By } from '@angular/platform-browser';
 import { MatSortHeader } from '@angular/material/sort';
 import { LOCALE_ID } from '@angular/core';
+import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CsvService } from '@shared/export/csv.service';
@@ -14,6 +15,7 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
+import { IMAGE_MAX_FALLBACK_BYTES } from '@shared/utils';
 
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { TeamsTablePdfExportService } from './teams-table-pdf-export.service';
@@ -168,5 +170,29 @@ describe('TeamsViewFinancesComponent', () => {
 
     expect(component.table.data.map(row => row.description))
       .toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
+  });
+
+  it('saves kept receipts as stubs, inlines new ones and lists unusable ones in one write', async () => {
+    const updateTeam = vi.spyOn(TestBed.inject(TeamsService), 'updateTeam').mockReturnValue(of({}));
+    const stub = { content_type: 'image/png', length: 4, stub: true };
+    const oldTransaction: any = { ...mockFinances[1], _rev: '1-a', _attachments: { 'kept.png': stub, 'dropped.png': stub } };
+    const receiptImages = {
+      retained: [ { name: 'kept.png' } ],
+      removed: [ { name: 'dropped.png' } ],
+      added: [
+        { file: new File([ 'data' ], 'new.png', { type: 'image/png' }) },
+        { file: new File([ new Uint8Array(IMAGE_MAX_FALLBACK_BYTES + 1) ], 'photo.heic', { type: 'image/heic' }) }
+      ]
+    } as any;
+    component.team = { _id: 'team-1', teamType: 'local', teamPlanetCode: 'planet' };
+
+    const result = await component.submitTransaction({ ...oldTransaction, receiptImages }, oldTransaction).toPromise();
+
+    expect(updateTeam).toHaveBeenCalledOnce();
+    expect(updateTeam.mock.calls[0][0]._attachments).toEqual({
+      'kept.png': stub,
+      'new.png': { content_type: 'image/png', data: btoa('data') }
+    });
+    expect(result).toEqual({ skippedAttachments: [ 'photo.heic' ] });
   });
 });
