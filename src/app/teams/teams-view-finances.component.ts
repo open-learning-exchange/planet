@@ -15,7 +15,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { forkJoin, of, Subject } from 'rxjs';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { CouchService } from '@shared/database/couchdb.service';
@@ -36,12 +36,12 @@ import { TeamsAttachmentsService } from './teams-attachments.service';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface TransactionForm {
+  [key: string]: any;
   amount: number | string;
   date: Date | number;
   description: string;
   receiptImages?: AttachmentInputState;
   type: 'credit' | 'debit';
-  [key: string]: any;
 }
 
 @Component({
@@ -109,19 +109,6 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   totals = { credit: 0, debit: 0, balance: 0 };
   private onDestroy$ = new Subject<void>();
 
-  get stats() {
-    const { credit, debit, balance } = this.totals;
-    const negative = balance < 0;
-    return [
-      { label: $localize`Total Credits`, icon: 'trending_up', tone: 'credit', value: credit },
-      { label: $localize`Total Debits`, icon: 'trending_down', tone: 'debit', value: debit },
-      {
-        label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
-        tone: negative ? 'warn' : 'net', value: balance, alert: negative
-      }
-    ];
-  }
-
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -150,6 +137,19 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
       this.allTransactions = this.setTransactionsTable(this.finances);
       this.applyDateFilter();
     }
+  }
+
+  get stats() {
+    const { credit, debit, balance } = this.totals;
+    const negative = balance < 0;
+    return [
+      { label: $localize`Total Credits`, icon: 'trending_up', tone: 'credit', value: credit },
+      { label: $localize`Total Debits`, icon: 'trending_down', tone: 'debit', value: debit },
+      {
+        label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
+        tone: negative ? 'warn' : 'net', value: balance, alert: negative
+      }
+    ];
   }
 
   private setTransactionsTable(transactions: any[]): any[] {
@@ -216,8 +216,8 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
           onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
             next: (result: any) => {
               this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
+              if (result?.skippedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be included.`);
               }
               this.dialogsFormService.closeDialogsForm();
             },
@@ -248,19 +248,18 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
       teamType,
       teamPlanetCode
     };
-    if (receiptImages) {
-      transaction._attachments = this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages);
-    }
-    return this.teamsService.updateTeam(transaction).pipe(
-      switchMap(savedTransaction => receiptImages ?
-        this.teamsAttachmentsService.uploadReceiptImages(savedTransaction._id, savedTransaction._rev, receiptImages, false) :
-        of({ failedAttachments: [] })
-      ),
+    const transaction$: Observable<{ doc: any, skipped: string[] }> = receiptImages ?
+      this.teamsAttachmentsService.withReceiptImages(
+        { ...transaction, _attachments: this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages) },
+        receiptImages
+      ) :
+      of({ doc: transaction, skipped: [] });
+    return transaction$.pipe(
+      switchMap(({ doc, skipped }) => this.teamsService.updateTeam(doc).pipe(map(() => ({ skippedAttachments: skipped })))),
       tap(() => {
         this.financesChanged.emit();
         this.dialogsLoadingService.stop();
-      }),
-      map(uploadResult => ({ failedAttachments: uploadResult.failedAttachments }))
+      })
     );
   }
 

@@ -11,6 +11,7 @@ type DialogFieldType = | 'checkbox' | 'textbox' | 'password'| 'selectbox' | 'rad
   | 'rating' | 'textarea' | 'markdown' | 'dialog' | 'date' | 'time' | 'toggle' | 'file-upload' | string;
 
 export interface DialogField<TName extends string = string> {
+  [key: string]: unknown;
   name: TName;
   type: DialogFieldType;
   placeholder?: string;
@@ -38,7 +39,6 @@ export interface DialogField<TName extends string = string> {
     multiple?: boolean;
     typePills?: string[];
   };
-  [key: string]: unknown;
 }
 
 export interface DialogFormValueMap {
@@ -60,6 +60,7 @@ export type DialogFormGroupConfig<T extends DialogFormValueMap> = {
 export type DialogFormGroupInput<T extends DialogFormValueMap> = FormGroup<any> | DialogFormGroupConfig<T>;
 
 export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormValueMap> {
+  [key: string]: unknown;
   autoFocus?: boolean;
   disableIfInvalid?: boolean;
   onSubmit?: (value: T, form: FormGroup<any>) => void;
@@ -69,7 +70,6 @@ export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormVal
   cancelLabel?: string;
   submitLabel?: string;
   hideCancel?: (value: T) => boolean;
-  [key: string]: unknown;
 }
 
 export interface DialogsFormData<T extends DialogFormValueMap = DialogFormValueMap>

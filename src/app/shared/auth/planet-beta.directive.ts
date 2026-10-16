@@ -4,13 +4,14 @@ import { UserService } from './user.service';
 @Directive({ selector: '[planetBeta]' })
 export class PlanetBetaDirective implements OnInit {
 
+  #planetBeta = true;
+
   constructor(
     private userService: UserService,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef
   ) {}
 
-  #planetBeta = true;
   @Input() set planetBeta(value: boolean) {
     this.#planetBeta = value === null ? true : value;
   }
