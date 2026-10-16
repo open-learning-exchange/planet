@@ -48,7 +48,7 @@ Please don't use the following name for variable since it is used by our `entryp
 ### i18n
 Planet uses Angular's `i18n` support to translate our content and make it accessible. Text can be marked for translation with the `i18n` attribute. For example, `<p i18n>Text to be translated</p>`.
 
-Angular supports interpolation inside i18n-marked elements. For example, `<p i18n>Hello {{name}}</p>` is valid translatable content. If there are no strings enclosed by the tag (only whitespace or no content), then the `i18n` attribute should not be used.
+Angular supports interpolation inside i18n-marked elements, so `<p i18n>Hello {{name}}</p>` is valid translatable content. Don't add `i18n` when the element has no text of its own, either empty or only interpolation such as `<p>{{interpolatedString}}</p>`, because translators would get nothing but a placeholder.
 
 If text of an attribute needs to be translated, add an attribute with the format `i18n-x`, where `x` is the attribute to translate. For example, `<img src="oleImg" i18n-title title="Example image" />`.
 

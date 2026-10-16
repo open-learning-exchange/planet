@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides shared guidance for AI coding agents working in this repository. It is the only instructions file: there is deliberately no `CLAUDE.md`, because Claude Code reads `AGENTS.md` when none exists.
+This file provides shared guidance for AI coding agents working in this repository. It is the only instructions file: there is deliberately no `CLAUDE.md`, because Claude Code (v2.1.277+) reads `AGENTS.md` when none exists.
 
 ## Commands
 
