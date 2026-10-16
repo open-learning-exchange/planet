@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SimpleChange, SimpleChanges } from '@angular/core';
 
 import { UserService } from '@shared/auth/user.service';
@@ -207,3 +208,58 @@ describe('TeamsMemberComponent', () => {
     });
   });
 });
+
+describe('TeamsMemberComponent template', () => {
+  let fixture: ComponentFixture<TeamsMemberComponent>;
+  let component: TeamsMemberComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ TeamsMemberComponent ],
+      providers: [
+        { provide: UserService, useValue: { get: () => ({ _id: 'org.couchdb.user:ann', isUserAdmin: false }) } },
+        { provide: StateService, useValue: { configuration: { code: 'kal' } } },
+        { provide: TasksService, useValue: { setTaskStatus: vi.fn() } },
+        { provide: UsersProfileDialogService, useValue: { open: vi.fn() } }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TeamsMemberComponent);
+    component = fixture.componentInstance;
+  });
+
+  it.each([
+    [ 'empty array', [] ],
+    [ 'omitted', undefined ]
+  ])('renders Tasks heading and "No assigned tasks" when tasks is %s', (_, tasks) => {
+    component.member = { name: 'ann', teamId: 'team-1', ...(tasks ? { tasks } : {}) };
+    component.ngOnChanges({ member: new SimpleChange(undefined, component.member, true) });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.tile-tasks .mat-caption')?.textContent.trim()).toBe('Tasks');
+    expect(fixture.nativeElement.querySelector('.km-member-no-tasks')?.textContent.trim()).toBe('No assigned tasks');
+  });
+
+  it('renders tasks list and not empty state when a team member has tasks', () => {
+    component.member = { name: 'ann', teamId: 'team-1', tasks: [ { title: 'Task 1', completed: false } ] };
+    component.ngOnChanges({ member: new SimpleChange(undefined, component.member, true) });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.km-member-no-tasks')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.ellipsis-title')?.textContent.trim()).toBe('Task 1');
+  });
+
+  it('omits empty state for join requests and community members', () => {
+    component.member = { name: 'ann', tasks: [] };
+    component.ngOnChanges({ member: new SimpleChange(undefined, component.member, true) });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.km-member-no-tasks')).toBeNull();
+
+    component.member = { name: 'ann', teamId: 'team-1', tasks: [] };
+    component.isRequest = true;
+    component.ngOnChanges({ member: new SimpleChange(undefined, component.member, true) });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.km-member-no-tasks')).toBeNull();
+  });
+});
+

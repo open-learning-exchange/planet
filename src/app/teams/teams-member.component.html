@@ -84,6 +84,11 @@
       }
     </mat-selection-list>
   </div>
+} @else if (!isRequest && memberType !== 'community') {
+  <div class="tile-tasks">
+    <span class="mat-caption" i18n>Tasks</span>
+    <p class="tile-muted km-member-no-tasks" i18n>No assigned tasks</p>
+  </div>
 }
 @if (isRequest && canManageRequests) {
   <div class="tile-actions">
