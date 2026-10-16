@@ -1,35 +1,39 @@
-import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy, Injector, afterNextRender } from '@angular/core';
+import {
+  Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
+} from '@angular/router';
+import { AnimationEvent, trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
-import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { PouchAuthService } from '../shared/database/pouch-auth.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { LoginDialogComponent } from '../login/login-dialog.component';
-import { PlanetLanguageComponent } from '../shared/planet-language.component';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetBetaDirective } from '../shared/beta.directive';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { FeedbackDirective } from '../feedback/feedback.directive';
-import { SyncDirective } from '../manager-dashboard/sync.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatBadge } from '@angular/material/badge';
-import { ChangePasswordDirective } from '../shared/dialogs/change-password.directive';
 import { MatDivider } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
+import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
+import { ANDROID_APPS } from '@shared/android/android-apps';
+
+import { environment } from '../../environments/environment';
+import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
+import { LoginDialogComponent, loginDialogId } from '../login/login-dialog.component';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { SyncDirective } from '../manager-dashboard/sync.directive';
 import { PulsateIconDirective } from './pulsate-icon.directive';
-import { ANDROID_APPS } from '../shared/android-apps';
 
 @Component({
   templateUrl: './home.component.html',
@@ -40,7 +44,7 @@ import { ANDROID_APPS } from '../shared/android-apps';
         width: '72px'
       })),
       state('open', style({
-        width: '175px'
+        width: '210px'
       })),
       transition('closed <=> open', animate('500ms ease'))
     ]),
@@ -56,8 +60,13 @@ import { ANDROID_APPS } from '../shared/android-apps';
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 
   @ViewChild('content') private mainContent;
+  @ViewChild('mobileSidenav') mobileSidenav: MatSidenav;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
+  // Material measures a newly shown drawer before sidenavState sets its width, and keeps the side margin after switching to overlay.
+  @ViewChild(MatSidenav) set shownSidenav(sidenav: MatSidenav | undefined) {
+    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
+  }
   private onDestroy$ = new Subject<void>();
   notifications = [];
   user: any = {};
@@ -70,22 +79,29 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   deviceType: DeviceType;
   isAndroid: boolean;
   isMobile: boolean;
+  isShortViewport: boolean;
   showBanner = true;
   readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
 
-  // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
     })
   );
-  // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
+
+  get usesOverlayNav(): boolean {
+    return this.isMobile || this.isShortViewport;
+  }
+
+  get notificationsLabel(): string {
+    return $localize`Notifications: ${this.notifications.length}:count:`;
+  }
 
   constructor(
     private dialog: MatDialog,
@@ -96,7 +112,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private notificationsService: NotificationsService,
-    private challengesService: ChallengesService
+    private challengesService: ChallengesService,
+    private injector: Injector
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -105,9 +122,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+    this.deviceInfoService.watchViewport().pipe(takeUntil(this.onDestroy$)).subscribe(({ deviceType, isShortViewport }) => {
       this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      this.isMobile = isMobileOrSmaller(deviceType);
+      this.isShortViewport = isShortViewport;
     });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
@@ -127,6 +145,17 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
     });
     this.subscribeToLogoutClick();
+    this.router.events.pipe(
+      filter(event =>
+        event instanceof NavigationEnd ||
+        (event instanceof NavigationSkipped && event.code === NavigationSkippedCode.IgnoredSameUrlNavigation)
+      ),
+      takeUntil(this.onDestroy$)
+    ).subscribe(() => {
+      if (this.usesOverlayNav) {
+        this.mobileSidenav?.close();
+      }
+    });
   }
 
   ngDoCheck() {
@@ -152,14 +181,15 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngOnDestroy() {
+    this.endAnimation();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
   syncToolbarLayout() {
-    const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
-    if (this.forceModern !== isScreenTooNarrow) {
-      this.forceModern = isScreenTooNarrow;
+    const needsModern = document.documentElement.clientWidth < this.classicToolbarWidth || this.isShortViewport;
+    if (this.forceModern !== needsModern) {
+      this.forceModern = needsModern;
     }
   }
 
@@ -167,8 +197,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.languageComponent?.openMenu();
   }
 
-  // Used to swap in different background.
-  // Should remove when background is finalized.
   backgroundRoute() {
     const url = this.router.url;
     const routesWithBackground = [
@@ -176,7 +204,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises', 'certifications', 'myDashboard', 'nation', 'earth',
       'health', 'myPersonals', 'community', 'voices'
     ];
-    // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
       .findIndex((route) => url.indexOf(route) > -1) > -1;
@@ -206,63 +233,56 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       console.log(error);
       return of({});
     };
+    const localAdminName = configuration.adminName?.split('@')[0];
+    const isLocalAdmin = !!localAdminName && localAdminName === this.userService.get().name;
     this.userService.endSessionLog().pipe(
       catchError(errorCatch),
       switchMap(() => this.pouchAuthService.logout()),
-      switchMap(() => {
-        const localAdminName = configuration.adminName.split('@')[0];
-        if (localAdminName === this.userService.get().name) {
-          return this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain });
-        }
-        return of({});
-      }),
       catchError(errorCatch)
-    ).subscribe((response: any) => {
+    ).subscribe(() => {
+      if (isLocalAdmin && configuration.parentDomain) {
+        // Parent cleanup is best-effort and must not delay local logout.
+        this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain })
+          .subscribe({ error: error => console.error('Unable to end parent session', error) });
+      }
       this.userService.unset();
       this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/login' : '/' ], {});
     });
   }
 
   getNotification() {
-    const userFilter = [ {
-      'user': 'org.couchdb.user:' + this.userService.get().name
-    } ];
-    if (this.userService.get().isUserAdmin) {
-      userFilter.push({ 'user': 'SYSTEM' });
-    }
+    const userFilter = notificationUserFilter(this.userService.get());
     this.couchService.findAll('notifications', findDocuments(
-      { '$or': userFilter,
+      { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
-        'time': { '$gt': 0 },
-        'status': 'unread'
+        time: { $gt: 0 },
+        status: 'unread'
       },
       0,
-      [ { 'time': 'desc' } ])
+      [ { time: 'desc' } ])
     ).subscribe(data => {
       this.notifications = data;
     }, (error) => console.log(error));
   }
 
   readNotification(notification) {
-    const updateNotificaton = { ...notification, 'status': 'read' };
+    const updateNotificaton = { ...notification, status: 'read' };
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       this.userService.setNotificationStateChange();
     }, (err) => console.log(err));
   }
 
-  /**
-   * Used for marking all notifications as read from navigation bar
-   */
   readAllNotification() {
     this.notificationsService.setNotificationsAsRead(this.notifications);
   }
 
-  sizeChange(forceModern: boolean) {
-    this.forceModern = forceModern;
-  }
-
   toggleNav() {
+    if (this.usesOverlayNav) {
+      this.mobileSidenav?.toggle();
+      return;
+    }
     this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
+    this.endAnimation();
     this.animDisp = this.animObs.subscribe();
   }
 
@@ -272,15 +292,22 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
+  // An interrupted toggle reports done after the next toggle has started its interval; a removed drawer reports void.
+  sidenavAnimationDone({ toState }: AnimationEvent) {
+    if (toState === this.sidenavState || toState === 'void') {
+      this.endAnimation();
+    }
+  }
+
   openLoginDialog() {
-    this.dialog.open(LoginDialogComponent);
+    if (!this.dialog.getDialogById(loginDialogId)) {
+      this.dialog.open(LoginDialogComponent, { id: loginDialogId });
+    }
   }
 
   openAnnouncementDialog(notification) {
     this.readNotification(notification);
-    const challenge = this.challengesService.getChallengeForNotification(notification);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getChallengeForNotification(notification))
+      .subscribe();
   }
 }

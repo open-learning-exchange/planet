@@ -1,19 +1,23 @@
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { urlToParamObject } from '../shared/utils';
+import { urlToParamObject } from '@shared/utils';
+
 import { FeedbackDirective } from './feedback.directive';
 
 describe('FeedbackDirective', () => {
   let couchService: any;
   let directive: FeedbackDirective;
   let router: any;
+  let dialogsFormService: any;
+  let dialogsLoadingService: any;
 
   const post = {
     message: 'Feedback message',
     priority: 'yes',
     type: 'bug'
   };
+  const screenshot = (name = 'screen shot.png') => ({ file: new File([ 'image' ], name, { type: 'image/png' }) });
 
   beforeEach(() => {
     couchService = {
@@ -21,14 +25,18 @@ describe('FeedbackDirective', () => {
       updateDocument: vi.fn().mockReturnValue(of({}))
     };
     router = { url: '/' };
+    dialogsFormService = { openDialogsForm: vi.fn(), closeDialogsForm: vi.fn(), showErrorMessage: vi.fn() };
+    dialogsLoadingService = { stop: vi.fn() };
     directive = new FeedbackDirective(
       { get: () => ({ name: 'tester' }) } as any,
       couchService,
-      {} as any,
+      dialogsFormService,
       router,
       { setFeedback: vi.fn() } as any,
       { showMessage: vi.fn(), showAlert: vi.fn() } as any,
       { configuration: { code: 'planet', parentCode: 'nation' } } as any,
+      {} as any,
+      dialogsLoadingService,
       {} as any
     );
   });
@@ -107,5 +115,91 @@ describe('FeedbackDirective', () => {
     expect(feedback.state).toBe('home');
     expect(feedback.routerLink).toEqual([ '/home' ]);
     expect(feedback.titleContext).toEqual({ kind: 'home' });
+  });
+
+  it('treats a trailing slash like the same route without it', () => {
+    router.url = '/users/';
+
+    directive.addFeedback(post);
+
+    const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
+    expect(feedback.url).toBe('/users/');
+    expect(feedback.routerLink).toEqual([ '/', 'users' ]);
+    expect(feedback.titleContext).toEqual({ kind: 'section', state: 'users' });
+  });
+
+  it('inlines the screenshots in the single write that creates the feedback', async () => {
+    couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
+
+    directive.addFeedback({ ...post, attachments: { retained: [], removed: [], added: [ screenshot(), screenshot() ] } });
+    await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
+
+    expect(couchService.updateDocument).toHaveBeenCalledOnce();
+    const feedback = couchService.updateDocument.mock.calls[0][1];
+    expect(feedback.attachments).toBeUndefined();
+    expect(feedback.messages[0].attachments).toEqual([ 'screen_shot.png', 'screen_shot-1.png' ]);
+    expect(feedback._attachments).toEqual({
+      'screen_shot.png': { content_type: 'image/png', data: btoa('image') },
+      'screen_shot-1.png': { content_type: 'image/png', data: btoa('image') }
+    });
+  });
+
+  it('submits feedback without a screenshot that cannot be normalized', async () => {
+    const originalImage = window.Image;
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
+    class ErrorImage {
+      onerror: () => void = () => {};
+
+      set src(_value: string) {
+        setTimeout(() => this.onerror());
+      }
+    }
+    (window as any).Image = ErrorImage;
+    URL.createObjectURL = vi.fn().mockReturnValue('blob:screenshot');
+    URL.revokeObjectURL = vi.fn();
+    couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
+
+    try {
+      const large = { file: new File([ new Uint8Array(2 * 1024 * 1024 + 1) ], 'bad.png', { type: 'image/png' }) };
+      directive.addFeedback({ ...post, attachments: { added: [ large, screenshot('good.png') ] } });
+      await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
+
+      const feedback = couchService.updateDocument.mock.calls[0][1];
+      expect(feedback.messages[0].attachments).toEqual([ 'good.png' ]);
+      expect(Object.keys(feedback._attachments)).toEqual([ 'good.png' ]);
+      expect((directive as any).planetMessageService.showAlert).toHaveBeenCalledWith(
+        expect.stringContaining('could not be included')
+      );
+    } finally {
+      (window as any).Image = originalImage;
+      URL.createObjectURL = originalCreateObjectURL;
+      URL.revokeObjectURL = originalRevokeObjectURL;
+    }
+  });
+
+  it('keeps the dialog open with an error when the feedback cannot be saved', () => {
+    couchService.updateDocument.mockReturnValue(throwError(new Error('offline')));
+
+    directive.addFeedback(post);
+
+    expect(dialogsFormService.closeDialogsForm).not.toHaveBeenCalled();
+    expect(dialogsFormService.showErrorMessage).toHaveBeenLastCalledWith(expect.stringContaining('could not be submitted'));
+    expect(dialogsLoadingService.stop).toHaveBeenCalledOnce();
+  });
+
+  it('balances the dialog loading request when a duplicate form submission is ignored', () => {
+    const result = new Subject();
+    couchService.updateDocument.mockReturnValue(result);
+    directive.openFeedback();
+    const { onSubmit } = dialogsFormService.openDialogsForm.mock.calls[0][3];
+
+    onSubmit(post);
+    onSubmit(post);
+    expect(couchService.updateDocument).toHaveBeenCalledOnce();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledOnce();
+    result.next({});
+    result.complete();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(2);
   });
 });

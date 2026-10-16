@@ -5,22 +5,8 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { languages } from '../shared/languages';
-import { CouchService } from '../shared/couchdb.service';
-import { ValidatorService } from '../validators/validator.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { findDocuments } from '../shared/mangoQueries';
-import { ConfigurationService } from './configuration.service';
-import { StateService } from '../shared/state.service';
-import { baseContextPrompt } from '../shared/ai-prompts.constants';
-
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { LowercaseDirective } from '../shared/lowercase.directive';
-import { RestrictDiacriticsDirective } from '../shared/restrict-diacritics.directives';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
@@ -28,13 +14,28 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { SubmitDirective } from '../shared/submit.directive';
 
-const removeProtocol = (str: string) => {
+import { languages } from '@shared/language/languages';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { baseContextPrompt } from '@shared/ai/ai-prompts.constants';
+import { LowercaseDirective } from '@shared/forms/lowercase.directive';
+import { RestrictDiacriticsDirective } from '@shared/forms/restrict-diacritics.directive';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
+
+import { environment } from '../../environments/environment';
+import { ValidatorService } from '../validators/validator.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { ConfigurationService } from './configuration.service';
+
+const removeProtocol = (str: string) =>
   // RegEx grabs the fragment of the string between '//' and last character
   // First match includes characters, second does not (so we use second)
-  return /\/\/(.*?)$/.exec(str)[1];
-};
+  /\/\/(.*?)$/.exec(str)[1]
+;
 
 interface LoginForm {
   name: FormControl<string>;
@@ -265,7 +266,7 @@ export class ConfigurationComponent implements OnInit {
 
   getNationList() {
     this.couchService.post('communityregistrationrequests/_find',
-      findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
+      findDocuments({ planetType: 'nation', registrationRequest: 'accepted' }, 0 ),
       { domain: environment.centerAddress, protocol: environment.centerProtocol })
       .subscribe((data) => {
         this.nations = data.docs;
@@ -339,7 +340,7 @@ export class ConfigurationComponent implements OnInit {
       this.configuration,
       this.configurationFormGroup.value,
       this.contactFormGroup.value,
-      this.configurationType === 'new' ? chatConfig : {}
+      chatConfig
     );
     return { credentials, configuration };
   }
@@ -351,9 +352,9 @@ export class ConfigurationComponent implements OnInit {
       return;
     }
     this.spinnerOn = true;
-    const { credentials, configuration } = this.createConfigurationDocs();
     if (this.configurationType === 'update') {
-      this.configurationService.updateConfiguration(configuration).pipe(finalize(spinnerOff)).subscribe(
+      const configPatch = { ...this.configurationFormGroup.value, ...this.contactFormGroup.value };
+      this.configurationService.patchConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
         err => {
           this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
@@ -363,6 +364,7 @@ export class ConfigurationComponent implements OnInit {
         }
       );
     } else {
+      const { credentials, configuration } = this.createConfigurationDocs();
       const admin = Object.assign(credentials, this.contactFormGroup.value);
       this.configurationService.createPlanet(admin, configuration, credentials).pipe(finalize(spinnerOff)).subscribe((data) => {
         this.planetMessageService.showMessage($localize`Admin created: ${credentials.name}`);

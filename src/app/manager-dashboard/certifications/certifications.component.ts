@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -8,17 +7,20 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { finalize } from 'rxjs/operators';
-import { CertificationsService } from './certifications.service';
-import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { MatIconButton, MatButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';
+import { MatIconButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { sortNumberOrString, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+
+import { CertificationsManagerService } from './certifications-manager.service';
 
 @Component({
   templateUrl: './certifications.component.html',
@@ -39,8 +41,9 @@ import { MatInput } from '@angular/material/input';
     MatIcon,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
-    MatButton,
+    MatTooltip,
     MatToolbarRow,
     MatMiniFabAnchor,
     MatTable,
@@ -61,8 +64,6 @@ import { MatInput } from '@angular/material/input';
   ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
-  private readonly destroyRef = inject(DestroyRef);
-
   certifications = new MatTableDataSource();
   selection = new SelectionModel(true, []);
   displayedColumns = [
@@ -71,26 +72,21 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
   isLoading = true;
 
   constructor(
     private certificationsService: CertificationsService,
+    private certificationsManagerService: CertificationsManagerService,
     private deviceInfoService: DeviceInfoService,
     private dialogsLoadingService: DialogsLoadingService
-  ) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-      });
-  }
+  ) {}
 
   ngOnInit() {
     this.getCertifications();
-    this.certifications.filterPredicate = filterSpecificFieldsByWord([ 'name' ]);
+    this.certifications.filterPredicate = filterSpecificFieldsHybrid([ 'name' ]);
   }
 
   ngAfterViewInit() {
@@ -111,7 +107,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(certification) {
-    this.certificationsService.openDeleteDialog(certification, this.deleteCertification());
+    this.certificationsManagerService.openDeleteDialog(certification, this.deleteCertification());
   }
 
   getCertifications() {

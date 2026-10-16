@@ -5,26 +5,32 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
-import { SubmissionsService } from './submissions.service';
-import { UserService } from '../shared/user.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { CoursesService } from '../courses/courses.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
+import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
+
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { appSourceLabel } from '@shared/android/app-source';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+
+import { SubmissionsService } from './submissions.service';
+import { CoursesService } from '../courses/courses.service';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -49,11 +55,14 @@ const columnsByFilterAndMode = {
     NgTemplateOutlet,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatSelect,
     MatOption,
     MatButtonToggleGroup,
     MatButtonToggle,
     MatInput,
+    FormsModule,
+    MatTooltip,
     NgClass,
     MatTable,
     MatSort,
@@ -79,8 +88,12 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
+  @Input() courseId: string;
+  @Input() courseTitle: string;
+  @Input() showCourseHeader = false;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
+  @Output() backClick = new EventEmitter<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
@@ -100,6 +113,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   };
   surveyId: string | null = null;
   isManagerSurveysRoute = false;
+  searchValue = '';
 
   constructor(
     private router: Router,
@@ -107,6 +121,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private coursesService: CoursesService,
+    private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService
   ) {
@@ -174,7 +189,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.submissions.data = submissions.map(submission => ({
         ...submission,
         submittedBy: this.submissionsService.submissionName(submission.user),
-        docSource: submission.androidId ? 'myPlanet' : 'planet'
+        docSource: appSourceLabel(submission)
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
@@ -208,20 +223,24 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.filter.type = 'survey';
       return { surveyId: this.surveyId, type: 'survey' as const };
     }
+    if (this.courseId) {
+      const escapedCourseId = this.courseId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return { query: findDocuments({ parentId: { $regex: `@${escapedCourseId}$` } }) };
+    }
     switch (this.mode) {
       case 'survey':
         return { query: findDocuments({
           'user.name': this.userService.get().name,
-          '$or': [
+          $or: [
             { type: 'survey' },
-            { type: 'exam', status: { '$ne': 'pending' } }
+            { type: 'exam', status: { $ne: 'pending' } }
           ]
         }) };
       case 'review':
         return { query: findDocuments({
           'user.name': this.userService.get().name,
           parentId: this.parentId,
-          status: { '$ne': 'pending' }
+          status: { $ne: 'pending' }
         }) };
       default:
         return { query: undefined };
@@ -230,7 +249,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   setupTable() {
     this.submissions.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'parent.name' ]),
+      filterSpecificFieldsHybrid([ 'parent.name' ]),
       filterDropdowns(this.filter)
     ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {
@@ -244,6 +263,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.submissions.filter = filterValue || this.dropdownsFill();
   }
 
@@ -264,6 +284,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
+    // A host that scopes the list to a course owns the route it came from.
+    if (this.courseId) {
+      this.backClick.emit();
+      return;
+    }
     this.router.navigate([ '../' ], { relativeTo: this.route.parent });
   }
 
@@ -305,13 +330,28 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       return submission;
     }
     const [ examId, courseId ] = submission.parentId.split('@');
-    if (!courseId) {
-      return submission;
+    const submissionCourse = courseId ? courses.find(course => course._id === courseId) : undefined;
+    if (!submissionCourse) {
+      return this.unresolvedCourseInfo(submission);
     }
-    const submissionCourse = courses.find(course => course._id === courseId) || { doc: { steps: [] } };
-    const stepNum = submissionCourse.doc.steps
+    const stepNum = (submissionCourse.doc.steps || [])
       .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
-    return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
+    return {
+      ...submission,
+      courseTitle: submissionCourse.doc.courseTitle,
+      stepNum,
+      stepLabel: stepNum === 0 ? $localize`Step not available` : undefined
+    };
+  }
+
+  private unresolvedCourseInfo(submission) {
+    const isLocalSubmission = !submission.source || submission.source === this.stateService.configuration.code;
+    return {
+      ...submission,
+      courseTitle: isLocalSubmission ? $localize`Course not available` : undefined,
+      stepNum: 0,
+      stepLabel: isLocalSubmission ? $localize`Step not available` : undefined
+    };
   }
 
   getTeamTypeLabel(teamType: string): string {

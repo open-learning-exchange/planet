@@ -1,51 +1,59 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { CustomValidators } from '../validators/custom-validators';
-import { StateService } from '../shared/state.service';
-import { ValidatorService } from '../validators/validator.service';
+
+import { of, empty, forkJoin, throwError, from } from 'rxjs';
+import { switchMap, map, take, catchError, finalize } from 'rxjs/operators';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsFormService, DialogField } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
+import { StateService } from '@shared/state.service';
+import {
+  fullName, planetAndParentId, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
+} from '@shared/utils';
+
+import { environment } from '../../environments/environment';
 import { UsersService } from '../users/users.service';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { truncateText } from '../shared/utils';
+import { CustomValidators } from '../validators/custom-validators';
+import { ValidatorService } from '../validators/validator.service';
+import { memberCompare } from './teams.utils';
 
 const nameField = {
-  'type': 'textbox',
-  'name': 'name',
-  'placeholder': $localize`Name`,
-  'required': true
+  type: 'textbox',
+  name: 'name',
+  placeholder: $localize`Name`,
+  required: true
 };
 const descriptionField = {
-  'type': 'markdown',
-  'name': 'description',
-  'placeholder': $localize`What is your team\'s plan?`,
-  'required': false
+  type: 'markdown',
+  name: 'description',
+  placeholder: $localize`What is your team\'s plan?`,
+  required: false
 };
 const enterpriseDescField = [
   {
-    'type': 'markdown',
-    'name': 'description',
-    'placeholder': $localize`What is your enterprise\'s Mission?`,
-    'required': false
+    type: 'markdown',
+    name: 'description',
+    placeholder: $localize`What is your enterprise\'s Mission?`,
+    required: false
   }, {
-    'type': 'markdown',
-    'name': 'services',
-    'placeholder': $localize`What are the Services your enterprise provides?`,
-    'required': false
+    type: 'markdown',
+    name: 'services',
+    placeholder: $localize`What are the Services your enterprise provides?`,
+    required: false
   }, {
-    'type': 'markdown',
-    'name': 'rules',
-    'placeholder': $localize`What are the Rules of your enterprise?`,
-    'required': false
+    type: 'markdown',
+    name: 'rules',
+    placeholder: $localize`What are the Rules of your enterprise?`,
+    required: false
   }
 ];
 const publicField = {
-  'type': 'toggle',
-  'name': 'public',
-  'label': $localize`Public`
+  type: 'toggle',
+  name: 'public',
+  label: $localize`Public`
 };
 
 @Injectable({
@@ -58,6 +66,7 @@ export class TeamsService {
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private usersService: UsersService,
     private stateService: StateService,
@@ -83,6 +92,7 @@ export class TeamsService {
     } : {};
     const formGroup = {
       ...nameControl,
+      coverImage: [ { retained: this.existingCoverAttachments(team), removed: [], added: [] } ],
       description: team.description || '',
       services: team.services || '',
       rules: team.rules || '',
@@ -90,63 +100,119 @@ export class TeamsService {
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
     };
-    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
+    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type, team), formGroup, true)
       .pipe(
-        switchMap((response: any) => response !== undefined ?
-          this.updateTeam(
-            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
-          ) :
-          empty()
-        ),
-        switchMap((response) => !team._id ?
-          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
-          of(response)
-        )
+        switchMap((response: any) => {
+          if (response === undefined) {
+            return empty();
+          }
+          const { coverImage, ...changes } = response;
+          this.dialogsLoadingService.start();
+          return this.saveTeamWithCover({
+            limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
+            parentCode: configuration.parentCode, createdBy: userId, ...team, ...changes, type
+          }, coverImage).pipe(
+            switchMap((savedTeam) => !team._id ?
+              this.toggleTeamMembership(savedTeam, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
+              of(savedTeam)
+            ),
+            finalize(() => this.dialogsLoadingService.stop())
+          );
+        })
       );
   }
 
-  addTeamFields(configuration, type) {
-    const typeField = {
-      'type': 'selectbox',
-      'name': 'teamType',
-      'placeholder': $localize`Team Type`,
-      'options': [
+  addTeamFields(configuration, type, team: any = {}) {
+    const typeField: DialogField = {
+      type: 'selectbox',
+      name: 'teamType',
+      placeholder: $localize`Team Type`,
+      options: [
         {
-          'value': 'sync',
-          'name': configuration.planetType === 'community' ? $localize`Connect with nation` : $localize`Connect with earth`
+          value: 'sync',
+          name: configuration.planetType === 'community' ? $localize`Connect with nation` : $localize`Connect with earth`
         },
-        { 'value': 'local', 'name': $localize`Local team` }
+        { value: 'local', name: $localize`Local team` }
       ]
+    };
+    const coverField: DialogField = {
+      type: 'file-upload',
+      name: 'coverImage',
+      placeholder: $localize`Cover image`,
+      fileUpload: {
+        accept: 'image/*',
+        existingAttachments: this.existingCoverAttachments(team),
+        hint: $localize`Recommended: a square image. Covers are cropped to fit.`,
+        imagePreview: true,
+        maxFiles: 1,
+        multiple: false,
+        typePills: [ 'IMG' ]
+      }
     };
     return [
       type === 'services' ? [] : nameField,
       type === 'enterprise' ? enterpriseDescField : descriptionField,
+      type === 'services' ? [] : coverField,
       type === 'team' ? typeField : [],
       publicField
     ].flat();
   }
 
+  existingCoverAttachments(team: any): ExistingAttachment[] {
+    const fileName = team?.coverFileName;
+    const attachment = team?._attachments?.[fileName];
+    return fileName && attachment ? [ {
+      name: fileName,
+      contentType: attachment.content_type,
+      url: this.coverImageUrl(team),
+      size: attachment.length
+    } ] : [];
+  }
+
+  coverImageUrl(team: any): string {
+    return team?._id && team.coverFileName ? couchAttachmentUrl(environment.couchAddress, this.dbName, team._id, team.coverFileName) : '';
+  }
+
+  saveTeamWithCover(team: any, coverState: AttachmentInputState) {
+    return from(withImageAttachment(team, 'coverFileName', coverState)).pipe(
+      switchMap(teamDoc => this.updateTeam(teamDoc)),
+      map(savedTeam => ({ ...savedTeam, _attachments: attachmentStubs(savedTeam._attachments) }))
+    );
+  }
+
+  saveErrorMessage(err: any): string {
+    return err?.message === UNPROCESSABLE_IMAGE_ERROR ?
+      $localize`Cover image could not be processed. Please choose a JPEG or PNG image.` :
+      $localize`There was a problem saving your changes.`;
+  }
+
   updateTeam(team: any) {
-    return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => {
-      return of({ ...team, _rev: res.rev, _id: res.id });
-    }));
+    return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => of({ ...team, _rev: res.rev, _id: res.id })));
   }
 
   requestToJoinTeam(team, user) {
-    const userPlanetCode = this.stateService.configuration.code;
-    return this.couchService.updateDocument(this.dbName, {
-      createdDate: this.couchService.datePlaceholder,
-      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
-    }).pipe(
-      switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
+    const memberInfo = { userId: user._id, userPlanetCode: this.stateService.configuration.code };
+    return this.couchService.post(`${this.dbName}/_find`, findDocuments(this.requestSelector(team, memberInfo), [ '_id' ], 0, 1)).pipe(
+      switchMap(({ docs }: any) => docs.length > 0 ? of(false) : this.couchService.updateDocument(this.dbName, {
+        createdDate: this.couchService.datePlaceholder,
+        ...this.membershipProps(team, memberInfo, 'request')
+      }).pipe(
+        switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({})),
+        map(() => true)
+      ))
     );
   }
 
   removeFromRequests(team, memberInfo) {
-    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, memberInfo, 'request'))).pipe(
+    return this.couchService.findAll(this.dbName, findDocuments(this.requestSelector(team, memberInfo))).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
     );
+  }
+
+  // teamId already names the team, and editing an enterprise can change its teamType after requests were made
+  private requestSelector(team, memberInfo) {
+    const { teamType, ...selector } = this.membershipProps(team, memberInfo, 'request');
+    return selector;
   }
 
   cancelJoinRequest(team) {
@@ -159,7 +225,7 @@ export class TeamsService {
       this.updateShelf(memberInfo) :
       this.updateMembershipDoc(team, leaveTeam, memberInfo)
     ).pipe(
-      switchMap(() => leaveTeam ? this.isTeamEmpty(team) : of(team)),
+      switchMap(() => leaveTeam ? this.isTeamEmpty(team).pipe(catchError(() => of(false))) : of(team)),
       switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
       switchMap((newTeam) => of({ ...team, ...newTeam }))
     );
@@ -179,14 +245,40 @@ export class TeamsService {
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {
+    if (!memberInfo?.userId) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
     const deleted = leaveTeam ? { _deleted: true } : {};
     const membershipProps = this.membershipProps(team, memberInfo, 'membership');
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
-      switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
+      switchMap((membershipDocs: any[]) => this.writeMembershipDocs(
+        membershipDocs.map(membershipDoc => this.membershipWriteDoc(
+          {
+            ...membershipDoc,
+            ...memberInfo,
+            ...membershipProps,
+            ...(membershipProps.userPlanetCode === undefined && membershipDoc.userPlanetCode !== undefined ?
+              { userPlanetCode: membershipDoc.userPlanetCode } : {}),
+            ...(membershipDoc._rev ? { _id: membershipDoc._id, _rev: membershipDoc._rev } : {})
+          },
+          deleted
+        ))
       ))
     );
+  }
+
+  addMembers(team, selected, requests) {
+    if (selected.some(user => !user?._id)) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
+    const newMembershipDocs = selected.map(user =>
+      this.membershipProps(team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
+    );
+    // Deletions keep the request's fields so they still match the teams replication selector
+    const requestsToDelete = requests.filter(request => newMembershipDocs.some(membership => memberCompare(membership, request)))
+      .map(request => this.membershipWriteDoc(request, { _deleted: true }));
+    return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
   }
 
   updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report', opts?: any) {
@@ -205,7 +297,21 @@ export class TeamsService {
   }
 
   changeTeamLeadership(oldLeader, newLeader) {
-    return this.couchService.bulkDocs(this.dbName, [ { ...newLeader, isLeader: true }, { ...oldLeader, isLeader: false } ]);
+    const shouldDemoteOldLeader = Boolean(oldLeader?._id) && oldLeader._id !== newLeader?._id && oldLeader.fromShelf !== true;
+    return this.freshMembershipDoc(newLeader).pipe(
+      // Shelf revisions belong to another database, so preserving them makes unsupported promotions fail closed with a conflict.
+      switchMap(freshNewLeader => this.writeMembershipDocs([
+        this.membershipWriteDoc(freshNewLeader, { isLeader: true })
+      ])),
+      switchMap(promotionResponse => shouldDemoteOldLeader ?
+        this.freshMembershipDoc(oldLeader).pipe(
+          switchMap(freshOldLeader => this.writeMembershipDocs([
+            this.membershipWriteDoc(freshOldLeader, { isLeader: false })
+          ])),
+          map(() => promotionResponse)
+        ) : of(promotionResponse)
+      )
+    );
   }
 
   // Included for backwards compatibility for older teams where membership was stored in shelf.  Only for member leaving a team.
@@ -216,25 +322,101 @@ export class TeamsService {
     ));
   }
 
+  // Membership documents contain exactly this persisted schema; other member fields are enriched view data.
+  private membershipWriteDoc(member, overrides: any = {}) {
+    const {
+      _id,
+      _rev,
+      createdDate,
+      updatedDate,
+      teamId,
+      teamPlanetCode,
+      teamType,
+      userId,
+      userPlanetCode,
+      docType,
+      isLeader,
+      role,
+      _deleted
+    } = { ...member, ...overrides };
+    return {
+      ...(_id ? { _id } : {}),
+      ...(_rev ? { _rev } : {}),
+      ...(createdDate !== undefined ? { createdDate } : {}),
+      ...(updatedDate !== undefined ? { updatedDate } : {}),
+      teamId,
+      teamPlanetCode,
+      teamType,
+      userId,
+      userPlanetCode,
+      docType: docType || 'membership',
+      ...(isLeader !== undefined ? { isLeader } : {}),
+      ...(role !== undefined ? { role } : {}),
+      ...(_deleted === true ? { _deleted: true } : {})
+    };
+  }
+
+  private writeMembershipDocs(docs: any[], requiredResultCount = docs.length) {
+    return this.couchService.bulkDocs(this.dbName, docs).pipe(
+      switchMap(response => this.validateBulkDocsResponse(response, docs.length, requiredResultCount))
+    );
+  }
+
+  private freshMembershipDoc(member) {
+    if (!member?.userId) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
+    return member._id && member.fromShelf !== true ?
+      this.couchService.get(`${this.dbName}/${member._id}`).pipe(map(doc => ({ ...member, ...doc }))) :
+      of(member);
+  }
+
+  private validateBulkDocsResponse(response: any, expectedCount: number, requiredResultCount = expectedCount) {
+    const results = Array.isArray(response) ? response : response?.res;
+    if (!Array.isArray(results)) {
+      return throwError(new Error('Unexpected bulk document response.'));
+    }
+    const requiredResults = results.slice(0, requiredResultCount);
+    const error = requiredResults.find(result => result?.error);
+    if (error) {
+      return throwError(error);
+    }
+    const hasUnexpectedResult = requiredResultCount > expectedCount || requiredResults.length !== requiredResultCount ||
+      (requiredResultCount === expectedCount && results.length !== expectedCount) || requiredResults.some(result =>
+      typeof result?.id !== 'string' || result.id.length === 0 ||
+      typeof result?.rev !== 'string' || result.rev.length === 0
+    );
+    return hasUnexpectedResult ? throwError(new Error('Unexpected bulk document response.')) : of(response);
+  }
+
   membershipProps(team, memberInfo, docType) {
     const { userId, userPlanetCode, isLeader } = memberInfo;
     const { _id: teamId, teamPlanetCode, teamType } = team;
     return {
-      teamId, userId, teamPlanetCode, teamType, userPlanetCode, docType, isLeader
+      teamId,
+      userId,
+      teamPlanetCode,
+      teamType,
+      ...(userPlanetCode !== undefined ? { userPlanetCode } : {}),
+      docType,
+      ...(isLeader !== undefined ? { isLeader } : {})
+    };
+  }
+
+  private activeMembershipSelector(team, withAllLinks = false) {
+    return {
+      teamId: team._id,
+      teamPlanetCode: team.teamPlanetCode,
+      status: { $or: [ { $exists: false }, { $ne: 'archived' } ] },
+      ...(withAllLinks ? {} : { docType: 'membership' })
     };
   }
 
   getTeamMembers(team, withAllLinks = false) {
-    const selector = {
-      teamId: team._id,
-      teamPlanetCode: team.teamPlanetCode,
-      status: { '$or': [ { '$exists': false }, { '$ne': 'archived' } ] },
-      ...(withAllLinks ? {} : { docType: 'membership' })
-    };
     this.usersService.requestUserData();
     return forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selector)),
-      this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
+      this.couchService.findAll(this.dbName, findDocuments(this.activeMembershipSelector(team, withAllLinks))),
+      this.couchService.findAll('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0)),
       this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
@@ -258,24 +440,26 @@ export class TeamsService {
     ));
   }
 
-  isTeamEmpty(team) {
-    return this.getTeamMembers(team).pipe(map((docs) => docs.length === 0));
+  private isTeamEmpty(team) {
+    const firstRow = (db: string, selector: any) => this.couchService.post(db + '/_find', findDocuments(selector, [ '_id' ], 0, 1));
+    return firstRow(this.dbName, this.activeMembershipSelector(team)).pipe(
+      switchMap((result: any) => result.docs.length > 0 ? of(result) : firstRow('shelf', { myTeamIds: { $in: [ team._id ] } })),
+      map(({ docs }) => docs.length === 0)
+    );
   }
 
   sendNotifications(type, members, notificationParams) {
     const notifications = members.filter((user: any) => {
       const userId = user.userId || user._id;
       return this.userService.get()._id !== userId && user.name !== 'satellite';
-    }).map((user: any) => {
-      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), type, user, notificationParams);
-    });
+    }).map((user: any) => this.teamNotification(this.teamNotificationMessage(type, notificationParams), type, user, notificationParams));
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
     const user = this.userService.get();
-    const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
-    const truncatedFullName = truncateText(fullName, 22);
+    const memberName = fullName(user) || user.name;
+    const truncatedFullName = truncateText(memberName, 22);
     const teamType = team.type || 'team';
     const teamMessage = team.type === 'services' ?
       'the <b>Community Services Directory</b>' :
@@ -308,30 +492,30 @@ export class TeamsService {
     const userId = user.userId || user._id;
     const linkParams = type === 'request' ? { activeTab: 'applicantTab' } : {};
     return {
-      'user': userId,
+      user: userId,
       message,
       link,
       linkParams,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      item: team._id,
+      type: 'team',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       userPlanetCode: user.userPlanetCode
     };
   }
 
   teamActivity(team: any, activity = 'teamVisit') {
     const data = {
-      'teamId': team._id,
-      'title': team.title,
-      'user': this.userService.get().name,
-      'type': activity,
-      'teamType': team.teamType,
-      'teamPlanetCode': team.teamPlanetCode,
-      'time': this.couchService.datePlaceholder,
-      'createdOn': this.stateService.configuration.code,
-      'parentCode': this.stateService.configuration.parentCode
+      teamId: team._id,
+      title: team.title,
+      user: this.userService.get().name,
+      type: activity,
+      teamType: team.teamType,
+      teamPlanetCode: team.teamPlanetCode,
+      time: this.couchService.datePlaceholder,
+      createdOn: this.stateService.configuration.code,
+      parentCode: this.stateService.configuration.parentCode
     };
     return this.couchService.updateDocument('team_activities', data);
   }
@@ -357,14 +541,14 @@ export class TeamsService {
   createServicesDoc() {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      '_id': `${code}@${parentCode}`,
-      'createdDate': this.couchService.datePlaceholder,
-      'teamPlanetCode': `${code}`,
-      'parentCode': `${parentCode}`,
-      'description': '',
-      'requests': [],
-      'teamType': 'sync',
-      'type': 'services'
+      _id: planetAndParentId(this.stateService.configuration),
+      createdDate: this.couchService.datePlaceholder,
+      teamPlanetCode: `${code}`,
+      parentCode: `${parentCode}`,
+      description: '',
+      requests: [],
+      teamType: 'sync',
+      type: 'services'
     };
     return this.updateTeam(newServicesDoc);
   }
@@ -376,11 +560,11 @@ export class TeamsService {
   createServicesLink({ title, route, teamType, icon }) {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      'teamId': `${code}@${parentCode}`,
-      'createdDate': this.couchService.datePlaceholder,
-      'teamPlanetCode': `${code}`,
-      'parentCode': `${parentCode}`,
-      'docType': 'link',
+      teamId: planetAndParentId(this.stateService.configuration),
+      createdDate: this.couchService.datePlaceholder,
+      teamPlanetCode: `${code}`,
+      parentCode: `${parentCode}`,
+      docType: 'link',
       teamType,
       icon,
       title,
@@ -391,16 +575,16 @@ export class TeamsService {
 
   getTeamsByUser(userName: string, userPlanetCode: string) {
     const selector = {
-      '$or': [
-        { 'userId': `org.couchdb.user:${userName}` },
-        { 'userId': `org.couchdb.user:${userName}@${userPlanetCode}` }
+      $or: [
+        { userId: `org.couchdb.user:${userName}` },
+        { userId: `org.couchdb.user:${userName}@${userPlanetCode}` }
       ],
-      'docType': 'membership'
+      docType: 'membership'
     };
     return this.couchService.findAll('teams', findDocuments(selector)).pipe(
       switchMap(memberships => {
         const teamIds = memberships.map((doc: any) => doc.teamId);
-        return this.couchService.findAll('teams', findDocuments({ '_id': { '$in': teamIds } }));
+        return this.couchService.findAll('teams', findDocuments({ _id: { $in: teamIds } }));
       }),
       map(teams => teams.filter((team: any) => team.status !== 'archived').map(team => ({ doc: team })))
     );

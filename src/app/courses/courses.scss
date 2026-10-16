@@ -1,14 +1,17 @@
+@use '../mixins' as m;
 @use '../variables' as v;
-@use './courses-shared' as c;
 
 planet-courses {
-  .mat-column-select {
-    max-width: 44px;
-    padding: 0 0 0 24px;
-  }
+  @include m.search-toolbar;
 
-  .mat-column-createdDate {
-    max-width: 100px;
+  &.embedded {
+    display: block;
+    height: 100%;
+    min-height: v.$view-container-min-height;
+
+    > .primary-link-hover {
+      height: 100%;
+    }
   }
 
   .column {
@@ -28,21 +31,15 @@ planet-courses {
     text-align: center;
   }
 
-  .search-bar {
-    height: c.$toolbar-height;
-  }
-
   .break-word {
     word-break: break-word;
   }
 
-  .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{c.$toolbar-height});
+  planet-courses-search {
+    @include m.search-filters('planet-courses-search-list');
   }
+}
 
-  @media(max-width: v.$screen-md) {
-    .mat-column-createdDate {
-      max-width: 70px;
-    }
-  }
+.filter-dialog planet-courses-search {
+  @include m.search-filters-stacked('planet-courses-search-list');
 }

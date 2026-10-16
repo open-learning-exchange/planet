@@ -16,7 +16,7 @@ export function registerChatApiRoutes(app: Express) {
 
     try {
       if (!save) {
-        const response = await chatNoSave(data.content, data.aiProvider, data.assistant, data.context);
+        const response = await chatNoSave(data.content, data.aiProvider, data.context);
         return res.status(200).json({
           'status': 'Success',
           'chat': response

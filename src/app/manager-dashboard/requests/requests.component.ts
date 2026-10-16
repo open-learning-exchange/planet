@@ -1,27 +1,30 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { CouchService } from '../../shared/couchdb.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields } from '../../shared/table-helpers';
-import { StateService } from '../../shared/state.service';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgTemplateOutlet } from '@angular/common';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { StateService } from '@shared/state.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { RequestsTableComponent } from './requests-table.component';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 @Component({
   templateUrl: './requests.component.html',
@@ -36,10 +39,11 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
     MatButtonToggle,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
+    MatTooltip,
     MatToolbarRow,
     MatButton,
-    NgClass,
     RequestsTableComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
@@ -57,8 +61,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   shownStatus = 'pending';
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   showFilterRow = false;
   get childType() {
     return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
@@ -74,12 +77,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private managerService: ManagerService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(
@@ -102,8 +100,8 @@ export class RequestsComponent implements OnInit, OnDestroy {
   }
 
   filterData(search = this.searchValue) {
-    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) });
-    const filterFunction = filterSpecificFields([ 'code', 'name' ]);
+    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { name: planet.nameDoc.name } : {}) });
+    const filterFunction = filterSpecificFieldsHybrid([ 'name' ], [ 'code' ]);
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
     );
@@ -135,7 +133,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
       [
         { placeholder: $localize`Name`, name: 'name', required: true, type: 'textbox' },
         { type: 'selectbox', name: 'planetId', placeholder: $localize`Planet`, required: false,
-          'options': [
+          options: [
             { name: $localize`Select Planet`, value: '' },
             ...this.sandboxPlanets.map(p => ({ name: p.nameDoc ? p.nameDoc.name : p.doc.name, value: p.doc._id }))
           ]

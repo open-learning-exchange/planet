@@ -2,20 +2,22 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef,
 import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { CustomValidators } from '../../validators/custom-validators';
-import { ConversationForm, AIProvider } from '../chat.model';
-import { ChatService } from '../../shared/chat.service';
-import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
-import { UserService } from '../../shared/user.service';
-import { StateService } from '../../shared/state.service';
 import { NgClass } from '@angular/common';
-import { ChatOutputDirective } from '../../shared/chat-output.directive';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { SubmitDirective } from '../../shared/submit.directive';
 import { MatIcon } from '@angular/material/icon';
+
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { showFormErrors, trackByIdVal } from '@shared/tables/table.helpers';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
+
+import { CustomValidators } from '../../validators/custom-validators';
+import { ConversationForm, AIProvider } from '../chat.model';
 
 type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
 
@@ -24,7 +26,7 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.scss'],
   imports: [
-    ChatOutputDirective,
+    PlanetMarkdownComponent,
     NgClass,
     FormsModule,
     ReactiveFormsModule,
@@ -59,7 +61,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     user: this.userService.get().name,
     content: '',
     aiProvider: { name: 'openai' },
-    assistant: true,
     context: '',
   };
   providers: AIProvider[] = [];
@@ -67,7 +68,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private fb: NonNullableFormBuilder,
     private stateService: StateService,
     private userService: UserService
@@ -229,8 +230,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   handleIncomingMessage(message: any) {
     if (message.type === 'final') {
       this.selectedConversationId = {
-        '_id': message.couchDBResponse?.id,
-        '_rev': message.couchDBResponse?.rev
+        _id: message.couchDBResponse?.id,
+        _rev: message.couchDBResponse?.rev
       };
       this.postSubmit();
     } else {
@@ -257,13 +258,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitPrompt() {
     const content = this.promptForm.controls.prompt.value;
-    this.data = { ...this.data, content, aiProvider: this.provider, assistant: this.provider?.name === 'openai' };
+    this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
     }
 
@@ -275,8 +275,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         (completion: any) => {
           this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
           this.selectedConversationId = {
-            '_id': completion.couchDBResponse?.id,
-            '_rev': completion.couchDBResponse?.rev
+            _id: completion.couchDBResponse?.id,
+            _rev: completion.couchDBResponse?.rev
           };
           this.postSubmit();
         },

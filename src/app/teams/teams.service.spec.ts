@@ -1,0 +1,724 @@
+import { of, throwError } from 'rxjs';
+import { vi } from 'vitest';
+
+import { IMAGE_MAX_FALLBACK_BYTES } from '@shared/utils';
+
+import { TeamsService } from './teams.service';
+
+describe('TeamsService membership writes', () => {
+  const successfulBulkResponse = { res: [ { id: 'membership-1', ok: true, rev: '2-membership' } ] };
+
+  afterEach(() => vi.restoreAllMocks());
+
+  const createService = (couchOverrides: any = {}, stateService: any = {}) => {
+    const couchService = {
+      findAll: vi.fn().mockReturnValue(of([])),
+      get: vi.fn().mockReturnValue(of({})),
+      bulkDocs: vi.fn().mockReturnValue(of(successfulBulkResponse)),
+      ...couchOverrides
+    };
+    const service = new TeamsService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      stateService,
+      {} as any
+    );
+    return { service, couchService };
+  };
+
+  const team = {
+    _id: 'team-1',
+    teamPlanetCode: 'planet-a',
+    teamType: 'local'
+  };
+
+  const membership = {
+    _id: 'membership-1',
+    _rev: '1-membership',
+    createdDate: 123,
+    updatedDate: 456,
+    teamId: team._id,
+    teamPlanetCode: team.teamPlanetCode,
+    teamType: team.teamType,
+    userId: 'org.couchdb.user:alex',
+    userPlanetCode: 'planet-a',
+    docType: 'membership',
+    isLeader: true,
+    role: 'Mentor'
+  };
+
+  const enrichedFields = {
+    name: 'Alex',
+    avatar: '/avatar',
+    status: 'active',
+    userDoc: { doc: { derived_key: 'secret', salt: 'secret-salt' } },
+    attachmentDoc: { _attachments: { img: {} } },
+    tasks: [ { _id: 'task-1' } ]
+  };
+
+  it('keeps exactly the persisted membership schema', () => {
+    const { service } = createService();
+
+    expect((service as any).membershipWriteDoc({
+      ...membership,
+      ...enrichedFields
+    }, { _deleted: true })).toEqual({
+      ...membership,
+      _deleted: true
+    });
+  });
+
+  it('updates a role without exposing enrichment or erasing leadership', () => {
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ membership ]))
+    });
+
+    service.updateMembershipDoc(team, false, {
+      ...membership,
+      ...enrichedFields,
+      role: 'Coordinator'
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      ...membership,
+      role: 'Coordinator'
+    } ]);
+  });
+
+  it('uses the freshly read membership revision instead of the enriched view revision', () => {
+    const freshMembership = { ...membership, _rev: '2-fresh' };
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ freshMembership ]))
+    });
+
+    service.updateMembershipDoc(team, false, {
+      ...membership,
+      _rev: '1-stale',
+      role: 'Coordinator'
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      ...membership,
+      _rev: '2-fresh',
+      role: 'Coordinator'
+    } ]);
+  });
+
+  it('preserves shelf identity when no persisted membership document is found', () => {
+    const shelfMembership = {
+      _id: 'org.couchdb.user:shelf-member',
+      _rev: '1-shelf',
+      fromShelf: true,
+      myTeamIds: [ team._id ],
+      teamId: team._id,
+      userId: 'org.couchdb.user:shelf-member'
+    };
+    const { service, couchService } = createService({
+      bulkDocs: vi.fn().mockReturnValue(of({
+        res: [ { id: shelfMembership._id, error: 'conflict', reason: 'Document update conflict.' } ]
+      }))
+    });
+    const error = vi.fn();
+
+    service.updateMembershipDoc(team, false, shelfMembership).subscribe({ error });
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ expect.objectContaining({
+      _id: shelfMembership._id,
+      _rev: shelfMembership._rev,
+      userId: shelfMembership.userId
+    }) ]);
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
+  });
+
+  it('preserves persisted leadership when the member update omits isLeader', () => {
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ membership ]))
+    });
+
+    service.updateMembershipDoc(team, false, {
+      userId: membership.userId,
+      userPlanetCode: membership.userPlanetCode,
+      role: 'Coordinator'
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      ...membership,
+      role: 'Coordinator'
+    } ]);
+  });
+
+  it('preserves stored planet identity when a stale shelf row matches a persisted membership', () => {
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ membership ]))
+    });
+
+    service.updateMembershipDoc(team, false, {
+      _id: membership.userId,
+      _rev: '1-shelf',
+      fromShelf: true,
+      teamId: team._id,
+      userId: membership.userId,
+      role: 'Coordinator'
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      ...membership,
+      role: 'Coordinator'
+    } ]);
+  });
+
+  it('validates mixed add-member writes and deletes requests with only their persisted fields', () => {
+    const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
+    const request = {
+      ...membership,
+      ...enrichedFields,
+      _id: 'request-1',
+      _rev: '1-request',
+      userId: selected[0]._id,
+      docType: 'request'
+    };
+    const bulkDocs = vi.fn().mockReturnValue(of({
+      res: [
+        { id: 'membership-new', rev: '1-new' },
+        { id: request._id, rev: '2-request' }
+      ]
+    }));
+    const { service } = createService({ bulkDocs });
+
+    service.addMembers(team, selected, [ request ]).subscribe();
+
+    expect(bulkDocs).toHaveBeenCalledWith('teams', [
+      {
+        teamId: team._id,
+        userId: selected[0]._id,
+        teamPlanetCode: team.teamPlanetCode,
+        teamType: team.teamType,
+        userPlanetCode: selected[0].planetCode,
+        docType: 'membership'
+      },
+      { ...membership, _id: request._id, _rev: request._rev, userId: selected[0]._id, docType: 'request', _deleted: true }
+    ]);
+  });
+
+  it('keeps a request from the same user ID on another planet', () => {
+    const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-b', docType: 'request' };
+    const bulkDocs = vi.fn().mockReturnValue(of({ res: [ { id: 'membership-new', rev: '1-new' } ] }));
+    const { service } = createService({ bulkDocs });
+
+    service.addMembers(team, selected, [ request ]).subscribe();
+
+    expect(bulkDocs.mock.calls[0][1]).toHaveLength(1);
+  });
+
+  it('reports an individual add-member bulk failure', () => {
+    const bulkDocs = vi.fn().mockReturnValue(of({
+      res: [ { id: 'membership-new', error: 'forbidden', reason: 'Membership rejected.' } ]
+    }));
+    const { service } = createService({ bulkDocs });
+    const error = vi.fn();
+
+    service.addMembers(team, [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ], []).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'forbidden' }));
+  });
+
+  it('accepts an add-member write when only request cleanup conflicts', () => {
+    const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
+    const bulkDocs = vi.fn().mockReturnValue(of({
+      res: [
+        { id: 'membership-new', rev: '1-new' },
+        { id: request._id, error: 'conflict', reason: 'Document update conflict.' }
+      ]
+    }));
+    const { service } = createService({ bulkDocs });
+    const next = vi.fn();
+    const error = vi.fn();
+
+    service.addMembers(team, selected, [ request ]).subscribe({ next, error });
+
+    expect(next).toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('rejects a second required membership failure before best-effort request cleanup', () => {
+    const selected = [
+      { _id: 'org.couchdb.user:first', planetCode: 'planet-a' },
+      { _id: 'org.couchdb.user:second', planetCode: 'planet-a' }
+    ];
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
+    const bulkDocs = vi.fn().mockImplementation((_dbName: string, docs: any[]) => of({
+      res: docs.map((doc, index) => {
+        if (doc._deleted) {
+          return { id: doc._id, rev: '2-request' };
+        }
+        return doc.userId === selected[1]._id
+          ? { id: `membership-${index}`, error: 'forbidden', reason: 'Membership rejected.' }
+          : { id: `membership-${index}`, rev: '1-membership' };
+      })
+    }));
+    const { service } = createService({ bulkDocs });
+    const error = vi.fn();
+
+    service.addMembers(team, selected, [ request ]).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'forbidden' }));
+  });
+
+  it('rejects an add-member write without a user ID', () => {
+    const { service, couchService } = createService();
+    const error = vi.fn();
+
+    service.addMembers(team, [ { planetCode: 'planet-a' } ], []).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Membership user ID is required.'
+    }));
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
+  });
+
+  it('sanitizes leadership writes and promotes before demoting', () => {
+    const promotionResponse = { res: [ { id: 'membership-new', ok: true, rev: '2-new' } ] };
+    const demotionResponse = { res: [ { id: 'membership-old', ok: true, rev: '2-old' } ] };
+    const bulkDocs = vi.fn()
+      .mockReturnValueOnce(of(promotionResponse))
+      .mockReturnValueOnce(of(demotionResponse));
+    const { service } = createService({ bulkDocs });
+    const oldLeader = {
+      ...membership,
+      ...enrichedFields,
+      _id: 'membership-old',
+      _rev: '1-old',
+      userId: 'org.couchdb.user:old'
+    };
+    const newLeader = {
+      ...membership,
+      ...enrichedFields,
+      _id: 'membership-new',
+      _rev: '1-new',
+      userId: 'org.couchdb.user:new',
+      role: 'Coordinator',
+      isLeader: false
+    };
+
+    service.changeTeamLeadership(oldLeader, newLeader).subscribe();
+
+    expect(bulkDocs).toHaveBeenNthCalledWith(1, 'teams', [ {
+      ...membership,
+      _id: 'membership-new',
+      _rev: '1-new',
+      userId: 'org.couchdb.user:new',
+      role: 'Coordinator',
+      isLeader: true
+    } ]);
+    expect(bulkDocs).toHaveBeenNthCalledWith(2, 'teams', [ {
+      ...membership,
+      _id: 'membership-old',
+      _rev: '1-old',
+      userId: 'org.couchdb.user:old',
+      isLeader: false
+    } ]);
+  });
+
+  it('uses freshly read revisions for both leadership writes', () => {
+    const oldLeader = {
+      ...membership,
+      _id: 'membership-old',
+      _rev: '1-old',
+      userId: 'org.couchdb.user:old'
+    };
+    const newLeader = {
+      ...membership,
+      _id: 'membership-new',
+      _rev: '1-new',
+      userId: 'org.couchdb.user:new',
+      isLeader: false
+    };
+    const get = vi.fn()
+      .mockReturnValueOnce(of({ ...newLeader, _rev: '2-new' }))
+      .mockReturnValueOnce(of({ ...oldLeader, _rev: '2-old' }));
+    const { service, couchService } = createService({ get });
+
+    service.changeTeamLeadership(oldLeader, newLeader).subscribe();
+
+    expect(get).toHaveBeenNthCalledWith(1, 'teams/membership-new');
+    expect(get).toHaveBeenNthCalledWith(2, 'teams/membership-old');
+    expect(couchService.bulkDocs).toHaveBeenNthCalledWith(1, 'teams', [ {
+      ...newLeader,
+      _rev: '2-new',
+      isLeader: true
+    } ]);
+    expect(couchService.bulkDocs).toHaveBeenNthCalledWith(2, 'teams', [ {
+      ...oldLeader,
+      _rev: '2-old',
+      isLeader: false
+    } ]);
+  });
+
+  it('does not demote when the old and new leader are the same document', () => {
+    const get = vi.fn().mockReturnValue(of({ ...membership, _rev: '2-fresh' }));
+    const { service, couchService } = createService({ get });
+
+    service.changeTeamLeadership(membership, membership).subscribe();
+
+    expect(get).toHaveBeenCalledTimes(1);
+    expect(couchService.bulkDocs).toHaveBeenCalledTimes(1);
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      ...membership,
+      _rev: '2-fresh',
+      isLeader: true
+    } ]);
+  });
+
+  it('does not demote the old leader when promotion fails', () => {
+    const bulkDocs = vi.fn().mockReturnValue(of({
+      res: [ { error: 'conflict', reason: 'Document update conflict.' } ]
+    }));
+    const { service } = createService({ bulkDocs });
+    const error = vi.fn();
+
+    service.changeTeamLeadership(
+      { ...membership, _id: 'membership-old', userId: 'org.couchdb.user:old' },
+      { ...membership, _id: 'membership-new', userId: 'org.couchdb.user:new' }
+    ).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
+    expect(bulkDocs).toHaveBeenCalledTimes(1);
+  });
+
+  [
+    { description: 'empty', response: { res: [] } },
+    { description: 'invalid', response: { res: [ {} ] } }
+  ].forEach(({ description, response }) => {
+    it(`does not demote the old leader after an ${description} promotion response`, () => {
+      const bulkDocs = vi.fn().mockReturnValue(of(response));
+      const { service } = createService({ bulkDocs });
+      const error = vi.fn();
+
+      service.changeTeamLeadership(
+        { ...membership, _id: 'membership-old', userId: 'org.couchdb.user:old' },
+        { ...membership, _id: 'membership-new', userId: 'org.couchdb.user:new' }
+      ).subscribe({ error });
+
+      expect(error).toHaveBeenCalledWith(expect.objectContaining({
+        message: 'Unexpected bulk document response.'
+      }));
+      expect(bulkDocs).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('skips a synthesized old leader without a persisted membership ID', () => {
+    const { service, couchService } = createService();
+
+    service.changeTeamLeadership(undefined, {
+      ...membership,
+      _id: 'membership-new',
+      userId: 'org.couchdb.user:new'
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledTimes(1);
+  });
+
+  it('fails a shelf promotion before demoting until origin-aware migration is available', () => {
+    const shelf = {
+      _id: 'org.couchdb.user:new',
+      _rev: '1-shelf',
+      myTeamIds: [ team._id ]
+    };
+    const bulkDocs = vi.fn().mockReturnValue(of({
+      res: [ { error: 'conflict', reason: 'Document update conflict.' } ]
+    }));
+    const { service } = createService({
+      bulkDocs
+    });
+    const error = vi.fn();
+
+    service.changeTeamLeadership(membership, {
+      ...shelf,
+      fromShelf: true,
+      teamId: team._id,
+      userId: shelf._id
+    }).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({ error: 'conflict' }));
+    expect(bulkDocs).toHaveBeenCalledTimes(1);
+    expect(bulkDocs.mock.calls[0][1][0]).toEqual(expect.objectContaining({
+      _id: shelf._id,
+      _rev: shelf._rev,
+      isLeader: true
+    }));
+  });
+
+  describe('join requests', () => {
+    const user = { _id: 'org.couchdb.user:sam' };
+    const requestSelector = {
+      teamId: team._id,
+      userId: user._id,
+      teamPlanetCode: team.teamPlanetCode,
+      userPlanetCode: 'planet-a',
+      docType: 'request'
+    };
+    const requestToJoin = (existingRequests: any[]) => {
+      const { service, couchService } = createService({
+        post: vi.fn().mockReturnValue(of({ docs: existingRequests })),
+        updateDocument: vi.fn().mockReturnValue(of({ id: 'request-1', rev: '1-request' }))
+      }, { configuration: { code: 'planet-a' } });
+      const next = vi.fn();
+      service.requestToJoinTeam(team, user).subscribe(next);
+      return { couchService, next };
+    };
+
+    it('writes a request when the user has none', () => {
+      const { couchService, next } = requestToJoin([]);
+
+      expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({ selector: requestSelector, limit: 1 }));
+      expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
+        ...requestSelector,
+        teamType: team.teamType
+      }));
+      expect(next).toHaveBeenCalledWith(true);
+    });
+
+    it('keeps an existing request instead of adding another', () => {
+      const { couchService, next } = requestToJoin([ { _id: 'request-1' } ]);
+
+      expect(couchService.updateDocument).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(false);
+    });
+
+    it('removes requests made before the team type changed', () => {
+      const { service, couchService } = createService();
+
+      service.removeFromRequests({ ...team, teamType: 'sync' }, { userId: user._id, userPlanetCode: 'planet-a' }).subscribe();
+
+      expect(couchService.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({ selector: requestSelector }));
+    });
+  });
+
+  it('sanitizes membership deletion writes', () => {
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([ membership ]))
+    });
+
+    service.updateMembershipDoc(team, true, {
+      userId: membership.userId,
+      userPlanetCode: membership.userPlanetCode
+    }).subscribe();
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [ {
+      ...membership,
+      _deleted: true
+    } ]);
+  });
+
+  it('rejects a membership update without a user ID before querying or writing', () => {
+    const { service, couchService } = createService();
+    const error = vi.fn();
+
+    service.updateMembershipDoc(team, true, {}).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Membership user ID is required.'
+    }));
+    expect(couchService.findAll).not.toHaveBeenCalled();
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unexpected wrapped bulk response', () => {
+    const { service } = createService({
+      bulkDocs: vi.fn().mockReturnValue(of({ ok: true }))
+    });
+    const error = vi.fn();
+
+    service.updateMembershipDoc(team, false, membership).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Unexpected bulk document response.'
+    }));
+  });
+
+  it('rejects a partial bulk response', () => {
+    const secondMembership = {
+      ...membership,
+      _id: 'membership-2',
+      _rev: '1-membership-2'
+    };
+    const { service } = createService({
+      findAll: vi.fn().mockReturnValue(of([ membership, secondMembership ])),
+      bulkDocs: vi.fn().mockReturnValue(of(successfulBulkResponse))
+    });
+    const error = vi.fn();
+
+    service.updateMembershipDoc(team, false, membership).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Unexpected bulk document response.'
+    }));
+  });
+
+  it('accepts a successful result with an id and revision when ok is omitted', () => {
+    const { service } = createService({
+      bulkDocs: vi.fn().mockReturnValue(of({
+        res: [ { id: 'membership-1', rev: '2-membership' } ]
+      }))
+    });
+    const next = vi.fn();
+    const error = vi.fn();
+
+    service.updateMembershipDoc(team, false, membership).subscribe({ next, error });
+
+    expect(next).toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  describe('archiving after a leave', () => {
+    const noRows = of({ docs: [] });
+    const leave = (teamRows: any, shelfRows: any) => {
+      const { service, couchService } = createService({
+        findAll: vi.fn().mockReturnValue(of([ membership ])),
+        post: vi.fn().mockImplementation((db: string) => db === 'teams/_find' ? teamRows : shelfRows),
+        updateDocument: vi.fn().mockReturnValue(of({ id: team._id, rev: '2-team' }))
+      });
+      const next = vi.fn();
+      const error = vi.fn();
+      service.toggleTeamMembership(team, true, { userId: membership.userId, userPlanetCode: membership.userPlanetCode })
+        .subscribe({ next, error });
+      const archived = couchService.updateDocument.mock.calls.some(([ , doc ]) => doc.status === 'archived');
+      return { couchService, archived, next, error };
+    };
+
+    it('archives the team once no membership remains', () => {
+      const { couchService, archived } = leave(noRows, noRows);
+
+      expect(archived).toBe(true);
+      expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({
+        selector: {
+          teamId: team._id,
+          teamPlanetCode: team.teamPlanetCode,
+          status: { $or: [ { $exists: false }, { $ne: 'archived' } ] },
+          docType: 'membership'
+        },
+        limit: 1
+      }));
+      expect(couchService.post).toHaveBeenCalledWith('shelf/_find', expect.objectContaining({
+        selector: { myTeamIds: { $in: [ team._id ] } },
+        limit: 1
+      }));
+    });
+
+    it('keeps the team without reading shelves while a membership remains', () => {
+      const { couchService, archived } = leave(of({ docs: [ { _id: 'membership-2' } ] }), noRows);
+
+      expect(archived).toBe(false);
+      expect(couchService.post).not.toHaveBeenCalledWith('shelf/_find', expect.anything());
+    });
+
+    it('keeps the team while a shelf membership remains', () => {
+      expect(leave(noRows, of({ docs: [ { _id: 'org.couchdb.user:sam' } ] })).archived).toBe(false);
+    });
+
+    it.each([ 'teams', 'shelf' ])('keeps the team and completes the leave when the %s check fails', (failing) => {
+      const failure = throwError({ status: 500 });
+      const { archived, next, error } = leave(failing === 'teams' ? failure : noRows, failing === 'shelf' ? failure : noRows);
+
+      expect(archived).toBe(false);
+      expect(next).toHaveBeenCalled();
+      expect(error).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('TeamsService cover image handling', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const createService = () => {
+    const couchService = {
+      updateDocument: vi.fn((db, doc) => of({ id: doc._id || 'new-id', rev: '2-rev' })),
+      putAttachment: vi.fn(),
+      get: vi.fn()
+    };
+    const service = new TeamsService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any
+    );
+    return { service, couchService };
+  };
+
+  const stub = { content_type: 'image/png', length: 1234, digest: 'md5-x', revpos: 1, stub: true };
+  const teamWithCover = {
+    _id: 'team-1',
+    _rev: '1-rev',
+    name: 'Team',
+    coverFileName: 'cover.png',
+    _attachments: { 'cover.png': stub, 'notes.pdf': { ...stub, content_type: 'application/pdf' } }
+  };
+  const pngFile = (name: string) => new File([ 'data' ], name, { type: 'image/png' });
+  const save = (service: TeamsService, team: any, coverState: any) =>
+    new Promise<any>((resolve, reject) => service.saveTeamWithCover(team, coverState).subscribe({ next: resolve, error: reject }));
+
+  it('keeps the cover and every attachment stub when the cover is unchanged', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [ { name: 'cover.png' } ], removed: [], added: [] });
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(1);
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', teamWithCover);
+  });
+
+  it('drops the cover and keeps other attachments when the cover is removed', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [], removed: [ { name: 'cover.png' } ], added: [] });
+
+    const savedDoc = couchService.updateDocument.mock.calls[0][1];
+    expect(savedDoc.coverFileName).toBeUndefined();
+    expect(savedDoc._attachments).toEqual({ 'notes.pdf': teamWithCover._attachments['notes.pdf'] });
+  });
+
+  it('creates a new team with its cover inlined in a single write', async () => {
+    const { service, couchService } = createService();
+
+    const savedTeam = await save(service, { name: 'New Team' }, { retained: [], removed: [], added: [ { file: pngFile('cover.png') } ] });
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(1);
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
+      name: 'New Team',
+      coverFileName: 'cover.png',
+      _attachments: { 'cover.png': { content_type: 'image/png', data: btoa('data') } }
+    });
+    expect(couchService.putAttachment).not.toHaveBeenCalled();
+    expect(couchService.get).not.toHaveBeenCalled();
+    expect(savedTeam._id).toBe('new-id');
+    expect(savedTeam._attachments).toEqual({ 'cover.png': { content_type: 'image/png', length: 4, stub: true } });
+  });
+
+  it('replaces a cover against the loaded revision under a new name', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [], removed: [ { name: 'cover.png' } ], added: [ { file: pngFile('cover.png') } ] });
+
+    const savedDoc = couchService.updateDocument.mock.calls[0][1];
+    expect(savedDoc._rev).toBe('1-rev');
+    expect(savedDoc.coverFileName).toBe('cover-1.png');
+    expect(Object.keys(savedDoc._attachments).sort()).toEqual([ 'cover-1.png', 'notes.pdf' ]);
+    expect(savedDoc._attachments['cover-1.png'].data).toBe(btoa('data'));
+  });
+
+  it('saves nothing when the new cover cannot be prepared', async () => {
+    const { service, couchService } = createService();
+    const tooLarge = new File([ new Uint8Array(IMAGE_MAX_FALLBACK_BYTES + 1) ], 'photo.heic', { type: 'image/heic' });
+
+    await expect(save(service, teamWithCover, { retained: [], removed: [], added: [ { file: tooLarge } ] })).rejects.toThrow();
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+});

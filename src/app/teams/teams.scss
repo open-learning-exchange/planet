@@ -33,6 +33,17 @@
   .team-name {
     max-width: 95%;
     overflow: hidden;
+
+    a:focus-visible {
+      outline: 2px solid v.$primary;
+      outline-offset: -2px;
+    }
+  }
+
+  .team-table-cover {
+    @include m.cover-thumbnail(36px);
+    vertical-align: middle;
+    margin-inline-end: 8px;
   }
 
   .highlighted {

@@ -25,6 +25,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 - `cd gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.
+- `npm test` — type-check, then Vitest. Install root dependencies first; Vitest resolves from the root.
 - `npm run lint` / `npm run lint-fix` — uses legacy ESLint config (`ESLINT_USE_FLAT_CONFIG=false`); the root app uses flat config (`eslint.config.mjs`), so don't try to unify them casually.
 - Only one `gateway` instance can bind the port at a time; stop the Docker gateway container before `npm run dev`.
 
@@ -34,20 +35,28 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 ## Architecture
 
-Planet Learning is an Angular 19 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
+Planet Learning is an Angular 20 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
 
 ### Repository layout
 
-- `src/app/` — feature-per-directory Angular app. Each feature owns its own `*-router.module.ts` and is lazy-loaded from `src/app/app-router.module.ts`, which mounts `HomeModule` at `''` (guarded by `UserGuard` + `UnsavedChangesGuard`) and `LoginModule` at `/login` (guarded by `AuthService`). Unknown routes fall through to `PageNotFoundComponent`.
-- `src/app/shared/` — cross-feature services, directives, dialogs, and the database layer. Two DB abstractions live here:
-  - `couchdb.service.ts` — HTTP wrapper around CouchDB used by most features. Every request goes through `setOpts` / `couchDBReq`, which injects `withCredentials` and surfaces 403s via `PlanetMessageService`. Prefer adding new calls through this service rather than raw `HttpClient`.
-  - `database/pouch.service.ts` + `pouch-auth.service.ts` — PouchDB mirror for offline-capable data (currently seeded with `feedback`). When adding an offline-capable database, register it in the `databases` Set so `configureDBs()` creates the local mirror.
+- `src/app/` — feature-per-directory Angular app. Each feature owns its own `*-router.module.ts` and is lazy-loaded from `src/app/app-router.module.ts`, which mounts `HomeModule` at `''` (guarded by `UserGuard` + `UnsavedChangesGuard`) and `LoginModule` at `/login` (guarded by `AuthGuard`). Unknown routes fall through to `PageNotFoundComponent`.
+- `src/app/shared/` — cross-feature code, grouped by the capability each file serves rather than by file kind. Put a new shared file in the bucket matching what it *achieves*; there is deliberately no `services/`, `directives/`, or `constants/` bucket. Import shared files through the `@shared/*` alias (`@shared/ui/planet-message.service`); files in the same bucket import each other relatively (`./sibling`).
+  - `ai/` — gateway chat transport and prompt constants.
+  - `auth/` — route guards, `user.service.ts`, role/beta directives, password change.
+  - `android/`, `calendar/`, `certifications/`, `challenges/`, `charts/`, `ratings/`, `search/` — one capability each, dialogs included.
+  - `database/` — `couchdb.service.ts` (HTTP wrapper; every request goes through `setOpts` / `couchDBReq`, which injects `withCredentials` and surfaces 403s via `PlanetMessageService` — prefer it over raw `HttpClient`), `mango-queries.ts`, `sync.service.ts`, and the PouchDB mirror `pouch.service.ts` + `pouch-auth.service.ts` for offline-capable data (no databases are currently registered for mirroring; register new offline databases in the `databases` Set so `configureDBs()` creates the local mirror).
+  - `dialogs/` — the generic dialog framework (form, prompt, view, list, loading); only these take the `Dialogs` prefix. Put a dialog tied to a capability in that capability's folder, even when other features open it, and name it after that capability (`challenges/challenges-announcement-dialog.component.ts`, `chat/chat-share-dialog.component.ts`).
+  - `export/` — CSV and PDF generation. `forms/` — inputs and validation directives, with `tags/` for the tag inputs.
+  - `language/`, `markdown/`, `tables/`, `text/` (formatting pipes), `ui/` (display primitives, `device-info.service.ts` breakpoints and `planet-message.service.ts`), `unsaved-changes/`.
+  - Only `utils.ts`, `state.service.ts`, `material.module.ts` and `shared-components.module.ts` stay at the root.
+  - Code that belongs to one feature lives in that feature even when others use it, as `news/` holds the voice labels that `community/` and `teams/` open.
+  - Per `docs/Style-Guide.md`, keep each bucket under ~9 distinct concerns; split it rather than letting it sprawl.
 - `src/app/manager-dashboard/` — admin surfaces (sync, fetch, AI configuration, reports, requests, certifications). AI provider keys/models are read from the CouchDB `configurations` database; do not hardcode them.
 - `gateway/` — standalone Express + WebSocket gateway with internal `chatapi` and `public` modules. It serves chat on the existing `/ml/` namespace and scoped public operations on `/api/`. Credentials/models come from the CouchDB `configurations` doc, not env vars.
 - `design/` — CouchDB design documents (map/reduce views). Edit the per-db `.js` files and re-run `scripts/couchdb-setup.sh` to upload.
 - `docker/` — Dockerfiles for `planet` (nginx + built Angular bundle), `gateway`, and `db-init`. `docker/planet/default.conf.template` and `docker/planet/scripts/` drive the production entrypoint.
 - `scripts/` — project maintenance helpers: local dev environment templating (`dev-env.sh`), i18n catalog normalization (`i18n-normalize.mjs`), and CouchDB bootstrap (`couchdb-setup.sh`).
-- `docs/` — developer documentation (`Style-Guide.md`); `CONTRIBUTING.md` lives in `.github/`.
+- `docs/` — developer documentation (`Style-Guide.md`, `AGENT_SPELLBOOK.md`); `CONTRIBUTING.md` lives in `.github/`.
 - `src/environments/` — `environment.ts` (local dev), `environment.dev.ts` (generated by `scripts/dev-env.sh`, git-ignored), `environment.test.ts`, `environment.prod.ts`, plus the `environment.template` consumed by `scripts/dev-env.sh`.
 - `src/i18n/messages.*.xlf` — translation catalogs; do not edit by hand outside a normal i18n workflow. Use `npm run i18n:extract` to update the source catalog and normalize location metadata. Use `npm run i18n:normalize` to remove source file and line number metadata from existing catalogs. Use `npm run i18n:check` to validate extraction without changing committed files. Catalogs use Angular's current decimal message IDs.
 
@@ -65,4 +74,10 @@ From `docs/Style-Guide.md` (read it before making UI changes):
 
 ### Git workflow
 
-Develop on feature branches off `master`; the project asks for two positive reviews before merging. Install hooks (`npm run install-hooks`) so `pre-push` runs lint in both `./` and `gateway/`.
+Develop on feature branches off `master`; the project asks for two positive reviews before merging. Install hooks (`npm run install-hooks`) so `pre-push` enforces lint in both `./` and `gateway/`.
+
+PR titles follow the house style `scope: smoother thing doing (fixes #N)` (see the log; the `merge-prepping` skill below automates this). `(fixes #N)` goes in the **title** — the squash commit message is the PR title, so that's what auto-closes the issue on merge.
+
+## The Agent Spellbook
+
+`docs/AGENT_SPELLBOOK.md` is the reference for working with the other AI agents on PRs (coderabbitai, codex, copilot, devin, openhands, the `jules` label, dependabot): the Grid of who answers how, the **Laws of Summoning** — read them before mentioning any agent handle — and "The Skill Sync", which covers how the shared agent skills under `.agents/skills/` are wired up and maintained. Skill repos are git submodules, **not** initialized on a default clone or `actions/checkout` — run `git submodule update --init --recursive` before reading anything under `.agents/skills/`. Current skills: **merge-prepping** (PR titles into the house style above; source: https://github.com/dogi/merge-prepping), a submodule under `.agents/skills/`; and **branch-overtaking** (taking over an existing branch and its PR; source: https://github.com/dogi/branch-overtaking), registered for Claude Code only in `.claude/settings.json` with no submodule, so nothing under `.agents/skills/` carries it.

@@ -1,20 +1,12 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject } from 'rxjs';
-import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
-import { CoursesService } from '../courses.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { trackByIndex } from '../../shared/table-helpers';
+import { Subject, defer } from 'rxjs';
+import { takeUntil, switchMap, take, filter, map, finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
-import { CoursesViewDetailComponent } from './courses-view-detail.component';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
@@ -22,17 +14,29 @@ import {
   MatExpansionPanelDescription,
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
+import { MatDialog } from '@angular/material/dialog';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { trackByIndex } from '@shared/tables/table.helpers';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+
+import { CoursesService } from '../courses.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
+import { CoursesViewDetailComponent } from './courses-view-detail.component';
 import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './courses-view.component.html',
   styleUrls: ['courses-view.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     NgTemplateOutlet,
     MatIconButton,
@@ -51,6 +55,7 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatExpansionPanelActionRow,
     ResourcesMenuComponent,
     MatAnchor,
+    RouterLink,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
   ]
@@ -70,12 +75,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
-  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
-
   constructor(
     private router: Router,
     private userService: UserService,
@@ -83,12 +87,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -104,9 +106,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
-        this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
-          this.courseDetail.creator !== undefined &&
-          (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
+        this.canManage = this.coursesService.canManageCourse(this.courseDetail, { readOnly: this.parent });
         return this.stateService.getCouchState('exams', 'local');
       }),
       takeUntil(this.onDestroy$)
@@ -114,6 +114,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
       this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
     }, () => this.isLoading = false);
+    this.coursesService.courseTagsListener$(this.parent).pipe(
+      filter(({ courseId }) => courseId === this.courseDetail._id),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
@@ -163,9 +167,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    const latestStep = this.progress.reduce((stepNum, prog) => {
-      return prog.stepNum > stepNum ? prog.stepNum : stepNum;
-    }, 1);
+    const latestStep = this.progress.reduce((stepNum, prog) => prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
     this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
   }
 
@@ -188,12 +190,12 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  previewButtonClick(step: any, stepNum: any): void {
+  previewButtonClick(step: any, stepNum: any, previewTrigger: MatMenuTrigger): void {
     const stepType = this.coursesService.stepHasExamSurveyBoth(step);
     if (stepType === 'both' || stepType === undefined) {
       return;
     }
-    this.previewButton.closeMenu();
+    previewTrigger.closeMenu();
     if (stepType === 'exam') {
       this.goToExam(step, stepNum, true);
     }
@@ -212,8 +214,29 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   courseToggle(courseId, type) {
     const courseTitle = this.courseDetail.courseTitle;
-    this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
-      this.isUserEnrolled = !this.isUserEnrolled;
+    if (type === 'resign') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'leave',
+          type: 'course',
+          displayName: courseTitle,
+          okClick: {
+            request: defer(() => this.coursesService.courseResignAdmission(courseId, type, courseTitle)),
+            onNext: () => {
+              this.isUserEnrolled = false;
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
+    this.dialogsLoadingService.start();
+    this.coursesService.courseResignAdmission(courseId, type, courseTitle).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
+      this.isUserEnrolled = true;
     }, (error) => ((error)));
   }
 

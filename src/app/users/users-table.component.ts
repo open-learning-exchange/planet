@@ -10,26 +10,29 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
-} from '../shared/table-helpers';
-import { UserService } from '../shared/user.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UsersService } from './users.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+
+import {
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
+} from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
+
+import { UsersService } from './users.service';
+import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -83,26 +86,26 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   set search(newSearch: string) {
     this.usersTable.filter = newSearch || ' ';
   }
-  private _filter: { 'doc.roles': string, 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
+  #filter: { 'doc.roles': string, 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
   @Input()
   get filter() {
-    return this._filter;
+    return this.#filter;
   }
   set filter(newFilter) {
     // Trigger filter changes in the Material table
     this.usersTable.filter = this.usersTable.filter;
-    this._filter = newFilter;
+    this.#filter = newFilter;
   }
-  private _tableState: TableState;
+  #tableState: TableState;
   @Input()
   get tableState(): TableState {
-    return this._tableState;
+    return this.#tableState;
   }
   set tableState(newState: TableState) {
     this.filter['doc.planetCode'] = newState.selectedChild.code ||
       (newState.filterType === 'associated' ? undefined : this.configuration.code);
     this.filterType = newState.filterType;
-    this._tableState = newState;
+    this.#tableState = newState;
   }
   get tableData() {
     return this.usersTable;
@@ -119,17 +122,17 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   selection = new SelectionModel(true, [], true,
     (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
   );
-  renderedData: any[] = [];
+  pageSelection = new PaginatedSelection(this.selection, { selectValue: (row: any) => row.doc, keepAcrossPages: true });
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
-  deleteDialog: MatDialogRef<DialogsPromptComponent>;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  promptDialog: MatDialogRef<DialogsPromptComponent>;
+  readonly isMobile = this.deviceInfoService.isMobile;
   trackById = trackById;
 
   constructor(
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private userService: UserService,
     private usersService: UsersService,
     private router: Router,
@@ -137,12 +140,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -159,8 +157,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
     this.usersTable.filterPredicate = this.filterPredicate();
-    this.usersTable.connect().subscribe(data => {
-      this.renderedData = data;
+    this.pageSelection.connect(this.usersTable, this.onDestroy$);
+    this.usersTable.connect().pipe(takeUntil(this.onDestroy$)).subscribe(data => {
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
@@ -187,34 +185,21 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersTable.paginator = this.paginator;
   }
 
-  isAllSelected() {
-    return this.renderedData.length > 0 && this.renderedData.every((row: any) => this.selection.isSelected(row.doc));
-  }
-
   onlyManagerSelected() {
     return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.renderedData.forEach((row: any) => this.selection.deselect(row.doc));
-    } else {
-      this.renderedData.forEach((row: any) => {
-        if (!this.selection.isSelected(row.doc)) {
-          this.selection.select(row.doc);
-        }
-      });
+  gotoProfileView(userName: string, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
     }
-  }
-
-  gotoProfileView(userName: string) {
     if (this.isDialog) {
       return;
     }
     if (this.shouldOpenProfileDialog) {
       const code = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : null;
-      this.dialog.open(UserProfileDialogComponent, { data: { member: { name: userName, userPlanetCode: code } }, autoFocus: false });
+      this.usersProfileDialogService.open({ member: { name: userName, userPlanetCode: code } });
       return;
     }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
@@ -232,22 +217,57 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   deleteClick(user, event) {
     event.stopPropagation();
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+    this.openUserPrompt({
+      user,
+      changeType: 'delete',
+      extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : '',
+      request: () => this.usersService.deleteUser(user),
+      onSuccess: () => this.planetMessageService.showMessage($localize`User deleted: ${user.name}`),
+      errorMessage: $localize`There was a problem deleting this user.`
+    });
+  }
+
+  deactivateClick(user: any, event: Event) {
+    event.stopPropagation();
+    this.openUserPrompt({
+      user,
+      changeType: 'deactivate',
+      extraMessage: $localize`Deactivating will remove all active roles for this user.`,
+      request: () => this.usersService.setRoles(user, []),
+      onSuccess: () => {
+        this.usersService.requestUsers(true);
+        this.planetMessageService.showMessage($localize`User deactivated: ${user.name}`);
+      },
+      errorMessage: $localize`There was an error deactivating user.`
+    });
+  }
+
+  private openUserPrompt({ user, changeType, extraMessage, request, onSuccess, errorMessage }: {
+    user: any;
+    changeType: string;
+    extraMessage: string;
+    request: () => Observable<any>;
+    onSuccess: () => void;
+    errorMessage: string;
+  }) {
+    this.promptDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.usersService.deleteUser(user),
+          // Deferred so the request reads the user doc when OK is clicked rather than when the dialog opens
+          request: defer(request),
           onNext: () => {
             this.selection.deselect(user);
-            this.planetMessageService.showMessage($localize`User deleted: ${user.name}`);
-            this.deleteDialog.close();
+            onSuccess();
+            this.promptDialog.close();
           },
-          onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this user.`)
+          onError: () => this.planetMessageService.showAlert(errorMessage)
         },
         amount: 'single',
-        changeType: 'delete',
+        changeType,
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : ''
+        extraMessage,
+        extraMessageType: 'supplementary'
       }
     });
   }

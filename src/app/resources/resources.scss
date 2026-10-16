@@ -1,15 +1,7 @@
-@use '../variables' as v;
-@use './resources-shared' as r;
+@use '../mixins' as m;
 
 .resources-list {
-  .mat-column-select {
-    max-width: 68px;
-    padding: 0 0 0 24px;
-  }
-
-  .mat-column-tags {
-    max-width: 125px;
-  }
+  @include m.search-toolbar;
 
   .mat-column-title {
     padding: 0;
@@ -19,21 +11,9 @@
     padding-left: 24px;
   }
 
-  .mat-column-createdDate {
-    max-width: 125px;
-  }
-
   .mat-mdc-progress-bar {
     height: 10px;
     width: 120px;
-  }
-
-  .search-bar {
-    height: r.$toolbar-height;
-  }
-
-  .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{r.$toolbar-height});
   }
 
   .mat-mdc-button, .mat-mdc-outlined-button {
@@ -54,6 +34,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  planet-resources-search {
+    @include m.search-filters('planet-resources-search-list');
+  }
 }
 
 .list-content-menu .header {
@@ -69,10 +53,6 @@
   text-align: center;
 }
 
-planet-resources {
-  @media(max-width: v.$screen-md) {
-    .resources-list .mat-column-createdDate {
-      max-width: 100px;
-    }
-  }
+.filter-dialog planet-resources-search {
+  @include m.search-filters-stacked('planet-resources-search-list');
 }

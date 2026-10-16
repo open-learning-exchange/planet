@@ -3,7 +3,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DialogsLoadingComponent } from './dialogs-loading.component';
 
 @Injectable({
-  'providedIn': 'root'
+  providedIn: 'root'
 })
 export class DialogsLoadingService {
 
@@ -19,8 +19,16 @@ export class DialogsLoadingService {
     this.requestCount++;
     if (!this.isSpinnerOn) {
       this.isSpinnerOn = true;
-      this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
+      const spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
         disableClose: true
+      });
+      this.spinnerDialog = spinnerDialog;
+      // Back and forward close every dialog, this one included: forget its count so the next start() reopens it. Requests keep running
+      spinnerDialog.afterClosed().subscribe(() => {
+        if (this.spinnerDialog === spinnerDialog && this.isSpinnerOn) {
+          this.isSpinnerOn = false;
+          this.requestCount = 0;
+        }
       });
     }
   }

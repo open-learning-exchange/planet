@@ -5,14 +5,16 @@
   <span i18n>Certifications</span>
   <span class="toolbar-fill"></span>
 
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (deviceType() === deviceTypes.DESKTOP) {
     <div class="toolbar-search">
       <mat-icon>search</mat-icon>
       <mat-form-field subscriptSizing="dynamic" class="font-size-1">
         <mat-label i18n>Type certification name to search</mat-label>
         <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
+        <button type="button" mat-icon-button matSuffix (click)="resetSearch()" [style.visibility]="certifications.filter ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
       </mat-form-field>
-      <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
     </div>
   } @else {
     <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow"><mat-icon>filter_list</mat-icon></button>
@@ -20,7 +22,7 @@
 
 </mat-toolbar>
 
-@if (showFiltersRow && deviceType !== deviceTypes.DESKTOP) {
+@if (showFiltersRow && deviceType() !== deviceTypes.DESKTOP) {
   <mat-toolbar>
     <mat-toolbar-row>
       <div class="toolbar-search">
@@ -28,8 +30,10 @@
         <mat-form-field subscriptSizing="dynamic" class="font-size-1">
           <mat-label i18n>Type certification name to search</mat-label>
           <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
+          <button type="button" mat-icon-button matSuffix (click)="resetSearch()" [style.visibility]="certifications.filter ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>

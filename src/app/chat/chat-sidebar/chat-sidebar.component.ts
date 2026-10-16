@@ -3,29 +3,31 @@ import { NonNullableFormBuilder, FormGroup, Validators, FormControl, FormsModule
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
-import { Conversation, AIProvider } from '../chat.model';
-import { ChatService } from '../../shared/chat.service';
-import { CouchService } from '../../shared/couchdb.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-share.component';
-import { SearchService } from '../../shared/forms/search.service';
-import { showFormErrors, trackById } from '../../shared/table-helpers';
-import { UserService } from '../../shared/user.service';
 import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { SearchService } from '@shared/search/search.service';
+import { fuzzyWordMatch } from '@shared/search/fuzzy-search';
+import { showFormErrors, trackById } from '@shared/tables/table.helpers';
+import { UserService } from '@shared/auth/user.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { Conversation, AIProvider } from '../chat.model';
+import { ChatShareDialogComponent } from '../chat-share-dialog.component';
 import { ChatWindowComponent } from '../chat-window/chat-window.component';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 interface TitleForm {
   title: FormControl<string>;
@@ -43,6 +45,7 @@ interface TitleForm {
     MatMiniFabButton,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatIconButton,
@@ -64,12 +67,12 @@ interface TitleForm {
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch.trim();
+    return this.#titleSearch.trim();
   }
   set titleSearch(value: string) {
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
     this.filterConversations();
   }
@@ -82,14 +85,15 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   fullTextSearch = false;
   searchType: 'questions' | 'responses' | null = null;
   overlayOpen = false;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: Record<string, FormGroup<TitleForm>> = {};
   trackByFn = trackById;
   isLoading = true;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
@@ -97,9 +101,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private userService: UserService
   ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
     this.lastRenderedConversation = -1;
   }
 
@@ -165,7 +166,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       this.dbName, {
         ...conversation,
         title: title !== undefined && title !== null ? title : conversation.title,
-        shared: shared,
+        shared,
         updatedDate: this.couchService.datePlaceholder
       }
     ).subscribe((data) => {
@@ -235,8 +236,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     }
     const currentProvider = this.chatService.getChatAIProvider();
     this.chatService.setSelectedConversationId({
-      '_id': conversation?._id,
-      '_rev': conversation?._rev
+      _id: conversation?._id,
+      _rev: conversation?._rev
     });
     this.onConversationRender(index);
   }
@@ -260,7 +261,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   recordSearch(complete = false) {
     this.searchService.recordSearch({
       type: this.dbName,
-      filter: { 'title': this.titleSearch }
+      filter: { title: this.titleSearch }
     }, complete);
   }
 
@@ -274,7 +275,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   filterByTitle(conversation: Conversation): boolean {
-    return this.matchesSearchTerm(conversation.title, this.titleSearch);
+    return fuzzyWordMatch(this.titleSearch, conversation.title ?? '');
   }
 
   filterByFullText(conversation: Conversation): boolean {
@@ -304,7 +305,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   openShareDialog(conversation) {
-    const dialogRef = this.dialog.open(DialogsChatShareComponent, {
+    const dialogRef = this.dialog.open(ChatShareDialogComponent, {
       width: '50vw',
       maxHeight: '90vh',
       data: {

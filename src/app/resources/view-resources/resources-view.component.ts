@@ -1,25 +1,33 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { UserService } from '../../shared/user.service';
-import { ResourcesService } from '../resources.service';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { languages } from '../../shared/languages';
-import * as constants from '../resources-constants';
+import { takeUntil, finalize } from 'rxjs/operators';
+import { Subject, defer } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
-import { TdMarkdownComponent } from '@covalent/markdown';
-import { LanguageLabelComponent } from '../../shared/language-label.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { languages } from '@shared/language/languages';
+import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+
+import { environment } from '../../../environments/environment';
+import { ResourcesService } from '../resources.service';
+import * as constants from '../resources.constants';
 import { ResourcesViewerComponent } from './resources-viewer.component';
+import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../resources.utils';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -28,15 +36,17 @@ import { ResourcesViewerComponent } from './resources-viewer.component';
     MatToolbar,
     MatIconAnchor,
     MatIcon,
+    MatTooltip,
     NgTemplateOutlet,
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
+    MatMenuItem,
     MatButton,
     MatAnchor,
     NgClass,
     PlanetRatingComponent,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     LanguageLabelComponent,
     PlanetLoadingSpinnerComponent,
     ResourcesViewerComponent
@@ -52,6 +62,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   mediaType = '';
   resourceSrc = '';
+  formattedFileSize = '';
+  downloadFileSize = '';
   pdfSrc: any;
   contentType = '';
   isUserEnrolled = false;
@@ -71,7 +83,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceId: string;
   constantsOptions = constants;
   languageOptions = languages;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
@@ -81,12 +94,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog,
+    private linkCopyService: LinkCopyService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -105,8 +117,13 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           }
           this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
           this.router.navigate([ '/resources' ]);
+          this.isLoading = false;
+          return;
         }
         this.isLoading = false;
+        const attachmentCount = Object.keys(this.resource.doc?._attachments || {}).length;
+        this.formattedFileSize = attachmentCount > 1 ? formatResourceAttachmentsSize(this.resource.doc) : '';
+        this.downloadFileSize = formatResourceAttachmentSize(this.resource.doc);
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
@@ -131,9 +148,40 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   libraryToggle(resourceId, type) {
-    this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
+    if (type === 'remove') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'remove',
+          type: 'resource',
+          displayName: this.resource?.doc?.title || '',
+          okClick: {
+            request: defer(() => this.resourcesService.libraryAddRemove([ resourceId ], type)),
+            onNext: () => {
+              this.isUserEnrolled = !this.isUserEnrolled;
+              dialogRef.close();
+            },
+            onError: () => this.planetMessageService.showAlert($localize`There was a problem removing this resource from myLibrary.`)
+          }
+        }
+      });
+      return;
+    }
+    this.dialogsLoadingService.start();
+    this.resourcesService.libraryAddRemove([ resourceId ], type).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
-    }, (error) => ((error)));
+    }, () => this.planetMessageService.showAlert($localize`There was a problem adding this resource to myLibrary.`));
+  }
+
+  copyLink() {
+    this.linkCopyService.copyLink(
+      [ '/resources/view', this.resourceId ],
+      {
+        success: $localize`Resource link copied to clipboard`,
+        failure: $localize`Failed to copy resource link`
+      }
+    );
   }
 
   updateResource() {

@@ -1,0 +1,65 @@
+@use "../../variables" as v;
+
+.container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.card {
+  width: 95%;
+  margin: 0 auto;
+}
+
+mat-list-item.mat-mdc-list-item {
+  overflow: visible;
+  height: auto;
+}
+
+.list-item-content {
+  display: grid;
+  grid-template-columns: 1.5fr 4fr;
+  width: 100%;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.update-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.update-button-container button {
+  width: auto;
+  margin-left: 0;
+}
+
+.instructions {
+  padding: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.hint {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 8px;
+}
+
+@media (max-width: v.$screen-md) {
+  .list-item-content {
+    gap: 10px;
+  }
+}
+
+@media (max-width: v.$screen-sm) {
+  .list-item-content {
+    align-items: center;
+  }
+}

@@ -2,89 +2,67 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
-import { CovalentMarkdownModule } from '@covalent/markdown';
 
-import { PlanetLocalStatusComponent } from './planet-local-status.component';
+import { PlanetLocalStatusComponent } from '@shared/database/planet-local-status.component';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { LowercaseDirective } from '@shared/forms/lowercase.directive';
+import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
+import { PlanetFilteredAmountComponent } from '@shared/tables/planet-filtered-amount.component';
+import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { LabelComponent } from '@shared/ui/label.component';
+import { AvatarComponent } from '@shared/ui/avatar.component';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
+import { RestrictDiacriticsDirective } from '@shared/forms/restrict-diacritics.directive';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
 import { MaterialModule } from './material.module';
-import { SubmitDirective } from './submit.directive';
-import { LowercaseDirective } from '../shared/lowercase.directive';
-import { PlanetLanguageComponent } from './planet-language.component';
-import { ResourcesMenuComponent } from '../resources/view-resources/resources-menu.component';
-import { AuthorizedRolesDirective } from './authorized-roles.directive';
-import { PlanetBetaDirective } from './beta.directive';
-import { FilteredAmountComponent } from './planet-filtered-amount.component';
-import { TasksComponent, FilterAssigneePipe, AssigneeNamePipe } from '../tasks/tasks.component';
-import { PlanetRoleComponent } from './planet-role.component';
-import { PlanetMarkdownComponent } from './planet-markdown.component';
-import { CommunityListComponent } from '../community/community-list.component';
-import { LabelComponent } from './label.component';
-import { TimePipe } from '../manager-dashboard/reports/time.pipe';
-import { AvatarComponent } from './avatar.component';
-import { LanguageLabelComponent } from './language-label.component';
-import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
-import { ChatOutputDirective } from './chat-output.directive';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { TimeAgoPipe } from '../shared/time-ago.pipe';
-import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.component';
-import { PreviewOverflowDirective } from './preview-overflow.directive';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, CovalentMarkdownModule, RouterModule,
+    CommonModule, MaterialModule, RouterModule,
     PlanetLoadingSpinnerComponent,
     PlanetLocalStatusComponent,
     SubmitDirective,
     PlanetLanguageComponent,
-    ResourcesMenuComponent,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
-    TasksComponent,
-    FilterAssigneePipe,
-    AssigneeNamePipe,
+    PlanetFilteredAmountComponent,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
-    CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
-    TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    ChatOutputDirective,
     TruncateTextPipe,
-    TimeAgoPipe,
-    PreviewOverflowDirective
+    FullNamePipe,
+    TimeAgoPipe
   ],
   exports: [
     PlanetLocalStatusComponent,
     PlanetLoadingSpinnerComponent,
     SubmitDirective,
     PlanetLanguageComponent,
-    ResourcesMenuComponent,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
-    TasksComponent,
-    FilterAssigneePipe,
-    AssigneeNamePipe,
+    PlanetFilteredAmountComponent,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
-    CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
-    TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    ChatOutputDirective,
     OverlayModule,
     TruncateTextPipe,
-    TimeAgoPipe,
-    PreviewOverflowDirective
-  ],
-  providers: [
-    TimePipe
+    FullNamePipe,
+    TimeAgoPipe
   ]
 })
 export class SharedComponentsModule {}

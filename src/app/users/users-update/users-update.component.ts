@@ -6,35 +6,36 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
-import { FileUploadComponent } from '../../shared/forms/file-upload.component';
-import { UserService } from '../../shared/user.service';
-import { environment } from '../../../environments/environment';
-import { languages } from '../../shared/languages';
-import { CustomValidators } from '../../validators/custom-validators';
-import { StateService } from '../../shared/state.service';
-import { ValidatorService } from '../../validators/validator.service';
-import { showFormErrors } from '../../shared/table-helpers';
-import { educationLevel } from '../user-constants';
-import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes.component';
-import { CouchService } from '../../shared/couchdb.service';
-import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 import { MatToolbar } from '@angular/material/toolbar';
-
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError, MatSuffix, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
-import { SubmitDirective } from '../../shared/submit.directive';
 import { CdkScrollable } from '@angular/cdk/scrolling';
+
+import { FileUploadComponent } from '@shared/forms/file-upload.component';
+import { UserService } from '@shared/auth/user.service';
+import { languages } from '@shared/language/languages';
+import { StateService } from '@shared/state.service';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { CouchService } from '@shared/database/couchdb.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-validator.directive';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
+
+import { environment } from '../../../environments/environment';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
+import { educationLevel } from '../users.constants';
+import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 
 interface UsersUpdateFormGroup {
   firstName: FormControl<string>;
@@ -258,11 +259,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     // Alter between two possible keys for image element to ensure database updates
     const imgKey: string = this.currentImgKey === 'img' ? 'img_' : 'img';
     attachments[imgKey] = {
-      'content_type': contentType,
-      'data': data
+      content_type: contentType,
+      data
     };
 
-    return { '_attachments': attachments };
+    return { _attachments: attachments };
   }
 
   goBack() {
@@ -326,9 +327,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   appendToSurvey(user: SubmissionUserPayload) {
     const submissionId = this.route.snapshot.params.id;
-    this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
-      return this.couchService.put('submissions/' + submissionId, { ...submission, user });
-    })).subscribe(() => {
+    this.couchService.get('submissions/' + submissionId).pipe(
+      switchMap((submission) => this.couchService.put('submissions/' + submissionId, { ...submission, user }))
+    ).subscribe(() => {
       this.avatarChanged = false;
       this.initialFormValues = { ...this.editForm.getRawValue() };
       this.hasUnsavedChanges = false;

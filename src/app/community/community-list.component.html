@@ -16,7 +16,7 @@
           <span matListItemTitle>{{planet.nameDoc?.name || planet.doc.name}}</span>
           @if (!selectMode) {
             <div class="action-buttons" matListItemMeta>
-              <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code" i18n>View Exchange</a>
+              <a mat-raised-button color="primary" [routerLink]="[ '/community', planet.doc.code ]" i18n>View Exchange</a>
               <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]" i18n>
           View Report
         </a>
@@ -35,7 +35,7 @@
           <span matListItemTitle>{{planet.nameDoc?.name || planet.doc.name}}</span>
           @if (!selectMode) {
             <div class="action-buttons" matListItemMeta>
-              <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code" i18n>View Exchange</a>
+              <a mat-raised-button color="primary" [routerLink]="[ '/community', planet.doc.code ]" i18n>View Exchange</a>
               <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]" i18n>
           View Report
         </a>

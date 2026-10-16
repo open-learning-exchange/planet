@@ -1,23 +1,24 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { filterDropdowns } from '../shared/table-helpers';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationsService } from './notifications.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-import { NgClass, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { filterDropdowns } from '@shared/tables/table.helpers';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+
+import { NotificationsService, notificationUserFilter } from './notifications.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -33,7 +34,6 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     MatColumnDef,
     MatCellDef,
     MatCell,
-    NgClass,
     RouterLink,
     MatRowDef,
     MatRow,
@@ -42,7 +42,7 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     DatePipe
   ]
 })
-export class NotificationsComponent implements OnInit, AfterViewInit {
+export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
@@ -52,7 +52,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     { value: 'read', label: $localize`Read` },
     { value: 'unread', label: $localize`Unread` }
   ];
-  filter = { 'status': '' };
+  filter = { status: '' };
   anyUnread = true;
 
   constructor(
@@ -76,20 +76,20 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     this.notifications.paginator = this.paginator;
   }
 
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   getNotifications() {
-    const userFilter = [ {
-      'user': 'org.couchdb.user:' + this.userService.get().name
-    } ];
-    if (this.userService.get().isUserAdmin) {
-      userFilter.push({ 'user': 'SYSTEM' });
-    }
-    this.couchService.findAll('notifications/_find', findDocuments(
-      { '$or': userFilter,
+    const userFilter = notificationUserFilter(this.userService.get());
+    this.couchService.findAll('notifications', findDocuments(
+      { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
-        'time': { '$gt': 0 }
+        time: { $gt: 0 }
       },
       0,
-      [ { 'time': 'desc' } ]))
+      [ { time: 'desc' } ]))
       .subscribe(notifications => {
         this.notifications.data = notifications;
         this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
@@ -102,7 +102,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   readNotification(notification) {
-    const updateNotificaton = { ...notification, 'status': 'read' };
+    const updateNotificaton = { ...notification, status: 'read' };
     if (notification.status === 'unread') {
       this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
         this.notifications.data = this.notifications.data.map((n: any) => {
@@ -120,12 +120,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     this.notificationsService.setNotificationsAsRead(this.notifications.data);
   }
 
-  openAnnouncementDialog(notification?: any) {
-    const challenge = notification ?
-      this.challengesService.getChallengeForNotification(notification) :
-      this.challengesService.getActiveChallenge();
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+  openAnnouncementDialog(notification: any) {
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getChallengeForNotification(notification))
+      .pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 }
