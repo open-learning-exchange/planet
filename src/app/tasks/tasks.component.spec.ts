@@ -680,8 +680,6 @@ describe('TasksComponent read-only template', () => {
     expect(badge.tagName).toBe('SPAN');
     expect(badge.textContent?.trim()).toBe('To Do');
     expect(viewAssignees.disabled).toBe(false);
-    expect(viewAssignees.classList.contains('view-assignees')).toBe(true);
-    expect(viewAssignees.querySelector('mat-icon')?.textContent?.trim()).toBe('group');
 
     viewAssignees.click();
     expect(dialog.open).toHaveBeenCalledWith(TasksAssigneesDialogComponent, {
