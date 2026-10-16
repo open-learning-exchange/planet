@@ -20,6 +20,13 @@ planet-tasks {
       max-width: 100%;
     }
 
+    .view-assignees.mat-mdc-icon-button {
+      --mat-icon-button-state-layer-size: 40px;
+      padding: 8px;
+      background-color: v.$light-grey;
+      color: v.$grey-text;
+    }
+
     .task-title {
       overflow: hidden;
       text-overflow: ellipsis;
