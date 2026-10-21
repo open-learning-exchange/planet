@@ -13,58 +13,37 @@
   align-items: flex-start;
   gap: 8px;
   flex-wrap: wrap;
-  background: v.$white;
-  border: 1px solid v.$medium-grey;
-  border-radius: 8px;
-  padding: 10px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 
   .spacer {
     flex: 1 1 auto;
   }
-  .reports-count {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: v.$grey-text;
-    white-space: nowrap;
-    margin-top: 18px;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
-  }
   .reports-date-field {
-    width: 190px;
-    flex: 0 0 190px;
+    width: 220px;
+    flex: 0 0 220px;
   }
   .reports-label-field {
-    width: 220px;
-    flex: 0 1 240px;
-    min-width: 180px;
+    flex: 1 1 180px;
+    min-width: 0;
+    max-width: 280px;
   }
   .reports-reset-btn {
     align-self: flex-start;
     margin-top: 12px;
   }
+}
 
-  button[mat-stroked-button],
-  button[mat-raised-button] {
-    margin-top: 12px;
-  }
+.reports-count {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  color: v.$grey-text;
+  white-space: nowrap;
 
-  @media (max-width: v.$screen-xs) {
-    position: static;
-
-    .reports-date-field,
-    .reports-label-field {
-      width: 100%;
-      flex: 1 1 100%;
-    }
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 }
 

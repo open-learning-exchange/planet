@@ -5,12 +5,8 @@
 @if (!isLoading) {
   <div class="reports-container">
     <div class="reports-toolbar">
-      <span class="reports-count">
-        <mat-icon>description</mat-icon>
-        <span><strong>{{ filteredCards.length }}</strong>&nbsp;<ng-container i18n>reports</ng-container></span>
-      </span>
       @if (reportCards.length > 0 || hasActiveFilters) {
-        <mat-form-field appearance="outline" subscriptSizing="fixed" class="reports-date-field">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="reports-date-field">
           <mat-label i18n>Start date</mat-label>
           <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="applyFilters()" [max]="endDate">
           <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
@@ -19,13 +15,13 @@
             <mat-error i18n>Start date must be before end date</mat-error>
           }
         </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="fixed" class="reports-date-field">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="reports-date-field">
           <mat-label i18n>End date</mat-label>
           <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="applyFilters()" [min]="startDate">
           <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
           <mat-datepicker #dateFilterEnd></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="fixed" class="reports-label-field font-size-1">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="reports-label-field font-size-1">
           <mat-label i18n>Search by label...</mat-label>
           <mat-icon matPrefix>search</mat-icon>
           <input matInput [(ngModel)]="labelFilter" (ngModelChange)="applyFilters()">
@@ -67,6 +63,10 @@
       </div>
     }
     @if (filteredCards.length > 0) {
+      <span class="reports-count">
+        <mat-icon>description</mat-icon>
+        <span><strong>{{ filteredCards.length }}</strong>&nbsp;<ng-container i18n>reports</ng-container></span>
+      </span>
       <div class="reports-grid">
         @for (card of filteredCards; track trackByReport($index, card)) {
           <mat-card class="report-card"
