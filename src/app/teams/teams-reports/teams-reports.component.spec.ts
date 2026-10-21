@@ -243,6 +243,15 @@ describe('TeamsReportsComponent', () => {
       expect(data.map(row => row.Label)).toEqual([ 'Audit' ]);
       expect(title).toBe('Financial Summary for Team filtered by audti');
     });
+
+    it('leaves a missing date bound open in the PDF subtitle', () => {
+      component.startDate = new Date(2026, 9, 1);
+      expect(component['exportSubtitle']()).toBe('Date range: from Oct 1, 2026');
+
+      component.startDate = undefined;
+      component.endDate = new Date(2026, 9, 31);
+      expect(component['exportSubtitle']()).toBe('Date range: until Oct 31, 2026');
+    });
   });
 
   describe('label suggestions', () => {

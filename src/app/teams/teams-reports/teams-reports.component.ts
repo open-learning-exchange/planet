@@ -445,12 +445,15 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
   }
 
   private exportSubtitle() {
-    if (!this.startDate && !this.endDate) {
-      return '';
+    const start = this.startDate && formatDate(this.startDate, 'mediumDate', this.localeId);
+    const end = this.endDate && formatDate(this.endDate, 'mediumDate', this.localeId);
+    if (start && end) {
+      return $localize`Date range: ${start} - ${end}`;
     }
-    const start = this.startDate ? formatDate(this.startDate, 'mediumDate', this.localeId) : $localize`Beginning`;
-    const end = this.endDate ? formatDate(this.endDate, 'mediumDate', this.localeId) : $localize`Today`;
-    return $localize`Date range: ${start} - ${end}`;
+    if (start) {
+      return $localize`Date range: from ${start}`;
+    }
+    return end ? $localize`Date range: until ${end}` : '';
   }
 
   private receiptImageSections() {
