@@ -5,7 +5,7 @@
   <span i18n>Certifications</span>
   <span class="toolbar-fill"></span>
 
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (deviceType() === deviceTypes.DESKTOP) {
     <div class="toolbar-search">
       <mat-icon>search</mat-icon>
       <mat-form-field subscriptSizing="dynamic" class="font-size-1">
@@ -22,7 +22,7 @@
 
 </mat-toolbar>
 
-@if (showFiltersRow && deviceType !== deviceTypes.DESKTOP) {
+@if (showFiltersRow && deviceType() !== deviceTypes.DESKTOP) {
   <mat-toolbar>
     <mat-toolbar-row>
       <div class="toolbar-search">

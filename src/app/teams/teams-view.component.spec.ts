@@ -1,6 +1,8 @@
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
+
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+
 import { TeamsViewComponent } from './teams-view.component';
 
 describe('TeamsViewComponent task projections', () => {
@@ -62,5 +64,24 @@ describe('TeamsViewComponent task projections', () => {
     expect(dialogsLoadingService.start).toHaveBeenCalledTimes(1);
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
     expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('notifies members only when a join request is written', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    const sendNotifications = vi.fn(() => of({}));
+    component.team = { _id: 't1' };
+    component.user = { _id: 'alex' };
+    component.members = [];
+    component.getMembers = () => of([]);
+    component.sendNotifications = sendNotifications;
+    component.dialogsLoadingService = { stop: vi.fn() };
+
+    component.teamsService = { requestToJoinTeam: () => of(false) };
+    component.changeMembershipRequest('request')().subscribe();
+    expect(sendNotifications).not.toHaveBeenCalled();
+
+    component.teamsService = { requestToJoinTeam: () => of(true) };
+    component.changeMembershipRequest('request')().subscribe();
+    expect(sendNotifications).toHaveBeenCalledTimes(1);
   });
 });

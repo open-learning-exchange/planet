@@ -134,10 +134,6 @@
       }
     }
   }
-
-  .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{v.$search-filters-height});
-  }
 }
 
 @mixin label-chip {
@@ -145,4 +141,11 @@
   border-radius: 12px;
   background: v.$light-grey;
   font-weight: 600;
+}
+
+@mixin cover-thumbnail($size) {
+  width: $size;
+  height: $size;
+  border-radius: 4px;
+  object-fit: cover;
 }

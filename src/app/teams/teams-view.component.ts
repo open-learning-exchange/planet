@@ -4,49 +4,52 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError, distinctUntilChanged, skip } from 'rxjs/operators';
-import { CouchService } from '../shared/database/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/auth/user.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { TeamsService } from './teams.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { NewsService } from '../news/news.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { ReportsService } from '../manager-dashboard/reports/reports.service';
-import { StateService } from '../shared/state.service';
-import { ResourcesPickerDialogComponent } from '../resources/resources-picker-dialog.component';
-import { TablesAddDialogComponent } from '../shared/tables/tables-add-dialog.component';
-import { environment } from '../../environments/environment';
-import { TasksService } from '../tasks/tasks.service';
-import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
-import { CustomValidators } from '../validators/custom-validators';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
-import { PlanetLoadingSpinnerComponent } from '../shared/ui/planet-loading-spinner.component';
-import { NewsListComponent } from '../news/news-list.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
+import { MatTooltip } from '@angular/material/tooltip';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { PlanetCalendarComponent } from '@shared/calendar/planet-calendar.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { planetAndParentId } from '@shared/utils';
+
+import { TeamsService } from './teams.service';
+import { NewsService } from '../news/news.service';
+import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { ResourcesPickerDialogComponent } from '../resources/resources-picker-dialog.component';
+import { environment } from '../../environments/environment';
+import { TasksService } from '../tasks/tasks.service';
+import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
+import { CustomValidators } from '../validators/custom-validators';
+import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
+import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
+import { NewsListComponent } from '../news/news-list.component';
+import { TeamsMemberComponent } from './teams-member.component';
 import { TasksComponent } from '../tasks/tasks.component';
-import { PlanetCalendarComponent } from '../shared/calendar/planet-calendar.component';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
-import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetMarkdownComponent } from '../shared/markdown/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
-import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { ResourcesIconComponent } from '../resources/resources-icon.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { CustomVoiceLabel } from '../news/news.utils';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
@@ -107,7 +110,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogRef: MatDialogRef<TablesAddDialogComponent>;
   user = this.userService.get();
   news: any[] = [];
-  private readonly emptyVoiceLabels: string[] = [];
+  private readonly emptyVoiceLabels: CustomVoiceLabel[] = [];
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
@@ -129,7 +132,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reportsCount = 0;
   financesCount = 0;
   configuration = this.stateService.configuration;
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
 
   get requestBadgeDescription(): string {
@@ -155,11 +159,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private stateService: StateService,
     private tasksService: TasksService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
@@ -326,7 +326,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(requestDateCompare);
-      this.disableAddingMembers = this.members.length >= this.team.limit;
+      // Teams created on myPlanet are stored with a limit of 0, and the services directory has none
+      this.disableAddingMembers = this.team.limit > 0 && this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
       this.reports = docs.filter(doc => doc.docType === 'report');
@@ -375,7 +376,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.isUserLeader || canManageLocalTeams;
   }
 
-  get customVoiceLabels(): string[] {
+  get customVoiceLabels(): (string | CustomVoiceLabel)[] {
     return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
@@ -480,16 +481,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
       let membershipWriteCompleted = false;
+      let notify = true;
       return changeObject.obs.pipe(
         catchError(error => this.refreshMembersOnError(error)),
-        tap(() => {
+        tap((result) => {
           membershipWriteCompleted = true;
+          notify = type !== 'request' || result === true;
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ?
           this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
-        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
+        switchMap(() => notify ? this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] }) : of({})),
         map(() => changeObject.message),
         catchError(error => membershipWriteCompleted ?
           this.refreshMembersOnError(error) : throwError(error)),
@@ -605,10 +608,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.planetMessageService.showMessage(
-        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe({
+      next: (updatedTeam) => {
+        this.team = updatedTeam;
+        this.planetMessageService.showMessage(
+          (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      },
+      error: (err) => this.planetMessageService.showAlert(this.teamsService.saveErrorMessage(err))
     });
   }
 
@@ -721,7 +727,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       width: '500px',
       autoFocus: false,
       data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }
-    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+    }).afterClosed().subscribe((updatedLabels?: CustomVoiceLabel[]) => {
       if (updatedLabels) {
         this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }
@@ -807,6 +813,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       autoFocus: false
     });
+  }
+
+  coverImageUrl(): string {
+    return this.teamsService.coverImageUrl(this.team);
   }
 
 }

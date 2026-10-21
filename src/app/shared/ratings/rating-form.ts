@@ -1,5 +1,7 @@
-import { FormControl } from '@angular/forms';
-import { DialogField, DialogFormValueMap } from '../dialogs/dialogs-form.service';
+import { FormControl, FormGroup } from '@angular/forms';
+import { startWith } from 'rxjs/operators';
+
+import { DialogField, DialogFormValueMap } from '@shared/dialogs/dialogs-form.service';
 
 export const ratingFormFields: DialogField[] = [
   {
@@ -26,3 +28,6 @@ export interface RatingFormModel {
   rate: FormControl<number>;
   comment: FormControl<string>;
 }
+
+export const disableCommentWhenUnrated = ({ controls: { rate, comment } }: FormGroup<RatingFormModel>) =>
+  rate.valueChanges.pipe(startWith(rate.value)).subscribe(value => value > 0 ? comment.enable() : comment.disable());

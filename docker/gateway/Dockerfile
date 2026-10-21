@@ -1,6 +1,7 @@
-ARG IMAGE=treehouses/node:3.21
+ARG BASE_IMAGE
+ARG BUILD_IMAGE=treehouses/node:3.21
 
-FROM ${IMAGE} AS builder
+FROM --platform=$BUILDPLATFORM ${BUILD_IMAGE} AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 WORKDIR /
@@ -14,8 +15,9 @@ COPY ./gateway/tsconfig.json ./
 
 RUN npm run build
 RUN --mount=type=cache,id=npm-builder,target=/root/.npm npm prune --omit=dev
+RUN ! find node_modules -name '*.node' | grep .
 
-FROM ${IMAGE}
+FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 WORKDIR /

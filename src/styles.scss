@@ -416,7 +416,6 @@ body {
   }
 
   .view-container.view-full-height {
-    height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
 
@@ -425,8 +424,7 @@ body {
     }
   }
 
-  // Keep this path bounded so nested dialog and tab views retain their own sizing.
-  mat-sidenav-content > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height) {
+  :is(mat-sidenav-content, .mat-mdc-dialog-content) > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height, > * > .space-container > .view-full-height) {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -451,6 +449,10 @@ body {
       flex: 1 1 0;
       min-height: v.$view-container-min-height;
     }
+  }
+
+  .mat-mdc-dialog-content:has(> * > .view-full-height, > * > .space-container > .view-full-height, > * > .space-container > * > .view-full-height, > planet-resources-viewer :is(iframe, .csv-container)) {
+    height: 100vh;
   }
 
   .view-container.view-full-height.view-table {
@@ -588,15 +590,6 @@ body {
       justify-content: center;
     }
 
-    .preview-content {
-      height: 9rem;
-      overflow: hidden;
-    }
-
-    .preview-toggle {
-      text-align: center;
-    }
-
     .expanded-row .content {
       max-height: none;
     }
@@ -646,10 +639,6 @@ body {
     }
   }
 
-  .view-container.view-full-height.no-toolbar {
-    height: v.$view-container-height-no-toolbar;
-  }
-
   .form-width-3 {
     width: 550px;
   }
@@ -694,6 +683,23 @@ body {
 
   .fit-screen-dialog .mat-mdc-dialog-content {
     max-height: calc(90vh - 96px);
+  }
+
+  .cdk-overlay-pane.mat-mdc-dialog-panel {
+    max-height: var(--planet-vh);
+  }
+
+  @media (max-width: v.$screen-sm) {
+    .cdk-overlay-pane.mat-mdc-dialog-panel {
+      min-width: 0 !important;
+      max-width: calc(100vw - 32px) !important;
+    }
+  }
+
+  @media (max-width: v.$screen-xs) {
+    .cdk-overlay-pane.mat-mdc-dialog-panel {
+      width: calc(100vw - 32px) !important;
+    }
   }
 
   mat-row mat-cell {
@@ -817,6 +823,13 @@ body {
     background-color: v.$light-grey;
   }
 
+  @each $key, $color in v.$label-colors {
+    .label-color-#{$key},
+    .mat-mdc-chip.label-color-#{$key} {
+      background-color: $color;
+    }
+  }
+
   .form-container {
     width: calc(#{v.$form-width-3} + 20px);
   }
@@ -881,11 +894,12 @@ body {
 
   @media only screen and (max-width: v.$screen-sm) {
     .form-container {
-      width: calc(#{v.$form-width-1} + 20px);
+      width: 100%;
     }
 
     .form-spacing {
-      width: v.$form-width-1;
+      width: 100%;
+      grid-template-columns: 1fr;
     }
   }
 

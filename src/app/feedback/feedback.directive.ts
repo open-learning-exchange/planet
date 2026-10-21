@@ -1,19 +1,22 @@
 import { Directive, HostListener, Input } from '@angular/core';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
 import { Validators } from '@angular/forms';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
+import { defer, Observable, of } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs/operators';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { AuthGuard } from '@shared/auth/auth.guard';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { PendingAttachment } from '@shared/forms/file-upload.component';
+import { normalizeImage, withImageAttachments } from '@shared/utils';
+
 import { FeedbackService } from './feedback.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { AuthGuard } from '../shared/auth/auth.guard';
-import { from, Observable, of } from 'rxjs';
-import { catchError, concatMap, filter, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { PendingAttachment } from '../shared/forms/file-upload.component';
-import { couchAttachmentPath, NormalizedImage, normalizeImage } from '../shared/utils';
 import {
   FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_SCREENSHOT_TYPES, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
   normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
@@ -92,7 +95,8 @@ export class FeedbackDirective {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private authGuard: AuthGuard,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialogGuard: DialogGuardService
   ) {}
 
   addFeedback(post: any) {
@@ -165,25 +169,27 @@ export class FeedbackDirective {
       ...this.feedbackOf,
     };
     const addedScreenshots: PendingAttachment[] = attachments?.added || [];
-    this.normalizeScreenshots(addedScreenshots).pipe(
-      switchMap(screenshots => {
-        if (screenshots.length) {
-          startingMessage.attachments = screenshots.map(({ fileName }) => fileName);
+    const feedback$: Observable<{ doc: any, added: string[], skipped: string[] }> = addedScreenshots.length ?
+      defer(() => withImageAttachments(
+        newFeedback, { added: addedScreenshots }, (file, usedNames) => normalizeImage(file, { maxDimension: 1920, usedNames })
+      )) :
+      of({ doc: newFeedback, added: [], skipped: [] });
+    feedback$.pipe(
+      switchMap(({ doc, added, skipped }) => {
+        if (added.length) {
+          startingMessage.attachments = added;
         }
-        return this.couchService.updateDocument('feedback', newFeedback).pipe(
-          switchMap(({ id, rev }) => this.uploadScreenshots(id, rev, screenshots)),
-          map(failedUploads => ({ failedUploads, skippedScreenshots: addedScreenshots.length - screenshots.length }))
-        );
+        return this.couchService.updateDocument('feedback', doc).pipe(map(() => skipped.length));
       }),
       finalize(() => {
         this.isSubmitting = false;
         this.dialogsLoadingService.stop();
       })
     ).subscribe(
-      ({ failedUploads, skippedScreenshots }) => {
+      (skippedScreenshots) => {
         this.dialogsFormService.closeDialogsForm();
         this.feedbackService.setFeedback();
-        if (failedUploads || skippedScreenshots) {
+        if (skippedScreenshots) {
           this.planetMessageService.showAlert($localize`Feedback submitted, but some screenshots could not be included.`);
         } else {
           this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
@@ -197,30 +203,11 @@ export class FeedbackDirective {
     );
   }
 
-  private normalizeScreenshots(screenshots: PendingAttachment[] = []): Observable<NormalizedImage[]> {
-    const usedNames: string[] = [];
-    return from(screenshots).pipe(
-      concatMap(({ file }) => normalizeImage(file, { maxDimension: 1920, usedNames })),
-      filter((image): image is NormalizedImage => image !== null),
-      tap(({ fileName }) => usedNames.push(fileName)),
-      toArray()
-    );
-  }
-
-  private uploadScreenshots(id: string, rev: string, screenshots: NormalizedImage[]): Observable<number> {
-    return screenshots.reduce((upload$, { file, fileName, contentType }) => upload$.pipe(
-      switchMap(result => this.couchService.putAttachment(
-        `feedback/${couchAttachmentPath(id, fileName)}?rev=${result.rev}`, file, { headers: { 'Content-Type': contentType } }
-      ).pipe(
-        map((response: any) => ({ ...result, rev: response.rev })),
-        catchError(() => of({ ...result, failed: result.failed + 1 }))
-      ))
-    ), of({ rev, failed: 0 })).pipe(map(({ failed }) => failed));
-  }
-
   @HostListener('click')
   checkAuthentication() {
-    this.authGuard.checkAuthenticationStatus().subscribe(() => this.openFeedback());
+    this.dialogGuard.open('feedback', () =>
+      this.authGuard.checkAuthenticationStatus().pipe(map(() => this.openFeedback()))
+    ).subscribe();
   }
 
   openFeedback() {
@@ -232,7 +219,7 @@ export class FeedbackDirective {
       message: [ this.message, CustomValidators.required ],
       attachments: [ { retained: [], removed: [], added: [] } ]
     };
-    this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
+    return this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       closeOnSubmit: false,
       confirmUnsavedChanges: true,
       onSubmit: response => {
