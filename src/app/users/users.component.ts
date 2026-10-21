@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { takeUntil, debounceTime, map } from 'rxjs/operators';
+import { takeUntil, debounceTime, map, finalize } from 'rxjs/operators';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -160,7 +160,10 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   roleSubmit(roles) {
-    this.usersService.setRolesForUsers(this.usersTable.selection.selected, roles).subscribe(
+    this.dialogsLoadingService.start();
+    this.usersService.setRolesForUsers(this.usersTable.selection.selected, roles).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
       () => {
         this.usersService.requestUsers(true);
         this.planetMessageService.showMessage($localize`Roles updated`);
