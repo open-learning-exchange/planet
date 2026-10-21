@@ -88,13 +88,12 @@ export class TeamsReportsComponent implements OnChanges {
   curCode = this.stateService.configuration.currency || {};
   reportCards: any[] = [];
   filteredCards: any[] = [];
-  filter = '';
   startDate: Date | undefined;
   endDate: Date | undefined;
   labelFilter = '';
 
   get hasActiveFilters(): boolean {
-    return !!(this.startDate || this.endDate || this.labelFilter.trim() || this.filter.trim());
+    return !!(this.startDate || this.endDate || this.labelFilter.trim());
   }
 
   ngOnChanges() {
@@ -120,70 +119,18 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   applyFilters() {
-    const searchText = (this.labelFilter || this.filter || '').trim();
+    const searchText = this.labelFilter.trim();
     const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
-
-    this.filteredCards = this.reportCards.filter(card => {
-      const report = card.report;
-
-      if (this.startDate && !this.isSameDay(report.startDate, this.startDate)) {
-        return false;
-      }
-
-      if (this.endDate && !this.isSameDay(report.endDate, this.endDate)) {
-        return false;
-      }
-
-      if (searchText && !matchesFilter(card, searchText)) {
-        return false;
-      }
-
-      return true;
-    });
-  }
-
-  private isSameDay(reportDate: any, filterDate: Date | undefined): boolean {
-    if (!filterDate) {
-      return true;
-    }
-    if (!reportDate) {
-      return false;
-    }
-    const d1 = new Date(reportDate);
-    const d2 = new Date(filterDate);
-    if (Number.isNaN(d1.getTime()) || Number.isNaN(d2.getTime())) {
-      return false;
-    }
-
-    const matchesUtc =
-      d1.getUTCFullYear() === d2.getUTCFullYear() &&
-      d1.getUTCMonth() === d2.getUTCMonth() &&
-      d1.getUTCDate() === d2.getUTCDate();
-    const matchesLocal =
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate();
-    const matchesCross1 =
-      d1.getUTCFullYear() === d2.getFullYear() &&
-      d1.getUTCMonth() === d2.getMonth() &&
-      d1.getUTCDate() === d2.getDate();
-    const matchesCross2 =
-      d1.getFullYear() === d2.getUTCFullYear() &&
-      d1.getMonth() === d2.getUTCMonth() &&
-      d1.getDate() === d2.getUTCDate();
-
-    return matchesUtc || matchesLocal || matchesCross1 || matchesCross2;
-  }
-
-  applyFilter(filter: string) {
-    this.filter = filter;
-    this.labelFilter = filter;
-    this.applyFilters();
+    // Report periods are stored as UTC midnight of their calendar days, so the picked days are compared in that form
+    const start = this.startDate ? this.couchService.dateConversion(this.startDate) : -Infinity;
+    const end = this.endDate ? this.couchService.dateConversion(this.endDate) : Infinity;
+    this.filteredCards = start > end ? [] : this.reportCards.filter(card =>
+      card.report.startDate <= end && card.report.endDate >= start && (!searchText || matchesFilter(card, searchText))
+    );
   }
 
   clearLabelFilter() {
     this.labelFilter = '';
-    this.filter = '';
     this.applyFilters();
   }
 
@@ -191,7 +138,6 @@ export class TeamsReportsComponent implements OnChanges {
     this.startDate = undefined;
     this.endDate = undefined;
     this.labelFilter = '';
-    this.filter = '';
     this.applyFilters();
   }
 
@@ -425,6 +371,7 @@ export class TeamsReportsComponent implements OnChanges {
       .subscribe(imageSections => this.teamsTablePdfExportService.exportTable({
         data,
         title,
+        subtitle: this.exportSubtitle(),
         currencyCode: this.curCode?.code,
         currencySymbol: this.curCode?.symbol,
         moneyColumns: [
@@ -466,13 +413,22 @@ export class TeamsReportsComponent implements OnChanges {
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
-    const filter = (this.labelFilter || this.filter || '').trim();
+    const filter = this.labelFilter.trim();
     return {
       data,
       title: filter ?
         $localize`Financial Summary for ${titleName} filtered by ${filter}` :
         $localize`Financial Summary for ${titleName}`
     };
+  }
+
+  private exportSubtitle() {
+    if (!this.startDate && !this.endDate) {
+      return '';
+    }
+    const start = this.startDate ? formatDate(this.startDate, 'mediumDate', this.localeId) : $localize`Beginning`;
+    const end = this.endDate ? formatDate(this.endDate, 'mediumDate', this.localeId) : $localize`Today`;
+    return $localize`Date range: ${start} - ${end}`;
   }
 
   private receiptImageSections() {

@@ -37,7 +37,7 @@
           }
         </mat-form-field>
         @if (hasActiveFilters) {
-          <button class="reports-reset-btn" mat-button color="primary" (click)="clearAllFilters()" i18n>Clear Filters</button>
+          <button class="reports-reset-btn" mat-button color="primary" (click)="clearAllFilters()" i18n>Clear filters</button>
         }
       }
       <span class="spacer"></span>
@@ -63,7 +63,7 @@
       <div class="reports-empty-state">
         <mat-icon class="reports-empty-icon">search_off</mat-icon>
         <p class="reports-empty" i18n>No reports match your filters.</p>
-        <button mat-stroked-button color="primary" (click)="clearAllFilters()" i18n>Clear Filters</button>
+        <button mat-stroked-button color="primary" (click)="clearAllFilters()" i18n>Clear filters</button>
       </div>
     }
     @if (filteredCards.length > 0) {
