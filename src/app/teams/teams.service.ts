@@ -430,19 +430,15 @@ export class TeamsService {
   }
 
   getTeamResources(linkDocs: any[]) {
-    return this.stateService.getCouchState('resources', 'local').pipe(map((resources: any[]) => {
-      const dangling = linkDocs.filter(linkDoc => !resources.some(resource => resource._id === linkDoc.resourceId));
-      if (dangling.length > 0) {
-        this.couchService.bulkDocs(this.dbName, dangling.map(doc => ({ ...doc, _deleted: true }))).subscribe();
-      }
-      return linkDocs
+    return this.stateService.getCouchState('resources', 'local').pipe(map((resources: any[]) =>
+      linkDocs
         .map(linkDoc => ({
           linkDoc,
           resource: resources.find(resource => resource._id === linkDoc.resourceId)
         }))
         .filter(resource => Boolean(resource.resource?._id && resource.resource?.title))
-        .sort((a, b) => a.resource.title.localeCompare(b.resource.title));
-    }));
+        .sort((a, b) => a.resource.title.localeCompare(b.resource.title))
+    ));
   }
 
   private isTeamEmpty(team) {

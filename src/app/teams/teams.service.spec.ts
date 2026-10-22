@@ -725,7 +725,7 @@ describe('TeamsService cover image handling', () => {
 
 
 describe('TeamsService.getTeamResources', () => {
-  it('filters deleted resources, deletes dangling link docs, and sorts active resources', () => {
+  it('filters deleted resources and sorts active resources without side-effect writes', () => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([])),
       get: vi.fn().mockReturnValue(of({})),
@@ -753,9 +753,7 @@ describe('TeamsService.getTeamResources', () => {
     let result: any[];
     service.getTeamResources(linkDocs).subscribe(res => (result = res));
 
-    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [
-      { _id: 'link-del', resourceId: 'res-deleted', title: 'Zeta Deleted Resource', _deleted: true }
-    ]);
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
     expect(result).toHaveLength(1);
     expect(result[0].resource._id).toBe('res-1');
     expect(result[0].resource.title).toBe('Beta Resource');
