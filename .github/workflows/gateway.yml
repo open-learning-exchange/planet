@@ -8,6 +8,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   DOCKER_ORG: treehouses
   DOCKER_REPO_TAG: planet-tags
@@ -27,7 +30,43 @@ jobs:
         id: step1
         run: |
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  testing:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # The gateway image (treehouses/node:3.21) runs Node 22
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            gateway/package-lock.json
+
+      # Vitest resolves from the repository root's node_modules
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install gateway dependencies
+        run: npm ci
+        working-directory: gateway
+
+      - name: Run lint
+        run: npm run lint
+        working-directory: gateway
+
+      - name: Run unit tests
+        run: npm test
+        working-directory: gateway
 
   build:
     name: Gateway build
@@ -79,12 +118,15 @@ jobs:
           fi
           docker buildx build \
             -f './docker/gateway/Dockerfile' \
-            --build-arg IMAGE='${{ matrix.base_image }}' \
+            --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
             "${cacheargs[@]}" \
             --load \
             -t $repo .
           actual_arch="$(docker image inspect "$repo" --format '{{.Architecture}}')"
           [ "$actual_arch" = '${{ matrix.arch }}' ] || { echo "architecture mismatch: expected ${{ matrix.arch }}, got ${actual_arch:-<none>}"; exit 1; }
+          docker run -d --name gateway-check -p 127.0.0.1:5000:5000 $repo
+          timeout 90 sh -c 'until curl -sf http://127.0.0.1:5000/; do sleep 2; done' || { docker logs gateway-check; exit 1; }
+          docker rm -f gateway-check
           docker images
           docker tag $repo $branchrepo
           docker push $repo

@@ -57,7 +57,7 @@ Within the `src/app` directory, each feature should have its own directory.  Wit
 
 Count distinct concerns rather than raw files when applying that threshold.  A component's `.html`, `.scss` and `.spec.ts` belong with its `.ts` and count once, so a directory of six components is not sprawling even at 20 files; a directory of 20 unrelated services is, at the same count.
 
-The `src/app/shared` directory is intended for files which are used across different features — a file whose only consumer is one feature belongs in that feature instead.  Within `shared`, group by the capability a file serves (`auth`, `database`, `tables`, `text`, …) rather than by file kind; there is deliberately no `services` or `directives` bucket.  Use relative imports between and within buckets.
+The `src/app/shared` directory is intended for files which are used across different features — a file whose only consumer is one feature belongs in that feature instead.  Within `shared`, group by the capability a file serves (`auth`, `database`, `tables`, `text`, …) rather than by file kind; there is deliberately no `services` or `directives` bucket.  Import shared files through the `@shared/*` alias (`@shared/ui/planet-message.service`); files in the same bucket import each other relatively (`./sibling`).
 
 ### Naming
 Component files should be named after their page/feature and follow Angular's standard naming pattern:
@@ -156,9 +156,14 @@ For consistent loading states across the application, follow these standards:
 
 - For action-based loading (form submissions, data operations):
   - Use `DialogsLoadingService` to show a loading wheel
-  - Start loading with `dialogsLoadingService.start()`
+  - Start loading with `dialogsLoadingService.start()` in the click handler, before the request, so the wheel also takes a second click
   - Stop loading with `dialogsLoadingService.stop()` in both success and error cases
   - Always use within a `finalize()` operator in RxJS pipes to ensure loading stops
+
+- For clicks that open a dialog after a request (a session check or a fetch):
+  - Wrap the opening in `DialogGuardService.open(key, ...)`, one key per action, so a second click while the request is pending opens nothing
+  - When a service opens the dialog and hands back no `MatDialogRef` (such as `SyncService`'s password confirmation), use `DialogGuardService.run(key, ...)`, which holds the key until the whole flow ends
+  - Writes still use the loading wheel: a key only blocks its own action, while the wheel blocks the whole page
 
 - Loading state variables:
   - Initialize as `isLoading = true` when data fetching begins

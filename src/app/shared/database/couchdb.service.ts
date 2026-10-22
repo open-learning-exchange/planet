@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
 import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
-import { PlanetMessageService } from '../ui/planet-message.service';
+
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+
+import { environment } from '../../../environments/environment';
 import { findDocuments } from './mango-queries';
 
 class DatePlaceholder {}
@@ -17,6 +19,11 @@ export class CouchService {
   private baseUrl = environment.couchAddress;
   private reqNum = 0;
   datePlaceholder = new DatePlaceholder();
+
+  constructor(
+    private http: HttpClient,
+    private planetMessageService: PlanetMessageService
+  ) {}
 
   private setOpts(opts: any = {}) {
     const { domain, protocol, ...httpOpts } = opts;
@@ -34,11 +41,6 @@ export class CouchService {
     this.reqNum++;
     return this.formatHttpReq(httpReq);
   }
-
-  constructor(
-    private http: HttpClient,
-    private planetMessageService: PlanetMessageService
-  ) {}
 
   formatHttpReq(httpReq: Observable<any>) {
     return httpReq

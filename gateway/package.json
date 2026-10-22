@@ -7,6 +7,7 @@
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "dev": "nodemon --exec ts-node src/index.ts",
+    "test": "tsc --noEmit -p tsconfig.spec.json && vitest run",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts",
     "lint-fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts --fix"
   },
@@ -36,7 +37,7 @@
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "nano": "^10.1.2",
-    "openai": "^4.28.0",
+    "openai": "^4.104.0",
     "textract": "^2.5.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3",

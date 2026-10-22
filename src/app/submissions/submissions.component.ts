@@ -5,18 +5,9 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '../shared/tables/table.helpers';
-import { appSourceLabel } from '../shared/android/app-source';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
-import { SubmissionsService } from './submissions.service';
-import { UserService } from '../shared/auth/user.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { CoursesService } from '../courses/courses.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
@@ -29,6 +20,17 @@ import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { appSourceLabel } from '@shared/android/app-source';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+
+import { SubmissionsService } from './submissions.service';
+import { CoursesService } from '../courses/courses.service';
 
 const columnsByFilterAndMode = {
   exam: {

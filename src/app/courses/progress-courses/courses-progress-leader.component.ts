@@ -2,26 +2,28 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CoursesService } from '../courses.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { CsvService } from '../../shared/export/csv.service';
-import { dedupeObjectArray } from '../../shared/utils';
-import { findDocuments } from '../../shared/database/mango-queries';
-import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
-import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { CoursesProgressPlanetSelectorComponent } from './courses-progress-planet-selector.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
+
+import { CsvService } from '@shared/export/csv.service';
+import { dedupeObjectArray } from '@shared/utils';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { CoursesService } from '../courses.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
+import { CoursesProgressPlanetSelectorComponent } from './courses-progress-planet-selector.component';
 import { CoursesProgressChartComponent } from './courses-progress-chart.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/ui/planet-loading-spinner.component';
-import { TruncateTextPipe } from '../../shared/text/truncate-text.pipe';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -65,7 +67,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   planetCodes: string[] = [];
   selectedPlanetCode: string;
   configuration: any = {};
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes = DeviceType;
   isLoading = false;
 
@@ -78,11 +80,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private usersProfileDialogService: UsersProfileDialogService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;

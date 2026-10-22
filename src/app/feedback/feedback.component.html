@@ -1,6 +1,6 @@
 <!-- Feedback Template -->
 <mat-toolbar>
-  @if (deviceType === deviceTypes.DESKTOP) {
+  @if (deviceType() === deviceTypes.DESKTOP) {
     <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
     <span i18n>Feedback List</span>
     <span class="toolbar-fill"></span>
@@ -14,7 +14,7 @@
         <span class="toolbar-fill"></span>
         <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
       </mat-toolbar-row>
-      @if (deviceType === deviceTypes.TABLET) {
+      @if (deviceType() === deviceTypes.TABLET) {
         @if (showFiltersRow) {
           <mat-toolbar-row>
             <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
@@ -22,7 +22,7 @@
           </mat-toolbar-row>
         }
       }
-      @if (deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE) {
+      @if (isMobile()) {
         @if (showFiltersRow) {
           <mat-toolbar-row>
             <ng-container *ngTemplateOutlet="filterOptions"></ng-container>

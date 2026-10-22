@@ -1,5 +1,8 @@
 import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+
 import { NewsListComponent } from './news-list.component';
 
 const createComponent = (items: any[] = []) => {
@@ -31,6 +34,32 @@ const createComponent = (items: any[] = []) => {
 
 afterEach(() => vi.useRealTimers());
 
+describe('NewsListComponent reply form', () => {
+  it('checks the session and opens one form for replies requested while the check is pending', () => {
+    const component = createComponent();
+    const auth = new Subject<boolean>();
+    const closed = new Subject<void>();
+    const openDialogsForm = vi.fn(() => ({ afterClosed: () => closed }));
+    const checkAuthenticationStatus = vi.fn().mockReturnValueOnce(auth).mockReturnValue(of(true));
+    component.authGuard = { checkAuthenticationStatus };
+    component.dialogGuard = new DialogGuardService();
+    component.dialogsFormService = { openDialogsForm };
+    const reply = { title: 'Reply', placeholder: 'Your message', news: { replyTo: 'root', viewIn: [] } };
+
+    component.openUpdateDialog(reply);
+    component.openUpdateDialog(reply);
+    auth.next(true);
+
+    expect(checkAuthenticationStatus).toHaveBeenCalledOnce();
+    expect(openDialogsForm).toHaveBeenCalledOnce();
+
+    closed.next();
+    component.openUpdateDialog(reply);
+
+    expect(openDialogsForm).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe('NewsListComponent labels', () => {
   it('handles label removal from a legacy post without a labels array', () => {
     const component = createComponent();
@@ -42,6 +71,20 @@ describe('NewsListComponent labels', () => {
     expect(component.newsService.postNews).toHaveBeenCalledWith(
       { ...news, labels: [] },
       'Label removed'
+    );
+  });
+
+  it('stores a colored custom label by name only', () => {
+    const component = createComponent();
+    component.customLabels = [ { name: 'Meeting', color: '#e1bee7' } ];
+    component.newsService = { postNews: vi.fn().mockReturnValue(of({})) };
+    const news = { _id: 'news-1', labels: [ 'legacy-label' ] };
+
+    component.changeLabels({ news, label: 'Meeting', action: 'add' });
+
+    expect(component.newsService.postNews).toHaveBeenCalledWith(
+      { ...news, labels: [ 'legacy-label', 'Meeting' ] },
+      'Label added'
     );
   });
 
@@ -270,6 +313,15 @@ describe('NewsListComponent filtering', () => {
     expect(component.messageSearch).toBe('');
     expect(component.selectedLabel).toBe('');
     expect(component.filteredItems.length).toBe(3);
+  });
+
+  it('keeps the current page when only the custom labels change', () => {
+    const component = createComponent(thread());
+    component.pageIndex = 2;
+
+    component.ngOnChanges({ customLabels: { firstChange: false } as any });
+
+    expect(component.pageIndex).toBe(2);
   });
 });
 

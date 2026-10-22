@@ -1,16 +1,24 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin, throwError } from 'rxjs';
-import { switchMap, map, take, catchError } from 'rxjs/operators';
-import { CouchService } from '../shared/database/couchdb.service';
-import { UserService } from '../shared/auth/user.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { CustomValidators } from '../validators/custom-validators';
-import { StateService } from '../shared/state.service';
-import { ValidatorService } from '../validators/validator.service';
+
+import { of, empty, forkJoin, throwError, from } from 'rxjs';
+import { switchMap, map, take, catchError, finalize } from 'rxjs/operators';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsFormService, DialogField } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
+import { StateService } from '@shared/state.service';
+import {
+  fullName, planetAndParentId, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
+} from '@shared/utils';
+
+import { environment } from '../../environments/environment';
 import { UsersService } from '../users/users.service';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { fullName, truncateText } from '../shared/utils';
+import { CustomValidators } from '../validators/custom-validators';
+import { ValidatorService } from '../validators/validator.service';
+import { memberCompare } from './teams.utils';
 
 const nameField = {
   type: 'textbox',
@@ -58,6 +66,7 @@ export class TeamsService {
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private usersService: UsersService,
     private stateService: StateService,
@@ -83,6 +92,7 @@ export class TeamsService {
     } : {};
     const formGroup = {
       ...nameControl,
+      coverImage: [ { retained: this.existingCoverAttachments(team), removed: [], added: [] } ],
       description: team.description || '',
       services: team.services || '',
       rules: team.rules || '',
@@ -90,24 +100,30 @@ export class TeamsService {
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
     };
-    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
+    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type, team), formGroup, true)
       .pipe(
-        switchMap((response: any) => response !== undefined ?
-          this.updateTeam(
-            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
-          ) :
-          empty()
-        ),
-        switchMap((response) => !team._id ?
-          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
-          of(response)
-        )
+        switchMap((response: any) => {
+          if (response === undefined) {
+            return empty();
+          }
+          const { coverImage, ...changes } = response;
+          this.dialogsLoadingService.start();
+          return this.saveTeamWithCover({
+            limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
+            parentCode: configuration.parentCode, createdBy: userId, ...team, ...changes, type
+          }, coverImage).pipe(
+            switchMap((savedTeam) => !team._id ?
+              this.toggleTeamMembership(savedTeam, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
+              of(savedTeam)
+            ),
+            finalize(() => this.dialogsLoadingService.stop())
+          );
+        })
       );
   }
 
-  addTeamFields(configuration, type) {
-    const typeField = {
+  addTeamFields(configuration, type, team: any = {}) {
+    const typeField: DialogField = {
       type: 'selectbox',
       name: 'teamType',
       placeholder: $localize`Team Type`,
@@ -119,12 +135,55 @@ export class TeamsService {
         { value: 'local', name: $localize`Local team` }
       ]
     };
+    const coverField: DialogField = {
+      type: 'file-upload',
+      name: 'coverImage',
+      placeholder: $localize`Cover image`,
+      fileUpload: {
+        accept: 'image/*',
+        existingAttachments: this.existingCoverAttachments(team),
+        hint: $localize`Recommended: a square image. Covers are cropped to fit.`,
+        imagePreview: true,
+        maxFiles: 1,
+        multiple: false,
+        typePills: [ 'IMG' ]
+      }
+    };
     return [
       type === 'services' ? [] : nameField,
       type === 'enterprise' ? enterpriseDescField : descriptionField,
+      type === 'services' ? [] : coverField,
       type === 'team' ? typeField : [],
       publicField
     ].flat();
+  }
+
+  existingCoverAttachments(team: any): ExistingAttachment[] {
+    const fileName = team?.coverFileName;
+    const attachment = team?._attachments?.[fileName];
+    return fileName && attachment ? [ {
+      name: fileName,
+      contentType: attachment.content_type,
+      url: this.coverImageUrl(team),
+      size: attachment.length
+    } ] : [];
+  }
+
+  coverImageUrl(team: any): string {
+    return team?._id && team.coverFileName ? couchAttachmentUrl(environment.couchAddress, this.dbName, team._id, team.coverFileName) : '';
+  }
+
+  saveTeamWithCover(team: any, coverState: AttachmentInputState) {
+    return from(withImageAttachment(team, 'coverFileName', coverState)).pipe(
+      switchMap(teamDoc => this.updateTeam(teamDoc)),
+      map(savedTeam => ({ ...savedTeam, _attachments: attachmentStubs(savedTeam._attachments) }))
+    );
+  }
+
+  saveErrorMessage(err: any): string {
+    return err?.message === UNPROCESSABLE_IMAGE_ERROR ?
+      $localize`Cover image could not be processed. Please choose a JPEG or PNG image.` :
+      $localize`There was a problem saving your changes.`;
   }
 
   updateTeam(team: any) {
@@ -132,19 +191,28 @@ export class TeamsService {
   }
 
   requestToJoinTeam(team, user) {
-    const userPlanetCode = this.stateService.configuration.code;
-    return this.couchService.updateDocument(this.dbName, {
-      createdDate: this.couchService.datePlaceholder,
-      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
-    }).pipe(
-      switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
+    const memberInfo = { userId: user._id, userPlanetCode: this.stateService.configuration.code };
+    return this.couchService.post(`${this.dbName}/_find`, findDocuments(this.requestSelector(team, memberInfo), [ '_id' ], 0, 1)).pipe(
+      switchMap(({ docs }: any) => docs.length > 0 ? of(false) : this.couchService.updateDocument(this.dbName, {
+        createdDate: this.couchService.datePlaceholder,
+        ...this.membershipProps(team, memberInfo, 'request')
+      }).pipe(
+        switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({})),
+        map(() => true)
+      ))
     );
   }
 
   removeFromRequests(team, memberInfo) {
-    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, memberInfo, 'request'))).pipe(
+    return this.couchService.findAll(this.dbName, findDocuments(this.requestSelector(team, memberInfo))).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
     );
+  }
+
+  // teamId already names the team, and editing an enterprise can change its teamType after requests were made
+  private requestSelector(team, memberInfo) {
+    const { teamType, ...selector } = this.membershipProps(team, memberInfo, 'request');
+    return selector;
   }
 
   cancelJoinRequest(team) {
@@ -204,12 +272,12 @@ export class TeamsService {
     if (selected.some(user => !user?._id)) {
       return throwError(new Error('Membership user ID is required.'));
     }
-    const selectedUserIds = new Set(selected.map(user => user._id));
     const newMembershipDocs = selected.map(user =>
       this.membershipProps(team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    const requestsToDelete = requests.filter(request => selectedUserIds.has(request.userId))
-      .map(({ _id, _rev }) => ({ _id, _rev, _deleted: true }));
+    // Deletions keep the request's fields so they still match the teams replication selector
+    const requestsToDelete = requests.filter(request => newMembershipDocs.some(membership => memberCompare(membership, request)))
+      .map(request => this.membershipWriteDoc(request, { _deleted: true }));
     return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
   }
 
@@ -473,7 +541,7 @@ export class TeamsService {
   createServicesDoc() {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      _id: `${code}@${parentCode}`,
+      _id: planetAndParentId(this.stateService.configuration),
       createdDate: this.couchService.datePlaceholder,
       teamPlanetCode: `${code}`,
       parentCode: `${parentCode}`,
@@ -492,7 +560,7 @@ export class TeamsService {
   createServicesLink({ title, route, teamType, icon }) {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      teamId: `${code}@${parentCode}`,
+      teamId: planetAndParentId(this.stateService.configuration),
       createdDate: this.couchService.datePlaceholder,
       teamPlanetCode: `${code}`,
       parentCode: `${parentCode}`,

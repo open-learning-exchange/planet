@@ -4,9 +4,11 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { describe, expect, it, vi } from 'vitest';
-import { DialogsFormService } from '../dialogs/dialogs-form.service';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { UserService } from '../auth/user.service';
+
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+
 import { PlanetRatingComponent } from './planet-rating.component';
 import { RatingService } from './rating.service';
 
@@ -227,6 +229,21 @@ describe('PlanetRatingComponent', () => {
     expect(planetMessage.showMessage).toHaveBeenCalledWith('Rating removed!');
   });
 
+  it('keeps the comment but disables it while no stars are selected', () => {
+    const { component, dialogClosed, ratingService } = createComponent();
+    const { rate, comment } = component.popupForm.controls;
+
+    component.onStarClick();
+    rate.setValue(0);
+    expect(comment.disabled).toBe(true);
+    expect(comment.value).toBe('Original comment');
+    rate.setValue(4);
+    expect(comment.enabled).toBe(true);
+    dialogClosed.next({ rate: 4, comment: 'Original comment' });
+
+    expect(ratingService.saveRating).toHaveBeenCalledWith(expect.objectContaining({ rate: 4, comment: 'Original comment' }));
+  });
+
   it('restores both forms and popup state when deletion fails', () => {
     const { component, dialogClosed, ratingService } = createComponent();
     ratingService.deleteRating.mockReturnValueOnce(throwError(new Error('delete failed')));
@@ -253,7 +270,7 @@ describe('PlanetRatingComponent', () => {
 
     expect(ratingService.deleteRating).not.toHaveBeenCalled();
     expect(component.rateForm.value).toEqual({ rate: 0 });
-    expect(component.popupForm.value).toEqual({ rate: 0, comment: '' });
+    expect(component.popupForm.getRawValue()).toEqual({ rate: 0, comment: '' });
     expect(component.isPopupOpen).toBe(false);
   });
 

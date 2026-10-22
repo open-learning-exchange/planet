@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import {
   ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
   genderBucket, hasMarkdownImages, IMAGE_MAX_FALLBACK_BYTES, localizedGender, normalizeImage,
-  normalizeMarkdownWhitespace, scaledDimensions
+  normalizeMarkdownWhitespace, safeAttachmentName, scaledDimensions, withImageAttachments
 } from './utils';
 
 describe('utils', () => {
@@ -16,6 +16,16 @@ describe('utils', () => {
       expect(couchAttachmentUrl('http://localhost:2200/', '/resources/', 'doc/id', 'site/index.html')).toBe(
         'http://localhost:2200/resources/doc%2Fid/site/index.html'
       );
+    });
+
+  });
+
+  describe('safeAttachmentName', () => {
+
+    it('strips leading underscores, which CouchDB rejects in attachment names', () => {
+      expect(safeAttachmentName('_DSC1234.JPG')).toBe('DSC1234.JPG');
+      expect(safeAttachmentName('/cover.png')).toBe('cover.png');
+      expect(safeAttachmentName('___')).toBe('attachment');
     });
 
   });
@@ -329,6 +339,30 @@ ${'\t'.repeat(18)}
 
       expect(await normalizeImage(file, { maxFallbackBytes: 1024 })).toBeNull();
       expect(await normalizeImage(file, { maxFallbackBytes: 4096 })).not.toBeNull();
+    });
+
+  });
+
+  describe('withImageAttachments', () => {
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it('skips an image that can no longer be read and keeps the others', async () => {
+      const readAsDataURL = FileReader.prototype.readAsDataURL;
+      vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function(this: FileReader, blob: Blob) {
+        return (blob as File).name === 'gone.png' ? this.onerror(new ProgressEvent('error')) : readAsDataURL.call(this, blob);
+      });
+      const added = [ 'gone.png', 'kept.png' ].map(name => ({ file: new File([ 'data' ], name, { type: 'image/png' }) }));
+
+      const result = await withImageAttachments({ _id: 'doc' }, { added }, async file => ({
+        file, contentType: 'image/png', fileName: file.name
+      }));
+
+      expect(result).toEqual({
+        doc: { _id: 'doc', _attachments: { 'kept.png': { content_type: 'image/png', data: btoa('data') } } },
+        added: [ 'kept.png' ],
+        skipped: [ 'gone.png' ]
+      });
     });
 
   });

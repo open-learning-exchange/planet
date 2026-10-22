@@ -6,10 +6,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { AndroidAppPromptService } from '@shared/android/android-app-prompt.service';
+
 import { PublicSurveyComponent } from './public-survey.component';
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { PublicSurveysService } from './public-surveys.service';
-import { AndroidAppPromptService } from '../../shared/android/android-app-prompt.service';
 
 describe('PublicSurveyComponent', () => {
   let fixture: ComponentFixture<PublicSurveyComponent>;
