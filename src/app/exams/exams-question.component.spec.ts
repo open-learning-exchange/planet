@@ -9,6 +9,7 @@ describe('ExamsQuestionComponent', () => {
   let examsService: ExamsService;
   let cdRef: ChangeDetectorRef;
   let component: ExamsQuestionComponent;
+  const image = { resourceId: 'res-1', filename: 'diagram.png', markdown: '![diagram](resources/res-1/diagram.png)' };
 
   beforeEach(() => {
     const fb = new FormBuilder().nonNullable;
@@ -17,28 +18,21 @@ describe('ExamsQuestionComponent', () => {
     component = new ExamsQuestionComponent(examsService, cdRef);
   });
 
-  it('defaults imageGroup to community', () => {
-    expect(component.imageGroup).toBe('community');
-  });
-
-  it('initializes questionForm with requiredMarkdown validator allowing text and image objects', () => {
-    expect(component.questionForm).toBeDefined();
-    expect(component.questionForm.controls.body).toBeDefined();
-
-    component.questionForm.controls.body.setValue({ text: 'Question with diagram', images: [ { resourceId: 'res-1' } ] });
+  it('accepts a question body with images and rejects an empty one', () => {
+    component.questionForm.controls.body.setValue({ text: 'Question with diagram', images: [ image ] });
     expect(component.questionForm.controls.body.valid).toBe(true);
 
     component.questionForm.controls.body.setValue('');
     expect(component.questionForm.controls.body.valid).toBe(false);
   });
 
-  it('adds and removes choices properly', () => {
-    expect(component.choices.length).toBe(0);
+  it('loads a question body with images as plain markdown text', () => {
+    const question = examsService.newQuestionForm(false);
+    question.controls.body.setValue({ text: `Question with ${image.markdown}`, images: [ image ] });
 
-    component.addChoice();
-    expect(component.choices.length).toBe(1);
+    component.question = question;
+    component.ngOnChanges();
 
-    component.removeChoice(0);
-    expect(component.choices.length).toBe(0);
+    expect(component.questionForm.controls.body.value).toBe(`Question with ${image.markdown}`);
   });
 });

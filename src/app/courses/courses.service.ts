@@ -322,14 +322,9 @@ export class CoursesService {
     const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
     const imagesArray = (item: { description: any }) =>
       this.markdownImagesService.createImagesArray(item, markdownText(item), 'description');
-    const stepExamImages = (course.steps || []).flatMap(step => [
-      ...(step.exam?.images || []),
-      ...(step.survey?.images || [])
-    ]);
-    const examMarkdown = (course.steps || []).flatMap(step => [
-      ...(step.exam?.questions || []).map(q => typeof q.body === 'string' ? q.body : (q.body?.text ?? '')),
-      ...(step.survey?.questions || []).map(q => typeof q.body === 'string' ? q.body : (q.body?.text ?? ''))
-    ]);
+    const stepExams = (course.steps || []).flatMap(step => [ step.exam, step.survey ]).filter(exam => exam);
+    const stepExamImages = stepExams.flatMap(exam => exam.images || []);
+    const examMarkdown = stepExams.flatMap(exam => [ exam.description || '', ...exam.questions.map(question => question.body) ]);
     const images = dedupeObjectArray(
       [ course.images || [], imagesArray(course), (course.steps || []).map(step => imagesArray(step)), stepExamImages ].flat(2),
       [ 'resourceId' ]

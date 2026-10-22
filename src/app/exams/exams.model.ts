@@ -19,5 +19,4 @@ export interface ExamQuestion {
   marks: number;
   choices: { text: string, id: string }[];
   scaleMax?: number;
-  images?: Array<{ resourceId: string, filename: string, markdown: string }>;
 }

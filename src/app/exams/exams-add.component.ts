@@ -38,19 +38,19 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
-import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { ImageInfo, PlanetMarkdownTextboxComponent, ValueWithImages } from '@shared/markdown/planet-markdown-textbox.component';
 
 import { ValidatorService } from '../validators/validator.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { ExamsService, QuestionFormGroup } from './exams.service';
+import { ExamsService, QuestionFormGroup, markdownText } from './exams.service';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { ExamsQuestionComponent } from './exams-question.component';
 
 interface ExamFormControls {
   name: FormControl<string>;
-  description: FormControl<string | any>;
+  description: FormControl<string | ValueWithImages>;
   passingPercentage: FormControl<number>;
   questions: FormArray<QuestionFormGroup>;
   type: FormControl<'courses' | 'surveys'>;
@@ -65,7 +65,7 @@ interface ExamInfo {
   type: 'courses' | 'surveys';
   teamShareAllowed: boolean;
   teamId?: string | null;
-  images?: Array<{ resourceId: string, filename: string, markdown: string }>;
+  images?: ImageInfo[];
   _id?: string;
   _rev?: string;
 }
@@ -118,6 +118,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   courseName = '';
   examType: 'exam' | 'survey';
   teamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
+  readonly imageGroup: 'community' | { [db: string]: string } = this.teamId ? { teams: this.teamId } : 'community';
+  images: ImageInfo[] = [];
   successMessage: string;
   steps = [];
   showFormError = false;
@@ -133,16 +135,16 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
   set question(newQuestion: QuestionFormGroup) {
     const question = this.questions.at(this.activeQuestionIndex);
+    const body = newQuestion.controls.body.value;
+    if (typeof body !== 'string') {
+      this.images = dedupeObjectArray([ ...this.images, ...body.images ], [ 'resourceId' ]);
+    }
     this.examsService.updateQuestion(question, newQuestion);
     this.#question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
   }
   get questions(): FormArray<QuestionFormGroup> {
     return this.examForm.controls.questions;
-  }
-
-  get imageGroup(): 'community' | { [db: string]: string } {
-    return this.teamId ? { teams: this.teamId } : 'community';
   }
 
   constructor(
@@ -175,7 +177,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     };
     this.examForm = this.fb.group<ExamFormControls>({
       name: this.fb.control('', nameControlOptions),
-      description: this.fb.control(''),
+      description: this.fb.control<string | ValueWithImages>(''),
       passingPercentage: this.fb.control(100, { validators: [ CustomValidators.positiveNumberValidator, Validators.max(100) ] }),
       questions: this.fb.array<QuestionFormGroup>([]),
       type: this.fb.control<'courses' | 'surveys'>(examRecordType),
@@ -203,6 +205,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       this.documentInfo = { _rev: exam._rev, _id: exam._id };
       this.examForm.controls.name.setAsyncValidators(this.nameValidator(exam.name));
       this.examForm.patchValue(exam);
+      this.images = exam.images || [];
       this.initializeQuestions(exam.questions);
       if (submissions.length > 0) {
         this.pageType = 'Copy';
@@ -231,36 +234,14 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private serializeExamData(formValue: any): ExamInfo {
-    const descriptionText = typeof formValue.description === 'string'
-      ? formValue.description
-      : (formValue.description?.text ?? '');
-    const descriptionImages = typeof formValue.description === 'object' && formValue.description?.images
-      ? formValue.description.images
-      : [];
-
-    const allImages: Array<{ resourceId: string, filename: string, markdown: string }> = [ ...descriptionImages ];
-    const questions = (formValue.questions || []).map((q: any) => {
-      const bodyText = typeof q.body === 'string' ? q.body : (q.body?.text ?? '');
-      const questionImages = typeof q.body === 'object' && q.body?.images
-        ? q.body.images
-        : (q.images || []);
-      allImages.push(...questionImages);
-      return {
-        ...q,
-        body: bodyText,
-        images: questionImages.length > 0 ? questionImages : undefined
-      };
-    });
-
-    const dedupedImages = dedupeObjectArray(allImages, [ 'resourceId' ]);
-    const markdowns = [ descriptionText, ...questions.map((q: any) => q.body) ];
-    const filteredImages = this.markdownImagesService.filterMissingImages(markdowns, dedupedImages);
-
+    const description = markdownText(formValue.description);
+    const questions = formValue.questions.map(question => ({ ...question, body: markdownText(question.body) }));
+    const images = this.markdownImagesService.createImagesArray({ ...formValue, images: this.images }, description, 'description');
     return {
       ...formValue,
-      description: descriptionText,
+      description,
       questions,
-      images: filteredImages.length > 0 ? filteredImages : undefined
+      images: this.markdownImagesService.filterMissingImages([ description, ...questions.map(question => question.body) ], images)
     };
   }
 
@@ -303,10 +284,6 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   appendToCourse(info: ExamInfo, type: 'exam' | 'survey') {
     const courseExam = { ...info, ...this.documentInfo, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
     this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
-    if (courseExam.images?.length) {
-      const currentImages = this.coursesService.course.images || [];
-      this.coursesService.course.images = dedupeObjectArray([ ...currentImages, ...courseExam.images ], [ 'resourceId' ]);
-    }
   }
 
   totalMarks(examInfo: ExamInfo) {
@@ -340,10 +317,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   getQuestionLabel(value: unknown, index: number): string {
-    const rawValue = typeof value === 'object' && value && 'text' in (value as any)
-      ? (value as any).text
-      : value;
-    const questionText = this.markdownRenderer.toPlainText(rawValue);
+    const questionText = this.markdownRenderer.toPlainText(value);
     return questionText || $localize`Question ${index + 1}`;
   }
 
