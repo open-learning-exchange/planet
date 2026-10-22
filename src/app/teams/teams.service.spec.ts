@@ -722,3 +722,42 @@ describe('TeamsService cover image handling', () => {
     expect(couchService.updateDocument).not.toHaveBeenCalled();
   });
 });
+
+
+describe('TeamsService.getTeamResources', () => {
+  it('filters deleted resources, deletes dangling link docs, and sorts active resources', () => {
+    const couchService = {
+      findAll: vi.fn().mockReturnValue(of([])),
+      get: vi.fn().mockReturnValue(of({})),
+      bulkDocs: vi.fn().mockReturnValue(of({ res: [] }))
+    };
+    const stateService = {
+      getCouchState: vi.fn().mockReturnValue(of([
+        { _id: 'res-1', title: 'Beta Resource' }
+      ]))
+    };
+    const service = new TeamsService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      stateService as any,
+      {} as any
+    );
+    const linkDocs = [
+      { _id: 'link-del', resourceId: 'res-deleted', title: 'Zeta Deleted Resource' },
+      { _id: 'link-1', resourceId: 'res-1', title: 'Alpha Link Title' }
+    ];
+
+    let result: any[];
+    service.getTeamResources(linkDocs).subscribe(res => (result = res));
+
+    expect(couchService.bulkDocs).toHaveBeenCalledWith('teams', [
+      { _id: 'link-del', resourceId: 'res-deleted', title: 'Zeta Deleted Resource', _deleted: true }
+    ]);
+    expect(result).toHaveLength(1);
+    expect(result[0].resource._id).toBe('res-1');
+    expect(result[0].resource.title).toBe('Beta Resource');
+  });
+});

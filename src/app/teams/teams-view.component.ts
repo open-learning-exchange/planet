@@ -406,8 +406,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
         successMsg: $localize`deleted`, errorMsg: $localize`deleting` },
       resource: {
-        request: this.removeResource(item), name: item.resource &&
-        item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
+        request: this.removeResource(item),
+        name: item.resource?.title || item.linkDoc?.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
       course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: $localize`removed`, errorMsg: $localize`removing` },
       remove: {
@@ -747,7 +747,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
               this.dialogsLoadingService.stop();
             });
         },
-        excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
+        excludeIds: this.resources.filter(r => r.resource?._id).map(r => r.resource._id),
         canAdd: true, db: this.dbName, linkId: this.teamId, resource
       }
     });
