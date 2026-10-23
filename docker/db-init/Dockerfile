@@ -12,6 +12,6 @@ WORKDIR /root
 
 COPY ./docker/db-init/docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY ./scripts/couchdb-setup.sh /root/couchdb-setup.sh
-ADD ./design /root/design
+COPY ./scripts/design /root/design
 
 CMD ["bash", "./docker-entrypoint.sh"]

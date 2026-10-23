@@ -59,7 +59,7 @@ Clone and configure the Planet project (`--recurse-submodules` pulls in the shar
 ```
 git clone --recurse-submodules https://github.com/open-learning-exchange/planet.git
 cd planet
-bash scripts/couchdb-setup.sh -p 2200
+npm run couchdb-setup -- -p 2200
 ```
 
 Install dependencies and serve the app:
@@ -195,7 +195,7 @@ npm install
 
 Run the CouchDB setup script:
 ```
-./scripts/couchdb-setup.sh -u <admin-username> -w <admin-password>
+npm run couchdb-setup -- -u <admin-username> -w <admin-password>
 ```
 ### Cannot GET /
 
