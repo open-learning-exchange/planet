@@ -722,3 +722,33 @@ describe('TeamsService cover image handling', () => {
     expect(couchService.updateDocument).not.toHaveBeenCalled();
   });
 });
+
+describe('TeamsService.getTeamResources', () => {
+  it('hides links whose resource is missing and sorts the rest by resource title', () => {
+    const stateService = {
+      getCouchState: vi.fn().mockReturnValue(of([
+        { _id: 'res-1', title: 'Beta' },
+        { _id: 'res-2', title: 'alpha' }
+      ]))
+    };
+    const service = new TeamsService(
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      stateService as any,
+      {} as any
+    );
+    const linkDocs = [
+      { resourceId: 'res-1', title: 'A link title' },
+      { resourceId: 'res-deleted', title: 'Deleted resource' },
+      { resourceId: 'res-2', title: 'Z link title' }
+    ];
+
+    let result: any[];
+    service.getTeamResources(linkDocs).subscribe(res => (result = res));
+
+    expect(result.map(({ resource }) => resource._id)).toEqual([ 'res-2', 'res-1' ]);
+  });
+});
