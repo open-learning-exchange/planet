@@ -436,7 +436,7 @@ export class TeamsService {
           linkDoc,
           resource: resources.find(resource => resource._id === linkDoc.resourceId)
         }))
-        .filter(resource => Boolean(resource.resource?._id && resource.resource?.title))
+        .filter(({ resource }) => resource?.title)
         .sort((a, b) => a.resource.title.localeCompare(b.resource.title))
     ));
   }
