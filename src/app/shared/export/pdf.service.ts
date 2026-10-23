@@ -57,7 +57,13 @@ const blobToJpegDataUrl = (blob: Blob): Observable<string> => new Observable(obs
     context.fillStyle = '#fff';
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.drawImage(image, 0, 0);
-    observer.next(canvas.toDataURL('image/jpeg', 0.85));
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+    // An empty (0×0) or oversized canvas encodes as 'data:,', which pdfmake can't parse
+    if (dataUrl === 'data:,') {
+      observer.error(new Error('Unable to convert image'));
+      return;
+    }
+    observer.next(dataUrl);
     observer.complete();
   };
   image.onerror = () => {
