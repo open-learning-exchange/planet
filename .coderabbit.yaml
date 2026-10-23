@@ -3,7 +3,7 @@ language: "en-US"
 
 tone_instructions: >-
   Correctness first: bugs, security, data loss. Then the conventions in
-  AGENTS.md and Style-Guide.md. Skip whatever eslint, sass-lint and htmlhint
+  AGENTS.md and docs/Style-Guide.md. Skip whatever eslint, sass-lint and htmlhint
   already report. No compliments, no restating the diff.
 
 reviews:
@@ -57,10 +57,10 @@ reviews:
         A separate service on the legacy eslint config; credentials and models
         come from the CouchDB configurations doc -- flag keys read from env
         vars or hard-coded.
-    - path: "design/**"
+    - path: "scripts/design/**"
       instructions: >-
         CouchDB map/reduce views. A changed view only takes effect once
-        couchdb-setup.sh re-uploads it -- flag changes that assume otherwise.
+        scripts/couchdb-setup.sh re-uploads it -- flag changes that assume otherwise.
 
   auto_review:
     enabled: false
@@ -73,4 +73,4 @@ knowledge_base:
     enabled: true
     filePatterns:
       - "AGENTS.md"
-      - "Style-Guide.md"
+      - "docs/Style-Guide.md"

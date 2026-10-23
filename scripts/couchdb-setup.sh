@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Paths below are relative to this script, so it runs from any directory
+cd "$(dirname "$0")" || exit 1
+
 # Function for upsert of design & other configuration docs
 upsert_doc() {
   DB=$1
