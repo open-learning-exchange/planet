@@ -97,8 +97,8 @@ export class SubmissionsService {
     const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
     obs.subscribe((res) => {
       let attempts = res.docs.length - 1;
-      const bestAttempt = res.docs.reduce((best: any, submission: any) =>
-        submission.grade > best.grade ? submission : best, res.docs[0]);
+      const bestAttempt = res.docs.filter((submission: any) => submission.status === 'complete').reduce((best: any, submission: any) =>
+        best === undefined || submission.grade > best.grade ? submission : best, undefined) || { grade: 0 };
       this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
       if (this.submission === undefined) {
         attempts += 1;
