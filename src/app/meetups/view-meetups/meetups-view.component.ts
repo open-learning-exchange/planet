@@ -24,7 +24,7 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 
 import { MeetupAuthorizationContext, MeetupService } from '../meetups.service';
 import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
-import { assigneeKey, assigneeName, effectiveAssignees } from '../../tasks/tasks.utils';
+import { assigneeKey, assigneeName as assigneeNameImport, effectiveAssignees as effectiveAssigneesImport } from '../../tasks/tasks.utils';
 
 @Component({
   selector: 'planet-meetups-view',
@@ -71,6 +71,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   listDialogRef: MatDialogRef<DialogsListComponent>;
   currentUserName = this.userService.get().name;
   dateNow: any;
+  effectiveAssignees = effectiveAssigneesImport;
+  assigneeName = assigneeNameImport;
 
   constructor(
     public dialog: MatDialog,
@@ -138,12 +140,21 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   joinMeetup() {
-    this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
+    if (!this.meetupDetail) {
+      return;
+    }
+    this.dialogsLoadingService.start();
+    this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       const msg = res.participate ? $localize`left` : $localize`joined`;
       this.meetupDetail.participate = !res.participate;
       this.planetMessageService.showMessage($localize`You have ${msg} meetup.`);
       this.fixEnrolledList(res.participate, this.userService.get().name);
-    });
+    }, () => this.planetMessageService.showAlert(this.meetupDetail.participate ?
+      $localize`There was a problem leaving this meetup` :
+      $localize`There was a problem joining this meetup`
+    ));
   }
 
   openInviteMemberDialog() {
@@ -231,9 +242,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       dialogRef: this.dialogRef
     });
   }
-
-  effectiveAssignees = effectiveAssignees;
-  assigneeName = assigneeName;
 
   assigneeTrackKey(assignee): string {
     return assigneeKey(assignee, this.stateService.configuration?.code);

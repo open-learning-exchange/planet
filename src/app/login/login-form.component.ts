@@ -52,6 +52,10 @@ export class LoginFormComponent implements OnInit {
   @Input() createMode = false;
   @Input() isDialog = false;
   @Output() loginEvent = new EventEmitter<'loggedOut' | 'loggedIn'>();
+  returnUrl = this.route.snapshot.queryParams['returnUrl'] || (this.stateService.configuration.planetType === 'center' ?
+    'myDashboard' :
+    '/'
+  );
 
   constructor(
     private couchService: CouchService,
@@ -73,11 +77,6 @@ export class LoginFormComponent implements OnInit {
     }
     this.initUserForm();
   }
-
-  returnUrl = this.route.snapshot.queryParams['returnUrl'] || (this.stateService.configuration.planetType === 'center' ?
-    'myDashboard' :
-    '/'
-  );
 
   initUserForm() {
     this.userForm = this.createMode ? this.createRegisterForm() : this.createLoginForm();
