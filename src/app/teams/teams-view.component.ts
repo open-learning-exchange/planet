@@ -49,7 +49,7 @@ import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { ResourcesIconComponent } from '../resources/resources-icon.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
-import { CustomVoiceLabel } from '../news/news-labels';
+import { CustomVoiceLabel } from '../news/news.utils';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({

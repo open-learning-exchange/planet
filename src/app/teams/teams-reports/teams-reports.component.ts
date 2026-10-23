@@ -88,6 +88,27 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
   filter = '';
   private onDestroy$ = new Subject<void>();
 
+  constructor(
+    private couchService: CouchService,
+    private dialog: MatDialog,
+    private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private teamsService: TeamsService,
+    private teamsAttachmentsService: TeamsAttachmentsService,
+    private csvService: CsvService,
+    private teamsTablePdfExportService: TeamsTablePdfExportService,
+    private stateService: StateService,
+    private planetMessageService: PlanetMessageService,
+    @Inject(LOCALE_ID) private localeId: string,
+    private dialogGuard: DialogGuardService
+  ) {}
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+
   ngOnChanges() {
     this.reportCards = (this.reports || [])
       .filter(report => report.status !== 'archived')
@@ -147,26 +168,6 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
       event.preventDefault();
     }
     this.openReportDialog(report);
-  }
-
-  constructor(
-    private couchService: CouchService,
-    private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private teamsService: TeamsService,
-    private teamsAttachmentsService: TeamsAttachmentsService,
-    private csvService: CsvService,
-    private teamsTablePdfExportService: TeamsTablePdfExportService,
-    private stateService: StateService,
-    private planetMessageService: PlanetMessageService,
-    @Inject(LOCALE_ID) private localeId: string,
-    private dialogGuard: DialogGuardService
-  ) {}
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {

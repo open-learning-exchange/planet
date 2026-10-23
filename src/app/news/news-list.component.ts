@@ -4,7 +4,7 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -33,7 +33,7 @@ import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
-import { CustomVoiceLabel, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
+import { CustomVoiceLabel, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news.utils';
 import { NewsListItemComponent } from './news-list-item.component';
 
 @Component({
@@ -479,8 +479,15 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
       });
     } else {
-      const okClick = (planets) =>
-        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog?.close());
+      const okClick = (planets) => {
+        this.dialogsLoadingService.start();
+        this.newsService.shareNews(news, planets.map(planet => planet.doc)).pipe(
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(
+          () => this.shareDialog?.close(),
+          () => this.planetMessageService.showAlert($localize`There was a problem sharing this message.`)
+        );
+      };
       this.dialogGuard.open('share-news', () => of(this.dialog.open(CommunityListDialogComponent, {
         data: {
           okClick,

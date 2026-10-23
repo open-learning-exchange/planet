@@ -36,12 +36,12 @@ import { TeamsAttachmentsService } from './teams-attachments.service';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface TransactionForm {
+  [key: string]: any;
   amount: number | string;
   date: Date | number;
   description: string;
   receiptImages?: AttachmentInputState;
   type: 'credit' | 'debit';
-  [key: string]: any;
 }
 
 @Component({
@@ -109,19 +109,6 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   totals = { credit: 0, debit: 0, balance: 0 };
   private onDestroy$ = new Subject<void>();
 
-  get stats() {
-    const { credit, debit, balance } = this.totals;
-    const negative = balance < 0;
-    return [
-      { label: $localize`Total Credits`, icon: 'trending_up', tone: 'credit', value: credit },
-      { label: $localize`Total Debits`, icon: 'trending_down', tone: 'debit', value: debit },
-      {
-        label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
-        tone: negative ? 'warn' : 'net', value: balance, alert: negative
-      }
-    ];
-  }
-
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -150,6 +137,19 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
       this.allTransactions = this.setTransactionsTable(this.finances);
       this.applyDateFilter();
     }
+  }
+
+  get stats() {
+    const { credit, debit, balance } = this.totals;
+    const negative = balance < 0;
+    return [
+      { label: $localize`Total Credits`, icon: 'trending_up', tone: 'credit', value: credit },
+      { label: $localize`Total Debits`, icon: 'trending_down', tone: 'debit', value: debit },
+      {
+        label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
+        tone: negative ? 'warn' : 'net', value: balance, alert: negative
+      }
+    ];
   }
 
   private setTransactionsTable(transactions: any[]): any[] {

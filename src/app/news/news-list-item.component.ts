@@ -8,7 +8,7 @@ import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
@@ -25,9 +25,9 @@ import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { NewsService } from './news.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import {
-  CustomVoiceLabel, DEFAULT_VOICE_LABELS, dedupeCustomVoiceLabels, dedupeVoiceLabels, labelColorClass, normalizeVoiceLabel, voiceLabelsEqual
-} from './news-labels';
-import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry } from './news.utils';
+  CustomVoiceLabel, DEFAULT_VOICE_LABELS, DEFAULT_VOICE_REACTIONS, dedupeCustomVoiceLabels, dedupeVoiceLabels, labelColorClass,
+  normalizeVoiceLabel, voiceLabelsEqual, getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry
+} from './news.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -51,6 +51,7 @@ import { getReactionEntries, hasUserReacted, toggleNewsReaction, ReactionEntry }
     MatButton,
     MatMenuTrigger,
     MatMenu,
+    MatMenuContent,
     NgTemplateOutlet,
     MatMenuItem,
     SlicePipe,
@@ -87,7 +88,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   teamLabels = [];
   previewLimit = 500;
   readonly isMobile = this.deviceInfoService.isMobile;
-  commonEmojis: string[] = ['😀', '❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🙏', '😭', '😎', '🎉', '✨', '💯', '🤔', '✅', '🥳'];
+  commonEmojis = DEFAULT_VOICE_REACTIONS;
   reactionSaving = false;
   private expansionKey: string;
 

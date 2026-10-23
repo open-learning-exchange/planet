@@ -26,7 +26,7 @@ import {
   LABEL_COLORS,
   dedupeCustomVoiceLabels,
   labelColorClass
-} from './news-labels';
+} from './news.utils';
 
 @Component({
   templateUrl: './news-labels-dialog.component.html',
