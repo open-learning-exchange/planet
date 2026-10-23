@@ -102,6 +102,9 @@
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
             <textarea matInput formControlName="{{field.name}}" [required]="!!field.required"></textarea>
+            @if (field.disabledHint && modalForm.controls[field.name].disabled) {
+              <mat-hint>{{field.disabledHint}}</mat-hint>
+            }
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
         }
@@ -168,8 +171,8 @@
   @if (title !== 'Rating') {
     <mat-dialog-actions>
       <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
-      <button type="button" mat-raised-button (click)="onCancel()" i18n>Cancel</button>
-      <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
+      <button type="button" mat-raised-button (click)="onCancel()">{{cancelLabel}}</button>
+      <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())">{{submitLabel}}</button>
     </mat-dialog-actions>
   }
 
