@@ -193,6 +193,14 @@ server {
     fastcgi_pass unix://run/fcgi.sock;
   }
 
+  location = /platform {
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME "$document_root/platform.sh";
+    fastcgi_pass unix://run/fcgi.sock;
+  }
+
   location @empty {
     return 200 '';
   }
