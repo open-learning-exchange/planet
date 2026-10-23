@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-import { Subject, defer } from 'rxjs';
+import { takeUntil, finalize } from 'rxjs/operators';
+import { Observable, Subject, defer } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -16,10 +16,12 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { languages } from '@shared/language/languages';
 import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
+import { RatingService } from '@shared/ratings/rating.service';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { LanguageLabelComponent } from '@shared/language/language-label.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
 
 import { environment } from '../../../environments/environment';
@@ -95,7 +97,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
-    private linkCopyService: LinkCopyService
+    private ratingService: RatingService,
+    private linkCopyService: LinkCopyService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -104,6 +108,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
+        this.ratingService.resetRatingInteraction(this.resourceId);
         this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
@@ -164,9 +169,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.resourcesService.libraryAddRemove([ resourceId ], type).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
-    }, (error) => ((error)));
+    }, () => this.planetMessageService.showAlert($localize`There was a problem adding this resource to myLibrary.`));
   }
 
   copyLink() {
@@ -194,5 +202,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.parent || this.canManage) {
+      return true;
+    }
+    return this.ratingService.promptRating(this.resource, 'resource');
   }
 }

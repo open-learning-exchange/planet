@@ -5,6 +5,8 @@ import { MaterialModule } from '@shared/material.module';
 
 import { LoginFormComponent } from './login-form.component';
 
+export const loginDialogId = 'login-dialog';
+
 @Component({
   template: `
     <mat-dialog-content>

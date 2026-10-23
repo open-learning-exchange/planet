@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterLink, RouterStateSnapshot } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject, defer } from 'rxjs';
-import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
+import { Observable, Subject, defer } from 'rxjs';
+import { takeUntil, switchMap, take, filter, map, finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -23,6 +23,8 @@ import { trackByIndex } from '@shared/tables/table.helpers';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { RatingService } from '@shared/ratings/rating.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
@@ -87,7 +89,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogsLoadingService: DialogsLoadingService,
+    private ratingService: RatingService
   ) {}
 
   ngOnInit() {
@@ -118,6 +122,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
+      this.ratingService.resetRatingInteraction(this.courseId);
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
     });
   }
@@ -230,7 +235,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
+    this.dialogsLoadingService.start();
+    this.coursesService.courseResignAdmission(courseId, type, courseTitle).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
       this.isUserEnrolled = true;
     }, (error) => ((error)));
   }
@@ -254,6 +262,25 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  canDeactivate(
+    currentRoute?: ActivatedRouteSnapshot,
+    currentState?: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    if (this.parent || this.canManage || this.isOwnRoute(nextState?.url)) {
+      return true;
+    }
+    return this.ratingService.promptRating(this.courseDetail, 'course');
+  }
+
+  // By segments because step links are absolute even under myCourses, and progress/enrolled are siblings of view
+  private isOwnRoute(url = '') {
+    const segments = this.router.parseUrl(url).root.children.primary?.segments.map(({ path }) => path) || [];
+    return segments.some((segment, index) =>
+      [ 'view', 'progress', 'enrolled' ].includes(segment) && segments[index + 1] === this.courseDetail._id
+    );
   }
 
 }

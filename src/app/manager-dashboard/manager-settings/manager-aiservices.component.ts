@@ -32,6 +32,7 @@ type DynamicConfigFormControls = Partial<Record<DynamicConfigControlKey, FormCon
 type ConfigFormControls = FixedConfigFormControls & DynamicConfigFormControls;
 
 interface AIConfiguration {
+  [key: string]: unknown;
   streaming?: boolean;
   keys?: Record<string, unknown>;
   models?: Record<string, unknown>;
@@ -39,7 +40,6 @@ interface AIConfiguration {
     name?: string;
     instructions?: string;
   };
-  [key: string]: unknown;
 }
 
 @Component({
