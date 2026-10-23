@@ -134,7 +134,7 @@
                   <span i18n>The survey has</span>
                   {{ ' ' + step?.survey?.questions.length + ' '}}
                   <span i18n>{step.survey.questions.length, plural, =1 {question} other {questions}}.</span>
-                  </span>
+                </span>
               }
             }
             @if (!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))) {
@@ -143,7 +143,7 @@
                   <planet-resources-menu [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
                 }
                 @if (step?.exam?.questions.length && isUserEnrolled) {
-                  <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="isStepLocked(stepNum) || (!canManage && stepNum > 0 && !step.isPreviousTestTaken)" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
+                  <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="!step.submission || isStepLocked(stepNum) || (!canManage && stepNum > 0 && !step.isPreviousTestTaken)" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
                 }
                 @if (step?.survey?.questions.length && isUserEnrolled) {
                   <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="isStepLocked(stepNum)" (click)="goToSurvey(stepNum)" i18n>Take Survey</button>

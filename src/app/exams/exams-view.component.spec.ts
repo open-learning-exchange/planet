@@ -14,6 +14,7 @@ describe('ExamsViewComponent', () => {
   let dialogsLoadingService: any;
   let dialog: any;
   let location: any;
+  let coursesService: any;
 
   const paramMapOf = (params: any) => ({
     get: (key: string) => (params[key] !== undefined ? params[key] : null),
@@ -27,7 +28,7 @@ describe('ExamsViewComponent', () => {
     return new ExamsViewComponent(
       router,
       route,
-      {} as any,
+      coursesService,
       submissionsService,
       { get: vi.fn().mockReturnValue({ name: 'user' }) } as any,
       couchService,
@@ -41,6 +42,11 @@ describe('ExamsViewComponent', () => {
   };
 
   beforeEach(() => {
+    coursesService = {
+      courseUpdated$: new Subject(),
+      requestCourse: vi.fn(),
+      canManageCourse: vi.fn().mockReturnValue(false)
+    };
     couchService = {
       get: vi.fn((path: string) => of(
         path.startsWith('teams/') ?
@@ -57,6 +63,45 @@ describe('ExamsViewComponent', () => {
       navigate: vi.fn(), createUrlTree: vi.fn(), url: '/surveys/dispense',
       getCurrentNavigation: vi.fn(), serializeUrl: vi.fn(url => url)
     };
+  });
+
+  describe('course prerequisites', () => {
+    const course = {
+      _id: 'course-1',
+      steps: [
+        { exam: { _id: 'exam-1', questions: [ {} ] }, passingRequired: true },
+        { stepTitle: 'Step 2', exam: { _id: 'exam-2' }, survey: { _id: 'survey-2' } }
+      ]
+    };
+
+    it.each([ 'exam', 'survey' ])('redirects a direct %s route when a prerequisite is unpassed', (type) => {
+      const params = { id: course._id, stepNum: '2', questionNum: '1', type, examId: `${type}-2` };
+      component = createComponent(params);
+      component.setCourseListener();
+      component.setExam(paramMapOf(params));
+
+      coursesService.courseUpdated$.next({ course, progress: [] });
+
+      expect(router.navigate).toHaveBeenCalledWith([ '/courses/view', course._id, 'step', 1 ], { replaceUrl: true });
+      expect(couchService.get).not.toHaveBeenCalled();
+      expect(submissionsService.openSubmission).not.toHaveBeenCalled();
+      expect(component.isInternalNavigation).toBe(true);
+      component.ngOnDestroy();
+    });
+
+    it.each([ 'exam', 'survey' ])('opens a direct %s route after the prerequisite is passed', (type) => {
+      const params = { id: course._id, stepNum: '2', questionNum: '1', type, examId: `${type}-2` };
+      component = createComponent(params);
+      component.setCourseListener();
+      component.setExam(paramMapOf(params));
+
+      coursesService.courseUpdated$.next({ course, progress: [ { stepNum: 1, passed: true } ] });
+
+      expect(router.navigate).not.toHaveBeenCalled();
+      expect(couchService.get).toHaveBeenCalledWith(`exams/${type}-2`);
+      expect(submissionsService.openSubmission).toHaveBeenCalledWith(expect.objectContaining({ type }));
+      component.ngOnDestroy();
+    });
   });
 
   it('opens a survey for recording without creating a submission first', () => {

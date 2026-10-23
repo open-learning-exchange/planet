@@ -22,6 +22,7 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 import { CoursesService } from '../courses.service';
+import { blockingStepIndex } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
@@ -79,14 +80,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   showChat = false;
   isOpenai = false;
   isLoading = true;
-  courseSteps: any[] = [];
-  allProgress: any[] = [];
   readonly isMobile = this.deviceInfoService.isMobile;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
-
-  get isCurrentStepLocked(): boolean {
-    return this.isStepLocked(this.stepNum - 1, { steps: this.courseSteps }, this.allProgress);
-  }
 
   constructor(
     private chatService: AiChatService,
@@ -120,6 +115,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     ).pipe(takeUntil(this.onDestroy$)).subscribe(
       ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
         this.canManage = this.coursesService.canManageCourse(course, { readOnly: this.parent });
+        if (this.redirectFromLockedStep(course, progress)) {
+          return;
+        }
         this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
         if (this.countActivity) {
           this.coursesService.courseActivity('visit', course, this.stepNum);
@@ -143,18 +141,22 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+        // A slow lookup for the previous step's exam can land after Next has moved on
+        if (submission.parentId !== `${this.stepDetail.exam?._id}@${this.courseId}`) {
+          return;
+        }
         this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
         this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         this.attempts = attempts;
-        const totalMarks = this.stepDetail?.exam?.totalMarks || 0;
-        const passingPercentage = this.stepDetail?.exam?.passingPercentage ?? 100;
-        const examPercent = totalMarks > 0 ? (bestAttempt.grade / totalMarks) * 100 : 0;
-        const isGraded = bestAttempt?.status === 'complete';
-        this.examPassed = isGraded && examPercent >= passingPercentage;
-        if (!this.parent && this.progress.passed !== this.examPassed) {
-          this.coursesService.updateProgress({
-            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
-          });
+        const totalMarks = this.stepDetail.exam.totalMarks || 0;
+        const passingPercentage = this.stepDetail.exam.passingPercentage ?? 100;
+        // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
+        const passedNow = bestAttempt.status === 'complete' && totalMarks > 0 &&
+          bestAttempt.grade * 100 >= passingPercentage * totalMarks;
+        // A stored pass stands even when no visible attempt passes (exam edited since), and progress never un-passes
+        this.examPassed = !!this.progress.passed || passedNow;
+        if (!this.parent && passedNow && !this.progress.passed) {
+          this.coursesService.updateProgress({ courseId: this.courseId, stepNum: this.stepNum, passed: true });
         }
       });
   }
@@ -164,15 +166,16 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  initCourse(course, progress, resources, exams) {
-    if (!this.parent && this.isStepLocked(this.stepNum - 1, course, progress)) {
-      const targetStep = this.getFirstUnlockedStep(course, progress);
-      this.isLoading = false;
-      this.router.navigate([ '../' + targetStep ], { relativeTo: this.route });
-      return;
+  redirectFromLockedStep(course, progress): boolean {
+    const blocking = this.parent || this.canManage ? -1 : blockingStepIndex(course.steps, progress);
+    if (blocking === -1 || this.stepNum - 1 <= blocking) {
+      return false;
     }
-    this.courseSteps = course.steps || [];
-    this.allProgress = progress || [];
+    this.router.navigate([ '../' + (blocking + 1) ], { relativeTo: this.route, replaceUrl: true });
+    return true;
+  }
+
+  initCourse(course, progress, resources, exams) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.initResources(resources);
@@ -195,35 +198,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         type: 'exam' });
     }
     this.isLoading = false;
-  }
-
-  isStepLocked(stepIndex: number, course: any, progress: any[]): boolean {
-    if (this.canManage || this.parent || stepIndex <= 0 || !course?.steps) {
-      return false;
-    }
-    for (let i = 0; i < stepIndex; i++) {
-      const prevStep = course.steps[i];
-      if (prevStep?.exam?.questions?.length && prevStep.passingRequired) {
-        const prevProg = (progress || []).find((p: any) => p.stepNum === (i + 1) && p.passed) ||
-          (progress || []).find((p: any) => p.stepNum === (i + 1));
-        if (!prevProg?.passed) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  getFirstUnlockedStep(course: any, progress: any[]): number {
-    if (!course?.steps?.length) {
-      return 1;
-    }
-    for (let i = 0; i < course.steps.length; i++) {
-      if (this.isStepLocked(i, course, progress)) {
-        return Math.max(1, i);
-      }
-    }
-    return 1;
   }
 
   initResources(resources) {
@@ -265,8 +239,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       return true;
     }
     if (this.stepDetail?.exam?.questions?.length > 0) {
+      // The next step's lock reads saved progress, so wait for the pass to be saved or Next would bounce back
       if (this.stepDetail.passingRequired) {
-        return this.examPassed;
+        return !!this.progress?.passed;
       }
       if (!this.attempts && !this.examPassed) {
         return false;
@@ -311,9 +286,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam(type = 'exam', preview = false) {
-    if (!preview && this.isCurrentStepLocked) {
-      return;
-    }
     this.router.navigate(
       [
         'exam',

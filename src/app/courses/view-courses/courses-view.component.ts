@@ -27,6 +27,7 @@ import { RatingService } from '@shared/ratings/rating.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { CoursesService } from '../courses.service';
+import { blockingStepIndex, stepLocked, stepProgress } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
 import { CoursesViewDetailComponent } from './courses-view-detail.component';
@@ -104,7 +105,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
           ...step,
           resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
-          progress: progress.find((p: any) => p.stepNum === (index + 1) && p.passed) || progress.find((p: any) => p.stepNum === (index + 1))
+          progress: stepProgress(progress, index + 1)
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
@@ -165,42 +166,21 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
     const stepClicked = this.courseDetail.steps[stepClickedNum];
-    const prevProg = (this.progress || []).find((p: any) => p.stepNum === (stepNum + 1) && p.passed) ||
-      (this.progress || []).find((p: any) => p.stepNum === (stepNum + 1));
-    const isSatisfied = step.passingRequired ?
-      !!prevProg?.passed :
-      (attempts > 0 || !!prevProg?.passed || (stepNum === 0 && step.exam === undefined));
-    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isSatisfied) || stepClicked.isPreviousTestTaken;
+    // A saved pass counts when an exam edit hides the earlier attempts; a content step's visit pass doesn't
+    const hasPassed = step.exam !== undefined && (this.progress || []).some(p => p.stepNum === stepNum + 1 && p.passed);
+    const isTestTaken = attempts > 0 || hasPassed || (stepNum === 0 && step.exam === undefined);
+    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
   }
 
   isStepLocked(stepIndex: number): boolean {
-    if (this.canManage || this.parent || stepIndex <= 0) {
-      return false;
-    }
-    for (let i = 0; i < stepIndex; i++) {
-      const prevStep = this.courseDetail.steps[i];
-      if (prevStep?.exam?.questions?.length && prevStep.passingRequired) {
-        const prevProg = (this.progress || []).find((p: any) => p.stepNum === (i + 1) && p.passed) ||
-          (this.progress || []).find((p: any) => p.stepNum === (i + 1));
-        if (!prevProg?.passed) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return !this.canManage && !this.parent && stepLocked(this.courseDetail.steps, this.progress, stepIndex);
   }
 
   viewStep() {
     const latestReached = (this.progress || []).reduce((stepNum: number, prog: any) =>
       prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
-    let targetStep = 1;
-    for (let i = 0; i < latestReached; i++) {
-      if (!this.isStepLocked(i)) {
-        targetStep = i + 1;
-      } else {
-        break;
-      }
-    }
+    const blocking = this.canManage || this.parent ? -1 : blockingStepIndex(this.courseDetail.steps, this.progress);
+    const targetStep = blocking > -1 ? Math.min(latestReached, blocking + 1) : latestReached;
     this.router.navigate([ './step/' + targetStep ], { relativeTo: this.route });
   }
 

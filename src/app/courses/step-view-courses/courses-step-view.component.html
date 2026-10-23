@@ -34,21 +34,21 @@
     }
     @if (stepNum !== maxStep) {
       <span class="step-nav-action" [matTooltip]="nextStepTooltip">
-        <button mat-icon-button class="km-next-step-btn" [disabled]="isLoading || !canProceedToNextStep()" (click)="changeStep(1)" aria-label="Next step" i18n-aria-label>
+        <button mat-icon-button [disabled]="isLoading || !canProceedToNextStep()" (click)="changeStep(1)" aria-label="Next step" i18n-aria-label>
           <mat-icon>navigate_next</mat-icon>
         </button>
       </span>
     }
     @if (stepNum === maxStep && isMobile()) {
       <span class="step-nav-action" [matTooltip]="nextStepTooltip">
-        <button mat-icon-button class="km-finish-step-btn" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" aria-label="Finish" i18n-aria-label>
+        <button mat-icon-button [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" aria-label="Finish" i18n-aria-label>
           <mat-icon>check</mat-icon>
         </button>
       </span>
     }
     @if (stepNum === maxStep && !isMobile()) {
       <span class="step-nav-action" [matTooltip]="nextStepTooltip">
-        <button mat-raised-button color="accent" class="margin-lr-10 km-finish-step-btn" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" i18n>Finish</button>
+        <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" i18n>Finish</button>
       </span>
     }
   </div>
@@ -76,7 +76,6 @@
     <button
       mat-raised-button
       color="accent"
-      [disabled]="isCurrentStepLocked"
       [ngClass]="{ 'margin-lr-10': !isMobile() }"
       (click)="goToExam()" i18n>
       {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
@@ -86,7 +85,6 @@
     <button
       mat-raised-button
       color="accent"
-      [disabled]="isCurrentStepLocked"
       [ngClass]="{ 'margin-lr-10': !isMobile() }"
       (click)="goToExam('survey')" i18n>
       Take Survey
