@@ -1,5 +1,5 @@
+import { signal } from '@angular/core';
 import { vi } from 'vitest';
-import { of } from 'rxjs';
 import { CoursesViewComponent } from './courses-view.component';
 
 describe('CoursesViewComponent', () => {
@@ -11,7 +11,7 @@ describe('CoursesViewComponent', () => {
     component = new CoursesViewComponent(
       routerMock as any, { get: () => ({ name: 'u', shelf: { courseIds: [] } }) } as any,
       { snapshot: { data: {} } } as any, {} as any, {} as any,
-      { configuration: {} } as any, { watchDeviceType: () => of('desktop') } as any, {} as any
+      { configuration: {} } as any, { deviceType: signal(undefined) } as any, {} as any, {} as any, {} as any
     );
   });
 
