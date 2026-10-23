@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { interval, of, race, forkJoin } from 'rxjs';
-import { debounce } from 'rxjs/operators';
+import { debounce, finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -19,6 +19,8 @@ import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
@@ -95,7 +97,9 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
     private userService: UserService,
     private healthService: HealthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialogsLoadingService: DialogsLoadingService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.initProfileForm();
     this.initHealthForm();
@@ -193,17 +197,19 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
     }
     const profileValue = this.profileForm.getRawValue();
     const healthValue = this.healthForm.getRawValue();
-    forkJoin([
+    const save$ = forkJoin([
       this.userService.updateUser({ ...this.userService.get(), ...profileValue }),
       this.healthService.postHealthProfileData({
         _id: this.existingData._id || this.userService.get()._id,
         _rev: this.existingData._rev,
         profile: healthValue
       })
-    ]).subscribe(() => {
+    ]);
+    this.dialogsLoadingService.start();
+    save$.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => {
       this.hasUnsavedChanges = false;
       this.goBack();
-    });
+    }, () => this.planetMessageService.showAlert($localize`There was an error saving your health profile`));
   }
 
   goBack() {
