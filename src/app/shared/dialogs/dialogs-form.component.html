@@ -1,7 +1,7 @@
 <form novalidate (ngSubmit)="onSubmit(modalForm, dialogRef)" [formGroup]="modalForm">
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
-    @for (field of fields; track field) {
+    @for (field of fields; track field; let last = $last) {
       <div [ngClass]="{ 'checkbox-wrapper': field.type === 'checkbox' || field.type === 'toggle' || field.type === 'markdown' }">
         <!--checkbox field-->
         @if (field.type === 'checkbox') {
@@ -102,6 +102,9 @@
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
             <textarea matInput formControlName="{{field.name}}" [required]="!!field.required"></textarea>
+            @if (field.disabledHint && modalForm.controls[field.name].disabled) {
+              <mat-hint>{{field.disabledHint}}</mat-hint>
+            }
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
         }
@@ -146,7 +149,7 @@
         }
         <!-- File Upload -->
         @if (field.type === 'file-upload') {
-          <div class="full-width">
+          <div class="full-width file-upload-wrapper" [class.file-upload-spaced]="!last">
             @if (field.placeholder) {
               <p class="mat-caption">{{ field.placeholder }}</p>
             }
@@ -168,8 +171,8 @@
   @if (title !== 'Rating') {
     <mat-dialog-actions>
       <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
-      <button type="button" mat-raised-button (click)="onCancel()" i18n>Cancel</button>
-      <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
+      <button type="button" mat-raised-button (click)="onCancel()">{{cancelLabel}}</button>
+      <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())">{{submitLabel}}</button>
     </mat-dialog-actions>
   }
 

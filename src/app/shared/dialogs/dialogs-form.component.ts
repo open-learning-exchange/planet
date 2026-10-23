@@ -1,35 +1,37 @@
 import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DialogsLoadingService } from './dialogs-loading.service';
-import { DialogsListService } from './dialogs-list.service';
-import { DialogsListComponent } from './dialogs-list.component';
-import { DialogGuardService } from './dialog-guard.service';
 import { map } from 'rxjs/operators';
-import { UserService } from '../auth/user.service';
-import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { MatIcon } from '@angular/material/icon';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../forms/form-error-messages.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { PlanetRatingStarsComponent } from '../ratings/planet-rating-stars.component';
-import { PlanetMarkdownTextboxComponent } from '../markdown/planet-markdown-textbox.component';
-import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '../forms/file-upload.component';
-import { AuthorizedRolesDirective } from '../auth/authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+
+import { UserService } from '@shared/auth/user.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetRatingStarsComponent } from '@shared/ratings/planet-rating-stars.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '@shared/forms/file-upload.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { deepEqual } from '@shared/utils';
+import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+
+import { DialogsLoadingService } from './dialogs-loading.service';
+import { DialogsListService } from './dialogs-list.service';
+import { DialogsListComponent } from './dialogs-list.component';
+import { DialogGuardService } from './dialog-guard.service';
+import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { SubmitDirective } from './submit.directive';
-import { deepEqual } from '../utils';
-import { filterSpecificFieldsHybrid } from '../tables/table.helpers';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-changes-prompt.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -60,6 +62,10 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-change
       display: block;
       height: 24px;
     }
+
+    .file-upload-spaced {
+      margin-bottom: 20px;
+    }
   `],
   imports: [
     FormsModule,
@@ -75,6 +81,7 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes/unsaved-change
     MatLabel,
     MatInput,
     MatError,
+    MatHint,
     FormErrorMessagesComponent,
     MatIconButton,
     MatSuffix,
@@ -108,6 +115,8 @@ export class DialogsFormComponent {
   readonly emptyAttachments: ExistingAttachment[] = [];
   dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
+  cancelLabel = $localize`Cancel`;
+  submitLabel = $localize`Submit`;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsFormComponent>,
@@ -126,6 +135,8 @@ export class DialogsFormComponent {
       this.fields = this.data.fields.filter(field => !field.planetBeta || this.userService.isBetaEnabled());
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
+      this.cancelLabel = this.data.cancelLabel || this.cancelLabel;
+      this.submitLabel = this.data.submitLabel || this.submitLabel;
       this.fields.forEach(field => {
         if (field.disabled) {
           this.modalForm.get(field.name)?.disable({ emitEvent: false });

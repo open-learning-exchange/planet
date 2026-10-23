@@ -21,6 +21,7 @@ describe('MeetupsViewComponent authorization', () => {
       { get: vi.fn(() => ({ name: 'ann' })) } as any,
       {} as any,
       {} as any,
+      {} as any,
       {} as any
     );
     component.meetupDetail = meetupDetail;
@@ -53,6 +54,15 @@ describe('MeetupsViewComponent authorization', () => {
     const { component } = createComponent({ createdBy: 'ann' }, { parent: true });
 
     expect(component.canManage).toBe(false);
+  });
+
+  it('ignores Join until the meetup has loaded', () => {
+    const { component } = createComponent();
+    const dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
+    Object.assign(component, { meetupDetail: undefined, dialogsLoadingService });
+
+    expect(() => component.joinMeetup()).not.toThrow();
+    expect(dialogsLoadingService.start).not.toHaveBeenCalled();
   });
 
   it('passes its read-only context to the guarded delete workflow', () => {

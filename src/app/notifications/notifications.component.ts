@@ -1,15 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { filterDropdowns } from '../shared/tables/table.helpers';
-import { takeUntil } from 'rxjs/operators';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationsService, notificationUserFilter } from './notifications.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -17,7 +11,16 @@ import { MatSelect } from '@angular/material/select';
 import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
-import { ChallengesService } from '../shared/challenges/challenges.service';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { filterDropdowns } from '@shared/tables/table.helpers';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+
+import { NotificationsService, notificationUserFilter } from './notifications.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -41,7 +44,7 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     DatePipe
   ]
 })
-export class NotificationsComponent implements OnInit, AfterViewInit {
+export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
@@ -60,6 +63,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private userService: UserService,
     private challengesService: ChallengesService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -73,6 +78,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.notifications.paginator = this.paginator;
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getNotifications() {
@@ -98,7 +108,10 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   readNotification(notification) {
     const updateNotificaton = { ...notification, status: 'read' };
     if (notification.status === 'unread') {
-      this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
+      this.dialogsLoadingService.start();
+      this.couchService.put('notifications/' + notification._id, updateNotificaton).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe((data) => {
         this.notifications.data = this.notifications.data.map((n: any) => {
           if (n._id === data.id) {
             return Object.assign(updateNotificaton, { _rev: data.rev });
@@ -106,7 +119,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
           return n;
         });
         this.userService.setNotificationStateChange();
-      }, (err) => console.log(err));
+      }, () => this.planetMessageService.showAlert($localize`There was a problem marking this notification as read`));
     }
   }
 
@@ -115,10 +128,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   openAnnouncementDialog(notification: any) {
-    this.challengesService.getChallengeForNotification(notification).subscribe(challenge => {
-      if (challenge) {
-        this.challengesService.openChallengeDialog(this.dialog, challenge);
-      }
-    });
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getChallengeForNotification(notification))
+      .pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 }

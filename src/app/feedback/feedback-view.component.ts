@@ -2,31 +2,33 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
-import { CouchService } from '../shared/database/couchdb.service';
-import { UserService } from '../shared/auth/user.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { FeedbackService } from './feedback.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { StateService } from '../shared/state.service';
-import { couchAttachmentUrl, urlToParamObject } from '../shared/utils';
-import { UsersService } from '../users/users.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DatePipe, KeyValuePipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
-import { AuthorizedRolesDirective } from '../shared/auth/authorized-roles.directive';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { couchAttachmentUrl, urlToParamObject } from '@shared/utils';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { ExistingAttachment } from '@shared/forms/file-upload.component';
+
+import { FeedbackService } from './feedback.service';
+import { UsersService } from '../users/users.service';
 import {
   FEEDBACK_SCREENSHOT_TYPES, getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType
 } from './feedback.utils';
-import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
 import { environment } from '../../environments/environment';
-import { ExistingAttachment } from '../shared/forms/file-upload.component';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -150,11 +152,12 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       this.feedback.messages,
       { message: this.newMessage, user: this.user.name, time: this.couchService.datePlaceholder, userPlanetCode: this.user.planetCode }
     );
+    this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
         return forkJoin([ this.getFeedback(res.id), this.sendNotifications() ]);
-      })
+      }), finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(
         ([ feedback, notificationRes ]) => {
           this.setFeedback(feedback);
@@ -194,7 +197,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   setTitle() {
-    this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).subscribe(
+    this.dialogsLoadingService.start();
+    this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
       (res) => {
         this.editTitleMode = false;
         this.feedback._rev = res.rev;
@@ -218,7 +224,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   closeFeedback(feedback) {
-    this.feedbackServive.closeFeedback(feedback).subscribe(
+    this.dialogsLoadingService.start();
+    this.feedbackServive.closeFeedback(feedback).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
       () => this.router.navigate([ '/feedback' ]),
       () => this.planetMessageService.showAlert($localize`There was an error closing this feedback.`)
     );

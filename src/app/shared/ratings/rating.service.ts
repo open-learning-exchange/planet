@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../database/couchdb.service';
-import { findDocuments } from '../database/mango-queries';
-import { UserService } from '../auth/user.service';
+import { FormControl, FormGroup } from '@angular/forms';
 import { defer, Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, finalize, map } from 'rxjs/operators';
-import { StateService } from '../state.service';
-import { PlanetMessageService } from '../ui/planet-message.service';
-import { DialogsLoadingService } from '../dialogs/dialogs-loading.service';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { disableCommentWhenUnrated, ratingFormFields, RatingFormModel, RatingFormValue } from './rating-form';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [] };
 
@@ -36,6 +40,7 @@ export interface SaveRatingOptions {
 export class RatingService {
   private dbName = 'ratings';
   private ratingsUpdated = new Subject<any>();
+  private ratingInteractions = new Set<string>();
   ratingsUpdated$ = this.ratingsUpdated.asObservable();
   ratings: any[];
 
@@ -43,6 +48,7 @@ export class RatingService {
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
+    private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService
   ) {}
@@ -125,12 +131,15 @@ export class RatingService {
     { item, type, rate, existingRating = {}, comment = existingRating.comment ?? '', ratingInfo = {} }: SaveRatingOptions
   ): Observable<RatingInfo> {
     return defer(() => {
+      const itemId = this.itemId(item);
+      // Marked before the write lands so leaving mid-save cannot prompt for, and post, a second rating
+      this.markRatingInteraction(itemId);
       const itemDoc = item.doc ?? item;
       const configuration = this.stateService.configuration;
       const newRating = {
         ...existingRating,
         type,
-        item: this.itemId(item),
+        item: itemId,
         title: itemDoc.title || itemDoc.courseTitle,
         createdTime: existingRating.createdTime || this.couchService.datePlaceholder,
         rate,
@@ -159,6 +168,7 @@ export class RatingService {
   deleteRating(rating: any, ratingInfo: Partial<RatingInfo> = {}): Observable<RatingInfo> {
     return defer(() => this.couchService.delete(`${this.dbName}/${rating._id}?rev=${rating._rev}`).pipe(
       map(() => {
+        this.markRatingInteraction(rating.item);
         this.newRatings(false);
         return this.normalizeRatingInfo({
           userRating: {},
@@ -175,6 +185,61 @@ export class RatingService {
       this.dialogsLoadingService.start();
       return source.pipe(finalize(() => this.dialogsLoadingService.stop()));
     });
+  }
+
+  private canPromptForRating(item: any, type: RatingType): boolean {
+    const itemId = this.itemId(item);
+    if (!this.userService.get()?._id || !itemId || this.ratingInteractions.has(itemId)) {
+      return false;
+    }
+    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
+    const { inShelf } = this.userService.countInShelf([ itemId ], idType);
+    return !!inShelf && !(item.rating?.userRating?.rate > 0);
+  }
+
+  private markRatingInteraction(itemId: string) {
+    if (itemId) {
+      this.ratingInteractions.add(itemId);
+    }
+  }
+
+  resetRatingInteraction(itemId: string) {
+    this.ratingInteractions.delete(itemId);
+  }
+
+  promptRating(item: any, type: RatingType): Observable<boolean> {
+    if (!this.canPromptForRating(item, type)) {
+      return of(true);
+    }
+    const formGroup = new FormGroup<RatingFormModel>({
+      rate: new FormControl(0, { nonNullable: true }),
+      comment: new FormControl('', { nonNullable: true })
+    });
+    disableCommentWhenUnrated(formGroup);
+    return this.openRatingPrompt(item, type, formGroup);
+  }
+
+  private openRatingPrompt(item: any, type: RatingType, formGroup: FormGroup<RatingFormModel>): Observable<boolean> {
+    const title = type === 'course' ?
+      $localize`How would you rate this course?` :
+      $localize`How would you rate this resource?`;
+    return this.dialogsFormService.confirm<RatingFormValue>(
+      title, ratingFormFields, formGroup, false, true, { cancelLabel: $localize`Not now`, submitLabel: $localize`Done` }
+    ).pipe(switchMap(result => {
+      const { rate, comment } = formGroup.getRawValue();
+      if (!result || rate <= 0) {
+        this.markRatingInteraction(this.itemId(item));
+        return of(true);
+      }
+      return this.saveRating({ item, type, rate, comment, existingRating: item.rating?.userRating, ratingInfo: item.rating }).pipe(
+        map(ratingInfo => {
+          item.rating = ratingInfo;
+          this.planetMessageService.showMessage($localize`Thank you, your rating is submitted!`);
+          return true;
+        }),
+        catchError(() => this.openRatingPrompt(item, type, formGroup))
+      );
+    }));
   }
 
   private itemId(item: any): string {

@@ -1,7 +1,6 @@
 @use '../variables' as v;
 
 .space-container {
-  height: calc(#{v.$view-container-height-no-toolbar} + 1.5rem);
   margin: 0;
 }
 

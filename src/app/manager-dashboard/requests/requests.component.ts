@@ -1,18 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFieldsHybrid } from '../../shared/tables/table.helpers';
-import { StateService } from '../../shared/state.service';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
-import { CustomValidators } from '../../validators/custom-validators';
-import { ReportsService } from '../reports/reports.service';
-import { ManagerService } from '../manager.service';
-import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
-import { DeviceInfoService, DeviceType } from '../../shared/ui/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -21,8 +10,22 @@ import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
-import { RequestsTableComponent } from './requests-table.component';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { StateService } from '@shared/state.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+
+import { ValidatorService } from '../../validators/validator.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ReportsService } from '../reports/reports.service';
+import { ManagerService } from '../manager.service';
+import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
+import { RequestsTableComponent } from './requests-table.component';
 
 @Component({
   templateUrl: './requests.component.html',
@@ -59,8 +62,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   shownStatus = 'pending';
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   showFilterRow = false;
   get childType() {
     return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
@@ -75,13 +77,9 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
     private managerService: ManagerService,
-    private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+    private deviceInfoService: DeviceInfoService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(
@@ -158,7 +156,13 @@ export class RequestsComponent implements OnInit, OnDestroy {
   }
 
   deleteHub(hub, event) {
-    this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev).subscribe(() => this.getCommunityList());
+    this.dialogsLoadingService.start();
+    this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
+      () => this.getCommunityList(),
+      () => this.planetMessageService.showAlert($localize`There was a problem deleting this network`)
+    );
     event.stopPropagation();
   }
 

@@ -1,5 +1,8 @@
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+
+import { IMAGE_MAX_FALLBACK_BYTES } from '@shared/utils';
+
 import { TeamsService } from './teams.service';
 
 describe('TeamsService membership writes', () => {
@@ -7,7 +10,7 @@ describe('TeamsService membership writes', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  const createService = (couchOverrides: any = {}) => {
+  const createService = (couchOverrides: any = {}, stateService: any = {}) => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([])),
       get: vi.fn().mockReturnValue(of({})),
@@ -20,6 +23,7 @@ describe('TeamsService membership writes', () => {
       {} as any,
       {} as any,
       {} as any,
+      stateService,
       {} as any
     );
     return { service, couchService };
@@ -166,7 +170,7 @@ describe('TeamsService membership writes', () => {
     } ]);
   });
 
-  it('validates mixed add-member writes and reduces request deletions to tombstones', () => {
+  it('validates mixed add-member writes and deletes requests with only their persisted fields', () => {
     const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
     const request = {
       ...membership,
@@ -195,8 +199,19 @@ describe('TeamsService membership writes', () => {
         userPlanetCode: selected[0].planetCode,
         docType: 'membership'
       },
-      { _id: request._id, _rev: request._rev, _deleted: true }
+      { ...membership, _id: request._id, _rev: request._rev, userId: selected[0]._id, docType: 'request', _deleted: true }
     ]);
+  });
+
+  it('keeps a request from the same user ID on another planet', () => {
+    const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-b', docType: 'request' };
+    const bulkDocs = vi.fn().mockReturnValue(of({ res: [ { id: 'membership-new', rev: '1-new' } ] }));
+    const { service } = createService({ bulkDocs });
+
+    service.addMembers(team, selected, [ request ]).subscribe();
+
+    expect(bulkDocs.mock.calls[0][1]).toHaveLength(1);
   });
 
   it('reports an individual add-member bulk failure', () => {
@@ -213,7 +228,7 @@ describe('TeamsService membership writes', () => {
 
   it('accepts an add-member write when only request cleanup conflicts', () => {
     const selected = [ { _id: 'org.couchdb.user:new', planetCode: 'planet-a' } ];
-    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id };
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
     const bulkDocs = vi.fn().mockReturnValue(of({
       res: [
         { id: 'membership-new', rev: '1-new' },
@@ -235,7 +250,7 @@ describe('TeamsService membership writes', () => {
       { _id: 'org.couchdb.user:first', planetCode: 'planet-a' },
       { _id: 'org.couchdb.user:second', planetCode: 'planet-a' }
     ];
-    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id };
+    const request = { _id: 'request-1', _rev: '1-request', userId: selected[0]._id, userPlanetCode: 'planet-a' };
     const bulkDocs = vi.fn().mockImplementation((_dbName: string, docs: any[]) => of({
       res: docs.map((doc, index) => {
         if (doc._deleted) {
@@ -438,6 +453,52 @@ describe('TeamsService membership writes', () => {
     }));
   });
 
+  describe('join requests', () => {
+    const user = { _id: 'org.couchdb.user:sam' };
+    const requestSelector = {
+      teamId: team._id,
+      userId: user._id,
+      teamPlanetCode: team.teamPlanetCode,
+      userPlanetCode: 'planet-a',
+      docType: 'request'
+    };
+    const requestToJoin = (existingRequests: any[]) => {
+      const { service, couchService } = createService({
+        post: vi.fn().mockReturnValue(of({ docs: existingRequests })),
+        updateDocument: vi.fn().mockReturnValue(of({ id: 'request-1', rev: '1-request' }))
+      }, { configuration: { code: 'planet-a' } });
+      const next = vi.fn();
+      service.requestToJoinTeam(team, user).subscribe(next);
+      return { couchService, next };
+    };
+
+    it('writes a request when the user has none', () => {
+      const { couchService, next } = requestToJoin([]);
+
+      expect(couchService.post).toHaveBeenCalledWith('teams/_find', expect.objectContaining({ selector: requestSelector, limit: 1 }));
+      expect(couchService.updateDocument).toHaveBeenCalledWith('teams', expect.objectContaining({
+        ...requestSelector,
+        teamType: team.teamType
+      }));
+      expect(next).toHaveBeenCalledWith(true);
+    });
+
+    it('keeps an existing request instead of adding another', () => {
+      const { couchService, next } = requestToJoin([ { _id: 'request-1' } ]);
+
+      expect(couchService.updateDocument).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(false);
+    });
+
+    it('removes requests made before the team type changed', () => {
+      const { service, couchService } = createService();
+
+      service.removeFromRequests({ ...team, teamType: 'sync' }, { userId: user._id, userPlanetCode: 'planet-a' }).subscribe();
+
+      expect(couchService.findAll).toHaveBeenCalledWith('teams', expect.objectContaining({ selector: requestSelector }));
+    });
+  });
+
   it('sanitizes membership deletion writes', () => {
     const { service, couchService } = createService({
       findAll: vi.fn().mockReturnValue(of([ membership ]))
@@ -568,5 +629,96 @@ describe('TeamsService membership writes', () => {
       expect(next).toHaveBeenCalled();
       expect(error).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('TeamsService cover image handling', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const createService = () => {
+    const couchService = {
+      updateDocument: vi.fn((db, doc) => of({ id: doc._id || 'new-id', rev: '2-rev' })),
+      putAttachment: vi.fn(),
+      get: vi.fn()
+    };
+    const service = new TeamsService(
+      couchService as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any
+    );
+    return { service, couchService };
+  };
+
+  const stub = { content_type: 'image/png', length: 1234, digest: 'md5-x', revpos: 1, stub: true };
+  const teamWithCover = {
+    _id: 'team-1',
+    _rev: '1-rev',
+    name: 'Team',
+    coverFileName: 'cover.png',
+    _attachments: { 'cover.png': stub, 'notes.pdf': { ...stub, content_type: 'application/pdf' } }
+  };
+  const pngFile = (name: string) => new File([ 'data' ], name, { type: 'image/png' });
+  const save = (service: TeamsService, team: any, coverState: any) =>
+    new Promise<any>((resolve, reject) => service.saveTeamWithCover(team, coverState).subscribe({ next: resolve, error: reject }));
+
+  it('keeps the cover and every attachment stub when the cover is unchanged', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [ { name: 'cover.png' } ], removed: [], added: [] });
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(1);
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', teamWithCover);
+  });
+
+  it('drops the cover and keeps other attachments when the cover is removed', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [], removed: [ { name: 'cover.png' } ], added: [] });
+
+    const savedDoc = couchService.updateDocument.mock.calls[0][1];
+    expect(savedDoc.coverFileName).toBeUndefined();
+    expect(savedDoc._attachments).toEqual({ 'notes.pdf': teamWithCover._attachments['notes.pdf'] });
+  });
+
+  it('creates a new team with its cover inlined in a single write', async () => {
+    const { service, couchService } = createService();
+
+    const savedTeam = await save(service, { name: 'New Team' }, { retained: [], removed: [], added: [ { file: pngFile('cover.png') } ] });
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(1);
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
+      name: 'New Team',
+      coverFileName: 'cover.png',
+      _attachments: { 'cover.png': { content_type: 'image/png', data: btoa('data') } }
+    });
+    expect(couchService.putAttachment).not.toHaveBeenCalled();
+    expect(couchService.get).not.toHaveBeenCalled();
+    expect(savedTeam._id).toBe('new-id');
+    expect(savedTeam._attachments).toEqual({ 'cover.png': { content_type: 'image/png', length: 4, stub: true } });
+  });
+
+  it('replaces a cover against the loaded revision under a new name', async () => {
+    const { service, couchService } = createService();
+
+    await save(service, teamWithCover, { retained: [], removed: [ { name: 'cover.png' } ], added: [ { file: pngFile('cover.png') } ] });
+
+    const savedDoc = couchService.updateDocument.mock.calls[0][1];
+    expect(savedDoc._rev).toBe('1-rev');
+    expect(savedDoc.coverFileName).toBe('cover-1.png');
+    expect(Object.keys(savedDoc._attachments).sort()).toEqual([ 'cover-1.png', 'notes.pdf' ]);
+    expect(savedDoc._attachments['cover-1.png'].data).toBe(btoa('data'));
+  });
+
+  it('saves nothing when the new cover cannot be prepared', async () => {
+    const { service, couchService } = createService();
+    const tooLarge = new File([ new Uint8Array(IMAGE_MAX_FALLBACK_BYTES + 1) ], 'photo.heic', { type: 'image/heic' });
+
+    await expect(save(service, teamWithCover, { retained: [], removed: [], added: [ { file: tooLarge } ] })).rejects.toThrow();
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
   });
 });

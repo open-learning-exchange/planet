@@ -1,31 +1,33 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HealthService } from './health.service';
-import { conditions, conditionAndTreatmentFields } from './health.constants';
-import { UserService } from '../shared/auth/user.service';
-import { StateService } from '../shared/state.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { of, forkJoin, interval, race } from 'rxjs';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { CanComponentDeactivate } from '../shared/unsaved-changes/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes/unsaved-changes-prompt.component';
 import { debounce } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { PlanetNumberValidatorDirective } from '../shared/forms/planet-number-validator.directive';
-import { PlanetRoundDirective } from '../shared/forms/planet-round.directive';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-
 import { MatCheckbox } from '@angular/material/checkbox';
-import { PlanetMarkdownTextboxComponent } from '../shared/markdown/planet-markdown-textbox.component';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-validator.directive';
+import { PlanetRoundDirective } from '@shared/forms/planet-round.directive';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+
+import { HealthService } from './health.service';
+import { conditions, conditionAndTreatmentFields } from './health.constants';
+import { CustomValidators } from '../validators/custom-validators';
 
 interface HealthEventFormControls {
   temperature: FormControl<number | null>;
@@ -88,7 +90,8 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private stateService: StateService,
     private couchService: CouchService,
     private dialog: MatDialog,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.healthForm = this.fb.group({
       temperature: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
@@ -174,10 +177,11 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     if (promptFields.length) {
       this.showWarning(promptFields);
     } else {
-      this.saveEvent().subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.saveEvent().pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => {
         this.hasUnsavedChanges = false;
         this.goBack();
-      });
+      }, () => this.showSaveError());
     }
   }
 
@@ -209,7 +213,8 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
           onNext: (data) => {
             this.dialogPrompt.close(true);
             this.goBack();
-          }
+          },
+          onError: () => this.showSaveError()
         },
         displayName: '',
         showMainParagraph: false,
@@ -221,6 +226,10 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     this.dialogPrompt.afterClosed().subscribe(result => {
       this.hasUnsavedChanges = !result;
     });
+  }
+
+  showSaveError() {
+    this.planetMessageService.showAlert($localize`There was an error saving the examination`);
   }
 
   isFieldValueExpected(field: HealthEventFormFields) {

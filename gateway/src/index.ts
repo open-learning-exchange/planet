@@ -6,6 +6,7 @@ import WebSocket from 'ws';
 
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
+import { registerCurrencyRoutes } from './modules/currency/register';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get('/', (req: Request, res: Response) => {
 registerChatApiRoutes(app);
 registerPublicRoutes(app);
 registerChatApiWebSocket(wss);
+registerCurrencyRoutes(app);
 
 app.use((error: any, req: Request, res: Response, next: any) => {
   void req;

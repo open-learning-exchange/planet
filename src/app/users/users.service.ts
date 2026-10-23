@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Subject, combineLatest, of, throwError } from 'rxjs';
 import { switchMap, map, catchError, filter } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { fullName } from '@shared/utils';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+
 import { environment } from '../../environments/environment';
-import { CouchService } from '../shared/database/couchdb.service';
-import { fullName } from '../shared/utils';
-import { UserService } from '../shared/auth/user.service';
-import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
@@ -109,7 +111,7 @@ export class UsersService {
   }
 
   toggleAdminStatus(user) {
-    return user.roles.length === 0 ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
+    return user.isUserAdmin ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
   }
 
   demoteFromAdmin(user) {

@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { UserService } from '../shared/auth/user.service';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { StateService } from '../shared/state.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { switchMap, map, catchError, filter } from 'rxjs/operators';
+import { switchMap, map, catchError, filter, finalize } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { findDocuments } from '@shared/database/mango-queries';
 
 /**
  * Supports raw or replicated user docs and team-member rows. Callers holding a
@@ -43,13 +45,17 @@ export class NotificationsService {
     private userService: UserService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   setNotificationsAsRead(notifications: any) {
     const unreadArray = notifications.filter(notification => notification.status === 'unread')
       .map(notification => ({ ...notification, status: 'read' }));
-    this.couchService.bulkDocs('notifications', unreadArray).subscribe(() => {
+    this.dialogsLoadingService.start();
+    this.couchService.bulkDocs('notifications', unreadArray).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
       this.userService.setNotificationStateChange();
     }, (err) => this.planetMessageService.showAlert($localize`There was a problem marking all as read`));
   }

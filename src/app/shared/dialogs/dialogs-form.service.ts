@@ -1,14 +1,17 @@
 import { Observable } from 'rxjs';
-import { DialogsFormComponent } from './dialogs-form.component';
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MatDialogRef, MatDialog, MatDialogState } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
 import { AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlState, FormGroup, ValidatorFn } from '@angular/forms';
-import { ExistingAttachment } from '../forms/file-upload.component';
+
+import { ExistingAttachment } from '@shared/forms/file-upload.component';
+
+import { DialogsFormComponent } from './dialogs-form.component';
 
 type DialogFieldType = | 'checkbox' | 'textbox' | 'password'| 'selectbox' | 'radio'
   | 'rating' | 'textarea' | 'markdown' | 'dialog' | 'date' | 'time' | 'toggle' | 'file-upload' | string;
 
 export interface DialogField<TName extends string = string> {
+  [key: string]: unknown;
   name: TName;
   type: DialogFieldType;
   placeholder?: string;
@@ -21,6 +24,7 @@ export interface DialogField<TName extends string = string> {
   suggestions?: string[];
   planetBeta?: boolean;
   tooltip?: string;
+  disabledHint?: string;
   reset?: boolean;
   text?: string;
   authorizedRoles?: string | string[];
@@ -35,7 +39,6 @@ export interface DialogField<TName extends string = string> {
     multiple?: boolean;
     typePills?: string[];
   };
-  [key: string]: unknown;
 }
 
 export interface DialogFormValueMap {
@@ -57,13 +60,15 @@ export type DialogFormGroupConfig<T extends DialogFormValueMap> = {
 export type DialogFormGroupInput<T extends DialogFormValueMap> = FormGroup<any> | DialogFormGroupConfig<T>;
 
 export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormValueMap> {
+  [key: string]: unknown;
   autoFocus?: boolean;
   disableIfInvalid?: boolean;
   onSubmit?: (value: T, form: FormGroup<any>) => void;
   formOptions?: AbstractControlOptions;
   closeOnSubmit?: boolean;
   confirmUnsavedChanges?: boolean;
-  [key: string]: unknown;
+  cancelLabel?: string;
+  submitLabel?: string;
 }
 
 export interface DialogsFormData<T extends DialogFormValueMap = DialogFormValueMap>
@@ -73,7 +78,9 @@ export interface DialogsFormData<T extends DialogFormValueMap = DialogFormValueM
   formGroup: DialogFormGroupInput<T>;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DialogsFormService {
 
   private dialogRef?: MatDialogRef<DialogsFormComponent>;
@@ -85,15 +92,24 @@ export class DialogsFormService {
     fields: DialogField[],
     formGroup: DialogFormGroupInput<T>,
     autoFocus = false,
-    confirmUnsavedChanges = false
+    confirmUnsavedChanges = false,
+    actions: Pick<DialogsFormOptions<T>, 'cancelLabel' | 'submitLabel'> = {}
   ): Observable<T | undefined> {
     const dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
       width: '600px',
       autoFocus,
       disableClose: confirmUnsavedChanges,
-      data: { title, fields, formGroup, closeOnSubmit: true, confirmUnsavedChanges }
+      data: { title, fields, formGroup, closeOnSubmit: true, confirmUnsavedChanges, ...actions }
     });
-    return dialogRef.afterClosed() as Observable<T | undefined>;
+    return new Observable<T | undefined>(observer => {
+      const subscription = dialogRef.afterClosed().subscribe(observer);
+      return () => {
+        subscription.unsubscribe();
+        if (dialogRef.getState() === MatDialogState.OPEN) {
+          dialogRef.close();
+        }
+      };
+    });
   }
 
   openDialogsForm<T extends DialogFormValueMap = DialogFormValueMap>(
@@ -108,6 +124,7 @@ export class DialogsFormService {
       disableClose: options.confirmUnsavedChanges,
       data: { title, formGroup, fields, ...options }
     });
+    return this.dialogRef;
   }
 
   closeDialogsForm() {

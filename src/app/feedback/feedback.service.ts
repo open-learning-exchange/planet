@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CouchService } from '../shared/database/couchdb.service';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
 import { map } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+
 import { normalizeFeedbackStatus } from './feedback.utils';
 
 @Injectable({
@@ -13,14 +15,14 @@ export class FeedbackService {
   private feedbackUpdate = new Subject<any[]>();
   feedbackUpdate$ = this.feedbackUpdate.asObservable();
 
-  setFeedback() {
-    this.feedbackUpdate.next();
-  }
-
   constructor(
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService
   ) {}
+
+  setFeedback() {
+    this.feedbackUpdate.next();
+  }
 
   openFeedback(feedback: any) {
     return this.modifyFeedback(

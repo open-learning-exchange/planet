@@ -9,20 +9,6 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { CouchService } from '../shared/database/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UserService } from '../shared/auth/user.service';
-import {
-  filterDropdowns, filterSpecificFieldsHybrid, composeFilterFunctions, sortNumberOrString, dropdownsFill
-} from '../shared/tables/table.helpers';
-import { PlanetMessageService } from '../shared/ui/planet-message.service';
-import { FeedbackService } from './feedback.service';
-import { findDocuments } from '../shared/database/mango-queries';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { UsersService } from '../users/users.service';
-import { DeviceInfoService, DeviceType } from '../shared/ui/device-info.service';
-import { truncateText } from '../shared/utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -35,7 +21,23 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TruncateTextPipe } from '../shared/text/truncate-text.pipe';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { UserService } from '@shared/auth/user.service';
+import {
+  filterDropdowns, filterSpecificFieldsHybrid, composeFilterFunctions, sortNumberOrString, dropdownsFill
+} from '@shared/tables/table.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { truncateText } from '@shared/utils';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { FeedbackService } from './feedback.service';
+import { UsersService } from '../users/users.service';
 import {
   FEEDBACK_STATUS_OPTIONS, FEEDBACK_TYPE_OPTIONS, getFeedbackDisplayTitle, getFeedbackPriorityLabel, getFeedbackStatusLabel,
   getFeedbackTypeIcon, getFeedbackTypeLabel, normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
@@ -130,7 +132,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   user: any = {};
   private onDestroy$ = new Subject<void>();
   users = [];
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
 
@@ -145,11 +148,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private usersService: UsersService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     if (this.stateService.configuration.planetType === 'community') {

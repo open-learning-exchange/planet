@@ -4,15 +4,16 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { FormBuilder, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
+
+import { UserService } from '@shared/auth/user.service';
 
 import { DialogsFormComponent } from './dialogs-form.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
-import { UserService } from '../auth/user.service';
 import { DialogGuardService } from './dialog-guard.service';
 import { DialogField } from './dialogs-form.service';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 
 describe('DialogsFormComponent', () => {
   let fixture: ComponentFixture<DialogsFormComponent>;
@@ -94,6 +95,19 @@ describe('DialogsFormComponent', () => {
   afterEach(() => {
     Element.prototype.scrollIntoView = originalScrollIntoView;
     vi.restoreAllMocks();
+  });
+
+  it('uses custom action labels', () => {
+    createComponent({
+      title: 'Prompt',
+      fields: [ { type: 'textbox', name: 'rate', placeholder: 'Rate' } ],
+      formGroup: { rate: [ 0 ] },
+      cancelLabel: 'Not now',
+      submitLabel: 'Done'
+    });
+    const buttons = fixture.debugElement.queryAll(By.css('mat-dialog-actions button')).map(b => b.nativeElement.textContent.trim());
+
+    expect(buttons).toEqual([ 'Not now', 'Done' ]);
   });
 
   it('renders required asterisks on required radio labels', () => {

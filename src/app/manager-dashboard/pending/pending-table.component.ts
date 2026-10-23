@@ -4,11 +4,14 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { CouchService } from '../../shared/database/couchdb.service';
-import { PlanetMessageService } from '../../shared/ui/planet-message.service';
 import { DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import { finalize } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 @Component({
   selector: 'planet-pending-table',
@@ -49,7 +52,8 @@ export class PendingTableComponent implements OnChanges, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnChanges() {
@@ -62,7 +66,10 @@ export class PendingTableComponent implements OnChanges, AfterViewInit {
 
   deleteItem(item) {
     const { _id: id, _rev: rev } = item;
-    this.couchService.delete(`send_items/${id}?rev=${rev}`).subscribe(
+    this.dialogsLoadingService.start();
+    this.couchService.delete(`send_items/${id}?rev=${rev}`).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
       () => this.requestUpdate.emit(),
       () => this.planetMessageService.showAlert($localize`There was a problem deleting item`)
     );

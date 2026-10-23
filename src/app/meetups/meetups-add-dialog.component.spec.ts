@@ -3,10 +3,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { EMPTY } from 'rxjs';
 import { vi } from 'vitest';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { MeetupsAddDialogComponent } from './meetups-add-dialog.component';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'planet-meetups-add',
