@@ -29,6 +29,7 @@ export class CoursesProgressBarComponent implements OnChanges {
       const locked = blocking > -1 && index > blocking;
       return {
         status,
+        locked,
         clickable: !locked && (this.canManage || status !== 'not started'),
         tooltip: this.stepTooltip(step, index, status, locked)
       };

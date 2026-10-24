@@ -22,6 +22,7 @@ describe('CoursesProgressBarComponent', () => {
     component.ngOnChanges();
 
     expect(component.steps[1].tooltip).toBe('Step 2 (Locked)');
+    expect(component.steps[1].locked).toBe(true);
     component.routing(component.steps[1], 1);
     expect(routerMock.navigate).not.toHaveBeenCalled();
   });

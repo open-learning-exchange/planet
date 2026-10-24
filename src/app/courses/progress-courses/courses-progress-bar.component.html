@@ -1,7 +1,7 @@
 @for (step of steps; track step; let i = $index) {
   <div
     [matTooltip]="step.tooltip"
-    [ngClass]="{ 'completed': step.status === 'completed', 'not-started': step.status === 'not started', 'cursor-pointer': step.clickable }"
+    [ngClass]="{ 'completed': step.status === 'completed', 'not-started': step.status === 'not started', 'locked': step.locked, 'cursor-pointer': step.clickable }"
     (click)="routing(step, i)">
   </div>
 }
