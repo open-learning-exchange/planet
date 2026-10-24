@@ -13,13 +13,14 @@ async function getChatDocument(id: string) {
     'conversations': res.conversations,
     'title': res.title,
     'createdDate': res.createdDate,
-    'aiProvider': res.aiProvider
+    'aiProvider': res.aiProvider,
+    'user': res.user
   };
-  // Should return user, team data as well particularly for the "/conversations" endpoint
 }
 
 export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) {
-  const { conversations, title, createdDate, aiProvider } = await getChatDocument(dbData._id);
+  const stored = await getChatDocument(dbData._id);
+  const { conversations, title, createdDate, aiProvider } = stored;
   dbData.conversations = conversations;
   dbData.title = title;
   dbData.createdDate = createdDate;
@@ -29,6 +30,7 @@ export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) 
     messages.push({ 'role': 'user', 'content': query });
     messages.push({ 'role': 'assistant', 'content': response });
   }
+  return stored;
 }
 
 export async function fetchFileFromCouchDB(docId: string, attachmentName: string) {
