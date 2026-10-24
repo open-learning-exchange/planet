@@ -22,6 +22,7 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 import { CoursesService } from '../courses.service';
+import { blockingStepIndex } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
@@ -113,12 +114,15 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.stateService.getCouchState('exams', 'local')
     ).pipe(takeUntil(this.onDestroy$)).subscribe(
       ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
+        this.canManage = this.coursesService.canManageCourse(course, { readOnly: this.parent });
+        if (this.redirectFromLockedStep(course, progress)) {
+          return;
+        }
         this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
         if (this.countActivity) {
           this.coursesService.courseActivity('visit', course, this.stepNum);
           this.countActivity = false;
         }
-        this.canManage = this.coursesService.canManageCourse(course);
       });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -137,15 +141,22 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+        // A slow lookup for the previous step's exam can land after Next has moved on
+        if (submission.parentId !== `${this.stepDetail.exam?._id}@${this.courseId}`) {
+          return;
+        }
         this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
         this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         this.attempts = attempts;
-        const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
-        this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
-        if (!this.parent && this.progress.passed !== this.examPassed) {
-          this.coursesService.updateProgress({
-            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
-          });
+        const totalMarks = this.stepDetail.exam.totalMarks || 0;
+        const passingPercentage = this.stepDetail.exam.passingPercentage ?? 100;
+        // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
+        const passedNow = bestAttempt.status === 'complete' && totalMarks > 0 &&
+          bestAttempt.grade * 100 >= passingPercentage * totalMarks;
+        // A stored pass stands even when no visible attempt passes (exam edited since), and progress never un-passes
+        this.examPassed = !!this.progress.passed || passedNow;
+        if (!this.parent && passedNow && !this.progress.passed) {
+          this.coursesService.updateProgress({ courseId: this.courseId, stepNum: this.stepNum, passed: true });
         }
       });
   }
@@ -155,6 +166,15 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  redirectFromLockedStep(course, progress): boolean {
+    const blocking = this.parent || this.canManage ? -1 : blockingStepIndex(course.steps, progress);
+    if (blocking === -1 || this.stepNum - 1 <= blocking) {
+      return false;
+    }
+    this.router.navigate([ '../' + (blocking + 1) ], { relativeTo: this.route, replaceUrl: true });
+    return true;
+  }
+
   initCourse(course, progress, resources, exams) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
@@ -162,6 +182,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     // Fix for multiple progress docs created.  If there are more than one for a step, then we need to call updateProgress to fix.
     const stepProgressDocs = progress.filter(p => p.stepNum === this.stepNum);
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
+    this.examPassed = !!this.progress.passed;
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
     if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
       this.coursesService.updateProgress({
@@ -214,12 +235,36 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     if (this.stepNum > this.maxStep) {
       return false;
     }
-    if (!this.parent &&
-        this.stepDetail?.exam?.questions?.length > 0 &&
-        !this.attempts && !this.examPassed) {
-      return false;
+    if (this.canManage || this.parent) {
+      return true;
+    }
+    if (this.stepDetail?.exam?.questions?.length > 0) {
+      // The next step's lock reads saved progress, so wait for the pass to be saved or Next would bounce back
+      if (this.stepDetail.passingRequired) {
+        return !!this.progress?.passed;
+      }
+      if (!this.attempts && !this.examPassed) {
+        return false;
+      }
     }
     return true;
+  }
+
+  get nextStepTooltip(): string {
+    if (this.isLoading) {
+      return $localize`Loading...`;
+    }
+    if (!this.canProceedToNextStep()) {
+      if (this.stepDetail?.passingRequired) {
+        return this.stepNum === this.maxStep
+          ? $localize`You must pass the exam to finish the course`
+          : $localize`You must pass the exam to unlock the next step`;
+      }
+      return this.stepNum === this.maxStep
+        ? $localize`You must complete the exam to finish the course`
+        : $localize`You must complete the exam to unlock the next step`;
+    }
+    return this.stepNum === this.maxStep ? $localize`Finish course` : $localize`Next step`;
   }
 
   backToCourseDetail() {

@@ -72,6 +72,19 @@ describe('SubmissionsService survey exports', () => {
     expect(couchService.post).not.toHaveBeenCalled();
   });
 
+  it.each([ 0, 8 ])('picks the best attempt from completed submissions only (grade: %s)', (grade) => {
+    couchService.post.mockReturnValue(of({ docs: [
+      { _id: 'graded', status: 'complete', grade, answers: [] },
+      { _id: 'retake', status: 'pending', grade: 9, answers: [] }
+    ] }));
+    const updated = vi.fn();
+    service.submissionUpdated$.subscribe(updated);
+
+    service.openSubmission({ parentId: 'exam-1@course-1', parent: { _rev: '1-a' }, user: { name: 'learner' }, type: 'exam' });
+
+    expect(updated.mock.calls[0][0].bestAttempt._id).toBe('graded');
+  });
+
   it('exports a CSV submission counted through its embedded team', async () => {
     const [ submissions ] = await service.exportSubmissionsCsv(exam, 'survey', 'team-1').toPromise();
 

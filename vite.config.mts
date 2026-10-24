@@ -19,7 +19,6 @@ export default defineConfig(({ mode }) => ({
     include: ['src/**/*.spec.ts'],
     exclude: [
       // TODO: Update tests in these files and remove from exclusion list
-      'src/**/courses-view.component.spec.ts',
       'src/**/notifications.component.spec.ts',
       'src/**/login.component.spec.ts',
       'src/**/resources.component.spec.ts',
