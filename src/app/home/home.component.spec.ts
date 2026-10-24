@@ -72,7 +72,7 @@ describe('Home', () => {
 
   it('Should be a HomeComponent', () => {
     const { comp } = setup();
-    expect(comp instanceof HomeComponent).toBe(true, 'Should create HomeComponent');
+    expect(comp instanceof HomeComponent).toBe(true);
   });
 
   it('should close the mobile nav when a new page is selected', () => {
@@ -214,7 +214,7 @@ describe('Home', () => {
     const userService = TestBed.inject(UserService);
     vi.spyOn(userService, 'get').mockImplementation(() => currentUser);
     vi.spyOn(userService, 'endSessionLog').mockReturnValue(of({}));
-    vi.spyOn(TestBed.inject(PouchAuthService), 'logout').mockReturnValue(of({}));
+    vi.spyOn(TestBed.inject(PouchAuthService), 'logout').mockReturnValue(of([]));
     const unset = vi.spyOn(userService, 'unset').mockImplementation(() => currentUser = { name: '' });
     const deleteSession = vi.spyOn(TestBed.inject(CouchService), 'delete').mockReturnValue(parentDelete);
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);

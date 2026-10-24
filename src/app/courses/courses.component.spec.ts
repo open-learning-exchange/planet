@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
@@ -107,7 +108,8 @@ describe('CoursesComponent', () => {
             paramMap: of({ get: () => null })
           }
         },
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
       ]
     });
     fixture = TestBed.createComponent(CoursesComponent);
@@ -174,7 +176,7 @@ describe('CoursesComponent', () => {
     userServiceMock.shelfChange$.next(userServiceMock.shelf);
 
     expect(component.courses.data).not.toBe(previousData);
-    expect(component.courses.data[0].admission).toBe(true);
+    expect((component.courses.data[0] as { admission: boolean }).admission).toBe(true);
   });
 
   // TODO: Update tests to use vitest spies

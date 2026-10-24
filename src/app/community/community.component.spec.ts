@@ -73,7 +73,7 @@ describe('CommunityComponent remote exchange behavior', () => {
     const newsService = { newsUpdated$: EMPTY, requestNews: vi.fn(() => new Subscription()) };
     const teamsService = { getTeamMembers: vi.fn(() => of([])) };
     const couchService = {
-      findAll: vi.fn(() => of([])),
+      findAll: vi.fn((_db: unknown, _query: unknown) => of([])),
       get: vi.fn(() => of({ _id: 'remote@local', description: '' }))
     };
     const userChange$ = new Subject<any>();
@@ -250,7 +250,7 @@ describe('CommunityComponent remote exchange behavior', () => {
     const { component, couchService, routeParamMap } = createComponent();
     const firstRequest = new BehaviorSubject<any[]>([]);
     const secondRequest = new BehaviorSubject<any[]>([]);
-    couchService.findAll.mockImplementation((_db, query) =>
+    couchService.findAll.mockImplementation((_db, query: any) =>
       query.selector.code === 'remote' ? firstRequest : secondRequest
     );
 

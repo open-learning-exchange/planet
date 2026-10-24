@@ -4,12 +4,13 @@
     "outDir": "../out-tsc/spec",
     "target": "es2022",
     "types": [
+      "@angular/localize",
       "vitest/globals",
       "node"
     ]
   },
   "files": [
-    "src/test-setup.ts"
+    "src/polyfills.ts"
   ],
   "include": [
     "**/*.spec.ts",
