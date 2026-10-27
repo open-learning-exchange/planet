@@ -1,6 +1,6 @@
 import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
 import { forkJoin, throwError, of } from 'rxjs';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map, tap, throwIfEmpty } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -36,6 +36,9 @@ export class SyncDirective {
     this.dialogsLoadingService.start();
     this.updateReplicatorUsers().subscribe(() => {
       this.syncPlanet();
+    }, error => {
+      this.dialogsLoadingService.stop();
+      this.planetMessageService.showMessage(error.error ? error.error.reason : error);
     });
   }
 
@@ -52,6 +55,9 @@ export class SyncDirective {
       switchMap(([ achievements, teamResources, news ]: any[]) =>
         forkJoin(this.achievementResourceReplicator(achievements), this.teamAndNewsResourcesReplicator(teamResources, news))
       ),
+      // A failed tags request completes without a value
+      throwIfEmpty(() => $localize`Sync could not start, please try again`),
+      tap({ error: () => this.dialogsLoadingService.stop() }),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
         return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat(2)));
