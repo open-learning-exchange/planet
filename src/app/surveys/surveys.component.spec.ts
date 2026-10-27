@@ -299,6 +299,7 @@ describe('SurveysComponent', () => {
     component.openSendSurveyToTeamsDialog({ _id: 'survey-1', name: 'Survey 1' });
     okClick([ { doc: { _id: 'team-1', name: 'Team 1' } } ]);
 
+    expect(dialog.open.mock.calls[0][1].data.noSpinner).toBeFalsy();
     expect(dialogsLoadingService.start).not.toHaveBeenCalled();
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
   });
