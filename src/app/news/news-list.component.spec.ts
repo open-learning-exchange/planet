@@ -421,8 +421,10 @@ describe('NewsListComponent reply notifications', () => {
 
     component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' }, dialogRef);
     expect(sendReplyNotification).not.toHaveBeenCalled();
+    expect(dialogRef.close).not.toHaveBeenCalled();
     posted$.next();
 
+    expect(dialogRef.close).toHaveBeenCalledOnce();
     expect(sendReplyNotification).toHaveBeenCalledWith(expect.objectContaining({ _id: 'news-1' }), '/voices/news-1', undefined);
   });
 
