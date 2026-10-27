@@ -574,8 +574,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         autoFocus: true,
         disableIfInvalid: true,
-        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts, includeAnalysis }) => {
-          this.dialogsFormService.closeDialogsForm();
+        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts, includeAnalysis }, _form, dialogRef) => {
+          dialogRef.close();
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {

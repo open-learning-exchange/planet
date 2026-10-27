@@ -19,7 +19,7 @@ describe('ReportsDetailComponent exports', () => {
       {} as any,
       { start: vi.fn(), stop: vi.fn() } as any,
       csvService as any,
-      { closeDialogsForm: vi.fn() } as any,
+      {} as any,
       {} as any,
       {} as any,
       {} as any,
@@ -150,7 +150,6 @@ describe('ReportsDetailComponent exports', () => {
     csvService = { exportCSV: vi.fn() };
     component = Object.create(ReportsDetailComponent.prototype);
     component.csvService = csvService;
-    component.dialogsFormService = { closeDialogsForm: vi.fn() };
     component.dialogsLoadingService = { stop: vi.fn() };
     component.activityService = { appendUserDemographics: activities => activities, appendAge: activities => activities };
     component.resourceActivities = { total: { data: [] } };

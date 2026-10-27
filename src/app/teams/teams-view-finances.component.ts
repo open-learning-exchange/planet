@@ -213,17 +213,17 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
           receiptImages: [ this.teamsAttachmentsService.attachmentStateForDoc(transaction) ]
         },
         {
-          onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
+          onSubmit: (newTransaction: TransactionForm, _form, dialogRef) => this.submitTransaction(newTransaction, transaction).subscribe({
             next: (result: any) => {
               this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
               if (result?.skippedAttachments?.length) {
                 this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be included.`);
               }
-              this.dialogsFormService.closeDialogsForm();
+              dialogRef.close();
             },
             error: () => {
               this.dialogsLoadingService.stop();
-              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the transaction.`);
+              this.dialogsFormService.showErrorMessage(dialogRef, $localize`There was a problem saving the transaction.`);
             }
           })
         }

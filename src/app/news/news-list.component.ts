@@ -399,11 +399,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
     this.dialogGuard.open('news-form', () => (news._id ? of(true) : this.authGuard.checkAuthenticationStatus()).pipe(map(() =>
       this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
-        onSubmit: (newNews: any) => {
+        onSubmit: (newNews: any, _form, dialogRef) => {
           if (newNews) {
             this.postNews(
               { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
-              newNews
+              newNews,
+              dialogRef
             );
           }
         },
@@ -412,7 +413,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     ))).subscribe();
   }
 
-  postNews(oldNews, newNews) {
+  postNews(oldNews, newNews, dialogRef) {
     if (this.readOnly) {
       return;
     }
@@ -420,7 +421,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       { ...oldNews, ...newNews },
       oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`
     ).subscribe(() => {
-      this.dialogsFormService.closeDialogsForm();
+      dialogRef.close();
       this.dialogsLoadingService.stop();
       const repliedTo = oldNews._id ? undefined : this.itemsById.get(oldNews.replyTo)?.doc;
       if (repliedTo) {
