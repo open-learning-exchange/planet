@@ -53,9 +53,10 @@ describe('MeetupsComponent loading', () => {
 
     component.ngOnInit();
     meetupUpdated$.next([]);
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
+
     meetupUpdated$.next([]);
     component.ngOnDestroy();
-
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
   });
 });

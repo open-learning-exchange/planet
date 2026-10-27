@@ -277,9 +277,10 @@ describe('SurveysComponent', () => {
     (component as any).isDialogLoading = true;
 
     (component as any).loadSurveys();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
+
     (component as any).loadSurveys();
     component.ngOnDestroy();
-
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
   });
 
