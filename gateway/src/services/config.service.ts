@@ -25,9 +25,9 @@ export class ConfigurationUnavailableError extends Error {
 let snapshot: Snapshot | undefined;
 let reading: Promise<Snapshot> | undefined;
 
-const text = (value: unknown): string => (typeof value === 'string' ? value : '');
+const stringOrEmpty = (value: unknown): string => (typeof value === 'string' ? value : '');
 
-const texts = (value: unknown): Record<string, string> => Object.entries(value && typeof value === 'object' ? value : {})
+const stringsOnly = (value: unknown): Record<string, string> => Object.entries(value && typeof value === 'object' ? value : {})
   .reduce((entries, [ key, entry ]) => (typeof entry === 'string' ? { ...entries, [key]: entry } : entries), {} as Record<string, string>);
 
 // The document the client edits: first by _id, and _find skips design documents
@@ -38,12 +38,12 @@ const readDocument = async (): Promise<any> => {
 
 const toSnapshot = (doc: any): Snapshot => ({
   'configuration': {
-    'code': text(doc.code),
-    'parentCode': text(doc.parentCode),
-    'models': texts(doc.models),
-    'assistant': { 'instructions': text(doc.assistant?.instructions) }
+    'code': stringOrEmpty(doc.code),
+    'parentCode': stringOrEmpty(doc.parentCode),
+    'models': stringsOnly(doc.models),
+    'assistant': { 'instructions': stringOrEmpty(doc.assistant?.instructions) }
   },
-  'keys': texts(doc.keys)
+  'keys': stringsOnly(doc.keys)
 });
 
 const read = async (): Promise<Snapshot> => {
