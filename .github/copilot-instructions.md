@@ -1,6 +1,6 @@
 # Copilot instructions — Planet
 
-Read `AGENTS.md` at the repo root first — it is the full codebase guide (commands, architecture, conventions, git workflow). `CLAUDE.md` is a symlink to the same file, so there is only one source of truth.
+Read `AGENTS.md` at the repo root first — it is the full codebase guide (commands, architecture, conventions, git workflow). Every agent reads that same file, so there is only one source of truth.
 
 ## Shared agent skills
 

@@ -4,7 +4,7 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -33,7 +33,7 @@ import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
-import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news-labels';
+import { CustomVoiceLabel, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news.utils';
 import { NewsListItemComponent } from './news-list-item.component';
 
 @Component({
@@ -73,7 +73,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
-  @Input() customLabels: string[] = [];
+  @Input() customLabels: (string | CustomVoiceLabel)[] = [];
   @Output() viewChange = new EventEmitter<any>();
   @ViewChild('anchor', { static: false }) anchor: any;
   @ViewChild('listContent', { static: false }) listContent: ElementRef<HTMLElement>;
@@ -399,11 +399,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
     this.dialogGuard.open('news-form', () => (news._id ? of(true) : this.authGuard.checkAuthenticationStatus()).pipe(map(() =>
       this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
-        onSubmit: (newNews: any) => {
+        onSubmit: (newNews: any, _form, dialogRef) => {
           if (newNews) {
             this.postNews(
               { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
-              newNews
+              newNews,
+              dialogRef
             );
           }
         },
@@ -412,7 +413,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     ))).subscribe();
   }
 
-  postNews(oldNews, newNews) {
+  postNews(oldNews, newNews, dialogRef) {
     if (this.readOnly) {
       return;
     }
@@ -420,7 +421,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       { ...oldNews, ...newNews },
       oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`
     ).subscribe(() => {
-      this.dialogsFormService.closeDialogsForm();
+      dialogRef.close();
       this.dialogsLoadingService.stop();
       const repliedTo = oldNews._id ? undefined : this.itemsById.get(oldNews.replyTo)?.doc;
       if (repliedTo) {
@@ -475,12 +476,22 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
     if (local) {
-      this.newsService.shareNews(news).subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.newsService.shareNews(news).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
-      });
+      }, () => this.planetMessageService.showAlert($localize`There was a problem sharing this message.`));
     } else {
-      const okClick = (planets) =>
-        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog?.close());
+      const okClick = (planets) => {
+        this.dialogsLoadingService.start();
+        this.newsService.shareNews(news, planets.map(planet => planet.doc)).pipe(
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(
+          () => this.shareDialog?.close(),
+          () => this.planetMessageService.showAlert($localize`There was a problem sharing this message.`)
+        );
+      };
       this.dialogGuard.open('share-news', () => of(this.dialog.open(CommunityListDialogComponent, {
         data: {
           okClick,
@@ -540,7 +551,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const labels = action === 'remove' ?
       (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
       dedupeVoiceLabels([ ...(news.labels || []), label ]);
-    this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
+    this.dialogsLoadingService.start();
+    this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe({ error: () => this.planetMessageService.showAlert($localize`There was a problem updating the labels.`) });
   }
 
   getCurrentItems(): any[] {

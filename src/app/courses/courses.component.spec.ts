@@ -58,9 +58,7 @@ describe('CoursesComponent', () => {
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const stateServiceMock = {
@@ -92,7 +90,7 @@ describe('CoursesComponent', () => {
         { provide: SyncService, useValue: { getReplicationState: vi.fn().mockReturnValue(of({})) } },
         { provide: StateService, useValue: stateServiceMock },
         { provide: DialogsLoadingService, useValue: { start: vi.fn(), stop: vi.fn() } },
-        { provide: DialogGuardService, useValue: { open: vi.fn() } },
+        { provide: DialogGuardService, useValue: { open: vi.fn(), isActive: vi.fn().mockReturnValue(false) } },
         { provide: TagsService, useValue: { updateManyTags: vi.fn().mockReturnValue(of({})) } },
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, On
 import {
   Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
 } from '@angular/router';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { AnimationEvent, trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
@@ -30,7 +30,7 @@ import { ANDROID_APPS } from '@shared/android/android-apps';
 
 import { environment } from '../../environments/environment';
 import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
-import { LoginDialogComponent } from '../login/login-dialog.component';
+import { LoginDialogComponent, loginDialogId } from '../login/login-dialog.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { SyncDirective } from '../manager-dashboard/sync.directive';
 import { PulsateIconDirective } from './pulsate-icon.directive';
@@ -63,6 +63,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   @ViewChild('mobileSidenav') mobileSidenav: MatSidenav;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
+  // Material measures a newly shown drawer before sidenavState sets its width, and keeps the side margin after switching to overlay.
+  @ViewChild(MatSidenav) set shownSidenav(sidenav: MatSidenav | undefined) {
+    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
+  }
   private onDestroy$ = new Subject<void>();
   notifications = [];
   user: any = {};
@@ -120,13 +124,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       .subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
     this.deviceInfoService.watchViewport().pipe(takeUntil(this.onDestroy$)).subscribe(({ deviceType, isShortViewport }) => {
-      const usedOverlayNav = this.usesOverlayNav;
       this.deviceType = deviceType;
       this.isMobile = isMobileOrSmaller(deviceType);
       this.isShortViewport = isShortViewport;
-      if (this.usesOverlayNav !== usedOverlayNav) {
-        this.resetContentMargins();
-      }
     });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
@@ -188,15 +188,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   syncToolbarLayout() {
-    const needsModern = window.innerWidth < this.classicToolbarWidth || this.isShortViewport;
+    const needsModern = document.documentElement.clientWidth < this.classicToolbarWidth || this.isShortViewport;
     if (this.forceModern !== needsModern) {
       this.forceModern = needsModern;
     }
-  }
-
-  // Material can retain the side drawer's content margin after switching to overlay.
-  private resetContentMargins() {
-    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
   }
 
   openLanguageSelector(): void {
@@ -282,10 +277,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.notificationsService.setNotificationsAsRead(this.notifications);
   }
 
-  sizeChange(forceModern: boolean) {
-    this.forceModern = forceModern;
-  }
-
   toggleNav() {
     if (this.usesOverlayNav) {
       this.mobileSidenav?.toggle();
@@ -302,16 +293,22 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
+  // An interrupted toggle reports done after the next toggle has started its interval; a removed drawer reports void.
+  sidenavAnimationDone({ toState }: AnimationEvent) {
+    if (toState === this.sidenavState || toState === 'void') {
+      this.endAnimation();
+    }
+  }
+
   openLoginDialog() {
-    this.dialog.open(LoginDialogComponent);
+    if (!this.dialog.getDialogById(loginDialogId)) {
+      this.dialog.open(LoginDialogComponent, { id: loginDialogId });
+    }
   }
 
   openAnnouncementDialog(notification) {
     this.readNotification(notification);
-    this.challengesService.getChallengeForNotification(notification).subscribe(challenge => {
-      if (challenge) {
-        this.challengesService.openChallengeDialog(this.dialog, challenge);
-      }
-    });
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getChallengeForNotification(notification))
+      .subscribe();
   }
 }

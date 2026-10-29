@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -16,6 +16,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
 import { StateService } from '@shared/state.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
 
@@ -76,7 +77,8 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
     private managerService: ManagerService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -154,7 +156,13 @@ export class RequestsComponent implements OnInit, OnDestroy {
   }
 
   deleteHub(hub, event) {
-    this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev).subscribe(() => this.getCommunityList());
+    this.dialogsLoadingService.start();
+    this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
+      () => this.getCommunityList(),
+      () => this.planetMessageService.showAlert($localize`There was a problem deleting this network`)
+    );
     event.stopPropagation();
   }
 

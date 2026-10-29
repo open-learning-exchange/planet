@@ -118,7 +118,7 @@ export class ChangePasswordDirective implements OnChanges {
     );
   }
 
-  onPasswordSubmit(credentialData) {
+  onPasswordSubmit(credentialData, _form, dialogRef) {
     const user = this.userDetail || this.userService.get();
     const obs = this.isLoggedInUser
       ? this.couchService.post('_session', { name: user.name, password: credentialData.oldPassword })
@@ -130,13 +130,13 @@ export class ChangePasswordDirective implements OnChanges {
       const errors = responses.filter(r => r.ok === false);
       if (errors.length === 0) {
         this.planetMessageService.showMessage($localize`Password successfully updated`);
-        this.dialogsFormService.closeDialogsForm();
+        dialogRef.close();
       } else {
         this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
       }
     }, (err) => {
       if (err.error.reason === 'Name or password is incorrect.') {
-        this.dialogsFormService.showErrorMessage($localize`Old password isn't valid`);
+        this.dialogsFormService.showErrorMessage(dialogRef, $localize`Old password isn't valid`);
       }
       this.planetMessageService.showAlert($localize`Error changing password`);
     });

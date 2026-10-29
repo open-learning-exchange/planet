@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { MeetupsComponent } from './meetups.component';
 
@@ -33,5 +33,30 @@ describe('MeetupsComponent authorization', () => {
     component.deleteClick(meetup);
 
     expect(meetupService.openDeleteDialog).toHaveBeenCalledWith(meetup, expect.any(Function), { readOnly: true });
+  });
+});
+
+describe('MeetupsComponent loading', () => {
+  it('ends the page overlay on the first list update only', () => {
+    const meetupUpdated$ = new Subject<any[]>();
+    const dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
+    const component = new MeetupsComponent(
+      { currentTime: vi.fn(() => of(0)), checkAuthorization: vi.fn(() => of(false)) } as any,
+      {} as any,
+      {} as any,
+      { snapshot: { data: { parent: false } } } as any,
+      { get: vi.fn(() => ({ name: 'ann' })) } as any,
+      { meetupUpdated$, updateMeetups: vi.fn() } as any,
+      { configuration: {} } as any,
+      dialogsLoadingService as any
+    );
+
+    component.ngOnInit();
+    meetupUpdated$.next([]);
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
+
+    meetupUpdated$.next([]);
+    component.ngOnDestroy();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
   });
 });

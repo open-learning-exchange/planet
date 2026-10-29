@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Paths below are relative to this script, so it runs from any directory
+cd "$(dirname "$0")" || exit 1
+
 # Function for upsert of design & other configuration docs
 upsert_doc() {
   DB=$1
@@ -140,7 +143,7 @@ upsert_doc health _design/health @./design/health/health-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
 upsert_doc resource_activities _design/resource_activities @./design/activities/activities-design.json
 upsert_doc login_activities _design/login_activities @./design/activities/activities-design.json
-upsert_doc courses_progress _design/courses_progress @./design/courses_progress/courses_progress-design.json
+upsert_doc courses_progress _design/courses_progress @./design/courses-progress/courses-progress-design.json
 upsert_doc submissions _design/surveyData @./design/submissions/submissions-design.json
 
 # Insert indexes
