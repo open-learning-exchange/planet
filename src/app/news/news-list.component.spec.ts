@@ -29,6 +29,7 @@ const createComponent = (items: any[] = []) => {
     markReplyNotificationsAsRead: vi.fn()
   };
   component.newsService = { postSharedWithCommunity: () => true, requestNews: vi.fn() };
+  component.dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
   return component;
 };
 

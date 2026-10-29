@@ -498,10 +498,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleSurveyPublicAccess(survey: any) {
     const nextPublicAccess = survey.publicAccess !== true;
+    this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, {
       ...survey,
       publicAccess: nextPublicAccess
-    }).subscribe((res: any) => {
+    }).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res: any) => {
       this.updateSurveyState(survey._id, {
         publicAccess: nextPublicAccess,
         _rev: res.rev
@@ -633,10 +636,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   revokeSurveyPublicAccess(survey: any) {
+    this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, {
       ...survey,
       publicAccess: false
-    }).subscribe((res: any) => {
+    }).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res: any) => {
       this.updateSurveyState(survey._id, {
         publicAccess: false,
         _rev: res.rev

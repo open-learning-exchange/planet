@@ -6,7 +6,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CouchService } from '@shared/database/couchdb.service';
@@ -16,6 +16,7 @@ import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { RatingService } from '@shared/ratings/rating.service';
 
 import { ResourcesViewComponent } from './resources-view.component';
 import { ResourcesService } from '../resources.service';
@@ -28,6 +29,14 @@ describe('ResourcesViewComponent', () => {
   let statusElement;
   let testimage;
   let de;
+
+  const ratingServiceMock = {
+    promptRating: vi.fn().mockReturnValue(of(true)),
+    resetRatingInteraction: vi.fn(),
+    normalizeRatingInfo: vi.fn(rating => ({
+      rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [], ...rating
+    }))
+  };
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
@@ -65,6 +74,7 @@ describe('ResourcesViewComponent', () => {
   };
 
   beforeEach(() => {
+    ratingServiceMock.promptRating.mockReturnValue(of(true));
     deviceType.set(DeviceType.DESKTOP);
     resourcesServiceMock.resourcesListener.mockReturnValue(of([]));
     linkCopyServiceMock.copyLink.mockReset();
@@ -76,6 +86,7 @@ describe('ResourcesViewComponent', () => {
         { provide: StateService, useValue: stateServiceMock },
         { provide: UserService, useValue: userServiceMock },
         { provide: ResourcesService, useValue: resourcesServiceMock },
+        { provide: RatingService, useValue: ratingServiceMock },
         { provide: PlanetMessageService, useValue: planetMessageServiceMock },
         { provide: DeviceInfoService, useValue: { deviceType, isMobile: computed(() => isMobileOrSmaller(deviceType())) } },
         { provide: LinkCopyService, useValue: linkCopyServiceMock },
@@ -182,6 +193,34 @@ describe('ResourcesViewComponent', () => {
 
     expect(component.downloadFileSize).toBe('2.4 MB');
     expect(component.formattedFileSize).toBe('');
+  });
+
+  it('starts a new rating visit and prompts on leaving', () => {
+    ratingServiceMock.resetRatingInteraction.mockClear();
+    component.ngOnInit();
+    expect(ratingServiceMock.resetRatingInteraction).toHaveBeenCalledWith('id');
+    component.resource = { _id: 'r-1' };
+    component.canManage = false;
+
+    const result = component.canDeactivate();
+    (result as Observable<boolean>).subscribe(val => expect(val).toBe(true));
+
+    expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource');
+  });
+
+  it('never prompts on a parent view or for a manager', () => {
+    component.resource = { _id: 'r-1' };
+    ratingServiceMock.promptRating.mockClear();
+
+    component.parent = true;
+    component.canManage = false;
+    expect(component.canDeactivate()).toBe(true);
+
+    component.parent = false;
+    component.canManage = true;
+    expect(component.canDeactivate()).toBe(true);
+
+    expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
   });
 
 
