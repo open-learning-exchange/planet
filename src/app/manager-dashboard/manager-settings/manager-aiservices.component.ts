@@ -19,7 +19,15 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
+import { ProviderName } from '../../chat/chat.model';
 import { ConfigurationService } from '../../configuration/configuration.service';
+
+const DEFAULT_AI_PROVIDERS: Record<ProviderName, string> = {
+  openai: '',
+  perplexity: '',
+  deepseek: '',
+  gemini: ''
+};
 
 interface FixedConfigFormControls {
   streaming: FormControl<boolean>;
@@ -94,7 +102,8 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.configuration = this.stateService.configuration;
-    this.configuration.keys = this.stateService.keys;
+    this.configuration.keys = { ...DEFAULT_AI_PROVIDERS, ...this.stateService.keys };
+    this.configuration.models = { ...DEFAULT_AI_PROVIDERS, ...this.configuration.models };
     this.initForm();
   }
 
