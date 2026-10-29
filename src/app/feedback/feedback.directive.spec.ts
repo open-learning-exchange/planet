@@ -22,11 +22,11 @@ describe('FeedbackDirective', () => {
 
   // JSDOM never settles an image load, so fail it and take the raw-file fallback
   beforeEach(() => vi.stubGlobal('Image', class {
-    onerror: () => void = () => {};
-
     set src(_value: string) {
       setTimeout(() => this.onerror());
     }
+
+    onerror: () => void = () => {};
   }));
   afterEach(() => vi.unstubAllGlobals());
 

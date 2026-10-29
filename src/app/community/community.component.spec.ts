@@ -233,7 +233,7 @@ describe('CommunityComponent remote exchange behavior', () => {
     const { component, dialog, dialogsFormService } = createComponent();
 
     component.openAddMessageDialog();
-    component.postMessage({ message: 'Voice' });
+    component.postMessage({ message: 'Voice' }, undefined, undefined);
     component.openAddLinkDialog();
     component.openDeleteLinkDialog({});
     component.confirmDeleteDescription();
