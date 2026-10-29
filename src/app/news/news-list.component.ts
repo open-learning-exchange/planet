@@ -475,9 +475,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
     if (local) {
-      this.newsService.shareNews(news).subscribe(() => {
+      this.dialogsLoadingService.start();
+      this.newsService.shareNews(news).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
-      });
+      }, () => this.planetMessageService.showAlert($localize`There was a problem sharing this message.`));
     } else {
       const okClick = (planets) => {
         this.dialogsLoadingService.start();
@@ -547,7 +550,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const labels = action === 'remove' ?
       (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
       dedupeVoiceLabels([ ...(news.labels || []), label ]);
-    this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
+    this.dialogsLoadingService.start();
+    this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe({ error: () => this.planetMessageService.showAlert($localize`There was a problem updating the labels.`) });
   }
 
   getCurrentItems(): any[] {
