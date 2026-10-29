@@ -3,7 +3,7 @@ language: "en-US"
 
 tone_instructions: >-
   Correctness first: bugs, security, data loss. Then the conventions in
-  AGENTS.md and docs/Style-Guide.md. Skip whatever eslint, sass-lint and htmlhint
+  AGENTS.md and docs/STYLE_GUIDE.md. Skip whatever eslint, sass-lint and htmlhint
   already report. No compliments, no restating the diff.
 
 reviews:
@@ -73,4 +73,4 @@ knowledge_base:
     enabled: true
     filePatterns:
       - "AGENTS.md"
-      - "docs/Style-Guide.md"
+      - "docs/STYLE_GUIDE.md"

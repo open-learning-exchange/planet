@@ -36,6 +36,9 @@ Class name: ResourcesReviewService
 ```
 We suggest using max one sub-feature word to keep file and class names from getting too long.
 
+#### Other Files
+Scripts, folders and other files outside the Angular app also use lowercase words separated by dashes (`scripts/couchdb-setup.sh`, `scripts/design/courses-progress/`). Markdown docs are uppercase with underscores between words (`README.md`, `docs/STYLE_GUIDE.md`). Use an underscore anywhere else only when an outside name requires it, such as a CouchDB database (`courses_progress`) or design document (`_auth`).
+
 #### Forbidden Name
 
 Please don't use the following name for variable since it is used by our `entrypoint` script in our production docker container.

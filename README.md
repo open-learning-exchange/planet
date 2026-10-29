@@ -97,7 +97,7 @@ For gateway development instructions, refer to the [gateway README](gateway/READ
 ## Project Guidelines
 
 * Check out the project page for tasks.
-* Before contributing also be sure to read our [contributing guidelines](.github/CONTRIBUTING.md) and [style guide](docs/Style-Guide.md).
+* Before contributing also be sure to read our [contributing guidelines](.github/CONTRIBUTING.md) and [style guide](docs/STYLE_GUIDE.md).
 * Please clone the repository rather than forking, unless you're from outside the organization. It's easier for us to collaborate from a new branch on the same repository.
 * After cloning the repository please run `npm run install-hooks` to add the git hooks to your local repository.
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.

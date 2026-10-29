@@ -26,5 +26,7 @@ For those comfortable with GitHub and with the above languages please jump right
 * [Treehouse Project](https://github.com/treehouses/) - A image builder for planet learning deployment in raspberry pi
 * [Pirateship](https://github.com/ole-vi/pirateship) - Our homebrew system CLI tool
 
+Before opening a pull request on Planet, read our [style guide](../docs/STYLE_GUIDE.md).
+
 # Asking for help // OLE support communities
 OLE maintains a community of developers who actively maintain the Planet Learning system. You can discuss issues and ask for help in the [Discord community](https://discord.gg/BVrFEeNtQZ).
