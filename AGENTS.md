@@ -4,7 +4,7 @@ This file provides shared guidance for AI coding agents working in this reposito
 
 ## Commands
 
-Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and `chatapi`/`gateway` on port 5000).
+Prerequisites: Node.js v22.12 or later, npm v10, Angular CLI v21. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and `chatapi`/`gateway` on port 5000).
 
 ### Angular app (root)
 
@@ -13,8 +13,8 @@ Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be
 - `npm start` / `ng serve` — dev server on port 3000 (host `0.0.0.0`). If 3000 is taken, use `ng serve --port 3001`.
 - `npm run dev` — runs `scripts/dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when chatapi or CouchDB are on non-default ports.
 - `npm run build` — production build via `ng-high-memory` (`--max_old_space_size=4096`); large builds OOM without it.
-- `npm run test` — unit tests with Vitest through `@analogjs/vitest-angular`. There is no `e2e` workflow wired up on this branch.
-- Single spec: `ng test --test-files src/app/path/to/file.spec.ts` (or temporarily use `describe.only` / `it.only`).
+- `npm run test` — unit tests with Vitest through Angular's `@angular/build:unit-test` builder; the spec list lives in `angular.json` and runner options in `vitest.config.mts`. There is no `e2e` workflow wired up on this branch.
+- Single spec: `ng test --include src/app/path/to/file.spec.ts` (or temporarily use `describe.only` / `it.only`).
 - `npm run lint` — ESLint over `src/**/*.{ts,html}` via `@angular-eslint/builder`. `ng lint --fix` auto-fixes.
 - `npm run lint-all` — sass-lint (`lint:styles`) + ESLint + htmlhint (`lint:html`). Not yet gating: the style/html baselines have pre-existing failures, so CI runs only `npm run lint` and the pre-push hook only ESLint until that debt is cleared.
 - Locales (en, so, fr, ne, ar, es): `ng serve --configuration <spa|fra|nep|ara|som>` or `LNG=es npm start`. Locale configs, base hrefs, and xlf sources are defined in `angular.json` under `projects.planet-app.i18n`.
@@ -35,7 +35,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 ## Architecture
 
-Planet Learning is an Angular 20 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
+Planet Learning is an Angular 21 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
 
 ### Repository layout
 

@@ -286,6 +286,16 @@ describe('TeamsReportsComponent', () => {
     let updateAdditionalDocs: ReturnType<typeof vi.fn>;
     let attachmentsService: TeamsAttachmentsService;
 
+    // JSDOM never settles an image load, so fail it and take the raw-file fallback
+    beforeEach(() => vi.stubGlobal('Image', class {
+      set src(_value: string) {
+        setTimeout(() => this.onerror());
+      }
+
+      onerror: () => void = () => {};
+    }));
+    afterEach(() => vi.unstubAllGlobals());
+
     beforeEach(() => {
       attachmentsService = new TeamsAttachmentsService({} as any);
       updateAdditionalDocs = vi.fn().mockReturnValue(of({ res: [ { ok: true } ] }));

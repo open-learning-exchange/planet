@@ -93,6 +93,16 @@ describe('TeamsViewFinancesComponent', () => {
     vi.restoreAllMocks();
   });
 
+  // JSDOM never settles an image load, so fail it and take the raw-file fallback
+  beforeEach(() => vi.stubGlobal('Image', class {
+    set src(_value: string) {
+      setTimeout(() => this.onerror());
+    }
+
+    onerror: () => void = () => {};
+  }));
+  afterEach(() => vi.unstubAllGlobals());
+
   const sortBy = (id: string, start: 'asc' | 'desc') => {
     component.table.sort.sort({ id, start, disableClear: true });
     fixture.detectChanges();
