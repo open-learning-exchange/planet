@@ -15,6 +15,9 @@
         <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
         <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
       }
+      @if (surveyId && !isMobile) {
+        <ng-container *ngTemplateOutlet="surveyViewToggle"></ng-container>
+      }
       @if (isMobile) {
         <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
           <mat-icon>filter_list</mat-icon>
@@ -30,6 +33,11 @@
     @if (showFiltersRow && isMobile && !surveyId) {
       <mat-toolbar-row>
         <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
+      </mat-toolbar-row>
+    }
+    @if (surveyId && isMobile) {
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="surveyViewToggle"></ng-container>
       </mat-toolbar-row>
     }
   </mat-toolbar>
@@ -66,6 +74,12 @@
     </mat-button-toggle>
   </mat-button-toggle-group>
 </ng-template>
+<ng-template #surveyViewToggle>
+  <mat-button-toggle-group class="margin-lr-5 font-size-1" [value]="surveyView" (change)="showSurveyView($event.value)">
+    <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
+    <mat-button-toggle value="charts" i18n>Charts</mat-button-toggle>
+  </mat-button-toggle-group>
+</ng-template>
 <ng-template #filterSearch>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1 mdc-toolbar-input">
@@ -79,7 +93,10 @@
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
   <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog }">
-    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog"
+    @if (surveyView === 'charts') {
+      <planet-submissions-results [survey]="survey" [submissions]="submissions.filteredData"></planet-submissions-results>
+    }
+    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog" [class.hidden]="surveyView === 'charts'"
       [class.no-name-column]="!displayedColumns.includes('name')" [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
@@ -157,6 +174,7 @@
       </tr>
     </mat-table>
     <mat-paginator #paginator
+      [class.hidden]="surveyView === 'charts'"
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>

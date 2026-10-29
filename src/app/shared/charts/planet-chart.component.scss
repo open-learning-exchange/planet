@@ -1,0 +1,36 @@
+@use '../../variables' as v;
+
+.planet-chart {
+  position: relative;
+  height: 320px;
+}
+
+.planet-chart-placeholder {
+  height: 100%;
+}
+
+.planet-chart-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .planet-chart-actions {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .planet-chart:hover .planet-chart-actions,
+  .planet-chart-actions:focus-within {
+    opacity: 1;
+  }
+}
+
+.planet-chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: v.$grey-text;
+}

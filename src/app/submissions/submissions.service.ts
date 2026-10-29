@@ -14,7 +14,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { AiChatService } from '@shared/ai/ai-chat.service';
 import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
-import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '@shared/charts/chart.utils';
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, chartColors } from '@shared/charts/chart.utils';
 import { PdfService } from '@shared/export/pdf.service';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
 
@@ -645,7 +645,7 @@ export class SubmissionsService {
     const axisTitleFont = { size: 12, weight: 'bold' as const };
     const xAxisText = isRatingScale ? $localize`Rating` : $localize`Choice`;
     const yAxisText = isRatingScale ? $localize`Number of responses` : $localize`% of responders`;
-    const backgroundColor = data.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
+    const backgroundColor = chartColors(data.labels.length);
     const chartConfig: ChartConfiguration<'bar' | 'doughnut', number[], string> = {
       type: isBar ? 'bar' : 'doughnut',
       data: {

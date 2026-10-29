@@ -1,5 +1,7 @@
+import { styleVariables } from '@shared/utils';
+
 type ChartJsModule = typeof import('chart.js');
-type RegisterableKey = 'ArcElement' | 'BarController' | 'BarElement' | 'CategoryScale' | 'DoughnutController'
+export type RegisterableKey = 'ArcElement' | 'BarController' | 'BarElement' | 'CategoryScale' | 'DoughnutController'
   | 'Legend' | 'LinearScale' | 'Title' | 'Tooltip' | 'LineController' | 'PointElement' | 'LineElement';
 
 let chartJsPromise: Promise<ChartJsModule> | null = null;
@@ -65,7 +67,6 @@ export const renderNoDataPlaceholder = (
   return canvas.toDataURL('image/png');
 };
 
-export const CHART_COLORS = [
-  '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-  '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-];
+export const chartColors = (count: number): string[] => Array.from(
+  { length: count }, (_, index) => styleVariables.chartPalette[index % styleVariables.chartPalette.length]
+);

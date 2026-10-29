@@ -1,0 +1,21 @@
+@use '../variables' as v;
+
+// The view is a full-height grid, so the charts scroll inside their own row like the table does
+:host {
+  display: block;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.submissions-results-question {
+  margin-bottom: 2rem;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.submissions-results-note {
+  color: v.$grey-text;
+}

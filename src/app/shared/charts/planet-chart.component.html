@@ -1,0 +1,23 @@
+@if (hasData) {
+  <div class="planet-chart">
+    @if (chart) {
+      <div class="planet-chart-actions">
+        <button mat-icon-button (click)="downloadChart()" matTooltip="Download as image" i18n-matTooltip aria-label="Download as image" i18n-aria-label>
+          <mat-icon>get_app</mat-icon>
+        </button>
+        @if (canCopy) {
+          <button mat-icon-button (click)="copyChart()" matTooltip="Copy to clipboard" i18n-matTooltip aria-label="Copy to clipboard" i18n-aria-label>
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        }
+      </div>
+    }
+    @defer (on viewport) {
+      <canvas #canvas [id]="chartId"></canvas>
+    } @placeholder {
+      <div class="planet-chart-placeholder"></div>
+    }
+  </div>
+} @else {
+  <div class="planet-chart planet-chart-empty" i18n>No data available</div>
+}

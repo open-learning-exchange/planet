@@ -24,12 +24,15 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
 import { appSourceLabel } from '@shared/android/app-source';
 import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 import { SubmissionsService } from './submissions.service';
+import { SubmissionsResultsComponent } from './submissions-results.component';
 import { CoursesService } from '../courses/courses.service';
 
 const columnsByFilterAndMode = {
@@ -81,7 +84,8 @@ const columnsByFilterAndMode = {
     MatRow,
     MatNoDataRow,
     MatPaginator,
-    DatePipe
+    DatePipe,
+    SubmissionsResultsComponent
   ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -112,6 +116,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     status: 'requires grading'
   };
   surveyId: string | null = null;
+  surveyView: 'responses' | 'charts' = 'responses';
+  survey: any;
   isManagerSurveysRoute = false;
   searchValue = '';
 
@@ -123,7 +129,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private coursesService: CoursesService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -281,6 +289,19 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   dropdownsFill() {
     return dropdownsFill(this.filter);
+  }
+
+  showSurveyView(view: 'responses' | 'charts') {
+    this.surveyView = view;
+    if (view === 'charts' && !this.survey) {
+      this.couchService.get(`exams/${this.surveyId}`).subscribe(
+        survey => this.survey = survey,
+        () => {
+          this.surveyView = 'responses';
+          this.planetMessageService.showAlert($localize`There was a problem loading the survey charts.`);
+        }
+      );
+    }
   }
 
   goBack() {
