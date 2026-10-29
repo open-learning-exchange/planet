@@ -168,4 +168,18 @@ describe('SubmissionsService survey exports', () => {
 
     expect(getPrompt.mock.calls[0][0].content).toContain('"age": 0');
   });
+
+  it('charts a myPlanet Other answer, saved as the typed text alone, as Other', () => {
+    const question = { index: 0, type: 'select', hasOtherOption: true, choices: [ { id: 'a', text: 'Yes' } ] };
+    const submissions = [
+      { _id: 'planet-other', answers: [ { value: { id: 'other', text: 'Maybe', isOther: true } } ] },
+      { _id: 'myplanet-other', answers: [ { value: 'Maybe' } ] },
+      { _id: 'myplanet-choice', answers: [ { value: 'Yes' } ] }
+    ];
+
+    const { labels, data } = service.aggregateQuestionResponses(question, submissions, 'count');
+
+    expect(labels).toEqual([ 'Yes', 'Other' ]);
+    expect(data).toEqual([ 1, 2 ]);
+  });
 });

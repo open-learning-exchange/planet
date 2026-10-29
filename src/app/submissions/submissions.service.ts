@@ -732,7 +732,7 @@ export class SubmissionsService {
     question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users'
   ) {
     const totalUsers = submissions.length;
-    const counts: Record<string, Set<string>> = {};
+    const counts: Record<string, Set<string>> = Object.create(null);
     const scaleMax = question.scaleMax ?? 9;
 
     if (question.type === 'ratingScale') {
@@ -765,7 +765,9 @@ export class SubmissionsService {
       } else {
         const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
         selections.forEach(selection => {
-          if (selection.isOther || selection.id === 'other') {
+          // myPlanet saves a single choice's Other answer as the typed text alone
+          const isMyPlanetOther = question.hasOtherOption && typeof selection === 'string' && !counts[selection];
+          if (selection.isOther || selection.id === 'other' || isMyPlanetOther) {
             counts[$localize`Other`]?.add(userId);
           } else {
             const txt = selection.text ?? selection;
