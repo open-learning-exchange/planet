@@ -13,8 +13,19 @@
   .profile-container {
     max-width: 900px;
     display: grid;
-    grid-template-columns: 1fr .75fr .75fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .75fr) minmax(0, .75fr);
     grid-column-gap: 2rem;
+  }
+
+  .profile-list-lt, .profile-list-rt {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  ::ng-deep .profile-image-large {
+    aspect-ratio: 1;
+    object-fit: cover;
   }
 
   .mat-mdc-list-item-line p {
@@ -61,7 +72,7 @@
     }
 
     .profile-container {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       grid-template-areas:
       'icon icon'
       'list-lt list-rt';
@@ -81,12 +92,6 @@
       mat-card {
         flex-basis: auto;
       }
-    }
-
-    .profile-list-lt, .profile-list-rt {
-      min-width: 0;
-      overflow-wrap: break-word;
-      word-break: break-word;
     }
 
   }

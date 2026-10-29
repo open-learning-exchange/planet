@@ -9,7 +9,7 @@
 
 <div class="space-container">
   <mat-toolbar class="font-size-1" [class.primary-color]="!isDialog" [class.dialog-toolbar]="isDialog">
-    <span>{{userDetail.name | truncateText:40}}</span>
+    <span>{{(userDetail.name || urlName) | truncateText:40}}</span>
     @if (userDetail.gender) {
       <mat-icon class="margin-lr-5" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
     }
@@ -59,8 +59,8 @@
   <div class="view-container">
     <div class="profile-container">
       <div class="profile-image-section">
-        @if (userDetail.name) {
-          <planet-avatar [username]="userDetail.name" [planetCode]="userDetail.planetCode" imgClass="profile-image-large"></planet-avatar>
+        @if (userDetail.name || urlName) {
+          <planet-avatar [username]="userDetail.name || urlName" [planetCode]="userDetail.planetCode || planetCode" imgClass="profile-image-large"></planet-avatar>
         } @else {
           <img class="profile-image-large" src="assets/image.png">
         }
@@ -87,12 +87,12 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Number of Visits</h4>
-          <p matListItemLine><b>{{totalLogins || ''}}</b></p>
+          <p matListItemLine><b>{{totalLogins}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Roles</h4>
-          <p matListItemLine><b>{{ getUserRoles().join(', ') }}</b></p>
+          <p matListItemLine><b>{{ getUserRoles().join(', ') || 'N/A' }}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
@@ -114,7 +114,7 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Last Login</h4>
-          <p matListItemLine><b>{{(lastLogin || '') | date: 'mediumDate'}} {{(lastLogin || '') | date: 'shortTime'}}</b></p>
+          <p matListItemLine><b>{{lastLogin ? ((lastLogin | date: 'mediumDate') + ' ' + (lastLogin | date: 'shortTime')) : 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>

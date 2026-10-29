@@ -133,6 +133,10 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
 
   profileView() {
     const relationship = userRelationship(this.planetCode, this.stateService.configuration);
+    this.editable = relationship === 'local' && (
+      this.urlName === this.userService.get().name ||
+      (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName?.split('@')[0] !== this.urlName)
+    );
     this.couchService.get(userDocPath(this.urlName, this.planetCode, this.stateService.configuration)).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
