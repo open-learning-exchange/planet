@@ -484,12 +484,12 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
     }
     const { fields, formGroup } = this.tasksService.addDialogForm(task);
     this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
-      onSubmit: (newTask) => {
+      onSubmit: (newTask, _form, dialogRef) => {
         if (newTask) {
           this.tasksService.addDialogSubmit({ link: this.link, sync: this.sync }, task, newTask, () => {
             this.getTasks();
             this.planetMessageService.showMessage($localize`Task updated successfully`);
-            this.dialogsFormService.closeDialogsForm();
+            dialogRef.close();
           });
         }
       },

@@ -37,3 +37,19 @@ describe('DialogsFormService confirm', () => {
     expect(dialogRef.close).not.toHaveBeenCalled();
   });
 });
+
+describe('DialogsFormService showErrorMessage', () => {
+  const service = new DialogsFormService({} as any);
+
+  it('shows the error on the form it was given', () => {
+    const dialogRef = { componentInstance: { errorMessage: '' } };
+
+    service.showErrorMessage(dialogRef as any, 'Save failed');
+
+    expect(dialogRef.componentInstance.errorMessage).toBe('Save failed');
+  });
+
+  it('ignores a form that has already closed', () => {
+    expect(() => service.showErrorMessage({ componentInstance: null } as any, 'Save failed')).not.toThrow();
+  });
+});

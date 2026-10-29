@@ -234,14 +234,14 @@ export class PlanetTagInputDialogComponent {
   }
 
   editTagClick(event, tag) {
-    const onSubmit = ((newTag) => {
+    const onSubmit = ((newTag, _form, dialogRef) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
         this.planetMessageService.showMessage($localize`Collection updated`);
         this.selected.set(newTagId, this.selected.get(tag._id));
         this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
         this.data.initTags(this.mode === 'add' ? newTagId : undefined);
-        this.dialogsFormService.closeDialogsForm();
+        dialogRef.close();
         this.dialogsLoadingService.stop();
       });
     }).bind(this);

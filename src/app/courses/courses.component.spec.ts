@@ -57,9 +57,7 @@ describe('CoursesComponent', () => {
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const stateServiceMock = {
