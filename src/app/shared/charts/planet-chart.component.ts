@@ -33,7 +33,7 @@ export class PlanetChartComponent implements OnChanges, OnDestroy {
     this.renderChart();
   }
   chart: Chart;
-  // The Clipboard API only exists in secure contexts, and community servers serve plain HTTP
+  // The Clipboard API only exists in secure contexts, and community servers on Pis serve plain HTTP
   canCopy = typeof ClipboardItem !== 'undefined' && !!navigator.clipboard?.write;
   private canvasElement: HTMLCanvasElement;
 
