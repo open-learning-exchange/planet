@@ -92,7 +92,11 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Roles</h4>
-          <p matListItemLine><b>{{ getUserRoles().join(', ') || 'N/A' }}</b></p>
+          <p matListItemLine>@if (getUserRoles().length) {
+            <b>{{ getUserRoles().join(', ') }}</b>
+          } @else {
+            <b i18n>N/A</b>
+          }</p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
@@ -114,7 +118,11 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Last Login</h4>
-          <p matListItemLine><b>{{lastLogin ? ((lastLogin | date: 'mediumDate') + ' ' + (lastLogin | date: 'shortTime')) : 'N/A'}}</b></p>
+          <p matListItemLine>@if (lastLogin) {
+            <b>{{lastLogin | date: 'mediumDate'}} {{lastLogin | date: 'shortTime'}}</b>
+          } @else {
+            <b i18n>N/A</b>
+          }</p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
