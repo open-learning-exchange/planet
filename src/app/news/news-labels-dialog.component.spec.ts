@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 
 import { NewsLabelsDialogComponent } from './news-labels-dialog.component';
-import { DEFAULT_LABEL_COLOR } from './news-labels';
+import { DEFAULT_LABEL_COLOR } from './news.utils';
 
 describe('NewsLabelsDialogComponent', () => {
   let dialogRef: any;

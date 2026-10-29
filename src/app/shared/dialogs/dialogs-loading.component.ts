@@ -8,6 +8,7 @@ import { MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
       display: grid;
       align-items: center;
       justify-items: center;
+      justify-content: center;
       overflow: hidden;
       grid-template-rows: 1fr 200px;
       grid-template-columns: 200px;

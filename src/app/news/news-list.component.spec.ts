@@ -29,6 +29,7 @@ const createComponent = (items: any[] = []) => {
     markReplyNotificationsAsRead: vi.fn()
   };
   component.newsService = { postSharedWithCommunity: () => true, requestNews: vi.fn() };
+  component.dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
   return component;
 };
 
@@ -245,7 +246,7 @@ describe('NewsListComponent filtering', () => {
   });
 
   it('marks only the newest visible root as the latest message', () => {
-    const items = thread();
+    const items: any[] = thread();
     const component = createComponent(items);
     component.messageSearch = 'lunch';
 
@@ -409,26 +410,28 @@ describe('NewsListComponent reply notifications', () => {
     component.useReplyRoutes = useReplyRoutes;
     component.router = { url };
     component.newsService = { postNews: () => posted$ };
-    component.dialogsFormService = { closeDialogsForm: vi.fn() };
     component.dialogsLoadingService = { stop: vi.fn() };
     component.notificationsService.sendReplyNotification = vi.fn().mockReturnValue(of({}));
-    return { component, posted$, sendReplyNotification: component.notificationsService.sendReplyNotification };
+    const dialogRef = { close: vi.fn() };
+    return { component, posted$, dialogRef, sendReplyNotification: component.notificationsService.sendReplyNotification };
   };
 
   it('notifies the author only after the reply is posted', () => {
-    const { component, posted$, sendReplyNotification } = setup('/', true);
+    const { component, posted$, dialogRef, sendReplyNotification } = setup('/', true);
 
-    component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' });
+    component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' }, dialogRef);
     expect(sendReplyNotification).not.toHaveBeenCalled();
+    expect(dialogRef.close).not.toHaveBeenCalled();
     posted$.next();
 
+    expect(dialogRef.close).toHaveBeenCalledOnce();
     expect(sendReplyNotification).toHaveBeenCalledWith(expect.objectContaining({ _id: 'news-1' }), '/voices/news-1', undefined);
   });
 
   it('links team reply notifications to the replied-to message without the page tab parameters', () => {
-    const { component, posted$, sendReplyNotification } = setup('/teams/view/team-1;activeTab=taskTab', false);
+    const { component, posted$, dialogRef, sendReplyNotification } = setup('/teams/view/team-1;activeTab=taskTab', false);
 
-    component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' });
+    component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' }, dialogRef);
     posted$.next();
 
     expect(sendReplyNotification).toHaveBeenCalledWith(
@@ -437,9 +440,9 @@ describe('NewsListComponent reply notifications', () => {
   });
 
   it('does not notify when an existing reply is edited', () => {
-    const { component, posted$, sendReplyNotification } = setup('/', true);
+    const { component, posted$, dialogRef, sendReplyNotification } = setup('/', true);
 
-    component.postNews({ _id: 'reply-1', replyTo: 'news-1' }, { message: 'Edited' });
+    component.postNews({ _id: 'reply-1', replyTo: 'news-1' }, { message: 'Edited' }, dialogRef);
     posted$.next();
 
     expect(sendReplyNotification).not.toHaveBeenCalled();

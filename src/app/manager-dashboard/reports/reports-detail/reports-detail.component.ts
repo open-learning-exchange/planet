@@ -597,12 +597,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         $localize`Select Date Range for Resources Overview`;
 
       this.dialogsFormService.openDialogsForm(title, exportFields, exportFormGroup , {
-        onSubmit: (formValue: any) => {
+        onSubmit: (formValue: any, _form, dialogRef) => {
           if (reportType === 'coursesOverview') {
             this.exportCourseOverview(formValue.startDate, formValue.endDate);
           } else {
             this.exportResourceOverview(formValue.startDate, formValue.endDate);
           }
+          dialogRef.close();
         }
       });
       return;
@@ -632,9 +633,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       sortBy: sortingOptions && sortingOptions.length > 0 ? sortingOptions[0].value : null
     };
     this.dialogsFormService.openDialogsForm($localize`Select Date Range for Data Export`, fields, formGroup, {
-      onSubmit: (formValue: any) => {
+      onSubmit: (formValue: any, _form, dialogRef) => {
         this.getTeamMembers(formValue.team).subscribe(members => {
           this.exportCSV(reportType, { startDate: formValue.startDate, endDate: formValue.endDate }, members, formValue.sortBy);
+          dialogRef.close();
         });
       }
     });
@@ -708,7 +710,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       title: $localize`Courses Overview`
     });
 
-    this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
 
@@ -750,7 +751,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data: csvData,
       title: $localize`Resources Overview`
     });
-    this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
 
@@ -813,7 +813,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.exportChatData(dateRange, members, sortBy);
         break;
     }
-    this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
 

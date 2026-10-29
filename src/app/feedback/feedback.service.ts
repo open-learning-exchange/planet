@@ -12,17 +12,17 @@ import { normalizeFeedbackStatus } from './feedback.utils';
 })
 export class FeedbackService {
   readonly dbName = 'feedback';
-  private feedbackUpdate = new Subject<any[]>();
+  private feedbackUpdate = new Subject<void>();
   feedbackUpdate$ = this.feedbackUpdate.asObservable();
-
-  setFeedback() {
-    this.feedbackUpdate.next();
-  }
 
   constructor(
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService
   ) {}
+
+  setFeedback() {
+    this.feedbackUpdate.next();
+  }
 
   openFeedback(feedback: any) {
     return this.modifyFeedback(

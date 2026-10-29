@@ -74,13 +74,13 @@ $initials-palette: (
 // Fills for custom voice labels, keyed by the name stored on each label (LABEL_COLORS in
 // news-labels.ts). Leaves out the accent and warn tints so labels never read as team or alert chips.
 $label-colors: (
-  default: $primary-lighter,
-  green: mat.m2-get-color-from-palette(mat.$m2-green-palette, 100),
-  teal: mat.m2-get-color-from-palette(mat.$m2-teal-palette, 100),
-  purple: mat.m2-get-color-from-palette(mat.$m2-purple-palette, 100),
-  pink: mat.m2-get-color-from-palette(mat.$m2-pink-palette, 100),
-  lime: mat.m2-get-color-from-palette(mat.$m2-lime-palette, 100),
-  brown: mat.m2-get-color-from-palette(mat.$m2-brown-palette, 100)
+  'default': $primary-lighter,
+  'green': mat.m2-get-color-from-palette(mat.$m2-green-palette, 100),
+  'teal': mat.m2-get-color-from-palette(mat.$m2-teal-palette, 100),
+  'purple': mat.m2-get-color-from-palette(mat.$m2-purple-palette, 100),
+  'pink': mat.m2-get-color-from-palette(mat.$m2-pink-palette, 100),
+  'lime': mat.m2-get-color-from-palette(mat.$m2-lime-palette, 100),
+  'brown': mat.m2-get-color-from-palette(mat.$m2-brown-palette, 100)
 );
 
 // Chart series colors, in order. Canvas charts can't read SCSS, so styleVariables.chartPalette mirrors these.
@@ -127,7 +127,6 @@ $dashboard-tile-width: 125px;
 // Widths for forms fitting 1, 2, or 3 mat-input-fields horizontally
 $form-width-3: 550px;
 $form-width-2: 365px;
-$form-width-1: 181px;
 // Width for form field in grid layout
 $form-field-width: 180px;
 

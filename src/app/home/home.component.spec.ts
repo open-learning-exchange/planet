@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AnimationEvent } from '@angular/animations';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -71,7 +72,7 @@ describe('Home', () => {
 
   it('Should be a HomeComponent', () => {
     const { comp } = setup();
-    expect(comp instanceof HomeComponent).toBe(true, 'Should create HomeComponent');
+    expect(comp instanceof HomeComponent).toBe(true);
   });
 
   it('should close the mobile nav when a new page is selected', () => {
@@ -124,7 +125,7 @@ describe('Home', () => {
     expect(comp.animDisp).toBeUndefined();
   });
 
-  it('should stop the content margin interval when the desktop nav finishes animating', () => {
+  it('should stop the content margin interval only when the current toggle finishes or the side nav goes away', () => {
     const { comp } = renderNav(false);
 
     comp.toggleNav();
@@ -133,8 +134,23 @@ describe('Home', () => {
     comp.toggleNav();
 
     expect(firstRun.closed).toBe(true);
-    comp.endAnimation();
+    comp.sidenavAnimationDone({ toState: 'open' } as AnimationEvent);
+    expect(comp.animDisp.closed).toBe(false);
+    comp.sidenavAnimationDone({ toState: 'closed' } as AnimationEvent);
     expect(comp.animDisp.closed).toBe(true);
+    comp.toggleNav();
+    comp.sidenavAnimationDone({ toState: 'void' } as AnimationEvent);
+    expect(comp.animDisp.closed).toBe(true);
+  });
+
+  it('should re-measure the content margins after the shown nav changes', () => {
+    const { fixture, comp } = renderNav(false);
+    const updateContentMargins = vi.spyOn(comp['mainContent'], 'updateContentMargins');
+
+    comp.isMobile = true;
+    fixture.detectChanges();
+
+    expect(updateContentMargins).toHaveBeenCalled();
   });
 
   it('should use the overlay nav on a short viewport that is too wide to count as mobile', () => {
@@ -164,6 +180,19 @@ describe('Home', () => {
     expect(comp.forceModern).toBe(true);
   });
 
+  it('should force the modern toolbar when a phone has zoomed out to fit the classic links', () => {
+    const { comp } = renderNav(false);
+    const clientWidth = vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(390);
+    const innerWidth = vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(930);
+    comp.classicToolbarWidth = 930;
+
+    comp.syncToolbarLayout();
+
+    expect(comp.forceModern).toBe(true);
+    clientWidth.mockRestore();
+    innerWidth.mockRestore();
+  });
+
   it('should stop closing the nav once the component is destroyed', () => {
     const { comp, routerEvents } = renderNav(true);
     comp.toggleNav();
@@ -185,7 +214,7 @@ describe('Home', () => {
     const userService = TestBed.inject(UserService);
     vi.spyOn(userService, 'get').mockImplementation(() => currentUser);
     vi.spyOn(userService, 'endSessionLog').mockReturnValue(of({}));
-    vi.spyOn(TestBed.inject(PouchAuthService), 'logout').mockReturnValue(of({}));
+    vi.spyOn(TestBed.inject(PouchAuthService), 'logout').mockReturnValue(of([]));
     const unset = vi.spyOn(userService, 'unset').mockImplementation(() => currentUser = { name: '' });
     const deleteSession = vi.spyOn(TestBed.inject(CouchService), 'delete').mockReturnValue(parentDelete);
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);

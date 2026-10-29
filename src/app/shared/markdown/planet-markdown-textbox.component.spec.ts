@@ -23,7 +23,9 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
     document.body.innerHTML = markup;
     document.querySelectorAll<HTMLElement>(
       '.mat-mdc-dialog-actions, .actions-container, .exam-buttons, .action-buttons, div.action-button'
-    ).forEach(element => vi.spyOn(element, 'getClientRects').mockReturnValue([ {} as DOMRect ]));
+    ).forEach(element => vi.spyOn(element, 'getClientRects').mockReturnValue(
+      [ {} as DOMRect ] as unknown as DOMRectList
+    ));
 
     const host = document.querySelector<HTMLElement>('planet-markdown-textbox');
     return new PlanetMarkdownTextboxComponent(

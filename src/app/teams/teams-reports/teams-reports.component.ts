@@ -9,8 +9,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix, MatPrefix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
 
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
@@ -68,7 +69,12 @@ interface NewReportForm {
     MatFormField,
     MatLabel,
     MatSuffix,
+    MatPrefix,
+    MatError,
     MatInput,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
     FormsModule,
     DatePipe,
     CurrencyPipe
@@ -85,8 +91,34 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
   curCode = this.stateService.configuration.currency || {};
   reportCards: any[] = [];
   filteredCards: any[] = [];
-  filter = '';
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  labelFilter = '';
   private onDestroy$ = new Subject<void>();
+
+  get hasActiveFilters(): boolean {
+    return !!(this.startDate || this.endDate || this.labelFilter.trim());
+  }
+
+  constructor(
+    private couchService: CouchService,
+    private dialog: MatDialog,
+    private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private teamsService: TeamsService,
+    private teamsAttachmentsService: TeamsAttachmentsService,
+    private csvService: CsvService,
+    private teamsTablePdfExportService: TeamsTablePdfExportService,
+    private stateService: StateService,
+    private planetMessageService: PlanetMessageService,
+    @Inject(LOCALE_ID) private localeId: string,
+    private dialogGuard: DialogGuardService
+  ) {}
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   ngOnChanges() {
     this.reportCards = (this.reports || [])
@@ -107,20 +139,34 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
           isLoss: net < 0
         };
       });
-    this.applyFilter(this.filter);
+    this.applyFilters();
   }
 
-  applyFilter(filter: string) {
-    this.filter = filter;
+  applyFilters() {
+    const searchText = this.labelFilter.trim();
     const matchesFilter = filterSpecificFieldsHybrid([ 'searchText' ]);
-    this.filteredCards = this.reportCards.filter(card => matchesFilter(card, filter));
+    // Report periods are stored as UTC midnight of their calendar days, so the picked days are compared in that form
+    const start = this.startDate ? this.couchService.dateConversion(this.startDate) : -Infinity;
+    const end = this.endDate ? this.couchService.dateConversion(this.endDate) : Infinity;
+    this.filteredCards = start > end ? [] : this.reportCards.filter(card =>
+      card.report.startDate <= end && card.report.endDate >= start && (!searchText || matchesFilter(card, searchText))
+    );
+  }
+
+  clearLabelFilter() {
+    this.labelFilter = '';
+    this.applyFilters();
+  }
+
+  clearAllFilters() {
+    this.startDate = undefined;
+    this.endDate = undefined;
+    this.labelFilter = '';
+    this.applyFilters();
   }
 
   private searchableText(report) {
-    const dates = [ report.startDate, report.endDate ].filter(date => date);
-    const dateText = [ 'mediumDate', 'MMMM yyyy', 'yyyy-MM' ]
-      .map(format => dates.map(date => formatDate(date, format, this.localeId, 'UTC')).join(' '));
-    return [ report.label, ...dateText ].filter(text => !!text).join(' ');
+    return [ report.label, report.description ].filter(text => !!text).join(' ');
   }
 
   private reportLabels() {
@@ -147,26 +193,6 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
       event.preventDefault();
     }
     this.openReportDialog(report);
-  }
-
-  constructor(
-    private couchService: CouchService,
-    private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private teamsService: TeamsService,
-    private teamsAttachmentsService: TeamsAttachmentsService,
-    private csvService: CsvService,
-    private teamsTablePdfExportService: TeamsTablePdfExportService,
-    private stateService: StateService,
-    private planetMessageService: PlanetMessageService,
-    @Inject(LOCALE_ID) private localeId: string,
-    private dialogGuard: DialogGuardService
-  ) {}
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
@@ -219,9 +245,9 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
           disableIfInvalid: true,
-          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe({
+          onSubmit: (newReport, _form, dialogRef) => this.updateReport(oldReport, newReport).subscribe({
             next: (result: any) => {
-              this.dialogsFormService.closeDialogsForm();
+              dialogRef.close();
               const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
               this.planetMessageService.showMessage($localize`Report ${action}`);
               if (result?.skippedAttachments?.length) {
@@ -230,7 +256,7 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
             },
             error: () => {
               this.dialogsLoadingService.stop();
-              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the report.`);
+              this.dialogsFormService.showErrorMessage(dialogRef, $localize`There was a problem saving the report.`);
             }
           })
         }
@@ -367,6 +393,7 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
       .subscribe(imageSections => this.teamsTablePdfExportService.exportTable({
         data,
         title,
+        subtitle: this.exportSubtitle(),
         currencyCode: this.curCode?.code,
         currencySymbol: this.curCode?.symbol,
         moneyColumns: [
@@ -408,13 +435,25 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
-    const filter = this.filter.trim();
+    const filter = this.labelFilter.trim();
     return {
       data,
       title: filter ?
         $localize`Financial Summary for ${titleName} filtered by ${filter}` :
         $localize`Financial Summary for ${titleName}`
     };
+  }
+
+  private exportSubtitle() {
+    const start = this.startDate && formatDate(this.startDate, 'mediumDate', this.localeId);
+    const end = this.endDate && formatDate(this.endDate, 'mediumDate', this.localeId);
+    if (start && end) {
+      return $localize`Date range: ${start} - ${end}`;
+    }
+    if (start) {
+      return $localize`Date range: from ${start}`;
+    }
+    return end ? $localize`Date range: until ${end}` : '';
   }
 
   private receiptImageSections() {

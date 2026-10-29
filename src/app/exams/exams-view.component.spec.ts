@@ -55,7 +55,7 @@ describe('ExamsViewComponent', () => {
     location = { replaceState: vi.fn() };
     router = {
       navigate: vi.fn(), createUrlTree: vi.fn(), url: '/surveys/dispense',
-      getCurrentNavigation: vi.fn(), serializeUrl: vi.fn(url => url)
+      currentNavigation: vi.fn(), serializeUrl: vi.fn(url => url)
     };
   });
 
@@ -163,7 +163,7 @@ describe('ExamsViewComponent', () => {
     const survey = { _id: 'nation-survey', name: 'Nation survey', questions: [ { body: 'Q1' } ] };
     component = createComponent(params);
     couchService.get.mockReturnValue(throwError({ status: 404 }));
-    router.getCurrentNavigation.mockReturnValue({ extras: { state: { recordingSurvey: survey } } });
+    router.currentNavigation.mockReturnValue({ extras: { state: { recordingSurvey: survey } } });
 
     component.setExam(paramMapOf(params));
 

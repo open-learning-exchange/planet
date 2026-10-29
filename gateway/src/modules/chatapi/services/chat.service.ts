@@ -1,11 +1,15 @@
 import { DocumentInsertResponse } from 'nano';
 
 import { chatDB } from '../../../config/couch.config';
+import { ConfigurationUnavailableError, getConfiguration } from '../../../services/config.service';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 
 function handleChatError(error: any) {
+  if (error instanceof ConfigurationUnavailableError) {
+    throw error;
+  }
   if (error.response) {
     throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
   } else {
@@ -32,6 +36,8 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
     throw new Error('"data.content" is a required non-empty string field');
   }
 
+  const { assistant } = await getConfiguration();
+
   if (dbData._id) {
     await retrieveChatHistory(dbData, messages);
   } else {
@@ -47,7 +53,7 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, dbData.assistant, dbData.context, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, assistant.instructions, dbData.context, stream, callback);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
@@ -68,7 +74,6 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
 export async function chatNoSave(
   content: any,
   aiProvider: AIProvider,
-  assistant: boolean,
   context?: any
 ): Promise<string | undefined> {
   const messages: ChatMessage[] = [];
@@ -76,7 +81,8 @@ export async function chatNoSave(
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, assistant, context);
+    // One-off prompts such as survey analysis carry their own instructions, so they skip the Planet prompt
+    const completionText = await aiChat(messages, aiProvider, '', context);
     return completionText;
   } catch (error: any) {
     handleChatError(error);

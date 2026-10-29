@@ -49,7 +49,7 @@ import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { ResourcesIconComponent } from '../resources/resources-icon.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
-import { CustomVoiceLabel } from '../news/news-labels';
+import { CustomVoiceLabel } from '../news/news.utils';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
@@ -449,17 +449,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateRole(member) {
-    return ({ teamRole }) => {
+    return ({ teamRole }, _form, dialogRef) => {
       this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
         catchError(error => this.refreshMembersOnError(error)),
         finalize(() => this.dialogsLoadingService.stop()),
         switchMap(() => this.getMembers())
       ).subscribe({
         next: () => {
-          this.dialogsFormService.closeDialogsForm();
+          dialogRef.close();
           this.planetMessageService.showMessage($localize`Role has been updated.`);
         },
-        error: () => this.dialogsFormService.showErrorMessage($localize`There was a problem updating the role.`)
+        error: () => this.dialogsFormService.showErrorMessage(dialogRef, $localize`There was a problem updating the role.`)
       });
     };
   }
@@ -708,7 +708,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     );
   }
 
-  postMessage(message) {
+  postMessage(message, _form, dialogRef) {
     this.newsService.postNews({
       viewIn: [ { _id: this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
@@ -718,7 +718,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
-      this.dialogsFormService.closeDialogsForm();
+      dialogRef.close();
     });
   }
 

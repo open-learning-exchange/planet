@@ -1,6 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
 import { CouchService } from '@shared/database/couchdb.service';
 
@@ -10,7 +11,7 @@ describe('ValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
-      providers: [ValidatorService, CouchService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [ValidatorService, CouchService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
     });
   });
 
