@@ -386,7 +386,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   questionRouteParams() {
     const params = this.route.snapshot.params;
-    return params.surveyId && this.submissionId ?
+    return params.surveyId && !params.submissionId && this.submissionId ?
       { ...params, submissionId: this.submissionId, status: 'pending' } :
       params;
   }

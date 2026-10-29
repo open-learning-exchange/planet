@@ -83,6 +83,20 @@ $label-colors: (
   'brown': mat.m2-get-color-from-palette(mat.$m2-brown-palette, 100)
 );
 
+// Chart series colors, in order. Canvas charts can't read SCSS, so styleVariables.chartPalette mirrors these.
+$chart-palette: (
+  $primary,
+  $accent,
+  mat.m2-get-color-from-palette(mat.$m2-green-palette, 600),
+  mat.m2-get-color-from-palette(mat.$m2-red-palette, 600),
+  mat.m2-get-color-from-palette(mat.$m2-purple-palette, 300),
+  mat.m2-get-color-from-palette(mat.$m2-cyan-palette, 600),
+  mat.m2-get-color-from-palette(mat.$m2-orange-palette, 600),
+  mat.m2-get-color-from-palette(mat.$m2-deep-purple-palette, 300),
+  mat.m2-get-color-from-palette(mat.$m2-light-green-palette, 600),
+  $grey
+);
+
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
 $disabled-button: map.get(mat.$m2-light-theme-background-palette, 'disabled-button');

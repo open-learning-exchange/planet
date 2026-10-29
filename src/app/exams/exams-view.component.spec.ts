@@ -280,4 +280,14 @@ describe('ExamsViewComponent', () => {
 
     expect(component.questionRouteParams()).toEqual(params);
   });
+
+  it('keeps a complete response complete when the manager route passes its survey id down', () => {
+    const params = {
+      surveyId: 'survey-1', type: 'survey', submissionId: 'submission-1', status: 'complete', mode: 'view', questionNum: '1'
+    };
+    component = createComponent(params);
+    component.submissionId = 'submission-1';
+
+    expect(component.questionRouteParams()).toEqual(params);
+  });
 });

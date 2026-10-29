@@ -14,7 +14,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { AiChatService } from '@shared/ai/ai-chat.service';
 import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
-import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '@shared/charts/chart.utils';
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, chartColors } from '@shared/charts/chart.utils';
 import { PdfService } from '@shared/export/pdf.service';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
 
@@ -647,7 +647,7 @@ export class SubmissionsService {
     const axisTitleFont = { size: 12, weight: 'bold' as const };
     const xAxisText = isRatingScale ? $localize`Rating` : $localize`Choice`;
     const yAxisText = isRatingScale ? $localize`Number of responses` : $localize`% of responders`;
-    const backgroundColor = data.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
+    const backgroundColor = chartColors(data.labels.length);
     const chartConfig: ChartConfiguration<'bar' | 'doughnut', number[], string> = {
       type: isBar ? 'bar' : 'doughnut',
       data: {
@@ -734,7 +734,7 @@ export class SubmissionsService {
     question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users'
   ) {
     const totalUsers = submissions.length;
-    const counts: Record<string, Set<string>> = {};
+    const counts: Record<string, Set<string>> = Object.create(null);
     const scaleMax = question.scaleMax ?? 9;
 
     if (question.type === 'ratingScale') {
@@ -767,7 +767,9 @@ export class SubmissionsService {
       } else {
         const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
         selections.forEach(selection => {
-          if (selection.isOther || selection.id === 'other') {
+          // myPlanet saves a single choice's Other answer as the typed text alone
+          const isMyPlanetOther = question.hasOtherOption && typeof selection === 'string' && !counts[selection];
+          if (selection.isOther || selection.id === 'other' || isMyPlanetOther) {
             counts[$localize`Other`]?.add(userId);
           } else {
             const txt = selection.text ?? selection;
