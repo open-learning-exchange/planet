@@ -7,7 +7,7 @@ import {
 } from '@angular/material/table';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
-import { Subject, zip } from 'rxjs';
+import { Subject, Subscription, zip } from 'rxjs';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
@@ -118,6 +118,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   surveyId: string | null = null;
   surveyView: 'responses' | 'charts' = 'responses';
   survey: any;
+  private surveyRequest: Subscription;
   isManagerSurveysRoute = false;
   searchValue = '';
 
@@ -293,10 +294,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   showSurveyView(view: 'responses' | 'charts') {
     this.surveyView = view;
-    if (view === 'charts' && !this.survey) {
-      this.couchService.get(`exams/${this.surveyId}`).subscribe(
+    if (view === 'charts' && !this.surveyRequest) {
+      this.surveyRequest = this.couchService.get(`exams/${this.surveyId}`).subscribe(
         survey => this.survey = survey,
         () => {
+          this.surveyRequest = undefined;
           this.surveyView = 'responses';
           this.planetMessageService.showAlert($localize`There was a problem loading the survey charts.`);
         }
