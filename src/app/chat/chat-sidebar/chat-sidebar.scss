@@ -1,10 +1,15 @@
 @use '../../variables' as v;
 
+.sidebar-panel {
+  width: 260px;
+}
+
 .header {
-  padding: 10px;
+  justify-content: space-between;
+  padding: 8px 4px;
 
   .icon-button {
-    margin-left: 10px;
+    margin-left: 8px;
     background-color: v.$accent;
   }
 }
@@ -14,22 +19,21 @@
   top: 0;
   background-color: v.$white;
   z-index: 100;
-  padding: 0.25rem;
+  padding: 8px;
+}
+
+.search-field {
+  width: 100%;
+}
+
+.search-type-row {
+  margin-top: 4px;
 }
 
 ul {
   list-style: none;
+  margin: 0;
   padding: 0;
-}
-
-li {
-  padding: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-li:hover {
-  background-color: v.$medium-grey;
 }
 
 .expand-button {
@@ -39,10 +43,10 @@ li:hover {
   border-radius: 50%;
   background-color: v.$accent;
   transition: width 0.3s ease;
-}
 
-.expand-button button {
-  padding: 0;
+  button {
+    padding: 0;
+  }
 }
 
 .sidebar-drawer {
@@ -54,36 +58,77 @@ li:hover {
   height: 100%;
 }
 
-.sidebar-icon mat-icon {
-  align-self: flex-end;
-  font-size: 20px;
-  line-height: 1;
+.sidebar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  --mat-icon-button-touch-target-display: none;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
 }
 
 .conversation-list {
-  width: 200px;
-  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover,
+  &.selected {
+    background-color: v.$medium-grey;
+  }
 }
 
-.overlay-text {
-  width: 100px;
-  border: solid 1px v.$grey;
-  border-radius: 5px;
-  background: v.$white;
-  text-align: center;
-  padding: 10px;
-  margin: 0;
+.conversation-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.conversation-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.conversation-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.conversation-edit-field {
+  flex: 1;
+  min-width: 0;
 }
 
 .no-chats-message {
-  margin-left: 4px;
+  padding: 8px 12px;
 }
 
 .full-conversation-label {
   font-size: small;
   font-style: italic;
   word-break: break-word;
-  width: 180px;
   white-space: normal;
 }
 
@@ -92,6 +137,7 @@ li:hover {
   align-items: center;
   width: 100%;
   justify-content: space-between;
+  margin-top: 4px;
 }
 
 .full-conversation-label-row {
@@ -99,6 +145,7 @@ li:hover {
   align-items: center;
   min-width: 0;
 }
+
 @media only screen and (max-width: v.$screen-md) {
   .expand-button {
     top: 10px;

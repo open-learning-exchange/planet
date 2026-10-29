@@ -1045,6 +1045,9 @@ body {
 
   .conversation-response {
     margin: 8px 16px;
+    padding: 8px;
+    border-radius: 5px;
+    background-color: #{v.$medium-grey};
   }
 
   .conversation-error {
