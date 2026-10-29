@@ -9,6 +9,7 @@ export interface Exam {
   type: 'courses' | 'survey';
   updatedDate: number;
   sourcePlanet: string;
+  images?: Array<{ resourceId: string, filename: string, markdown: string }>;
 }
 
 export interface ExamQuestion {
