@@ -7,7 +7,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
@@ -81,6 +81,7 @@ import { SubmitDirective } from './submit.directive';
     MatLabel,
     MatInput,
     MatError,
+    MatHint,
     FormErrorMessagesComponent,
     MatIconButton,
     MatSuffix,
@@ -114,6 +115,8 @@ export class DialogsFormComponent {
   readonly emptyAttachments: ExistingAttachment[] = [];
   dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
+  cancelLabel = $localize`Cancel`;
+  submitLabel = $localize`Submit`;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsFormComponent>,
@@ -132,6 +135,8 @@ export class DialogsFormComponent {
       this.fields = this.data.fields.filter(field => !field.planetBeta || this.userService.isBetaEnabled());
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
+      this.cancelLabel = this.data.cancelLabel || this.cancelLabel;
+      this.submitLabel = this.data.submitLabel || this.submitLabel;
       this.fields.forEach(field => {
         if (field.disabled) {
           this.modalForm.get(field.name)?.disable({ emitEvent: false });

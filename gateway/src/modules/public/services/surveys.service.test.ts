@@ -4,16 +4,16 @@ import { Request } from 'express';
 const mocks = vi.hoisted(() => ({
   'getSurvey': vi.fn(),
   'getTeam': vi.fn(),
-  'listConfigurations': vi.fn(),
+  'getCurrentConfiguration': vi.fn(),
   'insertSubmission': vi.fn()
 }));
 
 vi.mock('../../../config/couch.config', () => ({
-  'configurationDB': { 'list': mocks.listConfigurations },
   'examsDB': { 'get': mocks.getSurvey },
   'submissionsDB': { 'insert': mocks.insertSubmission },
   'teamsDB': { 'get': mocks.getTeam }
 }));
+vi.mock('../../../services/config.service', () => ({ 'getCurrentConfiguration': mocks.getCurrentConfiguration }));
 
 import { createPublicSurveySubmission, getPublicSurvey } from './surveys.service';
 
@@ -47,7 +47,7 @@ describe('public surveys', () => {
     vi.clearAllMocks();
     mocks.getSurvey.mockResolvedValue(publicSurvey);
     mocks.getTeam.mockResolvedValue({ '_id': 'team-1', 'name': 'Water committee' });
-    mocks.listConfigurations.mockResolvedValue({ 'rows': [ { 'doc': { 'code': 'planet-1', 'parentCode': 'earth' } } ] });
+    mocks.getCurrentConfiguration.mockResolvedValue({ 'code': 'planet-1', 'parentCode': 'earth' });
   });
 
   it.each([

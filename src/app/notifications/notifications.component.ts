@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
@@ -17,6 +17,8 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { filterDropdowns } from '@shared/tables/table.helpers';
 import { ChallengesService } from '@shared/challenges/challenges.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 import { NotificationsService, notificationUserFilter } from './notifications.service';
 
@@ -61,6 +63,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
     private couchService: CouchService,
     private userService: UserService,
     private challengesService: ChallengesService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -104,7 +108,10 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
   readNotification(notification) {
     const updateNotificaton = { ...notification, status: 'read' };
     if (notification.status === 'unread') {
-      this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
+      this.dialogsLoadingService.start();
+      this.couchService.put('notifications/' + notification._id, updateNotificaton).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe((data) => {
         this.notifications.data = this.notifications.data.map((n: any) => {
           if (n._id === data.id) {
             return Object.assign(updateNotificaton, { _rev: data.rev });
@@ -112,7 +119,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
           return n;
         });
         this.userService.setNotificationStateChange();
-      }, (err) => console.log(err));
+      }, () => this.planetMessageService.showAlert($localize`There was a problem marking this notification as read`));
     }
   }
 

@@ -173,7 +173,7 @@
       }
       @if (!teamDataLoading) {
         @if (members.length === 0) {
-          <p i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
+          <p i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} services {services directory} }.</p>
         } @else {
           <h4 i18n>Members ({{members.length}})</h4>
           <div class="card-grid member-cards">
@@ -201,7 +201,7 @@
           <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" [matBadgeDescription]="taskBadgeDescription" i18n>Tasks</span></ng-container>
         </ng-template>
         @if (taskCount === 0) {
-          <p i18n>There are currently no tasks assigned to this { mode, select, team {team} enterprise {enterprise} }.</p>
+          <p i18n>There are currently no tasks assigned to this { mode, select, team {team} enterprise {enterprise} services {services directory} }.</p>
         }
         <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members" [editable]="userStatus === 'member'"></planet-tasks>
       </mat-tab>
@@ -236,37 +236,29 @@
           <ng-container i18n>{ mode, select, team {Resources} enterprise {Documents} services {Documents} }</ng-container> ({{resources?.length || 0}})
         </ng-template>
         @if (resources?.length < 1) {
-          <p i18n>There are no { mode, select, team {resources} enterprise {documents} } associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
+          <p i18n>There are no { mode, select, team {resources} enterprise {documents} services {documents} } associated with this { mode, select, team {team} enterprise {enterprise} services {services directory} }.</p>
         } @else {
           <div class="card-grid">
             @for (resource of resources; track resource) {
-              <mat-card (click)="resource.resource && openResource(resource.resource._id)" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource?._attachments" [ngClass]="{'cursor-pointer': resource.resource}">
+              <mat-card (click)="openResource(resource.resource._id)" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource?._attachments" class="cursor-pointer">
                 <div class="mat-subtitle-1">
-                  @if (resource.resource!==undefined) {
-                    <span class="resource-title-wrapper">
-                      <planet-resource-icon [resource]="resource.resource"></planet-resource-icon><b>{{resource.resource.title | truncateText:75}}</b>
-                    </span>
-                  }
-                  @if (resource.resource===undefined) {
-                    <span i18n-matTooltip
-                      matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
-                      {{resource.linkDoc.title | truncateText:75}}
-                    </span>
-                  }
+                  <span class="resource-title-wrapper">
+                    <planet-resource-icon [resource]="resource.resource"></planet-resource-icon><b>{{resource.resource.title | truncateText:75}}</b>
+                  </span>
                 </div>
-                @if (resource.resource !== undefined) {
-                  <mat-chip class="planet-chip-label visibility-badge" [ngClass]="resource.resource?.private === true ? 'chip-outline-warn' : 'chip-outline-primary'">
-                    @if (resource.resource?.private === true) {
-                      <span i18n>Private</span>
-                    }
-                    @if (resource.resource?.private !== true) {
-                      <span i18n>Public</span>
-                    }
-                  </mat-chip>
+                <mat-chip class="planet-chip-label visibility-badge" [ngClass]="resource.resource?.private === true ? 'chip-outline-warn' : 'chip-outline-primary'">
+                  @if (resource.resource?.private === true) {
+                    <span i18n>Private</span>
+                  }
+                  @if (resource.resource?.private !== true) {
+                    <span i18n>Public</span>
+                  }
+                </mat-chip>
+                @if (resource.resource?.description) {
+                  <mat-card-content>
+                    <planet-markdown [content]="resource.resource.description | truncateText:120"></planet-markdown>
+                  </mat-card-content>
                 }
-                <mat-card-content>
-                  <planet-markdown [content]="resource.resource.description | truncateText:120"></planet-markdown>
-                </mat-card-content>
                 @if (userStatus === 'member') {
                   <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
                     <mat-icon>more_vert</mat-icon>
@@ -294,7 +286,7 @@
           <ng-container i18n>Courses</ng-container> ({{visibleCourses.length}})
         </ng-template>
         @if (visibleCourses.length < 1) {
-          <p i18n>There are no courses associated with this team.</p>
+          <p i18n>There are no courses associated with this { mode, select, team {team} enterprise {enterprise} services {services directory} }.</p>
         } @else {
           <div class="card-grid">
             @for (course of visibleCourses; track course) {
