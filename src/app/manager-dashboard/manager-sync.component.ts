@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
@@ -49,10 +50,9 @@ export class ManagerSyncComponent implements OnInit {
     forkJoin([
       this.couchService.get('_scheduler/docs'),
       this.couchService.findAll('_replicator')
-    ]).subscribe(([ reps, data ]) => {
+    ]).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(([ reps, data ]) => {
       const jobs = reps.docs.filter(replicator => replicator.database === '_replicator');
       this.replicators = data.map((rep: any) => ({ ...rep, ...jobs.find(n => n.doc_id === rep._id) }));
-      this.dialogsLoadingService.stop();
     });
   }
 

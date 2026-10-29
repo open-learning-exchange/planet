@@ -124,6 +124,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   configuration = this.stateService.configuration;
   parentCount = 0;
   useDialogLoading = true;
+  private isDialogLoading = false;
   isLoading = true;
   searchValue = '';
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
@@ -158,6 +159,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.useDialogLoading = !this.teamId && !this.routeTeamId;
     if (this.useDialogLoading) {
+      this.isDialogLoading = true;
       this.dialogsLoadingService.start();
     }
     this.surveys.filterPredicate = filterSpecificFieldsHybrid([ 'name' ]);
@@ -181,6 +183,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.stopDialogLoading();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -248,15 +251,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       ];
       this.applyViewModeFilter();
       this.isLoading = false;
-      if (this.useDialogLoading) {
-        this.dialogsLoadingService.stop();
-      }
+      this.stopDialogLoading();
     }, () => {
       this.isLoading = false;
-      if (this.useDialogLoading) {
-        this.dialogsLoadingService.stop();
-      }
+      this.stopDialogLoading();
     });
+  }
+
+  // Sends reload the list, so only the first load ends ngOnInit's start()
+  private stopDialogLoading() {
+    if (this.isDialogLoading) {
+      this.isDialogLoading = false;
+      this.dialogsLoadingService.stop();
+    }
   }
 
   private applyViewModeFilter() {
@@ -392,7 +399,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         width: '80vw',
         data: {
           okClick: (selection: any[]) => {
-            this.dialogsLoadingService.start();
             this.sendSurvey(survey, selection).subscribe(() => {
               this.dialogsLoadingService.stop();
             });
@@ -422,7 +428,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       width: '80vw',
       data: {
         okClick: (selection: any[]) => {
-          this.dialogsLoadingService.start();
           forkJoin(selection.map(item => this.createTeamSurveyFromSource(survey, {
             _id: item.doc._id,
             name: item.doc.name
