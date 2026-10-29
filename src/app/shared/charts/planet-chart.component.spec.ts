@@ -53,7 +53,7 @@ describe('PlanetChartComponent', () => {
     fixture.autoDetectChanges();
     await fixture.whenStable();
   };
-  // Zone.js can't track native await, so whenStable can settle before Chart.js is constructed
+  // A pending Chart.js import isn't a Zone.js task, so whenStable can settle before the chart is constructed
   const renderInView = async () => {
     await render();
     scrollIntoView();
