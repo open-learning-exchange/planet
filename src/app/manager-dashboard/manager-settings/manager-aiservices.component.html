@@ -24,10 +24,10 @@
                     [type]="hideKey[apiKey.key] ? 'password' : 'text'"
                     [formControlName]="'keys_' + apiKey.key"
                     />
-                  <button mat-icon-button matIconSuffix (click)="toggleHideKey(apiKey.key)">
+                  <button mat-icon-button matIconSuffix (click)="toggleHideKey(apiKey.key)" [matTooltip]="getHideKeyTooltip(apiKey.key)">
                     <mat-icon>{{ hideKey[apiKey.key] ? 'visibility_off' : 'visibility' }}</mat-icon>
                   </button>
-                  <button mat-icon-button matIconSuffix (click)="copyKey(apiKey.key)">
+                  <button mat-icon-button matIconSuffix (click)="copyKey(apiKey.key)" matTooltip="Copy to clipboard" i18n-matTooltip>
                     <mat-icon>content_copy</mat-icon>
                   </button>
                 </mat-form-field>
