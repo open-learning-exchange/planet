@@ -87,7 +87,11 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Number of Visits</h4>
-          <p matListItemLine><b>{{totalLogins ?? 'N/A'}}</b></p>
+          <p matListItemLine>@if (totalLogins !== null) {
+            <b>{{totalLogins}}</b>
+          } @else {
+            <b i18n>N/A</b>
+          }</p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
