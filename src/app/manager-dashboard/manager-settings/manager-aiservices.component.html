@@ -96,7 +96,18 @@
                     <mat-card-title i18n>Chat Configurations</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
-                      <mat-list>
+                      <mat-list class="chat-configurations-list">
+                        <mat-list-item>
+                          <div matListItemTitle class="list-item-content">
+                            <span id="chat-enabled-label" i18n>Enable AI chat:</span>
+                              <mat-slide-toggle
+                                formControlName="chatEnabled"
+                                aria-labelledby="chat-enabled-label"
+                                matTooltip="Enable or disable AI chat for the entire community"
+                                i18n-matTooltip>
+                              </mat-slide-toggle>
+                          </div>
+                        </mat-list-item>
                         <mat-list-item>
                           <div matListItemTitle class="list-item-content">
                             <span i18n>Chat streaming:</span>

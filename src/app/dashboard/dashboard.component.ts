@@ -105,6 +105,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.displayName = fullName(this.user) || this.user.name;
     this.planetName = this.stateService.configuration.name;
+    this.stateService.couchStateListener?.('configurations')?.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.initMyLifeItems();
+    });
     this.getSurveys();
     this.getExams();
     this.initDashboard();
@@ -126,10 +129,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initMyLifeItems() {
+    const isChatEnabled = this.stateService.configuration?.chatEnabled !== false;
     this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
-      { baseFirstLine: $localize` my `, title: $localize`Chat`, link: '/chat', returnState: { route: 'myDashboard' } },
+      {
+        baseFirstLine: $localize` my `,
+        title: $localize`Chat`,
+        link: isChatEnabled ? '/chat' : null,
+        returnState: isChatEnabled ? { route: 'myDashboard' } : undefined,
+        tooltip: isChatEnabled ? undefined : $localize`Chat is disabled, contact community admin`
+      },
       { baseFirstLine: $localize` my `, title: $localize`Progress`, link: 'myProgress' },
       { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
       { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },

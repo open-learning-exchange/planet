@@ -103,6 +103,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     return $localize`Notifications: ${this.notifications.length}:count:`;
   }
 
+  get isChatEnabled(): boolean {
+    return this.configuration?.chatEnabled !== false;
+  }
+
+  get chatTitle(): string {
+    return this.isChatEnabled ? $localize`AI Chat` : $localize`AI Chat (Disabled)`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private couchService: CouchService,

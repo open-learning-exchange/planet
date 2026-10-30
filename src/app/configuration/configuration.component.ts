@@ -312,6 +312,7 @@ export class ConfigurationComponent implements OnInit {
     } = this.loginForm.value;
 
     const chatConfig = {
+      chatEnabled: true,
       streaming: false,
       keys: {
         openai: '',
