@@ -1,7 +1,9 @@
+import { SimpleChange } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import { ExamsViewComponent } from './exams-view.component';
 
 describe('ExamsViewComponent', () => {
@@ -271,6 +273,41 @@ describe('ExamsViewComponent', () => {
     component.submissionId = 'submission-1';
 
     expect(component.questionRouteParams()).toEqual({ ...params, submissionId: 'submission-1', status: 'pending' });
+  });
+
+  it('clears multiple-choice selections after an incorrect try so the second try can pass', () => {
+    const choiceA = { id: 'a', text: 'A' };
+    const choiceB = { id: 'b', text: 'B' };
+    const question = { body: 'Q1', type: 'selectMultiple', choices: [ choiceA, choiceB ], correctChoice: [ 'a', 'b' ] } as any;
+    component = createComponent();
+    component.question = question;
+    component.questionNum = 1;
+    component.maxQuestions = 2;
+    submissionsService.submission = { status: 'pending' };
+    submissionsService.submitAnswer = vi.fn().mockReturnValue(of({ nextQuestion: 0 }));
+
+    const widget = new ExamsTakeWidgetComponent();
+    widget.question = question;
+    widget.answer = component.answer;
+    widget.ngOnChanges({
+      question: new SimpleChange(null, question, true),
+      answer: new SimpleChange(null, component.answer, true)
+    });
+
+    widget.toggleMultipleOption(choiceA);
+    component.nextQuestion();
+
+    expect(component.statusMessage).toBe('incorrect');
+    expect(component.answer.value).toBeNull();
+    expect(widget.checkboxState).toEqual({});
+
+    widget.toggleMultipleOption(choiceA);
+    widget.toggleMultipleOption(choiceB);
+    submissionsService.submitAnswer.mockReturnValue(of({ nextQuestion: 1 }));
+    component.nextQuestion();
+
+    expect(submissionsService.submitAnswer).toHaveBeenLastCalledWith([ choiceA, choiceB ], true, 0, false);
+    expect(router.navigate).toHaveBeenCalled();
   });
 
   it('keeps the url unchanged for a submission opened directly', () => {
