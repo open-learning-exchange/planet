@@ -67,7 +67,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   urlName = '';
   editable = false;
   hasAchievement = false;
-  totalLogins = 0;
+  totalLogins: number | null = null;
   lastLogin = 0;
   educationLevel = educationLevel;
   readonly isMobile = this.deviceInfoService.isMobile;
@@ -134,20 +134,20 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   profileView() {
     const relationship = userRelationship(this.planetCode, this.stateService.configuration);
     const adminName = this.stateService.configuration.adminName?.split('@')[0];
-    this.editable = relationship === 'local' && (
+    const canEdit = relationship === 'local' && (
       this.urlName === this.userService.get().name ||
       (this.userService.doesUserHaveRole([ '_admin' ]) && !!adminName && adminName !== this.urlName)
     );
+    // Only the dialog's link may show early: with an empty userDetail, planetChangePassword targets the logged-in user
+    this.editable = this.isDialog && canEdit;
     this.couchService.get(userDocPath(this.urlName, this.planetCode, this.stateService.configuration)).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
-      this.editable = relationship === 'local' && (
-        userDetail.name === this.userService.get().name ||
-        (this.userService.doesUserHaveRole([ '_admin' ]) && !!adminName && adminName !== this.urlName)
-      );
+      this.editable = canEdit;
       this.checkHasAchievments();
     }, (error) => {
       console.log(error);
+      this.editable = false;
     });
   }
 

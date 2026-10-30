@@ -60,7 +60,7 @@
     <div class="profile-container">
       <div class="profile-image-section">
         @if (userDetail.name || urlName) {
-          <planet-avatar [username]="userDetail.name || urlName" [planetCode]="userDetail.planetCode || planetCode" imgClass="profile-image-large"></planet-avatar>
+          <planet-avatar [username]="userDetail.name || urlName" [planetCode]="planetCode" imgClass="profile-image-large"></planet-avatar>
         } @else {
           <img class="profile-image-large" src="assets/image.png">
         }
@@ -87,7 +87,7 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Number of Visits</h4>
-          <p matListItemLine><b>{{totalLogins}}</b></p>
+          <p matListItemLine><b>{{totalLogins ?? 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
