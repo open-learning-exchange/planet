@@ -38,7 +38,7 @@ describe('UsersProfileDialogService', () => {
   it('caps the dialog to the viewport', () => {
     service.open({ member: { name: 'ann' } });
 
-    expect(configOf()).toMatchObject({ width: '760px', height: '750px', maxWidth: '90vw', maxHeight: '90vh' });
+    expect(configOf()).toMatchObject({ width: '900px', height: '90vh', maxWidth: '90vw', maxHeight: '90vh' });
   });
 
   it('passes the member through untouched', () => {

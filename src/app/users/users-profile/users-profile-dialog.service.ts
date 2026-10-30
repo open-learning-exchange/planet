@@ -16,8 +16,8 @@ export class UsersProfileDialogService {
 
   open(data: UserProfileDialogData, config: Omit<MatDialogConfig, 'data'> = {}) {
     return this.dialog.open(UserProfileDialogComponent, {
-      width: '760px',
-      height: '750px',
+      width: '900px',
+      height: '90vh',
       maxWidth: '90vw',
       maxHeight: '90vh',
       // A profile is taller than the dialog, so Material's default 'first-tabbable' scrolls
