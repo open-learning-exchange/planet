@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { findDocuments, inSelector } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
 
 import { environment } from '../../../environments/environment';
 import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
@@ -16,6 +17,7 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
   private socket: WebSocket;
+  private configuredProviders: Array<AIProvider> = [];
 
   private chatStreamSubject: Subject<string> = new Subject<string>();
   private errorSubject: Subject<string> = new Subject<string>();
@@ -35,9 +37,21 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   constructor(
     private httpClient: HttpClient,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private stateService: StateService
   ) {
     this.fetchAIProviders();
+    this.stateService.couchStateListener?.('configurations')?.subscribe(() => {
+      this.updateAvailableProviders();
+    });
+  }
+
+  isChatEnabled(): boolean {
+    return this.stateService.configuration?.chatEnabled !== false;
+  }
+
+  private updateAvailableProviders() {
+    this.aiProvidersSubject.next(this.isChatEnabled() ? this.configuredProviders : []);
   }
 
   initializeWebSocket() {
@@ -80,7 +94,8 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
         })
       )
       .subscribe((providers) => {
-        this.aiProvidersSubject.next(providers);
+        this.configuredProviders = providers;
+        this.updateAvailableProviders();
       });
   }
 
@@ -89,6 +104,9 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
   }
 
   getPrompt(data: object, save: boolean): Observable<any> {
+    if (!this.isChatEnabled()) {
+      return throwError(new Error($localize`Chat is disabled, contact community admin`));
+    }
     return this.httpClient.post(`${this.baseUrl}/`, {
       data,
       save,
@@ -106,6 +124,10 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   // Method to send user input via WebSocket
   sendUserInput(data: any): void {
+    if (!this.isChatEnabled()) {
+      this.errorSubject.next($localize`Chat is disabled, contact community admin`);
+      return;
+    }
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(data));
     }

@@ -22,6 +22,7 @@ import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { ConfigurationService } from '../../configuration/configuration.service';
 
 interface FixedConfigFormControls {
+  chatEnabled: FormControl<boolean>;
   streaming: FormControl<boolean>;
   assistantName: FormControl<string>;
   assistantInstructions: FormControl<string>;
@@ -33,6 +34,7 @@ type ConfigFormControls = FixedConfigFormControls & DynamicConfigFormControls;
 
 interface AIConfiguration {
   [key: string]: unknown;
+  chatEnabled?: boolean;
   streaming?: boolean;
   keys?: Record<string, unknown>;
   models?: Record<string, unknown>;
@@ -86,6 +88,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.configForm = this.fb.group<ConfigFormControls>({
+      chatEnabled: this.fb.control(true),
       streaming: this.fb.control(false),
       assistantName: this.fb.control(''),
       assistantInstructions: this.fb.control('')
@@ -105,6 +108,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
 
   initForm() {
     this.configForm = this.fb.group<ConfigFormControls>({
+      chatEnabled: this.fb.control(this.configuration.chatEnabled !== false),
       streaming: this.fb.control(!!this.configuration.streaming),
       ...this.mapConfigToFormControls(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormControls(this.configuration.models, 'models_'),
@@ -135,6 +139,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     }
     this.dialogsLoadingService.start();
     const configPatch = {
+      chatEnabled: this.configForm.controls.chatEnabled.value,
       streaming: this.configForm.controls.streaming.value,
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
       models: this.extractFormValues(this.configuration.models, 'models_'),

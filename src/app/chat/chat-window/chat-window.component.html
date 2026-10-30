@@ -13,18 +13,21 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label i18n>Chat</mat-label>
         <textarea #chatInput matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
-        <button
-          mat-icon-button
+        <span
+          class="send-button-wrapper"
           matIconSuffix
-          [planetSubmit]="promptForm.valid && spinnerOn"
-          [disabled]="!promptForm.valid || providers.length === 0 || !spinnerOn"
           i18n-matTooltip
-          matTooltip="chat is disabled, contact community admin"
-          [matTooltipDisabled]="providers.length > 0"
-          color="primary"
-          >
-          <mat-icon>send</mat-icon>
-        </button>
+          matTooltip="Chat is disabled, contact community admin"
+          [matTooltipDisabled]="providers.length > 0">
+          <button
+            mat-icon-button
+            [planetSubmit]="promptForm.valid && spinnerOn"
+            [disabled]="!promptForm.valid || providers.length === 0 || !spinnerOn"
+            color="primary"
+            >
+            <mat-icon>send</mat-icon>
+          </button>
+        </span>
       </mat-form-field>
     </form>
   </div>

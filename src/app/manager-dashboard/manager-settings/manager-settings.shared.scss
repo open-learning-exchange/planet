@@ -18,6 +18,13 @@ mat-list-item.mat-mdc-list-item {
   height: auto;
 }
 
+.chat-configurations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 12px 0;
+}
+
 .list-item-content {
   display: grid;
   grid-template-columns: 1.5fr 4fr;
