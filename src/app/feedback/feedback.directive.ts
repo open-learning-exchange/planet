@@ -1,11 +1,13 @@
 import { Directive, HostListener, Input } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { defer, Observable, of } from 'rxjs';
 import { finalize, map, switchMap } from 'rxjs/operators';
 
 import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormComponent } from '@shared/dialogs/dialogs-form.component';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
@@ -99,9 +101,9 @@ export class FeedbackDirective {
     private dialogGuard: DialogGuardService
   ) {}
 
-  addFeedback(post: any) {
+  addFeedback(post: any, dialogRef: MatDialogRef<DialogsFormComponent>) {
     this.isSubmitting = true;
-    this.dialogsFormService.showErrorMessage('');
+    this.dialogsFormService.showErrorMessage(dialogRef, '');
     const date = new Date();
     const user = this.userService.get().name;
     const feedbackUrl = this.router.url || '/';
@@ -118,15 +120,15 @@ export class FeedbackDirective {
     if (firstPart === 'home') {
       feedback.titleContext = { kind: 'home' };
       feedback.routerLink = [ '/home' ];
-      this.updateFeedback(feedback, date, user, feedbackUrl);
+      this.updateFeedback(feedback, date, user, feedbackUrl, dialogRef);
     } else if (this.feedbackOf?.name) {
       feedback.titleContext = { kind: 'item', state: firstPart, name: this.feedbackOf.name };
       feedback.routerLink = [ '/', firstPart, 'view', this.feedbackOf.item ];
-      this.updateFeedback(feedback, date, user, feedbackUrl);
+      this.updateFeedback(feedback, date, user, feedbackUrl, dialogRef);
     } else if (urlParts.length === 2) {
       feedback.titleContext = { kind: 'section', state: firstPart };
       feedback.routerLink = [ '/', firstPart ];
-      this.updateFeedback(feedback, date, user, feedbackUrl);
+      this.updateFeedback(feedback, date, user, feedbackUrl, dialogRef);
     } else if (lastPart) {
       const fallbackPath = urlParts.slice(1);
       this.couchService.getDocumentByID(firstPart, lastPart).subscribe(
@@ -136,12 +138,12 @@ export class FeedbackDirective {
             : document?.title || document?.courseTitle || document?.name || lastPart;
           feedback.titleContext = { kind: 'item', state: firstPart, name: resourceName };
           feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
-          this.updateFeedback(feedback, date, user, feedbackUrl);
+          this.updateFeedback(feedback, date, user, feedbackUrl, dialogRef);
         },
         (error) => {
           feedback.titleContext = { kind: 'path', path: fallbackPath };
           feedback.routerLink = [ '/', ...fallbackPath ];
-          this.updateFeedback(feedback, date, user, feedbackUrl);
+          this.updateFeedback(feedback, date, user, feedbackUrl, dialogRef);
         }
       );
     }
@@ -152,7 +154,7 @@ export class FeedbackDirective {
     return path.split('/').map(part => part.split(';')[0]).join('/');
   }
 
-  private updateFeedback(feedback: any, date: Date, user: string, url: string) {
+  private updateFeedback(feedback: any, date: Date, user: string, url: string, dialogRef: MatDialogRef<DialogsFormComponent>) {
     const { attachments, ...feedbackValues } = feedback;
     const startingMessage: Message = { message: feedback.message, time: date, user };
     const newFeedback: Feedback = {
@@ -187,7 +189,7 @@ export class FeedbackDirective {
       })
     ).subscribe(
       (skippedScreenshots) => {
-        this.dialogsFormService.closeDialogsForm();
+        dialogRef.close();
         this.feedbackService.setFeedback();
         if (skippedScreenshots) {
           this.planetMessageService.showAlert($localize`Feedback submitted, but some screenshots could not be included.`);
@@ -197,7 +199,7 @@ export class FeedbackDirective {
       },
       () => {
         this.dialogsFormService.showErrorMessage(
-          $localize`Your feedback could not be submitted. Your text and images are still here. Please try again.`
+          dialogRef, $localize`Your feedback could not be submitted. Your text and images are still here. Please try again.`
         );
       }
     );
@@ -222,12 +224,12 @@ export class FeedbackDirective {
     return this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       closeOnSubmit: false,
       confirmUnsavedChanges: true,
-      onSubmit: response => {
+      onSubmit: (response, _form, dialogRef) => {
         if (this.isSubmitting) {
           this.dialogsLoadingService.stop();
           return;
         }
-        this.addFeedback(response);
+        this.addFeedback(response, dialogRef);
       }
     });
   }

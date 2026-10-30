@@ -17,8 +17,8 @@ For development, the following additional tools are required:
 * Docker
 * Git
 * NPM v10
-* Node.js v22
-* Angular CLI v20
+* Node.js v22.12 or later
+* Angular CLI v21
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -59,8 +59,7 @@ Clone and configure the Planet project (`--recurse-submodules` pulls in the shar
 ```
 git clone --recurse-submodules https://github.com/open-learning-exchange/planet.git
 cd planet
-chmod +x couchdb-setup.sh
-bash couchdb-setup.sh -p 2200
+npm run couchdb-setup -- -p 2200
 ```
 
 Install dependencies and serve the app:
@@ -98,7 +97,7 @@ For gateway development instructions, refer to the [gateway README](gateway/READ
 ## Project Guidelines
 
 * Check out the project page for tasks.
-* Before contributing also be sure to read our [style guide](Style-Guide.md).
+* Before contributing also be sure to read our [contributing guidelines](.github/CONTRIBUTING.md) and [style guide](docs/STYLE_GUIDE.md).
 * Please clone the repository rather than forking, unless you're from outside the organization. It's easier for us to collaborate from a new branch on the same repository.
 * After cloning the repository please run `npm run install-hooks` to add the git hooks to your local repository.
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
@@ -196,7 +195,7 @@ npm install
 
 Run the CouchDB setup script:
 ```
-./couchdb-setup.sh -u <admin-username> -w <admin-password>
+npm run couchdb-setup -- -u <admin-username> -w <admin-password>
 ```
 ### Cannot GET /
 
@@ -213,6 +212,6 @@ ng serve
 
 ### Error on initial npm install
 
-If your npm install fails on your first try, first check if you are using Node v22. Other versions of Node may throw errors when installing dependencies.
+If your npm install fails on your first try, first check if you are using Node v22.12 or later. Older versions may not satisfy Angular's supported Node.js range.
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).

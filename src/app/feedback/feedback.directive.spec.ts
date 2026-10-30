@@ -11,6 +11,7 @@ describe('FeedbackDirective', () => {
   let router: any;
   let dialogsFormService: any;
   let dialogsLoadingService: any;
+  let dialogRef: any;
 
   const post = {
     message: 'Feedback message',
@@ -19,13 +20,24 @@ describe('FeedbackDirective', () => {
   };
   const screenshot = (name = 'screen shot.png') => ({ file: new File([ 'image' ], name, { type: 'image/png' }) });
 
+  // JSDOM never settles an image load, so fail it and take the raw-file fallback
+  beforeEach(() => vi.stubGlobal('Image', class {
+    set src(_value: string) {
+      setTimeout(() => this.onerror());
+    }
+
+    onerror: () => void = () => {};
+  }));
+  afterEach(() => vi.unstubAllGlobals());
+
   beforeEach(() => {
     couchService = {
       getDocumentByID: vi.fn().mockReturnValue(throwError(() => ({ status: 404 }))),
       updateDocument: vi.fn().mockReturnValue(of({}))
     };
     router = { url: '/' };
-    dialogsFormService = { openDialogsForm: vi.fn(), closeDialogsForm: vi.fn(), showErrorMessage: vi.fn() };
+    dialogsFormService = { openDialogsForm: vi.fn(), showErrorMessage: vi.fn() };
+    dialogRef = { close: vi.fn() };
     dialogsLoadingService = { stop: vi.fn() };
     directive = new FeedbackDirective(
       { get: () => ({ name: 'tester' }) } as any,
@@ -44,7 +56,7 @@ describe('FeedbackDirective', () => {
   it('stores matrix parameters in the feedback URL', () => {
     router.url = '/users/profile/a;planet=mutugi';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(feedback.url).toBe('/users/profile/a;planet=mutugi');
@@ -53,7 +65,7 @@ describe('FeedbackDirective', () => {
   it('stores matrix parameters in intermediate path segments', () => {
     router.url = '/users;planet=mutugi/profile/a';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(feedback.url).toBe('/users;planet=mutugi/profile/a');
@@ -64,7 +76,7 @@ describe('FeedbackDirective', () => {
   it('keeps page parameters parseable from the stored URL', () => {
     router.url = '/users/profile/a;planet=mutugi';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(urlToParamObject(feedback.url)).toEqual({ planet: 'mutugi' });
@@ -73,7 +85,7 @@ describe('FeedbackDirective', () => {
   it('uses parameter-free values for navigation metadata', () => {
     router.url = '/users/profile/a;planet=mutugi';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(feedback.state).toBe('users');
@@ -84,7 +96,7 @@ describe('FeedbackDirective', () => {
   it('stores query parameters while keeping navigation metadata parameter-free', () => {
     router.url = '/users?search=mutugi';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(feedback.url).toBe('/users?search=mutugi');
@@ -96,7 +108,7 @@ describe('FeedbackDirective', () => {
   it('behaves the same for routes without matrix parameters', () => {
     router.url = '/users/profile/a';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(feedback.url).toBe('/users/profile/a');
@@ -108,7 +120,7 @@ describe('FeedbackDirective', () => {
   it('behaves the same for the home route', () => {
     router.url = '/';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(feedback.url).toBe('/');
@@ -120,7 +132,7 @@ describe('FeedbackDirective', () => {
   it('treats a trailing slash like the same route without it', () => {
     router.url = '/users/';
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
     const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
     expect(feedback.url).toBe('/users/');
@@ -131,8 +143,8 @@ describe('FeedbackDirective', () => {
   it('inlines the screenshots in the single write that creates the feedback', async () => {
     couchService.updateDocument.mockReturnValue(of({ id: 'feedback-1', rev: '1-a' }));
 
-    directive.addFeedback({ ...post, attachments: { retained: [], removed: [], added: [ screenshot(), screenshot() ] } });
-    await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
+    directive.addFeedback({ ...post, attachments: { retained: [], removed: [], added: [ screenshot(), screenshot() ] } }, dialogRef);
+    await vi.waitFor(() => expect(dialogRef.close).toHaveBeenCalledOnce());
 
     expect(couchService.updateDocument).toHaveBeenCalledOnce();
     const feedback = couchService.updateDocument.mock.calls[0][1];
@@ -162,8 +174,8 @@ describe('FeedbackDirective', () => {
 
     try {
       const large = { file: new File([ new Uint8Array(2 * 1024 * 1024 + 1) ], 'bad.png', { type: 'image/png' }) };
-      directive.addFeedback({ ...post, attachments: { added: [ large, screenshot('good.png') ] } });
-      await vi.waitFor(() => expect(dialogsFormService.closeDialogsForm).toHaveBeenCalledOnce());
+      directive.addFeedback({ ...post, attachments: { added: [ large, screenshot('good.png') ] } }, dialogRef);
+      await vi.waitFor(() => expect(dialogRef.close).toHaveBeenCalledOnce());
 
       const feedback = couchService.updateDocument.mock.calls[0][1];
       expect(feedback.messages[0].attachments).toEqual([ 'good.png' ]);
@@ -181,10 +193,10 @@ describe('FeedbackDirective', () => {
   it('keeps the dialog open with an error when the feedback cannot be saved', () => {
     couchService.updateDocument.mockReturnValue(throwError(new Error('offline')));
 
-    directive.addFeedback(post);
+    directive.addFeedback(post, dialogRef);
 
-    expect(dialogsFormService.closeDialogsForm).not.toHaveBeenCalled();
-    expect(dialogsFormService.showErrorMessage).toHaveBeenLastCalledWith(expect.stringContaining('could not be submitted'));
+    expect(dialogRef.close).not.toHaveBeenCalled();
+    expect(dialogsFormService.showErrorMessage).toHaveBeenLastCalledWith(dialogRef, expect.stringContaining('could not be submitted'));
     expect(dialogsLoadingService.stop).toHaveBeenCalledOnce();
   });
 
@@ -194,8 +206,8 @@ describe('FeedbackDirective', () => {
     directive.openFeedback();
     const { onSubmit } = dialogsFormService.openDialogsForm.mock.calls[0][3];
 
-    onSubmit(post);
-    onSubmit(post);
+    onSubmit(post, undefined, dialogRef);
+    onSubmit(post, undefined, dialogRef);
     expect(couchService.updateDocument).toHaveBeenCalledOnce();
     expect(dialogsLoadingService.stop).toHaveBeenCalledOnce();
     result.next({});

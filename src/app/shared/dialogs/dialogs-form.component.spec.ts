@@ -110,6 +110,21 @@ describe('DialogsFormComponent', () => {
     expect(buttons).toEqual([ 'Not now', 'Done' ]);
   });
 
+  it('hands the submit handler the dialog it was opened in', () => {
+    const onSubmit = vi.fn();
+    createComponent({
+      title: 'Prompt',
+      fields: [ { type: 'textbox', name: 'rate', placeholder: 'Rate' } ],
+      formGroup: { rate: [ 1 ] },
+      onSubmit
+    });
+
+    fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
+
+    expect(onSubmit.mock.calls[0][2]).toBe(dialogRef);
+    expect(dialogRef.close).not.toHaveBeenCalled();
+  });
+
   it('renders required asterisks on required radio labels', () => {
     createComponent();
 

@@ -31,7 +31,7 @@ const setup = ({ inShelf = true, updateResponse }: { inShelf?: boolean, updateRe
   };
   const state = { configuration: { code: 'c1', parentCode: 'p1', parentDomain: 'dom' } };
   const dialogs = {
-    confirm: vi.fn((_title, _fields, formGroup) => {
+    confirm: vi.fn((_title, _fields, formGroup, ..._options) => {
       dialogForms.push(formGroup);
       dialogResults.push(new Subject<any>());
       return dialogResults[dialogResults.length - 1];
