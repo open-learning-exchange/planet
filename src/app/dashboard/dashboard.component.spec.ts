@@ -65,7 +65,7 @@ describe('DashboardComponent', () => {
       requestCourses: vi.fn(),
       coursesListener$: vi.fn().mockReturnValue(of([]))
     };
-    stateServiceMock = { configuration: { name: 'Planet Earth', code: 'earth_code' } };
+    stateServiceMock = { configuration: { name: 'Planet Earth', code: 'earth_code' }, couchStateListener: vi.fn().mockReturnValue(of()) };
     const completionService = new CertificationsService({} as any);
     certificationsServiceMock = {
       getCertifications: vi.fn().mockReturnValue(of([])),

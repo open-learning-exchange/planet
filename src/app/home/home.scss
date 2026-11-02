@@ -149,6 +149,10 @@
         border-radius: 0;
       }
 
+      a.mat-mdc-button-disabled {
+        opacity: 0.5;
+      }
+
       // takes the left sidenav and alters color of text, background and svg-fill on .active class
       a.active {
         background-color: v.$primary-text;

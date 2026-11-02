@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { findDocuments, inSelector } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -41,13 +41,14 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
     private stateService: StateService
   ) {
     this.fetchAIProviders();
-    this.stateService.couchStateListener?.('configurations')?.subscribe(() => {
-      this.updateAvailableProviders();
-    });
+    this.stateService.couchStateListener('configurations').pipe(
+      map(() => this.isChatEnabled()),
+      distinctUntilChanged()
+    ).subscribe(() => this.updateAvailableProviders());
   }
 
   isChatEnabled(): boolean {
-    return this.stateService.configuration?.chatEnabled !== false;
+    return this.stateService.configuration.chatEnabled !== false;
   }
 
   private updateAvailableProviders() {

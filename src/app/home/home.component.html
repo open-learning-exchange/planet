@@ -57,7 +57,7 @@
       }
     }
     @if (layout === 'classic' && !forceModern) {
-      <span [title]="chatTitle"><button mat-icon-button [disabled]="!isChatEnabled" [routerLink]="isChatEnabled ? '/chat' : null" [attr.title]="chatTitle"><mat-icon>question_answer</mat-icon></button></span>
+      <span [title]="chatTitle"><button mat-icon-button [disabled]="!isChatEnabled" [routerLink]="isChatEnabled ? '/chat' : null"><mat-icon>question_answer</mat-icon></button></span>
       <button mat-icon-button planetFeedback i18n-title title="Submit Feedback"><mat-icon svgIcon="feedback"></mat-icon></button>
       <button mat-icon-button routerLink="/feedback" i18n-title title="Review Feedback"><mat-icon svgIcon="feedbacklist"></mat-icon></button>
       @if (isLoggedIn) {
@@ -254,7 +254,7 @@
     <!--Bottom part-->
     <ul class="bottom-nav">
       <li [title]="chatTitle">
-        <a mat-button [disabled]="!isChatEnabled" [routerLink]="isChatEnabled ? '/chat' : null" routerLinkActive="active" [attr.title]="chatTitle">
+        <a mat-button [disabled]="!isChatEnabled" [routerLink]="isChatEnabled ? '/chat' : null" routerLinkActive="active">
           <mat-icon>question_answer</mat-icon>
           <label i18n>AI Chat</label>
         </a>

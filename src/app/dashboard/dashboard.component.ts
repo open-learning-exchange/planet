@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
+import { finalize, map, catchError, switchMap, auditTime, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { NgClass, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -95,6 +95,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.setCompletedCourses(courses, certifications);
     });
     this.initMyLifeItems();
+    this.stateService.couchStateListener('configurations').pipe(
+      map(() => this.stateService.configuration.chatEnabled),
+      distinctUntilChanged(),
+      takeUntil(this.onDestroy$)
+    ).subscribe(() => this.initMyLifeItems());
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
       this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
@@ -105,9 +110,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.displayName = fullName(this.user) || this.user.name;
     this.planetName = this.stateService.configuration.name;
-    this.stateService.couchStateListener?.('configurations')?.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      this.initMyLifeItems();
-    });
     this.getSurveys();
     this.getExams();
     this.initDashboard();
@@ -129,7 +131,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initMyLifeItems() {
-    const isChatEnabled = this.stateService.configuration?.chatEnabled !== false;
+    const isChatEnabled = this.stateService.configuration.chatEnabled !== false;
     this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
@@ -137,7 +139,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         baseFirstLine: $localize` my `,
         title: $localize`Chat`,
         link: isChatEnabled ? '/chat' : null,
-        returnState: isChatEnabled ? { route: 'myDashboard' } : undefined,
+        returnState: { route: 'myDashboard' },
         tooltip: isChatEnabled ? undefined : $localize`Chat is disabled, contact community admin`
       },
       { baseFirstLine: $localize` my `, title: $localize`Progress`, link: 'myProgress' },
