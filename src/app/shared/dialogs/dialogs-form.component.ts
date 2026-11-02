@@ -180,7 +180,7 @@ export class DialogsFormComponent {
     }
     if (this.data && this.data.onSubmit) {
       this.dialogsLoadingService.start();
-      this.data.onSubmit(mForm.value, mForm);
+      this.data.onSubmit(mForm.value, mForm, dialog);
     }
     if (!this.data || this.data.closeOnSubmit === true) {
       this.dialogsLoadingService.stop();

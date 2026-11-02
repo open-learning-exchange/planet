@@ -359,7 +359,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
-  postMessage(message) {
+  postMessage(message, _form, dialogRef) {
     if (this.isRemoteExchange) {
       return;
     }
@@ -384,7 +384,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop()),
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
-      this.dialogsFormService.closeDialogsForm();
+      dialogRef.close();
       const challenge = this.challengesService.activeChallengeIn(this.team);
       if (
         challenge &&
@@ -579,9 +579,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   updateTitle(councillor) {
-    return ({ leadershipTitle }) => {
+    return ({ leadershipTitle }, _form, dialogRef) => {
       if (leadershipTitle === councillor.doc.leadershipTitle) {
-        this.dialogsFormService.closeDialogsForm();
+        dialogRef.close();
         this.dialogsLoadingService.stop();
         return;
       }
@@ -593,7 +593,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
           !councillor.doc.leadershipTitle ?
             $localize`Title added` :
             $localize`Title updated`;
-        this.dialogsFormService.closeDialogsForm();
+        dialogRef.close();
         this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();
       });
@@ -621,7 +621,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       formGroup,
       {
         autoFocus: true,
-        onSubmit: ({ description }: { description: string }) => {
+        onSubmit: ({ description }: { description: string }, _form, dialogRef) => {
           const trimmedDescription = description.trim();
 
           if (!trimmedDescription) {
@@ -640,7 +640,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
               ? $localize`Description edited successfully.`
               : $localize`Description added successfully.`;
 
-            this.dialogsFormService.closeDialogsForm();
+            dialogRef.close();
             this.planetMessageService.showMessage(message);
           });
         }

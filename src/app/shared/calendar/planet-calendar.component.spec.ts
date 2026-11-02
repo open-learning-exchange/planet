@@ -1,16 +1,18 @@
 import { vi } from 'vitest';
 import { ElementRef, SimpleChange } from '@angular/core';
-import { of, Subject, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { styleVariables } from '@shared/utils';
 
 import { PlanetCalendarComponent } from './planet-calendar.component';
 
+const calendarEvents = (component: PlanetCalendarComponent) => component.calendarOptions.events as any[];
+
 describe('PlanetCalendarComponent read-only behavior', () => {
   const createComponent = () => {
     const dialog = { open: vi.fn() };
-    const authGuard = { checkAuthenticationStatus: vi.fn(() => of(undefined)) };
+    const authGuard = { checkAuthenticationStatus: vi.fn((): Observable<unknown> => of(undefined)) };
     const component = new PlanetCalendarComponent(
       { documentElement: { lang: 'en' } } as any,
       'en',
@@ -535,7 +537,7 @@ describe('PlanetCalendarComponent', () => {
       return { component, couchService, userChange$ };
     };
     const draggable = (component: PlanetCalendarComponent) =>
-      Object.fromEntries(component.calendarOptions.events.map((event: any) => [ event.title, event.startEditable ]));
+      Object.fromEntries(calendarEvents(component).map((event: any) => [ event.title, event.startEditable ]));
     const change = (previousValue: any, currentValue: any) => new SimpleChange(previousValue, currentValue, false);
 
     it('turns on dragging and the add button from the cached events when the calendar becomes editable', () => {
@@ -593,7 +595,7 @@ describe('PlanetCalendarComponent', () => {
 
       responses['team-b meetups'].next([ { ...meetup, title: 'Team B' } ]);
       responses['team-b tasks'].next([]);
-      expect(component.calendarOptions.events.map((event: any) => event.title)).toEqual([ 'Team B' ]);
+      expect(calendarEvents(component).map((event: any) => event.title)).toEqual([ 'Team B' ]);
     });
   });
 
@@ -623,18 +625,18 @@ describe('PlanetCalendarComponent', () => {
       component.getMeetups();
       component.getTasks();
 
-      expect(component.calendarOptions.events.length).toBe(3);
+      expect(calendarEvents(component).length).toBe(3);
 
       component.toggleFilter('uncompleted');
-      expect(component.calendarOptions.events.some((e: any) => e.title === 'Open Task')).toBe(false);
+      expect(calendarEvents(component).some((e: any) => e.title === 'Open Task')).toBe(false);
 
       component.toggleFilter('completed');
       component.toggleFilter('event');
       expect(component.calendarOptions.events).toEqual([ {} ]);
 
       component.toggleFilter('event');
-      expect(component.calendarOptions.events.length).toBe(1);
-      expect(component.calendarOptions.events[0].title).toBe('Meeting');
+      expect(calendarEvents(component).length).toBe(1);
+      expect(calendarEvents(component)[0].title).toBe('Meeting');
     });
 
     it('shows meetups and tasks on non-team calendars', () => {
@@ -648,7 +650,7 @@ describe('PlanetCalendarComponent', () => {
       component.getMeetups();
       component.getTasks();
 
-      expect(component.calendarOptions.events.map((e: any) => e.title)).toEqual([ 'Event', 'Task' ]);
+      expect(calendarEvents(component).map((e: any) => e.title)).toEqual([ 'Event', 'Task' ]);
     });
   });
 });

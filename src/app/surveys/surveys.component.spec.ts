@@ -66,8 +66,7 @@ describe('SurveysComponent', () => {
     };
     stateService = { configuration: { name: 'Local Planet' } };
     dialogsFormService = {
-      openDialogsForm: vi.fn(),
-      closeDialogsForm: vi.fn()
+      openDialogsForm: vi.fn()
     };
     linkCopyService = { copyLink: vi.fn() };
     dialog = {};

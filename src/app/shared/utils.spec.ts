@@ -350,7 +350,9 @@ ${'\t'.repeat(18)}
     it('skips an image that can no longer be read and keeps the others', async () => {
       const readAsDataURL = FileReader.prototype.readAsDataURL;
       vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function(this: FileReader, blob: Blob) {
-        return (blob as File).name === 'gone.png' ? this.onerror(new ProgressEvent('error')) : readAsDataURL.call(this, blob);
+        return (blob as File).name === 'gone.png'
+          ? this.onerror(new ProgressEvent('error') as ProgressEvent<FileReader>)
+          : readAsDataURL.call(this, blob);
       });
       const added = [ 'gone.png', 'kept.png' ].map(name => ({ file: new File([ 'data' ], name, { type: 'image/png' }) }));
 

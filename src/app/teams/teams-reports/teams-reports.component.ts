@@ -245,9 +245,9 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
           disableIfInvalid: true,
-          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe({
+          onSubmit: (newReport, _form, dialogRef) => this.updateReport(oldReport, newReport).subscribe({
             next: (result: any) => {
-              this.dialogsFormService.closeDialogsForm();
+              dialogRef.close();
               const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
               this.planetMessageService.showMessage($localize`Report ${action}`);
               if (result?.skippedAttachments?.length) {
@@ -256,7 +256,7 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
             },
             error: () => {
               this.dialogsLoadingService.stop();
-              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the report.`);
+              this.dialogsFormService.showErrorMessage(dialogRef, $localize`There was a problem saving the report.`);
             }
           })
         }
