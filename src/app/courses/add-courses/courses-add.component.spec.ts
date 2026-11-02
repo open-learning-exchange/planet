@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -51,8 +52,9 @@ describe('CoursesAddComponent', () => {
       ]), MaterialModule, BrowserAnimationsModule, CoursesAddComponent, FormErrorMessagesComponent],
       providers: [
         CouchService,
-        ValidatorService,
+        { provide: ValidatorService, useValue: { isUnique$: () => of(null) } },
         provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -129,15 +131,15 @@ describe('CoursesAddComponent', () => {
       component.updateCourse(component.courseForm.getRawValue(), true);
       await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledOnce());
 
-      expect(saveCourse.mock.calls[0][0].coverFileName).toBe('cover-1.png');
-      expect(Object.keys(saveCourse.mock.calls[0][0]._attachments)).toEqual([ 'cover.png', 'cover-1.png' ]);
+      expect((saveCourse.mock.calls[0][0] as any).coverFileName).toBe('cover-1.png');
+      expect(Object.keys((saveCourse.mock.calls[0][0] as any)._attachments)).toEqual([ 'cover.png', 'cover-1.png' ]);
       expect(URL.createObjectURL).toHaveBeenCalledOnce();
 
       component.savedCourse._attachments['cover-1.png'] = {};
       component.updateCourse(component.courseForm.getRawValue(), true);
       await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledTimes(2));
 
-      expect(saveCourse.mock.calls[1][0].coverFileName).toBe('cover-2.png');
+      expect((saveCourse.mock.calls[1][0] as any).coverFileName).toBe('cover-2.png');
       expect(URL.createObjectURL).toHaveBeenCalledTimes(2);
     } finally {
       restoreImage();
@@ -235,7 +237,7 @@ describe('CoursesAddComponent', () => {
         displayName: 'Test draft'
       })
     }));
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -272,7 +274,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -318,7 +320,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }

@@ -1,7 +1,8 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { StateService } from '@shared/state.service';
 
 import { TeamsAttachmentsService } from '../teams-attachments.service';
@@ -285,6 +286,16 @@ describe('TeamsReportsComponent', () => {
     let updateAdditionalDocs: ReturnType<typeof vi.fn>;
     let attachmentsService: TeamsAttachmentsService;
 
+    // JSDOM never settles an image load, so fail it and take the raw-file fallback
+    beforeEach(() => vi.stubGlobal('Image', class {
+      set src(_value: string) {
+        setTimeout(() => this.onerror());
+      }
+
+      onerror: () => void = () => {};
+    }));
+    afterEach(() => vi.unstubAllGlobals());
+
     beforeEach(() => {
       attachmentsService = new TeamsAttachmentsService({} as any);
       updateAdditionalDocs = vi.fn().mockReturnValue(of({ res: [ { ok: true } ] }));
@@ -312,6 +323,61 @@ describe('TeamsReportsComponent', () => {
       updateAdditionalDocs.mockReturnValue(of({ res: [ { error: 'conflict', reason: 'Document update conflict.' } ] }));
 
       await expect(save()).rejects.toThrow('Document update conflict.');
+    });
+  });
+
+  describe('saving while another form is open', () => {
+    let dialog: { open: ReturnType<typeof vi.fn> };
+    let dialogsFormService: DialogsFormService;
+
+    const formRef = () => ({ close: vi.fn(), componentInstance: { errorMessage: '' } });
+
+    beforeEach(() => {
+      dialog = { open: vi.fn(() => formRef()) };
+      dialogsFormService = new DialogsFormService(dialog as any);
+      component = new TeamsReportsComponent(
+        { currentTime: () => of(Date.UTC(2026, 1, 15)) } as any,
+        {} as any,
+        dialogsFormService,
+        { stop: vi.fn() } as any,
+        {} as any,
+        { receiptAttachments: () => [], attachmentStateForDoc: () => ({}) } as any as TeamsAttachmentsService,
+        {} as any,
+        {} as any,
+        { configuration: { currency: {} } } as any as StateService,
+        { showMessage: vi.fn(), showAlert: vi.fn() } as any,
+        'en-US',
+        { open: (_key, work) => work() } as any
+      );
+    });
+
+    const openReportUnderTransaction = () => {
+      component.openAddReportDialog({}, false);
+      dialogsFormService.openDialogsForm('Add Transaction', [], {});
+      const [ reportForm, transactionForm ] = dialog.open.mock.results.map(result => result.value);
+      const { onSubmit } = dialog.open.mock.calls[0][1].data;
+      return { reportForm, transactionForm, submitReport: () => onSubmit(report(), undefined, reportForm) };
+    };
+
+    it('closes the report form, not the form opened after it', () => {
+      vi.spyOn(component as any, 'updateReport').mockReturnValue(of({}));
+      const { reportForm, transactionForm, submitReport } = openReportUnderTransaction();
+
+      submitReport();
+
+      expect(reportForm.close).toHaveBeenCalledOnce();
+      expect(transactionForm.close).not.toHaveBeenCalled();
+    });
+
+    it('shows a failed save on the report form, not the form opened after it', () => {
+      vi.spyOn(component as any, 'updateReport').mockReturnValue(throwError('offline'));
+      const { reportForm, transactionForm, submitReport } = openReportUnderTransaction();
+
+      submitReport();
+
+      expect(reportForm.componentInstance.errorMessage).toBe('There was a problem saving the report.');
+      expect(reportForm.close).not.toHaveBeenCalled();
+      expect(transactionForm.componentInstance.errorMessage).toBe('');
     });
   });
 });

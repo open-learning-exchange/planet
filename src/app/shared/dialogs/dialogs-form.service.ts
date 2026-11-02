@@ -63,7 +63,7 @@ export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormVal
   [key: string]: unknown;
   autoFocus?: boolean;
   disableIfInvalid?: boolean;
-  onSubmit?: (value: T, form: FormGroup<any>) => void;
+  onSubmit?: (value: T, form: FormGroup<any>, dialogRef: MatDialogRef<DialogsFormComponent>) => void;
   formOptions?: AbstractControlOptions;
   closeOnSubmit?: boolean;
   confirmUnsavedChanges?: boolean;
@@ -82,8 +82,6 @@ export interface DialogsFormData<T extends DialogFormValueMap = DialogFormValueM
   providedIn: 'root'
 })
 export class DialogsFormService {
-
-  private dialogRef?: MatDialogRef<DialogsFormComponent>;
 
   constructor(private dialog: MatDialog) { }
 
@@ -118,22 +116,17 @@ export class DialogsFormService {
     formGroup: DialogFormGroupInput<T>,
     options: DialogsFormOptions<T> = {}
   ) {
-    this.dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
+    return this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
       width: '600px',
       autoFocus: options.autoFocus,
       disableClose: options.confirmUnsavedChanges,
       data: { title, formGroup, fields, ...options }
     });
-    return this.dialogRef;
   }
 
-  closeDialogsForm() {
-    this.dialogRef?.close();
-  }
-
-  showErrorMessage(errorMessage: string) {
-    if (this.dialogRef?.componentInstance) {
-      this.dialogRef.componentInstance.errorMessage = errorMessage;
+  showErrorMessage(dialogRef: MatDialogRef<DialogsFormComponent>, errorMessage: string) {
+    if (dialogRef.componentInstance) {
+      dialogRef.componentInstance.errorMessage = errorMessage;
     }
   }
 

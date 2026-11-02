@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -30,8 +30,8 @@ describe('UserUpdateProfileComponent', () => {
     addImageForReplication: vi.fn().mockReturnValue(of({}))
   };
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         FormsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule, BrowserAnimationsModule,
         UsersUpdateComponent, FormErrorMessagesComponent, MatIconTestingModule
@@ -57,7 +57,7 @@ describe('UserUpdateProfileComponent', () => {
         { provide: MatDialog, useValue: { open: vi.fn(), openDialogs: [] } }
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UsersUpdateComponent);
