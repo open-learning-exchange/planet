@@ -291,6 +291,15 @@ describe('PlanetRatingComponent', () => {
     expect(component.rateForm.value).toEqual({ rate: 5 });
   });
 
+  it('names only the unlabelled gender segments that have ratings', () => {
+    const { component } = createComponent();
+
+    component.rating = { userRating: {}, allRatings: [ { rate: 4, user: { gender: 'other' } }, { rate: 2, user: { gender: 'male' } } ] };
+    component.ngOnChanges();
+
+    expect(component.legendData.map(({ label, amount }) => ({ label, amount }))).toEqual([ { label: 'Other', amount: 1 } ]);
+  });
+
   it('saves a star clicked in the rendered widget and opens the comment dialog', () => {
     const dialogsForm = { confirm: vi.fn(() => new Subject()) };
     const ratingService = {

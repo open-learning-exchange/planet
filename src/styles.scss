@@ -67,6 +67,10 @@ body {
     background-color: v.$grey;
   }
 
+  .bg-green-lighter {
+    background-color: v.$planet-green-lighter;
+  }
+
   .display-flex {
     display: flex;
   }
@@ -296,6 +300,17 @@ body {
 
     .stats-total {
       grid-area: total;
+    }
+
+    .stats-legend {
+      font-size: 0.75rem;
+    }
+
+    .stats-legend-swatch {
+      display: inline-block;
+      width: 0.6rem;
+      height: 0.6rem;
+      margin-right: 0.25rem;
     }
 
     .avg-rating {
