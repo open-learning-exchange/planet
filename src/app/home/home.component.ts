@@ -20,7 +20,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
-import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
 import { ChallengesService } from '@shared/challenges/challenges.service';
 import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
@@ -76,10 +76,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   sidenavState = 'closed';
   classicToolbarWidth = 0;
   planetName;
-  deviceType: DeviceType;
   isAndroid: boolean;
-  isMobile: boolean;
-  isShortViewport: boolean;
+  readonly isShortViewport = this.deviceInfoService.isShortViewport;
+  readonly usesOverlayNav = this.deviceInfoService.usesOverlayNav;
   showBanner = true;
   readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
@@ -94,10 +93,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
-
-  get usesOverlayNav(): boolean {
-    return this.isMobile || this.isShortViewport;
-  }
 
   get notificationsLabel(): string {
     return $localize`Notifications: ${this.notifications.length}:count:`;
@@ -123,11 +118,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.couchService.get('_node/nonode@nohost/_config/planet').pipe(takeUntil(this.onDestroy$))
       .subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
-    this.deviceInfoService.watchViewport().pipe(takeUntil(this.onDestroy$)).subscribe(({ deviceType, isShortViewport }) => {
-      this.deviceType = deviceType;
-      this.isMobile = isMobileOrSmaller(deviceType);
-      this.isShortViewport = isShortViewport;
-    });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
 
@@ -153,7 +143,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       ),
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
-      if (this.usesOverlayNav) {
+      if (this.usesOverlayNav()) {
         this.mobileSidenav?.close();
       }
     });
@@ -188,7 +178,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   syncToolbarLayout() {
-    const needsModern = document.documentElement.clientWidth < this.classicToolbarWidth || this.isShortViewport;
+    const needsModern = document.documentElement.clientWidth < this.classicToolbarWidth || this.isShortViewport();
     if (this.forceModern !== needsModern) {
       this.forceModern = needsModern;
     }
@@ -278,7 +268,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   toggleNav() {
-    if (this.usesOverlayNav) {
+    if (this.usesOverlayNav()) {
       this.mobileSidenav?.toggle();
       return;
     }
