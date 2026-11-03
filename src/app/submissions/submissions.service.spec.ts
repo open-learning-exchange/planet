@@ -168,4 +168,18 @@ describe('SubmissionsService survey exports', () => {
 
     expect(getPrompt.mock.calls[0][0].content).toContain('"age": 0');
   });
+
+  it('sends only a specified gender in the AI analysis payload', async () => {
+    const getPrompt = vi.fn().mockReturnValue(of({ chat: 'Analysis' }));
+    (service as any).chatService = { getPrompt };
+
+    await service.analyseResponses(
+      { ...exam, type: 'survey', description: '', questions: [ { body: 'Question', type: 'text' } ] },
+      [ { ...submissionWithEmbeddedTeam, user: { age: 20 } }, { ...submissionWithEmbeddedTeam, user: { age: 20, gender: ' Other ' } } ]
+    );
+
+    const { content } = getPrompt.mock.calls[0][0];
+    expect(content).toContain('"gender": "other"');
+    expect(content).not.toContain('didNotSpecify');
+  });
 });
