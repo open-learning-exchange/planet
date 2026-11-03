@@ -1,4 +1,5 @@
-import { ChatItem, ProviderName } from './chat.model';
+import { ProviderName } from '../providers/registry';
+import { ChatItem } from './chat.model';
 
 export interface DbDoc {
   _id: string;
