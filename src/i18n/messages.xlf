@@ -5455,6 +5455,9 @@ Other Notes</source>
       <trans-unit id="7093342624757221192" datatype="html">
         <source>Pinned message</source>
       </trans-unit>
+      <trans-unit id="3450111567279169376" datatype="html">
+        <source>Community pinned message</source>
+      </trans-unit>
       <trans-unit id="7106377710784632961" datatype="html">
         <source>The pinned message could not be loaded.</source>
       </trans-unit>

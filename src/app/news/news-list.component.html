@@ -65,10 +65,21 @@
     <p i18n>Replies ({{ totalReplies }}):</p>
   }
   @for (item of displayedItems; track trackById($index, item)) {
-    <div [attr.id]="'news-' + item._id">
+    @let isPinned = replyViewing._id === 'root' && item._id === pin?.messageId;
+    <div [attr.id]="'news-' + item._id" [class.news-announcement]="isPinned">
+      @if (isPinned) {
+        <h2 class="news-announcement-title">
+          <mat-icon svgIcon="pin" aria-hidden="true"></mat-icon>
+          @if (isTeamsFeed) {
+            <span i18n>Pinned message</span>
+          } @else {
+            <span i18n>Community pinned message</span>
+          }
+        </h2>
+      }
       <planet-news-list-item
         [item]="item"
-        [isPinned]="replyViewing._id === 'root' && item._id === pin?.messageId"
+        [isPinned]="isPinned"
         [canPin]="!!pin && canManagePin && !readOnly && replyViewing._id === 'root'"
         (togglePin)="changePin(item._id)"
         [isMainPostShared]="isMainPostShared"

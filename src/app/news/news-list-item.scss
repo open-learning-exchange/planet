@@ -16,22 +16,6 @@ mat-card-header {
   display: block;
 }
 
-.news-pinned {
-  border: 2px solid v.$primary;
-  margin-bottom: 1rem;
-}
-
-.news-pinned-heading {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 6px 6px 0 0;
-  background: v.$primary-lighter;
-  color: v.$primary-lighter-text;
-  font-weight: 600;
-}
-
 .subtitle-row {
   display: grid;
   grid-template-columns: 1fr auto;
