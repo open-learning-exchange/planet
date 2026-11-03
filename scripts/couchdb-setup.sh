@@ -122,6 +122,7 @@ DBS=(
   "achievements"
   "myplanet_activities"
   "news"
+  "news_pins"
   "parent_users"
   "team_activities"
   "tasks"
@@ -138,6 +139,8 @@ insert_dbs $DBS
 node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
+upsert_doc news_pins _design/pins @./design/news-pins/pins.json
+upsert_doc news_pins _security '{"admins":{"names":[],"roles":[]},"members":{"names":[],"roles":[]}}'
 upsert_doc resources _design/resources @./design/resources/resources-design.json
 upsert_doc health _design/health @./design/health/health-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json

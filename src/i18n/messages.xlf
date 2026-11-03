@@ -5446,6 +5446,27 @@ Other Notes</source>
       <trans-unit id="6597680371820382343" datatype="html">
         <source>validateDates(): startDate control is not found in parent group</source>
       </trans-unit>
+      <trans-unit id="3225126960942904235" datatype="html">
+        <source>Pin message</source>
+      </trans-unit>
+      <trans-unit id="4747067316995456853" datatype="html">
+        <source>Unpin message</source>
+      </trans-unit>
+      <trans-unit id="7093342624757221192" datatype="html">
+        <source>Pinned message</source>
+      </trans-unit>
+      <trans-unit id="7106377710784632961" datatype="html">
+        <source>The pinned message could not be loaded.</source>
+      </trans-unit>
+      <trans-unit id="7854418584990720549" datatype="html">
+        <source>The pinned message could not be saved.</source>
+      </trans-unit>
+      <trans-unit id="6927895978612627740" datatype="html">
+        <source>Another leader changed the pin. Review the current pin and try again.</source>
+      </trans-unit>
+      <trans-unit id="217864917149539979" datatype="html">
+        <source>Pin this message? It will replace the current pinned message in this chat.</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -29,7 +29,7 @@ import { AuthGuard } from '@shared/auth/auth.guard';
 import { trackById } from '@shared/tables/table.helpers';
 import { LabelComponent } from '@shared/ui/label.component';
 
-import { NewsService } from './news.service';
+import { NewsPin, NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
@@ -71,6 +71,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() readOnly = false;
+  @Input() canManagePin = false;
+  pin?: NewsPin;
+  private pinLoad?: Subscription;
+  private pinChange?: Subscription;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
   @Input() customLabels: (string | CustomVoiceLabel)[] = [];
@@ -182,6 +186,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes.viewableId || changes.viewableBy) {
+      this.loadPin();
+    }
     if (Object.keys(changes).every(input => input === 'customLabels')) {
       return;
     }
@@ -262,12 +269,59 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngOnDestroy() {
+    this.pinLoad?.unsubscribe();
+    this.pinChange?.unsubscribe();
     this.routerEventsSubscription?.unsubscribe();
     this.searchSubscription?.unsubscribe();
     this.unreadRepliesSubscription?.unsubscribe();
     if (this.observer) {
       this.observer.disconnect();
     }
+  }
+
+  private loadPin() {
+    this.pinLoad?.unsubscribe();
+    this.pinChange?.unsubscribe();
+    this.pin = undefined;
+    if (this.viewableId) {
+      this.pinLoad = this.newsService.getPin(this.viewableBy + ':' + this.viewableId).subscribe({
+        next: pin => {
+          this.pin = pin;
+          this.loadPagedItems();
+        },
+        error: () => this.planetMessageService.showAlert($localize`The pinned message could not be loaded.`)
+      });
+    }
+  }
+
+  changePin(id: string) {
+    const pin = this.pin;
+    if (!pin || !this.canManagePin || this.readOnly || this.pinChange?.closed === false) {
+      return;
+    }
+    const messageId = pin.messageId === id ? null : id;
+    const confirm = messageId && pin.messageId
+      ? this.dialog.open(DialogsPromptComponent, { data: {
+        showMainParagraph: false, spinnerOn: false,
+        extraMessage: $localize`Pin this message? It will replace the current pinned message in this chat.`
+      } }).afterClosed() : of(true);
+    this.pinChange = confirm.pipe(
+      filter(approved => approved === true && this.canManagePin && !this.readOnly && this.pin === pin),
+      switchMap(() => this.newsService.savePin(pin, messageId))
+    ).subscribe({
+      next: saved => {
+        this.pin = saved;
+        this.loadPagedItems();
+      },
+      error: error => {
+        if (error.status === 409) {
+          this.loadPin();
+          this.planetMessageService.showAlert($localize`Another leader changed the pin. Review the current pin and try again.`);
+        } else {
+          this.planetMessageService.showAlert($localize`The pinned message could not be saved.`);
+        }
+      }
+    });
   }
 
   setupObserver() {
@@ -559,7 +613,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   getCurrentItems(): any[] {
     if (this.replyViewing._id === 'root') {
-      return this.filteredItems.filter(item => !item.doc.replyTo);
+      const posts = this.filteredItems.filter(item => !item.doc.replyTo);
+      const pinnedIndex = posts.findIndex(item => item._id === this.pin?.messageId);
+      if (pinnedIndex > 0) {
+        posts.unshift(posts.splice(pinnedIndex, 1)[0]);
+      }
+      return posts;
     }
     return this.replyObject[this.replyViewing._id] || [];
   }

@@ -96,7 +96,8 @@
         <planet-loading-spinner text="Loading messages..." i18n-text></planet-loading-spinner>
       }
       @if (!newsLoading) {
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [customLabels]="customVoiceLabels" [shareTarget]="configuration?.planetType" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [customLabels]="customVoiceLabels" [shareTarget]="configuration?.planetType" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"
+          [canManagePin]="team?.teamPlanetCode === planetCode && (user.isUserAdmin || user.roles?.includes('leader'))">
           @if (userStatus === 'member') {
             <button class="new-message-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New message</button>
           }

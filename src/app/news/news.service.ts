@@ -11,6 +11,12 @@ import { dedupeObjectArray, planetAndParentId } from '@shared/utils';
 
 import { environment } from '../../environments/environment';
 
+export interface NewsPin {
+  _id: string;
+  _rev?: string;
+  messageId: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,6 +33,19 @@ export class NewsService {
     private userService: UserService,
     private planetMessageService: PlanetMessageService
   ) {}
+
+  getPin(id: string) {
+    return this.couchService.get('news_pins/' + encodeURIComponent(id)).pipe(
+      catchError(error => error.status === 404 && error.error?.reason === 'missing'
+        ? of({ _id: id, messageId: null }) : throwError(() => error))
+    );
+  }
+
+  savePin(pin: NewsPin, messageId: string | null) {
+    return this.couchService.put('news_pins/' + encodeURIComponent(pin._id), { ...pin, messageId }).pipe(
+      map(result => ({ _id: pin._id, _rev: result.rev, messageId }))
+    );
+  }
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };

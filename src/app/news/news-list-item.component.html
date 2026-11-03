@@ -1,4 +1,10 @@
-<mat-card>
+<mat-card [class.news-pinned]="isPinned">
+  @if (isPinned) {
+    <div class="news-pinned-heading">
+      <mat-icon svgIcon="pin"></mat-icon>
+      <span i18n>Pinned message</span>
+    </div>
+  }
   <mat-card-header>
     <mat-card-subtitle class="subtitle-row">
       <div class="label-panel">
@@ -124,6 +130,11 @@
         <ng-container *ngTemplateOutlet="actionItems"></ng-container>
       </mat-menu>
     } @else {
+      @if (canPin) {
+        <button mat-icon-button type="button" [matTooltip]="pinActionLabel" [attr.aria-label]="pinActionLabel" (click)="togglePin.emit()">
+          <mat-icon [svgIcon]="isPinned ? 'unpin' : 'pin'"></mat-icon>
+        </button>
+      }
       @if (!readOnly && (editable || item.public === true)) {
         <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
         <button class="km-react-voice" mat-icon-button type="button" matTooltip="Reactions" i18n-matTooltip aria-label="Reactions" i18n-aria-label [matMenuTriggerFor]="reactionMenu">
@@ -167,6 +178,11 @@
 </mat-card>
 
 <ng-template #actionItems>
+  @if (canPin) {
+    <button mat-menu-item type="button" (click)="togglePin.emit()">
+      <mat-icon [svgIcon]="isPinned ? 'unpin' : 'pin'"></mat-icon>{{ pinActionLabel }}
+    </button>
+  }
   @if (!readOnly && (editable || item.public === true)) {
     <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
     <button class="km-react-voice" mat-menu-item type="button" [matMenuTriggerFor]="reactionMenu">

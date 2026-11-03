@@ -7,7 +7,7 @@
             <planet-loading-spinner text="Loading voices..." i18n-text></planet-loading-spinner>
           } @else {
             <planet-news-list [items]="news" [customLabels]="customVoiceLabels" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"
-              [useReplyRoutes]="!isRemoteExchange" [readOnly]="isRemoteExchange">
+              [useReplyRoutes]="!isRemoteExchange" [readOnly]="isRemoteExchange" [canManagePin]="isLoggedIn && isCommunityLeader && !isRemoteExchange">
               <ng-container *planetAuthorizedRoles="'learner'">
                 @if (isLoggedIn && !isRemoteExchange) {
                   <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New Voice</button>

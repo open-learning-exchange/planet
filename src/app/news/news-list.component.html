@@ -68,6 +68,9 @@
     <div [attr.id]="'news-' + item._id">
       <planet-news-list-item
         [item]="item"
+        [isPinned]="replyViewing._id === 'root' && item._id === pin?.messageId"
+        [canPin]="!!pin && canManagePin && !readOnly && replyViewing._id === 'root'"
+        (togglePin)="changePin(item._id)"
         [isMainPostShared]="isMainPostShared"
         [replyObject]="replyObject"
         [editable]="editable"

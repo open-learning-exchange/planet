@@ -28,12 +28,60 @@ const createComponent = (items: any[] = []) => {
     getUnreadReplyIds$: vi.fn().mockReturnValue(of([])),
     markReplyNotificationsAsRead: vi.fn()
   };
-  component.newsService = { postSharedWithCommunity: () => true, requestNews: vi.fn() };
+  component.newsService = {
+    postSharedWithCommunity: () => true, requestNews: vi.fn(), getPin: (id: string) => of({ _id: id, messageId: null })
+  };
   component.dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
   return component;
 };
 
 afterEach(() => vi.useRealTimers());
+
+describe('pinned messages', () => {
+  const posts = [ 'newer', 'older' ].map(_id => ({ _id, doc: { message: _id } }));
+
+  it('puts the pinned root first once, respecting search and pagination', () => {
+    const component = createComponent(posts);
+    component.pin = { messageId: 'older' };
+    component.pageSize = 1;
+    component.applyFilters();
+    expect(component.displayedItems).toEqual([ posts[1] ]);
+    expect(component.totalItems).toBe(2);
+    component.messageSearch = 'newer';
+    component.applyFilters();
+    expect(component.displayedItems).toEqual([ posts[0] ]);
+  });
+
+  it('keeps the old pin on cancel and replaces it only after confirmation', () => {
+    const component = createComponent(posts);
+    const pin = { _id: 'community:local', _rev: '1-old', messageId: 'older' };
+    component.pin = pin;
+    component.canManagePin = true;
+    const savePin = vi.fn().mockReturnValue(of({ ...pin, messageId: 'newer' }));
+    component.newsService = { savePin };
+    const afterClosed = vi.fn().mockReturnValueOnce(of(false)).mockReturnValueOnce(of(true));
+    component.dialog = { open: () => ({ afterClosed }) };
+    component.changePin('newer');
+    expect(savePin).not.toHaveBeenCalled();
+    component.changePin('newer');
+    expect(savePin).toHaveBeenCalledWith(pin, 'newer');
+    expect(component.pin.messageId).toBe('newer');
+  });
+
+  it('lets a leader unpin and leaves the feed alone for other readers', () => {
+    const component = createComponent(posts);
+    const pin = { _id: 'teams:local', _rev: '1-old', messageId: 'older' };
+    component.pin = pin;
+    const savePin = vi.fn().mockReturnValue(of({ ...pin, messageId: null }));
+    component.newsService = { savePin };
+    component.changePin('older');
+    expect(savePin).not.toHaveBeenCalled();
+    component.canManagePin = true;
+    component.changePin('older');
+    expect(savePin).toHaveBeenCalledWith(pin, null);
+    expect(component.displayedItems).toEqual(posts);
+  });
+});
 
 describe('NewsListComponent reply form', () => {
   it('checks the session and opens one form for replies requested while the check is pending', () => {

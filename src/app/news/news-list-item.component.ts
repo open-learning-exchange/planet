@@ -68,6 +68,13 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showRepliesButton = true;
   @Input() editable = true;
   @Input() readOnly = false;
+  @Input() isPinned = false;
+  @Input() canPin = false;
+  @Output() togglePin = new EventEmitter<void>();
+
+  get pinActionLabel(): string {
+    return this.isPinned ? $localize`Unpin message` : $localize`Pin message`;
+  }
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() hasUnreadReplies = false;
   @Output() changeReplyViewing = new EventEmitter<any>();
