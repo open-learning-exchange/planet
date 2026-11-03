@@ -136,14 +136,16 @@ describe('DashboardTileComponent', () => {
       expect(tile.isExpanded()).toBe(true);
     });
 
-    it('keeps a collapsed myLife tile collapsed across the small mobile breakpoint', () => {
+    it('keeps a collapsed myLife tile collapsed across device changes', () => {
       const deviceType = signal(DeviceType.MOBILE);
       const tile = renderTile('myLife', deviceType);
 
       tile.toggleAccordion(new Event('click'));
-      deviceType.set(DeviceType.SMALL_MOBILE);
 
-      expect(tile.isExpanded()).toBe(false);
+      [DeviceType.SMALL_MOBILE, DeviceType.TABLET, DeviceType.MOBILE].forEach(type => {
+        deviceType.set(type);
+        expect(tile.isExpanded()).toBe(false);
+      });
     });
 
     it('starts other tiles collapsed and keeps their toggle across device changes', () => {

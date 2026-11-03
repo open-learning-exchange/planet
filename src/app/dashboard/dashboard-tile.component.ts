@@ -1,6 +1,6 @@
 import {
   Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
-  ChangeDetectorRef, HostBinding, forwardRef, input, linkedSignal
+  ChangeDetectorRef, HostBinding, computed, forwardRef, input, signal
 } from '@angular/core';
 import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -83,7 +83,8 @@ export class DashboardTileComponent implements AfterViewChecked {
   courseTileLines = 2;
   recentlyDragged = false;
   readonly isAccordionMode = this.deviceInfoService.isMobile;
-  readonly isExpanded = linkedSignal(() => this.cardType() === 'myLife' && this.isAccordionMode());
+  private readonly expandedByUser = signal<boolean | undefined>(undefined);
+  readonly isExpanded = computed(() => this.expandedByUser() ?? (this.cardType() === 'myLife' && this.isAccordionMode()));
 
   @HostBinding('class.accordion-collapsed') get isCollapsed() {
     return !this.isExpanded();
@@ -150,7 +151,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   toggleAccordion(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.isExpanded.update(isExpanded => !isExpanded);
+    this.expandedByUser.set(!this.isExpanded());
     if (this.isExpanded()) {
       setTimeout(() => {
         this.cd.detectChanges();
