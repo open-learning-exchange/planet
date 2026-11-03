@@ -8,10 +8,10 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { dedupeShelfReduce, ageFromUser } from '@shared/utils';
 import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
 import { StateService } from '@shared/state.service';
+import { createGenderCounts, normalizeGender } from '@shared/demographics/gender.constants';
 
 import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../../courses/courses.service';
-import { createGenderCounts, normalizeGender } from '../../users/gender.constants';
 import { startOfDay, subtractMonthsClamped } from './reports.utils';
 
 interface ActivityRequestObject {

@@ -22,10 +22,10 @@ import { LanguageLabelComponent } from '@shared/language/language-label.componen
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { AvatarComponent } from '@shared/ui/avatar.component';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { getGenderIcon } from '@shared/demographics/gender.constants';
 
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { educationLevel } from '../users.constants';
-import { getGenderIcon } from '../gender.constants';
 import { userDocPath, userRelationship } from '../users.utils';
 import { TeamsService } from '../../teams/teams.service';
 

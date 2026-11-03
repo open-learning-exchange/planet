@@ -13,13 +13,13 @@ import { MatCard } from '@angular/material/card';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { AndroidAppPromptService } from '@shared/android/android-app-prompt.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { genderOptions, type GenderValue } from '@shared/demographics/gender.constants';
 
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService, PublicSurveyTeam } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { genderOptions, type GenderValue } from '../../users/gender.constants';
 
 type PublicSurveyStep = 'intro' | 'questions' | 'demographics' | 'submitted';
 

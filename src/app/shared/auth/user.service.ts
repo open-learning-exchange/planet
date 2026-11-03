@@ -6,9 +6,9 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { addToArray, removeFromArray, dedupeShelfReduce } from '@shared/utils';
 import { StateService } from '@shared/state.service';
+import { normalizeGender } from '@shared/demographics/gender.constants';
 
 import { environment } from '../../../environments/environment';
-import { normalizeGender } from '../../users/gender.constants';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session

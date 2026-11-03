@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import type { GenderValue } from '@shared/demographics/gender.constants';
+
 import { environment } from '../../../environments/environment';
 import { ExamAnswerValue } from '../exams-take/exam-answer.helpers';
-import type { GenderValue } from '../../users/gender.constants';
 
 export interface PublicSurveyDemographics {
   age?: number;

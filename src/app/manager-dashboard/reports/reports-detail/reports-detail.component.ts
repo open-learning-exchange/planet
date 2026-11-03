@@ -36,6 +36,7 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { reportGenderOptions, ReportGenderValue } from '@shared/demographics/gender.constants';
 
 import { ReportsService } from '../reports.service';
 import { CustomValidators } from '../../../validators/custom-validators';
@@ -48,7 +49,6 @@ import {
 import { ResourcesViewerDialogComponent } from '../../../resources/view-resources/resources-viewer-dialog.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../../users/users.service';
-import { reportGenderOptions, ReportGenderValue } from '../../../users/gender.constants';
 import { CoursesViewDetailDialogComponent } from '../../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from '../reports-health.component';
 import { UsersProfileDialogService } from '../../../users/users-profile/users-profile-dialog.service';

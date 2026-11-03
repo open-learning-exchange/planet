@@ -8,10 +8,10 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { couchAttachmentPath, formatDate } from '@shared/utils';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+import { reportGenderOptions, ReportGenderValue } from '@shared/demographics/gender.constants';
 
 import { ReportsService } from '../../manager-dashboard/reports/reports.service';
 import { monthDataLabels } from '../../manager-dashboard/reports/reports.utils';
-import { reportGenderOptions, ReportGenderValue } from '../../users/gender.constants';
 
 export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
 export const CSV_PREVIEW_MAX_ROWS = 5000;

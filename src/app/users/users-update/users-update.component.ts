@@ -31,12 +31,12 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-validator.directive';
 import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { genderOptions, normalizeGender } from '@shared/demographics/gender.constants';
 
 import { environment } from '../../../environments/environment';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { educationLevel } from '../users.constants';
-import { genderOptions, normalizeGender } from '../gender.constants';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 
 interface UsersUpdateFormGroup {

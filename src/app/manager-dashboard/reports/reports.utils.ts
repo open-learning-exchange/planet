@@ -1,7 +1,7 @@
 import type { CsvService } from '@shared/export/csv.service';
+import { getGenderLabel } from '@shared/demographics/gender.constants';
 
 import { millisecondsToDay } from '../../meetups/meetups.constants';
-import { getGenderLabel } from '../../users/gender.constants';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
