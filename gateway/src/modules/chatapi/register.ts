@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import WebSocket from 'ws';
 
-import { ConfigurationUnavailableError } from '../../services/config.service';
+import { ChatDisabledError, ConfigurationUnavailableError, requireChatEnabled } from '../../services/config.service';
 import { configuredProviders } from './providers/clients';
 import { chat, chatNoSave } from './services/chat.service';
 
@@ -16,6 +16,7 @@ export function registerChatApiRoutes(app: Express) {
     }
 
     try {
+      await requireChatEnabled();
       if (!save) {
         const response = await chatNoSave(data.content, data.aiProvider, data.context);
         return res.status(200).json({
@@ -30,7 +31,7 @@ export function registerChatApiRoutes(app: Express) {
         'couchDBResponse': response?.couchSaveResponse
       });
     } catch (error: any) {
-      if (error instanceof ConfigurationUnavailableError) {
+      if (error instanceof ConfigurationUnavailableError || error instanceof ChatDisabledError) {
         return next(error);
       }
       if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
@@ -56,6 +57,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           return;
         }
 
+        await requireChatEnabled();
         const chatResponse = await chat(payload, true, (response) => {
           ws.send(JSON.stringify({ 'type': 'partial', response }));
         });
@@ -68,8 +70,8 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           }));
         }
       } catch (error: any) {
-        if (error instanceof ConfigurationUnavailableError) {
-          ws.send(JSON.stringify({ 'error': error.name, 'message': error.message }));
+        if (error instanceof ConfigurationUnavailableError || error instanceof ChatDisabledError) {
+          ws.send(JSON.stringify({ 'type': 'error', 'error': error.name, 'message': error.message }));
         } else if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
           ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
         } else {

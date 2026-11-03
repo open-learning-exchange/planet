@@ -38,6 +38,10 @@
     overflow: hidden;
   }
 
+  > .dashboard-item-link[aria-disabled="true"] {
+    opacity: 0.5;
+  }
+
   &.has-course-cover {
     > .dashboard-item-link {
       padding: 0.5rem;

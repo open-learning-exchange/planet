@@ -50,6 +50,7 @@
                 [class.cursor-pointer]="item.link && !recentlyDragged"
                 [routerLink]="recentlyDragged ? null : item.link"
                 [state]="item.returnState ? { returnState: item.returnState } : undefined"
+                [attr.aria-disabled]="!item.link ? 'true' : null"
                 [matTooltip]="item.tooltip">
                 @if (hasCover(item)) {
                   <div class="dashboard-course-cover">

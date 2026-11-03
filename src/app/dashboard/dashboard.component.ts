@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
+import { finalize, map, catchError, switchMap, auditTime, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { NgClass, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -10,6 +10,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { UserService } from '@shared/auth/user.service';
+import { chatUnavailableReason } from '@shared/ai/chat-availability';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
@@ -95,6 +96,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.setCompletedCourses(courses, certifications);
     });
     this.initMyLifeItems();
+    this.stateService.couchStateListener('configurations').pipe(
+      map(() => chatUnavailableReason(this.stateService.configuration)),
+      distinctUntilChanged(),
+      takeUntil(this.onDestroy$)
+    ).subscribe(() => this.initMyLifeItems());
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
       this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
@@ -126,10 +132,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initMyLifeItems() {
+    const chatTooltip = chatUnavailableReason(this.stateService.configuration);
     this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
-      { baseFirstLine: $localize` my `, title: $localize`Chat`, link: '/chat', returnState: { route: 'myDashboard' } },
+      {
+        baseFirstLine: $localize` my `,
+        title: $localize`Chat`,
+        link: chatTooltip ? null : '/chat',
+        returnState: { route: 'myDashboard' },
+        tooltip: chatTooltip
+      },
       { baseFirstLine: $localize` my `, title: $localize`Progress`, link: 'myProgress' },
       { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
       { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },

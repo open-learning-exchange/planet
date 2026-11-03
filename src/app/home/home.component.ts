@@ -16,6 +16,7 @@ import { MatDivider } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 
 import { UserService } from '@shared/auth/user.service';
+import { chatUnavailableReason } from '@shared/ai/chat-availability';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
@@ -101,6 +102,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   get notificationsLabel(): string {
     return $localize`Notifications: ${this.notifications.length}:count:`;
+  }
+
+  get isChatEnabled(): boolean {
+    return !chatUnavailableReason(this.configuration);
+  }
+
+  get chatTitle(): string {
+    return chatUnavailableReason(this.configuration) || $localize`AI Chat`;
   }
 
   constructor(

@@ -53,8 +53,23 @@
       <trans-unit id="5545607360676773950" datatype="html">
         <source>Send a message</source>
       </trans-unit>
-      <trans-unit id="6902066591850406795" datatype="html">
-        <source>chat is disabled, contact community admin</source>
+      <trans-unit id="7728585992953102212" datatype="html">
+        <source>Chat configuration is unavailable.</source>
+      </trans-unit>
+      <trans-unit id="2082885849347309361" datatype="html">
+        <source>Chat is disabled, contact community admin</source>
+      </trans-unit>
+      <trans-unit id="1412720229982290039" datatype="html">
+        <source>No AI provider is available.</source>
+      </trans-unit>
+      <trans-unit id="8740036082299980043" datatype="html">
+        <source>Send message</source>
+      </trans-unit>
+      <trans-unit id="2694725400536938026" datatype="html">
+        <source>Enable AI chat:</source>
+      </trans-unit>
+      <trans-unit id="5468644386983648890" datatype="html">
+        <source>When off, AI chat and survey AI analysis stop for everyone using the web app. Saved keys are kept.</source>
       </trans-unit>
       <trans-unit id="6824763714539805412" datatype="html">
         <source>AI Chat</source>

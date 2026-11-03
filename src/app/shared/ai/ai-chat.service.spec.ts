@@ -1,0 +1,74 @@
+import { TestBed } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
+import { of, Subject } from 'rxjs';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { AIProvider } from '../../chat/chat.model';
+import { AiChatService } from './ai-chat.service';
+
+describe('AiChatService', () => {
+  let configurations$: Subject<void>;
+  let stateService: { configuration: { _id?: string, chatEnabled?: boolean }, couchStateListener: () => Subject<void> };
+  const post = vi.fn(() => of({}));
+  let emissions: AIProvider[][];
+
+  const refreshConfiguration = (configuration: { chatEnabled?: boolean }) => {
+    stateService.configuration = { _id: 'local', ...configuration };
+    configurations$.next();
+  };
+
+  beforeEach(() => {
+    configurations$ = new Subject<void>();
+    stateService = { configuration: { _id: 'local' }, couchStateListener: () => configurations$ };
+    post.mockClear();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: HttpClient, useValue: { get: () => of({ openai: true, gemini: false }), post } },
+        { provide: CouchService, useValue: {} },
+        { provide: StateService, useValue: stateService }
+      ]
+    });
+    emissions = [];
+    TestBed.inject(AiChatService).listAIProviders().subscribe((providers) => emissions.push(providers));
+  });
+
+  it('empties the providers while chat is off and restores them when it comes back on', () => {
+    refreshConfiguration({ chatEnabled: false });
+    expect(emissions[emissions.length - 1]).toEqual([]);
+
+    refreshConfiguration({ chatEnabled: true });
+    expect(emissions[emissions.length - 1]).toEqual([ { name: 'openai', model: 'openai' } ]);
+  });
+
+  it('does not re-emit the providers when a refresh leaves the flag unchanged', () => {
+    const emitted = emissions.length;
+
+    refreshConfiguration({});
+    refreshConfiguration({ chatEnabled: true });
+
+    expect(emissions.length).toEqual(emitted);
+  });
+
+  it('blocks both transports until a configuration document exists and when disabled', () => {
+    const service = TestBed.inject(AiChatService);
+    const httpError = vi.fn();
+    const streamError = vi.fn();
+    service.getErrorStream().subscribe(streamError);
+    for (const configuration of [ {}, { _id: 'local', chatEnabled: false } ]) {
+      stateService.configuration = configuration;
+      configurations$.next();
+      expect(emissions.at(-1)).toEqual([]);
+      service.getPrompt({}, false).subscribe({ error: httpError });
+      service.sendUserInput({});
+    }
+    expect(httpError).toHaveBeenCalledTimes(2);
+    expect(httpError.mock.calls[1][0]).toBeInstanceOf(Error);
+    expect(streamError).toHaveBeenCalledTimes(2);
+    expect(post).not.toHaveBeenCalled();
+
+    refreshConfiguration({});
+    service.getPrompt({}, false).subscribe();
+    expect(post).toHaveBeenCalledOnce();
+  });
+});

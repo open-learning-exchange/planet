@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
+import { catchError, distinctUntilChanged, map, startWith } from 'rxjs/operators';
 
 import { findDocuments, inSelector } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
 
 import { environment } from '../../../environments/environment';
 import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
+import { chatUnavailableReason } from './chat-availability';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +18,7 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
   private socket: WebSocket;
+  private configuredProviders: Array<AIProvider> = [];
 
   private chatStreamSubject: Subject<string> = new Subject<string>();
   private errorSubject: Subject<string> = new Subject<string>();
@@ -35,9 +38,23 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   constructor(
     private httpClient: HttpClient,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private stateService: StateService
   ) {
+    this.stateService.couchStateListener('configurations').pipe(
+      map(() => !this.unavailableReason),
+      startWith(!this.unavailableReason),
+      distinctUntilChanged()
+    ).subscribe(() => this.updateAvailableProviders());
     this.fetchAIProviders();
+  }
+
+  get unavailableReason(): string {
+    return chatUnavailableReason(this.stateService.configuration);
+  }
+
+  private updateAvailableProviders() {
+    this.aiProvidersSubject.next(this.unavailableReason ? [] : this.configuredProviders);
   }
 
   initializeWebSocket() {
@@ -49,8 +66,8 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
       this.socket.addEventListener('message', (event) => {
         try {
           const message = JSON.parse(event.data);
-          if (message.type === 'error') {
-            this.errorSubject.next(message.error);
+          if (message.error || message.type === 'error') {
+            this.errorSubject.next(this.gatewayErrorMessage(message));
           } else {
             this.chatStreamSubject.next(event.data);
           }
@@ -80,7 +97,8 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
         })
       )
       .subscribe((providers) => {
-        this.aiProvidersSubject.next(providers);
+        this.configuredProviders = providers;
+        this.updateAvailableProviders();
       });
   }
 
@@ -88,11 +106,25 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
     return this.aiProviders$;
   }
 
+  private gatewayErrorMessage(error: { error: string, message?: string }): string {
+    if (error.error === 'Chat Disabled') {
+      this.stateService.requestData('configurations', 'local');
+      return $localize`Chat is disabled, contact community admin`;
+    }
+    return error.message || error.error;
+  }
+
   getPrompt(data: object, save: boolean): Observable<any> {
+    const reason = this.unavailableReason;
+    if (reason) {
+      return throwError(() => new Error(reason));
+    }
     return this.httpClient.post(`${this.baseUrl}/`, {
       data,
       save,
-    });
+    }).pipe(catchError(error => throwError(() =>
+      error.status === 403 && error.error?.error === 'Chat Disabled' ? new Error(this.gatewayErrorMessage(error.error)) : error
+    )));
   }
 
   // Subscribe to stream updates
@@ -106,6 +138,11 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   // Method to send user input via WebSocket
   sendUserInput(data: any): void {
+    const reason = this.unavailableReason;
+    if (reason) {
+      this.errorSubject.next(reason);
+      return;
+    }
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(data));
     }
