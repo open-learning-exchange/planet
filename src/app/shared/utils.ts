@@ -321,25 +321,6 @@ export const ageFromUser = (
   return age === undefined || age === null || age === '' ? null : age;
 };
 
-export const genderBucket = (gender?: unknown) => {
-  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
-  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
-};
-
-export const localizedGender = (gender?: unknown, fallback = '') => {
-  if (typeof gender !== 'string' || !gender) {
-    return fallback;
-  }
-  switch (gender.toLowerCase()) {
-    case 'male':
-      return $localize`Male`;
-    case 'female':
-      return $localize`Female`;
-    default:
-      return toProperCase(gender);
-  }
-};
-
 export const formatStringDate = (date: string) =>
   new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date));
 

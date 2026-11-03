@@ -1,4 +1,4 @@
-import { styleVariables } from './utils';
+import { styleVariables } from '@shared/utils';
 
 export type GenderValue = 'male' | 'female' | 'other';
 export type ReportGenderValue = GenderValue | 'didNotSpecify';
@@ -31,8 +31,8 @@ export const reportGenderOptions: ReportGenderOption[] = [
 
 const genderOptionValues = new Set(genderOptions.map(({ value }) => value));
 
-export const normalizeGender = (gender?: string | null): ReportGenderValue => {
-  const normalizedGender = gender?.trim().toLowerCase() as GenderValue | undefined;
+export const normalizeGender = (gender?: unknown): ReportGenderValue => {
+  const normalizedGender = typeof gender === 'string' ? gender.trim().toLowerCase() as GenderValue : undefined;
   return normalizedGender && genderOptionValues.has(normalizedGender) ? normalizedGender : 'didNotSpecify';
 };
 
@@ -51,10 +51,10 @@ export const getGenderIcon = (gender?: string | null): string | null => {
 };
 
 export const getGenderLabel = (
-  gender?: string | null,
+  gender?: unknown,
   { fallback = $localize`N/A` }: { fallback?: string } = {}
 ): string => {
-  if (!gender?.trim()) {
+  if (typeof gender !== 'string' || !gender.trim()) {
     return fallback;
   }
   const normalizedGender = normalizeGender(gender);

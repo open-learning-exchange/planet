@@ -20,7 +20,7 @@ describe('gender constants', () => {
       expect(normalizeGender(gender)).toBe(expected);
     });
 
-    it.each([ undefined, null, '', '   ', 'unknown' ])('maps %s to didNotSpecify', (gender) => {
+    it.each([ undefined, null, '', '   ', 'unknown', 1, {} ])('maps %s to didNotSpecify', (gender) => {
       expect(normalizeGender(gender)).toBe('didNotSpecify');
     });
 
@@ -46,8 +46,9 @@ describe('gender constants', () => {
       expect(getGenderLabel('unknown')).toBe('Did not specify');
     });
 
-    it('uses the provided fallback when gender is omitted or blank', () => {
+    it('uses the provided fallback when gender is omitted, blank or not a string', () => {
       expect(getGenderLabel(undefined, { fallback: 'Not available' })).toBe('Not available');
+      expect(getGenderLabel(1, { fallback: 'Not available' })).toBe('Not available');
       expect(getGenderLabel('   ', { fallback: 'Not available' })).toBe('Not available');
     });
 

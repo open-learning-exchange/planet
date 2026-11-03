@@ -10,7 +10,7 @@ import { StateService } from '@shared/state.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { createGenderCounts, normalizeGender } from '@shared/gender.constants';
+import { createGenderCounts, normalizeGender } from '../../users/gender.constants';
 import { disableCommentWhenUnrated, ratingFormFields, RatingFormModel, RatingFormValue } from './rating-form';
 
 const startingRating = {

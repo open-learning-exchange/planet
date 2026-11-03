@@ -6,9 +6,9 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { stringToHex, ageFromBirthDate } from '@shared/utils';
 import { findDocuments } from '@shared/database/mango-queries';
-import { normalizeGender } from '@shared/gender.constants';
 
 import { UsersService } from '../users/users.service';
+import { normalizeGender } from '../users/gender.constants';
 
 @Injectable({
   providedIn: 'root'

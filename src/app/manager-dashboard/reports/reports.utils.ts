@@ -1,7 +1,7 @@
 import type { CsvService } from '@shared/export/csv.service';
-import { localizedGender } from '@shared/utils';
 
 import { millisecondsToDay } from '../../meetups/meetups.constants';
+import { getGenderLabel } from '../../users/gender.constants';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -108,7 +108,7 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
 );
 
 export const demographicsForCsv = (data: any) => ({
-  [$localize`Gender`]: localizedGender(data?.gender),
+  [$localize`Gender`]: getGenderLabel(data?.gender, { fallback: '' }),
   [$localize`Age (years)`]: data?.age ?? ''
 });
 

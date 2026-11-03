@@ -19,7 +19,7 @@ import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.compon
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService, PublicSurveyTeam } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { genderOptions, type GenderValue } from '../../shared/gender.constants';
+import { genderOptions, type GenderValue } from '../../users/gender.constants';
 
 type PublicSurveyStep = 'intro' | 'questions' | 'demographics' | 'submitted';
 

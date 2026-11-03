@@ -22,6 +22,8 @@ const initialRating = () => ({
   totalRating: 2,
   maleRating: 1,
   femaleRating: 1,
+  otherRating: 0,
+  didNotSpecifyRating: 0,
   userRating: {
     _id: 'r-1',
     _rev: '1-a',
@@ -43,6 +45,8 @@ const normalizeRatingInfo = (ratingInfo: any = {}) => {
     totalRating: allRatings.length,
     maleRating: allRatings.filter(rating => rating.user?.gender === 'male').length,
     femaleRating: allRatings.filter(rating => rating.user?.gender === 'female').length,
+    otherRating: allRatings.filter(rating => rating.user?.gender === 'other').length,
+    didNotSpecifyRating: allRatings.filter(rating => ![ 'male', 'female', 'other' ].includes(rating.user?.gender)).length,
     userRating: ratingInfo.userRating || {},
     allRatings
   };

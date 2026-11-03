@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 
 import { ReportsService } from './reports.service';
+import { demographicsForCsv } from './reports.utils';
 
 describe('ReportsService', () => {
   let service: ReportsService;
@@ -81,6 +82,15 @@ describe('ReportsService', () => {
       ]);
     });
 
+    it('keeps the gender raw so an unmatched profile exports a blank cell', () => {
+      service.users = [ { name: 'ada', gender: 'female' } ];
+
+      const [ unmatched ] = service.appendUserDemographics([ { user: 'nobody' } ], time);
+
+      expect(unmatched.gender).toBeUndefined();
+      expect(demographicsForCsv(unmatched).Gender).toBe('');
+    });
+
   });
 
   describe('demographicsFor', () => {
@@ -98,10 +108,10 @@ describe('ReportsService', () => {
   describe('groupUsers', () => {
 
     it('counts genders on the raw user docs', () => {
-      const grouped = service.groupUsers([ { gender: 'male' }, { gender: 'female' }, {} ]);
+      const grouped = service.groupUsers([ { gender: 'male' }, { gender: 'female' }, { gender: 'other' }, {}, { gender: ' ' } ]);
 
-      expect(grouped.count).toBe(3);
-      expect(grouped.byGender).toEqual({ male: 1, female: 1, other: 0, didNotSpecify: 1 });
+      expect(grouped.count).toBe(5);
+      expect(grouped.byGender).toEqual({ male: 1, female: 1, other: 1, didNotSpecify: 2 });
     });
 
     it('counts genders on the { doc: user } shape the members list passes', () => {
@@ -115,9 +125,9 @@ describe('ReportsService', () => {
     });
 
     it('keeps the totals numeric for genders the chart has no bucket for', () => {
-      const grouped = service.groupUsers([ { gender: 'nonbinary' }, { gender: 'Male' } ]);
+      const grouped = service.groupUsers([ { gender: 'nonbinary' }, { gender: 'Male' }, { gender: ' female ' }, { gender: 1 } ]);
 
-      expect(grouped.byGender).toEqual({ male: 1, female: 0, other: 0, didNotSpecify: 1 });
+      expect(grouped.byGender).toEqual({ male: 1, female: 1, other: 0, didNotSpecify: 2 });
     });
 
     it('groups direct and wrapped user records by their gender and join month', () => {
