@@ -130,7 +130,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
         this.goBack();
         return;
       }
-      this.event = event === 'new' ? {} : event;
+      this.event = event === 'new' ? { _id: this.healthService.generateKey(16) } : event;
       this.healthForm.patchValue(this.event);
       this.onFormChanges();
       this.captureInitialState();
