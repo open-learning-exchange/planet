@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { defaultIfEmpty, map } from 'rxjs/operators';
-import { findDocuments } from '../mangoQueries';
-import { UserService } from '../user.service';
-import { StateService } from '../state.service';
-import { CouchService } from '../couchdb.service';
-import { filterSpecificFields } from '../table-helpers';
+
+import { findDocuments } from '@shared/database/mango-queries';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { filterSpecificFields } from '@shared/tables/table.helpers';
+
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 
 const listColumns = {
-  'resources': [ 'title' ],
-  'courses': [ 'courseTitle' ],
-  '_users': [ 'Full Name', 'name' ],
-  'child_users': [ 'Full Name', 'name' ],
-  'communityregistrationrequests': [ 'name', 'code', 'localDomain' ]
+  resources: [ 'title' ],
+  courses: [ 'courseTitle' ],
+  _users: [ 'Full Name', 'name' ],
+  child_users: [ 'Full Name', 'name' ],
+  communityregistrationrequests: [ 'name', 'code', 'localDomain' ]
 };
 
 @Injectable()
@@ -34,8 +36,8 @@ export class DialogsListService {
       );
     };
     return {
-      '_users': users,
-      'child_users': users
+      _users: users,
+      child_users: users
     };
   }
 

@@ -10,6 +10,12 @@ export interface PublicSurveyDemographics {
   gender?: GenderValue;
 }
 
+export interface PublicSurveyTeam {
+  _id: string;
+  name: string;
+  type: string;
+}
+
 export interface PublicSurvey {
   _id: string;
   name: string;
@@ -20,7 +26,7 @@ export interface PublicSurvey {
 
 export interface PublicSurveyResponse {
   survey: PublicSurvey;
-  team: { _id: string; name: string; type: string };
+  team: PublicSurveyTeam;
 }
 
 @Injectable({

@@ -1,18 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { SyncService } from '@shared/database/sync.service';
+
 import { ValidatorService } from '../validators/validator.service';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { ConfigurationComponent } from './configuration.component';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { ConfigurationService } from './configuration.service';
-import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { SyncService } from '../shared/sync.service';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;
@@ -20,9 +22,7 @@ describe('ConfigurationComponent', () => {
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const stateServiceMock = {
@@ -50,7 +50,8 @@ describe('ConfigurationComponent', () => {
             snapshot: { data: { update: false } }
           }
         },
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
       ]
     });
     fixture = TestBed.createComponent(ConfigurationComponent);

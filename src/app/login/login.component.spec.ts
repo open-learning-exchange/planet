@@ -3,10 +3,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { LoginComponent } from './login.component';
-import { CouchService } from '../shared/couchdb.service';
-import { MaterialModule } from '../shared/material.module';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { MaterialModule } from '@shared/material.module';
+
+import { LoginComponent } from './login.component';
 
 describe('Login', () => {
 
@@ -15,11 +18,11 @@ describe('Login', () => {
   const setup = () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, LoginComponent],
-      providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [CouchService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
     });
-    const fixture = TestBed.createComponent(LoginComponent),
-      comp = fixture.componentInstance;
-      /*de = fixture.debugElement.query(By.css('#login-status')),
+    const fixture = TestBed.createComponent(LoginComponent);
+    const comp = fixture.componentInstance;
+    /*de = fixture.debugElement.query(By.css('#login-status')),
       statusElement = de.nativeElement,
       couchService = fixture.debugElement.injector.get(CouchService),
       testModel = { name: 'test', password: 'password', repeatPassword: 'password' };*/

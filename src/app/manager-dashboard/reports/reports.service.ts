@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
-import { findDocuments } from '../../shared/mangoQueries';
-import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
-import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
-import { StateService } from '../../shared/state.service';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { dedupeShelfReduce, ageFromUser } from '@shared/utils';
+import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
+import { StateService } from '@shared/state.service';
+import { createGenderCounts, normalizeGender } from '@shared/gender.constants';
+
+import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../../courses/courses.service';
-import { createGenderCounts, normalizeGender } from '../../shared/gender.constants';
+import { startOfDay, subtractMonthsClamped } from './reports.utils';
 
 interface ActivityRequestObject {
   planetCode?: string;
   tillDate?: number;
-  fromMyPlanet?: boolean;
   filterAdmin?: boolean;
 }
 
@@ -28,6 +30,7 @@ export class ReportsService {
     { value: '24h', label: $localize`Last 24 Hours` },
     { value: '7d', label: $localize`Last 7 Days` },
     { value: '1m', label: $localize`Last Month` },
+    { value: '3m', label: $localize`Last 3 Months` },
     { value: '6m', label: $localize`Last 6 Months` },
     { value: '12m', label: $localize`Last 12 Months` },
     { value: 'all', label: $localize`All Time` },
@@ -94,12 +97,11 @@ export class ReportsService {
     );
   }
 
-  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', fromMyPlanet }: any = { field: 'createdOn' }) {
+  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time' }: any = { field: 'createdOn' }) {
     return planetCode ?
       findDocuments({
         ...{ [field]: planetCode },
-        ...this.timeFilter(dateField, tillDate),
-        ...(fromMyPlanet !== undefined ? { androidId: { '$exists': fromMyPlanet } } : {})
+        ...this.timeFilter(dateField, tillDate)
       }) :
       undefined;
   }
@@ -134,13 +136,11 @@ export class ReportsService {
 
   getAllActivities(
     db: 'login_activities' | 'resource_activities' | 'course_activities',
-    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
+    { planetCode, tillDate, filterAdmin }: ActivityRequestObject = {}
   ) {
     const dateField = db === 'login_activities' ? 'loginTime' : 'time';
-    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
-      .pipe(map((activities: any) => {
-        return this.filterAdmin(activities, filterAdmin);
-      }));
+    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField }))
+      .pipe(map((activities: any) => this.filterAdmin(activities, filterAdmin)));
   }
 
   groupLoginActivities(loginActivities) {
@@ -151,8 +151,8 @@ export class ReportsService {
     });
   }
 
-  getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet })).pipe(
+  getRatingInfo({ planetCode, tillDate, filterAdmin }: ActivityRequestObject = {}) {
+    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time' })).pipe(
       map((ratings: any) => this.filterAdmin(ratings, filterAdmin)));
   }
 
@@ -175,9 +175,7 @@ export class ReportsService {
     return forkJoin([
       this.couchService.get(db),
       this.couchService.get(db + '/_design_docs')
-    ]).pipe(map(([ schema, ddocs ]) => {
-      return schema.doc_count - ddocs.total_rows;
-    }));
+    ]).pipe(map(([ schema, ddocs ]) => schema.doc_count - ddocs.total_rows));
   }
 
   getChildDatabaseCounts(code: string) {
@@ -186,9 +184,7 @@ export class ReportsService {
 
   getAdminActivities({ planetCode, tillDate, domain }: { planetCode?: string, tillDate?: number, domain?: string }) {
     return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate, dateField: 'time' }), { domain })
-      .pipe(map(adminActivities => {
-        return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
-      }));
+      .pipe(map(adminActivities => this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' })));
   }
 
   mostRecentAdminActivities(planet, logins, adminActivities) {
@@ -202,28 +198,54 @@ export class ReportsService {
     });
   }
 
-  appendGender(array) {
-    return array.map((item: any) => {
-      const user = this.users.find((u: any) => u.name === item.user) || {};
-      return ({
-        ...item,
-        gender: normalizeGender(user.gender)
-      });
+  private usersByName() {
+    return this.users.reduce((users: Map<string, any>, user: any) => {
+      if (user.name && !users.has(user.name)) {
+        users.set(user.name, user);
+      }
+      return users;
+    }, new Map());
+  }
+
+  private genderOfActivity(item: any, users: Map<string, any>) {
+    return users.get(item.user)?.gender;
+  }
+
+  private ageOfActivity(item: any, time: number | Date, users: Map<string, any>) {
+    return item.age ?? ageFromUser(time, users.get(item.user)) ?? '';
+  }
+
+  demographicsFor(time: number | Date) {
+    const users = this.usersByName();
+    return (item: any) => ({
+      age: this.ageOfActivity(item, time, users),
+      gender: this.genderOfActivity(item, users)
     });
   }
 
-  appendAge(array, time) {
-    return array.map((item: any) => {
-      const user = this.users.find((u: any) => u.name === item.user) || {};
-      return ({
-        ...item,
-        age: ageFromBirthDate(time, user.birthDate)
-      });
-    });
+  appendGender(array) {
+    const users = this.usersByName();
+    return array.map((item: any) => ({
+      ...item,
+      gender: normalizeGender(this.genderOfActivity(item, users))
+    }));
+  }
+
+  appendAge(array, time: number | Date) {
+    const users = this.usersByName();
+    return array.map((item: any) => ({
+      ...item,
+      age: this.ageOfActivity(item, time, users)
+    }));
+  }
+
+  appendUserDemographics(array, time: number | Date) {
+    const demographics = this.demographicsFor(time);
+    return array.map((item: any) => ({ ...item, ...demographics(item) }));
   }
 
   timeFilter(field, time) {
-    return time !== undefined ? { [field]: { '$gt': time } } : {};
+    return time !== undefined ? { [field]: { $gt: time } } : {};
   }
 
   filterAdmin(records, filter) {
@@ -274,25 +296,23 @@ export class ReportsService {
       this.couchService.get('courses_progress/_design/courses_progress/_view/completion?group=true'),
       this.couchService.get('courses_progress/_design/courses_progress/_view/steps?group=true'),
       this.coursesService.coursesListener$().pipe(take(1))
-    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, { rows: steps }, courses ]) => {
-      return {
-        courses: courses.map(course => ({
-          steps: course.doc.steps.length,
-          exams: course.doc.steps.filter(step => step.exam).length,
-          _id: course._id
-        })),
-        enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
-        completions: completions.filter(({ key, value }) => {
-          const course = courses.find(c => c._id === key.courseId);
-          return course && value.count === course.doc.steps.length;
-        })
-          .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
-        steps: steps.map(({ key, value }) => {
-          const course = courses.find(c => c._id === key.courseId);
-          return { ...key, time: value.max, title: course ? course.doc.courseTitle : '' };
-        })
-      };
-    }));
+    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, { rows: steps }, courses ]) => ({
+      courses: courses.map(course => ({
+        steps: course.doc.steps.length,
+        exams: course.doc.steps.filter(step => step.exam).length,
+        _id: course._id
+      })),
+      enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
+      completions: completions.filter(({ key, value }) => {
+        const course = courses.find(c => c._id === key.courseId);
+        return course && value.count === course.doc.steps.length;
+      })
+        .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
+      steps: steps.map(({ key, value }) => {
+        const course = courses.find(c => c._id === key.courseId);
+        return { ...key, time: value.max, title: course ? course.doc.courseTitle : '' };
+      })
+    })));
   }
 
   getChatHistory() {
@@ -343,16 +363,16 @@ export class ReportsService {
         startDate.setDate(now.getDate() - 7);
         break;
       case '1m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 1);
+        startDate = startOfDay(subtractMonthsClamped(now, 1));
+        break;
+      case '3m':
+        startDate = startOfDay(subtractMonthsClamped(now, 3));
         break;
       case '6m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 6);
+        startDate = startOfDay(subtractMonthsClamped(now, 6));
         break;
       case '12m':
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 12);
+        startDate = startOfDay(subtractMonthsClamped(now, 12));
         break;
       case 'all':
         startDate = minDate;

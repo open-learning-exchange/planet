@@ -1,21 +1,6 @@
-@use "../../variables" as v;
-
-.mat-column-name {
-  max-width: 25vw;
-}
-.mat-column-stepNum {
-  max-width: 90px;
-}
-
-@media (max-width: v.$screen-sm) {
-  .responsive-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
-
-  mat-header-cell,
-  mat-cell {
-    min-width: 130px;
-  }
+// mat-expansion-panel sets overflow: hidden on its host, so a min-width-table nested
+// inside one is clipped rather than scrolled. Give the embedded tables their own scroller.
+.panel-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }

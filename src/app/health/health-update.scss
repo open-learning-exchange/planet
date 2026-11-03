@@ -1,5 +1,3 @@
-@use '../variables' as v;
-
 :host {
   .view-container {
     display: grid;
@@ -20,10 +18,6 @@
         grid-column: 1 / -1;
       }
     }
-  }
-
-  .view-container.view-full-height {
-    height: v.$view-container-height-no-toolbar
   }
 
 }

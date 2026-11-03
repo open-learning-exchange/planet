@@ -1,11 +1,17 @@
 @use '../../variables' as v;
 
 :host {
+  .view-full-height {
+    display: flex;
+    flex-direction: column;
+  }
+
   .course-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "detail view";
-    height: calc(100vh - 282px);
+    flex: 1 1 0;
+    min-height: 0;
   }
 
   .course-detail {

@@ -7,17 +7,19 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { from, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { MaterialModule } from '../shared/material.module';
-import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
-import { SharedComponentsModule } from '../shared/shared-components.module';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
+
+import { MaterialModule } from '@shared/material.module';
+import { PlanetFormsModule } from '@shared/forms/planet-forms.module';
+import { SharedComponentsModule } from '@shared/shared-components.module';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { StateService } from '@shared/state.service';
+import { showFormErrors } from '@shared/tables/table.helpers';
+
 import { CustomValidators } from '../validators/custom-validators';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { ValidatorService } from '../validators/validator.service';
-import { PouchAuthService } from '../shared/database/pouch-auth.service';
-import { StateService } from '../shared/state.service';
-import { showFormErrors } from '../shared/table-helpers';
 import { LoginTasksService } from './login-tasks.service';
 
 interface LoginFormControls {
@@ -31,7 +33,7 @@ interface RegisterFormControls extends LoginFormControls {
 
 interface LoginCredentials {
   name: string;
-  password: string
+  password: string;
 };
 
 type LoginFormGroup = FormGroup<LoginFormControls>;
@@ -50,6 +52,10 @@ export class LoginFormComponent implements OnInit {
   @Input() createMode = false;
   @Input() isDialog = false;
   @Output() loginEvent = new EventEmitter<'loggedOut' | 'loggedIn'>();
+  returnUrl = this.route.snapshot.queryParams['returnUrl'] || (this.stateService.configuration.planetType === 'center' ?
+    'myDashboard' :
+    '/'
+  );
 
   constructor(
     private couchService: CouchService,
@@ -72,11 +78,6 @@ export class LoginFormComponent implements OnInit {
     this.initUserForm();
   }
 
-  returnUrl = this.route.snapshot.queryParams['returnUrl'] || (this.stateService.configuration.planetType === 'center' ?
-    'myDashboard' :
-    '/'
-  );
-
   initUserForm() {
     this.userForm = this.createMode ? this.createRegisterForm() : this.createLoginForm();
   }
@@ -96,13 +97,13 @@ export class LoginFormComponent implements OnInit {
 
   welcomeNotification(userId: string) {
     const data = {
-      'user': userId,
-      'message': $localize`Welcome <b>${userId.replace('org.couchdb.user:', '')}</b> to the Planet Learning`,
-      'link': '',
-      'type': 'register',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      user: userId,
+      message: $localize`Welcome <b>${userId.replace('org.couchdb.user:', '')}</b> to the Planet Learning`,
+      link: '',
+      type: 'register',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
     this.couchService.updateDocument('notifications', data)
       .subscribe();
@@ -198,7 +199,7 @@ export class LoginFormComponent implements OnInit {
 
   errorHandler(message: string) {
     return () => {
-      this.userForm.setErrors({ 'invalid': true });
+      this.userForm.setErrors({ invalid: true });
       this.planetMessageService.showAlert(message);
     };
   }

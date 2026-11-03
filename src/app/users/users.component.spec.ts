@@ -5,20 +5,23 @@ import { By } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { vi } from 'vitest';
-import { MaterialModule } from '../shared/material.module';
-import { UsersComponent } from './users.component';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
 import { of } from 'rxjs';
+
+import { MaterialModule } from '@shared/material.module';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+
+import { UsersComponent } from './users.component';
 
 describe('Users', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, UsersComponent],
-      providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
     });
     const fixture = TestBed.createComponent(UsersComponent);
     const comp = fixture.componentInstance;
@@ -38,7 +41,7 @@ describe('Users', () => {
 
   it('Should be a UsersComponent', () => {
     const { comp } = setup();
-    expect(comp instanceof UsersComponent).toBe(true, 'Should create UsersComponent');
+    expect(comp instanceof UsersComponent).toBe(true);
   });
 
   // describe('Init', () => {

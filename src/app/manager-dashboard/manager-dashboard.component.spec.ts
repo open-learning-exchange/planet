@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
@@ -6,18 +6,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { SyncService } from '@shared/database/sync.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+
 import { ManagerDashboardComponent } from './manager-dashboard.component';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
 import { CoursesService } from '../courses/courses.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { StateService } from '../shared/state.service';
 import { ManagerService } from './manager.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { SyncService } from '../shared/sync.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 describe('ManagerDashboardComponent', () => {
   let component: ManagerDashboardComponent;
@@ -42,9 +43,7 @@ describe('ManagerDashboardComponent', () => {
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const couchServiceMock = {
@@ -55,8 +54,8 @@ describe('ManagerDashboardComponent', () => {
     currentTimeListener: vi.fn().mockReturnValue(of(Date.now()))
   };
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [ManagerDashboardComponent],
       providers: [
         { provide: HttpClient, useValue: HttpTestingController},
@@ -84,7 +83,7 @@ describe('ManagerDashboardComponent', () => {
         { provide: MatDialog, useValue: { open: vi.fn() } }
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ManagerDashboardComponent);

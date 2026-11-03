@@ -1,33 +1,46 @@
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { of } from 'rxjs';
+import { By } from '@angular/platform-browser';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Observable, of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { RatingService } from '@shared/ratings/rating.service';
+
 import { ResourcesViewComponent } from './resources-view.component';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DeviceInfoService } from '../../shared/device-info.service';
 
 describe('ResourcesViewComponent', () => {
 
   let component: ResourcesViewComponent;
+  const deviceType = signal(DeviceType.DESKTOP);
   let fixture: ComponentFixture<ResourcesViewComponent>;
   let statusElement;
   let testimage;
   let de;
 
+  const ratingServiceMock = {
+    promptRating: vi.fn().mockReturnValue(of(true)),
+    resetRatingInteraction: vi.fn(),
+    normalizeRatingInfo: vi.fn(rating => ({
+      rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [], ...rating
+    }))
+  };
+
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const stateServiceMock = {
@@ -49,7 +62,20 @@ describe('ResourcesViewComponent', () => {
     get: vi.fn().mockReturnValue(of({}))
   };
 
+  const linkCopyServiceMock = {
+    copyLink: vi.fn()
+  };
+
+  const planetMessageServiceMock = {
+    showAlert: vi.fn(),
+    showMessage: vi.fn()
+  };
+
   beforeEach(() => {
+    ratingServiceMock.promptRating.mockReturnValue(of(true));
+    deviceType.set(DeviceType.DESKTOP);
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([]));
+    linkCopyServiceMock.copyLink.mockReset();
     TestBed.configureTestingModule({
       imports: [ ResourcesViewComponent, MatIconTestingModule ],
       providers: [
@@ -58,19 +84,22 @@ describe('ResourcesViewComponent', () => {
         { provide: StateService, useValue: stateServiceMock },
         { provide: UserService, useValue: userServiceMock },
         { provide: ResourcesService, useValue: resourcesServiceMock },
-        PlanetMessageService,
-        DeviceInfoService,
+        { provide: RatingService, useValue: ratingServiceMock },
+        { provide: PlanetMessageService, useValue: planetMessageServiceMock },
+        { provide: DeviceInfoService, useValue: { deviceType, isMobile: computed(() => isMobileOrSmaller(deviceType())) } },
+        { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: CouchService, useValue: couchServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },
         {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              data: { parent: {} }
+              data: { parent: false }
             },
             paramMap: of({ get: () => 'id' })
           }
-        }
+        },
+        provideNoopAnimations()
       ]
     });
     fixture = TestBed.createComponent(ResourcesViewComponent);
@@ -83,6 +112,113 @@ describe('ResourcesViewComponent', () => {
 
   it('should be created', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('copies local resource links from the desktop action', () => {
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('.km-copy-resource-link')).nativeElement.click();
+
+    expect(linkCopyServiceMock.copyLink).toHaveBeenCalledWith(
+      [ '/resources/view', 'id' ],
+      {
+        success: 'Resource link copied to clipboard',
+        failure: 'Failed to copy resource link'
+      }
+    );
+  });
+
+  it('does not offer link copying for a parent resource', () => {
+    component.parent = true;
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('.km-copy-resource-link'))).toBeNull();
+  });
+
+  it('renders a labeled menu item for link copying on smaller screens', async () => {
+    deviceType.set(DeviceType.MOBILE);
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('.menu')).nativeElement.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const copyButton = document.body.querySelector('.km-copy-resource-link') as HTMLButtonElement;
+    expect(copyButton).not.toBeNull();
+    expect(copyButton.textContent).toContain('Copy Resource Link');
+    copyButton.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(linkCopyServiceMock.copyLink).toHaveBeenCalled();
+    expect(document.body.querySelector('.km-copy-resource-link')).toBeNull();
+  });
+
+  it('shows the selected attachment size and the total only for bundles', () => {
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ {
+      _id: 'id',
+      doc: {
+        addedBy: 'user',
+        sourcePlanet: 'planet_code',
+        openWhichFile: 'index.html',
+        _attachments: {
+          'index.html': { length: 50000 },
+          'style.css': { length: 100000 }
+        }
+      }
+    } ]));
+
+    component.ngOnInit();
+
+    expect(component.downloadFileSize).toBe('48.8 KB');
+    expect(component.formattedFileSize).toBe('146.5 KB');
+  });
+
+  it('omits the redundant total for a single attachment', () => {
+    resourcesServiceMock.resourcesListener.mockReturnValue(of([ {
+      _id: 'id',
+      doc: {
+        addedBy: 'user',
+        sourcePlanet: 'planet_code',
+        _attachments: { 'manual.pdf': { length: 2516582 } }
+      }
+    } ]));
+
+    component.ngOnInit();
+
+    expect(component.downloadFileSize).toBe('2.4 MB');
+    expect(component.formattedFileSize).toBe('');
+  });
+
+  it('starts a new rating visit and prompts on leaving', () => {
+    ratingServiceMock.resetRatingInteraction.mockClear();
+    component.ngOnInit();
+    expect(ratingServiceMock.resetRatingInteraction).toHaveBeenCalledWith('id');
+    component.resource = { _id: 'r-1' };
+    component.canManage = false;
+
+    const result = component.canDeactivate();
+    (result as Observable<boolean>).subscribe(val => expect(val).toBe(true));
+
+    expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource');
+  });
+
+  it('never prompts on a parent view or for a manager', () => {
+    component.resource = { _id: 'r-1' };
+    ratingServiceMock.promptRating.mockClear();
+
+    component.parent = true;
+    component.canManage = false;
+    expect(component.canDeactivate()).toBe(true);
+
+    component.parent = false;
+    component.canManage = true;
+    expect(component.canDeactivate()).toBe(true);
+
+    expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
   });
 
 

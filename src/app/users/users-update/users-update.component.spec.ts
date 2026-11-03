@@ -1,19 +1,21 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { UsersUpdateComponent } from './users-update.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CouchService } from '../../shared/couchdb.service';
-import { MaterialModule } from '../../shared/material.module';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { ActivatedRoute } from '@angular/router';
-import { UserService } from '../../shared/user.service';
-import { StateService } from '../../shared/state.service';
-import { ValidatorService } from '../../validators/validator.service';
 import { MatDialog } from '@angular/material/dialog';
+
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { CouchService } from '@shared/database/couchdb.service';
+import { MaterialModule } from '@shared/material.module';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+
+import { UsersUpdateComponent } from './users-update.component';
+import { ValidatorService } from '../../validators/validator.service';
 
 describe('UserUpdateProfileComponent', () => {
   let component: UsersUpdateComponent;
@@ -28,8 +30,8 @@ describe('UserUpdateProfileComponent', () => {
     addImageForReplication: vi.fn().mockReturnValue(of({}))
   };
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         FormsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule, BrowserAnimationsModule,
         UsersUpdateComponent, FormErrorMessagesComponent, MatIconTestingModule
@@ -55,7 +57,7 @@ describe('UserUpdateProfileComponent', () => {
         { provide: MatDialog, useValue: { open: vi.fn(), openDialogs: [] } }
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UsersUpdateComponent);

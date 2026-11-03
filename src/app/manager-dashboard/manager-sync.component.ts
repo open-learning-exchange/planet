@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { SyncDirective } from './sync.directive';
 import { MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine, MatDivider } from '@angular/material/list';
 import { NgClass } from '@angular/common';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+
+import { SyncDirective } from './sync.directive';
 
 @Component({
   templateUrl: './manager-sync.component.html',
@@ -47,10 +50,9 @@ export class ManagerSyncComponent implements OnInit {
     forkJoin([
       this.couchService.get('_scheduler/docs'),
       this.couchService.findAll('_replicator')
-    ]).subscribe(([ reps, data ]) => {
+    ]).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(([ reps, data ]) => {
       const jobs = reps.docs.filter(replicator => replicator.database === '_replicator');
       this.replicators = data.map((rep: any) => ({ ...rep, ...jobs.find(n => n.doc_id === rep._id) }));
-      this.dialogsLoadingService.stop();
     });
   }
 

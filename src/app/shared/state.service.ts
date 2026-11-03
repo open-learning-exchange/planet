@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { Subject } from 'rxjs';
 import { map, switchMap, filter, catchError } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,7 @@ export class StateService {
     const baseDbs = [ 'resources' ];
     baseDbs.forEach(db => {
       if (!this.state.local[db]) {
-        this.requestData(db, 'local', { 'title': 'asc' });
+        this.requestData(db, 'local', { title: 'asc' });
       }
     });
   }
@@ -80,7 +81,7 @@ export class StateService {
   getAll(db: string, opts: any, planetField: string, sort: any = 0) {
     return this.getChanges(db, opts, planetField).pipe(switchMap(() =>
       this.couchService.findAllStream(db, findDocuments({
-        '_id': { '$gt': null }
+        _id: { $gt: null }
       }, 0, sort, 1000), opts)
     ));
   }

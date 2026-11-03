@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { LoginComponent } from './login.component';
 import { LoginFormComponent } from './login-form.component';
-import { ConfigurationGuard } from '../configuration/configuration-guard.service';
+import { ConfigurationGuard } from '../configuration/configuration.guard';
 import { ConfigurationComponent } from '../configuration/configuration.component';
 import { MigrationComponent } from '../configuration/migration.component';
 

@@ -6,10 +6,12 @@
   <mat-form-field class="font-size-1">
     <mat-label i18n>Search name...</mat-label>
     <input matInput [(ngModel)]="searchValue">
+    <button type="button" mat-icon-button matSuffix (click)="searchValue = ''; resetFilter()" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
-  <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
 </mat-toolbar>
 
 <div class="space-container">
-  <planet-users-table #table [users]="users" [search]="searchValue" [filter]="{}" [(tableState)]="tableState" [displayedColumns]="displayedColumns" containerClass="view-container view-full-height no-toolbar view-table" (tableDataChange)="tableDataChange($event)"></planet-users-table>
+  <planet-users-table #table [users]="users" [search]="searchValue" [filter]="{}" [(tableState)]="tableState" [displayedColumns]="displayedColumns" containerClass="view-container view-full-height view-table" (tableDataChange)="tableDataChange($event)"></planet-users-table>
 </div>

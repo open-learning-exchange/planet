@@ -1,0 +1,29 @@
+<mat-table #table [dataSource]="items">
+  <ng-container matColumnDef="item">
+    <mat-header-cell *matHeaderCellDef i18n>Title</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      @if (element.db === 'resources') {
+        {{ element.item.doc.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon>
+      }
+      @if (element.db === 'courses') {
+        {{ element.item.doc.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon>
+      }
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="date">
+    <mat-header-cell *matHeaderCellDef i18n>Date Sent</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <button mat-raised-button color="warn" (click)="deleteItem(element)"><mat-icon>delete</mat-icon><ng-container i18n>Delete</ng-container></button>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+<mat-paginator #paginator
+  [pageSize]="50"
+  [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+</mat-paginator>

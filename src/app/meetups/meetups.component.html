@@ -47,7 +47,7 @@
     <mat-table #table [dataSource]="meetups" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null" [checked]="selection.hasValue() && pageSelection.isAllSelected()" [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row" class="table-selection-top">
@@ -65,7 +65,7 @@
             }
           </h3>
           <div class="content">
-            <td-markdown [content]="element.description"></td-markdown>
+            <planet-markdown [content]="element.description" [imageSource]="parent ? 'parent' : 'local'"></planet-markdown>
           </div>
           @if (!parent) {
             <button class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
@@ -87,13 +87,11 @@
                 <mat-icon>feedback</mat-icon>
                 <span i18n>Feedback</span>
               </a>
-              @if (currentUser.name === element.createdBy) {
+              @if (canEditMeetup(element)) {
                 <a mat-menu-item [routerLink]="['/meetups/update', element._id]">
                   <mat-icon>folder</mat-icon>
                   <span i18n>Manage</span>
                 </a>
-              }
-              @if (currentUser.name === element.createdBy || currentUser.isUserAdmin) {
                 <button mat-menu-item (click)="deleteClick(element)">
                   <mat-icon>delete_forever</mat-icon>
                   <span i18n>Delete</span>
@@ -110,7 +108,7 @@
             <p>
               <span i18n>Date:</span>
               <span>{{ ' ' + (element.startDate | date: 'fullDate') + ' ' }}</span>
-              @if (element.endDate && element.endDate !== element.startDate) {
+              @if (element.endDate && (element.endDate | date: 'fullDate') !== (element.startDate | date: 'fullDate')) {
                 <span>{{ '- ' + (element.endDate | date: 'fullDate') + ' ' }}</span>
               }
               @if (element.startTime || element.endTime) {
@@ -144,7 +142,7 @@
   <mat-paginator #paginator
     [pageSize]="50"
     [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-    (page)="onPaginateChange($event)">
+    (page)="pageSelection.onPageChange()">
   </mat-paginator>
 </div>
 </div>

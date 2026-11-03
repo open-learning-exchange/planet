@@ -1,0 +1,210 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
+import { MatDialog } from '@angular/material/dialog';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { PlanetStepListComponent } from './planet-step-list.component';
+
+describe('PlanetStepListComponent', () => {
+  let component: PlanetStepListComponent;
+  let fixture: ComponentFixture<PlanetStepListComponent>;
+  let dialogMock: any;
+  let dialogRefMock: any;
+
+  beforeEach(() => {
+    dialogRefMock = {
+      close: vi.fn()
+    };
+
+    dialogMock = {
+      open: vi.fn().mockImplementation(() => dialogRefMock)
+    };
+
+    TestBed.configureTestingModule({
+      imports: [PlanetStepListComponent],
+      providers: [
+        { provide: MatDialog, useValue: dialogMock }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PlanetStepListComponent);
+    component = fixture.componentInstance;
+    component.steps = [
+      { stepTitle: 'Step 1' },
+      { stepTitle: 'Step 2' }
+    ];
+    component.nameProp = 'stepTitle';
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should open delete prompt dialog when moveStep with direction 0 is called', () => {
+    component.confirmDelete = true;
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    expect(dialogMock.open).toHaveBeenCalled();
+    expect(component.steps).toEqual([
+      { stepTitle: 'Step 1' },
+      { stepTitle: 'Step 2' }
+    ]);
+
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    expect(dialogConfig.data.showMainParagraph).toBe(false);
+    expect(dialogConfig.data.spinnerOn).toBe(false);
+    expect(dialogConfig.data.extraMessage).toBe('Are you sure you want to delete the following step?');
+    expect(dialogConfig.data.displayName).toBe('Step 1');
+  });
+
+  it('should use custom deletePromptMessage when provided', () => {
+    component.confirmDelete = true;
+    component.deletePromptMessage = 'Are you sure you want to delete the following achievement?';
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    expect(dialogMock.open).toHaveBeenCalled();
+
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    expect(dialogConfig.data.extraMessage).toBe('Are you sure you want to delete the following achievement?');
+  });
+
+  it('should remove step when prompt dialog okClick onNext is called', () => {
+    component.confirmDelete = true;
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+
+    dialogConfig.data.okClick.onNext();
+
+    expect(dialogRefMock.close).toHaveBeenCalled();
+    expect(component.steps).toEqual([{ stepTitle: 'Step 2' }]);
+  });
+
+  it('should delete without a prompt when confirmation is not enabled', () => {
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+
+    expect(dialogMock.open).not.toHaveBeenCalled();
+    expect(component.steps).toEqual([{ stepTitle: 'Step 2' }]);
+  });
+
+  it('should return to the list after deleting without confirmation', () => {
+    component.listMode = false;
+    component.openIndex = 0;
+    const stepClickedSpy = vi.spyOn(component.stepClicked, 'emit');
+
+    component.removeStep();
+
+    expect(dialogMock.open).not.toHaveBeenCalled();
+    expect(component.steps).toEqual([{ stepTitle: 'Step 2' }]);
+    expect(component.listMode).toBe(true);
+    expect(stepClickedSpy).toHaveBeenCalledWith(-1);
+  });
+
+  it('should move steps without a prompt when confirmation is enabled', () => {
+    component.confirmDelete = true;
+
+    component.moveStep({ index: 0, direction: 1, listId: component.listId });
+    expect(component.steps).toEqual([
+      { stepTitle: 'Step 2' },
+      { stepTitle: 'Step 1' }
+    ]);
+
+    component.moveStep({ index: 1, direction: -1, listId: component.listId });
+
+    expect(dialogMock.open).not.toHaveBeenCalled();
+    expect(component.steps).toEqual([
+      { stepTitle: 'Step 1' },
+      { stepTitle: 'Step 2' }
+    ]);
+  });
+
+  it('should remove a FormArray step after confirmation', () => {
+    component.confirmDelete = true;
+    const steps = new FormArray([
+      new FormGroup({ stepTitle: new FormControl('Step 1') }),
+      new FormGroup({ stepTitle: new FormControl('Step 2') })
+    ]);
+    component.steps = steps;
+    const stepsChangeSpy = vi.spyOn(component.stepsChange, 'emit');
+
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    expect(stepsChangeSpy).not.toHaveBeenCalled();
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    dialogConfig.data.okClick.onNext();
+
+    expect(steps.value).toEqual([{ stepTitle: 'Step 2' }]);
+    expect(stepsChangeSpy).toHaveBeenCalledWith([{ stepTitle: 'Step 2' }]);
+  });
+
+  it('should keep the open step selected when deleting an earlier step', () => {
+    component.confirmDelete = true;
+    component.listMode = false;
+    component.openIndex = 1;
+
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    dialogConfig.data.okClick.onNext();
+
+    expect(component.listMode).toBe(false);
+    expect(component.openIndex).toBe(0);
+  });
+
+  it('should return to the list after confirming deletion of the open step', () => {
+    component.confirmDelete = true;
+    component.listMode = false;
+    component.openIndex = 0;
+    const stepClickedSpy = vi.spyOn(component.stepClicked, 'emit');
+
+    component.removeStep();
+    expect(component.listMode).toBe(false);
+
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    dialogConfig.data.okClick.onNext();
+
+    expect(component.listMode).toBe(true);
+    expect(stepClickedSpy).toHaveBeenCalledWith(-1);
+  });
+
+  it('should not update navigation when the confirmed step no longer exists', () => {
+    component.confirmDelete = true;
+    component.listMode = false;
+    component.openIndex = 0;
+    const steps = new FormArray([
+      new FormGroup({ stepTitle: new FormControl('Step 1') })
+    ]);
+    component.steps = steps;
+    const stepClickedSpy = vi.spyOn(component.stepClicked, 'emit');
+    const stepsChangeSpy = vi.spyOn(component.stepsChange, 'emit');
+
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    steps.removeAt(0);
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    dialogConfig.data.okClick.onNext();
+
+    expect(component.listMode).toBe(false);
+    expect(component.openIndex).toBe(0);
+    expect(stepClickedSpy).not.toHaveBeenCalled();
+    expect(stepsChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not delete a different FormArray step after values are reordered', () => {
+    component.confirmDelete = true;
+    const steps = new FormArray([
+      new FormGroup({ stepTitle: new FormControl('Step 1') }),
+      new FormGroup({ stepTitle: new FormControl('Step 2') })
+    ]);
+    component.steps = steps;
+    const stepsChangeSpy = vi.spyOn(component.stepsChange, 'emit');
+
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    steps.setValue([
+      { stepTitle: 'Step 2' },
+      { stepTitle: 'Step 1' }
+    ]);
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    dialogConfig.data.okClick.onNext();
+
+    expect(steps.value).toEqual([
+      { stepTitle: 'Step 2' },
+      { stepTitle: 'Step 1' }
+    ]);
+    expect(stepsChangeSpy).not.toHaveBeenCalled();
+  });
+});
