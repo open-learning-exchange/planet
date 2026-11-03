@@ -17,7 +17,7 @@ import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '@shared/charts/chart.utils';
 import { PdfService } from '@shared/export/pdf.service';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
-import { getGenderLabel, normalizeGender } from '@shared/demographics/gender.constants';
+import { getGenderLabel, parseGender } from '@shared/demographics/gender.constants';
 
 import { CoursesService } from '../courses/courses.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -809,16 +809,13 @@ export class SubmissionsService {
   }
 
   async analyseResponses(exam: any, submissions: any) {
-    const userSubmissions = submissions.map(submission => {
-      const gender = normalizeGender(submission.user.gender);
-      return {
-        userInfo: {
-          age: ageFromUser(submission.lastUpdateTime, submission.user),
-          gender: gender === 'didNotSpecify' ? undefined : gender
-        },
-        answers: submission.answers
-      };
-    });
+    const userSubmissions = submissions.map(submission => ({
+      userInfo: {
+        age: ageFromUser(submission.lastUpdateTime, submission.user),
+        gender: parseGender(submission.user.gender)
+      },
+      answers: submission.answers
+    }));
 
     const getResponse = (answer, type) => {
       let result;

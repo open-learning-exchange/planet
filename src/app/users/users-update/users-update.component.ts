@@ -31,7 +31,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-validator.directive';
 import { SubmitDirective } from '@shared/dialogs/submit.directive';
-import { genderOptions, normalizeGender } from '@shared/demographics/gender.constants';
+import { genderOptions, parseGender } from '@shared/demographics/gender.constants';
 
 import { environment } from '../../../environments/environment';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -380,7 +380,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   private mapUserToFormValue(user: UserDocument): Partial<UsersUpdateFormValue> {
-    const normalizedGender = normalizeGender(user.gender);
     return {
       firstName: user.firstName ?? '',
       middleName: user.middleName ?? '',
@@ -391,7 +390,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       birthDate: user.birthDate ?? null,
       birthYear: user.birthYear ?? null,
       age: user.age ?? null,
-      gender: normalizedGender === 'didNotSpecify' ? '' : normalizedGender,
+      gender: parseGender(user.gender) ?? '',
       level: user.level ?? '',
       betaEnabled: user.betaEnabled ?? false
     };

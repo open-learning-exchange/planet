@@ -3,10 +3,21 @@ import {
   getGenderIcon,
   getGenderLabel,
   normalizeGender,
+  parseGender,
   reportGenderOptions
 } from './gender.constants';
 
 describe('gender constants', () => {
+
+  describe('parseGender', () => {
+
+    it('returns only recognized genders', () => {
+      expect(parseGender(' Other ')).toBe('other');
+      expect(parseGender('nonbinary')).toBeUndefined();
+      expect(parseGender(1)).toBeUndefined();
+    });
+
+  });
 
   describe('normalizeGender', () => {
 

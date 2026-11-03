@@ -6,7 +6,7 @@ export type ReportGenderValue = GenderValue | 'didNotSpecify';
 export interface GenderOption {
   value: GenderValue;
   label: string;
-  icon?: string | null;
+  icon: string;
   iconClass?: string;
 }
 
@@ -31,10 +31,12 @@ export const reportGenderOptions: ReportGenderOption[] = [
 
 const genderOptionValues = new Set(genderOptions.map(({ value }) => value));
 
-export const normalizeGender = (gender?: unknown): ReportGenderValue => {
-  const normalizedGender = typeof gender === 'string' ? gender.trim().toLowerCase() as GenderValue : undefined;
-  return normalizedGender && genderOptionValues.has(normalizedGender) ? normalizedGender : 'didNotSpecify';
+export const parseGender = (gender?: unknown): GenderValue | undefined => {
+  const parsedGender = typeof gender === 'string' ? gender.trim().toLowerCase() as GenderValue : undefined;
+  return parsedGender && genderOptionValues.has(parsedGender) ? parsedGender : undefined;
 };
+
+export const normalizeGender = (gender?: unknown): ReportGenderValue => parseGender(gender) ?? 'didNotSpecify';
 
 export const createGenderCounts = (): Record<ReportGenderValue, number> =>
   reportGenderOptions.reduce((counts, { value }) => {
@@ -42,13 +44,7 @@ export const createGenderCounts = (): Record<ReportGenderValue, number> =>
     return counts;
   }, {} as Record<ReportGenderValue, number>);
 
-export const getGenderIcon = (gender?: string | null): string | null => {
-  const normalizedGender = normalizeGender(gender);
-  if (normalizedGender === 'didNotSpecify') {
-    return null;
-  }
-  return normalizedGender;
-};
+export const getGenderIcon = (gender?: unknown): string | null => parseGender(gender) ?? null;
 
 export const getGenderLabel = (
   gender?: unknown,
