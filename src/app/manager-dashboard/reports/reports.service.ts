@@ -227,7 +227,7 @@ export class ReportsService {
     const users = this.usersByName();
     return array.map((item: any) => ({
       ...item,
-      gender: normalizeGender(this.genderOfActivity(item, users))
+      gender: this.genderOfActivity(item, users)
     }));
   }
 

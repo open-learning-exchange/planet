@@ -14,8 +14,8 @@ describe('ReportsService', () => {
 
   describe('appendGender', () => {
 
-    it('takes the gender from the user profile and normalizes it for the charts', () => {
-      service.users = [ { name: 'ada', gender: ' Female ' } ];
+    it('takes the gender from the user profile so charts group on the raw values', () => {
+      service.users = [ { name: 'ada', gender: 'female' } ];
 
       expect(service.appendGender([ { user: 'ada', gender: 'Female' } ])).toEqual([ { user: 'ada', gender: 'female' } ]);
     });
@@ -32,12 +32,12 @@ describe('ReportsService', () => {
       expect(service.appendGender([ { user: 'ada' } ])).toEqual([ { user: 'ada', gender: 'female' } ]);
     });
 
-    it('buckets records with no matching user as did not specify', () => {
+    it('leaves the gender unset for records with no matching user', () => {
       service.users = [ { name: 'ada', gender: 'female' }, { birthDate: new Date(1998, 8, 4) } ];
 
       expect(service.appendGender([ { user: 'nobody' }, { profileId: 'abc' } ])).toEqual([
-        { user: 'nobody', gender: 'didNotSpecify' },
-        { profileId: 'abc', gender: 'didNotSpecify' }
+        { user: 'nobody', gender: undefined },
+        { profileId: 'abc', gender: undefined }
       ]);
     });
 
@@ -101,6 +101,19 @@ describe('ReportsService', () => {
       const demographics = service.demographicsFor(time);
 
       expect(demographics({ user: 'ada', conversations: [ 'unrelated' ] })).toEqual({ age: 28, gender: 'female' });
+    });
+
+  });
+
+  describe('groupLoginActivities', () => {
+
+    it('normalizes the gender when the activities are grouped for the charts', () => {
+      service.users = [ { name: 'ada', gender: ' Female ' } ];
+      const loginTime = new Date(2025, 0, 10).valueOf();
+
+      const { byMonth } = service.groupLoginActivities([ { user: 'ada', loginTime }, { user: 'nobody', loginTime } ]);
+
+      expect(byMonth.map(({ gender }) => gender)).toEqual([ 'female', 'didNotSpecify' ]);
     });
 
   });
