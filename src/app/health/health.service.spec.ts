@@ -21,7 +21,7 @@ describe('HealthService addEvent', () => {
     const couchService = {
       findAll: vi.fn().mockReturnValue(of([ { key: 'key', iv: 'iv', createdOn: 1 } ])),
       post: vi.fn().mockReturnValue(of({ _id: patientId, _rev: '1-a', userKey: 'patient-key' })),
-      get: vi.fn().mockImplementation((path: string) => of(path === 'health/exam' ? { _rev: '1-c' } : {})),
+      get: vi.fn().mockImplementation((path: string) => of(path === 'health/exam' ? { _rev: '1-c', date: 500 } : {})),
       currentTime: vi.fn().mockReturnValue(of(1000)),
       put
     };
@@ -39,7 +39,7 @@ describe('HealthService addEvent', () => {
     put.mockImplementation((url, body) => body._id === 'exam' && !body._rev ? throwError(() => ({ status: 409 })) : of({ ok: true }));
 
     expect(addEvent({ _id: 'exam' }).next).toHaveBeenCalled();
-    expect(put).toHaveBeenLastCalledWith(expect.any(String), expect.objectContaining({ _id: 'exam', _rev: '1-c' }));
+    expect(put).toHaveBeenLastCalledWith(expect.any(String), expect.objectContaining({ _id: 'exam', _rev: '1-c', date: 500 }));
   });
 
   it('reports a conflict on an edited examination', () => {

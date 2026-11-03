@@ -121,7 +121,7 @@ export class HealthService {
             // A new examination conflicts only when an earlier attempt already saved it
             catchError(error => error.status === 409 && !oldEvent._rev ?
               this.couchService.get(`health/${eventDoc._id}`).pipe(
-                switchMap(({ _rev }) => this.postHealthDoc({}, { ...eventDoc, _rev }, keyDoc))
+                switchMap(({ _rev, date }) => this.postHealthDoc({}, { ...eventDoc, _rev, date }, keyDoc))
               ) :
               throwError(() => error)
             )
