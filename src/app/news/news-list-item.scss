@@ -12,6 +12,12 @@ mat-card {
   }
 }
 
+mat-card.news-announcement {
+  border: 1px solid v.$medium-grey;
+  background: v.$white;
+  box-shadow: none;
+}
+
 mat-card-header {
   display: block;
 }

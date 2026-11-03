@@ -53,6 +53,12 @@ export class AppComponent {
       'home',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/home.svg'));
     iconRegistry.addSvgIcon(
+      'megaphone',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/megaphone.svg'));
+    iconRegistry.addSvgIcon(
+      'megaphone-off',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/megaphone-off.svg'));
+    iconRegistry.addSvgIcon(
       'pin',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/pin.svg'));
     iconRegistry.addSvgIcon(

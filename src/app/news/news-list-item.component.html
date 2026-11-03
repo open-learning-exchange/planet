@@ -1,4 +1,5 @@
-<mat-card>
+<mat-card [class.news-announcement]="isPinned">
+  <ng-content></ng-content>
   <mat-card-header>
     <mat-card-subtitle class="subtitle-row">
       <div class="label-panel">
@@ -126,7 +127,7 @@
     } @else {
       @if (canPin) {
         <button mat-icon-button type="button" [matTooltip]="pinActionLabel" [attr.aria-label]="pinActionLabel" (click)="togglePin.emit()">
-          <mat-icon [svgIcon]="isPinned ? 'unpin' : 'pin'"></mat-icon>
+          <mat-icon [svgIcon]="isPinned ? 'megaphone-off' : 'megaphone'"></mat-icon>
         </button>
       }
       @if (!readOnly && (editable || item.public === true)) {
@@ -174,7 +175,7 @@
 <ng-template #actionItems>
   @if (canPin) {
     <button mat-menu-item type="button" (click)="togglePin.emit()">
-      <mat-icon [svgIcon]="isPinned ? 'unpin' : 'pin'"></mat-icon>{{ pinActionLabel }}
+      <mat-icon [svgIcon]="isPinned ? 'megaphone-off' : 'megaphone'"></mat-icon>{{ pinActionLabel }}
     </button>
   }
   @if (!readOnly && (editable || item.public === true)) {

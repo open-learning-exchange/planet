@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
-import { NgClass } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/list';
@@ -47,6 +47,7 @@ import { NewsListItemComponent } from './news-list-item.component';
     MatProgressSpinner,
     MatPaginator,
     NgClass,
+    NgTemplateOutlet,
     FormsModule,
     MatToolbar,
     MatFormField,

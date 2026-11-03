@@ -1,5 +1,10 @@
 <div #listContent class="news-list-content">
+  @let first = displayedItems?.[0];
+  @let announcement = replyViewing._id === 'root' && first && first._id === pin?.messageId ? first : null;
   @if (replyViewing._id === 'root') {
+    @if (announcement) {
+      <ng-container *ngTemplateOutlet="post; context: { $implicit: announcement, pinned: true }"></ng-container>
+    }
     <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
       <mat-form-field class="search-form-field mdc-toolbar-input">
         <mat-label>{{ searchLabel }}</mat-label>
@@ -65,37 +70,9 @@
     <p i18n>Replies ({{ totalReplies }}):</p>
   }
   @for (item of displayedItems; track trackById($index, item)) {
-    @let isPinned = replyViewing._id === 'root' && item._id === pin?.messageId;
-    <div [attr.id]="'news-' + item._id" [class.news-announcement]="isPinned">
-      @if (isPinned) {
-        <h2 class="news-announcement-title">
-          <mat-icon svgIcon="pin" aria-hidden="true"></mat-icon>
-          @if (isTeamsFeed) {
-            <span i18n>Pinned message</span>
-          } @else {
-            <span i18n>Community pinned message</span>
-          }
-        </h2>
-      }
-      <planet-news-list-item
-        [item]="item"
-        [isPinned]="isPinned"
-        [canPin]="!!pin && canManagePin && !readOnly && replyViewing._id === 'root'"
-        (togglePin)="changePin(item._id)"
-        [isMainPostShared]="isMainPostShared"
-        [replyObject]="replyObject"
-        [editable]="editable"
-        [readOnly]="readOnly"
-        [shareTarget]="shareTarget"
-        [customLabels]="customLabels"
-        [hasUnreadReplies]="unreadReplyIds.has(item._id) && replyObject[item._id]?.length > 0"
-        (changeReplyViewing)="showReplies($event)"
-        (updateNews)="openUpdateDialog($event)"
-        (deleteNews)="openDeleteDialog($event)"
-        (shareNews)="shareNews($event)"
-        (changeLabels)="changeLabels($event)">
-      </planet-news-list-item>
-    </div>
+    @if (item !== announcement) {
+      <ng-container *ngTemplateOutlet="post; context: { $implicit: item, pinned: false }"></ng-container>
+    }
   }
   @if (replyViewing._id !== 'root') {
     <div #anchor class="loading-anchor"></div>
@@ -116,3 +93,34 @@
     showFirstLastButtons>
   </mat-paginator>
 }
+
+<ng-template #post let-item let-isPinned="pinned">
+  <planet-news-list-item [attr.id]="'news-' + item._id"
+    [item]="item"
+    [isPinned]="isPinned"
+    [canPin]="!!pin && canManagePin && !readOnly && replyViewing._id === 'root'"
+    (togglePin)="changePin(item._id)"
+    [isMainPostShared]="isMainPostShared"
+    [replyObject]="replyObject"
+    [editable]="editable"
+    [readOnly]="readOnly"
+    [shareTarget]="shareTarget"
+    [customLabels]="customLabels"
+    [hasUnreadReplies]="unreadReplyIds.has(item._id) && replyObject[item._id]?.length > 0"
+    (changeReplyViewing)="showReplies($event)"
+    (updateNews)="openUpdateDialog($event)"
+    (deleteNews)="openDeleteDialog($event)"
+    (shareNews)="shareNews($event)"
+    (changeLabels)="changeLabels($event)">
+    @if (isPinned) {
+      <h2 class="news-announcement-title">
+        <mat-icon svgIcon="megaphone" aria-hidden="true"></mat-icon>
+        @if (isTeamsFeed) {
+          <span i18n>Pinned message</span>
+        } @else {
+          <span i18n>Community pinned message</span>
+        }
+      </h2>
+    }
+  </planet-news-list-item>
+</ng-template>
