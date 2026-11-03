@@ -1,8 +1,7 @@
 import {
   Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
-  ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
+  ChangeDetectorRef, HostBinding, forwardRef, input, linkedSignal
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
@@ -19,7 +18,7 @@ import { MatIconButton } from '@angular/material/button';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
@@ -68,19 +67,9 @@ export class DashboardTileTitleComponent {
     TruncateTextPipe
   ]
 })
-export class DashboardTileComponent implements AfterViewChecked, OnInit {
-  private readonly destroyRef = inject(DestroyRef);
+export class DashboardTileComponent implements AfterViewChecked {
   @Input() cardTitle: string;
-  #cardType: string;
-  @Input() set cardType(value: string) {
-    this.#cardType = value;
-    if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
-      this.isExpanded = true;
-    }
-  }
-  get cardType(): string {
-    return this.#cardType;
-  }
+  readonly cardType = input<string>();
   @Input() color: string;
   @Input() itemData;
   @Input() link;
@@ -93,14 +82,14 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   tileLines = 2;
   courseTileLines = 2;
   recentlyDragged = false;
-  isExpanded = false;
-  deviceType: DeviceType;
+  readonly isAccordionMode = this.deviceInfoService.isMobile;
+  readonly isExpanded = linkedSignal(() => this.cardType() === 'myLife' && this.isAccordionMode());
 
   @HostBinding('class.accordion-collapsed') get isCollapsed() {
-    return !this.isExpanded;
+    return !this.isExpanded();
   }
   @HostBinding('class.accordion-expanded') get isExpandedClass() {
-    return this.isExpanded;
+    return this.isExpanded();
   }
   constructor(
     private planetMessageService: PlanetMessageService,
@@ -110,22 +99,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-        if (this.cardType === 'myLife' && (deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE)) {
-          this.isExpanded = true;
-        }
-      });
-  }
-
-  ngOnInit() {
-    if (this.cardType === 'myLife' && (this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE)) {
-      this.isExpanded = true;
-    }
-  }
+  ) {}
 
   ngAfterViewChecked() {
     const itemDiv = this.itemDiv?.nativeElement;
@@ -176,16 +150,12 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   toggleAccordion(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.isExpanded = !this.isExpanded;
-    if (this.isExpanded) {
+    this.isExpanded.update(isExpanded => !isExpanded);
+    if (this.isExpanded()) {
       setTimeout(() => {
         this.cd.detectChanges();
       }, 100);
     }
-  }
-
-  get isAccordionMode(): boolean {
-    return this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
   }
 
   removeFromShelf(event, item: any) {
@@ -300,18 +270,18 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   dashboardTextLines(item: any): number | 'none' {
-    if (this.isAccordionMode) {
+    if (this.isAccordionMode()) {
       return 'none';
     }
     return this.hasCover(item) ? this.courseTileLines : this.tileLines;
   }
 
   hasCover(item: any): boolean {
-    return (this.cardType === 'myCourses' || this.cardType === 'myTeams') && !!item.coverFileName;
+    return (this.cardType() === 'myCourses' || this.cardType() === 'myTeams') && !!item.coverFileName;
   }
 
   coverImageUrl(item: any): string {
-    const db = this.cardType === 'myTeams' ? 'teams' : 'courses';
+    const db = this.cardType() === 'myTeams' ? 'teams' : 'courses';
     return couchAttachmentUrl(environment.couchAddress, db, item._id, item.coverFileName);
   }
 }
