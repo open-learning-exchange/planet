@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
-import { catchError, distinctUntilChanged, map } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, map, startWith } from 'rxjs/operators';
 
 import { findDocuments, inSelector } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -9,6 +9,7 @@ import { StateService } from '@shared/state.service';
 
 import { environment } from '../../../environments/environment';
 import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
+import { chatUnavailableReason } from './chat-availability';
 
 @Injectable({
   providedIn: 'root'
@@ -40,19 +41,20 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
     private couchService: CouchService,
     private stateService: StateService
   ) {
-    this.fetchAIProviders();
     this.stateService.couchStateListener('configurations').pipe(
-      map(() => this.isChatEnabled()),
+      map(() => !this.unavailableReason),
+      startWith(!this.unavailableReason),
       distinctUntilChanged()
     ).subscribe(() => this.updateAvailableProviders());
+    this.fetchAIProviders();
   }
 
-  isChatEnabled(): boolean {
-    return this.stateService.configuration.chatEnabled !== false;
+  get unavailableReason(): string {
+    return chatUnavailableReason(this.stateService.configuration);
   }
 
   private updateAvailableProviders() {
-    this.aiProvidersSubject.next(this.isChatEnabled() ? this.configuredProviders : []);
+    this.aiProvidersSubject.next(this.unavailableReason ? [] : this.configuredProviders);
   }
 
   initializeWebSocket() {
@@ -64,8 +66,8 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
       this.socket.addEventListener('message', (event) => {
         try {
           const message = JSON.parse(event.data);
-          if (message.type === 'error') {
-            this.errorSubject.next(message.error);
+          if (message.error || message.type === 'error') {
+            this.errorSubject.next(this.gatewayErrorMessage(message));
           } else {
             this.chatStreamSubject.next(event.data);
           }
@@ -104,14 +106,25 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
     return this.aiProviders$;
   }
 
+  private gatewayErrorMessage(error: { error: string, message?: string }): string {
+    if (error.error === 'Chat Disabled') {
+      this.stateService.requestData('configurations', 'local');
+      return $localize`Chat is disabled, contact community admin`;
+    }
+    return error.message || error.error;
+  }
+
   getPrompt(data: object, save: boolean): Observable<any> {
-    if (!this.isChatEnabled()) {
-      return throwError(new Error($localize`Chat is disabled, contact community admin`));
+    const reason = this.unavailableReason;
+    if (reason) {
+      return throwError(() => new Error(reason));
     }
     return this.httpClient.post(`${this.baseUrl}/`, {
       data,
       save,
-    });
+    }).pipe(catchError(error => throwError(() =>
+      error.status === 403 && error.error?.error === 'Chat Disabled' ? new Error(this.gatewayErrorMessage(error.error)) : error
+    )));
   }
 
   // Subscribe to stream updates
@@ -125,8 +138,9 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   // Method to send user input via WebSocket
   sendUserInput(data: any): void {
-    if (!this.isChatEnabled()) {
-      this.errorSubject.next($localize`Chat is disabled, contact community admin`);
+    const reason = this.unavailableReason;
+    if (reason) {
+      this.errorSubject.next(reason);
       return;
     }
     if (this.socket.readyState === WebSocket.OPEN) {

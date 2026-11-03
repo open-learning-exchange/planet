@@ -9,20 +9,22 @@ import { AiChatService } from './ai-chat.service';
 
 describe('AiChatService', () => {
   let configurations$: Subject<void>;
-  let stateService: { configuration: { chatEnabled?: boolean }, couchStateListener: () => Subject<void> };
+  let stateService: { configuration: { _id?: string, chatEnabled?: boolean }, couchStateListener: () => Subject<void> };
+  const post = vi.fn(() => of({}));
   let emissions: AIProvider[][];
 
   const refreshConfiguration = (configuration: { chatEnabled?: boolean }) => {
-    stateService.configuration = configuration;
+    stateService.configuration = { _id: 'local', ...configuration };
     configurations$.next();
   };
 
   beforeEach(() => {
     configurations$ = new Subject<void>();
-    stateService = { configuration: {}, couchStateListener: () => configurations$ };
+    stateService = { configuration: { _id: 'local' }, couchStateListener: () => configurations$ };
+    post.mockClear();
     TestBed.configureTestingModule({
       providers: [
-        { provide: HttpClient, useValue: { get: () => of({ openai: true, gemini: false }) } },
+        { provide: HttpClient, useValue: { get: () => of({ openai: true, gemini: false }), post } },
         { provide: CouchService, useValue: {} },
         { provide: StateService, useValue: stateService }
       ]
@@ -40,12 +42,33 @@ describe('AiChatService', () => {
   });
 
   it('does not re-emit the providers when a refresh leaves the flag unchanged', () => {
-    refreshConfiguration({});
     const emitted = emissions.length;
 
     refreshConfiguration({});
     refreshConfiguration({ chatEnabled: true });
 
     expect(emissions.length).toEqual(emitted);
+  });
+
+  it('blocks both transports until a configuration document exists and when disabled', () => {
+    const service = TestBed.inject(AiChatService);
+    const httpError = vi.fn();
+    const streamError = vi.fn();
+    service.getErrorStream().subscribe(streamError);
+    for (const configuration of [ {}, { _id: 'local', chatEnabled: false } ]) {
+      stateService.configuration = configuration;
+      configurations$.next();
+      expect(emissions.at(-1)).toEqual([]);
+      service.getPrompt({}, false).subscribe({ error: httpError });
+      service.sendUserInput({});
+    }
+    expect(httpError).toHaveBeenCalledTimes(2);
+    expect(httpError.mock.calls[1][0]).toBeInstanceOf(Error);
+    expect(streamError).toHaveBeenCalledTimes(2);
+    expect(post).not.toHaveBeenCalled();
+
+    refreshConfiguration({});
+    service.getPrompt({}, false).subscribe();
+    expect(post).toHaveBeenCalledOnce();
   });
 });

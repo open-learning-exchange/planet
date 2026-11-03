@@ -66,6 +66,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   providers: AIProvider[] = [];
   trackByFn = trackByIdVal;
 
+  get sendUnavailableReason(): string {
+    return this.chatService.unavailableReason || (this.providers.length === 0 ? $localize`No AI provider is available.` : '');
+  }
+
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: AiChatService,

@@ -16,11 +16,13 @@
         <span
           class="send-button-wrapper"
           matIconSuffix
-          i18n-matTooltip
-          matTooltip="Chat is disabled, contact community admin"
-          [matTooltipDisabled]="providers.length > 0">
+          [matTooltip]="sendUnavailableReason"
+          [attr.tabindex]="sendUnavailableReason ? 0 : null"
+          [attr.role]="sendUnavailableReason ? 'group' : null"
+          aria-label="Send message" i18n-aria-label>
           <button
             mat-icon-button
+            aria-label="Send message" i18n-aria-label
             [planetSubmit]="promptForm.valid && spinnerOn"
             [disabled]="!promptForm.valid || providers.length === 0 || !spinnerOn"
             color="primary"

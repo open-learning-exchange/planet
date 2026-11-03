@@ -22,6 +22,15 @@ export class ConfigurationUnavailableError extends Error {
   }
 }
 
+export class ChatDisabledError extends Error {
+  statusCode = 403;
+
+  constructor() {
+    super('Chat is disabled, contact community admin');
+    this.name = 'Chat Disabled';
+  }
+}
+
 let snapshot: Snapshot | undefined;
 let reading: Promise<Snapshot> | undefined;
 
@@ -31,9 +40,24 @@ const stringsOnly = (value: unknown): Record<string, string> => Object.entries(v
   .reduce((entries, [ key, entry ]) => (typeof entry === 'string' ? { ...entries, [key]: entry } : entries), {} as Record<string, string>);
 
 // The document the client edits: first by _id, and _find skips design documents
-const readDocument = async (): Promise<any> => {
-  const { docs } = await configurationDB.find({ 'selector': { '_id': { '$gt': null } }, 'limit': 1 });
-  return docs[0];
+const readDocument = async (fields?: string[]): Promise<any> => {
+  try {
+    const { docs } = await configurationDB.find({ 'selector': { '_id': { '$gt': null } }, 'limit': 1, ...(fields && { fields }) });
+    return docs[0];
+  } catch (error) {
+    console.error(`Error reading the planet configuration: ${error}`);
+    throw new ConfigurationUnavailableError();
+  }
+};
+
+export const requireChatEnabled = async (): Promise<void> => {
+  const doc = await readDocument([ '_id', 'chatEnabled' ]);
+  if (!doc) {
+    throw new ConfigurationUnavailableError();
+  }
+  if (doc.chatEnabled === false) {
+    throw new ChatDisabledError();
+  }
 };
 
 const toSnapshot = (doc: any): Snapshot => ({
@@ -54,9 +78,6 @@ const read = async (): Promise<Snapshot> => {
     }
     snapshot = toSnapshot(doc);
     return snapshot;
-  } catch (error) {
-    console.error(`Error reading the planet configuration: ${error}`);
-    throw new ConfigurationUnavailableError();
   } finally {
     reading = undefined;
   }
@@ -75,10 +96,7 @@ export const getConfiguration = async (): Promise<Configuration> => (await curre
 
 // For writes stamped with the planet's code and parent, which a manager can change while the gateway runs
 export const getCurrentConfiguration = async (): Promise<Configuration> => {
-  const doc = await readDocument().catch((error) => {
-    console.error(`Error reading the planet configuration: ${error}`);
-    throw new ConfigurationUnavailableError();
-  });
+  const doc = await readDocument();
   return toSnapshot(doc || {}).configuration;
 };
 

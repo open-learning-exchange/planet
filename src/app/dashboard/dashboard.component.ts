@@ -10,6 +10,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { UserService } from '@shared/auth/user.service';
+import { chatUnavailableReason } from '@shared/ai/chat-availability';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
@@ -96,7 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     this.initMyLifeItems();
     this.stateService.couchStateListener('configurations').pipe(
-      map(() => this.stateService.configuration.chatEnabled),
+      map(() => chatUnavailableReason(this.stateService.configuration)),
       distinctUntilChanged(),
       takeUntil(this.onDestroy$)
     ).subscribe(() => this.initMyLifeItems());
@@ -131,16 +132,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initMyLifeItems() {
-    const isChatEnabled = this.stateService.configuration.chatEnabled !== false;
+    const chatTooltip = chatUnavailableReason(this.stateService.configuration);
     this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
       {
         baseFirstLine: $localize` my `,
         title: $localize`Chat`,
-        link: isChatEnabled ? '/chat' : null,
+        link: chatTooltip ? null : '/chat',
         returnState: { route: 'myDashboard' },
-        tooltip: isChatEnabled ? undefined : $localize`Chat is disabled, contact community admin`
+        tooltip: chatTooltip
       },
       { baseFirstLine: $localize` my `, title: $localize`Progress`, link: 'myProgress' },
       { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
