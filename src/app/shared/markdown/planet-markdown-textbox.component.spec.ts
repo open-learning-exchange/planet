@@ -234,6 +234,24 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
 
     expect(FakeEasyMDE.instance.value()).toBe('typed early');
     expect(fixture.componentInstance.control.value).toEqual({ text: 'typed early', images: [] });
+    expect(FakeEasyMDE.instance.options.autofocus).toBe(false);
+    expect(FakeEasyMDE.instance.codemirror.setCursor).not.toHaveBeenCalled();
+  });
+
+  it('moves focus and the caret into the editor when the textarea had focus', async () => {
+    const editorArrives = delayedEditor();
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+
+    typeInTextarea(fixture, 'first\nsecond');
+    const textarea: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+    textarea.focus();
+    textarea.setSelectionRange(8, 8);
+    editorArrives();
+    await settle(fixture);
+
+    expect(FakeEasyMDE.instance.options.autofocus).toBe(true);
+    expect(FakeEasyMDE.instance.codemirror.setCursor).toHaveBeenCalledWith(8);
   });
 
   it('stays editable when the editor cannot load', async () => {
