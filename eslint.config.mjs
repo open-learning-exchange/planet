@@ -239,9 +239,6 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
             }, {
                 name: "showdown",
                 message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
-            }, {
-                name: "@covalent/markdown",
-                message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
             }],
         }],
 
