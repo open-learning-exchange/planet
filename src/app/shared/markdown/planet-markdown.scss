@@ -1,4 +1,5 @@
 @use '../../variables' as v;
+@use '../../mixins' as m;
 
 planet-markdown.planet-markdown-renderer {
   display: block;
@@ -63,28 +64,7 @@ planet-markdown.planet-markdown-renderer .markdown-content {
     border: 1px solid v.$grey;
   }
 
-  .markdown-align-left {
-    text-align: left;
-  }
-
-  .markdown-align-center {
-    text-align: center;
-  }
-
-  .markdown-align-right {
-    text-align: right;
-  }
-
-  .task-list-item {
-    list-style-type: none;
-  }
-
-  .markdown-task-checkbox {
-    display: inline-block;
-    margin: 0 0.35em 0.25em -1.6em;
-    color: v.$primary;
-    vertical-align: middle;
-  }
+  @include m.markdown-alignment-and-tasks;
 
   a[href] {
     color: v.$primary-dark;
