@@ -30,10 +30,10 @@ const markdownPaths = ["showdown", "@covalent/markdown"].map(name => ({
 }));
 
 // The rule only sees the import string, not where the importing file sits, so each shared depth gets its own regex.
-const reachesIntoShared = "^\\.{1,2}/(?:.*/)?shared/"; // ../shared/utils, from anywhere
-const rootIntoBucket = "^\\./[^/]+/"; // ./dialogs/x, from shared/*.ts
-const bucketPastItself = "^\\.\\./(?!\\.\\./)"; // ../utils, from shared/forms/*.ts
-const nestedPastBucket = "^\\.\\./\\.\\./(?!\\.\\./)"; // ../../utils, from shared/forms/tags/*.ts
+const reachesIntoShared = "^\\.{1,2}/(?:.*/)?shared/";
+const rootIntoBucket = "^\\./[^/]+/";
+const bucketPastItself = "^\\.\\./(?!\\.\\./)";
+const nestedPastBucket = "^\\.\\./\\.\\./(?!\\.\\./)";
 
 // A later config object's no-restricted-imports replaces the earlier options, so every override passes the full list.
 const restrictedImports = (bucketRegex, paths = [rxjsPath, ...markdownPaths]) => ["error", {
