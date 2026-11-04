@@ -1,6 +1,11 @@
 import { vi } from 'vitest';
-import { ElementRef } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { PlanetMarkdownTextboxComponent } from './planet-markdown-textbox.component';
 
 describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
@@ -36,7 +41,8 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
       } as any,
       new ElementRef(host),
       {} as any,
-      { runOutsideAngular: (callback: () => void) => callback() } as any
+      { runOutsideAngular: (callback: () => void) => callback() } as any,
+      {} as any
     );
   };
 
@@ -107,5 +113,173 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
     expect(formField.classList.contains('planet-markdown-fullscreen-field')).toBe(false);
     expect(actions.classList.contains('planet-markdown-fullscreen-actions')).toBe(false);
     expect(host.classList.contains('planet-markdown-fullscreen-host')).toBe(false);
+  });
+});
+
+class FakeEasyMDE {
+  static instance?: FakeEasyMDE;
+  text: string;
+  cleanup = vi.fn();
+  toggleFullScreen = vi.fn();
+  isFullscreenActive = vi.fn(() => false);
+  changeHandler: () => void;
+  codemirror = {
+    on: (_event: string, handler: () => void) => {
+      this.changeHandler = handler;
+    },
+    posFromIndex: (index: number) => index,
+    setCursor: vi.fn()
+  };
+
+  constructor(public options: any) {
+    this.text = options.element.value;
+    FakeEasyMDE.instance = this;
+  }
+
+  value(text?: string) {
+    if (text === undefined) {
+      return this.text;
+    }
+    this.type(text);
+  }
+
+  type(text: string) {
+    this.text = text;
+    this.changeHandler();
+  }
+}
+
+@Component({
+  template: '<planet-markdown-textbox [formControl]="control" imageGroup="community"></planet-markdown-textbox>',
+  imports: [ ReactiveFormsModule, PlanetMarkdownTextboxComponent ]
+})
+class FormControlHostComponent {
+  control = new FormControl<any>('saved text');
+}
+
+@Component({
+  template: '<planet-markdown-textbox [(ngModel)]="comment"></planet-markdown-textbox>',
+  imports: [ FormsModule, PlanetMarkdownTextboxComponent ]
+})
+class NgModelHostComponent {
+  comment = 'saved comment';
+}
+
+describe('PlanetMarkdownTextboxComponent editor', () => {
+  const settle = async (fixture: ComponentFixture<unknown>) => {
+    fixture.detectChanges();
+    await new Promise(resolve => setTimeout(resolve));
+    fixture.detectChanges();
+  };
+  const typeInTextarea = (fixture: ComponentFixture<unknown>, text: string) => {
+    const textarea = fixture.debugElement.query(By.css('textarea')).nativeElement as HTMLTextAreaElement;
+    textarea.value = text;
+    textarea.dispatchEvent(new Event('input'));
+  };
+  const stubEditor = (editor: Promise<any> = Promise.resolve({ default: FakeEasyMDE })) =>
+    vi.spyOn(PlanetMarkdownTextboxComponent.prototype as any, 'loadEditor').mockReturnValue(editor);
+  const delayedEditor = () => {
+    let arrive: () => void;
+    stubEditor(new Promise(resolve => {
+      arrive = () => resolve({ default: FakeEasyMDE });
+    }));
+    return () => arrive();
+  };
+
+  beforeEach(() => {
+    FakeEasyMDE.instance = undefined;
+    TestBed.configureTestingModule({ providers: [ { provide: MatDialog, useValue: {} } ] });
+  });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('gives the form its text and images value, and the editor the saved text, without any typing', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+
+    expect(fixture.componentInstance.control.value).toEqual({ text: 'saved text', images: [] });
+    expect(FakeEasyMDE.instance.value()).toBe('saved text');
+  });
+
+  it('keeps a template-driven value', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(NgModelHostComponent);
+    await settle(fixture);
+
+    expect(fixture.componentInstance.comment).toBe('saved comment');
+    expect(FakeEasyMDE.instance.value()).toBe('saved comment');
+  });
+
+  it('sends typed text to the form and form writes to the editor', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+
+    FakeEasyMDE.instance.type('typed');
+    expect(fixture.componentInstance.control.value).toEqual({ text: 'typed', images: [] });
+
+    fixture.componentInstance.control.setValue('from the form');
+    expect(FakeEasyMDE.instance.value()).toBe('from the form');
+  });
+
+  it('keeps text typed before the editor arrives', async () => {
+    const editorArrives = delayedEditor();
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+
+    typeInTextarea(fixture, 'typed early');
+    editorArrives();
+    await settle(fixture);
+
+    expect(FakeEasyMDE.instance.value()).toBe('typed early');
+    expect(fixture.componentInstance.control.value).toEqual({ text: 'typed early', images: [] });
+  });
+
+  it('stays editable when the editor cannot load', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    stubEditor(Promise.reject(new Error('chunk failed')));
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+
+    typeInTextarea(fixture, 'typed without the editor');
+
+    expect(fixture.componentInstance.control.value).toEqual({ text: 'typed without the editor', images: [] });
+    expect(consoleError).toHaveBeenCalled();
+  });
+
+  it('does not create an editor once destroyed, and releases one it created', async () => {
+    const editorArrives = delayedEditor();
+    const destroyedEarly = TestBed.createComponent(FormControlHostComponent);
+    await settle(destroyedEarly);
+    destroyedEarly.destroy();
+    editorArrives();
+    await new Promise(resolve => setTimeout(resolve));
+    expect(FakeEasyMDE.instance).toBeUndefined();
+
+    stubEditor();
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+    const editor = FakeEasyMDE.instance;
+    editor.isFullscreenActive.mockReturnValue(true);
+    fixture.destroy();
+
+    expect(editor.toggleFullScreen).toHaveBeenCalled();
+    expect(editor.cleanup).toHaveBeenCalled();
+  });
+
+  it('previews through the shared renderer', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+
+    const preview = new DOMParser().parseFromString(FakeEasyMDE.instance.options.previewRender(
+      '<img src="x" onerror="alert(1)">\n\n![pic](resources/id/pic.png)\n\n[site](https://example.com) [script](javascript:alert(1))'
+    ), 'text/html').body;
+
+    expect(preview.querySelector('[onerror]')).toBeNull();
+    expect(preview.querySelector('img[alt="pic"]').getAttribute('src')).toBe(`${environment.couchAddress}/resources/id/pic.png`);
+    expect(preview.querySelector('a').getAttribute('target')).toBe('_blank');
+    expect(preview.querySelector('a[href^="javascript"]')).toBeNull();
   });
 });
