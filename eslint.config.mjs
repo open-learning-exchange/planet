@@ -19,6 +19,31 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
+const rxjsPath = {
+    name: "rxjs/Rx",
+    message: "Please import directly from 'rxjs' instead",
+};
+
+const markdownPaths = ["showdown", "@covalent/markdown"].map(name => ({
+    name,
+    message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
+}));
+
+// The rule only sees the import string, not where the importing file sits, so each shared depth gets its own regex.
+const reachesIntoShared = "^\\.{1,2}/(?:.*/)?shared/"; // ../shared/utils, from anywhere
+const rootIntoBucket = "^\\./[^/]+/"; // ./dialogs/x, from shared/*.ts
+const bucketPastItself = "^\\.\\./(?!\\.\\./)"; // ../utils, from shared/forms/*.ts
+const nestedPastBucket = "^\\.\\./\\.\\./(?!\\.\\./)"; // ../../utils, from shared/forms/tags/*.ts
+
+// A later config object's no-restricted-imports replaces the earlier options, so every override passes the full list.
+const restrictedImports = (bucketRegex, paths = [rxjsPath, ...markdownPaths]) => ["error", {
+    paths,
+    patterns: [reachesIntoShared, bucketRegex].filter(Boolean).map(regex => ({
+        regex,
+        message: "Import shared files through @shared/*; only files in the same bucket stay relative",
+    })),
+}];
+
 export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
     files: ["**/*.ts"],
     extends: compat.extends("plugin:@angular-eslint/template/process-inline-templates"),
@@ -232,18 +257,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "no-invalid-this": "off",
         "no-new-wrappers": "error",
 
-        "no-restricted-imports": ["error", {
-            paths: [{
-                name: "rxjs/Rx",
-                message: "Please import directly from 'rxjs' instead",
-            }, {
-                name: "showdown",
-                message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
-            }, {
-                name: "@covalent/markdown",
-                message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
-            }],
-        }],
+        "no-restricted-imports": restrictedImports(),
 
         "@typescript-eslint/no-shadow": ["error", {
             hoist: "all",
@@ -313,9 +327,25 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "prefer-const": "error",
     },
 }, {
+    // One entry per depth: a bucket nested deeper than forms/tags needs another.
+    files: ["src/app/shared/*.ts"],
+    rules: {
+        "no-restricted-imports": restrictedImports(rootIntoBucket),
+    },
+}, {
+    files: ["src/app/shared/*/*.ts"],
+    rules: {
+        "no-restricted-imports": restrictedImports(bucketPastItself),
+    },
+}, {
+    files: ["src/app/shared/*/*/*.ts"],
+    rules: {
+        "no-restricted-imports": restrictedImports(nestedPastBucket),
+    },
+}, {
     files: ["src/app/shared/markdown/markdown-render.service.ts"],
     rules: {
-        "no-restricted-imports": "off",
+        "no-restricted-imports": restrictedImports(bucketPastItself, [rxjsPath]),
     },
 }, {
     files: ["**/*.html"],
