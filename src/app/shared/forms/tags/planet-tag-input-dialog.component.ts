@@ -7,6 +7,7 @@ import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
 } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
@@ -216,28 +217,31 @@ export class PlanetTagInputDialogComponent {
   addLabel() {
     if (this.addTagForm.valid) {
       const { name, attachedTo } = this.addTagForm.getRawValue();
-      this.tagsService.updateTag({ name, attachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
+      this.dialogsLoadingService.start();
+      this.tagsService.updateTag({ name, attachedTo, db: this.data.db, docType: 'definition' }).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe((res) => {
         this.newTagInfo = { id: res[0].id, parentId: attachedTo };
         this.planetMessageService.showMessage($localize`New collection added`);
         this.forEachTagControl(this.addTagForm, (_, control) => control.updateValueAndValidity());
         this.data.initTags();
         this.addTagForm.controls.name.reset('');
         this.addTagForm.controls.attachedTo.reset('');
-      });
+      }, () => this.planetMessageService.showAlert($localize`There was a problem adding this collection.`));
     } else {
       this.forEachTagControl(this.addTagForm, (_, control) => control.markAsTouched({ onlySelf: true }));
     }
   }
 
   editTagClick(event, tag) {
-    const onSubmit = ((newTag) => {
+    const onSubmit = ((newTag, _form, dialogRef) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
         this.planetMessageService.showMessage($localize`Collection updated`);
         this.selected.set(newTagId, this.selected.get(tag._id));
         this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
         this.data.initTags(this.mode === 'add' ? newTagId : undefined);
-        this.dialogsFormService.closeDialogsForm();
+        dialogRef.close();
         this.dialogsLoadingService.stop();
       });
     }).bind(this);

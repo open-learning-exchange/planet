@@ -24,7 +24,7 @@ import { baseContextPrompt } from '@shared/ai/ai-prompts.constants';
 import { LowercaseDirective } from '@shared/forms/lowercase.directive';
 import { RestrictDiacriticsDirective } from '@shared/forms/restrict-diacritics.directive';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
-import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
@@ -120,8 +120,7 @@ interface ContactForm {
     MatIcon,
     MatCheckbox,
     MatMiniFabButton,
-    MatStepperPrevious,
-    SubmitDirective
+    MatStepperPrevious
   ]
 })
 export class ConfigurationComponent implements OnInit {
@@ -136,7 +135,6 @@ export class ConfigurationComponent implements OnInit {
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
-  spinnerOn = true;
   configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
   languageNames = languages.map(list => list.name);
@@ -149,7 +147,8 @@ export class ConfigurationComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private configurationService: ConfigurationService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) { }
 
   ngOnInit() {
@@ -346,12 +345,11 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onSubmitConfiguration() {
-    const spinnerOff = () => this.spinnerOn = false;
     if (!this.allValid()) {
-      spinnerOff();
       return;
     }
-    this.spinnerOn = true;
+    this.dialogsLoadingService.start();
+    const spinnerOff = () => this.dialogsLoadingService.stop();
     if (this.configurationType === 'update') {
       const configPatch = { ...this.configurationFormGroup.value, ...this.contactFormGroup.value };
       this.configurationService.patchConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(

@@ -3,7 +3,7 @@ import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { switchMap } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
@@ -13,6 +13,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 
 import { CustomValidators } from '../validators/custom-validators';
@@ -98,7 +99,8 @@ export class CommunityLinkDialogComponent {
     private fb: NonNullableFormBuilder,
     private teamsService: TeamsService,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.linkForm = this.fb.group({
       title: this.fb.control('', {
@@ -143,12 +145,18 @@ export class CommunityLinkDialogComponent {
     const linkTitle = this.linkForm.controls.title.value;
     const link = this.linkForm.getRawValue();
 
+    this.dialogsLoadingService.start();
     this.teamsService.createServicesLink(link).pipe(
-      switchMap(() => this.data.getLinks())
+      finalize(() => this.dialogsLoadingService.stop())
     ).subscribe({
       next: () => {
         this.dialogRef.close();
         this.planetMessageService.showMessage($localize`Added link: ${linkTitle}`);
+        this.data.getLinks().subscribe({
+          error: () => this.planetMessageService.showAlert(
+            $localize`There was a problem refreshing the links. Reload the page to see the new link.`
+          )
+        });
       },
       error: () => {
         this.planetMessageService.showAlert($localize`Error adding link`);

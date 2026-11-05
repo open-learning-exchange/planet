@@ -97,6 +97,34 @@ describe('DialogsFormComponent', () => {
     vi.restoreAllMocks();
   });
 
+  it('uses custom action labels', () => {
+    createComponent({
+      title: 'Prompt',
+      fields: [ { type: 'textbox', name: 'rate', placeholder: 'Rate' } ],
+      formGroup: { rate: [ 0 ] },
+      cancelLabel: 'Not now',
+      submitLabel: 'Done'
+    });
+    const buttons = fixture.debugElement.queryAll(By.css('mat-dialog-actions button')).map(b => b.nativeElement.textContent.trim());
+
+    expect(buttons).toEqual([ 'Not now', 'Done' ]);
+  });
+
+  it('hands the submit handler the dialog it was opened in', () => {
+    const onSubmit = vi.fn();
+    createComponent({
+      title: 'Prompt',
+      fields: [ { type: 'textbox', name: 'rate', placeholder: 'Rate' } ],
+      formGroup: { rate: [ 1 ] },
+      onSubmit
+    });
+
+    fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
+
+    expect(onSubmit.mock.calls[0][2]).toBe(dialogRef);
+    expect(dialogRef.close).not.toHaveBeenCalled();
+  });
+
   it('renders required asterisks on required radio labels', () => {
     createComponent();
 

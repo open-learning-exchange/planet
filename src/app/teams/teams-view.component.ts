@@ -49,6 +49,7 @@ import { TeamsReportsComponent } from './teams-reports/teams-reports.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { ResourcesIconComponent } from '../resources/resources-icon.component';
 import { NewsLabelsDialogComponent } from '../news/news-labels-dialog.component';
+import { CustomVoiceLabel } from '../news/news.utils';
 import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
@@ -109,7 +110,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogRef: MatDialogRef<TablesAddDialogComponent>;
   user = this.userService.get();
   news: any[] = [];
-  private readonly emptyVoiceLabels: string[] = [];
+  private readonly emptyVoiceLabels: CustomVoiceLabel[] = [];
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
@@ -325,7 +326,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(requestDateCompare);
-      this.disableAddingMembers = this.members.length >= this.team.limit;
+      // Teams created on myPlanet are stored with a limit of 0, and the services directory has none
+      this.disableAddingMembers = this.team.limit > 0 && this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
       this.reports = docs.filter(doc => doc.docType === 'report');
@@ -374,7 +376,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.isUserLeader || canManageLocalTeams;
   }
 
-  get customVoiceLabels(): string[] {
+  get customVoiceLabels(): (string | CustomVoiceLabel)[] {
     return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
@@ -447,17 +449,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateRole(member) {
-    return ({ teamRole }) => {
+    return ({ teamRole }, _form, dialogRef) => {
       this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
         catchError(error => this.refreshMembersOnError(error)),
         finalize(() => this.dialogsLoadingService.stop()),
         switchMap(() => this.getMembers())
       ).subscribe({
         next: () => {
-          this.dialogsFormService.closeDialogsForm();
+          dialogRef.close();
           this.planetMessageService.showMessage($localize`Role has been updated.`);
         },
-        error: () => this.dialogsFormService.showErrorMessage($localize`There was a problem updating the role.`)
+        error: () => this.dialogsFormService.showErrorMessage(dialogRef, $localize`There was a problem updating the role.`)
       });
     };
   }
@@ -479,16 +481,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
       let membershipWriteCompleted = false;
+      let notify = true;
       return changeObject.obs.pipe(
         catchError(error => this.refreshMembersOnError(error)),
-        tap(() => {
+        tap((result) => {
           membershipWriteCompleted = true;
+          notify = type !== 'request' || result === true;
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ?
           this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
-        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
+        switchMap(() => notify ? this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] }) : of({})),
         map(() => changeObject.message),
         catchError(error => membershipWriteCompleted ?
           this.refreshMembersOnError(error) : throwError(error)),
@@ -704,7 +708,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     );
   }
 
-  postMessage(message) {
+  postMessage(message, _form, dialogRef) {
     this.newsService.postNews({
       viewIn: [ { _id: this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
@@ -714,7 +718,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
-      this.dialogsFormService.closeDialogsForm();
+      dialogRef.close();
     });
   }
 
@@ -723,7 +727,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       width: '500px',
       autoFocus: false,
       data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }
-    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+    }).afterClosed().subscribe((updatedLabels?: CustomVoiceLabel[]) => {
       if (updatedLabels) {
         this.team = { ...this.team, customVoiceLabels: updatedLabels };
       }

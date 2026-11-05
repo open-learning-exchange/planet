@@ -21,6 +21,7 @@ import { findByIdInArray } from '@shared/utils';
 import { commonSortingDataAccessor } from '@shared/tables/table.helpers';
 import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
 import { SyncService } from '@shared/database/sync.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
@@ -85,7 +86,8 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private managerService: ManagerService,
     private syncService: SyncService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    public dialogGuard: DialogGuardService
   ) {}
 
   ngOnInit() {
@@ -123,7 +125,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
     const deleteItems = itemsToPull.map(sentItem => ({ _id: sentItem._id, _rev: sentItem._rev, _deleted: true }));
-    this.syncService.replicatorsArrayWithTags(itemsToPull, 'pull', 'parent').pipe(switchMap((replicators) =>
+    const fetchItems = () => this.syncService.replicatorsArrayWithTags(itemsToPull, 'pull', 'parent').pipe(switchMap((replicators) =>
       replicators.length > 0 ?
         this.syncService.confirmPasswordAndRunReplicators(replicators) :
         of('no replicators')
@@ -131,7 +133,9 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
       res !== 'no replicators' ?
         this.couchService.post('send_items/_bulk_docs', { docs: deleteItems }, { domain: this.planetConfiguration.parentDomain }) :
         of({})
-    )).subscribe(() => this.planetMessageService.showMessage($localize`Resources/Courses are being fetched`));
+    ));
+    this.dialogGuard.run('fetch-items', fetchItems)
+      .subscribe(() => this.planetMessageService.showMessage($localize`Resources/Courses are being fetched`));
 
   }
 

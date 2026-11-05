@@ -13,7 +13,7 @@ import { MatInput } from '@angular/material/input';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
-import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { ConfigurationService } from '../../configuration/configuration.service';
 
@@ -23,20 +23,20 @@ import { ConfigurationService } from '../../configuration/configuration.service'
   imports: [
     MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle,
     MatCardContent, MatList, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent,
-    MatButton, SubmitDirective
+    MatButton
   ]
 })
 export class ManagerCurrencyComponent implements OnInit {
   form: FormGroup<{ code: FormControl<string>, symbol: FormControl<string>, key: FormControl<string> }>;
   configuration: any = {};
-  spinnerOn = true;
 
   constructor(
     private fb: NonNullableFormBuilder,
     private configurationService: ConfigurationService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private router: Router
+    private router: Router,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.form = this.fb.group({
       code: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(6) ] }),
@@ -57,15 +57,13 @@ export class ManagerCurrencyComponent implements OnInit {
   }
 
   save() {
-    const spinnerOff = () => this.spinnerOn = false;
     if (this.form.invalid) {
-      spinnerOff();
       return;
     }
-    this.spinnerOn = true;
+    this.dialogsLoadingService.start();
     const { key, ...codeAndSymbol } = this.form.value;
     this.configurationService.patchLocalConfiguration({ currency: { ...codeAndSymbol }, keys: { currency: key } })
-      .pipe(finalize(spinnerOff))
+      .pipe(finalize(() => this.dialogsLoadingService.stop()))
       .subscribe(
         () => {
           this.stateService.requestData('configurations', 'local');

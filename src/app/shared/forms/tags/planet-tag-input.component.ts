@@ -98,8 +98,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
-  onChange: (value: string[]) => void = () => {};
-  onTouched: () => void = () => {};
   stateChanges = new Subject<void>();
   tags: TagWithId[] = [];
   inputControl = new FormControl<string>('', { nonNullable: true });
@@ -136,6 +134,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.stateChanges.complete();
     this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
   }
+
+  onChange: (value: string[]) => void = () => {};
+  onTouched: () => void = () => {};
 
   initTags(editedId?: string) {
     this.tagsService.getTags(this.db, this.parent).subscribe((tags: TagWithId[]) => {

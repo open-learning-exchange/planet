@@ -9,8 +9,8 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { EMPTY, forkJoin, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
@@ -124,6 +124,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   configuration = this.stateService.configuration;
   parentCount = 0;
   useDialogLoading = true;
+  private isDialogLoading = false;
   isLoading = true;
   searchValue = '';
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
@@ -158,6 +159,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.useDialogLoading = !this.teamId && !this.routeTeamId;
     if (this.useDialogLoading) {
+      this.isDialogLoading = true;
       this.dialogsLoadingService.start();
     }
     this.surveys.filterPredicate = filterSpecificFieldsHybrid([ 'name' ]);
@@ -181,6 +183,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.stopDialogLoading();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -248,15 +251,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       ];
       this.applyViewModeFilter();
       this.isLoading = false;
-      if (this.useDialogLoading) {
-        this.dialogsLoadingService.stop();
-      }
+      this.stopDialogLoading();
     }, () => {
       this.isLoading = false;
-      if (this.useDialogLoading) {
-        this.dialogsLoadingService.stop();
-      }
+      this.stopDialogLoading();
     });
+  }
+
+  // Sends reload the list, so only the first load ends ngOnInit's start()
+  private stopDialogLoading() {
+    if (this.isDialogLoading) {
+      this.isDialogLoading = false;
+      this.dialogsLoadingService.stop();
+    }
   }
 
   private applyViewModeFilter() {
@@ -392,7 +399,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         width: '80vw',
         data: {
           okClick: (selection: any[]) => {
-            this.dialogsLoadingService.start();
             this.sendSurvey(survey, selection).subscribe(() => {
               this.dialogsLoadingService.stop();
             });
@@ -422,7 +428,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       width: '80vw',
       data: {
         okClick: (selection: any[]) => {
-          this.dialogsLoadingService.start();
           forkJoin(selection.map(item => this.createTeamSurveyFromSource(survey, {
             _id: item.doc._id,
             name: item.doc.name
@@ -443,22 +448,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   adoptSurvey(survey) {
-    this.couchService.get('teams/' + this.routeTeamId).subscribe(
-      team => {
-        this.createTeamSurveyFromSource(survey, {
-          _id: team._id,
-          name: team.name
-        }).subscribe(() => {
-          this.planetMessageService.showMessage($localize`Survey adopted`);
-          this.loadSurveys();
-        }, () => {
-          this.planetMessageService.showAlert($localize`Error adopting survey.`);
-        });
-      },
-      error => {
+    this.dialogsLoadingService.start();
+    this.couchService.get('teams/' + this.routeTeamId).pipe(
+      catchError(error => {
         this.planetMessageService.showAlert($localize`Error adopting survey: ${error.message}`);
-      }
-    );
+        return EMPTY;
+      }),
+      switchMap(team => this.createTeamSurveyFromSource(survey, {
+        _id: team._id,
+        name: team.name
+      })),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
+      this.planetMessageService.showMessage($localize`Survey adopted`);
+      this.loadSurveys();
+    }, () => {
+      this.planetMessageService.showAlert($localize`Error adopting survey.`);
+    });
   }
 
   sendSurvey(survey: any, users: any[]): Observable<void> {
@@ -497,10 +503,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleSurveyPublicAccess(survey: any) {
     const nextPublicAccess = survey.publicAccess !== true;
+    this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, {
       ...survey,
       publicAccess: nextPublicAccess
-    }).subscribe((res: any) => {
+    }).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res: any) => {
       this.updateSurveyState(survey._id, {
         publicAccess: nextPublicAccess,
         _rev: res.rev
@@ -570,8 +579,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         autoFocus: true,
         disableIfInvalid: true,
-        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts, includeAnalysis }) => {
-          this.dialogsFormService.closeDialogsForm();
+        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts, includeAnalysis }, _form, dialogRef) => {
+          dialogRef.close();
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
@@ -632,10 +641,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   revokeSurveyPublicAccess(survey: any) {
+    this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, {
       ...survey,
       publicAccess: false
-    }).subscribe((res: any) => {
+    }).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res: any) => {
       this.updateSurveyState(survey._id, {
         publicAccess: false,
         _rev: res.rev

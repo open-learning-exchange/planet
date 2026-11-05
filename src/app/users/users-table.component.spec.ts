@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
@@ -143,5 +144,29 @@ describe('UsersTableComponent', () => {
     expect(planetMessageService.showAlert).toHaveBeenCalledWith('There was an error deactivating user.');
     expect(usersService.requestUsers).not.toHaveBeenCalled();
     expect(planetMessageService.showMessage).not.toHaveBeenCalled();
+  });
+
+  it('shows admins the Promote button for active non-admin users', async () => {
+    component.tableState = new TableState();
+    fixture.componentRef.setInput('users', [
+      { doc: { ...mockUser, isUserAdmin: false, roles: [ 'learner' ] } }
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const promoteButton = fixture.debugElement.query(By.css('.km-promote-button'));
+    expect(promoteButton).toBeTruthy();
+  });
+
+  it('hides the Promote button for inactive users', async () => {
+    component.tableState = new TableState();
+    fixture.componentRef.setInput('users', [
+      { doc: { ...mockUser, isUserAdmin: false, roles: [] } }
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const promoteButton = fixture.debugElement.query(By.css('.km-promote-button'));
+    expect(promoteButton).toBeNull();
   });
 });

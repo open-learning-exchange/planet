@@ -1,5 +1,5 @@
 import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
@@ -16,6 +16,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { filterSpecificFields, createDeleteArray } from '@shared/tables/table.helpers';
 import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
 import { StateService } from '@shared/state.service';
@@ -82,7 +83,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private configurationService: ConfigurationService,
     private stateService: StateService,
     private managerService: ManagerService,
-    private dialogGuard: DialogGuardService
+    private dialogGuard: DialogGuardService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -121,7 +123,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resendConfig() {
-    this.configurationService.patchConfiguration({ registrationRequest: 'pending' }).subscribe(null,
+    this.dialogsLoadingService.start();
+    this.configurationService.patchConfiguration({ registrationRequest: 'pending' }).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(null,
       error => this.planetMessageService.showAlert($localize`An error occurred please try again.`),
       () => {
         this.planetMessageService.showMessage($localize`Registration request has been sent successfully.`);

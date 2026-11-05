@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { key } from '../config/currency-provider.config';
+
+import { getKeys } from '../../../services/config.service';
 
 // See https://docs.openexchangerates.org/reference/historical-json
 const OPENEXCHANGERATES_MIN_YEAR = 1999;
@@ -40,6 +41,8 @@ export const getCurrencyRate = async (req: Request, res: Response) => {
       'message': 'Number must parse to valid date after 1st January 1999 and before current time'
     });
   }
+
+  const key = (await getKeys()).currency;
 
   try {
     const apiResponse = await fetch(`https://openexchangerates.org/api/historical/${date}.json?app_id=${key}&symbols=GTQ`);

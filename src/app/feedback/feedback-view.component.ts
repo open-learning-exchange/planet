@@ -152,11 +152,12 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       this.feedback.messages,
       { message: this.newMessage, user: this.user.name, time: this.couchService.datePlaceholder, userPlanetCode: this.user.planetCode }
     );
+    this.dialogsLoadingService.start();
     this.couchService.updateDocument(this.dbName, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
         return forkJoin([ this.getFeedback(res.id), this.sendNotifications() ]);
-      })
+      }), finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(
         ([ feedback, notificationRes ]) => {
           this.setFeedback(feedback);
@@ -196,7 +197,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   setTitle() {
-    this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).subscribe(
+    this.dialogsLoadingService.start();
+    this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
       (res) => {
         this.editTitleMode = false;
         this.feedback._rev = res.rev;
@@ -220,7 +224,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   closeFeedback(feedback) {
-    this.feedbackServive.closeFeedback(feedback).subscribe(
+    this.dialogsLoadingService.start();
+    this.feedbackServive.closeFeedback(feedback).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(
       () => this.router.navigate([ '/feedback' ]),
       () => this.planetMessageService.showAlert($localize`There was an error closing this feedback.`)
     );

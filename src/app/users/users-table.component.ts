@@ -11,7 +11,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
@@ -27,6 +27,7 @@ import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
@@ -139,7 +140,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private route: ActivatedRoute,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -293,10 +295,13 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   setRoles(user, roles, event) {
     event.stopPropagation();
-    this.usersService.setRoles(user, roles).subscribe(() => {
+    this.dialogsLoadingService.start();
+    this.usersService.setRoles(user, roles).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
       this.usersService.requestUsers(true);
       this.planetMessageService.showMessage($localize`${user.name} roles modified`);
-    });
+    }, () => this.planetMessageService.showAlert($localize`There was an error modifying ${user.name} roles`));
   }
 
 }

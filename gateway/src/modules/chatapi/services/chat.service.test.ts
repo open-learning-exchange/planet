@@ -12,6 +12,10 @@ vi.mock('../../../config/couch.config', () => ({
   'resourceDB': {}
 }));
 vi.mock('../utils/chat.utils', () => ({ 'aiChat': mocks.aiChat }));
+vi.mock('../../../services/config.service', () => ({
+  'ConfigurationUnavailableError': class extends Error {},
+  'getConfiguration': async () => ({ 'assistant': { 'instructions': '' } })
+}));
 
 import { chat, ConversationAccessError } from './chat.service';
 

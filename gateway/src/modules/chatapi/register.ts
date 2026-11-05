@@ -2,13 +2,14 @@ import { Express } from 'express';
 import WebSocket from 'ws';
 
 import { SessionInfo } from '../../middleware/auth';
+import { ConfigurationUnavailableError } from '../../services/config.service';
+import { configuredProviders } from './providers/clients';
 import { chat, chatNoSave, ConversationAccessError } from './services/chat.service';
-import { keys } from './config/ai-providers.config';
 
 const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
 
 export function registerChatApiRoutes(app: Express) {
-  app.post('/', async (req: any, res: any) => {
+  app.post('/', async (req: any, res: any, next: any) => {
     const { data, save } = req.body;
 
     if (!isValidData(data)) {
@@ -17,7 +18,7 @@ export function registerChatApiRoutes(app: Express) {
 
     try {
       if (!save) {
-        const response = await chatNoSave(data.content, data.aiProvider, data.assistant, data.context);
+        const response = await chatNoSave(data.content, data.aiProvider, data.context);
         return res.status(200).json({
           'status': 'Success',
           'chat': response
@@ -33,6 +34,9 @@ export function registerChatApiRoutes(app: Express) {
       if (error instanceof ConversationAccessError) {
         return res.status(403).json({ 'error': 'Forbidden', 'message': error.message });
       }
+      if (error instanceof ConfigurationUnavailableError) {
+        return next(error);
+      }
       if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
         return res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
       }
@@ -40,14 +44,9 @@ export function registerChatApiRoutes(app: Express) {
     }
   });
 
-  app.get('/checkproviders', (req: any, res: any) => {
+  app.get('/checkproviders', (req: any, res: any, next: any) => {
     void req;
-    res.status(200).json({
-      'openai': keys.openai.apiKey ? true : false,
-      'perplexity': keys.perplexity.apiKey ? true : false,
-      'deepseek': keys.deepseek.apiKey ? true : false,
-      'gemini': keys.gemini.apiKey ? true : false
-    });
+    configuredProviders().then((providers) => res.status(200).json(providers)).catch(next);
   });
 }
 
@@ -79,6 +78,8 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
       } catch (error: any) {
         if (error instanceof ConversationAccessError) {
           ws.send(JSON.stringify({ 'type': 'error', 'error': error.message }));
+        } else if (error instanceof ConfigurationUnavailableError) {
+          ws.send(JSON.stringify({ 'error': error.name, 'message': error.message }));
         } else if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
           ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
         } else {

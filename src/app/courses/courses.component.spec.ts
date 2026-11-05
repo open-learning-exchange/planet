@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
@@ -57,9 +58,7 @@ describe('CoursesComponent', () => {
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const stateServiceMock = {
@@ -91,7 +90,7 @@ describe('CoursesComponent', () => {
         { provide: SyncService, useValue: { getReplicationState: vi.fn().mockReturnValue(of({})) } },
         { provide: StateService, useValue: stateServiceMock },
         { provide: DialogsLoadingService, useValue: { start: vi.fn(), stop: vi.fn() } },
-        { provide: DialogGuardService, useValue: { open: vi.fn() } },
+        { provide: DialogGuardService, useValue: { open: vi.fn(), isActive: vi.fn().mockReturnValue(false) } },
         { provide: TagsService, useValue: { updateManyTags: vi.fn().mockReturnValue(of({})) } },
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
@@ -107,7 +106,8 @@ describe('CoursesComponent', () => {
             paramMap: of({ get: () => null })
           }
         },
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
       ]
     });
     fixture = TestBed.createComponent(CoursesComponent);
@@ -174,7 +174,7 @@ describe('CoursesComponent', () => {
     userServiceMock.shelfChange$.next(userServiceMock.shelf);
 
     expect(component.courses.data).not.toBe(previousData);
-    expect(component.courses.data[0].admission).toBe(true);
+    expect((component.courses.data[0] as { admission: boolean }).admission).toBe(true);
   });
 
   // TODO: Update tests to use vitest spies

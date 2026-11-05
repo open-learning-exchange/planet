@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
+import { ValueWithImages } from '@shared/markdown/planet-markdown-textbox.component';
 
 import { CustomValidators } from '../validators/custom-validators';
 
@@ -13,7 +14,7 @@ export interface QuestionChoice {
   id: string;
 }
 export interface QuestionValue {
-  body: string;
+  body: string | ValueWithImages;
   type: string;
   correctChoice: string | string[];
   marks: number;
@@ -28,7 +29,7 @@ export type QuestionChoiceFormGroup = FormGroup<{
 }>;
 
 export type QuestionFormGroup = FormGroup<{
-  body: FormControl<string>;
+  body: FormControl<string | ValueWithImages>;
   type: FormControl<string>;
   correctChoice: FormControl<string | string[]>;
   marks: FormControl<number>;
@@ -36,6 +37,8 @@ export type QuestionFormGroup = FormGroup<{
   hasOtherOption: FormControl<boolean>;
   scaleMax: FormControl<number>;
 }>;
+
+export const markdownText = (value: string | ValueWithImages) => typeof value === 'string' ? value : value.text;
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +56,7 @@ export class ExamsService {
   newQuestionForm(requireCorrect: boolean, initialValue?: Partial<QuestionValue>): QuestionFormGroup {
     const choices = (initialValue && initialValue.choices) || [];
     const formGroup = this.fb.group({
-      body: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      body: this.fb.control<string | ValueWithImages>('', { validators: [ CustomValidators.requiredMarkdown ] }),
       type: this.fb.control('input'),
       correctChoice: this.fb.control<string | string[]>('', { validators: [ CustomValidators.choiceSelected(requireCorrect) ] }),
       marks: this.fb.control(1, { validators: [ CustomValidators.positiveNumberValidator ] }),
@@ -94,10 +97,10 @@ export class ExamsService {
   }
 
   updateQuestion(question: QuestionFormGroup, newQuestion: QuestionFormGroup) {
-    const { choices: newChoices, ...fields }: QuestionValue = newQuestion.getRawValue();
+    const { choices: newChoices, body, ...fields }: QuestionValue = newQuestion.getRawValue();
     const choices = question.controls.choices;
     this.removeChoices(choices, newChoices);
-    question.patchValue(fields);
+    question.patchValue({ ...fields, body: markdownText(body) });
     const currentChoices = choices.controls;
     newChoices.forEach((choice: QuestionChoice) => {
       const index = currentChoices.findIndex(c => c.controls.id.value === choice.id);

@@ -17,7 +17,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
-import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { ConfigurationService } from '../../configuration/configuration.service';
 
@@ -32,6 +32,7 @@ type DynamicConfigFormControls = Partial<Record<DynamicConfigControlKey, FormCon
 type ConfigFormControls = FixedConfigFormControls & DynamicConfigFormControls;
 
 interface AIConfiguration {
+  [key: string]: unknown;
   streaming?: boolean;
   keys?: Record<string, unknown>;
   models?: Record<string, unknown>;
@@ -39,7 +40,6 @@ interface AIConfiguration {
     name?: string;
     instructions?: string;
   };
-  [key: string]: unknown;
 }
 
 @Component({
@@ -66,7 +66,6 @@ interface AIConfiguration {
     MatSlideToggle,
     MatTooltip,
     MatButton,
-    SubmitDirective,
     TitleCasePipe,
     KeyValuePipe
   ]
@@ -75,7 +74,6 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: AIConfiguration = {};
   configForm: FormGroup<ConfigFormControls>;
   hideKey: { [key: string]: boolean } = {};
-  spinnerOn = true;
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -85,6 +83,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.configForm = this.fb.group<ConfigFormControls>({
       streaming: this.fb.control(false),
@@ -131,12 +130,10 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   }
 
   saveConfig() {
-    const spinnerOff = () => this.spinnerOn = false;
     if (!this.configuration?._id || !this.configForm.valid) {
-      spinnerOff();
       return;
     }
-    this.spinnerOn = true;
+    this.dialogsLoadingService.start();
     const configPatch = {
       streaming: this.configForm.controls.streaming.value,
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
@@ -146,7 +143,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
         instructions: this.getStringControlValue('assistantInstructions')
       }
     };
-    this.configurationService.patchLocalConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
+    this.configurationService.patchLocalConfiguration(configPatch).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(
       () => this.stateService.requestData('configurations', 'local'),
       err => {
         this.planetMessageService.showAlert($localize`There was an error updating the configuration`);

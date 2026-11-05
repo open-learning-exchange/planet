@@ -2,6 +2,7 @@ import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { TagsService } from '@shared/forms/tags/tags.service';
+import { MarkdownImagesService } from '@shared/markdown/markdown-images.service';
 
 import { CoursesService } from './courses.service';
 
@@ -224,6 +225,42 @@ describe('CoursesService', () => {
 
     it('denies when there is no course', () => {
       expect(createPermissionService(admin).canManageCourse(undefined)).toBe(false);
+    });
+  });
+
+  describe('storeMarkdownImages', () => {
+    it('aggregates step exam and survey images into course images', () => {
+      const markdownImagesService = new MarkdownImagesService();
+      const service = new CoursesService(
+        {} as any,
+        {} as any,
+        { ratingsUpdated$: of(undefined) } as any,
+        {} as any,
+        { couchStateListener: vi.fn().mockReturnValue(of(undefined)) } as any,
+        {} as any,
+        markdownImagesService,
+        {} as any
+      );
+      const course = {
+        description: 'Course description',
+        steps: [
+          {
+            description: 'Step 1 description',
+            exam: {
+              questions: [
+                { body: 'Question with image ![Diagram](/resources/res-1/diagram.png)' }
+              ],
+              images: [
+                { resourceId: 'res-1', filename: 'diagram.png', markdown: '![Diagram](/resources/res-1/diagram.png)' }
+              ]
+            }
+          }
+        ]
+      };
+      const result = service.storeMarkdownImages(course);
+      expect(result.images).toEqual([
+        { resourceId: 'res-1', filename: 'diagram.png', markdown: '![Diagram](/resources/res-1/diagram.png)' }
+      ]);
     });
   });
 });
