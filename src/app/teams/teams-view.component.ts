@@ -281,9 +281,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.team = team;
         return this.getMembers();
       })
-    ).subscribe(() => {
-      this.leader = {};
-      this.userStatus = 'member';
+    ).subscribe({
+      next: () => {
+        this.leader = {};
+        this.userStatus = 'member';
+      },
+      error: () => {
+        this.teamDataLoading = false;
+        this.planetMessageService.showAlert($localize`There was a problem loading the services page.`);
+      }
     });
   }
 
