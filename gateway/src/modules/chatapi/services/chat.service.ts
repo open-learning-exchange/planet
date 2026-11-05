@@ -15,7 +15,7 @@ export class ConversationAccessError extends Error {
   }
 }
 
-export const canContinue = (doc: Pick<DbDoc, 'user'>, session: SessionInfo): boolean => doc.user === session.name;
+export const isUserConversationOwner = (doc: Pick<DbDoc, 'user'>, session: SessionInfo): boolean => doc.user === session.name;
 
 // nano sends `_design`/`_local` ids unencoded, so `_design/../<id>` would read one doc and then write a design doc
 const isConversationId = (id: unknown): boolean => typeof id === 'string' && /^[^_/][^/]*$/.test(id);
@@ -59,7 +59,7 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
       throw new ConversationAccessError();
     }
     const stored = await retrieveChatHistory(dbData, messages);
-    if (!canContinue(stored, session)) {
+    if (!isUserConversationOwner(stored, session)) {
       throw new ConversationAccessError();
     }
   } else {
