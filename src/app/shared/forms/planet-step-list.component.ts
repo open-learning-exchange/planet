@@ -15,9 +15,7 @@ import { uniqueId } from '@shared/utils';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 
 export type PlanetStepControl = AbstractControl<any, any>;
-export type PlanetStepControls = Record<string, PlanetStepControl>;
-export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
-export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
+export type PlanetStepFormArray = FormArray<FormGroup<any>>;
 export type PlanetStepListSteps = unknown[] | PlanetStepFormArray;
 
 interface StepMoveEvent {

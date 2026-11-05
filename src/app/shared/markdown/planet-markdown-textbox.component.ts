@@ -11,8 +11,8 @@ import { MarkdownImagesDialogComponent } from './markdown-images-dialog.componen
 import { TdTextEditorComponent } from '@covalent/text-editor';
 import { NgClass } from '@angular/common';
 
-interface ImageInfo { resourceId: string, filename: string, markdown: string }
-interface ValueWithImages { text: string, images: ImageInfo[] }
+export interface ImageInfo { resourceId: string, filename: string, markdown: string }
+export interface ValueWithImages { text: string, images: ImageInfo[] }
 interface FullscreenState {
   owner: HTMLElement;
   actions: HTMLElement;
@@ -191,18 +191,21 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
               name: 'preview',
               action: (editor: any) => editor.togglePreview(),
               className: 'fa fa-eye',
+              noDisable: true,
               title: $localize`Preview`
             },
             {
               name: 'side-by-side',
               action: (editor: any) => editor.toggleSideBySide(),
               className: 'fa fa-columns',
+              noDisable: true,
               title: $localize`Side by Side`
             },
             {
               name: 'fullscreen',
               action: (editor: any) => editor.toggleFullScreen(),
               className: 'fa fa-arrows-alt',
+              noDisable: true,
               title: $localize`Fullscreen`
             },
             '|',
@@ -210,6 +213,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
               name: 'guide',
               action: 'https://www.markdownguide.org/basic-syntax/',
               className: 'fa fa-question-circle',
+              noDisable: true,
               title: $localize`Markdown Guide`
             }
           ]

@@ -1,8 +1,8 @@
 import OpenAI from 'openai';
 
-import { models } from '../config/ai-providers.config';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 import { Attachment } from '../models/db-doc.model';
+import { providerClient } from '../providers/clients';
 import { openaiChat } from '../providers/openai.provider';
 import { fetchFileFromCouchDB } from './db.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
@@ -76,17 +76,14 @@ export async function aiChatStream(
   context: any = '',
   callback?: (response: string) => void
 ): Promise<string> {
-  const provider = models[aiProvider.name];
-  if (!provider) {
-    throw new Error('Unsupported AI provider');
-  }
-  const model = aiProvider.model ?? provider.defaultModel;
+  const { client, defaultModel } = await providerClient(aiProvider.name);
+  const model = aiProvider.model ?? defaultModel;
 
   if (aiProvider.name === 'openai') {
-    return await openaiResponse(provider.ai, model, messages, instructions, context, callback);
+    return await openaiResponse(client, model, messages, instructions, context, callback);
   }
 
-  const completion = await provider.ai.chat.completions.create({
+  const completion = await client.chat.completions.create({
     model,
     messages,
     'stream': true,
@@ -120,17 +117,14 @@ export async function aiChatNonStream(
   instructions: string,
   context: any = '',
 ): Promise<string> {
-  const provider = models[aiProvider.name];
-  if (!provider) {
-    throw new Error('Unsupported AI provider');
-  }
-  const model = aiProvider.model ?? provider.defaultModel;
+  const { client, defaultModel } = await providerClient(aiProvider.name);
+  const model = aiProvider.model ?? defaultModel;
 
   if (aiProvider.name === 'openai') {
-    return await openaiResponse(provider.ai, model, messages, instructions, context);
+    return await openaiResponse(client, model, messages, instructions, context);
   }
 
-  const completion = await provider.ai.chat.completions.create({
+  const completion = await client.chat.completions.create({
     model,
     messages,
   });

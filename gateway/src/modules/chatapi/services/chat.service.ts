@@ -1,12 +1,15 @@
 import { DocumentInsertResponse } from 'nano';
 
 import { chatDB } from '../../../config/couch.config';
+import { ConfigurationUnavailableError, getConfiguration } from '../../../services/config.service';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
-import { assistant } from '../config/ai-providers.config';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 
 function handleChatError(error: any) {
+  if (error instanceof ConfigurationUnavailableError) {
+    throw error;
+  }
   if (error.response) {
     throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
   } else {
@@ -32,6 +35,8 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');
   }
+
+  const { assistant } = await getConfiguration();
 
   if (dbData._id) {
     await retrieveChatHistory(dbData, messages);

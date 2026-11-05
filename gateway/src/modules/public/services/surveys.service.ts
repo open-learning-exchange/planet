@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
-import { configurationDB, examsDB, submissionsDB, teamsDB } from '../../../config/couch.config';
+import { examsDB, submissionsDB, teamsDB } from '../../../config/couch.config';
+import { Configuration, getCurrentConfiguration } from '../../../services/config.service';
 
 type TeamDoc = {
   _id: string;
@@ -18,11 +19,6 @@ type SurveyDoc = {
   teamId: string;
   publicAccess?: boolean;
   isArchived?: boolean;
-};
-
-type ConfigurationDoc = {
-  code?: string;
-  parentCode?: string;
 };
 
 type PublicSubmissionPayload = {
@@ -49,15 +45,6 @@ const fetchDoc = async <T>(db: any, id: string): Promise<T | null> => {
       return null;
     }
     throw error;
-  }
-};
-
-const fetchConfiguration = async (): Promise<ConfigurationDoc | null> => {
-  try {
-    const result = await configurationDB.list({ 'include_docs': true, 'limit': 1 });
-    return (result.rows[0]?.doc as ConfigurationDoc) || null;
-  } catch {
-    return null;
   }
 };
 
@@ -156,7 +143,7 @@ const buildPublicSubmission = (
   survey: SurveyDoc,
   team: TeamDoc,
   payload: PublicSubmissionPayload,
-  configuration: ConfigurationDoc | null
+  configuration: Configuration
 ) => {
   const now = Date.now();
   return {
@@ -168,8 +155,8 @@ const buildPublicSubmission = (
     'grade': 0,
     'status': 'complete',
     'team': sanitizeTeam(team),
-    'source': configuration?.code || '',
-    'parentCode': configuration?.parentCode || '',
+    'source': configuration.code,
+    'parentCode': configuration.parentCode,
     'startTime': now,
     'lastUpdateTime': now
   };
@@ -218,7 +205,7 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
   const [ survey, team, configuration ] = await Promise.all([
     fetchDoc<SurveyDoc>(examsDB, surveyId),
     fetchDoc<TeamDoc>(teamsDB, teamId),
-    fetchConfiguration()
+    getCurrentConfiguration()
   ]);
 
   if (!team || !isPublicSurvey(survey, teamId)) {

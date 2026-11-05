@@ -10,35 +10,57 @@
 
 .reports-toolbar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   flex-wrap: wrap;
-  background: v.$white;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
-  padding: 10px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 
   .spacer {
     flex: 1 1 auto;
   }
-  .reports-count {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: v.$grey-text;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
+  .reports-date-field {
+    width: 220px;
+    flex: 0 0 220px;
   }
-  .reports-filter {
-    flex: 0 1 260px;
-    min-width: 180px;
+  .reports-label-field {
+    flex: 1 1 180px;
+    min-width: 0;
+    max-width: 280px;
+  }
+  .reports-reset-btn {
+    align-self: flex-start;
+    margin-top: 12px;
+  }
+}
+
+.reports-count {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  color: v.$grey-text;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.reports-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 16px;
+  color: v.$grey-text;
+
+  .reports-empty-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    opacity: 0.6;
   }
 }
 
@@ -51,12 +73,12 @@
 .report-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid v.$medium-grey;
   cursor: pointer;
   transition: box-shadow 0.18s, border-color 0.18s;
 
   &:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 8px v.$shadow;
     border-color: v.$primary-light;
   }
 
@@ -108,7 +130,6 @@
 .report-card-range {
   font-size: 13px;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.87);
   margin-top: 2px;
 }
 
@@ -199,7 +220,7 @@
   gap: 8px;
   font-size: 12px;
   color: v.$grey-text;
-  border-top: 1px dashed rgba(0, 0, 0, 0.12);
+  border-top: 1px dashed v.$medium-grey;
   padding-top: 10px;
 
   .num {

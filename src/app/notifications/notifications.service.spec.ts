@@ -8,7 +8,7 @@ describe('NotificationsService', () => {
       findAll: vi.fn(() => of([])),
       updateDocument: vi.fn()
     };
-    const service = new NotificationsService({} as any, couchService as any, {} as any, {} as any);
+    const service = new NotificationsService({} as any, couchService as any, {} as any, {} as any, {} as any);
 
     service.notifyMeetupChange({ title: 'Meetup' }, 'm1').subscribe();
 
@@ -27,7 +27,7 @@ describe('NotificationsService', () => {
     };
     const service = new NotificationsService({} as any, couchService as any, {} as any, {
       configuration: {}
-    } as any);
+    } as any, {} as any);
 
     service.notifyMeetupChange({ title: 'Meetup' }, 'm1').subscribe();
 
@@ -120,7 +120,8 @@ describe('NotificationsService', () => {
       { get: () => ({ planetCode: 'community-c' }) } as any,
       couchService as any,
       {} as any,
-      { configuration: { code: 'nation-n' } } as any
+      { configuration: { code: 'nation-n' } } as any,
+      {} as any
     );
     const notification = {
       user: 'org.couchdb.user:alex',
@@ -153,7 +154,8 @@ describe('NotificationsService', () => {
       { get: () => ({ planetCode: 'community-c' }) } as any,
       couchService as any,
       {} as any,
-      { configuration: { code: 'nation-n' } } as any
+      { configuration: { code: 'nation-n' } } as any,
+      {} as any
     );
 
     service.sendNotificationToUser({
@@ -186,7 +188,8 @@ describe('NotificationsService', () => {
       { get: () => ({ planetCode: 'planet-a' }) } as any,
       couchService as any,
       {} as any,
-      { configuration: { code: 'planet-a' } } as any
+      { configuration: { code: 'planet-a' } } as any,
+      {} as any
     );
 
     service.sendNotificationToUser({
@@ -214,7 +217,8 @@ describe('NotificationsService', () => {
       { get: () => ({}) } as any,
       couchService as any,
       {} as any,
-      { configuration: { code: 'planet-a' } } as any
+      { configuration: { code: 'planet-a' } } as any,
+      {} as any
     );
     const notification = {
       user: 'org.couchdb.user:alex',
@@ -252,7 +256,8 @@ describe('NotificationsService reply notifications', () => {
       userService as any,
       couchService as any,
       planetMessageService as any,
-      stateService as any
+      stateService as any,
+      {} as any
     );
     return { service, couchService, userService };
   };

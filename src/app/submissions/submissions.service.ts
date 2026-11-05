@@ -21,6 +21,7 @@ import { MarkdownRenderService } from '@shared/markdown/markdown-render.service'
 import { CoursesService } from '../courses/courses.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +37,7 @@ export class SubmissionsService {
   private submissionUpdated = new Subject<any>();
   submissionUpdated$ = this.submissionUpdated.asObservable();
   submissionAttempts = 0;
+  private readonly imageHost = `${environment.couchAddress}/`;
 
   constructor(
     private couchService: CouchService,
@@ -406,7 +408,7 @@ export class SubmissionsService {
       question.index = i;
       docContent.push({
         stack: htmlToPdfmake(
-          `<strong>${$localize`Question `} ${i + 1}:</strong> ${this.markdownRenderer.render(question.body)}`
+          `<strong>${$localize`Question `} ${i + 1}:</strong> ${this.markdownRenderer.render(question.body, this.imageHost)}`
         )
       });
       if (question.type === 'selectMultiple') {
@@ -615,7 +617,7 @@ export class SubmissionsService {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
       const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
-      const renderedText = this.markdownRenderer.render(text);
+      const renderedText = this.markdownRenderer.render(text, this.imageHost);
       return `<div class="markdown-align-${alignment}"><strong>${localizedLabel} ${index + 1}:</strong><br>${renderedText}</div>`;
     };
     return (question, questionIndex) =>

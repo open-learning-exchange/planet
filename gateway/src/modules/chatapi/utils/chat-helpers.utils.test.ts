@@ -8,8 +8,8 @@ const mocks = vi.hoisted(() => ({
   'extractText': vi.fn()
 }));
 
-vi.mock('../config/ai-providers.config', () => ({
-  'models': { 'openai': { 'ai': { 'responses': { 'create': mocks.create } }, 'defaultModel': 'gpt-test' } }
+vi.mock('../providers/clients', () => ({
+  'providerClient': async () => ({ 'client': { 'responses': { 'create': mocks.create } }, 'defaultModel': 'gpt-test' })
 }));
 vi.mock('./db.utils', () => ({ 'fetchFileFromCouchDB': mocks.fetchFile }));
 vi.mock('./text-extraction.utils', () => ({ 'extractTextFromDocument': mocks.extractText }));

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -28,11 +28,11 @@ describe('UsersAchievementsUpdateComponent', () => {
   let dialogMock: any;
   let dialogRefMock: any;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     dialogRefMock = { close: vi.fn() };
     dialogMock = { open: vi.fn().mockImplementation(() => dialogRefMock), openDialogs: [] };
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       imports: [
         FormsModule, ReactiveFormsModule, RouterTestingModule, BrowserAnimationsModule,
         MatIconTestingModule, UsersAchievementsUpdateComponent
@@ -84,7 +84,7 @@ describe('UsersAchievementsUpdateComponent', () => {
     }).overrideComponent(PlanetMarkdownTextboxComponent, {
       set: { template: '<div></div>', imports: [] }
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UsersAchievementsUpdateComponent);

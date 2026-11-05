@@ -634,6 +634,15 @@ describe('TeamsService membership writes', () => {
 
 describe('TeamsService cover image handling', () => {
   afterEach(() => vi.restoreAllMocks());
+  // JSDOM never settles an image load, so fail it and take the raw-file fallback
+  beforeEach(() => vi.stubGlobal('Image', class {
+    set src(_value: string) {
+      setTimeout(() => this.onerror());
+    }
+
+    onerror: () => void = () => {};
+  }));
+  afterEach(() => vi.unstubAllGlobals());
 
   const createService = () => {
     const couchService = {
@@ -720,5 +729,35 @@ describe('TeamsService cover image handling', () => {
     await expect(save(service, teamWithCover, { retained: [], removed: [], added: [ { file: tooLarge } ] })).rejects.toThrow();
 
     expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+});
+
+describe('TeamsService.getTeamResources', () => {
+  it('hides links whose resource is missing and sorts the rest by resource title', () => {
+    const stateService = {
+      getCouchState: vi.fn().mockReturnValue(of([
+        { _id: 'res-1', title: 'Beta' },
+        { _id: 'res-2', title: 'alpha' }
+      ]))
+    };
+    const service = new TeamsService(
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      stateService as any,
+      {} as any
+    );
+    const linkDocs = [
+      { resourceId: 'res-1', title: 'A link title' },
+      { resourceId: 'res-deleted', title: 'Deleted resource' },
+      { resourceId: 'res-2', title: 'Z link title' }
+    ];
+
+    let result: any[];
+    service.getTeamResources(linkDocs).subscribe(res => (result = res));
+
+    expect(result.map(({ resource }) => resource._id)).toEqual([ 'res-2', 'res-1' ]);
   });
 });
