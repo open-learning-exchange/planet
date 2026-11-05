@@ -275,8 +275,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initServices(teamId) {
-    this.getTeam(teamId).pipe(
-      catchError(() => this.teamsService.createServicesDoc()),
+    this.teamsService.ensureServicesDoc().pipe(
+      switchMap(() => this.getTeam(teamId)),
       switchMap(team => {
         this.team = team;
         return this.getMembers();
