@@ -57,6 +57,7 @@ describe('ChallengesService', () => {
       expect(active(new Date(2026, 9, 31, 23))).toBe(true);
       expect(active(new Date(2026, 10, 1))).toBe(false);
       expect(service.parseDateBoundary('2026-10-31T12:00:00Z', 'end')).toEqual(new Date(Date.UTC(2026, 9, 31, 12)));
+      expect(service.parseDateBoundary(Date.UTC(2026, 9, 31, 12) as any, 'end')).toEqual(new Date(Date.UTC(2026, 9, 31, 12)));
     } finally {
       if (timezone === undefined) {
         delete process.env.TZ;
