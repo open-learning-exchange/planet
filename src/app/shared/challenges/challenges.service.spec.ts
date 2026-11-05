@@ -35,6 +35,26 @@ describe('ChallengesService', () => {
     expect(active).toBeUndefined();
   });
 
+  it('passes on other read failures instead of reporting no challenges', () => {
+    couchService.get.mockReturnValue(throwError({ status: 500 }));
+    const next = vi.fn();
+    const error = vi.fn();
+    service.getChallenges().subscribe({ next, error });
+
+    expect(next).not.toHaveBeenCalled();
+    expect(error).toHaveBeenCalledWith({ status: 500 });
+  });
+
+  it('shows no announcement when the services doc cannot be read', () => {
+    couchService.get.mockReturnValue(throwError({ status: 500 }));
+    const next = vi.fn();
+    const error = vi.fn();
+    service.getActiveChallenge(referenceDate).subscribe({ next, error });
+
+    expect(next).toHaveBeenCalledWith(undefined);
+    expect(error).not.toHaveBeenCalled();
+  });
+
   it('opens one announcement at a time, and none without an active challenge', () => {
     const dialog = { open: vi.fn().mockReturnValue({ afterClosed: () => NEVER }) } as any;
 
