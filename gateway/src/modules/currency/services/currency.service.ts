@@ -1,5 +1,25 @@
 import { Request, Response } from 'express';
 import { key } from '../config/currency-provider.config';
+import { teamsDB } from '../../../config/couch.config';
+
+/**
+ * Interface for transaction documents in CouchDB
+ */
+export interface TransactionDoc {
+  _id?: string;
+  _rev?: string;
+  docType: 'transaction';
+  teamId: string;
+  teamType: string;
+  teamPlanetCode: string;
+  type: 'credit' | 'debit';
+  amount: number;
+  date: number;
+  description: string;
+  status?: string;
+  receiptImages?: any;
+  _attachments?: any;
+}
 
 // See https://docs.openexchangerates.org/reference/historical-json
 const OPENEXCHANGERATES_MIN_YEAR = 1999;
@@ -62,3 +82,96 @@ export const getCurrencyRate = async (req: Request, res: Response) => {
   }
 
 };
+
+/**
+ * Validates transaction data
+ */
+const validateTransaction = (data: any): void => {
+  const requiredFields = [ 'teamId', 'teamType', 'teamPlanetCode', 'type', 'amount', 'date', 'description' ];
+
+  for (const field of requiredFields) {
+    if (data[field] === undefined || data[field] === null) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+
+  if (data.type !== 'credit' && data.type !== 'debit') {
+    throw new Error('Invalid transaction type. Must be "credit" or "debit"');
+  }
+
+  if (typeof data.amount !== 'number' || data.amount < 0) {
+    throw new Error('Amount must be a non-negative number');
+  }
+
+  if (typeof data.date !== 'number' || isNaN(data.date)) {
+    throw new Error('Date must be a valid timestamp');
+  }
+};
+
+/**
+ * Create or update a transaction document in CouchDB
+ * @param req - Express request with transaction data
+ * @param res - Express response
+ */
+export const submitTransaction = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { teamId, teamType, teamPlanetCode, type, description, amount, date, receiptImages, status } = req.body;
+
+    validateTransaction(req.body);
+
+    const transactionDoc: TransactionDoc = {
+      'docType': 'transaction',
+      teamId,
+      teamType,
+      teamPlanetCode,
+      type,
+      'amount': Number(amount),
+      'date': Number(date),
+      description,
+      ...(status ? { status } : {}),
+      ...(receiptImages ? { receiptImages } : {}),
+      // _attachments will be set by the caller if needed
+    };
+
+    // Check if this is an update (has _id)
+    if (req.body._id) {
+      transactionDoc._id = req.body._id;
+
+      // Fetch existing document to get _rev
+      const existingDoc = await teamsDB.get(req.body._id);
+      transactionDoc._rev = existingDoc._rev;
+
+      // Preserve attachments if updating
+      if ((existingDoc as any)._attachments) {
+        transactionDoc._attachments = (existingDoc as any)._attachments;
+      }
+    }
+
+    // Save document to CouchDB
+    const response = await (teamsDB as any).post(transactionDoc);
+
+    res.status(201).json({
+      'status': 'Success',
+      'couchDBResponse': response
+    });
+  } catch (error: any) {
+
+    if (error.status === 404) {
+      res.status(404).json({
+        'error': 'Not Found',
+        'message': 'Team document not found'
+      });
+    } else if (error.status === 409) {
+      res.status(409).json({
+        'error': 'Conflict',
+        'message': 'Document update conflict. Please refresh and try again.'
+      });
+    } else {
+      res.status(500).json({
+        'error': 'Internal Server Error',
+        'message': error.message || 'Failed to save transaction'
+      });
+    }
+  }
+};
+
