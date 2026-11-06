@@ -173,7 +173,6 @@ export class ChallengesService {
       return undefined;
     }
     const [ , year, month, day ] = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
-    // new Date('2026-10-31') is UTC midnight, which is still Oct 30 west of UTC
     const date = year ? new Date(Number(year), Number(month) - 1, Number(day)) : new Date(value);
     if (Number.isNaN(date.getTime())) {
       return undefined;
