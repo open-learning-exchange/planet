@@ -732,6 +732,62 @@ describe('TeamsService cover image handling', () => {
   });
 });
 
+describe('TeamsService.ensureServicesDoc', () => {
+  const servicesDoc = { _id: 'local@parent', _rev: '1-services', type: 'services', parentCode: 'parent' };
+
+  const ensure = (get: any, updateDocument = vi.fn().mockReturnValue(of({ id: 'local@parent', rev: '1-services' }))) => {
+    const couchService = { get, updateDocument, datePlaceholder: {} };
+    const stateService = { configuration: { code: 'local', parentCode: 'parent' } };
+    const service = new TeamsService(couchService as any, {} as any, {} as any, {} as any, {} as any, stateService as any, {} as any);
+    const next = vi.fn();
+    const error = vi.fn();
+    service.ensureServicesDoc().subscribe({ next, error });
+    return { couchService, next, error };
+  };
+
+  it('returns the stored doc without writing', () => {
+    const { couchService, next } = ensure(vi.fn().mockReturnValue(of(servicesDoc)));
+
+    expect(couchService.get).toHaveBeenCalledWith('teams/local@parent');
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(servicesDoc);
+  });
+
+  it('creates the full shape when the doc is missing and returns it as stored', () => {
+    const get = vi.fn().mockReturnValueOnce(throwError({ status: 404 })).mockReturnValueOnce(of(servicesDoc));
+    const { couchService, next } = ensure(get);
+
+    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
+      _id: 'local@parent',
+      createdDate: couchService.datePlaceholder,
+      teamPlanetCode: 'local',
+      parentCode: 'parent',
+      description: '',
+      requests: [],
+      teamType: 'sync',
+      type: 'services'
+    });
+    expect(get).toHaveBeenCalledTimes(2);
+    expect(next).toHaveBeenCalledWith(servicesDoc);
+  });
+
+  it('returns the doc another session created first', () => {
+    const get = vi.fn().mockReturnValueOnce(throwError({ status: 404 })).mockReturnValueOnce(of(servicesDoc));
+    const { next, error } = ensure(get, vi.fn().mockReturnValue(throwError({ status: 409 })));
+
+    expect(error).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(servicesDoc);
+  });
+
+  it('does not create the doc when the read fails for another reason', () => {
+    const { couchService, next, error } = ensure(vi.fn().mockReturnValue(throwError({ status: 500 })));
+
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    expect(error).toHaveBeenCalledWith({ status: 500 });
+  });
+});
+
 describe('TeamsService.getTeamResources', () => {
   it('hides links whose resource is missing and sorts the rest by resource title', () => {
     const stateService = {

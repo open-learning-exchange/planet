@@ -28,7 +28,7 @@ describe('PlanetCalendarComponent read-only behavior', () => {
       { canEditMeetup: () => false } as any,
       {} as any,
       { userChange$: new Subject() } as any,
-      new DialogGuardService()
+      new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any)
     );
     component.editable = false;
 
@@ -125,7 +125,7 @@ describe('PlanetCalendarComponent', () => {
     meetupService,
     notificationsService,
     userService,
-    new DialogGuardService()
+    new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any)
   );
 
   const authorized = { canEditMeetup: () => true };

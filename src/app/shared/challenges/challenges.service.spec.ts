@@ -2,7 +2,7 @@ import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ChallengesService } from './challenges.service';
-import { DialogGuardService } from '../dialogs/dialog-guard.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 describe('ChallengesService', () => {
   const challenge = {
@@ -15,7 +15,7 @@ describe('ChallengesService', () => {
   beforeEach(() => {
     couchService = { get: vi.fn().mockReturnValue(of({ _id: 'local@parent', challenges: [ challenge ] })) };
     const stateService = { configuration: { code: 'local', parentCode: 'parent' } } as any;
-    service = new ChallengesService(stateService, couchService, new DialogGuardService());
+    service = new ChallengesService(stateService, couchService, new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any));
   });
 
   it('reads challenges from the planet services doc', () => {
@@ -33,6 +33,26 @@ describe('ChallengesService', () => {
     service.getActiveChallenge(referenceDate).subscribe(result => active = result);
 
     expect(active).toBeUndefined();
+  });
+
+  it('passes on other read failures instead of reporting no challenges', () => {
+    couchService.get.mockReturnValue(throwError({ status: 500 }));
+    const next = vi.fn();
+    const error = vi.fn();
+    service.getChallenges().subscribe({ next, error });
+
+    expect(next).not.toHaveBeenCalled();
+    expect(error).toHaveBeenCalledWith({ status: 500 });
+  });
+
+  it('shows no announcement when the services doc cannot be read', () => {
+    couchService.get.mockReturnValue(throwError({ status: 500 }));
+    const next = vi.fn();
+    const error = vi.fn();
+    service.getActiveChallenge(referenceDate).subscribe({ next, error });
+
+    expect(next).toHaveBeenCalledWith(undefined);
+    expect(error).not.toHaveBeenCalled();
   });
 
   it('opens one announcement at a time, and none without an active challenge', () => {

@@ -9,8 +9,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Subject, of, throwError } from 'rxjs';
-import { catchError, filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -18,6 +18,7 @@ import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { LabelComponent } from '@shared/ui/label.component';
 import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 
+import { TeamsService } from '../teams/teams.service';
 import {
   CustomVoiceLabel,
   DEFAULT_VOICE_LABELS,
@@ -70,7 +71,8 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private teamsService: TeamsService
   ) {
     this.dialogRef.disableClose = true;
     this.dialogRef.backdropClick().pipe(takeUntil(this.onDestroy$)).subscribe(() => this.requestClose());
@@ -208,9 +210,10 @@ export class NewsLabelsDialogComponent implements OnInit, OnDestroy {
     this.isSaving = true;
     this.dialogsLoadingService.start();
     const customVoiceLabels = [ ...this.customLabels ];
-    this.couchService.get(`teams/${this.team._id}`).pipe(
-      // The community's services doc is only created once something is saved to it
-      catchError(error => this.target === 'community' && error.status === 404 ? of(this.team) : throwError(error)),
+    const currentDocument$ = this.team.type === 'services' ?
+      this.teamsService.ensureServicesDoc() :
+      this.couchService.get(`teams/${this.team._id}`);
+    currentDocument$.pipe(
       switchMap(currentDocument => this.couchService.updateDocument('teams', { ...currentDocument, customVoiceLabels })),
       finalize(() => {
         this.isSaving = false;
