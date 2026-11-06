@@ -325,7 +325,6 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "prefer-const": "error",
     },
 }, {
-    // One entry per depth: a bucket nested deeper than forms/tags needs another.
     files: ["src/app/shared/*.ts"],
     rules: {
         "no-restricted-imports": restrictedImports(rootIntoBucket),
