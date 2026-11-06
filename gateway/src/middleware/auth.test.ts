@@ -51,6 +51,13 @@ const upgrade = async (headers: Record<string, string>, ws: unknown = {}) => {
   return { req, responseHeaders, socket, wss };
 };
 
+// The limit is read once at load, so each queue spec loads its own copy of the module
+const withConcurrency = async (concurrency: string) => {
+  vi.stubEnv('SESSION_VALIDATION_CONCURRENCY', concurrency);
+  vi.resetModules();
+  return import('./auth');
+};
+
 describe('gateway authentication', () => {
   const fetchMock = vi.fn();
 
@@ -61,6 +68,8 @@ describe('gateway authentication', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -133,19 +142,44 @@ describe('gateway authentication', () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it('bounds concurrent CouchDB session validation for HTTP and WebSocket callers', async () => {
+  it('queues session checks past the concurrency limit and runs each one as a slot frees', async () => {
+    const auth = await withConcurrency('2');
     const resolvers: Array<(response: any) => void> = [];
     fetchMock.mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)));
-    const checks = Array.from({ 'length': 8 }, (unused, index) => {
-      void unused;
-      return requireSession({ 'headers': { 'cookie': `AuthSession=${index}` } } as any, mockResponse(), vi.fn());
-    });
-    await vi.waitFor(() => expect(resolvers).toHaveLength(8));
+    const checks = [ 'a', 'b' ].map((id) =>
+      auth.requireSession({ 'headers': { 'cookie': `AuthSession=${id}` } } as any, mockResponse(), vi.fn()));
+    await vi.waitFor(() => expect(resolvers).toHaveLength(2));
+    const next = vi.fn();
+    const queued = auth.requireSession({ 'headers': { 'cookie': 'AuthSession=queued' } } as any, mockResponse(), next);
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    resolvers[0](validSession());
+    await vi.waitFor(() => expect(resolvers).toHaveLength(3));
+    resolvers.slice(1).forEach((resolve) => resolve(validSession()));
+    await Promise.all([ ...checks, queued ]);
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('answers 503 when a queued session check waits too long, and frees the slot after', async () => {
+    const auth = await withConcurrency('1');
+    vi.useFakeTimers();
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const resolvers: Array<(response: any) => void> = [];
+    fetchMock.mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)));
+    const first = auth.requireSession({ 'headers': { 'cookie': 'AuthSession=first' } } as any, mockResponse(), vi.fn());
     const res = mockResponse();
-    await requireSession({ 'headers': { 'cookie': 'AuthSession=overflow' } } as any, res, vi.fn());
+    const queued = auth.requireSession({ 'headers': { 'cookie': 'AuthSession=queued' } } as any, res, vi.fn());
+    await vi.advanceTimersByTimeAsync(2000);
+    await queued;
     expect(res.status).toHaveBeenCalledWith(503);
-    resolvers.forEach((resolve) => resolve(validSession()));
-    await Promise.all(checks);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith('gateway: session validation gave up waiting for a slot');
+    resolvers[0](validSession());
+    await first;
+    const after = auth.requireSession({ 'headers': { 'cookie': 'AuthSession=after' } } as any, mockResponse(), vi.fn());
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    resolvers[1](validSession());
+    await after;
   });
 
   it.each([ 408, 429 ])('returns 503 when CouchDB session validation responds with %s', async (status) => {

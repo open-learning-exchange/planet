@@ -23,10 +23,45 @@ class SessionValidationError extends Error {
   }
 }
 
+interface SessionSlotWaiter {
+  resolve: (acquired: boolean) => void;
+  timer?: NodeJS.Timeout;
+}
+
 const SESSION_TIMEOUT_MS = 10000;
+const SESSION_SLOT_WAIT_MS = 2000;
+const SESSION_VALIDATION_CONCURRENCY = Number(process.env.SESSION_VALIDATION_CONCURRENCY) || 16;
 const UNAVAILABLE_SESSION_STATUSES = new Set([ 408, 429 ]);
-const MAX_CONCURRENT_SESSION_VALIDATIONS = 8;
 let sessionValidationsInFlight = 0;
+const sessionSlotWaiters = new Set<SessionSlotWaiter>();
+
+const acquireSessionSlot = (): Promise<boolean> => {
+  if (sessionValidationsInFlight < SESSION_VALIDATION_CONCURRENCY) {
+    sessionValidationsInFlight += 1;
+    return Promise.resolve(true);
+  }
+  return new Promise((resolve) => {
+    const waiter: SessionSlotWaiter = { resolve };
+    waiter.timer = setTimeout(() => {
+      sessionSlotWaiters.delete(waiter);
+      console.error('gateway: session validation gave up waiting for a slot'); // eslint-disable-line no-console
+      resolve(false);
+    }, SESSION_SLOT_WAIT_MS);
+    sessionSlotWaiters.add(waiter);
+  });
+};
+
+// A freed slot passes straight to the longest waiter, so the in-flight count only drops when nobody is queued
+const releaseSessionSlot = () => {
+  const [ waiter ] = sessionSlotWaiters;
+  if (!waiter) {
+    sessionValidationsInFlight -= 1;
+    return;
+  }
+  sessionSlotWaiters.delete(waiter);
+  clearTimeout(waiter.timer);
+  waiter.resolve(true);
+};
 
 export const authSessionCookie = (cookieHeader: string | undefined): string | undefined => {
   for (const cookie of cookieHeader?.split(';') || []) {
@@ -92,14 +127,13 @@ async function checkSession(headers: IncomingHttpHeaders): Promise<SessionCheck>
   if (!credentials) {
     return { 'session': null };
   }
-  if (sessionValidationsInFlight >= MAX_CONCURRENT_SESSION_VALIDATIONS) {
+  if (!await acquireSessionSlot()) {
     throw new SessionValidationError();
   }
-  sessionValidationsInFlight += 1;
   try {
     return await fetchSession(credentials);
   } finally {
-    sessionValidationsInFlight -= 1;
+    releaseSessionSlot();
   }
 }
 

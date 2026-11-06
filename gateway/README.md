@@ -24,6 +24,7 @@ Every route needs a Planet session unless it's on the open list in `src/index.ts
 
 - The gateway asks CouchDB's `_session` who the caller is, forwarding the browser's `AuthSession` cookie or an app's `Authorization: Basic` header, and passes a renewed cookie back. Chat takes the member from that session, and only a conversation's owner can add turns to it.
 - The WebSocket is checked during the HTTP upgrade, so a refused client never gets a socket (403 for an untrusted origin, 401 without a session).
+- Up to `SESSION_VALIDATION_CONCURRENCY` checks (default 16) run against CouchDB at once; the rest wait their turn, and after 2 s get a 503. On the reference Pi 5, 16 at once was faster than 8 or 40, and a class of 40 arriving together all got through within 0.15 s.
 - An origin is trusted when it matches the request's `Host`, port included, and the scheme in `X-Forwarded-Proto` when a proxy sends one, or when it's listed in `CORS_ORIGINS`. Behind a proxy that rewrites `Host`, list the public origin there.
 
 To run the gateway locally:
