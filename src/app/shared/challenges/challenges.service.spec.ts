@@ -65,4 +65,25 @@ describe('ChallengesService', () => {
     expect(dialog.open).toHaveBeenCalledTimes(1);
     expect(dialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ data: challenge }));
   });
+
+  it('reads date-only boundaries as whole local calendar days west of UTC', () => {
+    const timezone = process.env.TZ;
+    process.env.TZ = 'America/Guatemala';
+    try {
+      const active = (time: Date) => service.isChallengeActive(service.normalizeChallenge(challenge), time);
+
+      expect(active(new Date(2026, 8, 30, 23))).toBe(false);
+      expect(active(new Date(2026, 9, 1))).toBe(true);
+      expect(active(new Date(2026, 9, 31, 23))).toBe(true);
+      expect(active(new Date(2026, 10, 1))).toBe(false);
+      expect(service.parseDateBoundary('2026-10-31T12:00:00Z', 'end')).toEqual(new Date(Date.UTC(2026, 9, 31, 12)));
+      expect(service.parseDateBoundary(Date.UTC(2026, 9, 31, 12) as any, 'end')).toEqual(new Date(Date.UTC(2026, 9, 31, 12)));
+    } finally {
+      if (timezone === undefined) {
+        delete process.env.TZ;
+      } else {
+        process.env.TZ = timezone;
+      }
+    }
+  });
 });

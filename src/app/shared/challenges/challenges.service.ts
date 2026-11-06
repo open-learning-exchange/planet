@@ -173,11 +173,12 @@ export class ChallengesService {
     return Math.floor(this.getNumber(value, fallback, min));
   }
 
-  private parseDateBoundary(value: string | undefined, boundary: 'start' | 'end') {
+  parseDateBoundary(value: string | undefined, boundary: 'start' | 'end') {
     if (!value) {
       return undefined;
     }
-    const date = new Date(value);
+    const [ , year, month, day ] = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
+    const date = year ? new Date(Number(year), Number(month) - 1, Number(day)) : new Date(value);
     if (Number.isNaN(date.getTime())) {
       return undefined;
     }
