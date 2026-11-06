@@ -104,7 +104,7 @@
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Name</mat-header-cell>
-        <mat-cell *matCellDef="let element"><span class="card-label" i18n>Course Name</span><div class="cell-content" style="cursor: pointer">{{element.courseTitle}}</div></mat-cell>
+        <mat-cell *matCellDef="let element">@if (element.courseTitle) {<span class="card-label" i18n>Course Name</span><div class="cell-content" style="cursor: pointer">{{element.courseTitle}}</div>}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="stepNum">
         <mat-header-cell *matHeaderCellDef mat-sort-header="stepNum" i18n>Course Step</mat-header-cell>

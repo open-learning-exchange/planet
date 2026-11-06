@@ -584,7 +584,7 @@ body {
       }
 
       .mat-mdc-header-row:not(:has(.mat-sort-header, .card-select)) {
-        display: none;
+        @include m.visually-hidden;
       }
 
       .mat-mdc-header-row {
@@ -612,7 +612,7 @@ body {
         }
 
         &:not(.mat-sort-header):not(.card-select) {
-          display: none;
+          @include m.visually-hidden;
         }
       }
 
