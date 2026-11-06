@@ -174,6 +174,10 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     this.hideKey[key] = !this.hideKey[key];
   }
 
+  getHideKeyTooltip(key: string): string {
+    return this.hideKey[key] ? $localize`Show` : $localize`Hide`;
+  }
+
   copyKey(key: string) {
     const value = this.getStringControlValue('keys_' + key);
     this.clipboard.copy(value);
