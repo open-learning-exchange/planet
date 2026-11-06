@@ -1,7 +1,9 @@
+import { SimpleChange } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import { ExamsViewComponent } from './exams-view.component';
 
 describe('ExamsViewComponent', () => {
@@ -14,6 +16,7 @@ describe('ExamsViewComponent', () => {
   let dialogsLoadingService: any;
   let dialog: any;
   let location: any;
+  let coursesService: any;
 
   const paramMapOf = (params: any) => ({
     get: (key: string) => (params[key] !== undefined ? params[key] : null),
@@ -27,7 +30,7 @@ describe('ExamsViewComponent', () => {
     return new ExamsViewComponent(
       router,
       route,
-      {} as any,
+      coursesService,
       submissionsService,
       { get: vi.fn().mockReturnValue({ name: 'user' }) } as any,
       couchService,
@@ -41,6 +44,11 @@ describe('ExamsViewComponent', () => {
   };
 
   beforeEach(() => {
+    coursesService = {
+      courseUpdated$: new Subject(),
+      requestCourse: vi.fn(),
+      canManageCourse: vi.fn().mockReturnValue(false)
+    };
     couchService = {
       get: vi.fn((path: string) => of(
         path.startsWith('teams/') ?
@@ -57,6 +65,45 @@ describe('ExamsViewComponent', () => {
       navigate: vi.fn(), createUrlTree: vi.fn(), url: '/surveys/dispense',
       currentNavigation: vi.fn(), serializeUrl: vi.fn(url => url)
     };
+  });
+
+  describe('course prerequisites', () => {
+    const course = {
+      _id: 'course-1',
+      steps: [
+        { exam: { _id: 'exam-1', questions: [ {} ] }, passingRequired: true },
+        { stepTitle: 'Step 2', exam: { _id: 'exam-2' }, survey: { _id: 'survey-2' } }
+      ]
+    };
+
+    it.each([ 'exam', 'survey' ])('redirects a direct %s route when a prerequisite is unpassed', (type) => {
+      const params = { id: course._id, stepNum: '2', questionNum: '1', type, examId: `${type}-2` };
+      component = createComponent(params);
+      component.setCourseListener();
+      component.setExam(paramMapOf(params));
+
+      coursesService.courseUpdated$.next({ course, progress: [] });
+
+      expect(router.navigate).toHaveBeenCalledWith([ '/courses/view', course._id, 'step', 1 ], { replaceUrl: true });
+      expect(couchService.get).not.toHaveBeenCalled();
+      expect(submissionsService.openSubmission).not.toHaveBeenCalled();
+      expect(component.isInternalNavigation).toBe(true);
+      component.ngOnDestroy();
+    });
+
+    it.each([ 'exam', 'survey' ])('opens a direct %s route after the prerequisite is passed', (type) => {
+      const params = { id: course._id, stepNum: '2', questionNum: '1', type, examId: `${type}-2` };
+      component = createComponent(params);
+      component.setCourseListener();
+      component.setExam(paramMapOf(params));
+
+      coursesService.courseUpdated$.next({ course, progress: [ { stepNum: 1, passed: true } ] });
+
+      expect(router.navigate).not.toHaveBeenCalled();
+      expect(couchService.get).toHaveBeenCalledWith(`exams/${type}-2`);
+      expect(submissionsService.openSubmission).toHaveBeenCalledWith(expect.objectContaining({ type }));
+      component.ngOnDestroy();
+    });
   });
 
   it('opens a survey for recording without creating a submission first', () => {
@@ -271,6 +318,41 @@ describe('ExamsViewComponent', () => {
     component.submissionId = 'submission-1';
 
     expect(component.questionRouteParams()).toEqual({ ...params, submissionId: 'submission-1', status: 'pending' });
+  });
+
+  it('clears multiple-choice selections after an incorrect try so the second try can pass', () => {
+    const choiceA = { id: 'a', text: 'A' };
+    const choiceB = { id: 'b', text: 'B' };
+    const question = { body: 'Q1', type: 'selectMultiple', choices: [ choiceA, choiceB ], correctChoice: [ 'a', 'b' ] } as any;
+    component = createComponent();
+    component.question = question;
+    component.questionNum = 1;
+    component.maxQuestions = 2;
+    submissionsService.submission = { status: 'pending' };
+    submissionsService.submitAnswer = vi.fn().mockReturnValue(of({ nextQuestion: 0 }));
+
+    const widget = new ExamsTakeWidgetComponent();
+    widget.question = question;
+    widget.answer = component.answer;
+    widget.ngOnChanges({
+      question: new SimpleChange(null, question, true),
+      answer: new SimpleChange(null, component.answer, true)
+    });
+
+    widget.toggleMultipleOption(choiceA);
+    component.nextQuestion();
+
+    expect(component.statusMessage).toBe('incorrect');
+    expect(component.answer.value).toBeNull();
+    expect(widget.checkboxState).toEqual({});
+
+    widget.toggleMultipleOption(choiceA);
+    widget.toggleMultipleOption(choiceB);
+    submissionsService.submitAnswer.mockReturnValue(of({ nextQuestion: 1 }));
+    component.nextQuestion();
+
+    expect(submissionsService.submitAnswer).toHaveBeenLastCalledWith([ choiceA, choiceB ], true, 0, false);
+    expect(router.navigate).toHaveBeenCalled();
   });
 
   it('keeps the url unchanged for a submission opened directly', () => {

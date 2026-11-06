@@ -25,6 +25,7 @@ import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.
 import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 
 import { CoursesService } from '../courses/courses.service';
+import { blockingStepIndex } from '../courses/courses.utils';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
@@ -457,6 +458,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           this.planetMessageService.showAlert($localize`This test is not available`);
           this.isInternalNavigation = true;
           this.goBack();
+          return EMPTY;
+        }
+        const blocking = this.previewMode || this.coursesService.canManageCourse(course) ? -1 : blockingStepIndex(course.steps, progress);
+        if (blocking > -1 && this.stepNum - 1 > blocking) {
+          this.isInternalNavigation = true;
+          this.router.navigate([ '/courses/view', course._id, 'step', blocking + 1 ], { replaceUrl: true });
           return EMPTY;
         }
         this.title = step.stepTitle;
