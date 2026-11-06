@@ -361,7 +361,6 @@ ${'\t'.repeat(18)}
         }
       }
 
-      // Like a real canvas, it falls back to PNG for a type it can't encode
       const useCanvas = (alpha: number, encodes: string[]) => {
         const canvas = {
           width: 0,
