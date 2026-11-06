@@ -24,7 +24,7 @@ const rxjsPath = {
     message: "Please import directly from 'rxjs' instead",
 };
 
-const markdownPaths = ["showdown", "@covalent/markdown"].map(name => ({
+const markdownPaths = ["showdown"].map(name => ({
     name,
     message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
 }));

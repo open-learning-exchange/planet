@@ -70,7 +70,7 @@
               "src/styles.scss",
               "src/styles/calendar.scss",
               "src/styles/roboto.scss",
-              "src/simplemde.scss",
+              "node_modules/easymde/dist/easymde.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.css"
             ],
             "scripts": [],
