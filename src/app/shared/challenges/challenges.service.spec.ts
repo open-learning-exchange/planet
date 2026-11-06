@@ -2,7 +2,7 @@ import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ChallengesService } from './challenges.service';
-import { DialogGuardService } from '../dialogs/dialog-guard.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 describe('ChallengesService', () => {
   const challenge = {

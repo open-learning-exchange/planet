@@ -72,6 +72,11 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+
+    .step-nav-action {
+      display: inline-flex;
+      align-items: center;
+    }
   }
 
 }
