@@ -1093,7 +1093,6 @@ body {
   }
 }
 
-// Above the page's fixed layers (the z-index 1000 banner). Dialogs open in the top layer, or after it in the DOM without popover support
 .navigation-blocker {
   position: fixed;
   inset: 0;
