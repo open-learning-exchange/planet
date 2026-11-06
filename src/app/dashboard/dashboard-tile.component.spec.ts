@@ -1,10 +1,10 @@
-import { ElementRef, EnvironmentInjector, runInInjectionContext } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { computed, ElementRef, signal, Signal, WritableSignal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
-import { vi } from 'vitest';
+import { Mock, vi } from 'vitest';
 
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
 
@@ -31,22 +31,33 @@ const tileElement = (
 };
 
 describe('DashboardTileComponent', () => {
+  const createTile = (deviceType: Signal<DeviceType>) => {
+    TestBed.configureTestingModule({
+      imports: [ DashboardTileComponent ],
+      providers: [
+        { provide: CoursesService, useValue: {} },
+        { provide: DeviceInfoService, useValue: { isMobile: computed(() => isMobileOrSmaller(deviceType())) } },
+        { provide: MatDialog, useValue: {} },
+        { provide: PlanetMessageService, useValue: {} },
+        { provide: TeamsService, useValue: {} },
+        { provide: UserService, useValue: {} }
+      ]
+    }).overrideComponent(DashboardTileComponent, { set: { template: '' } });
+    return TestBed.createComponent(DashboardTileComponent);
+  };
+
   describe('title line measurement', () => {
+    let fixture: ComponentFixture<DashboardTileComponent>;
     let component: DashboardTileComponent;
-    let detectChanges: ReturnType<typeof vi.fn>;
+    let deviceType: WritableSignal<DeviceType>;
+    let detectChanges: Mock<() => void>;
 
     beforeEach(() => {
-      TestBed.configureTestingModule({});
+      deviceType = signal(DeviceType.DESKTOP);
       detectChanges = vi.fn();
-      component = runInInjectionContext(TestBed.inject(EnvironmentInjector), () => new DashboardTileComponent(
-        {} as any,
-        {} as any,
-        {} as any,
-        {} as any,
-        {} as any,
-        { detectChanges } as any,
-        { watchDeviceType: vi.fn(() => of(DeviceType.DESKTOP)) } as any
-      ));
+      fixture = createTile(deviceType);
+      component = fixture.componentInstance;
+      component['cd'].detectChanges = detectChanges;
     });
 
     it('does not measure tiles before the view is available', () => {
@@ -67,7 +78,7 @@ describe('DashboardTileComponent', () => {
       regularItem.append(tileElement('dashboard-item-link', 200, '16px', 'normal', 'a'));
       itemDiv.append(courseItem, regularItem);
       component.itemDiv = new ElementRef(itemDiv);
-      component.cardType = 'myCourses';
+      fixture.componentRef.setInput('cardType', 'myCourses');
 
       component.ngAfterViewChecked();
 
@@ -93,17 +104,59 @@ describe('DashboardTileComponent', () => {
     });
 
     it('does not clamp titles in accordion mode', () => {
-      component.deviceType = DeviceType.MOBILE;
+      deviceType.set(DeviceType.MOBILE);
 
       expect(component.dashboardTextLines({ coverFileName: 'cover.png' })).toBe('none');
     });
 
     it('builds coverImageUrl for myTeams and myCourses with respective dbs', () => {
-      component.cardType = 'myTeams';
+      fixture.componentRef.setInput('cardType', 'myTeams');
       expect(component.coverImageUrl({ _id: 't1', coverFileName: 'cover.png' })).toContain('/teams/t1/cover.png');
 
-      component.cardType = 'myCourses';
+      fixture.componentRef.setInput('cardType', 'myCourses');
       expect(component.coverImageUrl({ _id: 'c1', coverFileName: 'cover.png' })).toContain('/courses/c1/cover.png');
+    });
+  });
+
+  describe('accordion expansion', () => {
+    const renderTile = (cardType: string, deviceType: Signal<DeviceType>) => {
+      const fixture = createTile(deviceType);
+      fixture.componentRef.setInput('cardType', cardType);
+      fixture.componentInstance['cd'].detectChanges = vi.fn();
+      return fixture.componentInstance;
+    };
+
+    it('expands the myLife tile when the device becomes mobile', () => {
+      const deviceType = signal(DeviceType.DESKTOP);
+      const tile = renderTile('myLife', deviceType);
+      expect(tile.isExpanded()).toBe(false);
+
+      deviceType.set(DeviceType.MOBILE);
+
+      expect(tile.isExpanded()).toBe(true);
+    });
+
+    it('keeps a collapsed myLife tile collapsed across device changes', () => {
+      const deviceType = signal(DeviceType.MOBILE);
+      const tile = renderTile('myLife', deviceType);
+
+      tile.toggleAccordion(new Event('click'));
+
+      [DeviceType.SMALL_MOBILE, DeviceType.TABLET, DeviceType.MOBILE].forEach(type => {
+        deviceType.set(type);
+        expect(tile.isExpanded()).toBe(false);
+      });
+    });
+
+    it('starts other tiles collapsed and keeps their toggle across device changes', () => {
+      const deviceType = signal(DeviceType.MOBILE);
+      const tile = renderTile('myCourses', deviceType);
+      expect(tile.isExpanded()).toBe(false);
+
+      tile.toggleAccordion(new Event('click'));
+      deviceType.set(DeviceType.DESKTOP);
+
+      expect(tile.isExpanded()).toBe(true);
     });
   });
 
@@ -119,7 +172,7 @@ describe('DashboardTileComponent', () => {
       imports: [ DashboardTileComponent ],
       providers: [
         { provide: CoursesService, useValue: coursesService },
-        { provide: DeviceInfoService, useValue: { watchDeviceType: vi.fn().mockReturnValue(of(undefined)) } },
+        { provide: DeviceInfoService, useValue: { isMobile: signal(false) } },
         { provide: MatDialog, useValue: dialog },
         { provide: PlanetMessageService, useValue: messageService },
         { provide: TeamsService, useValue: {} },

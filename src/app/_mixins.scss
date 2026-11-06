@@ -149,3 +149,28 @@
   border-radius: 4px;
   object-fit: cover;
 }
+
+@mixin markdown-alignment-and-tasks {
+  .markdown-align-left {
+    text-align: left;
+  }
+
+  .markdown-align-center {
+    text-align: center;
+  }
+
+  .markdown-align-right {
+    text-align: right;
+  }
+
+  .task-list-item {
+    list-style-type: none;
+  }
+
+  .markdown-task-checkbox {
+    display: inline-block;
+    margin: 0 0.35em 0.25em -1.6em;
+    color: v.$primary;
+    vertical-align: middle;
+  }
+}

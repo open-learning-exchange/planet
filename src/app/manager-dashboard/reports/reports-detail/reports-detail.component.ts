@@ -646,7 +646,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   exportCourseOverview(startDate: Date, endDate: Date) {
-    this.dialogsLoadingService.start();
     const dateRange = { startDate, endDate };
     const filteredCourseData = filterByDate(
       this.courseActivities?.total?.data,
@@ -717,7 +716,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   exportResourceOverview(startDate: Date, endDate: Date) {
-    this.dialogsLoadingService.start();
     const dateRange = { startDate, endDate };
     const filteredResourceData = filterByDate(
       this.resourceActivities?.total?.data || [],
