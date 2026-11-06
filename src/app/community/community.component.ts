@@ -604,8 +604,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (this.isRemoteExchange) {
       return;
     }
+    const openedDescription = this.team.description || '';
     const formGroup: FormGroup<CommunityDescriptionForm> = this.fb.group({
-      description: this.fb.control(this.team.description || '', { validators: [ CustomValidators.requiredMarkdown ] })
+      description: this.fb.control(openedDescription, { validators: [ CustomValidators.requiredMarkdown ] })
     });
 
     this.dialogsFormService.openDialogsForm(
@@ -629,19 +630,31 @@ export class CommunityComponent implements OnInit, OnDestroy {
             return;
           }
 
-          this.teamsService.updateTeam({ ...this.team, description: trimmedDescription }).pipe(
+          this.teamsService.ensureServicesDoc().pipe(
+            switchMap(servicesDoc => {
+              // Merging onto the latest revision would otherwise overwrite a description saved since this dialog opened
+              if ((servicesDoc.description || '') !== openedDescription) {
+                this.team = servicesDoc;
+                this.servicesDescriptionLabel = servicesDoc.description ? 'Edit' : 'Add';
+                this.planetMessageService.showAlert($localize`Someone else changed the description. Close and reopen to see it.`);
+                return EMPTY;
+              }
+              return this.teamsService.updateTeam({ ...servicesDoc, description: trimmedDescription });
+            }),
             finalize(() => this.dialogsLoadingService.stop())
-          ).subscribe(newTeam => {
-            const previousDescription = !!this.team.description;
-            this.team = newTeam;
-            this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
+          ).subscribe({
+            next: newTeam => {
+              this.team = newTeam;
+              this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
 
-            const message = previousDescription
-              ? $localize`Description edited successfully.`
-              : $localize`Description added successfully.`;
+              const message = openedDescription
+                ? $localize`Description edited successfully.`
+                : $localize`Description added successfully.`;
 
-            dialogRef.close();
-            this.planetMessageService.showMessage(message);
+              dialogRef.close();
+              this.planetMessageService.showMessage(message);
+            },
+            error: () => this.planetMessageService.showAlert($localize`There was an error saving the description.`)
           });
         }
       }

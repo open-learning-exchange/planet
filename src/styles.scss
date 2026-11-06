@@ -1,6 +1,7 @@
 @use 'app/variables' as v;
 @use 'app/mixins' as m;
 @use 'planet-mat-theme';
+@use '@angular/cdk';
 
 :root {
   --planet-vh: 100vh;
@@ -1090,4 +1091,11 @@ body {
   ::-webkit-scrollbar-thumb:hover {
     opacity: 0.8;
   }
+}
+
+.navigation-blocker {
+  position: fixed;
+  inset: 0;
+  z-index: cdk.$overlay-container-z-index;
+  cursor: progress;
 }

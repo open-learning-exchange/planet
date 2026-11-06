@@ -43,7 +43,7 @@ import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { SearchService } from '@shared/search/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '@shared/ui/device-info.service';
+import { DeviceInfoService, isTabletOrSmaller } from '@shared/ui/device-info.service';
 import { PlanetFilteredAmountComponent } from '@shared/tables/planet-filtered-amount.component';
 import { PlanetTagSelectedInputComponent } from '@shared/forms/tags/planet-tag-selected-input.component';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
@@ -179,11 +179,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   );
   trackById = trackById;
   initialSort = '';
-  isMobile: boolean;
-  isTabletOrSmaller: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
+  readonly isTabletOrSmaller = this.deviceInfoService.isTabletOrSmaller;
   showFiltersRow = false;
   get showInlineFilters() {
-    return this.showFilters && !this.isTabletOrSmaller;
+    return this.showFilters && !this.isTabletOrSmaller();
   }
   expandedElement: any = null;
 
@@ -207,9 +207,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.isMobile = isMobileOrSmaller(deviceType);
-      this.isTabletOrSmaller = isTabletOrSmaller(deviceType);
-      if (!this.isTabletOrSmaller && this.filterDialogRef) {
+      if (!isTabletOrSmaller(deviceType) && this.filterDialogRef) {
         this.filterDialogRef.close();
       }
     });
@@ -440,7 +438,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleFilters() {
-    if (this.isTabletOrSmaller) {
+    if (this.isTabletOrSmaller()) {
       if (this.filterDialogRef) {
         return;
       }

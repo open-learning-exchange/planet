@@ -30,8 +30,8 @@ export const isAcceptableFile = (file: File, accept?: string): boolean => {
 };
 
 export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
-  // CouchDB rejects attachment names that start with an underscore
-  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_').replace(/^_+/, '') || 'attachment';
+  // CouchDB rejects attachment names that start with an underscore and reads + in a URL as a space; a parenthesis ends a markdown link
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>+()]/g, '_').replace(/^_+/, '') || 'attachment';
   if (usedNames.indexOf(trimmed) === -1) {
     return trimmed;
   }
@@ -66,6 +66,7 @@ export interface NormalizeImageOptions {
   quality?: number;
   usedNames?: string[];
   maxFallbackBytes?: number;
+  keepUnderBytes?: number;
 }
 
 export interface NormalizedImage {
@@ -98,10 +99,25 @@ interface EncodedImage {
   extension: string;
 }
 
+const hasTransparency = (canvas: HTMLCanvasElement): boolean => {
+  const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+  for (let alpha = 3; alpha < data.length; alpha += 4) {
+    if (data[alpha] < 255) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const encodedImage = async (canvas: HTMLCanvasElement, quality: number): Promise<EncodedImage | null> => {
   const webp = await canvasToBlob(canvas, 'image/webp', quality);
   if (webp?.type === 'image/webp') {
     return { blob: webp, contentType: 'image/webp', extension: 'webp' };
+  }
+  // Safari can't encode WebP, and JPEG would turn transparent pixels black
+  if (hasTransparency(canvas)) {
+    const png = await canvasToBlob(canvas, 'image/png', quality);
+    return png?.type === 'image/png' ? { blob: png, contentType: 'image/png', extension: 'png' } : null;
   }
   const jpeg = await canvasToBlob(canvas, 'image/jpeg', quality);
   return jpeg?.type === 'image/jpeg' ? { blob: jpeg, contentType: 'image/jpeg', extension: 'jpg' } : null;
@@ -111,11 +127,13 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
   const maxDimension = opts.maxDimension ?? 600;
   const quality = opts.quality ?? 0.82;
   const maxFallbackBytes = opts.maxFallbackBytes ?? IMAGE_MAX_FALLBACK_BYTES;
-  const fallback = (): NormalizedImage | null => (file.size > maxFallbackBytes ? null : {
+  const keepUnderBytes = opts.keepUnderBytes ?? 0;
+  const unchanged = (): NormalizedImage => ({
     file,
     contentType: normalizedContentType(file),
     fileName: safeAttachmentName(file.name, opts.usedNames)
   });
+  const fallback = (): NormalizedImage | null => (file.size > maxFallbackBytes ? null : unchanged());
   let objectUrl = '';
   try {
     objectUrl = URL.createObjectURL(file);
@@ -131,6 +149,9 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
       return fallback();
     }
     const dimensions = scaledDimensions(sourceWidth, sourceHeight, maxDimension);
+    if (file.size < keepUnderBytes && dimensions.width === sourceWidth && dimensions.height === sourceHeight) {
+      return unchanged();
+    }
     const canvas = document.createElement('canvas');
     canvas.width = dimensions.width;
     canvas.height = dimensions.height;
@@ -138,6 +159,7 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
     if (!ctx) {
       return fallback();
     }
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(image, 0, 0, dimensions.width, dimensions.height);
     const encoded = await encodedImage(canvas, quality);
     if (!encoded) {
@@ -564,7 +586,7 @@ export const normalizeMarkdownWhitespace = (content: string) => {
   return normalizedLines.join('\n').replace(/^\n+|\n+$/g, '');
 };
 
-export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
+export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif|webp)(?:\?.*?)?)\)/gi;
 
 // Content must be normalized first so pathological whitespace cannot inflate preview length.
 export const getMarkdownPreviewText = (content: string) => {

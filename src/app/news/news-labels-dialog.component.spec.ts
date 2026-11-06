@@ -12,6 +12,7 @@ describe('NewsLabelsDialogComponent', () => {
   let planetMessageService: any;
   let dialogsLoadingService: any;
   let dialog: any;
+  let teamsService: any;
   let communityTeam: any;
 
   const createComponent = (data: any) => new NewsLabelsDialogComponent(
@@ -20,7 +21,8 @@ describe('NewsLabelsDialogComponent', () => {
     couchService,
     planetMessageService,
     dialogsLoadingService,
-    dialog
+    dialog,
+    teamsService
   );
 
   beforeEach(() => {
@@ -32,10 +34,13 @@ describe('NewsLabelsDialogComponent', () => {
     };
     communityTeam = { _id: 'local@parent', teamType: 'sync', teamPlanetCode: 'local', type: 'services' };
     couchService = {
-      get: vi.fn().mockReturnValue(of({
-        ...communityTeam, _rev: '2-current', description: 'About us', customVoiceLabels: [ 'Stale label' ]
-      })),
+      get: vi.fn(),
       updateDocument: vi.fn().mockReturnValue(of({}))
+    };
+    teamsService = {
+      ensureServicesDoc: vi.fn().mockReturnValue(of({
+        ...communityTeam, _rev: '2-current', description: 'About us', customVoiceLabels: [ 'Stale label' ]
+      }))
     };
     planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
@@ -87,7 +92,8 @@ describe('NewsLabelsDialogComponent', () => {
     component.save();
 
     expect(component.initialCustomLabels).toEqual([ { name: 'Current label', color: DEFAULT_LABEL_COLOR } ]);
-    expect(couchService.get).toHaveBeenCalledWith('teams/local@parent');
+    expect(teamsService.ensureServicesDoc).toHaveBeenCalled();
+    expect(couchService.get).not.toHaveBeenCalled();
     expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
       ...communityTeam,
       _rev: '2-current',
@@ -104,19 +110,17 @@ describe('NewsLabelsDialogComponent', () => {
     ]);
   });
 
-  it('creates the community services doc when it does not exist yet', () => {
-    couchService.get.mockReturnValue(throwError({ status: 404 }));
+  it('keeps the dialog open without writing when the services doc cannot be read', () => {
+    teamsService.ensureServicesDoc.mockReturnValue(throwError({ status: 500 }));
     const component = createComponent({ target: 'community', team: communityTeam, customLabels: [] });
     component.ngOnInit();
     component.customLabels.push({ name: 'Event', color: DEFAULT_LABEL_COLOR });
 
     component.save();
 
-    expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
-      ...communityTeam,
-      customVoiceLabels: [ { name: 'Event', color: DEFAULT_LABEL_COLOR } ]
-    });
-    expect(dialogRef.close).toHaveBeenCalledWith([ { name: 'Event', color: DEFAULT_LABEL_COLOR } ]);
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(planetMessageService.showAlert).toHaveBeenCalled();
+    expect(dialogRef.close).not.toHaveBeenCalled();
   });
 
   it('adds valid pending input with selected color before saving', () => {
@@ -166,6 +170,7 @@ describe('NewsLabelsDialogComponent', () => {
     component.save();
 
     expect(couchService.get).toHaveBeenCalledWith('teams/team');
+    expect(teamsService.ensureServicesDoc).not.toHaveBeenCalled();
     expect(couchService.updateDocument).toHaveBeenCalledWith('teams', {
       _id: 'team',
       _rev: '2-current',
