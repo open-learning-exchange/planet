@@ -109,10 +109,11 @@ export class ChallengesService {
   }
 
   openChallengeDialogOnce(dialog: MatDialog, challenge$: Observable<PlanetChallenge | undefined>) {
+    // Pages call this on load, where covering the page would flash the overlay on every visit
     return this.dialogGuard.open('challenge-announcement', () => challenge$.pipe(
       filter(challenge => !!challenge),
       map(challenge => this.openChallengeDialog(dialog, challenge))
-    ));
+    ), { cover: false });
   }
 
   normalizeChallenge(challenge: Partial<PlanetChallenge>): PlanetChallenge {

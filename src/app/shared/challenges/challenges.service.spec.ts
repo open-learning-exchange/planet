@@ -2,7 +2,7 @@ import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ChallengesService } from './challenges.service';
-import { DialogGuardService } from '../dialogs/dialog-guard.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 describe('ChallengesService', () => {
   const challenge = {
@@ -15,7 +15,7 @@ describe('ChallengesService', () => {
   beforeEach(() => {
     couchService = { get: vi.fn().mockReturnValue(of({ _id: 'local@parent', challenges: [ challenge ] })) };
     const stateService = { configuration: { code: 'local', parentCode: 'parent' } } as any;
-    service = new ChallengesService(stateService, couchService, new DialogGuardService());
+    service = new ChallengesService(stateService, couchService, new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any));
   });
 
   it('reads challenges from the planet services doc', () => {

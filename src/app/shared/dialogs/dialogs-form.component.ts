@@ -216,7 +216,6 @@ export class DialogsFormComponent {
     const currentValue = control.value as Array<{ _id: string }> | null;
     const initialSelection = (currentValue || []).map((value) => value._id);
     const key = `dialogs-form:${field.db}:${field.name}`;
-    this.dialogsLoadingService.start();
     this.dialogGuard.open(key, () =>
       this.dialogsListService.attachDocsData(field.db, 'title', this.dialogOkClick(field).bind(this), initialSelection).pipe(
         map(data => this.dialog.open(DialogsListComponent, {
@@ -226,14 +225,7 @@ export class DialogsFormComponent {
           autoFocus: false
         }))
       )
-    ).subscribe({
-      next: ref => {
-        this.dialogsLoadingService.stop();
-        this.dialogListRef = ref;
-      },
-      error: () => this.dialogsLoadingService.stop(),
-      complete: () => this.dialogsLoadingService.stop()
-    });
+    ).subscribe(ref => this.dialogListRef = ref);
   }
 
   dialogOkClick(field: DialogField) {

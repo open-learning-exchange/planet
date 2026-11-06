@@ -9,6 +9,7 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import {
@@ -31,6 +32,7 @@ interface CoursesStepForm {
   id: FormControl<string>;
   stepTitle: FormControl<string>;
   description: FormControl<string>;
+  passingRequired: FormControl<boolean>;
 }
 
 @Component({
@@ -43,7 +45,7 @@ interface CoursesStepForm {
     CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
     ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
     MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent
+    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent, MatSlideToggle
   ]
 })
 export class CoursesStepComponent implements OnDestroy {
@@ -78,10 +80,12 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepForm = this.fb.group<CoursesStepForm>({
       id: this.fb.control(''),
       stepTitle: this.fb.control(''),
-      description: this.fb.control('')
+      description: this.fb.control(''),
+      passingRequired: this.fb.control(false)
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
+      this.activeStep = this.steps[this.activeStepIndex];
       this.stepsChange.emit(this.steps);
     });
   }
@@ -95,7 +99,10 @@ export class CoursesStepComponent implements OnDestroy {
     this.activeStepIndex = index;
     if (index > -1) {
       this.activeStep = this.steps[index];
-      this.stepForm.patchValue(this.steps[index]);
+      this.stepForm.patchValue({
+        ...this.steps[index],
+        passingRequired: !!this.steps[index].passingRequired
+      });
     }
     this.stepEditorOpenChange.emit(index > -1);
   }
