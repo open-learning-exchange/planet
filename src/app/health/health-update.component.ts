@@ -1,8 +1,8 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { interval, of, race, forkJoin } from 'rxjs';
-import { debounce, finalize } from 'rxjs/operators';
+import { interval, of, race } from 'rxjs';
+import { debounce, finalize, switchMap } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -197,14 +197,13 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
     }
     const profileValue = this.profileForm.getRawValue();
     const healthValue = this.healthForm.getRawValue();
-    const save$ = forkJoin([
-      this.userService.updateUser({ ...this.userService.get(), ...profileValue }),
-      this.healthService.postHealthProfileData({
+    const save$ = this.userService.updateUser({ ...this.userService.get(), ...profileValue }).pipe(
+      switchMap(() => this.healthService.postHealthProfileData({
         _id: this.existingData._id || this.userService.get()._id,
         _rev: this.existingData._rev,
         profile: healthValue
-      })
-    ]);
+      }))
+    );
     this.dialogsLoadingService.start();
     save$.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => {
       this.hasUnsavedChanges = false;

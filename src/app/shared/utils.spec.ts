@@ -28,6 +28,10 @@ describe('utils', () => {
       expect(safeAttachmentName('___')).toBe('attachment');
     });
 
+    it('replaces characters that break attachment URLs and markdown links', () => {
+      expect(safeAttachmentName('before+after (1).jpg')).toBe('before_after__1_.jpg');
+    });
+
   });
 
   describe('fullName', () => {
@@ -270,6 +274,10 @@ ${'\t'.repeat(18)}
       expect(hasMarkdownImages('![Guatemala](images/guatemala.jpg)')).toBe(true);
     });
 
+    it('detects images resized to WebP at upload', () => {
+      expect(hasMarkdownImages('![](resources/image-id/photo.webp)')).toBe(true);
+    });
+
   });
 
   describe('scaledDimensions', () => {
@@ -339,6 +347,61 @@ ${'\t'.repeat(18)}
 
       expect(await normalizeImage(file, { maxFallbackBytes: 1024 })).toBeNull();
       expect(await normalizeImage(file, { maxFallbackBytes: 4096 })).not.toBeNull();
+    });
+
+    describe('with a decoded image', () => {
+      class LoadedImage {
+        naturalWidth = 1000;
+        naturalHeight = 500;
+        onload: () => void = () => {};
+        onerror: () => void = () => {};
+
+        set src(_value: string) {
+          setTimeout(() => this.onload());
+        }
+      }
+
+      const useCanvas = (alpha: number, encodes: string[]) => {
+        const canvas = {
+          width: 0,
+          height: 0,
+          getContext: () => ({ drawImage: vi.fn(), getImageData: () => ({ data: new Uint8ClampedArray([ 0, 0, 0, alpha ]) }) }),
+          toBlob: (done: (blob: Blob) => void, type: string) =>
+            done(new Blob([ 'encoded' ], { type: encodes.includes(type) ? type : 'image/png' }))
+        };
+        vi.spyOn(document, 'createElement').mockReturnValue(canvas as any);
+        (window as any).Image = LoadedImage;
+      };
+      const file = () => new File([ 'original' ], 'diagram.png', { type: 'image/png' });
+
+      it('keeps transparent pixels as PNG when the browser cannot encode WebP', async () => {
+        useCanvas(0, [ 'image/jpeg' ]);
+        const original = file();
+
+        const result = await normalizeImage(original);
+
+        expect(result?.contentType).toBe('image/png');
+        expect(result?.fileName).toBe('diagram.png');
+        expect(result?.file).not.toBe(original);
+      });
+
+      it('uses JPEG for opaque images when the browser cannot encode WebP', async () => {
+        useCanvas(255, [ 'image/jpeg' ]);
+
+        const result = await normalizeImage(file());
+
+        expect(result?.contentType).toBe('image/jpeg');
+        expect(result?.fileName).toBe('diagram.jpg');
+      });
+
+      it('keeps the original only when it fits and is under keepUnderBytes', async () => {
+        useCanvas(255, [ 'image/webp' ]);
+        const original = file();
+
+        expect((await normalizeImage(original, { maxDimension: 1000, keepUnderBytes: 1024 }))?.file).toBe(original);
+        expect((await normalizeImage(original, { maxDimension: 600, keepUnderBytes: 1024 }))?.contentType).toBe('image/webp');
+        expect((await normalizeImage(original, { maxDimension: 1000, keepUnderBytes: 1 }))?.contentType).toBe('image/webp');
+      });
     });
 
   });
