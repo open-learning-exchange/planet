@@ -25,7 +25,6 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '@shared/database/mango-queries';
-import { DeviceInfoService } from '@shared/ui/device-info.service';
 
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
@@ -83,7 +82,6 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   dialogRef: MatDialogRef<DialogsListComponent>;
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
-  readonly isMobile = this.deviceInfoService.isMobile;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -99,8 +97,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private dialogsLoadingService: DialogsLoadingService,
     private validatorService: ValidatorService,
     private reportsService: ReportsService,
-    private dialogGuard: DialogGuardService,
-    private deviceInfoService: DeviceInfoService
+    private dialogGuard: DialogGuardService
   ) {}
 
   ngOnChanges() {
