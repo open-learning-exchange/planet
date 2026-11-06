@@ -6,53 +6,90 @@ import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 describe('ChallengesService', () => {
   const challenge = {
-    id: 'reto', title: 'Reto', courseId: 'course-1', surveyExamId: 'survey-1', startsAt: '2026-10-01', endsAt: '2026-10-31'
+    _id: 'reto', type: 'challenge', title: 'Reto', startsAt: '2026-10-01', endsAt: '2026-10-31',
+    tasks: [
+      { id: 'join', type: 'course_join', targetId: 'course-1', reward: 0 },
+      { id: 'survey', type: 'survey_complete', targetId: 'survey-1', courseId: 'course-1', reward: 1 }
+    ]
   };
   const referenceDate = new Date(2026, 9, 15);
   let couchService: any;
+  let userService: any;
   let service: ChallengesService;
 
   beforeEach(() => {
-    couchService = { get: vi.fn().mockReturnValue(of({ _id: 'local@parent', challenges: [ challenge ] })) };
-    const stateService = { configuration: { code: 'local', parentCode: 'parent' } } as any;
-    service = new ChallengesService(stateService, couchService, new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any));
+    couchService = { post: vi.fn().mockReturnValue(of({ docs: [ challenge ] })) };
+    userService = { get: vi.fn().mockReturnValue({ name: 'maria' }) };
+    service = new ChallengesService(couchService, new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any), userService);
   });
 
-  it('reads challenges from the planet services doc', () => {
+  it('reads challenges from the challenges database', () => {
     let active: any;
     service.getActiveChallenge(referenceDate).subscribe(result => active = result);
 
-    expect(couchService.get).toHaveBeenCalledWith('teams/local@parent');
-    expect(active).toEqual(expect.objectContaining({ id: 'reto', courseId: 'course-1' }));
-    expect(service.activeChallengeIn({ challenges: [ challenge ] }, referenceDate)).toEqual(active);
+    expect(couchService.post).toHaveBeenCalledWith('challenges/_find', expect.objectContaining({ selector: { type: 'challenge' } }));
+    expect(active).toEqual(expect.objectContaining({
+      _id: 'reto', tasks: expect.arrayContaining([ expect.objectContaining({ id: 'join' }) ])
+    }));
   });
 
-  it('has no active challenge when the services doc does not exist', () => {
-    couchService.get.mockReturnValue(throwError({ status: 404 }));
-    let active: any = 'unset';
-    service.getActiveChallenge(referenceDate).subscribe(result => active = result);
+  it('treats a missing database as no challenges, and passes other read errors on to all but announcements', () => {
+    const read = (status: number) => {
+      couchService.post.mockReturnValue(throwError({ status }));
+      const results: any = { active: 'unset' };
+      service.getChallenges().subscribe({ next: challenges => results.challenges = challenges, error: error => results.error = error });
+      service.getActiveChallenge(referenceDate).subscribe(active => results.active = active);
+      return results;
+    };
 
-    expect(active).toBeUndefined();
+    expect(read(404)).toEqual({ challenges: [], active: undefined });
+    expect(read(500)).toEqual({ error: { status: 500 }, active: undefined });
   });
 
-  it('passes on other read failures instead of reporting no challenges', () => {
-    couchService.get.mockReturnValue(throwError({ status: 500 }));
-    const next = vi.fn();
-    const error = vi.fn();
-    service.getChallenges().subscribe({ next, error });
+  it('is not active when disabled, without tasks, or with a ":" in its id', () => {
+    const active = (changes: any) => service.isChallengeActive(service.normalizeChallenge({ ...challenge, ...changes }), referenceDate);
 
-    expect(next).not.toHaveBeenCalled();
-    expect(error).toHaveBeenCalledWith({ status: 500 });
+    expect(active({})).toBe(true);
+    expect(active({ enabled: false })).toBe(false);
+    expect(active({ tasks: [] })).toBe(false);
+    expect(active({ _id: 'reto:x' })).toBe(false);
   });
 
-  it('shows no announcement when the services doc cannot be read', () => {
-    couchService.get.mockReturnValue(throwError({ status: 500 }));
-    const next = vi.fn();
-    const error = vi.fn();
-    service.getActiveChallenge(referenceDate).subscribe({ next, error });
+  it('finds the challenge for a course through a task target or a survey step course', () => {
+    couchService.post.mockReturnValue(of({ docs: [ { ...challenge, tasks: [ challenge.tasks[1] ] } ] }));
+    let forCourse: any;
+    let forOther: any = 'unset';
+    let forNone: any = 'unset';
+    service.getActiveChallengeForCourse('course-1', referenceDate).subscribe(result => forCourse = result);
+    service.getActiveChallengeForCourse('course-2', referenceDate).subscribe(result => forOther = result);
+    service.getActiveChallengeForCourse(undefined, referenceDate).subscribe(result => forNone = result);
 
-    expect(next).toHaveBeenCalledWith(undefined);
-    expect(error).not.toHaveBeenCalled();
+    expect(forCourse?._id).toBe('reto');
+    expect(forOther).toBeUndefined();
+    expect(forNone).toBeUndefined();
+  });
+
+  it('gives each user one notification per challenge', () => {
+    const notification = service.createChallengeNotification('org.couchdb.user:maria', service.normalizeChallenge(challenge as any), 0);
+
+    expect(notification).toEqual(expect.objectContaining({ _id: 'challenge:reto:org.couchdb.user:maria', challengeId: 'reto' }));
+  });
+
+  it('normalizes limits and drops tasks the engine cannot count', () => {
+    const normalized = service.normalizeChallenge({
+      ...challenge,
+      tasks: [
+        { id: 'voice', type: 'voice_post', reward: '2', countBy: 'day', maxCount: 5.7, requiredCount: '2' },
+        { id: 'join', type: 'course_join', targetId: 'course-1', requiredCount: 2 }, { id: 'untargeted', type: 'course_join' },
+        { id: 'voice', type: 'voice_post' }, { id: 'complete', type: 'voice_post' }, { id: 'a:b', type: 'voice_post' },
+        { id: 'login', type: 'login' }, { type: 'voice_post' }
+      ]
+    } as any);
+
+    expect(normalized.tasks).toEqual([
+      { id: 'voice', type: 'voice_post', reward: 2, countBy: 'day', maxCount: 5, requiredCount: 2 },
+      { id: 'join', type: 'course_join', targetId: 'course-1', reward: 0, countBy: 'each' }
+    ]);
   });
 
   it('opens one announcement at a time, and none without an active challenge', () => {
@@ -66,11 +103,22 @@ describe('ChallengesService', () => {
     expect(dialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ data: challenge }));
   });
 
+  it('announces a challenge once per user, so the next learner on the device still sees it', () => {
+    const dialog = { open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }) } as any;
+
+    service.announceOnce(dialog, of(challenge as any)).subscribe();
+    service.announceOnce(dialog, of(challenge as any)).subscribe();
+    userService.get.mockReturnValue({ name: 'jose' });
+    service.announceOnce(dialog, of(challenge as any)).subscribe();
+
+    expect(dialog.open).toHaveBeenCalledTimes(2);
+  });
+
   it('reads date-only boundaries as whole local calendar days west of UTC', () => {
     const timezone = process.env.TZ;
     process.env.TZ = 'America/Guatemala';
     try {
-      const active = (time: Date) => service.isChallengeActive(service.normalizeChallenge(challenge), time);
+      const active = (time: Date) => service.isChallengeActive(service.normalizeChallenge(challenge as any), time);
 
       expect(active(new Date(2026, 8, 30, 23))).toBe(false);
       expect(active(new Date(2026, 9, 1))).toBe(true);

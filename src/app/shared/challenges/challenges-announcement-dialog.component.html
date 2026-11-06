@@ -9,71 +9,95 @@
 
     <div class="thermometer-container">
       <div class="thermometer">
-        <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
+        <div class="thermometer-bar" [style.width.%]="goalPercentage()">
           <div
             class="thermometer-label"
-            [ngClass]="{ outside: getGoalPercentage() < 8 }"
+            [ngClass]="{ outside: goalPercentage() < 8 }"
             >
-            ${{ getGroupMoneyEarned() }} / ${{ goal }}
+            ${{ groupEarned }} / ${{ challenge.goal }}
           </div>
         </div>
       </div>
     </div>
     <hr>
 
-      @if (isLoading) {
-        <div>
-          <mat-spinner></mat-spinner>
-        </div>
-      } @else {
-        <div class="steps-container">
+    @if (isLoading) {
+      <div>
+        <mat-spinner></mat-spinner>
+      </div>
+    } @else {
+      <div class="steps-container">
+        @for (taskProgress of progress.tasks; track taskProgress.task.id) {
           <div class="step">
-            <mat-icon color="primary">
-              {{ getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked' }}
-            </mat-icon>
-            <span>Únete al curso del reto. [${{joinCourseReward}}]</span>
-            @if (!getStatus('joinedCourse')) {
-              <a mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
-                Unirse
-              </a>
-            }
-          </div>
-          <div class="step">
-            <mat-icon color="primary">
-              {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
-            </mat-icon>
-            <span>Comparte tu opinión en Nuestras Voces. [${{voicePostReward}}/voz]<br><span>{{getPosts()}} de {{ maxDailyPosts }} voces diarias</span> </span>
-            @if (getStatus('joinedCourse') && !getStatus('hasPost')) {
-              <a mat-button mat-raised-button color="primary" type="button" (click)="shareVoice()">
-                Chatea y comparte
-              </a>
-            } @else {
-              <div class="daily-voces-dots">
-                @for (dot of dailyPostDots; track dot; let i = $index) {
-                  <div
-                    class="dot"
-                    [ngClass]="{ completed: i < getPosts() }"
-                  ></div>
+            <mat-icon color="primary">{{ taskProgress.done ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            @switch (taskProgress.task.type) {
+              @case ('course_join') {
+                <span i18n>Join the course {{ courseTitle(taskProgress.task.targetId) }} [${{ taskProgress.task.reward }}]</span>
+                @if (!taskProgress.done) {
+                  <a mat-raised-button color="primary" type="button" [disabled]="isJoining" (click)="joinCourse(taskProgress.task)" i18n>Join</a>
                 }
-              </div>
+              }
+              @case ('course_complete') {
+                <span i18n>Finish the course {{ courseTitle(taskProgress.task.targetId) }} [${{ taskProgress.task.reward }}]</span>
+                @if (!taskProgress.done) {
+                  <a mat-raised-button color="primary" type="button" (click)="openCourse(taskProgress.task)" i18n>Open course</a>
+                }
+              }
+              @case ('survey_complete') {
+                <span i18n>Complete the survey [${{ taskProgress.task.reward }}]</span>
+                @if (!taskProgress.done && getSurveyStepNum(taskProgress.task)) {
+                  <a mat-raised-button color="primary" type="button" (click)="doSurvey(taskProgress.task)" i18n>Survey</a>
+                }
+              }
+              @case ('voice_post') {
+                <span>
+                  @if (taskProgress.task.countBy === 'day') {
+                    <span i18n>Share your voice in Our Voices [${{ taskProgress.task.reward }} per day]</span>
+                  } @else {
+                    <span i18n>Share your voice in Our Voices [${{ taskProgress.task.reward }} per voice]</span>
+                  }
+                  @if (taskProgress.task.requiredCount > 1) {
+                    <br>
+                    @if (taskProgress.task.countBy === 'day') {
+                      <span i18n>{{ taskProgress.count }} of {{ taskProgress.task.requiredCount }} days to finish</span>
+                    } @else {
+                      <span i18n>{{ taskProgress.count }} of {{ taskProgress.task.requiredCount }} voices to finish</span>
+                    }
+                  }
+                  @if (taskProgress.task.maxCount) {
+                    <br>
+                    @if (taskProgress.task.countBy === 'day') {
+                      <span i18n>{{ taskProgress.rewarded }} of {{ taskProgress.task.maxCount }} days rewarded</span>
+                    } @else {
+                      <span i18n>{{ taskProgress.rewarded }} of {{ taskProgress.task.maxCount }} voices rewarded</span>
+                    }
+                  }
+                </span>
+                @if (!taskProgress.done) {
+                  <a mat-raised-button color="primary" type="button" (click)="shareVoice()" i18n>Chat and share</a>
+                } @else {
+                  <div class="daily-voces-dots">
+                    @for (dot of countDots(taskProgress.task); track dot) {
+                      <div class="dot" [ngClass]="{ completed: dot < taskProgress.rewarded }"></div>
+                    }
+                  </div>
+                }
+              }
             }
           </div>
-          <div class="step">
-            <mat-icon color="primary">
-              {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
-            </mat-icon>
-            <span>¡Encuesta finalizada! [${{surveyCompletionReward}}]</span>
-            @if (getStatus('joinedCourse') && getStatus('hasPost') && !getStatus('surveyComplete')) {
-              <a mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
-                Encuesta
-              </a>
-            }
-          </div>
+        }
+        @if (isPreview) {
+          <div i18n>Managers set challenges up and don't take part in them.</div>
+        } @else {
           <div>
-            <span>Mis ganancias: <b>${{getIndividualMoneyEarned()}}</b> / ${{ joinCourseReward + surveyCompletionReward + (voicePostReward * maxDailyPosts) }}</span>
+            <span i18n>My earnings: <b>${{ progress.earned }}</b></span>
+            @if (maxEarnable() !== undefined) {
+              <span> / ${{ maxEarnable() }}</span>
+            }
           </div>
-        </div>
-      }
+        }
+      </div>
+    }
 
-    </div>
-  </mat-dialog-content>
+  </div>
+</mat-dialog-content>
