@@ -29,13 +29,11 @@ const markdownPaths = ["showdown", "@covalent/markdown"].map(name => ({
     message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
 }));
 
-// The rule only sees the import string, not where the importing file sits, so each shared depth gets its own regex.
 const reachesIntoShared = "^\\.{1,2}/(?:.*/)?shared/";
 const rootIntoBucket = "^\\./[^/]+/";
 const bucketPastItself = "^\\.\\./(?!\\.\\./)";
 const nestedPastBucket = "^\\.\\./\\.\\./(?!\\.\\./)";
 
-// A later config object's no-restricted-imports replaces the earlier options, so every override passes the full list.
 const restrictedImports = (bucketRegex, paths = [rxjsPath, ...markdownPaths]) => ["error", {
     paths,
     patterns: [reachesIntoShared, bucketRegex].filter(Boolean).map(regex => ({
