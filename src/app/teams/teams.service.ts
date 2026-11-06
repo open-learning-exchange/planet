@@ -539,7 +539,18 @@ export class TeamsService {
     this.couchService.bulkDocs('send_items', resources.map(resource => ({ db: 'resources', sendTo, item: resource }))).subscribe();
   }
 
-  createServicesDoc() {
+  ensureServicesDoc() {
+    const getServicesDoc = () => this.couchService.get(`${this.dbName}/${planetAndParentId(this.stateService.configuration)}`);
+    return getServicesDoc().pipe(
+      catchError(error => error.status === 404 ? this.createServicesDoc().pipe(
+        // 409: another session created it first. Read back either way so callers get the stored createdDate and _rev
+        catchError(createError => createError.status === 409 ? of(null) : throwError(createError)),
+        switchMap(getServicesDoc)
+      ) : throwError(error))
+    );
+  }
+
+  private createServicesDoc() {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
       _id: planetAndParentId(this.stateService.configuration),

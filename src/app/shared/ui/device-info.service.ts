@@ -44,6 +44,7 @@ export class DeviceInfoService {
   private readonly deviceTypeCache = new Map<string, Observable<DeviceType>>();
   readonly deviceType = toSignal(this.watchDeviceType(), { requireSync: true });
   readonly isMobile = computed(() => isMobileOrSmaller(this.deviceType()));
+  readonly isTabletOrSmaller = computed(() => isTabletOrSmaller(this.deviceType()));
   // One emission carries both values, so the nav choice never mixes a new width with an old height.
   private readonly viewport = toSignal(this.watchViewport(), { requireSync: true });
   readonly isShortViewport = computed(() => this.viewport().isShortViewport);
