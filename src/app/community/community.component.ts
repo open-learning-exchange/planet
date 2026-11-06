@@ -22,8 +22,7 @@ import { UserService } from '@shared/auth/user.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { planetAndParentId } from '@shared/utils';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
-import { ChallengesAnnouncementSuccessDialogComponent } from '@shared/challenges/challenges-announcement-dialog.component';
-import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { ChallengesService } from '@shared/challenges/challenges.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
@@ -144,7 +143,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private userStatusService: ChallengesUserStatusService,
+    private challengesProgressService: ChallengesProgressService,
     private deviceInfoService: DeviceInfoService,
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService,
@@ -212,6 +211,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       if (!this.isLoggedIn) {
         this.loggedOut$.next();
         this.clearMemberData();
+        this.challengeChecked = false;
       } else if (!this.teamLoaded) {
         this.getCommunityData(!this.communityReady);
       }
@@ -225,21 +225,23 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const challenge$ = this.isRemoteExchange ?
-      this.challengesService.getActiveChallenge() :
-      of(this.challengesService.activeChallengeIn(this.team));
-    challenge$.pipe(
-      filter(challenge => !!challenge),
-      switchMap(challenge => this.challengesService.openChallengeDialog(this.dialog, challenge).afterClosed().pipe(map(() => challenge))),
-      filter(() => !this.userStatusService.getCompleteChallenge()),
-      switchMap(challenge => this.sendChallengeNotification(this.user, challenge)),
+    if (this.isRemoteExchange) {
+      return;
+    }
+    this.challengesService.announceOnce(this.dialog, this.challengesService.getActiveChallenge()).pipe(
+      map(dialogRef => ({ dialogRef, announcement: dialogRef.componentInstance })),
+      switchMap(({ dialogRef, announcement }) => dialogRef.afterClosed().pipe(map(() => announcement))),
+      filter(announcement => announcement.needsReminder()),
+      switchMap(announcement => this.sendChallengeNotification(this.user, announcement.challenge)),
       takeUntil(this.onDestroy$)
     ).subscribe();
   }
 
   sendChallengeNotification(user, challenge) {
     const data = this.challengesService.createChallengeNotification(user._id, challenge, this.couchService.datePlaceholder);
-    return this.couchService.updateDocument('notifications', data);
+    return this.couchService.updateDocument('notifications', data).pipe(
+      catchError(error => error.status === 409 ? of(undefined) : throwError(error))
+    );
   }
 
   getCommunityData(withNews = true) {
@@ -385,23 +387,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
       dialogRef.close();
-      const challenge = this.challengesService.activeChallengeIn(this.team);
-      if (
-        challenge &&
-        this.userStatusService.getStatus('joinedCourse') &&
-        this.userStatusService.getStatus('surveyComplete') &&
-        !this.userStatusService.getStatus('hasPost')
-      ) {
-        this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
-          width: '50vw',
-          maxHeight: '100vh',
-          data: challenge
-        });
-        this.userStatusService.updateStatus(
-          'hasPost',
-          { status: true, amount: challenge.voicePostReward ?? 2 }
-        );
-      }
+      this.challengesProgressService.record('voice_post').subscribe();
     });
   }
 
