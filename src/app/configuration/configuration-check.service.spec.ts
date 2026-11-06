@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
-import { CouchService } from '../shared/database/couchdb.service';
+import { CouchService } from '@shared/database/couchdb.service';
 import { ConfigurationCheckService } from './configuration-check.service';
 
 describe('ConfigurationCheckService', () => {

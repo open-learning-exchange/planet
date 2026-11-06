@@ -27,6 +27,7 @@ import { RatingService } from '@shared/ratings/rating.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { CoursesService } from '../courses.service';
+import { blockingStepIndex, stepLocked, stepProgress } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
 import { CoursesViewDetailComponent } from './courses-view-detail.component';
@@ -67,7 +68,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
-  progress = [ { stepNum: 1 } ];
+  progress: any[] = [ { stepNum: 1 } ];
   fullView = 'on';
   currentView: string;
   courseId: string;
@@ -104,7 +105,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
           ...step,
           resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
-          progress: progress.find((p: any) => p.stepNum === (index + 1))
+          progress: stepProgress(progress, index + 1)
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
@@ -165,13 +166,22 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
     const stepClicked = this.courseDetail.steps[stepClickedNum];
-    const isTestTaken = attempts > 0 || (stepNum === 0 && step.exam === undefined);
+    // A saved pass counts when an exam edit hides the earlier attempts; a content step's visit pass doesn't
+    const hasPassed = step.exam !== undefined && (this.progress || []).some(p => p.stepNum === stepNum + 1 && p.passed);
+    const isTestTaken = attempts > 0 || hasPassed || (stepNum === 0 && step.exam === undefined);
     stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
   }
 
+  isStepLocked(stepIndex: number): boolean {
+    return !this.canManage && !this.parent && stepLocked(this.courseDetail.steps, this.progress, stepIndex);
+  }
+
   viewStep() {
-    const latestStep = this.progress.reduce((stepNum, prog) => prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
-    this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
+    const latestReached = (this.progress || []).reduce((stepNum: number, prog: any) =>
+      prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
+    const blocking = this.canManage || this.parent ? -1 : blockingStepIndex(this.courseDetail.steps, this.progress);
+    const targetStep = blocking > -1 ? Math.min(latestReached, blocking + 1) : latestReached;
+    this.router.navigate([ './step/' + targetStep ], { relativeTo: this.route });
   }
 
   goToSurvey(stepNum, preview = false) {

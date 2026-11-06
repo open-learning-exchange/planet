@@ -44,6 +44,7 @@ export class DeviceInfoService {
   private readonly deviceTypeCache = new Map<string, Observable<DeviceType>>();
   readonly deviceType = toSignal(this.watchDeviceType(), { requireSync: true });
   readonly isMobile = computed(() => isMobileOrSmaller(this.deviceType()));
+  readonly isTabletOrSmaller = computed(() => isTabletOrSmaller(this.deviceType()));
 
   constructor(private breakpointObserver: BreakpointObserver) {}
 

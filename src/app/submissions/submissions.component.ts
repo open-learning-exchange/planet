@@ -27,7 +27,7 @@ import { UserService } from '@shared/auth/user.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { StateService } from '@shared/state.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 
 import { SubmissionsService } from './submissions.service';
 import { CoursesService } from '../courses/courses.service';
@@ -98,8 +98,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
-  isMobile: boolean;
-  deviceType: DeviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   showFiltersRow = false;
   statusOptions: any = [
     { text: $localize`Pending`, value: 'pending' },
@@ -126,13 +125,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe(() => {
       this.showFiltersRow = false;
     });
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.surveyId = this.route.snapshot.paramMap.get('surveyId');
     this.isManagerSurveysRoute = !!this.surveyId;
   }

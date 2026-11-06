@@ -61,13 +61,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   showBanner = false;
   isLoading = true;
-  deviceType: DeviceType;
-  isMobile = false;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   myLifeItems: any[] = [];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
   @HostBinding('class.accordion-mode') get isAccordionMode() {
-    return this.deviceType === DeviceType.MOBILE;
+    return this.deviceType() === DeviceType.MOBILE;
   }
 
   constructor(
@@ -95,9 +95,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.setCompletedCourses(courses, certifications);
     });
     this.initMyLifeItems();
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.updateMyLifeItemsFormat();
     });
   }
@@ -142,7 +140,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   updateMyLifeItemsFormat() {
     this.myLifeItems = this.myLifeItems.map(item => ({
       ...item,
-      firstLine: this.isMobile ? item.baseFirstLine + item.title : item.baseFirstLine
+      firstLine: this.isMobile() ? item.baseFirstLine + item.title : item.baseFirstLine
     }));
   }
 
@@ -259,7 +257,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   get maxVisibleBadges(): number {
-    return this.deviceType === DeviceType.DESKTOP ? 8 : 6;
+    return this.deviceType() === DeviceType.DESKTOP ? 8 : 6;
   }
 
   get visibleBadges(): any[] {
