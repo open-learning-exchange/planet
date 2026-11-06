@@ -45,7 +45,7 @@ import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { TagsService } from '@shared/forms/tags/tags.service';
 import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
 import { SearchService } from '@shared/search/search.service';
-import { DeviceInfoService, isMobileOrSmaller, isTabletOrSmaller } from '@shared/ui/device-info.service';
+import { DeviceInfoService, isMobileOrSmaller } from '@shared/ui/device-info.service';
 import { PlanetFilteredAmountComponent } from '@shared/tables/planet-filtered-amount.component';
 import { PlanetTagSelectedInputComponent } from '@shared/forms/tags/planet-tag-selected-input.component';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
@@ -193,12 +193,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     filterIds(this.filterIds)
   ]);
   trackById = trackById;
-  isMobile: boolean;
-  isTabletOrSmaller: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
+  readonly isTabletOrSmaller = this.deviceInfoService.isTabletOrSmaller;
   showFilters = false;
   showFiltersRow = false;
   get showInlineFilters() {
-    return this.showFilters && !this.isMobile;
+    return this.showFilters && !this.isMobile();
   }
   expandedElement: any = null;
   certifications: any[] = [];
@@ -231,9 +231,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       });
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.isMobile = isMobileOrSmaller(deviceType);
-      this.isTabletOrSmaller = isTabletOrSmaller(deviceType);
-      if (!this.isMobile && this.filterDialogRef) {
+      if (!isMobileOrSmaller(deviceType) && this.filterDialogRef) {
         this.filterDialogRef.close();
       }
     });
@@ -486,7 +484,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   toggleFilters() {
-    if (this.isMobile) {
+    if (this.isMobile()) {
       if (this.filterDialogRef) {
         return;
       }
