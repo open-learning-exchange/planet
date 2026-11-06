@@ -18,7 +18,9 @@ describe('SubmissionsComponent', () => {
     {
       isMobile: signal(false),
       watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP))
-    } as any
+    } as any,
+    {} as any,
+    {} as any
   );
 
   it('keeps the search input synchronized with the table filter', () => {
