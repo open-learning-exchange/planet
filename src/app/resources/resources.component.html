@@ -1,5 +1,5 @@
 <mat-toolbar>
-  @if (!isTabletOrSmaller) {
+  @if (!isTabletOrSmaller()) {
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
       <span class="toolbar-fill margin-lr-10"></span>
@@ -91,7 +91,7 @@
               </button>
             </span>
           }
-          @if (!parent && isTabletOrSmaller) {
+          @if (!parent && isTabletOrSmaller()) {
             <span>
               @if (!isDialog) {
                 <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
@@ -103,7 +103,7 @@
               </mat-menu>
             </span>
           }
-          @if (!parent && !isTabletOrSmaller) {
+          @if (!parent && !isTabletOrSmaller()) {
             <span>
               <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
             </span>
@@ -119,19 +119,19 @@
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>
-    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller }" [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
+    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller() }" [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
       <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
       @if (selectedNotAdded > 0) {
         <span> ({{selectedNotAdded}})</span>
       }
     </button>
-    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller }" [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
+    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller() }" [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
       <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
       @if (selectedAdded > 0) {
         <span> ({{selectedAdded}})</span>
       }
     </button>
-    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+    <button mat-button [ngClass]="{'mat-menu-item': isTabletOrSmaller() }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
     <mat-menu #managerMenu="matMenu">
       @if (planetConfiguration.registrationRequest === 'accepted') {
         <button mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
@@ -179,7 +179,7 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            @if (isMobile) {
+            @if (isMobile()) {
               <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
                 [checked]="selection.isSelected(element._id)">
               </mat-checkbox>
