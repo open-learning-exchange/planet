@@ -265,14 +265,14 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   editChildName({ doc, nameDoc }) {
-    return ({ name }: { name: string }) => {
+    return ({ name }: { name: string }, _form, dialogRef) => {
       this.couchService.updateDocument(
         this.dbName,
         { ...nameDoc, name, docType: 'parentName', planetId: doc._id, createdDate: this.couchService.datePlaceholder }
       ).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
-        this.dialogsFormService.closeDialogsForm();
+        dialogRef.close();
         this.planetMessageService.showMessage(this.reportsService.planetNameUpdatedMessage(doc.planetType));
         this.requestUpdate.emit();
       },

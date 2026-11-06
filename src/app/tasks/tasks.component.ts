@@ -155,7 +155,6 @@ export class TasksComponent implements OnInit {
       this.tasksService.getTasks();
       const msg = task ? $localize`Task updated successfully` : $localize`Task created successfully`;
       this.planetMessageService.showMessage(msg);
-      this.dialogsFormService.closeDialogsForm();
     });
   }
 
@@ -186,9 +185,12 @@ export class TasksComponent implements OnInit {
   openAddDialog(additionalFields, task: any = {}, onSuccess = (res) => {}) {
     const { fields, formGroup } = this.tasksService.addDialogForm(task);
     this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
-      onSubmit: (newTask) => {
+      onSubmit: (newTask, _form, dialogRef) => {
         if (newTask) {
-          this.tasksService.addDialogSubmit(additionalFields, task, newTask, onSuccess.bind(this));
+          this.tasksService.addDialogSubmit(additionalFields, task, newTask, (res) => {
+            onSuccess(res);
+            dialogRef.close();
+          });
         }
       },
       autoFocus: true
