@@ -1,9 +1,3 @@
-
-<td-text-editor
-  [options]="options"
-  [ngClass]="{ 'warn-text-color': errorState }"
-  [ngModel]="textValue"
-  (ngModelChange)="writeValue($event)"
-  (focusout)="onFocusOut()"
-  #editor>
-</td-text-editor>
+<div [ngClass]="{ 'warn-text-color': errorState }" (focusout)="onFocusOut()">
+  <textarea #textarea class="planet-markdown-textbox-input" [value]="textValue ?? ''" (input)="writeValue(textarea.value)"></textarea>
+</div>

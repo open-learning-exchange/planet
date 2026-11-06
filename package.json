@@ -1,7 +1,7 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.25.65",
+  "version": "0.25.66",
   "myplanet": {
     "latest": "v0.77.89",
     "min": "v0.77.3"
@@ -44,17 +44,16 @@
     "@angular/platform-browser": "21.2.22",
     "@angular/router": "21.2.22",
     "@angular/service-worker": "21.2.22",
-    "@covalent/text-editor": "^11.19.5",
     "@fullcalendar/angular": "^6.1.21",
     "@fullcalendar/core": "^6.1.21",
     "@fullcalendar/daygrid": "^6.1.21",
     "@fullcalendar/interaction": "^6.1.21",
     "chart.js": "^3.9.1",
+    "easymde": "2.21.0",
     "events": "^3.3.0",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
     "jszip": "^3.2.2",
-    "marked": "4.2.5",
     "material-design-icons": "^3.0.1",
     "mime": "4.0.0",
     "ngx-image-cropper": "^8.1.1",
@@ -106,10 +105,6 @@
   "overrides": {
     "@typescript-eslint/visitor-keys": {
       "eslint-visitor-keys": "4.2.1"
-    },
-    "@covalent/text-editor": {
-      "@angular/core": "$@angular/core",
-      "@angular/common": "$@angular/common"
     },
     "vitest": {
       "vite": "$vite"
