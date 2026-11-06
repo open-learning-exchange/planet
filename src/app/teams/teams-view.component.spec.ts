@@ -1,9 +1,26 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
 
 import { TeamsViewComponent } from './teams-view.component';
+
+describe('TeamsViewComponent services page', () => {
+  it('stops loading and alerts when the services doc cannot be loaded', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.teamDataLoading = true;
+    component.teamsService = { ensureServicesDoc: () => throwError({ status: 500 }) };
+    component.planetMessageService = { showAlert: vi.fn() };
+    component.getMembers = vi.fn();
+
+    component.initServices('local@parent');
+
+    expect(component.teamDataLoading).toBe(false);
+    expect(component.planetMessageService.showAlert).toHaveBeenCalled();
+    expect(component.getMembers).not.toHaveBeenCalled();
+    expect(component.userStatus).toBeUndefined();
+  });
+});
 
 describe('TeamsViewComponent task projections', () => {
   it('projects secondary assignments and separates same-id members by planet', () => {

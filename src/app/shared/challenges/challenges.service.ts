@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 
 import { StateService } from '@shared/state.service';
@@ -44,7 +44,7 @@ export class ChallengesService {
   getChallenges(): Observable<PlanetChallenge[]> {
     return this.couchService.get(`teams/${planetAndParentId(this.stateService.configuration)}`).pipe(
       map(servicesDoc => this.servicesDocChallenges(servicesDoc)),
-      catchError(() => of([]))
+      catchError(error => error.status === 404 ? of([]) : throwError(error))
     );
   }
 
@@ -72,7 +72,11 @@ export class ChallengesService {
   }
 
   private getActiveChallenges(referenceDate: Date) {
-    return this.getChallenges().pipe(map(challenges => challenges.filter(challenge => this.isChallengeActive(challenge, referenceDate))));
+    return this.getChallenges().pipe(
+      // An announcement that can't load just doesn't show; getChallenges() keeps the error for editors
+      catchError(() => of([])),
+      map(challenges => challenges.filter(challenge => this.isChallengeActive(challenge, referenceDate)))
+    );
   }
 
   isChallengeActive(challenge: PlanetChallenge, referenceDate = new Date()): boolean {
