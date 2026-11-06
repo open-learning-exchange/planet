@@ -81,11 +81,11 @@
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table">
-    <mat-table #table class="responsive-table" [dataSource]="feedback" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table card-mode" [dataSource]="feedback" matSort [matSortDisableClear]="true">
       <!-- Title Column -->
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" class="card-title">
           <span class="ellipsis-title" [matTooltip]="element.displayTitle">{{ element.displayTitle }}</span>
         </mat-cell>
       </ng-container>
@@ -93,6 +93,7 @@
       <ng-container matColumnDef="type">
         <mat-header-cell *matHeaderCellDef mat-sort-header="type" i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          <span class="card-label" i18n>Type</span>
           @if (element.typeIcon) {
             <mat-icon>{{element.typeIcon}}</mat-icon>
           }
@@ -103,6 +104,9 @@
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header="priority" i18n>Priority</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          @if (element.normalizedPriority === 'yes' || element.normalizedPriority === 'no') {
+            <span class="card-label" i18n>Priority</span>
+          }
           @if (element.normalizedPriority === 'yes') {
             <mat-chip-set aria-label="Priority" i18n-aria-label><mat-chip highlighted color="accent">{{element.displayPriority}}</mat-chip></mat-chip-set>
           }
@@ -115,6 +119,7 @@
       <ng-container matColumnDef="owner">
         <mat-header-cell *matHeaderCellDef mat-sort-header="owner" i18n>Owner</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          <span class="card-label" i18n>Owner</span>
           <span>{{ (element.user?.fullName || element.user?.doc.name || element.owner) | truncateText:20 }}</span>
         </mat-cell>
       </ng-container>
@@ -122,6 +127,9 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          @if (element.normalizedStatus === 'open' || element.normalizedStatus === 'reopened' || element.normalizedStatus === 'closed') {
+            <span class="card-label" i18n>Status</span>
+          }
           @if (element.normalizedStatus === 'open' || element.normalizedStatus === 'reopened') {
             <mat-chip-set aria-label="Status" i18n-aria-label><mat-chip highlighted>{{element.displayStatus}}</mat-chip></mat-chip-set>
           }
@@ -133,22 +141,22 @@
       <!-- OpenTime Column -->
       <ng-container matColumnDef="openTime">
         <mat-header-cell *matHeaderCellDef mat-sort-header="openTime" i18n>Open Date</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.openTime | date: mediumDate}}</mat-cell>
+        <mat-cell *matCellDef="let element"><span class="card-label" i18n>Open Date</span>{{element.openTime | date: mediumDate}}</mat-cell>
       </ng-container>
       <!-- CloseTime Column -->
       <ng-container matColumnDef="closeTime">
         <mat-header-cell *matHeaderCellDef mat-sort-header="closeTime" i18n>Close Date</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.closeTime | date: mediumDate}}</mat-cell>
+        <mat-cell *matCellDef="let element">@if (element.closeTime) {<span class="card-label" i18n>Close Date</span>{{element.closeTime | date: mediumDate}}}</mat-cell>
       </ng-container>
       <!-- Source Column -->
       <ng-container matColumnDef="source">
         <mat-header-cell *matHeaderCellDef mat-sort-header="source" i18n>Source</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.source}}</mat-cell>
+        <mat-cell *matCellDef="let element">@if (element.source) {<span class="card-label" i18n>Source</span>{{element.source}}}</mat-cell>
       </ng-container>
       <!-- Action Column -->
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
-        <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+        <mat-cell *matCellDef="let element" class="card-menu" (click)="$event.stopPropagation()">
           <button mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
