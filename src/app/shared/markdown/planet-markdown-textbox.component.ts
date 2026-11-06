@@ -1,15 +1,17 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck,
-  ViewChild, NgZone
+  AfterViewInit, Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef,
+  DoCheck, ViewChild, NgZone
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MarkdownImagesDialogComponent } from './markdown-images-dialog.component';
-import { TdTextEditorComponent } from '@covalent/text-editor';
+import { MarkdownRenderService } from './markdown-render.service';
+import { normalizeMarkdownWhitespace } from '@shared/utils';
 import { NgClass } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 export interface ImageInfo { resourceId: string, filename: string, markdown: string }
 export interface ValueWithImages { text: string, images: ImageInfo[] }
@@ -28,9 +30,9 @@ interface FullscreenState {
     { provide: MatFormFieldControl, useExisting: PlanetMarkdownTextboxComponent },
   ],
   encapsulation: ViewEncapsulation.None,
-  imports: [TdTextEditorComponent, NgClass, FormsModule]
+  imports: [NgClass]
 })
-export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
+export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, AfterViewInit, DoCheck, OnInit, OnDestroy {
 
   static nextId = 0;
   // Action-row containers this component knows how to pin during fullscreen; a form whose
@@ -46,7 +48,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   @HostBinding('class.is-focused') get isFocused() {
     return this.focused;
   }
-  @ViewChild('editor') editor;
+  @ViewChild('textarea') textarea: ElementRef<HTMLTextAreaElement>;
   @Input() _value: ValueWithImages | string;
   get value(): ValueWithImages | string {
     return this._value;
@@ -66,6 +68,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     if (newText !== (typeof this._value === 'string' ? this._value : this._value.text)) {
       this.value = typeof this._value === 'string' ? newText : { ...this._value, text: newText };
     }
+    if (this.easyMDE && this.easyMDE.value() !== newText) {
+      this.ngZone.runOutsideAngular(() => this.easyMDE.value(newText));
+    }
   }
   @Output() valueChanges = new EventEmitter<string[]>();
 
@@ -74,6 +79,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   private fullscreenState?: FullscreenState;
+  private easyMDE: any;
+  private destroyed = false;
   #placeholder: string;
   @Input()
   get placeholder() {
@@ -104,10 +111,13 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   focused = false;
   errorState = false;
   options: any = {
+    autoDownloadFontAwesome: false,
     autoRefresh: true,
     hideIcons: [ 'image' ],
     minHeight: 'var(--planet-markdown-textbox-height)',
-    onToggleFullScreen: (isFullscreen: boolean) => this.setFullscreenLayout(isFullscreen)
+    onToggleFullScreen: (isFullscreen: boolean) => this.setFullscreenLayout(isFullscreen),
+    previewRender: (text: string) => this.renderPreview(text),
+    spellChecker: false
   };
 
   constructor(
@@ -115,7 +125,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
     private dialog: MatDialog,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private markdownRenderer: MarkdownRenderService
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -133,8 +144,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   ngOnInit() {
     const imageToolbarIcon = {
       name: 'custom',
-      action: this.addImage.bind(this),
-      className: 'fa fa-picture-o',
+      action: () => this.ngZone.run(() => this.addImage()),
+      className: 'fa fa-image',
       title: $localize`Add Image`
     };
     this.options = {
@@ -157,7 +168,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
             {
               name: 'heading',
               action: (editor: any) => editor.toggleHeadingSmaller(),
-              className: 'fa fa-header',
+              className: 'fa fa-heading',
               title: $localize`Heading`
             },
             '|',
@@ -224,16 +235,61 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     this._value = this.imageGroup ? { text: '', images: [] } : '';
   }
 
-  ngOnDestroy() {
-    try {
-      if (this.editor?.easyMDE?.isFullscreenActive()) {
-        this.editor.toggleFullScreen();
+  ngAfterViewInit() {
+    // The first write lands before registerOnChange, and forms read their { text, images } value from this echo.
+    Promise.resolve().then(() => {
+      if (!this.destroyed) {
+        this.writeValue(this.textValue);
       }
+    });
+    this.loadEditor().then(({ default: EasyMDE }) => {
+      if (!this.destroyed) {
+        this.createEditor(EasyMDE);
+      }
+    }).catch(error => console.error('Could not load the markdown editor', error));
+  }
+
+  ngOnDestroy() {
+    this.destroyed = true;
+    try {
+      if (this.easyMDE?.isFullscreenActive()) {
+        this.easyMDE.toggleFullScreen();
+      }
+      this.easyMDE?.cleanup();
     } finally {
       this.clearFullscreenLayout();
       this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
       this.stateChanges.complete();
     }
+  }
+
+  protected loadEditor() {
+    return import('easymde');
+  }
+
+  private createEditor(EasyMDE: any) {
+    const textarea = this.textarea.nativeElement;
+    const hadFocus = document.activeElement === textarea;
+    const cursor = textarea.selectionStart;
+    textarea.value = this.textValue ?? '';
+    this.ngZone.runOutsideAngular(() => {
+      this.easyMDE = new EasyMDE({ ...this.options, element: textarea, autofocus: hadFocus });
+      const codemirror = this.easyMDE.codemirror;
+      if (hadFocus) {
+        codemirror.setCursor(codemirror.posFromIndex(cursor));
+      }
+      codemirror.on('change', () => {
+        const text = this.easyMDE.value();
+        if (text !== this.textValue) {
+          this.ngZone.run(() => this.writeValue(text));
+        }
+      });
+    });
+  }
+
+  private renderPreview(text: string) {
+    return this.markdownRenderer.render(normalizeMarkdownWhitespace(text), `${environment.couchAddress}/`)
+      .replace(/<a /g, '<a target="_blank" ');
   }
 
   private setFullscreenLayout(isFullscreen: boolean) {
@@ -308,7 +364,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   writeValue(val: string) {
-    this.value = typeof this._value === 'string' || this.imageGroup === undefined ? val : { ...this._value, text: val };
+    this.value = typeof this._value === 'string' || this.imageGroup === undefined ? val : { ...this._value, text: val || '' };
     this.setErrorState();
   }
 
@@ -353,8 +409,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     }).afterClosed().subscribe(image => {
       if (image) {
         const markdown = `![](resources/${image._id}/${encodeURI(image.filename)})`;
-        this.editor.options.insertTexts.image = [ markdown, '' ];
-        this.editor.easyMDE.drawImage();
+        this.easyMDE.options.insertTexts.image = [ markdown, '' ];
+        this.ngZone.runOutsideAngular(() => this.easyMDE.drawImage());
         this.value = {
           ...this._value as ValueWithImages,
           images: [ ...(this._value as ValueWithImages).images, { resourceId: image._id, filename: image.filename, markdown } ]

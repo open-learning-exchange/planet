@@ -21,7 +21,7 @@ Prerequisites: Node.js v22.12 or later, npm v10, Angular CLI v21. A CouchDB inst
 
 ### gateway (`gateway/`)
 
-Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`.
+Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`, plus `CORS_ORIGINS=http://localhost:3000` so `ng serve` can reach it. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`. Every route except `GET /`, `GET /checkproviders` and `/public/surveys/...` needs a CouchDB session; from curl, use Basic auth with a local account (`curl -u admin:admin`).
 
 - `cd gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.

@@ -1,4 +1,5 @@
 import { signal } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { convertToParamMap } from '@angular/router';
 import { BehaviorSubject, EMPTY, Subject, Subscription, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
@@ -41,6 +42,59 @@ describe('CommunityComponent custom labels', () => {
       data: { target: 'community', team, customLabels: [ 'Announcement', 'Event' ] }
     });
     expect(component.customVoiceLabels).toEqual([ 'Event' ]);
+  });
+});
+
+describe('CommunityComponent description', () => {
+  const storedDoc = { _id: 'local@parent', _rev: '2-current', parentCode: 'parent', type: 'services', customVoiceLabels: [ 'Event' ] };
+
+  const submitDescription = (stored$: any) => {
+    const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    const teamsService = {
+      ensureServicesDoc: vi.fn(() => stored$),
+      updateTeam: vi.fn((team: any) => of({ ...team, _rev: '3-saved' }))
+    };
+    const planetMessageService = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const dialogRef = { close: vi.fn() };
+    let submit: any;
+    Object.assign(component, {
+      planetCode: null,
+      team: { _id: 'local@parent', _rev: '1-stale', type: 'services' },
+      fb: new FormBuilder().nonNullable,
+      teamsService,
+      planetMessageService,
+      dialogsFormService: { openDialogsForm: vi.fn((_title, _fields, _form, options) => submit = options.onSubmit) },
+      dialogsLoadingService: { stop: vi.fn() }
+    });
+
+    component.openDescriptionDialog();
+    submit({ description: ' About us ' }, undefined, dialogRef);
+    return { component, teamsService, planetMessageService, dialogRef };
+  };
+
+  it('saves the description onto the stored services doc, not the copy loaded with the page', () => {
+    const { component, teamsService, dialogRef } = submitDescription(of(storedDoc));
+
+    expect(teamsService.updateTeam).toHaveBeenCalledWith({ ...storedDoc, description: 'About us' });
+    expect(component.team).toEqual({ ...storedDoc, description: 'About us', _rev: '3-saved' });
+    expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('refuses to overwrite a description saved since the dialog opened', () => {
+    const changedDoc = { ...storedDoc, description: 'Written by another leader' };
+    const { component, teamsService, planetMessageService, dialogRef } = submitDescription(of(changedDoc));
+
+    expect(teamsService.updateTeam).not.toHaveBeenCalled();
+    expect(planetMessageService.showAlert).toHaveBeenCalled();
+    expect(component.team).toEqual(changedDoc);
+    expect(dialogRef.close).not.toHaveBeenCalled();
+  });
+
+  it('keeps the dialog open and alerts when the save fails', () => {
+    const { planetMessageService, dialogRef } = submitDescription(throwError({ status: 500 }));
+
+    expect(planetMessageService.showAlert).toHaveBeenCalled();
+    expect(dialogRef.close).not.toHaveBeenCalled();
   });
 });
 

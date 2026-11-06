@@ -32,7 +32,7 @@ export const DEFAULT_DEVICE_BREAKPOINTS: Required<DeviceBreakpoints> = {
 // Landscape phones may be tablet-width; coarse pointer excludes short desktop windows.
 export const SHORT_VIEWPORT_QUERY = '(max-height: 500px) and (pointer: coarse)';
 
-export interface ViewportState {
+interface ViewportState {
   deviceType: DeviceType;
   isShortViewport: boolean;
 }
@@ -44,6 +44,11 @@ export class DeviceInfoService {
   private readonly deviceTypeCache = new Map<string, Observable<DeviceType>>();
   readonly deviceType = toSignal(this.watchDeviceType(), { requireSync: true });
   readonly isMobile = computed(() => isMobileOrSmaller(this.deviceType()));
+  readonly isTabletOrSmaller = computed(() => isTabletOrSmaller(this.deviceType()));
+  // One emission carries both values, so the nav choice never mixes a new width with an old height.
+  private readonly viewport = toSignal(this.watchViewport(), { requireSync: true });
+  readonly isShortViewport = computed(() => this.viewport().isShortViewport);
+  readonly usesOverlayNav = computed(() => isMobileOrSmaller(this.viewport().deviceType) || this.viewport().isShortViewport);
 
   constructor(private breakpointObserver: BreakpointObserver) {}
 
@@ -84,7 +89,7 @@ export class DeviceInfoService {
     return deviceType$;
   }
 
-  public watchViewport(): Observable<ViewportState> {
+  private watchViewport(): Observable<ViewportState> {
     const breakpoints = this.resolveBreakpoints({});
     return this.breakpointObserver.observe([
       this.maxWidthQuery(breakpoints.smallMobile),

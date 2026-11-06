@@ -43,7 +43,7 @@ describe('NewsListComponent reply form', () => {
     const openDialogsForm = vi.fn(() => ({ afterClosed: () => closed }));
     const checkAuthenticationStatus = vi.fn().mockReturnValueOnce(auth).mockReturnValue(of(true));
     component.authGuard = { checkAuthenticationStatus };
-    component.dialogGuard = new DialogGuardService();
+    component.dialogGuard = new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any);
     component.dialogsFormService = { openDialogsForm };
     const reply = { title: 'Reply', placeholder: 'Your message', news: { replyTo: 'root', viewIn: [] } };
 
