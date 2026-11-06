@@ -24,6 +24,12 @@ import { RouterLink } from '@angular/router';
       }
     </mat-dialog-actions>
     `,
+  styles: [`
+    mat-dialog-content {
+      max-height: none;
+      scrollbar-gutter: stable;
+    }
+  `],
   imports: [
     MatDialogTitle,
     CdkScrollable,

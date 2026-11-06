@@ -84,6 +84,7 @@ describe('UsersAchievementsUpdateComponent', () => {
     }).overrideComponent(PlanetMarkdownTextboxComponent, {
       set: { template: '<div></div>', imports: [] }
     }).compileComponents();
+    vi.spyOn(PlanetMarkdownTextboxComponent.prototype, 'ngAfterViewInit').mockImplementation(() => undefined);
   });
 
   beforeEach(() => {

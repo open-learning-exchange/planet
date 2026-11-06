@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CovalentTextEditorModule } from '@covalent/text-editor';
 
 import { MaterialModule } from '@shared/material.module';
 import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
@@ -26,7 +25,6 @@ import { PlanetRoundDirective } from './planet-round.directive';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    CovalentTextEditorModule,
     SharedComponentsModule,
     FormErrorMessagesComponent,
     PlanetRatingComponent,
@@ -53,7 +51,6 @@ import { PlanetRoundDirective } from './planet-round.directive';
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
     PlanetTagSelectedInputComponent,
-    CovalentTextEditorModule,
     PlanetStepListComponent,
     PlanetStepListFormDirective,
     PlanetStepListActionsDirective,

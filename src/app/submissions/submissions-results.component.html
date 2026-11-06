@@ -1,0 +1,23 @@
+@if (!survey) {
+  <p class="submissions-results-note" i18n>Loading charts...</p>
+} @else if (questionCharts.length === 0) {
+  <p class="submissions-results-note" i18n>This survey has no choice or rating scale questions to chart.</p>
+} @else {
+  <p i18n>Total respondents: <strong>{{submissions.length}}</strong></p>
+  @for (questionChart of questionCharts; track questionChart.index) {
+    <section class="submissions-results-question">
+      <h3 class="mat-subtitle-1" i18n>Question {{questionChart.index + 1}}</h3>
+      <planet-markdown [content]="questionChart.body"></planet-markdown>
+      <planet-chart
+        [chartId]="'survey-question-' + (questionChart.index + 1)"
+        [type]="questionChart.type"
+        [labels]="questionChart.labels"
+        [datasets]="questionChart.datasets"
+        [options]="questionChart.options">
+      </planet-chart>
+      @if (questionChart.isMultiSelect) {
+        <p class="submissions-results-note" i18n>Respondents could pick more than one option, so the percentages can add up to more than 100%.</p>
+      }
+    </section>
+  }
+}

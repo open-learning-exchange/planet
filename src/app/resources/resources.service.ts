@@ -118,14 +118,14 @@ export class ResourcesService {
     }));
   }
 
-  updateResource(resourceInfo, file, { newTags, existingTags } = { newTags: [], existingTags: [] }, sanitizedFileName = null) {
+  updateResource(resourceInfo, file, { newTags, existingTags } = { newTags: [], existingTags: [] }) {
     return this.couchService.updateDocument(this.dbName, { createdDate: this.couchService.datePlaceholder, ...resourceInfo }, ).pipe(
       switchMap((resourceRes) =>
         forkJoin([
           of(resourceRes),
           file ?
             this.couchService.putAttachment(
-              this.dbName + '/' + resourceRes.id + '/' + (sanitizedFileName ? sanitizedFileName : file.name) + '?rev=' + resourceRes.rev,
+              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev,
               file, { headers: { 'Content-Type': normalizedContentType(file) } }
             ) :
             of({}),

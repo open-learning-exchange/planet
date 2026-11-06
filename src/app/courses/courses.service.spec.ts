@@ -228,6 +228,20 @@ describe('CoursesService', () => {
     });
   });
 
+  it('keeps a pass held by a duplicate progress doc when merging a step', () => {
+    const service = new CoursesService(
+      {} as any, {} as any, { ratingsUpdated$: of(undefined) } as any, {} as any,
+      { couchStateListener: vi.fn().mockReturnValue(of(undefined)) } as any, {} as any, {} as any, {} as any
+    );
+    const docs = service.newProgressDocs(
+      [ { _id: 'planet', stepNum: 1, passed: false }, { _id: 'app', stepNum: 1, passed: true } ], { stepNum: 1, passed: false }
+    );
+
+    expect(docs).toEqual([
+      expect.objectContaining({ _id: 'planet', passed: true }), expect.objectContaining({ _id: 'app', _deleted: true })
+    ]);
+  });
+
   describe('storeMarkdownImages', () => {
     it('aggregates step exam and survey images into course images', () => {
       const markdownImagesService = new MarkdownImagesService();
