@@ -1,5 +1,6 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -33,7 +34,7 @@ import {
     MatIcon
   ]
 })
-export class ExamsTakeWidgetComponent implements OnChanges {
+export class ExamsTakeWidgetComponent implements OnChanges, OnDestroy {
 
   @Input() question: (ExamQuestion & { hasOtherOption?: boolean, scaleMax?: number }) | null = null;
   @Input() answer: FormControl<ExamAnswerValue>;
@@ -45,6 +46,7 @@ export class ExamsTakeWidgetComponent implements OnChanges {
 
   checkboxState: Record<string, boolean> = {};
   currentOtherOption = createOtherAnswerOption();
+  private answerSubscription?: Subscription;
 
   get ratingScaleNumbers() {
     const scaleMax = this.question?.scaleMax ?? 9;
@@ -52,6 +54,14 @@ export class ExamsTakeWidgetComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes.answer) {
+      this.answerSubscription?.unsubscribe();
+      this.answerSubscription = this.answer?.valueChanges.subscribe(value => {
+        if (value === null) {
+          this.checkboxState = {};
+        }
+      });
+    }
     if ((changes.question || changes.storedAnswerValue) && this.answer) {
       const restoredAnswer = restoreExamAnswer(this.question, this.storedAnswerValue);
       this.checkboxState = restoredAnswer.checkboxState;
@@ -59,6 +69,10 @@ export class ExamsTakeWidgetComponent implements OnChanges {
       this.answer.setValue(restoredAnswer.value);
       this.answer.updateValueAndValidity({ emitEvent: false });
     }
+  }
+
+  ngOnDestroy() {
+    this.answerSubscription?.unsubscribe();
   }
 
   setCheckboxAnswer({ checked }: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
