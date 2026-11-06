@@ -130,7 +130,9 @@ export class ChallengesProgressService {
         const dayCounts: Record<string, { taskId: string, counts: number[] }> = rows.reduce(
           (byLearnerTask, { key: [ , planetCode, user, taskId ], value }) => {
             const learnerTask = JSON.stringify([ planetCode, user, taskId ]);
-            return { ...byLearnerTask, [learnerTask]: { taskId, counts: [ ...(byLearnerTask[learnerTask]?.counts || []), value ] } };
+            byLearnerTask[learnerTask] ??= { taskId, counts: [] };
+            byLearnerTask[learnerTask].counts.push(value);
+            return byLearnerTask;
           }, {}
         );
         const earned = Object.values(dayCounts).reduce((total, { taskId, counts }) => {

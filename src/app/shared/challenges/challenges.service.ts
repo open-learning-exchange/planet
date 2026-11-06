@@ -164,7 +164,7 @@ export class ChallengesService {
 
   private isUsableTask(task: Partial<ChallengeTask>) {
     return typeof task?.id === 'string' && task.id !== '' && !task.id.includes(':') && task.id !== COMPLETE_TASK_ID &&
-      CHALLENGE_TASK_TYPES.includes(task.type);
+      CHALLENGE_TASK_TYPES.includes(task.type) && (task.type === 'voice_post' || !!task.targetId);
   }
 
   private normalizeTask(task: Partial<ChallengeTask>): ChallengeTask {
