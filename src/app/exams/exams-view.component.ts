@@ -25,6 +25,7 @@ import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.
 import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 
 import { CoursesService } from '../courses/courses.service';
+import { blockingStepIndex } from '../courses/courses.utils';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
@@ -213,7 +214,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   // Only questionNum may differ between two views of one test, so any other change of destination
   // -- a different submission, mode or test id -- still counts as leaving
   isSameExamDestination(): boolean {
-    const destination = this.router.getCurrentNavigation()?.finalUrl;
+    const destination = this.router.currentNavigation()?.finalUrl;
     const identity = (url: string) => {
       const [ path, ...params ] = url.split(';');
       return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');
@@ -258,7 +259,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.fromSubmission = false;
     this.initialLoad = true;
     this.isLoading = true;
-    const recordingSurvey = this.router.getCurrentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
+    const recordingSurvey = this.router.currentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
     const survey$ = this.couchService.get(`exams/${surveyId}`).pipe(catchError(error => {
       if (error.status !== 404) {
         return throwError(error);
@@ -457,6 +458,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           this.planetMessageService.showAlert($localize`This test is not available`);
           this.isInternalNavigation = true;
           this.goBack();
+          return EMPTY;
+        }
+        const blocking = this.previewMode || this.coursesService.canManageCourse(course) ? -1 : blockingStepIndex(course.steps, progress);
+        if (blocking > -1 && this.stepNum - 1 > blocking) {
+          this.isInternalNavigation = true;
+          this.router.navigate([ '/courses/view', course._id, 'step', blocking + 1 ], { replaceUrl: true });
           return EMPTY;
         }
         this.title = step.stepTitle;

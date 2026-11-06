@@ -189,7 +189,7 @@
           @if (element.admission && element.doc.steps.length && !parent && !isDialog && !isForm) {
             <div class="course-progress">
               <span i18n>myProgress:</span>
-              <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
+              <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress" [canManage]="element.canManage"></planet-courses-progress-bar>
             </div>
           }
           <mat-chip-set #tagsList class="tags-list" aria-label="Course tags" i18n-aria-label>
