@@ -205,7 +205,8 @@ export class CoursesService {
     return currentProgressDocs.length === 0 ?
       [ { createdDate: this.couchService.datePlaceholder, ...newProgress } ] :
       currentProgressDocs.map((current, index) => index === 0 ?
-        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress, passed: current.passed || newProgress.passed } :
+        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress,
+          passed: currentProgressDocs.some(doc => doc.passed) || newProgress.passed } :
         { ...current, _deleted: true }
       );
   }
