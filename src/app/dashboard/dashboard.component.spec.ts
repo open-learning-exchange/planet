@@ -1,3 +1,4 @@
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, NEVER, of, Subject, throwError } from 'rxjs';
@@ -7,7 +8,7 @@ import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { CertificationsService } from '@shared/certifications/certifications.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
 
 import { DashboardComponent } from './dashboard.component';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -71,7 +72,13 @@ describe('DashboardComponent', () => {
       getCertifications: vi.fn().mockReturnValue(of([])),
       isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
     };
-    deviceInfoServiceMock = { watchDeviceType: vi.fn().mockReturnValue(deviceType$.asObservable()) };
+    const deviceType = signal(deviceType$.value);
+    deviceType$.subscribe(value => deviceType.set(value));
+    deviceInfoServiceMock = {
+      deviceType,
+      isMobile: computed(() => isMobileOrSmaller(deviceType())),
+      watchDeviceType: vi.fn().mockReturnValue(deviceType$.asObservable())
+    };
     matDialogMock = { open: vi.fn() };
 
     TestBed.configureTestingModule({
@@ -288,12 +295,22 @@ describe('DashboardComponent', () => {
     createComponent();
 
     deviceType$.next(DeviceType.SMALL_MOBILE);
-    expect(component.isMobile).toBe(true);
+    expect(component.isMobile()).toBe(true);
     expect(component.isAccordionMode).toBe(false);
 
     deviceType$.next(DeviceType.MOBILE);
-    expect(component.isMobile).toBe(true);
+    expect(component.isMobile()).toBe(true);
     expect(component.isAccordionMode).toBe(true);
+  });
+
+  it('reformats the myLife titles when the device type changes', () => {
+    createComponent();
+    const chatFirstLine = () => component.myLifeItems.find(item => item.link === '/chat').firstLine;
+
+    expect(chatFirstLine()).toBe(' my ');
+
+    deviceType$.next(DeviceType.MOBILE);
+    expect(chatFirstLine()).toBe(' my Chat');
   });
 
   it('reloads dashboard data when the shelf changes', () => {
@@ -333,7 +350,7 @@ describe('DashboardComponent', () => {
       component.setCompletedCourses(courses, []);
 
       deviceType$.next(DeviceType.DESKTOP);
-      expect(component.isMobile).toBe(false);
+      expect(component.isMobile()).toBe(false);
       expect(component.maxVisibleBadges).toBe(8);
       expect(component.visibleBadges).toHaveLength(8);
       expect(component.remainingBadgesCount).toBe(2);
@@ -344,7 +361,7 @@ describe('DashboardComponent', () => {
       expect(component.hiddenBadges.map(course => course._id)).toEqual([ 'c_6', 'c_7', 'c_8', 'c_9' ]);
 
       deviceType$.next(DeviceType.MOBILE);
-      expect(component.isMobile).toBe(true);
+      expect(component.isMobile()).toBe(true);
       expect(component.maxVisibleBadges).toBe(6);
       expect(component.visibleBadges).toHaveLength(6);
       expect(component.remainingBadgesCount).toBe(4);

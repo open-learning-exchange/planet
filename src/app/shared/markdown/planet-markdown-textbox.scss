@@ -1,4 +1,5 @@
 @use '../../variables' as v;
+@use '../../mixins' as m;
 
 @mixin editor-border($color) {
   .EasyMDEContainer .editor-toolbar {
@@ -21,6 +22,49 @@ planet-markdown-textbox.is-focused:not(.is-invalid) {
 planet-markdown-textbox {
   --planet-markdown-textbox-height: clamp(10rem, 20vh, 13rem);
 
+  .planet-markdown-textbox-input {
+    display: block;
+    width: 100%;
+    height: calc(var(--planet-markdown-textbox-height) + 4.5rem);
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid v.$medium-grey;
+    border-radius: 4px;
+    font: inherit;
+    resize: none;
+  }
+
+  .EasyMDEContainer .CodeMirror {
+    background-color: inherit;
+    color: inherit;
+  }
+
+  .editor-toolbar {
+    background-color: inherit;
+
+    i.separator {
+      border-left: none;
+    }
+
+    button .fa {
+      color: var(--mat-app-text-color, inherit);
+    }
+
+    button:hover, button.active {
+      background-color: transparent;
+    }
+
+    // EasyMDE still names Font Awesome 4 icons that Planet's Font Awesome 5 redrew or dropped.
+    .fa-arrows-alt::before {
+      content: '\f31e';
+    }
+
+    .fa-check-square-o::before {
+      content: '\f14a';
+      font-weight: 400;
+    }
+  }
+
   .CodeMirror {
     min-height: 0;
   }
@@ -41,6 +85,8 @@ planet-markdown-textbox {
   }
 
   .editor-preview, .editor-preview-side {
+    @include m.markdown-alignment-and-tasks;
+
     img {
       width: 100%;
       max-width: 40vw;
@@ -95,17 +141,6 @@ planet-markdown-textbox {
   // In side-by-side the preview keeps its full half; only the editor column and the
   // rows pinned below it shift up for the action bar.
   &:has(.CodeMirror-sided) {
-    // Covalent's side preview paints no background of its own until EasyMDE renders
-    // into it; keep an opaque canvas behind the right half so the page never shows
-    // through. The fullscreen toolbar and preview sit at z-index 9 and stay above it.
-    &::after {
-      content: '';
-      position: fixed;
-      inset: 0 0 0 50%;
-      z-index: 8;
-      background: v.$white;
-    }
-
     .EasyMDEContainer .editor-preview-side {
       bottom: 0 !important;
     }
