@@ -161,7 +161,7 @@ export const requireSessionExcept = (openRoutes: OpenRoute[]) => (req: Request, 
     next();
     return;
   }
-  void requireSession(req, res, next);
+  requireSession(req, res, next).catch(next);
 };
 
 const rejectUpgrade = (socket: Duplex, status: number) => {
@@ -178,7 +178,7 @@ export const authenticateUpgrade = (wss: WebSocket.Server) => {
     }
   });
 
-  return async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+  const upgrade = async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
     const onSocketError = (error: Error) => {
       console.error(`gateway: WebSocket upgrade failed: ${error.message}`); // eslint-disable-line no-console
     };
@@ -205,4 +205,9 @@ export const authenticateUpgrade = (wss: WebSocket.Server) => {
     socket.removeListener('error', onSocketError);
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req, session));
   };
+
+  return (req: IncomingMessage, socket: Duplex, head: Buffer) => upgrade(req, socket, head).catch((error) => {
+    console.error(`gateway: WebSocket upgrade failed: ${error}`); // eslint-disable-line no-console
+    socket.destroy();
+  });
 };
