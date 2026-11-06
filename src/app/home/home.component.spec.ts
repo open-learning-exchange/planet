@@ -2,11 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router, NavigationEnd, NavigationSkipped, NavigationSkippedCode } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AnimationEvent } from '@angular/animations';
-import { Subject, of, throwError } from 'rxjs';
+import { BehaviorSubject, Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { MaterialModule } from '@shared/material.module';
@@ -14,25 +15,37 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { DEFAULT_DEVICE_BREAKPOINTS, SHORT_VIEWPORT_QUERY } from '@shared/ui/device-info.service';
 
 import { HomeComponent } from './home.component';
 
 describe('Home', () => {
 
   let activeFixture: ComponentFixture<HomeComponent>;
+  const mobileQuery = `(max-width: ${DEFAULT_DEVICE_BREAKPOINTS.mobile}px)`;
 
-  const setup = () => {
+  const setup = (matchingQueries: string[] = []) => {
     const routerEvents = new Subject<NavigationEnd | NavigationSkipped>();
+    const breakpoints$ = new BehaviorSubject({ matches: true });
     TestBed.configureTestingModule({
       imports: [ RouterTestingModule, BrowserAnimationsModule, CommonModule, MaterialModule, HomeComponent ],
-      providers: [ CouchService, UserService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting() ]
+      providers: [
+        CouchService,
+        UserService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        {
+          provide: BreakpointObserver,
+          useValue: { observe: () => breakpoints$, isMatched: (query: string) => matchingQueries.includes(query) }
+        }
+      ]
     });
     TestBed.overrideComponent(HomeComponent, {
       set: {
         template: `
           <mat-toolbar #toolbar></mat-toolbar>
           <mat-sidenav-container #content>
-            @if (usesOverlayNav) {
+            @if (usesOverlayNav()) {
               <mat-sidenav #mobileSidenav mode="over"></mat-sidenav>
             } @else {
               <mat-sidenav mode="side" opened></mat-sidenav>
@@ -47,14 +60,12 @@ describe('Home', () => {
     const fixture = TestBed.createComponent(HomeComponent);
     const comp = fixture.componentInstance;
     activeFixture = fixture;
-    return { fixture, comp, routerEvents };
+    return { fixture, comp, routerEvents, matchingQueries, breakpoints$ };
   };
 
   // Renders a real drawer without unrelated navigation directives.
   const renderNav = (isMobile: boolean, isShortViewport = false) => {
-    const context = setup();
-    context.comp.isMobile = isMobile;
-    context.comp.isShortViewport = isShortViewport;
+    const context = setup([ ...(isMobile ? [ mobileQuery ] : []), ...(isShortViewport ? [ SHORT_VIEWPORT_QUERY ] : []) ]);
     context.fixture.detectChanges();
     return context;
   };
@@ -144,20 +155,14 @@ describe('Home', () => {
   });
 
   it('should re-measure the content margins after the shown nav changes', () => {
-    const { fixture, comp } = renderNav(false);
+    const { fixture, comp, matchingQueries, breakpoints$ } = renderNav(false);
     const updateContentMargins = vi.spyOn(comp['mainContent'], 'updateContentMargins');
 
-    comp.isMobile = true;
+    matchingQueries.push(mobileQuery);
+    breakpoints$.next({ matches: true });
     fixture.detectChanges();
 
     expect(updateContentMargins).toHaveBeenCalled();
-  });
-
-  it('should use the overlay nav on a short viewport that is too wide to count as mobile', () => {
-    const { comp } = renderNav(false, true);
-
-    expect(comp.usesOverlayNav).toBe(true);
-    expect(comp.mobileSidenav).toBeDefined();
   });
 
   it('should close the overlay nav on navigation when the viewport is only short', () => {
