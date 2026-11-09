@@ -129,6 +129,21 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
     await new Promise(resolve => setTimeout(resolve));
     expect(dialogRef.disableClose).toBe(disableClose);
   });
+
+  it('keeps holding its dialog when fullscreen comes back before the restore runs', async () => {
+    const dialogRef = { disableClose: false };
+    component = setupComponent('<planet-markdown-textbox></planet-markdown-textbox>', dialogRef);
+
+    component.options.onToggleFullScreen(true);
+    component.options.onToggleFullScreen(false);
+    component.options.onToggleFullScreen(true);
+    await new Promise(resolve => setTimeout(resolve));
+    expect(dialogRef.disableClose).toBe(true);
+
+    component.options.onToggleFullScreen(false);
+    await new Promise(resolve => setTimeout(resolve));
+    expect(dialogRef.disableClose).toBe(false);
+  });
 });
 
 class FakeEasyMDE {

@@ -80,6 +80,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
 
   private fullscreenState?: FullscreenState;
   private dialogDisableClose: boolean | undefined;
+  private restoreDisableClose?: ReturnType<typeof setTimeout>;
   private easyMDE: any;
   private destroyed = false;
   #placeholder: string;
@@ -328,14 +329,19 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
       return;
     }
     if (isFullscreen) {
-      this.dialogDisableClose = this.dialogRef.disableClose;
+      if (this.restoreDisableClose) {
+        clearTimeout(this.restoreDisableClose);
+        this.restoreDisableClose = undefined;
+      } else {
+        this.dialogDisableClose = this.dialogRef.disableClose;
+      }
       this.dialogRef.disableClose = true;
       return;
     }
     // A microtask would restore it before the leaving Escape reaches the dialog's listener on body.
-    const disableClose = this.dialogDisableClose;
-    setTimeout(() => {
-      this.dialogRef.disableClose = disableClose;
+    this.restoreDisableClose = setTimeout(() => {
+      this.restoreDisableClose = undefined;
+      this.dialogRef.disableClose = this.dialogDisableClose;
     });
   }
 
