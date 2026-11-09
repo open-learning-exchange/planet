@@ -292,4 +292,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   focusInput() {
     this.chatInput?.nativeElement.focus();
   }
+
+  getSendTooltip(): string {
+    return this.providers.length > 0 ? $localize`Send` : $localize`chat is disabled, contact community admin`;
+  }
 }

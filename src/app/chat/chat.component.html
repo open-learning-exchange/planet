@@ -3,6 +3,9 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span class="titlebar" i18n>AI Chat</span>
+  @if (selectedConversationTitle) {
+    <span class="conversation-header-title" [matTooltip]="selectedConversationTitle | truncateText:100">{{ selectedConversationTitle }}</span>
+  }
   <span class="toolbar-fill"></span>
   @if (displayToggle) {
     <mat-form-field class="mdc-toolbar-input">

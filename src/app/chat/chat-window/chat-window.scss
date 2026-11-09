@@ -27,9 +27,10 @@ textarea {
   height: 100px;
 }
 
-button {
+.send-button-wrapper {
   position: absolute;
   top: 70%;
   right: 8px;
   transform: translateY(-50%);
+  display: inline-block;
 }

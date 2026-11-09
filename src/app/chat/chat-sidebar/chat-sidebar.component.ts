@@ -6,12 +6,10 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet } from '@angular/common';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 
 import { AiChatService } from '@shared/ai/ai-chat.service';
@@ -51,17 +49,14 @@ interface TitleForm {
     MatIconButton,
     MatTooltip,
     MatCheckbox,
-    CdkOverlayOrigin,
-    CdkConnectedOverlay,
     MatButtonToggleGroup,
     MatButtonToggle,
     ReactiveFormsModule,
     MatError,
     FormErrorMessagesComponent,
-    NgTemplateOutlet,
     PlanetLoadingSpinnerComponent,
-    ChatWindowComponent,
-    TruncateTextPipe
+    TruncateTextPipe,
+    ChatWindowComponent
   ]
 })
 export class ChatSidebarComponent implements OnInit, OnDestroy {
@@ -84,7 +79,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   provider?: AIProvider;
   fullTextSearch = false;
   searchType: 'questions' | 'responses' | null = null;
-  overlayOpen = false;
   readonly deviceType = this.deviceInfoService.deviceType;
   readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
@@ -157,19 +151,34 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.isEditing = !this.isEditing;
   }
 
-  toggleOverlay() {
-    this.overlayOpen = !this.overlayOpen;
+  cancelEditTitle(conversation: Conversation) {
+    this.titleForm[conversation._id]?.controls.title.setValue(conversation.title ?? '');
+    this.isEditing = false;
   }
 
   updateConversation(conversation: Conversation, title?: string | null, shared?: boolean) {
+    const updatedTitle = title !== undefined && title !== null ? title : conversation.title;
     this.couchService.updateDocument(
       this.dbName, {
         ...conversation,
-        title: title !== undefined && title !== null ? title : conversation.title,
-        shared,
+        title: updatedTitle,
+        shared: shared ?? conversation.shared,
         updatedDate: this.couchService.datePlaceholder
       }
-    ).subscribe((data) => {
+    ).subscribe((data: any) => {
+      if (this.selectedConversation?._id === conversation._id) {
+        const updatedRev = data?.rev ?? conversation._rev;
+        this.selectedConversation = {
+          ...this.selectedConversation,
+          _rev: updatedRev,
+          title: updatedTitle
+        };
+        this.chatService.setSelectedConversationId({
+          _id: conversation._id,
+          _rev: updatedRev,
+          title: updatedTitle
+        });
+      }
       this.getChatHistory();
       return data;
     });
@@ -225,6 +234,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   selectConversation(conversation: Conversation, index: number) {
+    if (this.selectedConversation?._id !== conversation?._id) {
+      this.isEditing = false;
+    }
     this.selectedConversation = conversation;
     if (this.selectedConversation?.aiProvider) {
       const aiProvider: AIProvider = {
@@ -237,7 +249,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     const currentProvider = this.chatService.getChatAIProvider();
     this.chatService.setSelectedConversationId({
       _id: conversation?._id,
-      _rev: conversation?._rev
+      _rev: conversation?._rev,
+      title: conversation?.title
     });
     this.onConversationRender(index);
   }
@@ -293,8 +306,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   filterConversations() {
-    if (this.titleSearch.trim() === '' ) {
-      this.getChatHistory();
+    if (this.titleSearch === '') {
+      this.filteredConversations = [ ...this.conversations ];
+      return;
     }
     this.filteredConversations = this.conversations?.filter(conversation => {
       if (this.fullTextSearch) {

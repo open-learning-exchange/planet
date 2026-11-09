@@ -12,8 +12,23 @@
   min-width: 100px;
 }
 
+.conversation-header-title {
+  margin-left: 140px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: v.$grey-text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50vw;
+}
+
 @media only screen and (max-width: v.$screen-md) {
   .titlebar {
     display: none;
+  }
+
+  .conversation-header-title {
+    margin-left: 0;
   }
 }

@@ -1,109 +1,103 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
-  <mat-drawer #drawer mode="side" [opened]="!isMobile()">
+  <mat-drawer #drawer class="sidebar-panel" mode="side" [opened]="!isMobile()">
 
     <div class="header-container">
       <div class="header flex-vertical-center">
-        <button type="button" mat-raised-button color="primary" mat-button (click)="newChat()">
+        <button type="button" mat-raised-button color="primary" (click)="newChat()">
           <mat-icon>add</mat-icon>
           <span i18n>Start New Chat</span>
         </button>
         @if (deviceType() === deviceTypes.DESKTOP) {
-          <button class="icon-button" mat-mini-fab (click)="drawer.toggle()">
+          <button type="button" class="icon-button" mat-mini-fab (click)="drawer.toggle()">
             <mat-icon class="material-icons">chevron_left</mat-icon>
           </button>
         }
       </div>
-      <mat-form-field class="font-size-1 margin-lr-3">
+      <mat-form-field class="search-field font-size-1" subscriptSizing="dynamic">
         <mat-label i18n>Search</mat-label>
         <input matInput [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
         <button type="button" mat-icon-button matSuffix (click)="resetFilter()" [style.visibility]="(titleSearch || searchType) ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
           <mat-icon>close</mat-icon>
         </button>
-      </mat-form-field><br>
+      </mat-form-field>
       <div class="full-conversation-row">
         <div class="full-conversation-label-row">
           <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()">
             <span class="full-conversation-label" i18n>Full Conversation Search </span>
           </mat-checkbox>
         </div>
-        <button mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+        <button type="button" mat-icon-button class="sidebar-icon" matTooltip="Search through the entire conversation, not just the title" i18n-matTooltip>
           <mat-icon>help_outline</mat-icon>
         </button>
       </div>
-      <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
-        <span class="overlay-text" i18n>Search through the entire conversation, not just the title</span>
-      </ng-template>
-      <div>
-        @if (fullTextSearch) {
+      @if (fullTextSearch) {
+        <div class="search-type-row">
           <mat-button-toggle-group [(ngModel)]="searchType" (change)="filterConversations()">
             <mat-button-toggle value="questions" i18n>Questions</mat-button-toggle>
             <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
           </mat-button-toggle-group>
-        }
-      </div>
+        </div>
+      }
       <hr>
-      </div>
-      @if (!isLoading && filteredConversations?.length) {
-        <ul>
-          @for (conversation of filteredConversations; track trackByFn($index, conversation); let i = $index) {
-            <li class="conversation-list" (click)="selectConversation(conversation, i)">
-              @if (isEditing) {
-                @if (selectedConversation?._id === conversation?._id) {
-                  <form [formGroup]="titleForm[conversation._id]" (ngSubmit)="submitTitle(conversation)">
-                    <mat-form-field class="mat-form-field half-width">
-                      <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
-                      <mat-error>
-                        <planet-form-error-messages [control]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
-                      </mat-error>
-                    </mat-form-field>
-                    <button mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
-                      <mat-icon>check</mat-icon>
-                    </button>
-                    <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()" matTooltip="Close" i18n-matTooltip>
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </form>
-                } @else {
-                  {{ conversation?.title | truncateText:19 }}
-                }
-              } @else {
-                <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
+    </div>
+    @if (!isLoading && filteredConversations?.length) {
+      <ul>
+        @for (conversation of filteredConversations; track trackByFn($index, conversation); let i = $index) {
+          <li class="conversation-list" [class.selected]="selectedConversation?._id === conversation?._id" (click)="selectConversation(conversation, i)">
+            @if (isEditing && selectedConversation?._id === conversation?._id) {
+              <form class="conversation-edit-form" [formGroup]="titleForm[conversation._id]" (ngSubmit)="submitTitle(conversation)" (click)="$event.stopPropagation()">
+                <mat-form-field class="conversation-edit-field" subscriptSizing="dynamic">
+                  <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
+                  <mat-error>
+                    <planet-form-error-messages [control]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
+                  </mat-error>
+                </mat-form-field>
+                <div class="conversation-actions">
+                  <button type="submit" mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button type="button" mat-icon-button class="sidebar-icon" (click)="cancelEditTitle(conversation)" matTooltip="Close" i18n-matTooltip>
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </form>
+            } @else {
+              <span class="conversation-title" [matTooltip]="conversation?.title | truncateText:100">{{ conversation?.title }}</span>
+              <div class="conversation-actions" (click)="$event.stopPropagation()">
                 @if (conversation.shared) {
-                  <button mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
+                  <button type="button" mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
                     <mat-icon>done_all</mat-icon>
                   </button>
                 }
                 @if (selectedConversation?._id === conversation?._id) {
-                  <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()" i18n-matTooltip matTooltip="Edit title">
+                  <button type="button" mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()" i18n-matTooltip matTooltip="Edit title">
                     <mat-icon>edit</mat-icon>
                   </button>
-                }
-                @if (selectedConversation?._id === conversation?._id) {
-                  <button mat-icon-button class="sidebar-icon" (click)="openShareDialog(conversation)" i18n-matTooltip matTooltip="Share conversation">
+                  <button type="button" mat-icon-button class="sidebar-icon" (click)="openShareDialog(conversation)" i18n-matTooltip matTooltip="Share conversation">
                     <mat-icon>share</mat-icon>
                   </button>
                 }
-              }
-              <ng-template #conversationTitle>{{ conversation?.title | truncateText:19 }}</ng-template>
-            </li>
-          }
-        </ul>
-      } @else {
-        @if (isLoading) {
-          <planet-loading-spinner text="Loading conversations..." i18n-text></planet-loading-spinner>
+              </div>
+            }
+          </li>
         }
-        @if (!isLoading) {
-          <div class="no-chats-message" i18n>No previous conversations.</div>
-        }
+      </ul>
+    } @else {
+      @if (isLoading) {
+        <planet-loading-spinner text="Loading conversations..." i18n-text></planet-loading-spinner>
       }
-    </mat-drawer>
+      @if (!isLoading) {
+        <div class="no-chats-message" i18n>No previous conversations.</div>
+      }
+    }
+  </mat-drawer>
 
-    <div class="window-box">
-      <div class="expand-button">
-        <button mat-mini-fab (click)="drawer.toggle()">
-          <mat-icon class="material-icons">{{ drawer.opened && deviceType() !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-        </button>
-      </div>
-      <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
+  <div class="window-box">
+    <div class="expand-button">
+      <button type="button" mat-mini-fab (click)="drawer.toggle()">
+        <mat-icon class="material-icons">{{ drawer.opened && deviceType() !== deviceTypes.DESKTOP ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+      </button>
     </div>
-  </mat-drawer-container>
+    <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
+  </div>
+</mat-drawer-container>
