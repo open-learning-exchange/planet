@@ -24,7 +24,7 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
     vi.unstubAllGlobals();
   });
 
-  const setupComponent = (markup: string) => {
+  const setupComponent = (markup: string, dialogRef?: { disableClose: boolean }) => {
     document.body.innerHTML = markup;
     document.querySelectorAll<HTMLElement>(
       '.mat-mdc-dialog-actions, .actions-container, .exam-buttons, .action-buttons, div.action-button'
@@ -42,7 +42,8 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
       new ElementRef(host),
       {} as any,
       { runOutsideAngular: (callback: () => void) => callback() } as any,
-      {} as any
+      {} as any,
+      dialogRef as any
     );
   };
 
@@ -114,6 +115,20 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
     expect(actions.classList.contains('planet-markdown-fullscreen-actions')).toBe(false);
     expect(host.classList.contains('planet-markdown-fullscreen-host')).toBe(false);
   });
+
+  it.each([ false, true ])('holds its dialog open in fullscreen and restores disableClose %s once Escape passes', async disableClose => {
+    const dialogRef = { disableClose };
+    component = setupComponent('<planet-markdown-textbox></planet-markdown-textbox>', dialogRef);
+
+    component.options.onToggleFullScreen(true);
+    expect(dialogRef.disableClose).toBe(true);
+
+    component.options.onToggleFullScreen(false);
+    await Promise.resolve();
+    expect(dialogRef.disableClose).toBe(true);
+    await new Promise(resolve => setTimeout(resolve));
+    expect(dialogRef.disableClose).toBe(disableClose);
+  });
 });
 
 class FakeEasyMDE {
@@ -128,7 +143,8 @@ class FakeEasyMDE {
       this.changeHandler = handler;
     },
     posFromIndex: (index: number) => index,
-    setCursor: vi.fn()
+    setCursor: vi.fn(),
+    focus: vi.fn()
   };
 
   constructor(public options: any) {
@@ -284,6 +300,21 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
 
     expect(editor.toggleFullScreen).toHaveBeenCalled();
     expect(editor.cleanup).toHaveBeenCalled();
+  });
+
+  it('focuses the editor from a click on its form field, but leaves clicks inside the editor alone', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(FormControlHostComponent);
+    await settle(fixture);
+    const textbox: PlanetMarkdownTextboxComponent = fixture.debugElement.query(By.css('planet-markdown-textbox')).componentInstance;
+    const editor = document.createElement('div');
+    editor.innerHTML = '<div class="EasyMDEContainer"><div class="editor-preview"></div></div>';
+
+    textbox.onContainerClick({ target: editor.querySelector('.editor-preview') } as unknown as MouseEvent);
+    expect(FakeEasyMDE.instance.codemirror.focus).not.toHaveBeenCalled();
+
+    textbox.onContainerClick({ target: fixture.nativeElement } as unknown as MouseEvent);
+    expect(FakeEasyMDE.instance.codemirror.focus).toHaveBeenCalled();
   });
 
   it('previews through the shared renderer', async () => {

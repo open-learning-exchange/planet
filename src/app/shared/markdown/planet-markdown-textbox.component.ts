@@ -3,7 +3,7 @@ import {
   DoCheck, ViewChild, NgZone
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -79,6 +79,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
   }
 
   private fullscreenState?: FullscreenState;
+  private dialogDisableClose: boolean | undefined;
   private easyMDE: any;
   private destroyed = false;
   #placeholder: string;
@@ -115,7 +116,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     autoRefresh: true,
     hideIcons: [ 'image' ],
     minHeight: 'var(--planet-markdown-textbox-height)',
-    onToggleFullScreen: (isFullscreen: boolean) => this.setFullscreenLayout(isFullscreen),
+    onToggleFullScreen: (isFullscreen: boolean) => {
+      this.setFullscreenLayout(isFullscreen);
+      this.holdDialogOpen(isFullscreen);
+    },
     previewRender: (text: string) => this.renderPreview(text),
     spellChecker: false
   };
@@ -126,7 +130,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     private elementRef: ElementRef,
     private dialog: MatDialog,
     private ngZone: NgZone,
-    private markdownRenderer: MarkdownRenderService
+    private markdownRenderer: MarkdownRenderService,
+    @Optional() private dialogRef: MatDialogRef<unknown>
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -318,6 +323,22 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     });
   }
 
+  private holdDialogOpen(isFullscreen: boolean) {
+    if (!this.dialogRef) {
+      return;
+    }
+    if (isFullscreen) {
+      this.dialogDisableClose = this.dialogRef.disableClose;
+      this.dialogRef.disableClose = true;
+      return;
+    }
+    // A microtask would restore it before the leaving Escape reaches the dialog's listener on body.
+    const disableClose = this.dialogDisableClose;
+    setTimeout(() => {
+      this.dialogRef.disableClose = disableClose;
+    });
+  }
+
   private findFullscreenLayout(): FullscreenState | undefined {
     const host = this.elementRef.nativeElement as HTMLElement;
     let owner = host.parentElement;
@@ -380,6 +401,13 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
 
   setDescribedByIds(ids: string[]) {
     this.describedBy = ids.join(' ');
+  }
+
+  onContainerClick(event: MouseEvent) {
+    // EasyMDE handles clicks inside itself, and CodeMirror stays editable under its preview.
+    if (!(event.target as Element).closest('.EasyMDEContainer')) {
+      (this.easyMDE?.codemirror ?? this.textarea.nativeElement).focus();
+    }
   }
 
   setErrorState() {
