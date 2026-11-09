@@ -55,7 +55,9 @@ export class ChallengesService {
     private couchService: CouchService,
     private dialogGuard: DialogGuardService,
     private userService: UserService
-  ) { }
+  ) {
+    this.userService.userChange$.pipe(filter(user => !user?.name)).subscribe(() => this.announced.clear());
+  }
 
   getChallenges(): Observable<PlanetChallenge[]> {
     // Not findAll: it turns errors into an empty list
@@ -132,13 +134,11 @@ export class ChallengesService {
     ), { cover: false });
   }
 
-  // Keyed by user: learners share devices without reloading
   announceOnce(dialog: MatDialog, challenge$: Observable<PlanetChallenge | undefined>) {
-    const key = (challenge: PlanetChallenge) => `${this.userService.get()?.name}:${challenge._id}`;
     return this.openChallengeDialogOnce(dialog, challenge$.pipe(
-      filter(challenge => !!challenge && !this.announced.has(key(challenge))),
+      filter(challenge => !!challenge && !this.announced.has(challenge._id)),
       map(challenge => {
-        this.announced.add(key(challenge));
+        this.announced.add(challenge._id);
         return challenge;
       })
     ));

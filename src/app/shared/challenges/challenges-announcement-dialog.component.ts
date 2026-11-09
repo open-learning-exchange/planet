@@ -131,9 +131,13 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
   }
 
   doSurvey(task: ChallengeTask) {
-    const stepNum = this.getSurveyStepNum(task);
-    this.router.navigate([ `/courses/view/${task.courseId}/step/${stepNum}/exam`, {
-      id: task.courseId,
+    const step = this.surveyStep(task);
+    if (!step) {
+      return;
+    }
+    const { courseId, stepNum } = step;
+    this.router.navigate([ `/courses/view/${courseId}/step/${stepNum}/exam`, {
+      id: courseId,
       stepNum,
       questionNum: 1,
       type: 'survey',
@@ -143,12 +147,13 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
     this.dialogRef.close();
   }
 
-  getSurveyStepNum(task: ChallengeTask) {
-    const course = this.coursesService.course?._id === task.courseId ?
-      this.coursesService.course :
-      this.coursesService.local.courses.find((localCourse: any) => localCourse._id === task.courseId);
-    const surveyStepIndex = course?.steps?.findIndex((step: any) => step.survey?._id === task.targetId);
-    return surveyStepIndex > -1 ? surveyStepIndex + 1 : undefined;
+  surveyStep(task: ChallengeTask): { courseId: string, stepNum: number } | undefined {
+    const isSurveyStep = (step: any) => step.survey?._id === task.targetId;
+    const hasSurvey = (candidate: any) =>
+      candidate && (!task.courseId || candidate._id === task.courseId) && candidate.steps?.some(isSurveyStep);
+    const { course: openCourse, local } = this.coursesService;
+    const course = local.courses.find(hasSurvey) ?? (hasSurvey(openCourse) ? openCourse : undefined);
+    return course && { courseId: course._id, stepNum: course.steps.findIndex(isSurveyStep) + 1 };
   }
 
   shareVoice() {

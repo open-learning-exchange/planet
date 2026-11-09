@@ -45,7 +45,7 @@
               }
               @case ('survey_complete') {
                 <span i18n>Complete the survey [${{ taskProgress.task.reward }}]</span>
-                @if (!taskProgress.done && getSurveyStepNum(taskProgress.task)) {
+                @if (!taskProgress.done && surveyStep(taskProgress.task)) {
                   <a mat-raised-button color="primary" type="button" (click)="doSurvey(taskProgress.task)" i18n>Survey</a>
                 }
               }

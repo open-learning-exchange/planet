@@ -58,7 +58,7 @@ export class ChallengesProgressService {
     return this.challengesService.getActiveChallenges().pipe(
       map(challenges => challenges.filter(challenge => challenge.tasks.some(task => types.includes(task.type)))),
       switchMap(challenges => challenges.length ?
-        forkJoin(challenges.map(challenge => this.refresh(challenge, types).pipe(
+        forkJoin(challenges.map(challenge => this.refresh(challenge).pipe(
           map(({ completedNow }) => completedNow),
           catchError(() => of(false))
         ))) :
@@ -68,22 +68,27 @@ export class ChallengesProgressService {
     );
   }
 
-  refresh(challenge: PlanetChallenge, types?: ChallengeTaskType[]): Observable<{ progress: UserProgress, completedNow: boolean }> {
+  refresh(challenge: PlanetChallenge): Observable<{ progress: UserProgress, completedNow: boolean }> {
     if (!this.canTakePart()) {
       return of({ progress: this.userProgress(challenge, []), completedNow: false });
     }
     const user = this.userService.get();
-    const tasks = challenge.tasks.filter(task => !types || types.includes(task.type));
-    const evidenceByTask$ = tasks.length ?
-      forkJoin(tasks.map(task => this.evidence(challenge, task, user).pipe(catchError(() => of([]))))) :
-      of([]);
     return this.userDocs(challenge, user.name).pipe(
-      switchMap(existing => evidenceByTask$.pipe(
-        map(evidenceByTask => tasks.flatMap((task, index) => this.progressDocs(challenge, task, user.name, evidenceByTask[index]))),
-        map(docs => docs.filter(doc => !existing.some(existingDoc => existingDoc._id === doc._id))),
-        switchMap(docs => docs.length ? this.couchService.post(`${DB}/_bulk_docs`, { docs }) : of([]))
-      )),
-      switchMap(() => this.userDocs(challenge, user.name)),
+      switchMap(existing => {
+        const tasks = challenge.tasks.filter(task =>
+          REPEATABLE_TASK_TYPES.includes(task.type) || !existing.some(doc => doc.taskId === task.id)
+        );
+        const evidenceByTask$ = tasks.length ?
+          forkJoin(tasks.map(task => this.evidence(challenge, task, user).pipe(catchError(() => of([]))))) :
+          of([]);
+        return evidenceByTask$.pipe(
+          map(evidenceByTask => tasks.flatMap((task, index) => this.progressDocs(challenge, task, user.name, evidenceByTask[index]))),
+          map(docs => docs.filter(doc => !existing.some(existingDoc => existingDoc._id === doc._id))),
+          switchMap(docs => docs.length ?
+            this.couchService.post(`${DB}/_bulk_docs`, { docs }).pipe(switchMap(() => this.userDocs(challenge, user.name))) :
+            of(existing))
+        );
+      }),
       switchMap(docs => {
         const progress = this.userProgress(challenge, docs);
         if (!progress.complete || progress.succeeded) {

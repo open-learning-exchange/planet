@@ -1,4 +1,4 @@
-import { NEVER, of, throwError } from 'rxjs';
+import { NEVER, Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ChallengesService } from './challenges.service';
@@ -19,7 +19,7 @@ describe('ChallengesService', () => {
 
   beforeEach(() => {
     couchService = { post: vi.fn().mockReturnValue(of({ docs: [ challenge ] })) };
-    userService = { get: vi.fn().mockReturnValue({ name: 'maria' }) };
+    userService = { get: vi.fn().mockReturnValue({ name: 'maria' }), userChange$: new Subject() };
     service = new ChallengesService(couchService, new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any), userService);
   });
 
@@ -103,12 +103,13 @@ describe('ChallengesService', () => {
     expect(dialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ data: challenge }));
   });
 
-  it('announces a challenge once per user, so the next learner on the device still sees it', () => {
+  it('announces a challenge once per login', () => {
     const dialog = { open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }) } as any;
 
     service.announceOnce(dialog, of(challenge as any)).subscribe();
+    userService.userChange$.next({ name: 'maria' });
     service.announceOnce(dialog, of(challenge as any)).subscribe();
-    userService.get.mockReturnValue({ name: 'jose' });
+    userService.userChange$.next({ name: '' });
     service.announceOnce(dialog, of(challenge as any)).subscribe();
 
     expect(dialog.open).toHaveBeenCalledTimes(2);

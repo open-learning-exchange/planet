@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
@@ -58,7 +58,7 @@ describe('ChallengesProgressService', () => {
         return { id: doc._id, ok: true };
       })))
     };
-    userService = { get: vi.fn().mockReturnValue(user), doesUserHaveRole: vi.fn().mockReturnValue(false) };
+    userService = { get: vi.fn().mockReturnValue(user), doesUserHaveRole: vi.fn().mockReturnValue(false), userChange$: EMPTY };
     dialog = { open: vi.fn() };
     const stateService = { configuration: { code: 'guatemala', parentCode: 'earth' } } as any;
     challengesService = new ChallengesService(couchService, new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any), userService);
@@ -98,14 +98,12 @@ describe('ChallengesProgressService', () => {
     expect(result.progress).toEqual(expect.objectContaining({ earned: 0, complete: false, succeeded: false }));
   });
 
-  it('queries only the recorded types, for this learner, inside the window and the challenge course', () => {
+  it('queries only this learner\'s records, inside the window and the challenge course', () => {
     challenge = { ...challenge, startsAt: '2026-10-01', endsAt: '2026-10-31', tasks: [ voiceTask, surveyTask ] };
     const window = { $gte: day(1, 0), $lte: new Date(2026, 9, 31, 23, 59, 59, 999).getTime() };
     vi.useFakeTimers({ now: day(15) });
     try {
       service.record('voice_post').subscribe();
-      expect(selectorFor('submissions')).toBeUndefined();
-      service.record('survey_complete').subscribe();
     } finally {
       vi.useRealTimers();
     }
@@ -116,7 +114,7 @@ describe('ChallengesProgressService', () => {
     }));
   });
 
-  it('shows success once, whichever task finishes last, and only in the tab that wrote it', () => {
+  it('shows success once, at the first action after every task is done, and only in the tab that wrote it', () => {
     challenge.tasks = [ joinTask, voiceTask ];
     data.news = [ voice('a', day(2)) ];
     service.record('voice_post').subscribe();
@@ -124,7 +122,7 @@ describe('ChallengesProgressService', () => {
 
     data.shelf = [ { _id: user._id, courseIds: [ 'course-1' ] } ];
     let completed: boolean;
-    service.record('course_join').subscribe(result => completed = result);
+    service.record('voice_post').subscribe(result => completed = result);
     service.record('voice_post').subscribe();
 
     expect(completed).toBe(true);
@@ -149,6 +147,10 @@ describe('ChallengesProgressService', () => {
     data.courses_progress.push({ _id: 'p2', stepNum: 2, passed: true, updatedDate: day(4) });
     service.record('course_complete').subscribe();
     expect(Object.values(progressDocs)[0]).toEqual(expect.objectContaining({ evidence: 'courses_progress/p2' }));
+
+    const queries = couchService.findAll.mock.calls.length;
+    service.record('course_complete').subscribe();
+    expect(couchService.findAll.mock.calls.length).toBe(queries);
   });
 
   it('writes nothing for managers', () => {

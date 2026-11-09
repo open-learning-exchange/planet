@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { EMPTY, Subject, Subscription, forkJoin, iif, of, throwError } from 'rxjs';
+import { EMPTY, Subject, Subscription, forkJoin, iif, merge, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, take, filter } from 'rxjs/operators';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
@@ -233,7 +233,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       switchMap(({ dialogRef, announcement }) => dialogRef.afterClosed().pipe(map(() => announcement))),
       filter(announcement => announcement.needsReminder()),
       switchMap(announcement => this.sendChallengeNotification(this.user, announcement.challenge)),
-      takeUntil(this.onDestroy$)
+      takeUntil(merge(this.onDestroy$, this.loggedOut$))
     ).subscribe();
   }
 
