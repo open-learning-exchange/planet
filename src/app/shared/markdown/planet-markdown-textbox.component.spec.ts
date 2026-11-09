@@ -116,7 +116,7 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
     expect(host.classList.contains('planet-markdown-fullscreen-host')).toBe(false);
   });
 
-  it.each([ false, true ])('holds its dialog open in fullscreen and restores disableClose %s once Escape passes', async disableClose => {
+  it.each([ false, true ])('holds its dialog open in fullscreen and restores disableClose %s after a macrotask', async disableClose => {
     const dialogRef = { disableClose };
     component = setupComponent('<planet-markdown-textbox></planet-markdown-textbox>', dialogRef);
 
@@ -152,6 +152,7 @@ class FakeEasyMDE {
   cleanup = vi.fn();
   toggleFullScreen = vi.fn();
   isFullscreenActive = vi.fn(() => false);
+  isPreviewActive = vi.fn(() => false);
   changeHandler: () => void;
   codemirror = {
     on: (_event: string, handler: () => void) => {
@@ -317,7 +318,7 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
     expect(editor.cleanup).toHaveBeenCalled();
   });
 
-  it('focuses the editor from a click on its form field, but leaves clicks inside the editor alone', async () => {
+  it('focuses the editor from a click on its form field, but not from inside the editor or under its preview', async () => {
     stubEditor();
     const fixture = TestBed.createComponent(FormControlHostComponent);
     await settle(fixture);
@@ -326,8 +327,11 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
     editor.innerHTML = '<div class="EasyMDEContainer"><div class="editor-preview"></div></div>';
 
     textbox.onContainerClick({ target: editor.querySelector('.editor-preview') } as unknown as MouseEvent);
+    FakeEasyMDE.instance.isPreviewActive.mockReturnValue(true);
+    textbox.onContainerClick({ target: fixture.nativeElement } as unknown as MouseEvent);
     expect(FakeEasyMDE.instance.codemirror.focus).not.toHaveBeenCalled();
 
+    FakeEasyMDE.instance.isPreviewActive.mockReturnValue(false);
     textbox.onContainerClick({ target: fixture.nativeElement } as unknown as MouseEvent);
     expect(FakeEasyMDE.instance.codemirror.focus).toHaveBeenCalled();
   });

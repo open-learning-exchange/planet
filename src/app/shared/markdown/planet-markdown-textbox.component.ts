@@ -410,8 +410,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
   }
 
   onContainerClick(event: MouseEvent) {
-    // EasyMDE handles clicks inside itself, and CodeMirror stays editable under its preview.
-    if (!(event.target as Element).closest('.EasyMDEContainer')) {
+    // EasyMDE handles its own clicks, and CodeMirror stays editable hidden under the preview.
+    if (!this.easyMDE?.isPreviewActive() && !(event.target as Element).closest('.EasyMDEContainer')) {
       (this.easyMDE?.codemirror ?? this.textarea.nativeElement).focus();
     }
   }
