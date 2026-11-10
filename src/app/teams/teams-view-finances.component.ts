@@ -122,7 +122,11 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
     private teamsAttachmentsService: TeamsAttachmentsService,
     @Inject(LOCALE_ID) private localeId: string,
     private dialogGuard: DialogGuardService
-  ) {}
+  ) {
+    const sortValue = this.table.sortingDataAccessor;
+    // Same-day transactions tie on date, so sort them in the order the running balance was summed
+    this.table.sortingDataAccessor = (row, column) => column === 'date' ? row.position : sortValue(row, column);
+  }
 
   ngOnDestroy() {
     this.onDestroy$.next();
@@ -130,9 +134,7 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges() {
-    if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
-      this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
-    }
+    this.setDisplayedColumns();
     if (!this.isLoading && this.finances) {
       this.allTransactions = this.setTransactionsTable(this.finances);
       this.applyDateFilter();
@@ -149,6 +151,13 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
         label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
         tone: negative ? 'warn' : 'net', value: balance, alert: negative
       }
+    ];
+  }
+
+  setDisplayedColumns() {
+    const dateOrder = (this.table.sort?.active ?? 'date') === 'date';
+    this.displayedColumns = [
+      'date', 'description', 'credit', 'debit', ...(dateOrder ? [ 'balance' ] : []), ...(this.editable ? [ 'action' ] : [])
     ];
   }
 
@@ -173,7 +182,7 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
     const previousBalance = index !== 0 ? newArray[index - 1].balance : 0;
     return [
       ...newArray,
-      { ...transaction, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
+      { ...transaction, position: index, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
     ];
   }
 
@@ -287,7 +296,7 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   }
 
   private transactionDocFields(transaction: any = {}) {
-    const { receiptImages, credit, debit, balance, ...docFields } = transaction;
+    const { receiptImages, credit, debit, balance, position, ...docFields } = transaction;
     return docFields;
   }
 
@@ -348,12 +357,13 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   }
 
   private financeExportData(sourceData: any[]) {
+    const showBalance = this.displayedColumns.includes('balance');
     const data = sourceData.map(row => ({
       [$localize`date`]: fullLabel(row.date, this.localeId),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
       [$localize`debit`]: row.debit,
-      [$localize`balance`]: row.balance
+      ...(showBalance ? { [$localize`balance`]: row.balance } : {})
     }));
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.stateService.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;

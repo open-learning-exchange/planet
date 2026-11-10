@@ -1,5 +1,5 @@
 @if (!isLoading) {
-  <div class="finances-container" matSort matSortActive="date" matSortDirection="desc" [matSortDisableClear]="true">
+  <div class="finances-container" matSort matSortActive="date" matSortDirection="desc" [matSortDisableClear]="true" (matSortChange)="setDisplayedColumns()">
     @if (!emptyTable) {
       <div class="finance-stats">
         @for (s of stats; track s.tone) {
@@ -85,7 +85,7 @@
             <mat-cell *matCellDef="let element" class="num debit">{{ element.debit ? '−' + (element.debit | currency:curCode?.code:curCode?.symbol) : '' }}</mat-cell>
           </ng-container>
           <ng-container matColumnDef="balance">
-            <mat-header-cell *matHeaderCellDef class="num" i18n>Balance</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef class="num km-balance" i18n>Balance</mat-header-cell>
             <mat-cell *matCellDef="let element" class="num balance" [ngClass]="{ debit: element.balance < 0 }">
               {{ element.balance | currency:curCode?.code:curCode?.symbol }}
             </mat-cell>
