@@ -33,6 +33,9 @@ export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) 
   return stored;
 }
 
+// nano sends `_design`/`_local` ids unencoded, so `_design/../<db>/<id>` would reach other databases as the gateway's admin
+export const isPlainDocId = (id: unknown): id is string => typeof id === 'string' && /^[^_/][^/]*$/.test(id);
+
 export async function fetchFileFromCouchDB(docId: string, attachmentName: string) {
   try {
     return await resourceDB.attachment.get(docId, attachmentName);
