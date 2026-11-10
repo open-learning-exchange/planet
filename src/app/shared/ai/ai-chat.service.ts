@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { findDocuments, inSelector } from '@shared/database/mango-queries';
@@ -21,7 +21,7 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
-  private toggleAIService = new Subject<ProviderName>();
+  private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
