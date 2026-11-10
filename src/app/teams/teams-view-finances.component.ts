@@ -300,9 +300,17 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
     return docFields;
   }
 
-  resetDateFilter() {
+  get defaultSort() {
+    const sort = this.table.sort;
+    return !sort || (sort.active === 'date' && sort.direction === 'desc');
+  }
+
+  clearFilters() {
     this.startDate = undefined;
     this.endDate = undefined;
+    if (!this.defaultSort) {
+      this.table.sort.sort({ id: 'date', start: 'desc', disableClear: true });
+    }
     this.applyDateFilter();
   }
 

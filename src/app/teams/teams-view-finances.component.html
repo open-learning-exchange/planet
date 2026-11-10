@@ -31,8 +31,8 @@
         <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
         <mat-datepicker #dateFilterEnd></mat-datepicker>
       </mat-form-field>
-      @if (startDate || endDate) {
-        <button class="finance-reset-btn" mat-button color="primary" (click)="resetDateFilter()" i18n>Reset</button>
+      @if (startDate || endDate || !defaultSort) {
+        <button class="finance-reset-btn km-clear-filters" mat-button color="primary" (click)="clearFilters()" i18n>Clear filters</button>
       }
       <span class="spacer"></span>
       @if (!emptyTable) {

@@ -115,6 +115,8 @@ describe('TeamsViewFinancesComponent', () => {
 
   const balanceShown = () => fixture.debugElement.queryAll(By.css('.km-balance')).length === 1;
 
+  const clearFiltersButton = (): HTMLButtonElement | null => fixture.nativeElement.querySelector('.km-clear-filters');
+
   it('should create TeamsViewFinancesComponent', () => {
     expect(component).toBeTruthy();
   });
@@ -167,12 +169,32 @@ describe('TeamsViewFinancesComponent', () => {
     fixture.detectChanges();
     expect(component.emptyTable).toBe(true);
 
-    component.resetDateFilter();
+    component.startDate = undefined;
+    component.transactionFilter();
     fixture.detectChanges();
 
     expect(component.table.sort.active).toBe('credit');
     expect(component.table.sort.direction).toBe('asc');
     expect(renderedDescriptions()).toEqual([ 'Hardware Supplies', 'Grant Funding', 'Initial Deposit' ]);
+  });
+
+  it('should offer Clear filters after a sort change and restore the date sort and range', () => {
+    expect(clearFiltersButton()).toBeNull();
+    sortBy('credit', 'asc');
+    expect(clearFiltersButton()).not.toBeNull();
+    component.startDate = new Date('2026-07-04T00:00:00Z');
+    component.transactionFilter();
+    fixture.detectChanges();
+
+    clearFiltersButton().click();
+    fixture.detectChanges();
+
+    expect(component.table.sort.active).toBe('date');
+    expect(component.table.sort.direction).toBe('desc');
+    expect(component.startDate).toBeUndefined();
+    expect(renderedDescriptions()).toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
+    expect(balanceShown()).toBe(true);
+    expect(clearFiltersButton()).toBeNull();
   });
 
   it('should not reorder the table data source when exporting', () => {
