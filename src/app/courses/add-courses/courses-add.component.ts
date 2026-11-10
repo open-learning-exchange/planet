@@ -28,7 +28,7 @@ import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.com
 import { SubmitDirective } from '@shared/dialogs/submit.directive';
 import { FileUploadComponent, AttachmentInputState, ExistingAttachment, PendingAttachment } from '@shared/forms/file-upload.component';
 import {
-  attachmentStubs, couchAttachmentUrl, normalizeImage, NormalizedImage, UNPROCESSABLE_IMAGE_ERROR, withImageAttachment
+  couchAttachmentUrl, normalizeImage, NormalizedImage, UNPROCESSABLE_IMAGE_ERROR, withImageAttachment
 } from '@shared/utils';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
@@ -75,7 +75,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
   #steps = [];
-  private preserveCoverStateUntilSubmit = false;
   existingCoverAttachments: ExistingAttachment[] = [];
   private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
   private coverCheck?: { file: File, usedNames: string[], image: Promise<NormalizedImage | null> };
@@ -155,29 +154,21 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.draftExists = draft !== undefined;
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
+      this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
+      this.setInitialState();
       if (continued) {
-        this.preserveCoverStateUntilSubmit = !!continuedCoverState;
+        // Compared against the stored course or draft above, so an unchanged return from the builder writes no draft
         this.setFormAndSteps(continuedCourse);
-        this.setCoverState(continuedCoverState || this.coverState);
-        const addedCover = this.coverState.added[0];
-        if (addedCover) {
-          void this.validateAddedCover(addedCover).then(() => {
-            if (!this.isDestroyed) {
-              this.submitAddedExam();
-            }
-          });
-        } else {
-          this.submitAddedExam();
+        if (continuedCoverState) {
+          this.existingCoverAttachments = continuedCoverState.retained;
+          this.coverUploadComponent?.addFiles(continuedCoverState.added.map(({ file }) => file));
         }
-      } else {
-        this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
-        this.setInitialState();
       }
     });
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
     if (!continued) {
-      this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+      this.coursesService.course = { courseId: this.courseId, form: this.courseForm.value, steps: this.steps };
     }
     this.coursesService.stepIndex = undefined;
   }
@@ -218,16 +209,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       resideOn: this.fb.control(configuration.code),
       updatedDate: this.fb.control<DateValue>(this.couchService.datePlaceholder)
     });
-  }
-
-  submitAddedExam() {
-    setTimeout(() => {
-      if (!this.courseForm.pending) {
-        this.onSubmit(false);
-      } else {
-        this.submitAddedExam();
-      }
-    }, 1000);
   }
 
   setDocumentInfo(doc) {
@@ -282,10 +263,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onCoverStateChange(state: AttachmentInputState) {
-    if (this.preserveCoverStateUntilSubmit) {
-      this.preserveCoverStateUntilSubmit = false;
-      return;
-    }
     this.setCoverState(state);
     if (state.added[0]) {
       void this.validateAddedCover(state.added[0]);
@@ -343,7 +320,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.setCoverState({ retained: [ ...this.existingCoverAttachments ], removed: [], added: [] });
   }
 
-  updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
+  updateCourse(courseInfo: FormGroup<CourseFormModel>['value']) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
@@ -356,12 +333,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     const addedCover = this.coverState?.added[0];
     from(withImageAttachment(newCourse, 'coverFileName', this.coverState, (file, usedNames) => this.normalizedCover(file, usedNames))).pipe(
       switchMap(course => this.saveCourseDocument(course))
-    ).subscribe(([ courseRes ]) => {
+    ).subscribe(() => {
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
-      this.courseChangeComplete(message, courseRes, shouldNavigate);
-      this.preserveCoverStateUntilSubmit = false;
+      this.courseChangeComplete(message);
     }, (err) => {
-      this.preserveCoverStateUntilSubmit = false;
       if (err?.message === UNPROCESSABLE_IMAGE_ERROR && addedCover && this.rejectAddedCover(addedCover)) {
         return;
       }
@@ -384,39 +359,21 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSubmit(shouldNavigate = true) {
+  onSubmit() {
     if (!this.courseForm.valid) {
-      this.preserveCoverStateUntilSubmit = false;
       this.submitAttempted = true;
       this.isFormExpanded = true;
       showFormErrors(this.courseForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
-    this.updateCourse(this.courseForm.getRawValue(), shouldNavigate);
+    this.updateCourse(this.courseForm.getRawValue());
   }
 
-  courseChangeComplete(message, response: any, shouldNavigate) {
+  courseChangeComplete(message: string) {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.isSaved = true;
     this.planetMessageService.showMessage(message);
-    if (shouldNavigate) {
-      this.navigateBack();
-      return;
-    }
-    if (this.isDestroyed) {
-      return;
-    }
-    this.isSaved = false;
-    this.courseId = response.id;
-    this.setDocumentInfo(response.doc);
-    this.savedCourse = { ...response.doc, _attachments: attachmentStubs(response.doc._attachments) };
-    this.coverUploadComponent?.clear();
-    this.setExistingCover(this.savedCourse);
-    this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
-    this.coursesService.course = { ...this.documentInfo };
-    if (this.pageType === 'Add') {
-      this.router.navigate([ '../update/', this.courseId ], { relativeTo: this.route, replaceUrl: true });
-    }
+    this.navigateBack();
   }
 
   addStep() {
