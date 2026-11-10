@@ -13,7 +13,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, finalize, map, switchMap } from 'rxjs/operators';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -287,8 +287,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     if (this.pageType !== 'Update' || !courseId) {
       return of(false);
     }
-    // Learners take the live exam, but pass checks and the course page's attempt lookup (by _rev) read this course copy,
-    // so every in-place save refreshes it. updatedDate stays, or the course form would see an edit and write a draft.
+    // Pass checks and attempt lookups (by _rev) read this copy, so every in-place save rewrites it.
+    // updatedDate is left alone so the course form doesn't see an edit and write a draft.
     return this.couchService.get(`courses/${courseId}`).pipe(switchMap((course: any) => {
       const index = (course.steps || []).findIndex(step => step[type]?._id === courseExam._id);
       if (index < 0) {
@@ -297,7 +297,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       const steps = course.steps.map((step, stepIndex) => stepIndex === index ? { ...step, [type]: courseExam } : step);
       return this.couchService.updateDocument('courses', this.coursesService.storeMarkdownImages({ ...course, steps }))
         .pipe(map(() => true));
-    }), catchError(() => of(false)));
+    }));
   }
 
   private unpublishedMessage() {

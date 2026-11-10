@@ -68,7 +68,7 @@ type DateValue = number | string | CouchService['datePlaceholder'];
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
 
-  readonly dbName = 'courses'; // make database name a constant
+  readonly dbName = 'courses';
   private onDestroy$ = new Subject<void>();
   private isDestroyed = false;
   private isSaved = false;
@@ -89,11 +89,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   submitAttempted = false;
   newCourseLabel = $localize`New Course`;
   tags = this.fb.control<string[]>([]);
-  // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
   images: any[] = [];
-  // from the languages import
   languageNames = languages.map(list => list.name);
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
   @ViewChild(FileUploadComponent) coverUploadComponent?: FileUploadComponent;
@@ -157,12 +155,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
       this.setInitialState();
       if (continued) {
-        // Compared against the stored course or draft above, so an unchanged return from the builder writes no draft
+        // Baseline is the stored course or draft, so an unchanged return writes no draft
         this.setFormAndSteps(continuedCourse);
-        if (continuedCoverState) {
-          this.existingCoverAttachments = continuedCoverState.retained;
-          this.coverUploadComponent?.addFiles(continuedCoverState.added.map(({ file }) => file));
-        }
+        this.existingCoverAttachments = continuedCoverState.retained;
+        this.coverUploadComponent.addFiles(continuedCoverState.added.map(({ file }) => file));
       }
     });
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
@@ -251,7 +247,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         steps: this.steps,
         tags: this.tags.value
       });
-      // Only auto-save if there are actual changes from the initial state
       if (currentState !== this.initialState) {
         this.pouchService.saveDocEditing({
           ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags

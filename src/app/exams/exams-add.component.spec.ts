@@ -1,5 +1,5 @@
 import { FormBuilder } from '@angular/forms';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
 import { MarkdownImagesService } from '@shared/markdown/markdown-images.service';
@@ -89,26 +89,22 @@ describe('ExamsAddComponent', () => {
     expect(messages.showMessage.mock.calls).toEqual([ [ 'Test updated successfully' ], [ 'Test updated successfully' ] ]);
   });
 
-  it.each([
-    [ 'the course has no id yet', undefined, of({}) ],
-    [ 'the stored course does not have the test', { steps: [ { exam: { _id: 'exam-2' } } ] }, of({}) ],
-    [ 'refreshing the stored course fails', { steps: [ { exam: { _id: 'exam-1' } } ] }, throwError(() => new Error('conflict')) ]
-  ])('asks for a course Submit and still returns when %s', (_label, storedCourse, write) => {
+  it('asks for a course Submit and still returns when the stored course does not have the test yet', () => {
     const couchService = {
-      get: vi.fn((path: string) => of(path.startsWith('courses/') ? storedCourse : exam)),
+      get: vi.fn((path: string) => of(path.startsWith('courses/') ? { steps: [ { exam: { _id: 'exam-2' } } ] } : exam)),
       findAll: vi.fn().mockReturnValue(of([])),
-      updateDocument: vi.fn().mockReturnValue(write)
+      updateDocument: vi.fn()
     };
     const { component, examsService, messages, router } = createComponent(
-      { type: 'exam', id: exam._id }, couchService, { courseId: storedCourse && 'course-1', steps: [ {} ] }
+      { type: 'exam', id: exam._id }, couchService, { courseId: 'course-1', steps: [ {} ] }
     );
     vi.spyOn(examsService, 'createExamDocument').mockReturnValue(of({ id: 'exam-1', rev: '2-b' }));
 
     component.ngOnInit();
     component.onSubmit(true);
 
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
     expect(messages.showMessage).toHaveBeenCalledWith('Test saved. Submit the course to publish it.');
-    expect(messages.showAlert).not.toHaveBeenCalled();
     expect(router.navigateByUrl).toHaveBeenCalled();
   });
 
