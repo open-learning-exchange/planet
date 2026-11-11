@@ -313,12 +313,6 @@ export class ConfigurationComponent implements OnInit {
 
     const chatConfig = {
       streaming: false,
-      keys: {
-        openai: '',
-        perplexity: '',
-        deepseek: '',
-        gemini: ''
-      },
       models: {
         openai: '',
         perplexity: '',

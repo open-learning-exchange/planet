@@ -46,6 +46,22 @@ mat-list-item.mat-mdc-list-item {
   line-height: 1.5;
 }
 
+.key-entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 12em;
+  }
+}
+
+.key-status {
+  min-width: 5em;
+}
+
 .hint {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.6);

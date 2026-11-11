@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -16,6 +16,7 @@ import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.co
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { ConfigurationService } from '../../configuration/configuration.service';
+import { ManagerKeysComponent } from './manager-keys.component';
 
 @Component({
   templateUrl: './manager-currency.component.html',
@@ -23,11 +24,12 @@ import { ConfigurationService } from '../../configuration/configuration.service'
   imports: [
     MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle,
     MatCardContent, MatList, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent,
-    MatButton
+    MatButton, ManagerKeysComponent
   ]
 })
 export class ManagerCurrencyComponent implements OnInit {
-  form: FormGroup<{ code: FormControl<string>, symbol: FormControl<string>, key: FormControl<string> }>;
+  @ViewChild(ManagerKeysComponent) keysCard: ManagerKeysComponent;
+  form: FormGroup<{ code: FormControl<string>, symbol: FormControl<string> }>;
   configuration: any = {};
 
   constructor(
@@ -40,19 +42,14 @@ export class ManagerCurrencyComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       code: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(6) ] }),
-      symbol: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(5) ] }),
-      key: this.fb.control('', { validators: [] })
+      symbol: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(5) ] })
     });
   }
 
   ngOnInit() {
     this.configuration = this.stateService.configuration;
-    this.configuration.keys = { currency: this.stateService.keys.currency };
     if (this.configuration?.currency) {
       this.form.patchValue(this.configuration.currency);
-    }
-    if (this.configuration?.keys?.currency) {
-      this.form.patchValue({ key: this.configuration.keys.currency });
     }
   }
 
@@ -61,9 +58,10 @@ export class ManagerCurrencyComponent implements OnInit {
       return;
     }
     this.dialogsLoadingService.start();
-    const { key, ...codeAndSymbol } = this.form.value;
-    this.configurationService.patchLocalConfiguration({ currency: { ...codeAndSymbol }, keys: { currency: key } })
-      .pipe(finalize(() => this.dialogsLoadingService.stop()))
+    this.keysCard.saveTypedKeys().pipe(
+      switchMap(() => this.configurationService.patchLocalConfiguration({ currency: { ...this.form.value } })),
+      finalize(() => this.dialogsLoadingService.stop())
+    )
       .subscribe(
         () => {
           this.stateService.requestData('configurations', 'local');
