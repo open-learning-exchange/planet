@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { of } from 'rxjs';
+import { defer, of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -32,15 +32,22 @@ describe('ManagerKeysComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('saves only the keys typed in, trimmed, when the page saves', () => {
-    configurationService.getKeyStatus.mockReturnValue(of({ ai: { openai: false, gemini: true }, currency: { openexchangerates: false } }));
-    configurationService.setKey.mockReturnValue(of(null));
+  it('saves the entered keys, trimmed, one after another', () => {
+    const saves: Subject<null>[] = [];
+    configurationService.getKeyStatus.mockReturnValue(of({ ai: { openai: false, gemini: true, deepseek: false } }));
+    configurationService.setKey.mockImplementation(() => defer(() => saves[saves.push(new Subject<null>()) - 1]));
     const component = createComponent();
     component.keyControls.openai.setValue(' sk-new ');
+    component.keyControls.gemini.setValue('gm-2');
+    let saved = false;
 
-    component.saveKeys().subscribe();
+    component.saveKeys().subscribe(() => saved = true);
+    expect(saves.length).toBe(1);
+    saves[0].complete();
+    expect(saves.length).toBe(2);
+    saves[1].complete();
 
-    expect(configurationService.setKey).toHaveBeenCalledTimes(1);
-    expect(configurationService.setKey).toHaveBeenCalledWith('ai', 'openai', 'sk-new');
+    expect(saved).toBe(true);
+    expect(configurationService.setKey.mock.calls).toEqual([ [ 'ai', 'openai', 'sk-new' ], [ 'ai', 'gemini', 'gm-2' ] ]);
   });
 });

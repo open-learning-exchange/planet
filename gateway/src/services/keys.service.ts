@@ -10,7 +10,6 @@ let cached: Record<string, Keys> | undefined;
 const keysOf = (doc: object): Keys => Object.entries(doc)
   .reduce((keys, [ name, key ]) => (name.startsWith('_') ? keys : { ...keys, [name]: key }), {} as Keys);
 
-// Read from CouchDB on first use, then kept up to date by writeKey
 const allKeys = async (): Promise<Record<string, Keys>> => {
   if (cached) {
     return cached;
