@@ -6,8 +6,12 @@ export interface DbDoc {
   user: any;
   title: string;
   createdDate: number;
+  updatedDate?: number;
   aiProvider?: ProviderName;
   conversations: ChatItem[];
+  context?: any;
+  shared?: boolean;
+  assistant?: boolean;
 }
 
 export interface Attachment {
