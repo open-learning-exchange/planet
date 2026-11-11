@@ -14,6 +14,8 @@ COUCHDB_PASS=planet
 CORS_ORIGINS=http://localhost:3000
 ```
 
+`COUCHDB_USER` and `COUCHDB_PASS` must be a CouchDB server admin: provider keys live in the admin-only `keys` database, which only the gateway reads.
+
 By default on Linux the gateway uses port `5000`. For Windows and macOS, use `5400` if needed and mirror that value in the root `.env` as `CHAT_PORT`.
 
 `CORS_ORIGINS` lists the browser origins allowed besides the gateway's own host, comma-separated. `ng serve` runs on a different port, so it needs its origin listed. To call the gateway from curl or scripts, sign in with Basic auth as any local account (`curl -u admin:admin localhost:5000/currency`).
@@ -40,6 +42,7 @@ To run the gateway tests, install the repository root dependencies first, then r
 
 - `modules/chatapi`: chat HTTP + WebSocket flow served through `/ml/`
 - `modules/currency`: exchange rates served through `/currency/`
+- `modules/keys`: provider keys, set and removed by managers through `PUT` and `DELETE /keys/:service/:name`; `GET /keys` says only whether each key is set
 - `modules/public`: scoped public endpoints served through `/public/`
 
 ## Public Endpoints

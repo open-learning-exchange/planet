@@ -156,6 +156,17 @@ export async function requireSession(req: Request, res: Response, next: NextFunc
   next();
 }
 
+const MANAGER_ROLES = [ '_admin', 'manager' ];
+
+export function requireManager(req: Request, res: Response, next: NextFunction) {
+  const session: SessionInfo | undefined = res.locals.session;
+  if (!session?.roles.some((role) => MANAGER_ROLES.includes(role))) {
+    res.status(403).json({ 'error': 'Forbidden', 'message': 'A manager session is required' });
+    return;
+  }
+  next();
+}
+
 export const requireSessionExcept = (openRoutes: OpenRoute[]) => (req: Request, res: Response, next: NextFunction) => {
   if (openRoutes.some((route) => route.methods.includes(req.method) && route.path.test(req.path))) {
     next();

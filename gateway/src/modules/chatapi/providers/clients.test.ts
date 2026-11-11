@@ -2,14 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({ 'getKeys': vi.fn(), 'getConfiguration': vi.fn() }));
 
-vi.mock('../../../services/config.service', () => ({ 'getKeys': mocks.getKeys, 'getConfiguration': mocks.getConfiguration }));
+vi.mock('../../../services/config.service', () => ({ 'getConfiguration': mocks.getConfiguration }));
+vi.mock('../../../services/keys.service', () => ({ 'getKeys': mocks.getKeys }));
 
 import { ProviderName } from '../models/chat.model';
 import { configuredProviders, providerClient } from './clients';
 
 describe('provider clients', () => {
   beforeEach(() => {
-    mocks.getKeys.mockResolvedValue({ 'deepseek': 'ds-key', 'currency': 'oxr-key' });
+    mocks.getKeys.mockResolvedValue({ 'deepseek': 'ds-key' });
     mocks.getConfiguration.mockResolvedValue({ 'models': {} });
   });
 
