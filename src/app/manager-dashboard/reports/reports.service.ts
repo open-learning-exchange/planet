@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,6 +10,7 @@ import { dedupeShelfReduce, ageFromUser, genderBucket } from '@shared/utils';
 import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
 import { StateService } from '@shared/state.service';
 
+import { environment } from '../../../environments/environment';
 import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../../courses/courses.service';
 import { startOfDay, subtractMonthsClamped } from './reports.utils';
@@ -25,6 +27,7 @@ interface ActivityRequestObject {
 export class ReportsService {
 
   users: any[] = [];
+  private readonly chatUsageUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat/usage`;
   readonly standardTimeFilters = [
     { value: '24h', label: $localize`Last 24 Hours` },
     { value: '7d', label: $localize`Last 7 Days` },
@@ -41,7 +44,8 @@ export class ReportsService {
     private usersService: UsersService,
     private dialog: MatDialog,
     private stateService: StateService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private httpClient: HttpClient
   ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', includeDocs = false } = {}) {
@@ -311,8 +315,7 @@ export class ReportsService {
   }
 
   getChatHistory() {
-    return this.couchService.get('chat_history/_all_docs', { params: { include_docs: 'true' } })
-      .pipe(map((data: any) => data.rows.map((row: any) => row.doc)));
+    return this.httpClient.get<any[]>(this.chatUsageUrl, { withCredentials: true });
   }
 
   groupChatUsage(chats: any) {
