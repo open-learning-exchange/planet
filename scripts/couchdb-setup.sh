@@ -157,6 +157,7 @@ upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
 upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
+upsert_doc chat_history _index '{"index":{"fields":[{"user":"asc"}]},"name":"user-index"}' POST
 
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security

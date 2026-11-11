@@ -1,12 +1,18 @@
 import { Express } from 'express';
 import WebSocket from 'ws';
 
-import { SessionInfo } from '../../middleware/auth';
+import { requireManager, SessionInfo } from '../../middleware/auth';
 import { ConfigurationUnavailableError } from '../../services/config.service';
+import { DbDoc } from './models/db-doc.model';
 import { configuredProviders } from './providers/clients';
 import { chat, chatNoSave, ConversationAccessError } from './services/chat.service';
+import { chatUsage, conversationChange, getConversation, listConversations, updateConversation } from './services/history.service';
 
 const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
+
+const respondWithConversation = (res: any, conversation?: DbDoc) => conversation ?
+  res.status(200).json(conversation) :
+  res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
 
 export function registerChatApiRoutes(app: Express) {
   app.post('/', async (req: any, res: any, next: any) => {
@@ -47,6 +53,30 @@ export function registerChatApiRoutes(app: Express) {
   app.get('/checkproviders', (req: any, res: any, next: any) => {
     void req;
     configuredProviders().then((providers) => res.status(200).json(providers)).catch(next);
+  });
+
+  app.get('/chat/conversations', (req: any, res: any, next: any) => {
+    void req;
+    listConversations(res.locals.session).then((conversations) => res.status(200).json(conversations)).catch(next);
+  });
+
+  app.get('/chat/conversations/:id', (req: any, res: any, next: any) => {
+    getConversation(req.params.id, res.locals.session).then((conversation) => respondWithConversation(res, conversation)).catch(next);
+  });
+
+  app.patch('/chat/conversations/:id', (req: any, res: any, next: any) => {
+    const change = conversationChange(req.body);
+    if (!change) {
+      return res.status(400).json({ 'error': 'Bad Request', 'message': 'Send a non-empty "title" or "shared": true' });
+    }
+    return updateConversation(req.params.id, res.locals.session, change)
+      .then((conversation) => respondWithConversation(res, conversation))
+      .catch(next);
+  });
+
+  app.get('/chat/usage', requireManager, (req: any, res: any, next: any) => {
+    void req;
+    chatUsage().then((usage) => res.status(200).json(usage)).catch(next);
   });
 }
 
