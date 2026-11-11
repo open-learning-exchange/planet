@@ -11,7 +11,7 @@ const KEY_NAMES = new Map<KeyService, readonly string[]>([
   [ 'currency', [ CURRENCY_PROVIDER ] ]
 ]);
 
-const knownKey = (req: Request, res: Response, next: NextFunction) =>
+const requireKnownKey = (req: Request, res: Response, next: NextFunction) =>
   KEY_NAMES.get(req.params.service as KeyService)?.includes(req.params.name) ?
     next() :
     res.status(404).json({ 'error': 'Not Found', 'message': 'Unknown key' });
@@ -28,7 +28,7 @@ const keyStatus = async () => {
   return status;
 };
 
-const respond = (res: Response, write: Promise<void>) => write.then(() => res.status(204).end(), (error) => {
+const respondToWrite = (res: Response, write: Promise<void>) => write.then(() => res.status(204).end(), (error) => {
   console.error(`Error saving a provider key: ${error}`);
   res.status(503).json({ 'error': 'Service Unavailable', 'message': 'The key could not be saved' });
 });
@@ -40,14 +40,14 @@ export function registerKeyRoutes(app: Express) {
     keyStatus().then((status) => res.status(200).json(status)).catch(next);
   });
 
-  app.put('/keys/:service/:name', knownKey, (req: Request, res: Response) => {
+  app.put('/keys/:service/:name', requireKnownKey, (req: Request, res: Response) => {
     const key = typeof req.body?.key === 'string' ? req.body.key.trim() : '';
     if (!key) {
       return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "key" field must be a non-empty string' });
     }
-    return respond(res, setKey(req.params.service as KeyService, req.params.name, key));
+    return respondToWrite(res, setKey(req.params.service as KeyService, req.params.name, key));
   });
 
-  app.delete('/keys/:service/:name', knownKey, (req: Request, res: Response) =>
-    respond(res, removeKey(req.params.service as KeyService, req.params.name)));
+  app.delete('/keys/:service/:name', requireKnownKey, (req: Request, res: Response) =>
+    respondToWrite(res, removeKey(req.params.service as KeyService, req.params.name)));
 }

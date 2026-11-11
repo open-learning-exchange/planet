@@ -230,14 +230,6 @@ export class ConfigurationService {
     return this.httpClient.delete(`${this.keysUrl}/${service}/${name}`, { withCredentials: true });
   }
 
-  removeAllKeys() {
-    return this.getKeyStatus().pipe(switchMap((status) => {
-      const removals = Object.entries(status).flatMap(([ service, names ]) =>
-        Object.keys(names).filter((name) => names[name]).map((name) => this.removeKey(service as KeyService, name)));
-      return removals.length ? forkJoin(removals) : of([]);
-    }));
-  }
-
   createUser(name, details, opts?) {
     return this.couchService.updateDocument('_users', { _id: 'org.couchdb.user:' + name, ...details }, opts);
   }

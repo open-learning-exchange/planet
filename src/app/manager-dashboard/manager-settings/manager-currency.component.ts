@@ -58,7 +58,7 @@ export class ManagerCurrencyComponent implements OnInit {
       return;
     }
     this.dialogsLoadingService.start();
-    this.keysCard.saveTypedKeys().pipe(
+    this.keysCard.saveKeys().pipe(
       switchMap(() => this.configurationService.patchLocalConfiguration({ currency: { ...this.form.value } })),
       finalize(() => this.dialogsLoadingService.stop())
     )

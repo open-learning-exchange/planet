@@ -38,7 +38,7 @@ describe('ManagerKeysComponent', () => {
     const component = createComponent();
     component.keyControls.openai.setValue(' sk-new ');
 
-    component.saveTypedKeys().subscribe();
+    component.saveKeys().subscribe();
 
     expect(configurationService.setKey).toHaveBeenCalledTimes(1);
     expect(configurationService.setKey).toHaveBeenCalledWith('ai', 'openai', 'sk-new');

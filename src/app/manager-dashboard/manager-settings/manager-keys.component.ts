@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { forkJoin, Observable, of } from 'rxjs';
+import { concat, Observable } from 'rxjs';
+import { toArray } from 'rxjs/operators';
 import { TitleCasePipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
@@ -52,12 +53,11 @@ export class ManagerKeysComponent implements OnInit {
     return Object.keys(this.status || {});
   }
 
-  // Called by the page's save button
-  saveTypedKeys(): Observable<unknown> {
-    const typed = this.names.filter((name) => this.keyControls[name].value.trim());
-    return typed.length ?
-      forkJoin(typed.map((name) => this.configurationService.setKey(this.service, name, this.keyControls[name].value.trim()))) :
-      of([]);
+  // One at a time, since every key of a service is saved in the same CouchDB document
+  saveKeys(): Observable<unknown> {
+    const entered = this.names.filter((name) => this.keyControls[name].value.trim());
+    return concat(...entered.map((name) => this.configurationService.setKey(this.service, name, this.keyControls[name].value.trim())))
+      .pipe(toArray());
   }
 
   removeKey(name: string) {

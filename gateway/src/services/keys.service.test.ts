@@ -70,16 +70,4 @@ describe('keys service', () => {
     expect(storedDoc()).toEqual({ '_id': 'ai', '_rev': '3-x', 'gemini': 'gm-1' });
     expect(mocks.list).toHaveBeenCalledTimes(1);
   });
-
-  it('saves keys of one service in turn, as removing every key at once needs', async () => {
-    mocks.list.mockResolvedValue(rows(aiDoc));
-    const storedDoc = couchWithDoc({ ...aiDoc, 'gemini': 'gm-1' });
-    const { getKeys, removeKey } = await loadService();
-    await getKeys('ai');
-
-    await Promise.all([ removeKey('ai', 'openai'), removeKey('ai', 'gemini') ]);
-
-    expect(storedDoc()).toEqual({ '_id': 'ai', '_rev': '3-x' });
-    expect(await getKeys('ai')).toEqual({});
-  });
 });

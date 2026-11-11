@@ -141,7 +141,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
         instructions: this.getStringControlValue('assistantInstructions')
       }
     };
-    this.keysCard.saveTypedKeys().pipe(
+    this.keysCard.saveKeys().pipe(
       switchMap(() => this.configurationService.patchLocalConfiguration(configPatch)),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(

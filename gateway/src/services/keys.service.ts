@@ -5,35 +5,27 @@ import { ConfigurationUnavailableError } from './config.service';
 export type KeyService = 'ai' | 'currency';
 type Keys = Record<string, string>;
 
-let stored: Record<string, Keys> | undefined;
-let reading: Promise<Record<string, Keys>> | undefined;
-let writing: Promise<unknown> = Promise.resolve();
+let cached: Record<string, Keys> | undefined;
 
 const keysOf = (doc: object): Keys => Object.entries(doc)
   .reduce((keys, [ name, key ]) => (name.startsWith('_') ? keys : { ...keys, [name]: key }), {} as Keys);
 
-const read = async (): Promise<Record<string, Keys>> => {
+// Read from CouchDB on first use, then kept up to date by writeKey
+const allKeys = async (): Promise<Record<string, Keys>> => {
+  if (cached) {
+    return cached;
+  }
   try {
     const { rows } = await keysDB.list({ 'include_docs': true });
-    stored = rows.reduce((services, row) => ({ ...services, [row.id]: keysOf(row.doc || {}) }), {} as Record<string, Keys>);
-    return stored;
+    cached = rows.reduce((services, row) => ({ ...services, [row.id]: keysOf(row.doc || {}) }), {} as Record<string, Keys>);
+    return cached;
   } catch (error) {
     console.error(`Error reading the provider keys: ${error}`);
     throw new ConfigurationUnavailableError('The provider keys could not be read');
-  } finally {
-    reading = undefined;
   }
 };
 
-const currentKeys = async (): Promise<Record<string, Keys>> => {
-  if (stored) {
-    return stored;
-  }
-  reading = reading || read();
-  return reading;
-};
-
-export const getKeys = async (service: KeyService): Promise<Keys> => (await currentKeys())[service] || {};
+export const getKeys = async (service: KeyService): Promise<Keys> => (await allKeys())[service] || {};
 
 const writeKey = async (service: KeyService, name: string, key?: string): Promise<void> => {
   const doc: any = await keysDB.get(service).catch((error) => {
@@ -47,18 +39,11 @@ const writeKey = async (service: KeyService, name: string, key?: string): Promis
     delete next[name];
   }
   await keysDB.insert(next);
-  if (stored) {
-    stored = { ...stored, [service]: keysOf(next) };
+  if (cached) {
+    cached = { ...cached, [service]: keysOf(next) };
   }
 };
 
-// Writes to one service's document would conflict, as when every key is removed at once, so they run in turn
-const queued = (task: () => Promise<void>): Promise<void> => {
-  const run = writing.then(task, task);
-  writing = run.catch(() => undefined);
-  return run;
-};
+export const setKey = (service: KeyService, name: string, key: string) => writeKey(service, name, key);
 
-export const setKey = (service: KeyService, name: string, key: string) => queued(() => writeKey(service, name, key));
-
-export const removeKey = (service: KeyService, name: string) => queued(() => writeKey(service, name));
+export const removeKey = (service: KeyService, name: string) => writeKey(service, name);
