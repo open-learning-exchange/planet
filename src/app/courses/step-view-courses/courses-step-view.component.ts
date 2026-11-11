@@ -173,7 +173,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     const blocking = this.parent || this.canManage ? -1 : blockingStepIndex(course.steps, progress);
     const lastOpenStep = blocking === -1 ? course.steps.length : blocking + 1;
-    // || 1 comes first because Math.max(NaN, 1) is NaN
+    // Math.max(NaN, 1) is NaN
     const targetStep = Math.min(Math.max(Math.floor(this.stepNum) || 1, 1), lastOpenStep);
     if (targetStep === this.stepNum) {
       return false;
@@ -191,10 +191,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
     this.examPassed = !!this.progress.passed;
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
-    // The exams doc is saved before the course's copy of it, so it can be ahead, and it's what the course page shows
+    // The exams doc is saved first, so it can be ahead of the course's copy
     const exam = this.stepDetail.exam && (exams.find(({ _id }) => _id === this.stepDetail.exam._id) || this.stepDetail.exam);
     const hasExam = stepHasExam({ exam });
-    // A step without a test can hold a stored fail: its test was emptied, or deleting or reordering steps moved a test's record onto it
+    // Emptied tests and moved steps can leave a stored fail on a step without a test
     const staleFail = !hasExam && !this.progress.passed;
     if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1 || staleFail)) {
       this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: !hasExam || this.progress.passed });

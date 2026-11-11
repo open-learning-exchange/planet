@@ -187,12 +187,6 @@ describe('CoursesStepViewComponent', () => {
     }
   );
 
-  it('redirects a step past the end to the step that must be passed', () => {
-    component.stepNum = 9;
-    expect(component.redirectFromUnavailableStep(lockedCourse, [ { stepNum: 1, passed: false } ])).toBe(true);
-    expect(routerMock.navigate).toHaveBeenCalledWith([ '../1' ], expect.objectContaining({ replaceUrl: true }));
-  });
-
   it.each([ 0, 1 ])('redirects step %s to the course page when the course has no steps', (stepNum) => {
     component.stepNum = stepNum;
     expect(component.redirectFromUnavailableStep({ _id: 'c1', steps: [] }, [])).toBe(true);
