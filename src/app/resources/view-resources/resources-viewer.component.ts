@@ -82,7 +82,6 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       .subscribe((resources) => {
         if (this.shownResourceId !== this.resourceId) {
           this.resource = resources.find((r: any) => r._id === this.resourceId);
-          // The library arrives in pages, so keep looking until the resource's page has arrived
           if (this.resource) {
             this.shownResourceId = this.resourceId;
             this.setResource(this.resource.doc);

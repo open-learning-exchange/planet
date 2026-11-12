@@ -37,7 +37,6 @@ describe('CoursesStepViewComponent', () => {
   it('shows the library\'s copy of each step resource it can open and counts the rest', () => {
     component.stepNum = 1;
     coursesServiceMock.stepResourceSort = (a, b) => a.title.localeCompare(b.title);
-    // Attached before its file was uploaded, so only the library's copy has one
     const fileAddedLater = { _id: 'file-added-later', title: 'A', _attachments: { 'a.pdf': {} } };
     const other = { _id: 'other', title: 'B', _attachments: { 'b.pdf': {} } };
     const resources = [ { _id: 'deleted', title: '0' }, { _id: 'file-added-later', title: 'A' }, other ];

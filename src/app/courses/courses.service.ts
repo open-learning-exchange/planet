@@ -225,7 +225,6 @@ export class CoursesService {
     return this.couchService.findAll(this.dbName, findDocuments({ _id: inSelector(ids) }), opts);
   }
 
-  // The course keeps its own copy of each step resource, so only the library's docs say whether one still exists and has a file
   libraryStepResources(course: any, parent = false) {
     const copies = course.steps.flatMap(step => step.resources);
     const ids = [ ...new Set<string>(copies.map(resource => resource._id)) ];
@@ -235,7 +234,6 @@ export class CoursesService {
     const opts = { domain: parent ? this.stateService.configuration.parentDomain : '' };
     return this.couchService.post('resources/_find', findDocuments({ _id: { $in: ids } }, 0, 0, ids.length), opts).pipe(
       map(({ docs }: { docs: any[] }) => new Map<string, any>(docs.map(doc => [ doc._id, doc ]))),
-      // Listing the course's copies, as before, beats calling every resource unavailable when the library can't be read
       catchError(() => of(new Map<string, any>(copies.map(resource => [ resource._id, resource ]))))
     );
   }

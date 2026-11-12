@@ -293,7 +293,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   // By segments because step links are absolute even under myCourses, and progress/enrolled are siblings of view
-  // A step resource opens at /resources/view/:id, outside the course's URLs
   private isOwnRoute(url = '') {
     const segments = this.router.parseUrl(url).root.children.primary?.segments.map(({ path }) => path) || [];
     const [ first, second, resourceId ] = segments;

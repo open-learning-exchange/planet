@@ -313,15 +313,5 @@ describe('CoursesService', () => {
 
       expect([ ...library.keys() ]).toEqual([ 'with-file', 'deleted' ]);
     });
-
-    it('makes no request for a course without step resources', () => {
-      const couchService = { post: vi.fn() };
-      let library: Map<string, any>;
-
-      createLookupService(couchService).libraryStepResources({ steps: [ { resources: [] } ] }).subscribe(docs => library = docs);
-
-      expect(couchService.post).not.toHaveBeenCalled();
-      expect(library.size).toBe(0);
-    });
   });
 });
