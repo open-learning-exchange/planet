@@ -1,8 +1,5 @@
 import { vi } from 'vitest';
-import { signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-
-import { DeviceType } from '@shared/ui/device-info.service';
 
 import { ReportsDetailComponent } from './reports-detail.component';
 import { ReportsService } from '../reports.service';
@@ -25,7 +22,6 @@ describe('ReportsDetailComponent exports', () => {
       {} as any,
       {} as any,
       new FormBuilder().nonNullable,
-      { deviceType: signal(DeviceType.DESKTOP) } as any,
       {} as any,
       'en-US'
     );
@@ -113,6 +109,9 @@ describe('ReportsDetailComponent time frame defaults', () => {
     component.selectedTimeFilter = selectedTimeFilter;
     component.filter = { app: '', members: [], startDate, endDate: new Date(2025, 5, 1) };
     component.minDate = new Date(2018, 6, 1);
+    component.timeFilterOptions = [ { value: 'custom', label: 'Custom' } ];
+    component.appSources = [];
+    component.selectedTeam = 'All';
     return component;
   };
 

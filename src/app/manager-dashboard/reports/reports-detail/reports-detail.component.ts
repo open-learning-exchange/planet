@@ -33,9 +33,9 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { AppSourceFilter, appSourceLabel, appSources } from '@shared/android/app-source';
 import { findDocuments } from '@shared/database/mango-queries';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 
 import { ReportsService } from '../reports.service';
 import { CustomValidators } from '../../../validators/custom-validators';
@@ -63,6 +63,7 @@ interface DateFilterForm {
   styleUrls: ['reports-detail.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
+    ListToolbarComponent,
     MatToolbar,
     MatToolbarRow,
     NgTemplateOutlet,
@@ -138,9 +139,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   dateFilterForm: FormGroup<DateFilterForm>;
   teams: any;
   selectedTeam: any = 'All';
-  showFiltersRow = false;
-  readonly deviceType = this.deviceInfoService.deviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
+  activeFilters: ActiveFilter[] = [];
   dateQueryParams = {
     startDate: null,
     endDate: null
@@ -185,7 +184,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private usersProfileDialogService: UsersProfileDialogService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
@@ -231,6 +229,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           this.planetCode = this.codeParam || this.stateService.configuration.code;
           this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
           this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+          this.setActiveFilters();
           this.initializeData(!this.codeParam);
         });
     });
@@ -247,6 +246,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onFilterChange(filterValue: AppSourceFilter) {
     this.filter.app = filterValue;
+    this.setActiveFilters();
     this.filterData();
   }
 
@@ -505,6 +505,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.filterData();
     };
     this.selectedTeam = filterValue;
+    this.setActiveFilters();
     if (filterValue === 'All') {
       filterMembers([]);
       return;
@@ -965,6 +966,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
+    this.setActiveFilters();
     const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
     this.showCustomDateFields = showCustomDateFields;
 
@@ -988,6 +990,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.selectedTeam = 'All';
     this.filter.members = [];
     this.onTimeFilterChange('3m');
+  }
+
+  private setActiveFilters() {
+    const time = this.timeFilterOptions.find(option => option.value === this.selectedTimeFilter);
+    const source = this.appSources.find(option => option.value === this.filter.app);
+    this.activeFilters = [
+      ...(this.selectedTimeFilter !== '3m' ? [ { label: time.label, clear: () => this.onTimeFilterChange('3m') } ] : []),
+      ...(this.selectedTeam !== 'All' ? [ { label: this.selectedTeam.name, clear: () => this.onTeamsFilterChange('All') } ] : []),
+      ...(source ? [ { label: source.label, clear: () => this.onFilterChange('') } ] : [])
+    ];
   }
 
   onHealthLoadingChange(loading: boolean) {
