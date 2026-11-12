@@ -117,6 +117,36 @@ describe('TeamsViewFinancesComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should chart the balance oldest first, ending at the newest row when transactions share a date', () => {
+    const sameDay = new Date('2026-07-12T00:00:00Z').getTime();
+    component.finances = [
+      ...mockFinances,
+      { _id: 'tx-4', date: sameDay, description: 'Bake Sale', type: 'credit', amount: 200, status: 'active' },
+      { _id: 'tx-5', date: sameDay, description: 'Rent', type: 'debit', amount: 300, status: 'active' }
+    ];
+    component.ngOnChanges();
+
+    expect(component.balanceChart.datasets[0].data).toEqual([ 1000, 750, 1250, 1450, 1150 ]);
+    expect(component.table.data[0].balance).toBe(1150);
+  });
+
+  it('should chart credit and debit by month within the date filter', () => {
+    component.finances = [
+      ...mockFinances,
+      { _id: 'tx-4', date: new Date('2026-08-03T10:00:00Z').getTime(), description: 'Rent', type: 'debit', amount: 100, status: 'active' }
+    ];
+    component.ngOnChanges();
+
+    expect(component.monthlyChart.labels).toEqual([ 'Jul 2026', 'Aug 2026' ]);
+    expect(component.monthlyChart.datasets.map(dataset => dataset.data)).toEqual([ [ 1500, 0 ], [ 250, 100 ] ]);
+
+    component.startDate = new Date(2026, 6, 4);
+    component.transactionFilter();
+
+    expect(component.monthlyChart.datasets.map(dataset => dataset.data)).toEqual([ [ 500, 0 ], [ 250, 100 ] ]);
+    expect(component.balanceChart.datasets[0].data).toEqual([ 750, 1250, 1150 ]);
+  });
+
   it('should bind MatSort to the table data source', () => {
     expect(component.table.sort).toBeTruthy();
   });

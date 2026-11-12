@@ -13,7 +13,7 @@
       </div>
     }
     @defer (on viewport) {
-      <canvas #canvas [id]="chartId"></canvas>
+      <canvas #canvas [id]="chartId" role="img" [attr.aria-label]="ariaLabel"></canvas>
     } @placeholder {
       <div class="planet-chart-placeholder"></div>
     }
