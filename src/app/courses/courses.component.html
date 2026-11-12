@@ -99,7 +99,7 @@
         <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
       }
       <mat-menu #managerMenu="matMenu">
-        <!-- Declared inside the manager menu so its items keep that menu's keyboard handling -->
+        <!-- Declared inside the manager menu so its items keep that menu's keyboard handling on desktop -->
         <ng-template #managerItems>
           <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
           @if (planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted') {

@@ -105,7 +105,7 @@
       <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
     }
     <mat-menu #managerMenu="matMenu">
-      <!-- Declared inside the manager menu so its items keep that menu's keyboard handling -->
+      <!-- Declared inside the manager menu so its items keep that menu's keyboard handling on desktop -->
       <ng-template #managerItems>
         @if (planetConfiguration.registrationRequest === 'accepted') {
           <button mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
