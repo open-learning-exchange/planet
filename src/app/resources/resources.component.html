@@ -15,7 +15,12 @@
           <mat-select placeholder="All" i18n-placeholder [value]="tagFilter.value[0]" (selectionChange)="tagFilter.setValue($event.value ? [ $event.value ] : [])">
             <mat-option i18n>All</mat-option>
             @for (tag of tagInputComponent?.tags; track tag._id) {
-              <mat-option [value]="tag._id">{{ tag.name }}</mat-option>
+              @if (!tag.attachedTo?.length) {
+                <mat-option [value]="tag._id">{{ tag.name }} ({{ tag.count }})</mat-option>
+                @for (subTag of tag.subTags; track subTag._id) {
+                  <mat-option class="list-filters-sub-option" [value]="subTag._id">{{ subTag.name }} ({{ subTag.count }})</mat-option>
+                }
+              }
             }
           </mat-select>
         </mat-form-field>

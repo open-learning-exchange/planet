@@ -53,6 +53,10 @@ planet-list-toolbar {
   }
 }
 
+.mat-mdc-option.list-filters-sub-option {
+  padding-inline-start: 2.5rem;
+}
+
 .list-filters-sheet .mat-bottom-sheet-container {
   // Material narrows the sheet only from 960px; one width keeps it the same across tablets
   min-width: min(100vw, 640px);
