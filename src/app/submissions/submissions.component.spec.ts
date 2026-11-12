@@ -24,14 +24,14 @@ describe('SubmissionsComponent', () => {
     expect(component.submissions.filter).toBe('learner name');
   });
 
-  it('clears the status that switching back to tests turns on', () => {
+  it('shows no chip for the default status, and clearing restores the defaults', () => {
     const component = createComponent();
     component.onFilterChange('survey', 'type');
 
     component.resetFilter();
 
     expect(component.filter.type).toBe('exam');
-    expect(component.filter.status).toBe('');
+    expect(component.filter.status).toBe('requires grading');
     expect(component.activeFilters).toEqual([]);
   });
 });

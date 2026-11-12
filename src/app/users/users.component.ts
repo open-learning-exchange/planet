@@ -190,7 +190,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
-    this.setActiveFilters();
+    this.changePlanetFilter('local');
     this.searchChange.next('');
   }
 

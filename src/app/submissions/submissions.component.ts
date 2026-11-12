@@ -271,7 +271,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   onFilterChange(filterValue: string, field: string) {
     if (field === 'type') {
-      this.filter.status = filterValue === 'exam' && this.mode === 'grade' ? 'requires grading' : '';
+      this.filter.status = this.defaultStatus(filterValue);
     }
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
@@ -284,21 +284,25 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   resetFilter() {
     this.onFilterChange(this.defaultType, 'type');
-    this.onFilterChange('All', 'status');
   }
 
   dropdownsFill() {
     return dropdownsFill(this.filter);
   }
 
+  private defaultStatus(type: string) {
+    return type === 'exam' && this.mode === 'grade' ? 'requires grading' : '';
+  }
+
   private setActiveFilters() {
-    const status = this.statusOptions.find(option => option.value === this.filter.status);
+    const status = this.filter.status !== this.defaultStatus(this.filter.type) &&
+      this.statusOptions.find(option => option.value === this.filter.status);
     this.activeFilters = [
       ...(this.filter.type !== this.defaultType ? [ {
         label: this.filter.type === 'survey' ? $localize`Surveys` : $localize`Tests`,
         clear: () => this.onFilterChange(this.defaultType, 'type')
       } ] : []),
-      ...(status ? [ { label: status.text, clear: () => this.onFilterChange('All', 'status') } ] : [])
+      ...(status ? [ { label: status.text, clear: () => this.onFilterChange(this.defaultStatus(this.filter.type), 'status') } ] : [])
     ];
   }
 
