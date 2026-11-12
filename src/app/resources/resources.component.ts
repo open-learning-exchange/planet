@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip, finalize } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, finalize, catchError } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -60,6 +60,7 @@ import { ResourcesSearchComponent } from './search-resources/resources-search.co
 import { levelList } from './resources.constants';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { ResourcesIconComponent } from './resources-icon.component';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
   selector: 'planet-resources',
@@ -204,7 +205,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private coursesService: CoursesService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       if (!isTabletOrSmaller(deviceType) && this.filterDialogRef) {
@@ -305,7 +307,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(resource) {
-    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.doc.title, 1);
+    this.openDeleteDialog([ resource ], this.deleteResource(resource), 'single', resource.doc.title);
   }
 
   deleteSelected() {
@@ -319,23 +321,36 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       okClick = this.deleteResource(resource);
       displayName = resource.doc.title;
     }
-    this.openDeleteDialog(okClick, amount, displayName, resources.length);
+    this.openDeleteDialog(resources, okClick, amount, displayName);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '', count) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'resource',
-        displayName,
-        count
-      }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
-      this.message = '';
+  openDeleteDialog(resources, okClick, amount, displayName = '') {
+    this.dialogGuard.open('delete-resources', () =>
+      this.coursesService.coursesUsingResources(resources.map(resource => resource._id)).pipe(
+        catchError(() => of([])),
+        map((courses: any[]) => {
+          // extraMessage renders HTML
+          const titles = courses.map(course => course.courseTitle.replace(/&/g, '&amp;').replace(/</g, '&lt;')).join(', ');
+          return this.dialog.open(DialogsPromptComponent, {
+            data: {
+              okClick,
+              amount,
+              changeType: 'delete',
+              type: 'resource',
+              displayName,
+              count: resources.length,
+              extraMessage: courses.length ? $localize`Used in courses: ${titles}` : '',
+              extraMessageType: 'supplementary'
+            }
+          });
+        })
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => {
+      this.deleteDialog = ref;
+      // Reset the message when the dialog closes
+      this.deleteDialog.afterClosed().subscribe(() => {
+        this.message = '';
+      });
     });
   }
 

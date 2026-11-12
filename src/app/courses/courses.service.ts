@@ -240,6 +240,12 @@ export class CoursesService {
     );
   }
 
+  coursesUsingResources(resourceIds: string[]) {
+    return this.couchService.findAll(this.dbName, findDocuments(
+      { steps: { $elemMatch: { resources: { $elemMatch: { _id: { $in: resourceIds } } } } } }, [ 'courseTitle' ]
+    ));
+  }
+
   findProgress(ids, opts) {
     const userQuery = opts.allUsers ? {} : { userId: this.userService.get()._id };
     return this.couchService.findAll(
