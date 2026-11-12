@@ -91,9 +91,7 @@
         } @else {
           <div>
             <span i18n>My earnings: <b>${{ progress.earned }}</b></span>
-            @if (maxEarnable() !== undefined) {
-              <span> / ${{ maxEarnable() }}</span>
-            }
+            <span> / ${{ maxEarnable() }}</span>
           </div>
         }
       </div>

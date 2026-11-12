@@ -170,14 +170,16 @@ export class ChallengesService {
   private normalizeTask(task: Partial<ChallengeTask>): ChallengeTask {
     const limit = (value: any) => value === undefined || value === null || value === '' ? undefined : Math.floor(this.getNumber(value, 0));
     const repeatable = REPEATABLE_TASK_TYPES.includes(task.type);
+    const requiredCount = repeatable ? limit(task.requiredCount) : undefined;
     return {
       ...task,
       id: task.id,
       type: task.type,
       reward: this.getNumber(task.reward, 0),
       countBy: task.countBy === 'day' ? 'day' : 'each',
-      maxCount: limit(task.maxCount),
-      requiredCount: repeatable ? limit(task.requiredCount) : undefined
+      // Progress docs are only checked for who wrote them, so the cap is what bounds a learner's share of the group total
+      maxCount: limit(task.maxCount) ?? (repeatable ? requiredCount || 1 : undefined),
+      requiredCount
     };
   }
 

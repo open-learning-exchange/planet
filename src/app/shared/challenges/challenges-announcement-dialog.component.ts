@@ -98,9 +98,8 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
     return this.challenge.goal > 0 ? (this.groupEarned / this.challenge.goal) * 100 : 0;
   }
 
-  maxEarnable(): number | undefined {
-    const amounts = this.challenge.tasks.map(task => this.challengesProgressService.maxEarnable(task));
-    return amounts.some(amount => amount === undefined) ? undefined : amounts.reduce((total, amount) => total + amount, 0);
+  maxEarnable(): number {
+    return this.challenge.tasks.reduce((total, task) => total + this.challengesProgressService.maxEarnable(task), 0);
   }
 
   countDots(task: ChallengeTask) {

@@ -128,8 +128,10 @@ export class ChallengesProgressService {
   }
 
   groupEarned(challenge: PlanetChallenge): Observable<number> {
+    // Only this planet's learners: planetCode is the writer's word, and each new one would count as another learner
+    const planet = [ challenge._id, this.stateService.configuration.code ];
     return this.couchService.get(`${DB}/_design/${DB}/_view/totals`, { params: {
-      group_level: '5', startkey: JSON.stringify([ challenge._id ]), endkey: JSON.stringify([ challenge._id, {} ])
+      group_level: '5', startkey: JSON.stringify(planet), endkey: JSON.stringify([ ...planet, {} ])
     } }).pipe(
       map(({ rows }) => {
         const dayCounts: Record<string, { taskId: string, counts: number[] }> = rows.reduce(
@@ -149,11 +151,8 @@ export class ChallengesProgressService {
     );
   }
 
-  maxEarnable(task: ChallengeTask): number | undefined {
-    if (!REPEATABLE_TASK_TYPES.includes(task.type)) {
-      return task.reward;
-    }
-    return task.maxCount === undefined ? undefined : task.maxCount * task.reward;
+  maxEarnable(task: ChallengeTask): number {
+    return REPEATABLE_TASK_TYPES.includes(task.type) ? task.maxCount * task.reward : task.reward;
   }
 
   private units(task: ChallengeTask, dayCounts: number[]) {

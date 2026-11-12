@@ -41,7 +41,8 @@ describe('ChallengesProgressService', () => {
           return of({ rows: Object.values(progressDocs).filter(({ _id }) => _id >= start && _id <= end).map(stored => ({ doc: stored })) });
         }
         if (url.startsWith('challenge_progress/_design')) {
-          const rows = Object.values(progressDocs).filter(({ taskId }) => taskId !== 'complete')
+          const [ , planetCode ] = JSON.parse(opts.params.startkey);
+          const rows = Object.values(progressDocs).filter(stored => stored.taskId !== 'complete' && stored.planetCode === planetCode)
             .map(stored => JSON.stringify([ stored.challengeId, stored.planetCode, stored.user, stored.taskId, stored.day ]))
             .reduce((counts, key) => ({ ...counts, [key]: (counts[key] || 0) + 1 }), {});
           return of({ rows: Object.entries(rows).map(([ key, value ]) => ({ key: JSON.parse(key), value })) });
@@ -164,15 +165,19 @@ describe('ChallengesProgressService', () => {
     expect(couchService.post).not.toHaveBeenCalled();
   });
 
-  it('totals the planet per learner and planet, capped at the goal', () => {
+  it('totals this planet per learner, capped at the goal', () => {
     [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ].forEach(id => progressDocs[id] = progress(id));
-    progressDocs.h = progress('h', { planetCode: 'nepal' });
+    progressDocs.h = progress('h', { planetCode: 'invented' });
+    progressDocs.k = progress('k', { user: 'juan' });
     progressDocs.i = progress('i', { taskId: 'join' });
     progressDocs.j = progress('j', { taskId: 'join' });
     let earned: number;
 
     service.groupEarned(normalized([ voiceTask, joinTask ])).subscribe(result => earned = result);
     expect(earned).toBe((5 + 1) * 2 + 1);
+
+    service.groupEarned(normalized([ { id: 'voice', type: 'voice_post', reward: 2 }, joinTask ])).subscribe(result => earned = result);
+    expect(earned).toBe((1 + 1) * 2 + 1);
 
     service.groupEarned({ ...normalized([ voiceTask, joinTask ]), goal: 4 }).subscribe(result => earned = result);
     expect(earned).toBe(4);
