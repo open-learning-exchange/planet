@@ -4,7 +4,7 @@ planet-list-toolbar {
   flex-shrink: 0;
 
   // A long or translated title shrinks instead of pushing the buttons off screen
-  .mat-toolbar-row:first-child > span:first-of-type {
+  .list-toolbar-compact > .mat-toolbar-row:first-child > span:first-of-type {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -38,11 +38,11 @@ planet-list-toolbar {
     min-height: 40px;
     padding-block: 0.25rem;
     gap: 0.5rem;
-    white-space: normal;
 
     .mat-mdc-chip-set {
       flex: 1 1 auto;
       min-width: 0;
+      white-space: normal;
     }
 
     .mat-mdc-chip-remove .mat-icon {
@@ -77,13 +77,15 @@ planet-list-toolbar {
 
     > mat-button-toggle-group {
       align-self: flex-start;
+      max-width: 100%;
+      flex-wrap: wrap;
     }
 
     .mat-mdc-form-field {
       width: 100%;
     }
 
-    .mat-mdc-form-field-subscript-wrapper {
+    .mat-mdc-form-field-subscript-wrapper:not(:has(mat-error)) {
       display: none;
     }
   }
