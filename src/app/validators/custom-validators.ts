@@ -249,6 +249,10 @@ export class CustomValidators {
     return /\S/.test(value) ? null : { required: true };
   }
 
+  static requiredEvenIfDisabled(controlName: string): ValidatorFn {
+    return (group: AbstractControl) => group.getRawValue()[controlName] ? null : { required: true };
+  }
+
   static requiredMarkdown(ac: AbstractControl<string | { text: string } | null>): ValidationErrors | null {
     // Markdown editors may emit plain strings (no imageGroup) or objects with a text property (with imageGroup).
     const markdownText = typeof ac.value === 'string'

@@ -198,7 +198,7 @@ export class ConfigurationComponent implements OnInit {
       alwaysOnline: this.formBuilder.control(false),
       betaEnabled: this.formBuilder.control('off')
     }, {
-      validators: (group) => group.getRawValue().parentDomain ? null : { required: true }
+      validators: CustomValidators.requiredEvenIfDisabled('parentDomain')
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: this.formBuilder.control('', { validators: [ CustomValidators.required ] }),
@@ -327,7 +327,7 @@ export class ConfigurationComponent implements OnInit {
         adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value
       },
       this.configuration,
-      this.configurationFormGroup.value,
+      this.configurationFormGroup.getRawValue(),
       this.contactFormGroup.value,
       chatConfig
     );
@@ -345,7 +345,7 @@ export class ConfigurationComponent implements OnInit {
       this.saveConfiguration();
       return;
     }
-    const reRegisters = changes.some(({ key }) => key === 'parentDomain');
+    const reRegisters = changes.some(({ key }) => key === 'planetType' || key === 'parentDomain');
     this.dialog.open(DialogsPromptComponent, {
       data: {
         showMainParagraph: false,
@@ -364,7 +364,7 @@ export class ConfigurationComponent implements OnInit {
     this.dialogsLoadingService.start();
     const spinnerOff = () => this.dialogsLoadingService.stop();
     if (this.configurationType === 'update') {
-      const configPatch = { ...this.configurationFormGroup.value, ...this.contactFormGroup.value };
+      const configPatch = { ...this.configurationFormGroup.getRawValue(), ...this.contactFormGroup.value };
       this.configurationService.patchConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
         err => {

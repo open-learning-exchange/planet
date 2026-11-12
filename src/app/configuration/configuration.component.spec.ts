@@ -128,11 +128,21 @@ describe('ConfigurationComponent update', () => {
     component.onSubmitConfiguration();
     const message: string = dialogMock.open.mock.calls[0][1].data.extraMessage;
     expect(message).toContain(label);
-    expect(message.includes('register again')).toBe(key === 'parentDomain');
+    expect(message.includes('register again')).toBe(key === 'planetType' || key === 'parentDomain');
     expect(configurationServiceMock.patchConfiguration).not.toHaveBeenCalled();
 
     afterClosed.mockReturnValueOnce(of(true));
     component.onSubmitConfiguration();
     expect(configurationServiceMock.patchConfiguration).toHaveBeenCalled();
+  });
+
+  it('saves a parent set while its select is still disabled', () => {
+    const parentDomain = component.configurationFormGroup.controls.parentDomain;
+    parentDomain.disable();
+    parentDomain.setValue('other.example/db');
+    afterClosed.mockReturnValueOnce(of(true));
+    component.onSubmitConfiguration();
+    expect(configurationServiceMock.patchConfiguration)
+      .toHaveBeenCalledWith(expect.objectContaining({ parentDomain: 'other.example/db' }));
   });
 });
