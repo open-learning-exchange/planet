@@ -1,26 +1,27 @@
 @if (!teamId) {
-  <mat-toolbar>
+  <planet-list-toolbar [searchValue]="searchValue">
     <button mat-icon-button (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span i18n>Surveys</span>
-    <span class="toolbar-fill"></span>
-    <div class="toolbar-search">
-      <mat-icon>search</mat-icon>
-      <mat-form-field subscriptSizing="dynamic" class="font-size-1">
-        <mat-label i18n>Type title to search...</mat-label>
-        <input matInput [ngModel]="searchValue" (ngModelChange)="applyFilter($event)">
-        <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-  </mat-toolbar>
+    <ng-template #listSearch>
+      <div class="toolbar-search">
+        <mat-icon>search</mat-icon>
+        <mat-form-field subscriptSizing="dynamic" class="font-size-1">
+          <mat-label i18n>Type title to search...</mat-label>
+          <input matInput [ngModel]="searchValue" (ngModelChange)="applyFilter($event)">
+          <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </ng-template>
+  </planet-list-toolbar>
 }
 
 <div class="primary-link-hover" [class.space-container]="!teamId">
   @if (!teamId) {
-    <mat-toolbar class="primary-color font-size-1">
+    <planet-list-actions [selected]="selection.selected.length" [inline]="true" (clearSelection)="selection.clear()">
       @if (isAuthorized) {
         <button mat-mini-fab (click)="routeToEditSurvey('add')" >
           <mat-icon>add</mat-icon>
@@ -33,15 +34,17 @@
           <mat-button-toggle value="adopt" i18n>Adopt a survey</mat-button-toggle>
         </mat-button-toggle-group>
       }
-      <ng-container *planetAuthorizedRoles="'manager'">
-        <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
-          <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-          @if (selection?.selected?.length) {
-            <span> ({{selection?.selected?.length}})</span>
-          }
-        </button>
-      </ng-container>
-    </mat-toolbar>
+      <ng-template #listActions>
+        <ng-container *planetAuthorizedRoles="'manager'">
+          <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+            <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+            @if (selection?.selected?.length) {
+              <span> ({{selection?.selected?.length}})</span>
+            }
+          </button>
+        </ng-container>
+      </ng-template>
+    </planet-list-actions>
   }
   <div class="view-container view-full-height view-table" [class.fill-parent]="teamId">
     @if (isLoading && !useDialogLoading) {

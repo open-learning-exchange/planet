@@ -27,6 +27,7 @@ import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { findByIdInArray } from '@shared/utils';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
 
 import { MeetupService } from './meetups.service';
 import { FeedbackDirective } from '../feedback/feedback.directive';
@@ -53,6 +54,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     }
   `],
   imports: [
+    ListToolbarComponent,
     MatToolbar,
     MatIconButton,
     MatIcon,

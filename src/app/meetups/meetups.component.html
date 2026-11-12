@@ -1,16 +1,17 @@
 
-<mat-toolbar>
+<planet-list-toolbar [searchValue]="meetups.filter">
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span i18n>Meetups</span>
-  <span class="toolbar-fill"></span>
-  <mat-icon class="input-icon">search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <mat-label i18n>Type title to search...</mat-label>
-    <input matInput (keyup)="applyFilter($event.target.value)">
-  </mat-form-field>
-</mat-toolbar>
+  <ng-template #listSearch>
+    <mat-icon class="input-icon">search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <mat-label i18n>Type title to search...</mat-label>
+      <input matInput (keyup)="applyFilter($event.target.value)" [value]="meetups.filter">
+    </mat-form-field>
+  </ng-template>
+</planet-list-toolbar>
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
