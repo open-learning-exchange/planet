@@ -80,7 +80,6 @@ export class CoursesSearchListComponent {
   }
 
   reset() {
-    // Compact mode has no selection list: its select follows the selected input
     this.selectionList?.deselectAll();
   }
 

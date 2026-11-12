@@ -3,11 +3,20 @@ planet-list-toolbar {
   // The full-height layout keeps only direct mat-toolbar children from shrinking
   flex-shrink: 0;
 
-  // The title gives way to the controls, so a long or translated one can't push them off screen
+  // A long or translated title shrinks instead of pushing the buttons off screen
   .mat-toolbar-row:first-child > span:first-of-type {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  // Material skips blank badges, so the dot carries a character it doesn't show
+  .list-toolbar-dot .mat-badge-content {
+    width: 8px;
+    height: 8px;
+    min-width: 0;
+    min-height: 0;
+    font-size: 0;
   }
 
   .list-toolbar-search {
