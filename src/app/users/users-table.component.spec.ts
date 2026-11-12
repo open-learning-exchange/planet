@@ -169,4 +169,34 @@ describe('UsersTableComponent', () => {
     const promoteButton = fixture.debugElement.query(By.css('.km-promote-button'));
     expect(promoteButton).toBeNull();
   });
+
+  it('shows the Action column only where admins can act on local users', () => {
+    component.tableState = new TableState();
+    expect(component.columns).toContain('action');
+
+    component.tableState = { ...new TableState(), filterType: 'associated' };
+    expect(component.columns).not.toContain('action');
+
+    component.isDialog = true;
+    component.tableState = new TableState();
+    expect(component.columns).not.toContain('action');
+    expect(component.columns).toContain('select');
+  });
+
+  it('opens a profile from the keyboard on the member name', async () => {
+    component.tableState = new TableState();
+    fixture.componentRef.setInput('users', [
+      { doc: { ...mockUser, isUserAdmin: false, roles: [ 'learner' ] }, fullName: 'John Doe' }
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const openProfile = vi.spyOn(component, 'gotoProfileView').mockImplementation(() => {});
+
+    const name: HTMLElement = fixture.debugElement.query(By.css('.km-profile-link')).nativeElement;
+    name.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+
+    expect(name.getAttribute('role')).toBe('button');
+    expect(name.getAttribute('tabindex')).toBe('0');
+    expect(openProfile).toHaveBeenCalledWith(mockUser.name);
+  });
 });

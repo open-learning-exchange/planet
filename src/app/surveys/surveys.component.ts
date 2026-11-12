@@ -11,8 +11,8 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { EMPTY, forkJoin, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap, takeUntil } from 'rxjs/operators';
-import { DatePipe } from '@angular/common';
-import { MatToolbar } from '@angular/material/toolbar';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
@@ -65,6 +65,8 @@ interface SurveyFilterForm {
   },
   imports: [
     MatToolbar,
+    MatToolbarRow,
+    NgTemplateOutlet,
     MatIconButton,
     MatIcon,
     MatFormField,
@@ -132,6 +134,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() teamId?: string;
   availableAIProviders: any[] = [];
   readonly isMobile = this.deviceInfoService.isMobile;
+  showFiltersRow = false;
 
   get teamSurveyMode() {
     return !!(this.teamId || this.routeTeamId);
