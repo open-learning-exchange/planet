@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil, debounceTime, map, finalize } from 'rxjs/operators';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -11,31 +10,41 @@ import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field'
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
+import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
+import { ListActionsComponent } from '@shared/tables/list-actions.component';
 
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 
+const roleLabels = {
+  leader: $localize`Leader`,
+  monitor: $localize`Monitor`,
+  health: $localize`Health Provider`,
+  learner: $localize`Learner`,
+  manager: $localize`Manager`,
+  admin: $localize`Admin`
+};
+
 @Component({
   selector: 'planet-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
   imports: [
-    MatToolbar,
+    ListToolbarComponent,
+    ListActionsComponent,
     MatIconButton,
     MatIcon,
     NgTemplateOutlet,
-    MatToolbarRow,
     MatButtonToggleGroup,
     MatButtonToggle,
     MatFormField,
@@ -47,7 +56,6 @@ import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/r
     MatInput,
     MatButton,
     MatTooltip,
-    FormsModule,
     UsersTableComponent
   ]
 })
@@ -67,16 +75,13 @@ export class UsersComponent implements OnInit, OnDestroy {
   children: any;
   roleList = this.usersService.roleList;
   allRolesList = this.usersService.allRolesList;
-  selectedRoles: string[] = [];
   filteredRole: string;
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   private searchChange = new Subject<string>();
   configuration = this.stateService.configuration;
   tableState = new TableState();
-  readonly deviceType = this.deviceInfoService.deviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
-  showFiltersRow = false;
+  activeFilters: ActiveFilter[] = [];
   isLoading = true;
 
   constructor(
@@ -88,7 +93,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private dialogsFormService: DialogsFormService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -130,6 +135,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   changePlanetFilter(type, child: any = {}) {
     this.filterDisplayColumns(type);
     this.tableState = { ...this.tableState, filterType: type, selectedChild: child };
+    this.setActiveFilters();
   }
 
   filterDisplayColumns(type: string) {
@@ -176,10 +182,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 
-  updateSelectedRoles(newSelection: string[]) {
-    this.selectedRoles = newSelection;
-  }
-
   onFilterChange(filterValue: string) {
     this.filter = { ...this.filter, 'doc.roles': filterValue === 'All' ? '' : filterValue };
     this.changePlanetFilter(this.tableState.filterType, this.tableState.selectedChild);
@@ -188,6 +190,38 @@ export class UsersComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
+    this.setActiveFilters();
     this.searchChange.next('');
+  }
+
+  openRolesDialog() {
+    this.dialogsFormService.confirm(
+      $localize`Set roles of selected`,
+      [ {
+        type: 'selectbox', name: 'roles', placeholder: $localize`Roles`, multiple: true, required: true,
+        options: this.roleList.map(role => ({ name: roleLabels[role], value: role }))
+      } ],
+      { roles: [ [], Validators.required ] }
+    ).subscribe((response: any) => {
+      if (response) {
+        this.roleSubmit(response.roles);
+      }
+    });
+  }
+
+  private setActiveFilters() {
+    const { filterType, selectedChild } = this.tableState;
+    const child = this.children?.find(({ doc }) => doc === selectedChild);
+    const role = this.filter['doc.roles'];
+    this.activeFilters = [
+      ...(filterType === 'associated' ? [ { label: $localize`Associated`, clear: () => this.changePlanetFilter('local') } ] : []),
+      ...(child ? [ { label: child.nameDoc ? child.nameDoc.name : child.doc.name, clear: () => this.changePlanetFilter('local') } ] : []),
+      ...(role ? [ { label: roleLabels[role], clear: () => this.resetRole() } ] : [])
+    ];
+  }
+
+  private resetRole() {
+    this.filteredRole = 'All';
+    this.onFilterChange('All');
   }
 }
