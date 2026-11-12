@@ -1,59 +1,53 @@
 @if (!isForm) {
-  <mat-toolbar>
-    @if (!isMobile()) {
-      <mat-toolbar-row>
-        @if (!isDialog) {
-          <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-        }
-        <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-4 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
-          <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
+  <planet-list-toolbar [activeFilters]="activeFilters" [searchValue]="titleSearch" (clearFilters)="resetFilter()">
+    @if (!isDialog) {
+      <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+    }
+    <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
+    <!-- Hidden on phones rather than removed: it restores the collections route param and keeps it in step -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-4 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search" [style.display]="isTabletOrSmaller() ? 'none' : null">
+      <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
+    </mat-form-field>
+    <ng-template #listFilters let-compact>
+      @if (compact) {
+        <mat-form-field subscriptSizing="dynamic" floatLabel="always">
+          <mat-label i18n>Collections</mat-label>
+          <mat-select placeholder="All" i18n-placeholder [value]="tagFilter.value[0]" (selectionChange)="tagFilter.setValue($event.value ? [ $event.value ] : [])">
+            <mat-option i18n>All</mat-option>
+            @for (tag of tagInputComponent?.tags; track tag._id) {
+              <mat-option [value]="tag._id">{{ tag.name }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
-        <span class="toolbar-fill"></span>
-        <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-      </mat-toolbar-row>
-    } @else {
-      <mat-toolbar-row>
-        @if (!isDialog) {
-          <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-        }
-        <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-4 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
-          <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
-        </mat-form-field>
-        <span class="toolbar-fill"></span>
-        <button mat-icon-button (click)="toggleFiltersRow()" aria-label="Toggle filter controls" i18n-aria-label><mat-icon>filter_list</mat-icon></button>
-      </mat-toolbar-row>
-      @if (showFiltersRow) {
-        <mat-toolbar-row class="filter-row">
-          <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-        </mat-toolbar-row>
+        <planet-courses-search [compact]="true" [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
+      } @else {
+        <span class="font-size-1 margin-lr-4 search-by-label" i18n>Search by:</span>
+        <button mat-stroked-button i18n (click)="toggleFilters()">Filter</button>
       }
-    }
+    </ng-template>
+    <ng-template #listSearch let-compact>
+      <mat-form-field subscriptSizing="dynamic" class="font-size-1 search-title-input">
+        <mat-label i18n>Title</mat-label>
+        <input matInput [(ngModel)]="titleSearch">
+        <button type="button" mat-icon-button matSuffix (click)="titleSearch = ''" [style.visibility]="titleSearch ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      @if (!compact) {
+        <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection.isEmpty"><span i18n>Clear filters</span></button>
+      }
+    </ng-template>
     @if (showInlineFilters) {
-      <mat-toolbar-row class="search-bar">
-        <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
+      <mat-toolbar-row planetListToolbarRow class="search-bar">
+        <planet-courses-search [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
       </mat-toolbar-row>
     }
-  </mat-toolbar>
+  </planet-list-toolbar>
 }
-
-<ng-template #filterOptions>
-  <span class="font-size-1 margin-lr-4 search-by-label" i18n>Search by:</span>
-  <button mat-stroked-button i18n (click)="toggleFilters()">Filter</button>
-  <mat-form-field subscriptSizing="dynamic" class="font-size-1 search-title-input">
-    <mat-label i18n>Title</mat-label>
-    <input matInput [(ngModel)]="titleSearch">
-    <button type="button" mat-icon-button matSuffix (click)="titleSearch = ''" [style.visibility]="titleSearch ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection.isEmpty"><span i18n>Clear filters</span></button>
-</ng-template>
 
 <div [ngClass]="{ 'space-container': !isForm }" class="primary-link-hover">
   @if (!isDialog && !isForm) {
-    <mat-toolbar class="primary-color font-size-1">
+    <planet-list-actions [selected]="selection.selected.length" [inline]="parent" (clearSelection)="selection.clear()">
       @if (isAuthorized) {
         @if (!parent) {
           <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
@@ -63,27 +57,22 @@
           <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
         </div>
         <span class="toolbar-fill"></span>
-        @if (parent) {
-          <button mat-button [disabled]="!selection.selected.length || dialogGuard.isActive('share-course')" (click)="shareCourse('pull', selection.selected)">
-            <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
-          </button>
-        }
-        @if (!parent && isTabletOrSmaller()) {
-          <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #actionsMenu="matMenu" class="actions-menu">
-            <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-          </mat-menu>
-        }
-        @if (!parent && !isTabletOrSmaller()) {
-          <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-        }
       }
-    </mat-toolbar>
+      <ng-template #listActions let-menu>
+        @if (isAuthorized) {
+          @if (parent) {
+            <button mat-button [disabled]="!selection.selected.length || dialogGuard.isActive('share-course')" (click)="shareCourse('pull', selection.selected)">
+              <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
+            </button>
+          } @else {
+            <ng-container *ngTemplateOutlet="actionButtons; context: { $implicit: menu }"></ng-container>
+          }
+        }
+      </ng-template>
+    </planet-list-actions>
   }
 
-  <ng-template #actionButtons>
+  <ng-template #actionButtons let-menu>
     @if (user.isUserAdmin) {
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-3 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
@@ -102,33 +91,43 @@
       }
     </button>
     @if (user.isUserAdmin) {
-      <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+      @if (menu) {
+        <ng-container *planetAuthorizedRoles="''">
+          <ng-container *ngTemplateOutlet="managerItems"></ng-container>
+        </ng-container>
+      } @else {
+        <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+      }
       <mat-menu #managerMenu="matMenu">
-        <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
-        @if (planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted') {
-          <button mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0 || dialogGuard.isActive('share-course')">
-            <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
-            <span i18n>Send Courses</span>
-            @if (selectedLocal > 0) {
-              <span> ({{selectedLocal}})</span>
-            }
-          </button>
-        }
-        @if (planetType !== 'community') {
-          <button mat-menu-item (click)="openSendCourseDialog()" [disabled]="!selection.selected.length || dialogGuard.isActive('send-course')">
-            <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-            <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
+        <!-- Declared inside the manager menu so its items keep that menu's keyboard handling -->
+        <ng-template #managerItems>
+          <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
+          @if (planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted') {
+            <button mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0 || dialogGuard.isActive('share-course')">
+              <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
+              <span i18n>Send Courses</span>
+              @if (selectedLocal > 0) {
+                <span> ({{selectedLocal}})</span>
+              }
+            </button>
+          }
+          @if (planetType !== 'community') {
+            <button mat-menu-item (click)="openSendCourseDialog()" [disabled]="!selection.selected.length || dialogGuard.isActive('send-course')">
+              <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+              <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
+              @if (selection?.selected?.length) {
+                <span> ({{selection?.selected?.length}})</span>
+              }
+            </button>
+          }
+          <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
+            <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
             @if (selection?.selected?.length) {
               <span> ({{selection?.selected?.length}})</span>
             }
           </button>
-        }
-        <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
-          <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-          @if (selection?.selected?.length) {
-            <span> ({{selection?.selected?.length}})</span>
-          }
-        </button>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="managerItems"></ng-container>
       </mat-menu>
     }
   </ng-template>
@@ -323,17 +322,3 @@
     </mat-paginator>
   </div>
 </div>
-
-<ng-template #searchFilters>
-  <planet-courses-search [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
-</ng-template>
-
-<ng-template #filterDialog>
-  <h2 mat-dialog-title i18n>Filter</h2>
-  <mat-dialog-content>
-    <ng-container *ngTemplateOutlet="searchFilters"></ng-container>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-raised-button color="primary" mat-dialog-close i18n>Close</button>
-  </mat-dialog-actions>
-</ng-template>
