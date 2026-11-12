@@ -26,16 +26,15 @@ export interface Message {
   response: string;
 }
 
-export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
+export type ProviderName = string;
 
 export interface AIProvider {
   name: ProviderName;
-  model?: string;
+  label?: string;
 }
 
-export interface AIServices {
-  openai: boolean;
-  perplexity: boolean;
-  deepseek: boolean;
-  gemini: boolean;
+export interface AIServiceStatus {
+  name: ProviderName;
+  label: string;
+  configured: boolean;
 }

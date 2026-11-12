@@ -1,8 +1,14 @@
-export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
+import { ProviderName } from '../providers/registry';
 
 export interface AIProvider {
   name: ProviderName;
   model?: string;
+}
+
+export interface ProviderStatus {
+  name: ProviderName;
+  label: string;
+  configured: boolean;
 }
 
 export interface ChatMessage {
