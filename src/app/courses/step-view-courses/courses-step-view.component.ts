@@ -140,7 +140,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+      .subscribe(({ submission, attempts, passed = false }) => {
         // A slow lookup for the previous step's exam can land after Next has moved on
         if (submission.parentId !== `${this.stepDetail.exam?._id}@${this.courseId}`) {
           return;
@@ -148,14 +148,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
         this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         this.attempts = attempts;
-        const totalMarks = this.stepDetail.exam.totalMarks || 0;
-        const passingPercentage = this.stepDetail.exam.passingPercentage ?? 100;
-        // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
-        const passedNow = bestAttempt.status === 'complete' && totalMarks > 0 &&
-          bestAttempt.grade * 100 >= passingPercentage * totalMarks;
-        // A stored pass stands even when no visible attempt passes (exam edited since), and progress never un-passes
-        this.examPassed = !!this.progress.passed || passedNow;
-        if (!this.parent && passedNow && !this.progress.passed) {
+        // A stored pass stands even when no attempt here passes (another app saved it), and progress never un-passes
+        this.examPassed = !!this.progress.passed || passed;
+        if (!this.parent && passed && !this.progress.passed) {
           this.coursesService.updateProgress({ courseId: this.courseId, stepNum: this.stepNum, passed: true });
         }
       });
