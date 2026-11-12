@@ -7,9 +7,9 @@
   @if (displayToggle) {
     <mat-form-field class="mdc-toolbar-input">
       <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()">
-        @for (service of aiServices; track service) {
-          <mat-option [value]="service.model">
-            {{service.name}}
+        @for (service of aiServices; track service.name) {
+          <mat-option [value]="service.name">
+            {{service.label}}
           </mat-option>
         }
       </mat-select>
