@@ -3,7 +3,7 @@ import WebSocket from 'ws';
 
 import { SessionInfo } from '../../middleware/auth';
 import { ConfigurationUnavailableError } from '../../services/config.service';
-import { configuredProviders } from './providers/clients';
+import { listProviders } from './providers/clients';
 import { chat, chatNoSave, ConversationAccessError } from './services/chat.service';
 
 const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
@@ -46,7 +46,7 @@ export function registerChatApiRoutes(app: Express) {
 
   app.get('/checkproviders', (req: any, res: any, next: any) => {
     void req;
-    configuredProviders().then((providers) => res.status(200).json(providers)).catch(next);
+    listProviders().then((providers) => res.status(200).json({ providers })).catch(next);
   });
 }
 
