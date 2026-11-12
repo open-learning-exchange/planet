@@ -296,13 +296,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   private setActiveFilters() {
     const status = this.filter.status !== this.defaultStatus(this.filter.type) &&
-      this.statusOptions.find(option => option.value === this.filter.status);
+      (this.statusOptions.find(option => option.value === this.filter.status)?.text ?? $localize`All statuses`);
     this.activeFilters = [
       ...(this.filter.type !== this.defaultType ? [ {
         label: this.filter.type === 'survey' ? $localize`Surveys` : $localize`Tests`,
         clear: () => this.onFilterChange(this.defaultType, 'type')
       } ] : []),
-      ...(status ? [ { label: status.text, clear: () => this.onFilterChange(this.defaultStatus(this.filter.type), 'status') } ] : [])
+      ...(status ? [ { label: status, clear: () => this.onFilterChange(this.defaultStatus(this.filter.type), 'status') } ] : [])
     ];
   }
 
