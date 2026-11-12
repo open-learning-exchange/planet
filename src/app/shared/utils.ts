@@ -30,8 +30,10 @@ export const isAcceptableFile = (file: File, accept?: string): boolean => {
 };
 
 export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
-  // CouchDB rejects attachment names that start with an underscore and reads + in a URL as a space; a parenthesis ends a markdown link
-  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>+()]/g, '_').replace(/^_+/, '') || 'attachment';
+  // CouchDB rejects attachment names that start with an underscore and reads + in a URL as a space; a parenthesis ends a markdown link;
+  // a URL drops . and .. path segments
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>+()]/g, '_').replace(/^_+/, '').replace(/^\.{1,2}$/, '') ||
+    'attachment';
   if (usedNames.indexOf(trimmed) === -1) {
     return trimmed;
   }

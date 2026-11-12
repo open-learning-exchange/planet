@@ -134,7 +134,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.model === 'openai');
+      this.isOpenai = providers.some(provider => provider.name === 'openai');
     });
   }
 
