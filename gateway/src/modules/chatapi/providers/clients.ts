@@ -1,20 +1,16 @@
 import OpenAI from 'openai';
 
 import { getConfiguration, getKeys } from '../../../services/config.service';
-import { ProviderName } from '../models/chat.model';
+import { ProviderStatus } from '../models/chat.model';
+import { PROVIDER_NAMES, PROVIDER_REGISTRY, ProviderName } from './registry';
 
-const BASE_URLS: Record<ProviderName, string | undefined> = {
-  'openai': undefined,
-  'perplexity': 'https://api.perplexity.ai',
-  'deepseek': 'https://api.deepseek.com',
-  'gemini': 'https://generativelanguage.googleapis.com/v1beta/openai/'
-};
-
-const PROVIDER_NAMES = Object.keys(BASE_URLS) as ProviderName[];
-
-export async function configuredProviders(): Promise<Record<ProviderName, boolean>> {
-  const keys = await getKeys();
-  return PROVIDER_NAMES.reduce((providers, name) => ({ ...providers, [name]: !!keys[name] }), {} as Record<ProviderName, boolean>);
+export async function listProviders(): Promise<ProviderStatus[]> {
+  const [ keys, { models } ] = await Promise.all([ getKeys(), getConfiguration() ]);
+  return PROVIDER_NAMES.map((name) => ({
+    name,
+    'label': PROVIDER_REGISTRY[name].label,
+    'configured': !!keys[name] && !!models[name]
+  }));
 }
 
 export async function providerClient(name: ProviderName): Promise<{ client: OpenAI; defaultModel: string }> {
@@ -26,7 +22,7 @@ export async function providerClient(name: ProviderName): Promise<{ client: Open
     throw new Error(`${name} is not configured`);
   }
   return {
-    'client': new OpenAI({ 'apiKey': keys[name], 'baseURL': BASE_URLS[name] }),
+    'client': new OpenAI({ 'apiKey': keys[name], 'baseURL': PROVIDER_REGISTRY[name].baseURL }),
     'defaultModel': models[name] || ''
   };
 }

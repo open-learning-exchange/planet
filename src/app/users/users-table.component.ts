@@ -25,7 +25,6 @@ import {
 import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
-import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -107,6 +106,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       (newState.filterType === 'associated' ? undefined : this.configuration.code);
     this.filterType = newState.filterType;
     this.#tableState = newState;
+    this.updateColumns();
   }
   get tableData() {
     return this.usersTable;
@@ -120,6 +120,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   usersTable = new MatTableDataSource();
   filterType = 'local';
   isUserAdmin = false;
+  columns: string[] = [];
   selection = new SelectionModel(true, [], true,
     (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
   );
@@ -128,7 +129,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
   promptDialog: MatDialogRef<DialogsPromptComponent>;
-  readonly isMobile = this.deviceInfoService.isMobile;
   trackById = trackById;
 
   constructor(
@@ -140,12 +140,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private route: ActivatedRoute,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService,
     private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.updateColumns();
     this.usersTable.sortingDataAccessor = (item: any, property) => {
       if (item[property]) {
         return sortNumberOrString(item, property);
@@ -172,6 +172,15 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     if (this.isDialog) {
       this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles' ];
     }
+    this.updateColumns();
+  }
+
+  updateColumns() {
+    const showActions = this.isUserAdmin && this.filterType === 'local' && !this.isDialog;
+    const showSelect = this.isUserAdmin || this.isDialog;
+    this.columns = this.displayedColumns.filter(column =>
+      (column !== 'action' || showActions) && (column !== 'select' || showSelect)
+    );
   }
 
   ngOnDestroy() {
@@ -180,9 +189,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   ngAfterViewInit() {
-    if (!this.isDialog && !this.isUserAdmin) {
-      this.displayedColumns = this.displayedColumns.filter(column => column !== 'select');
-    }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
   }
@@ -191,11 +197,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
-  gotoProfileView(userName: string, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
+  gotoProfileView(userName: string) {
     if (this.isDialog) {
       return;
     }

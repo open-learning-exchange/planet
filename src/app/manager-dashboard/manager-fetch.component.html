@@ -15,15 +15,15 @@
     @if (isLoading) {
       <planet-loading-spinner text="Loading items..." i18n-text></planet-loading-spinner>
     }
-    <mat-table #table [dataSource]="pushedItems" matSort [class.hidden]="isLoading">
+    <mat-table #table class="card-mode" [dataSource]="pushedItems" matSort [class.hidden]="isLoading">
       <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
+        <mat-header-cell *matHeaderCellDef class="card-select">
           <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
             [checked]="selection.hasValue() && pageSelection.isAllSelected()"
             [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
-        <mat-cell *matCellDef="let row">
+        <mat-cell *matCellDef="let row" class="card-select">
           <mat-checkbox
             (click)="$event.stopPropagation()"
             (change)="$event ? selection.toggle(row._id) : null"
@@ -33,7 +33,7 @@
       </ng-container>
       <ng-container matColumnDef="item">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" class="card-title">
           @if (element.db === 'resources') {
             {{ element.item.doc.title }}
             <mat-icon class="margin-lr-5 fetch-icon">library_books</mat-icon>
@@ -46,7 +46,7 @@
       </ng-container>
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef mat-sort-header="time" i18n>Date Sent</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
+        <mat-cell *matCellDef="let element"><span class="card-label" i18n>Date Sent</span>{{ element.time | date}}</mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
