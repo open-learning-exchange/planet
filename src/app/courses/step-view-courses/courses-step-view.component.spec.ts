@@ -26,12 +26,29 @@ describe('CoursesStepViewComponent', () => {
     };
     routerMock = { navigate: vi.fn() };
     component = new CoursesStepViewComponent(
-      {} as any, coursesServiceMock, {} as any, {} as any,
+      {} as any, coursesServiceMock, {} as any,
       routerMock, { snapshot: { data: {} } } as any, {} as any,
-      submissionsServiceMock, { get: vi.fn() } as any,
+      submissionsServiceMock, { get: vi.fn(), shelf: { courseIds: [] } } as any,
       { isMobile: signal(false) } as any, {} as any
     );
     component.isLoading = false;
+  });
+
+  it('shows the library\'s copy of each step resource it can open and counts the rest', () => {
+    component.stepNum = 1;
+    coursesServiceMock.stepResourceSort = (a, b) => a.title.localeCompare(b.title);
+    // Attached before its file was uploaded, so only the library's copy has one
+    const fileAddedLater = { _id: 'file-added-later', title: 'A', _attachments: { 'a.pdf': {} } };
+    const other = { _id: 'other', title: 'B', _attachments: { 'b.pdf': {} } };
+    const resources = [ { _id: 'deleted', title: '0' }, { _id: 'file-added-later', title: 'A' }, other ];
+    const course = { _id: 'c1', steps: [ { resources } ] };
+    const library = new Map<string, any>([ [ 'file-added-later', fileAddedLater ], [ 'other', other ] ]);
+
+    component.initCourse(course, [], library, []);
+
+    expect(component.stepDetail.resources).toEqual([ fileAddedLater, other ]);
+    expect(component.stepDetail.unavailableResources).toBe(1);
+    expect(component.resource).toBe(fileAddedLater);
   });
 
   it('enables Next on a passingRequired step only once the pass is saved', () => {
@@ -127,13 +144,13 @@ describe('CoursesStepViewComponent', () => {
     Object.assign(coursesServiceMock, {
       courseUpdated$,
       canManageCourse: authorizationService.canManageCourse.bind(authorizationService),
+      libraryStepResources: () => of(new Map()),
       requestCourse: vi.fn(),
       courseActivity: vi.fn()
     });
     submissionsServiceMock.openSubmission = vi.fn();
     component = new CoursesStepViewComponent(
-      { listAIProviders: () => of([]) } as any, coursesServiceMock, {} as any,
-      { resourcesListener: () => of([]), requestResourcesUpdate: vi.fn() } as any, routerMock,
+      { listAIProviders: () => of([]) } as any, coursesServiceMock, {} as any, routerMock,
       { snapshot: { data: { parent } }, paramMap: of(new Map([ [ 'stepNum', '1' ], [ 'id', 'c1' ] ])) } as any,
       { getCouchState: () => of([]) } as any, submissionsServiceMock,
       { get: vi.fn(), shelf: { courseIds: [] } } as any, { isMobile: signal(false) } as any, {} as any

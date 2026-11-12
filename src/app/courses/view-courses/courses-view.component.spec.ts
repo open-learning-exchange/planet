@@ -1,4 +1,5 @@
 import { signal } from '@angular/core';
+import { NEVER, of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 import { CoursesViewComponent } from './courses-view.component';
 
@@ -84,5 +85,33 @@ describe('CoursesViewComponent', () => {
     component.setStepButtonStatus(component.courseDetail.steps[2], 2);
 
     expect(component.courseDetail.steps[2].isPreviousTestTaken).toBeFalsy();
+  });
+
+  it('lists the library\'s copy of each step resource it can open and counts the rest', () => {
+    const courseUpdated$ = new Subject<any>();
+    const inLibrary = { _id: 'in-library', title: 'Renamed in the library', _attachments: {} };
+    const coursesService = {
+      courseUpdated$,
+      libraryStepResources: () => of(new Map<string, any>([ [ 'in-library', inLibrary ], [ 'no-file', { _id: 'no-file' } ] ])),
+      courseActivity: vi.fn(),
+      canManageCourse: () => false,
+      courseTagsListener$: () => NEVER,
+      requestCourse: vi.fn(),
+      stepResourceSort: () => 0
+    };
+    component = new CoursesViewComponent(
+      routerMock, { get: () => ({ name: 'u' }), shelf: { courseIds: [] } } as any,
+      { snapshot: { data: {} }, paramMap: of(new Map([ [ 'id', 'c1' ] ])) } as any, coursesService as any, {} as any,
+      { configuration: {}, getCouchState: () => of([]) } as any, { deviceType: signal(undefined) } as any, {} as any, {} as any,
+      { resetRatingInteraction: vi.fn() } as any
+    );
+
+    component.ngOnInit();
+    const resources = [ { _id: 'in-library' }, { _id: 'deleted', _attachments: {} }, { _id: 'no-file' } ];
+    courseUpdated$.next({ course: { _id: 'c1', steps: [ { resources } ] } });
+
+    expect(component.courseDetail.steps[0].resources).toEqual([ inLibrary ]);
+    expect(component.courseDetail.steps[0].unavailableResources).toBe(2);
+    component.ngOnDestroy();
   });
 });

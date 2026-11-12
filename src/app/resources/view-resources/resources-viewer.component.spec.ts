@@ -115,3 +115,24 @@ describe('ResourcesViewerComponent CSV preview', () => {
   });
 
 });
+
+describe('ResourcesViewerComponent library pages', () => {
+  it('keeps looking until the page holding its resource arrives', () => {
+    const library = new Subject<any[]>();
+    const component = new ResourcesViewerComponent(
+      {} as any,
+      { resourcesListener: () => library, requestResourcesUpdate: vi.fn() } as any,
+      { snapshot: { data: { parent: false } } } as any,
+      { configuration: {} } as any, {} as any, {} as any, {} as any, {} as any
+    );
+    const setResource = vi.spyOn(component, 'setResource').mockImplementation(() => {});
+    component.resourceId = 'on-page-2';
+    const doc = { _id: 'on-page-2' };
+
+    library.next([ { _id: 'on-page-1', doc: { _id: 'on-page-1' } } ]);
+    library.next([ { _id: 'on-page-1', doc: { _id: 'on-page-1' } }, { _id: 'on-page-2', doc } ]);
+
+    expect(setResource).toHaveBeenCalledTimes(1);
+    expect(setResource).toHaveBeenCalledWith(doc);
+  });
+});

@@ -277,4 +277,51 @@ describe('CoursesService', () => {
       ]);
     });
   });
+
+  describe('libraryStepResources', () => {
+    const createLookupService = (couchService: any) => new CoursesService(
+      couchService, {} as any, { ratingsUpdated$: of(undefined) } as any, {} as any,
+      { couchStateListener: () => of(undefined), configuration: { parentDomain: 'nation.example' } } as any,
+      {} as any, {} as any, {} as any
+    );
+    const course = { steps: [
+      { resources: [ { _id: 'with-file', _attachments: {} }, { _id: 'deleted', _attachments: {} } ] },
+      { resources: [ { _id: 'with-file', _attachments: {} } ] }
+    ] };
+
+    it('reads every step resource from the library in one request', () => {
+      const libraryDoc = { _id: 'with-file', title: 'Renamed', _attachments: {} };
+      const couchService = { post: vi.fn().mockReturnValue(of({ docs: [ libraryDoc ] })) };
+      let library: Map<string, any>;
+
+      createLookupService(couchService).libraryStepResources(course, true).subscribe(docs => library = docs);
+
+      const [ path, query, opts ] = couchService.post.mock.calls[0];
+      expect(couchService.post).toHaveBeenCalledTimes(1);
+      expect(path).toBe('resources/_find');
+      expect(query.selector._id.$in).toEqual([ 'with-file', 'deleted' ]);
+      expect(query.limit).toBe(2);
+      expect(opts.domain).toBe('nation.example');
+      expect([ ...library.entries() ]).toEqual([ [ 'with-file', libraryDoc ] ]);
+    });
+
+    it('falls back to the course\'s own copies when the library can\'t be read', () => {
+      const couchService = { post: vi.fn().mockReturnValue(throwError(() => new Error('offline'))) };
+      let library: Map<string, any>;
+
+      createLookupService(couchService).libraryStepResources(course).subscribe(docs => library = docs);
+
+      expect([ ...library.keys() ]).toEqual([ 'with-file', 'deleted' ]);
+    });
+
+    it('makes no request for a course without step resources', () => {
+      const couchService = { post: vi.fn() };
+      let library: Map<string, any>;
+
+      createLookupService(couchService).libraryStepResources({ steps: [ { resources: [] } ] }).subscribe(docs => library = docs);
+
+      expect(couchService.post).not.toHaveBeenCalled();
+      expect(library.size).toBe(0);
+    });
+  });
 });
