@@ -267,4 +267,13 @@ describe('CoursesComponent', () => {
     expect(result[3]).toMatchObject({ inCertification: false, isCompleted: false });
     expect(certificationsServiceMock.isCourseCompleted).toHaveBeenCalledTimes(3);
   });
+
+  it('names the certifications that require a course in its delete confirmation', () => {
+    dialogMock.open.mockReturnValueOnce({ afterClosed: () => of(undefined) });
+    component.certifications = [ { name: 'Health <b>', courseIds: [ 'c1' ] }, { name: 'Other', courseIds: [ 'c2' ] } ];
+
+    component.deleteClick({ _id: 'c1', _rev: '1', courseTitle: 'Course' });
+
+    expect(dialogMock.open.mock.lastCall[1].data.extraMessage).toBe('Required by certifications: Health &lt;b>');
+  });
 });

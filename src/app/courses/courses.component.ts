@@ -342,7 +342,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   deleteClick(course) {
-    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle, 1);
+    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle, [ course._id ]);
   }
 
   deleteSelected() {
@@ -356,10 +356,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       okClick = this.deleteCourse(course);
       displayName = course.courseTitle;
     }
-    this.openDeleteDialog(okClick, amount, displayName, selected.length);
+    this.openDeleteDialog(okClick, amount, displayName, this.selection.selected);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '', count) {
+  openDeleteDialog(okClick, amount, displayName = '', courseIds: string[]) {
+    // extraMessage renders HTML
+    const certificationNames = this.certifications
+      .filter(certification => certification.courseIds?.some(courseId => courseIds.includes(courseId)))
+      .map(certification => certification.name.replace(/&/g, '&amp;').replace(/</g, '&lt;'))
+      .join(', ');
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
@@ -367,7 +372,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         changeType: 'delete',
         type: 'course',
         displayName,
-        count
+        count: courseIds.length,
+        extraMessage: certificationNames ? $localize`Required by certifications: ${certificationNames}` : '',
+        extraMessageType: 'supplementary'
       }
     });
     // Reset the message when the dialog closes

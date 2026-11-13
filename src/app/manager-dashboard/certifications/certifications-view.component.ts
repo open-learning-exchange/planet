@@ -17,6 +17,15 @@ import { CoursesComponent } from '../../courses/courses.component';
 @Component({
   templateUrl: './certifications-view.component.html',
   styles: [`
+    .view-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    mat-tab-group {
+      min-height: 0;
+    }
+
     .placeholder-message {
       margin-top: 20px;
       display: block;
@@ -33,6 +42,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
 
   certification: any = { courseIds: [] };
   certifiedMembers: any[] = [];
+  hasDeletedCourse = false;
   certifiedTableState = new TableState();
   onDestroy$ = new Subject<void>();
 
@@ -73,6 +83,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     if (this.certification.courseIds.length === 0 || !progress) {
       return;
     }
+    this.hasDeletedCourse = this.certification.courseIds.some(id => !courses.some(course => course._id === id));
     this.certifiedMembers = this.certificationsService.certifiedUsers(this.certification, courses, progress, users);
   }
 
