@@ -50,16 +50,16 @@
     @if (isLoading && !useDialogLoading) {
       <planet-loading-spinner text="Loading surveys..." i18n-text></planet-loading-spinner>
     }
-    <mat-table #table class="responsive-table min-width-table" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
+    <mat-table #table class="responsive-table min-width-table card-mode" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
       <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
+        <mat-header-cell *matHeaderCellDef class="card-select">
           <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
             [checked]="selection.hasValue() && pageSelection.isAllSelected()"
             [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()"
             [disabled]="currentFilter.viewMode === 'adopt'">
           </mat-checkbox>
         </mat-header-cell>
-        <mat-cell *matCellDef="let row">
+        <mat-cell *matCellDef="let row" class="card-select">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)"
             [disabled]="!isRowSelectable(row)"
@@ -69,36 +69,36 @@
       </ng-container>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Survey</mat-header-cell>
-        <mat-cell *matCellDef="let element"><span>{{element.name}}</span></mat-cell>
+        <mat-cell *matCellDef="let element" class="card-title"><span>{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="taken">
         <mat-header-cell *matHeaderCellDef mat-sort-header="taken" i18n>Number of Times Taken</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
+        <mat-cell *matCellDef="let element"><span class="card-label" i18n>Number of Times Taken</span>{{element.taken}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Linked</mat-header-cell>
         <mat-cell *matCellDef="let element">@if (element.course) {
+          <span class="card-label" i18n>Course Linked</span>
           <span class="cursor-pointer course-title" [routerLink]="['/courses/view', element.course._id]">{{element.courseTitle}}</span>
         }</mat-cell>
       </ng-container>
       <ng-container matColumnDef="createdDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Created/Updated on</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          <span class="card-label" i18n>Created/Updated on</span>
           {{element.createdDate | date: 'mediumDate'}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" class="card-actions">
           <div class="table-action-buttons">
           @if (element.parent !== true && currentFilter.viewMode !== 'adopt') {
             @if (!teamId) {
               <div [matTooltip]="getActionTooltip(element, 'edit')">
                 <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)" [disabled]="element.isArchived">
                   <mat-icon>edit</mat-icon>
-                  @if (!isMobile()) {
-                    <label i18n> Edit</label>
-                  }
+                  <label i18n> Edit</label>
                 </button>
               </div>
             }
@@ -106,9 +106,7 @@
               <div [matTooltip]="getActionTooltip(element, 'send')">
                 <button mat-raised-button color="primary" [matMenuTriggerFor]="sendMenu" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
                   <mat-icon>send</mat-icon>
-                  @if (!isMobile()) {
-                    <label i18n> Send</label>
-                  }
+                  <label i18n> Send</label>
                 </button>
               </div>
               <mat-menu #sendMenu="matMenu">
@@ -119,21 +117,17 @@
             <div [matTooltip]="getActionTooltip(element, 'record')">
               <button mat-raised-button color="primary" (click)="recordSurvey(element)" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
                 <mat-icon>fiber_manual_record</mat-icon>
-                @if (!isMobile()) {
-                  <label i18n> Record</label>
-                }
+                <label i18n> Record</label>
               </button>
             </div>
             @if (element.teamId && (teamId || routeTeamId)) {
               <div [matTooltip]="getActionTooltip(element, 'public')">
                 <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="!element.questions?.length || element.isArchived">
                   <mat-icon>{{ element.publicAccess === true ? 'link' : 'public' }}</mat-icon>
-                  @if (!isMobile()) {
-                    @if (element.publicAccess === true) {
-                      <label i18n>Copy Public Link</label>
-                    } @else {
-                      <label i18n>Generate Public Link</label>
-                    }
+                  @if (element.publicAccess === true) {
+                    <label i18n>Copy Public Link</label>
+                  } @else {
+                    <label i18n>Generate Public Link</label>
                   }
                 </button>
               </div>
@@ -142,12 +136,7 @@
               <div [matTooltip]="getActionTooltip(element, 'revoke')">
                 <button mat-raised-button color="accent" type="button" (click)="revokeSurveyPublicAccess(element)" [disabled]="element.isArchived">
                   <mat-icon>close</mat-icon>
-                  @if (!isMobile()) {
-                    <label i18n>Revoke Public Link</label>
-                  }
-                  @if (isMobile()) {
-                    <label i18n>Revoke</label>
-                  }
+                  <label i18n>Revoke Public Link</label>
                 </button>
               </div>
             }
@@ -155,9 +144,7 @@
               <div [matTooltip]="getActionTooltip(element, 'archive')">
                 <button mat-raised-button color="primary" (click)="archiveSurvey(element)" [disabled]="element.isArchived">
                   <mat-icon>archive</mat-icon>
-                  @if (!isMobile()) {
-                    <label i18n> Archive</label>
-                  }
+                  <label i18n> Archive</label>
                 </button>
               </div>
             }
@@ -165,9 +152,7 @@
               <div [matTooltip]="getActionTooltip(element, 'submissions')">
                 <button mat-raised-button color="primary" (click)="viewSurveySubmissions(element)" [disabled]="!element.questions?.length || !element.taken">
                   <mat-icon>insert_drive_file</mat-icon>
-                  @if (!isMobile()) {
-                    <label i18n> Submissions</label>
-                  }
+                  <label i18n> Submissions</label>
                 </button>
               </div>
             }
@@ -176,9 +161,7 @@
             <div [matTooltip]="getActionTooltip(element, 'adopt')">
               <button mat-raised-button color="primary" (click)="adoptSurvey(element)">
                 <mat-icon>get_app</mat-icon>
-                @if (!isMobile()) {
-                  <label i18n> Adopt</label>
-                }
+                <label i18n> Adopt</label>
               </button>
             </div>
           }
@@ -186,9 +169,7 @@
             <div [matTooltip]="getActionTooltip(element, 'export')">
               <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu">
                 <mat-icon>move_to_inbox</mat-icon>
-                @if (!isMobile()) {
-                  <label i18n> Export</label>
-                }
+                <label i18n> Export</label>
               </button>
               <mat-menu #exportMenu="matMenu">
                 <button mat-menu-item (click)="exportCSV(element)" i18n>Excel (CSV)</button>

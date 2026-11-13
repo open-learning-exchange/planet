@@ -13,6 +13,9 @@
     </button>
   </mat-toolbar>
   <div class="view-container view-full-height tab-scroll-shell">
+    @if (hasDeletedCourse) {
+      <span i18n>A course this certification requires was deleted, so no members can be certified. Click on <b>Edit</b> to remove it.</span>
+    }
     <mat-tab-group class="tab-scroll-layout">
       <mat-tab i18n-label label="Course Requirements">
         @if (certification.courseIds.length > 0) {

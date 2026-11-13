@@ -161,7 +161,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     this.emitState();
   }
 
-  private addFiles(fileList: FileList | null) {
+  addFiles(fileList: FileList | File[] | null) {
     this.errorMessage = '';
     const files = Array.from(fileList || []);
     if (!files.length) {

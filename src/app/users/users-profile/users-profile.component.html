@@ -10,8 +10,8 @@
 <div class="space-container">
   <mat-toolbar class="font-size-1" [class.primary-color]="!isDialog" [class.dialog-toolbar]="isDialog">
     <span>{{(userDetail.name || urlName) | truncateText:40}}</span>
-    @if (userDetail.gender) {
-      <mat-icon class="margin-lr-5" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
+    @if (profileGenderIcon) {
+      <mat-icon class="margin-lr-5" [svgIcon]="profileGenderIcon"></mat-icon>
     }
     <span class="toolbar-fill"></span>
     @if (isMobile()) {

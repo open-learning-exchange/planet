@@ -297,5 +297,31 @@
         "roles": []
       }
     }
+  },
+  {
+    "dbName": "challenges",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
+  },
+  {
+    "dbName": "challenge_progress",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
   }
 ]

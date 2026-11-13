@@ -35,7 +35,6 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
-import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
@@ -133,7 +132,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
   availableAIProviders: any[] = [];
-  readonly isMobile = this.deviceInfoService.isMobile;
 
   get teamSurveyMode() {
     return !!(this.teamId || this.routeTeamId);
@@ -153,7 +151,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private chatService: AiChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService,
     private linkCopyService: LinkCopyService,
     private dialogGuard: DialogGuardService
   ) {}

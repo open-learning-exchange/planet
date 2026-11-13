@@ -55,6 +55,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup<CertificationFormControls>;
   courseIds: string[] = [];
+  deletedCourseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
@@ -91,6 +92,10 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
+          this.certificationsService.deletedCourseIds(this.courseIds).subscribe(
+            deletedCourseIds => this.deletedCourseIds = deletedCourseIds,
+            () => {}
+          );
         });
       } else {
         this.certificateInfo._id = undefined;
@@ -145,13 +150,19 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
         },
         noSpinner: true,
         mode: 'courses',
-        excludeIds: initialCourseIds
+        excludeIds: initialCourseIds,
+        requireSteps: true
       }
     });
   }
 
   removeCourses() {
     this.courseIds = this.courseIds.filter(id => this.courseTable.selection.selected.indexOf(id) === -1);
+  }
+
+  removeDeletedCourses() {
+    this.courseIds = this.courseIds.filter(id => !this.deletedCourseIds.includes(id));
+    this.deletedCourseIds = [];
   }
 
 }
