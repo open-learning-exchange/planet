@@ -156,7 +156,7 @@ Up to `$screen-md`, a `mat-table` with the `card-mode` class shows each row as a
 
 - `card-title` on exactly one cell; `card-select` on the selection column's header and row cells; `card-image` for an avatar or cover; `card-menu` for a ⋮ menu cell; `card-actions` for the action buttons, which become labelled text buttons.
 - `card-value` for a number or amount that should be read down the list (a balance, a count): it sits in the row's last column, right-aligned, and the detail lines pack beside it. Use it for one to three values with short labels; that column takes up to half the row, so a long label squeezes the title and the detail lines on a phone.
-- Every other cell is a detail line. Start it with `<span class="card-label" i18n>…</span>` using the column header's exact text, so translators get no new string. Put the label inside the same `@if` as its value, so a blank cell renders empty and is hidden.
+- Every other cell is a detail line. Start it with `<span class="card-label" i18n>…</span>` using the column header's exact text, so translators get no new string. Put the label inside the same `@if` as its value, so a blank cell renders empty and is hidden. A value that explains itself, such as the date under a ledger row's title, may go without a label.
 - From `$screen-xs` up, `card-actions` ends the title row instead of taking its own line, unless the row has a `card-value` cell.
 - The header row becomes a strip of sort pills plus the select-all box; cells without `mat-sort-header` are hidden.
 - Card mode sets `--responsive-table-min-width: 0`, which is what cancels `.min-width-table` inside cards.
