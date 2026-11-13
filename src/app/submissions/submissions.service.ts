@@ -96,20 +96,35 @@ export class SubmissionsService {
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending', team }: any) {
-    const selector = submissionId ? { _id: submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
-    const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
-    obs.subscribe((res) => {
-      let attempts = res.docs.length - 1;
-      const bestAttempt = res.docs.filter((submission: any) => submission.status === 'complete').reduce((best: any, submission: any) =>
-        best === undefined || submission.grade > best.grade ? submission : best, undefined) || { grade: 0 };
-      this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
+    // A test's attempts count across its edits, leaving out uploads with no copy of its questions;
+    // a survey response stays tied to the questions it answered
+    const selector = submissionId ? { _id: submissionId } : {
+      parentId, 'user.name': user.name,
+      ...(type === 'survey' ? { 'parent._rev': parent._rev } : { 'parent.questions': { $type: 'array' } })
+    };
+    const obs = user.name || submissionId ? this.couchService.findAll('submissions', findDocuments(selector)) : of([]);
+    obs.subscribe((docs: any[]) => {
+      const attempts = docs.filter((submission: any) => submission.status !== 'pending').length;
+      const passed = type === 'exam' && docs.some((submission: any) => this.attemptPasses(submission));
+      // Answers saved against an older revision may not line up with the current questions, so that attempt starts over
+      this.submission = docs.find(submission => type === 'survey' ||
+        (submission.status === status && (submissionId || submission.parent._rev === parent._rev)));
       if (this.submission === undefined) {
-        attempts += 1;
         this.newSubmission({ parentId, parent, user, type, team });
       }
       this.submissionAttempts = attempts;
-      this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
+      this.submissionUpdated.next({ submission: this.submission, attempts, passed });
     });
+  }
+
+  // Judged against the test as the learner took it, so a later edit never takes a pass away
+  attemptPasses({ status, grade, parent: { questions, passingPercentage } }: any) {
+    // Planet's copy has no totalMarks, so the marks are summed. myPlanet sends marks and the pass mark as '',
+    // and scores those as 1 per question and a pass mark of 100.
+    const totalMarks = questions.reduce((total: number, question: any) => total + (question.marks === '' ? 1 : Number(question.marks)), 0);
+    const passMark = passingPercentage === '' ? 100 : passingPercentage ?? 100;
+    // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
+    return status === 'complete' && totalMarks > 0 && grade * 100 >= passMark * totalMarks;
   }
 
   startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {

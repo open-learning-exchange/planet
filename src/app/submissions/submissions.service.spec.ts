@@ -11,7 +11,7 @@ describe('SubmissionsService survey exports', () => {
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
   let pdfService: { download: ReturnType<typeof vi.fn>, getHtmlConverter?: ReturnType<typeof vi.fn> };
-  let couchService: { post: ReturnType<typeof vi.fn>, datePlaceholder: string };
+  let couchService: { post: ReturnType<typeof vi.fn>, findAll: ReturnType<typeof vi.fn>, datePlaceholder: string };
 
   const exam = {
     _id: 'team-survey-1',
@@ -34,7 +34,7 @@ describe('SubmissionsService survey exports', () => {
     dialogsLoadingService = { stop: vi.fn() };
     planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     pdfService = { download: vi.fn().mockResolvedValue(undefined) };
-    couchService = { post: vi.fn(), datePlaceholder: 'NOW' };
+    couchService = { post: vi.fn(), findAll: vi.fn(), datePlaceholder: 'NOW' };
     service = new SubmissionsService(
       couchService as any,
       { configuration: { name: 'Planet', code: 'planet-1' } } as any,
@@ -72,17 +72,70 @@ describe('SubmissionsService survey exports', () => {
     expect(couchService.post).not.toHaveBeenCalled();
   });
 
-  it.each([ 0, 8 ])('picks the best attempt from completed submissions only (grade: %s)', (grade) => {
-    couchService.post.mockReturnValue(of({ docs: [
-      { _id: 'graded', status: 'complete', grade, answers: [] },
-      { _id: 'retake', status: 'pending', grade: 9, answers: [] }
-    ] }));
-    const updated = vi.fn();
-    service.submissionUpdated$.subscribe(updated);
+  describe('opening a test', () => {
+    const testCopy = (_rev: string, marks: (number | string)[] = [ 10 ], passingPercentage: number | string = 80) =>
+      ({ _rev, questions: marks.map(m => ({ marks: m })), passingPercentage });
+    const open = (docs: any[], parent = testCopy('2-b'), type = 'exam') => {
+      couchService.findAll.mockReturnValue(of(docs));
+      const updated = vi.fn();
+      service.submissionUpdated$.subscribe(updated);
+      service.openSubmission({ parentId: 'exam-1@course-1', parent, user: { name: 'learner' }, type });
+      return updated.mock.calls[0][0];
+    };
+    const selector = () => couchService.findAll.mock.calls[0][1].selector;
 
-    service.openSubmission({ parentId: 'exam-1@course-1', parent: { _rev: '1-a' }, user: { name: 'learner' }, type: 'exam' });
+    it('counts attempts from an older revision and still opens a fresh pending attempt on the current one', () => {
+      const { submission, attempts, passed } = open([
+        { _id: 'graded', status: 'complete', grade: 8, parent: testCopy('1-a'), answers: [ {} ] },
+        { _id: 'waiting', status: 'requires grading', grade: 0, parent: testCopy('1-a'), answers: [ {} ] },
+        { _id: 'abandoned', status: 'pending', grade: 0, parent: testCopy('1-a'), answers: [ {} ] }
+      ]);
 
-    expect(updated.mock.calls[0][0].bestAttempt._id).toBe('graded');
+      expect(selector()).not.toHaveProperty([ 'parent._rev' ]);
+      expect(attempts).toBe(2);
+      expect(passed).toBe(true);
+      expect(submission._id).toBeUndefined();
+      expect(submission.parent._rev).toBe('2-b');
+      expect(submission.answers).toEqual([]);
+    });
+
+    it('resumes the unfinished attempt on the current revision', () => {
+      const { submission, attempts } = open([
+        { _id: 'abandoned', status: 'pending', grade: 0, parent: testCopy('1-a'), answers: [ {} ] },
+        { _id: 'current', status: 'pending', grade: 0, parent: testCopy('2-b'), answers: [ {} ] }
+      ]);
+
+      expect(submission._id).toBe('current');
+      expect(attempts).toBe(0);
+    });
+
+    it('passes on any attempt that passed its own copy, even one scoring less than a failed attempt', () => {
+      const { passed } = open([
+        { _id: 'stricter', status: 'complete', grade: 9, parent: testCopy('1-a', [ 10 ], 100), answers: [] },
+        { _id: 'lowered', status: 'complete', grade: 8, parent: testCopy('2-b', [ 10 ], 80), answers: [] }
+      ]);
+
+      expect(passed).toBe(true);
+    });
+
+    it('keeps a survey response tied to the revision it answered', () => {
+      open([], testCopy('2-b'), 'survey');
+
+      expect(selector()['parent._rev']).toBe('2-b');
+    });
+
+    it.each([
+      [ 'at exactly the pass mark', 'complete', 29, testCopy('1-a', [ 50 ], 58), true ],
+      [ 'below the pass mark', 'complete', 7, testCopy('1-a', [ 10 ], 80), false ],
+      [ 'graded zero against a zero pass mark', 'complete', 0, testCopy('1-a', [ 10 ], 0), true ],
+      [ 'unfinished, against a zero pass mark', 'pending', 10, testCopy('1-a', [ 10 ], 0), false ],
+      [ 'waiting for grading, against a zero pass mark', 'requires grading', 10, testCopy('1-a', [ 10 ], 0), false ],
+      [ 'on a test with no questions', 'complete', 0, testCopy('1-a', [], 0), false ],
+      [ 'from myPlanet, below full marks', 'complete', 1, testCopy('1-a', [ '', '' ], ''), false ],
+      [ 'from myPlanet, at full marks', 'complete', 2, testCopy('1-a', [ '', '' ], ''), true ]
+    ])('judges an attempt %s', (_, status, grade, parent, passes) => {
+      expect(service.attemptPasses({ status, grade, parent })).toBe(passes);
+    });
   });
 
   it('exports a CSV submission counted through its embedded team', async () => {
