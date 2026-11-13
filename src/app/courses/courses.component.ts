@@ -148,6 +148,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
+  @Input() requireSteps = false;
   dialogRef: MatDialogRef<DialogsListComponent> | null = null;
   filterDialogRef: MatDialogRef<any> | null = null;
   message = '';
@@ -257,7 +258,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       courses.sort((a, b) => b.doc.createdDate - a.doc.createdDate);
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
-        .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+        .filter((course: any) => this.excludeIds.indexOf(course._id) === -1)
+        .filter((course: any) => !this.requireSteps || course.doc.steps?.length > 0);
       this.stopLoading();
     }, () => this.stopLoading());
     this.selection.changed.subscribe(({ source }) => {
@@ -340,7 +342,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   deleteClick(course) {
-    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle, 1);
+    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle, [ course._id ]);
   }
 
   deleteSelected() {
@@ -354,23 +356,33 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       okClick = this.deleteCourse(course);
       displayName = course.courseTitle;
     }
-    this.openDeleteDialog(okClick, amount, displayName, selected.length);
+    this.openDeleteDialog(okClick, amount, displayName, this.selection.selected);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '', count) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'course',
-        displayName,
-        count
-      }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
-      this.message = '';
+  openDeleteDialog(okClick, amount, displayName = '', courseIds: string[]) {
+    this.dialogGuard.open('delete-courses', () => this.certificationsService.certificationsRequiring(courseIds).pipe(
+      // extraMessage renders HTML
+      map((certifications: any[]) => certifications.map(({ name }) => name.replace(/&/g, '&amp;').replace(/</g, '&lt;')).join(', ')),
+      map(names => names ? $localize`Required by certifications: ${names}` : ''),
+      catchError(() => of($localize`Could not check whether certifications require this.`)),
+      map(extraMessage => this.dialog.open(DialogsPromptComponent, {
+        data: {
+          okClick,
+          amount,
+          changeType: 'delete',
+          type: 'course',
+          displayName,
+          count: courseIds.length,
+          extraMessage,
+          extraMessageType: 'supplementary'
+        }
+      }))
+    )).pipe(takeUntil(this.onDestroy$)).subscribe(ref => {
+      this.deleteDialog = ref;
+      // Reset the message when the dialog closes
+      this.deleteDialog.afterClosed().subscribe(() => {
+        this.message = '';
+      });
     });
   }
 
