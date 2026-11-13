@@ -1,5 +1,5 @@
 import type { CsvService } from '@shared/export/csv.service';
-import { localizedGender } from '@shared/utils';
+import { getGenderLabel } from '@shared/demographics/gender.constants';
 
 import { millisecondsToDay } from '../../meetups/meetups.constants';
 
@@ -108,7 +108,7 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
 );
 
 export const demographicsForCsv = (data: any) => ({
-  [$localize`Gender`]: localizedGender(data?.gender),
+  [$localize`Gender`]: getGenderLabel(data?.gender, { fallback: '' }),
   [$localize`Age (years)`]: data?.age ?? ''
 });
 

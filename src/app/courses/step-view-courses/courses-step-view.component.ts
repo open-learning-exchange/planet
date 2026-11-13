@@ -23,7 +23,7 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 import { CoursesService } from '../courses.service';
-import { blockingStepIndex } from '../courses.utils';
+import { blockingStepIndex, stepHasExam } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
@@ -117,7 +117,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     ).pipe(takeUntil(this.onDestroy$)).subscribe(
       ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
         this.canManage = this.coursesService.canManageCourse(course, { readOnly: this.parent });
-        if (this.redirectFromLockedStep(course, progress)) {
+        if (this.redirectFromUnavailableStep(course, progress)) {
           return;
         }
         this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
@@ -136,7 +136,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.model === 'openai');
+      this.isOpenai = providers.some(provider => provider.name === 'openai');
     });
   }
 
@@ -168,12 +168,19 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  redirectFromLockedStep(course, progress): boolean {
+  redirectFromUnavailableStep(course, progress): boolean {
+    if (course.steps.length === 0) {
+      this.router.navigate([ '../../' ], { relativeTo: this.route, replaceUrl: true });
+      return true;
+    }
     const blocking = this.parent || this.canManage ? -1 : blockingStepIndex(course.steps, progress);
-    if (blocking === -1 || this.stepNum - 1 <= blocking) {
+    const lastOpenStep = blocking === -1 ? course.steps.length : blocking + 1;
+    // Math.max(NaN, 1) is NaN
+    const targetStep = Math.min(Math.max(Math.floor(this.stepNum) || 1, 1), lastOpenStep);
+    if (targetStep === this.stepNum) {
       return false;
     }
-    this.router.navigate([ '../' + (blocking + 1) ], { relativeTo: this.route, replaceUrl: true });
+    this.router.navigate([ '../' + targetStep ], { relativeTo: this.route, replaceUrl: true });
     return true;
   }
 
@@ -186,16 +193,19 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
     this.examPassed = !!this.progress.passed;
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
-    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
-      this.coursesService.updateProgress({
-        courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined || this.progress.passed
-      });
+    // The exams doc is saved first, so it can be ahead of the course's copy
+    const exam = this.stepDetail.exam && (exams.find(({ _id }) => _id === this.stepDetail.exam._id) || this.stepDetail.exam);
+    const hasExam = stepHasExam({ exam });
+    // Emptied tests and moved steps can leave a stored fail on a step without a test
+    const staleFail = !hasExam && !this.progress.passed;
+    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1 || staleFail)) {
+      this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: !hasExam || this.progress.passed });
     }
     this.maxStep = course.steps.length;
     if (this.stepDetail.exam) {
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
-        parent: exams.find(exam => exam._id === this.stepDetail.exam._id) || this.stepDetail.exam,
+        parent: exam,
         user: this.userService.get(),
         type: 'exam' });
     }

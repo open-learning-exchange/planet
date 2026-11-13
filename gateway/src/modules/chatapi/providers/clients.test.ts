@@ -4,17 +4,22 @@ const mocks = vi.hoisted(() => ({ 'getKeys': vi.fn(), 'getConfiguration': vi.fn(
 
 vi.mock('../../../services/config.service', () => ({ 'getKeys': mocks.getKeys, 'getConfiguration': mocks.getConfiguration }));
 
-import { ProviderName } from '../models/chat.model';
-import { configuredProviders, providerClient } from './clients';
+import { listProviders, providerClient } from './clients';
+import { ProviderName } from './registry';
 
 describe('provider clients', () => {
   beforeEach(() => {
-    mocks.getKeys.mockResolvedValue({ 'deepseek': 'ds-key', 'currency': 'oxr-key' });
-    mocks.getConfiguration.mockResolvedValue({ 'models': {} });
+    mocks.getKeys.mockResolvedValue({ 'deepseek': 'ds-key', 'gemini': 'gemini-key', 'currency': 'oxr-key' });
+    mocks.getConfiguration.mockResolvedValue({ 'models': { 'openai': 'openai-model', 'deepseek': 'deepseek-model' } });
   });
 
-  it('reports only the AI providers that have a saved key', async () => {
-    expect(await configuredProviders()).toEqual({ 'openai': false, 'perplexity': false, 'deepseek': true, 'gemini': false });
+  it('lists every AI provider, configured only with both a key and a model', async () => {
+    expect(await listProviders()).toEqual([
+      { 'name': 'openai', 'label': 'OpenAI', 'configured': false },
+      { 'name': 'perplexity', 'label': 'Perplexity', 'configured': false },
+      { 'name': 'deepseek', 'label': 'DeepSeek', 'configured': true },
+      { 'name': 'gemini', 'label': 'Gemini', 'configured': false }
+    ]);
   });
 
   it('refuses a provider without a key, and a name that is not a provider', async () => {
