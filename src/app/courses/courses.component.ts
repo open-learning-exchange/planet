@@ -360,26 +360,29 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openDeleteDialog(okClick, amount, displayName = '', courseIds: string[]) {
-    // extraMessage renders HTML
-    const certificationNames = this.certifications
-      .filter(certification => certification.courseIds?.some(courseId => courseIds.includes(courseId)))
-      .map(certification => certification.name.replace(/&/g, '&amp;').replace(/</g, '&lt;'))
-      .join(', ');
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'course',
-        displayName,
-        count: courseIds.length,
-        extraMessage: certificationNames ? $localize`Required by certifications: ${certificationNames}` : '',
-        extraMessageType: 'supplementary'
-      }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
-      this.message = '';
+    this.dialogGuard.open('delete-courses', () => this.certificationsService.certificationsRequiring(courseIds).pipe(
+      // extraMessage renders HTML
+      map((certifications: any[]) => certifications.map(({ name }) => name.replace(/&/g, '&amp;').replace(/</g, '&lt;')).join(', ')),
+      map(names => names ? $localize`Required by certifications: ${names}` : ''),
+      catchError(() => of($localize`Could not check whether certifications require this.`)),
+      map(extraMessage => this.dialog.open(DialogsPromptComponent, {
+        data: {
+          okClick,
+          amount,
+          changeType: 'delete',
+          type: 'course',
+          displayName,
+          count: courseIds.length,
+          extraMessage,
+          extraMessageType: 'supplementary'
+        }
+      }))
+    )).pipe(takeUntil(this.onDestroy$)).subscribe(ref => {
+      this.deleteDialog = ref;
+      // Reset the message when the dialog closes
+      this.deleteDialog.afterClosed().subscribe(() => {
+        this.message = '';
+      });
     });
   }
 

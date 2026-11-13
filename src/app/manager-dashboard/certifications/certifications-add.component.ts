@@ -19,7 +19,6 @@ import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.co
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsManagerService } from './certifications-manager.service';
 import { CoursesComponent } from '../../courses/courses.component';
-import { CoursesService } from '../../courses/courses.service';
 import { ValidatorService } from '../../validators/validator.service';
 
 
@@ -71,8 +70,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private cdRef: ChangeDetectorRef,
-    private dialogsLoadingService: DialogsLoadingService,
-    private coursesService: CoursesService
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.certificateForm = this.fb.group({
       name: this.fb.control('', {
@@ -94,9 +92,10 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
-          this.coursesService.findCourses(this.courseIds, {}).subscribe((courses: any[]) => {
-            this.deletedCourseIds = this.courseIds.filter(courseId => !courses.some(course => course._id === courseId));
-          });
+          this.certificationsService.deletedCourseIds(this.courseIds).subscribe(
+            deletedCourseIds => this.deletedCourseIds = deletedCourseIds,
+            () => {}
+          );
         });
       } else {
         this.certificateInfo._id = undefined;

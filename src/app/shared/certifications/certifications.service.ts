@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,19 @@ export class CertificationsService {
 
   getCertification(id: string) {
     return this.couchService.get(`${this.dbName}/${id}`);
+  }
+
+  // Posts directly because findAll turns a failed request into an empty list
+  certificationsRequiring(courseIds: string[]) {
+    return this.couchService.post(`${this.dbName}/_find`, findDocuments({ courseIds: { $elemMatch: { $in: courseIds } } }))
+      .pipe(map(({ docs }) => docs));
+  }
+
+  // _all_docs returns a row per key: a course that never existed has an error, a deleted one has value.deleted
+  deletedCourseIds(courseIds: string[]) {
+    return this.couchService.post('courses/_all_docs', { keys: courseIds }).pipe(
+      map(({ rows }) => rows.filter(row => row.error || row.value.deleted).map(row => row.key))
+    );
   }
 
   isCourseCompleted(course, user) {

@@ -3,7 +3,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CouchService } from '@shared/database/couchdb.service';
@@ -38,7 +38,8 @@ describe('CoursesComponent', () => {
   const completionService = new CertificationsService({} as any);
   const certificationsServiceMock = {
     getCertifications: vi.fn().mockReturnValue(of([])),
-    isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
+    isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user)),
+    certificationsRequiring: vi.fn()
   };
 
   const coursesServiceMock = {
@@ -269,11 +270,20 @@ describe('CoursesComponent', () => {
   });
 
   it('names the certifications that require a course in its delete confirmation', () => {
-    dialogMock.open.mockReturnValueOnce({ afterClosed: () => of(undefined) });
-    component.certifications = [ { name: 'Health <b>', courseIds: [ 'c1' ] }, { name: 'Other', courseIds: [ 'c2' ] } ];
+    (TestBed.inject(DialogGuardService) as any).open.mockImplementation((key, work) => work());
+    dialogMock.open.mockReturnValue({ afterClosed: () => of(undefined) });
+    certificationsServiceMock.certificationsRequiring.mockReturnValueOnce(of([ { name: 'Health <b>' } ]));
 
     component.deleteClick({ _id: 'c1', _rev: '1', courseTitle: 'Course' });
 
+    expect(certificationsServiceMock.certificationsRequiring).toHaveBeenCalledWith([ 'c1' ]);
     expect(dialogMock.open.mock.lastCall[1].data.extraMessage).toBe('Required by certifications: Health &lt;b>');
+
+    certificationsServiceMock.certificationsRequiring.mockReturnValueOnce(throwError(() => new Error('failed')));
+
+    component.deleteClick({ _id: 'c1', _rev: '1', courseTitle: 'Course' });
+
+    expect(dialogMock.open.mock.lastCall[1].data.extraMessage).toBe('Could not check whether certifications require this.');
+    dialogMock.open.mockReturnValue(dialogRefMock);
   });
 });

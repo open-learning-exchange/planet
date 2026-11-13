@@ -1,3 +1,5 @@
+import { of } from 'rxjs';
+
 import { CertificationsService } from './certifications.service';
 
 describe('CertificationsService', () => {
@@ -41,6 +43,20 @@ describe('CertificationsService', () => {
     expect(service.certifiedUsers({ courseIds: [ 'deleted' ] }, courses, progress, [ user ])).toEqual([]);
     expect(service.certifiedUsers({ courseIds: [ 'c1', 'deleted' ] }, courses, progress, [ user ])).toEqual([]);
     expect(service.certifiedUsers({ courseIds: [] }, courses, progress, [ user ])).toEqual([]);
+  });
+
+  it('reports the course ids that are deleted or never existed', () => {
+    const couchService = { post: vi.fn(() => of({ rows: [
+      { key: 'live', value: { rev: '1-a' } },
+      { key: 'deleted', value: { rev: '2-b', deleted: true } },
+      { key: 'missing', error: 'not_found' }
+    ] })) };
+    let deletedCourseIds;
+
+    new CertificationsService(couchService as any).deletedCourseIds([ 'live', 'deleted', 'missing' ])
+      .subscribe(ids => deletedCourseIds = ids);
+
+    expect(deletedCourseIds).toEqual([ 'deleted', 'missing' ]);
   });
 
   it('certifies nobody for a course with no steps', () => {
