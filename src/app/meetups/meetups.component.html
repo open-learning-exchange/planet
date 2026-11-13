@@ -133,7 +133,7 @@
         </div>
       </mat-cell>
     </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
     <tr class="mat-row" *matNoDataRow>
       <td><div class="view-container" i18n>No Meetups Found</div></td>

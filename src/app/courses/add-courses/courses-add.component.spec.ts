@@ -16,8 +16,10 @@ import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component
 import { PouchService } from '@shared/database/pouch.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
+import { FileUploadComponent } from '@shared/forms/file-upload.component';
 
 import { CoursesAddComponent } from './courses-add.component';
+import { CoursesService } from '../courses.service';
 import { ValidatorService } from '../../validators/validator.service';
 
 describe('CoursesAddComponent', () => {
@@ -80,6 +82,7 @@ describe('CoursesAddComponent', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -110,7 +113,7 @@ describe('CoursesAddComponent', () => {
       expect((component as any).coverState.added).toEqual([]);
 
       component.setCoverState({ retained: [], removed: [], added: [ addedCover ] });
-      component.updateCourse(component.courseForm.getRawValue(), true);
+      component.updateCourse(component.courseForm.getRawValue());
       component.setCoverState({ retained: [], removed: [], added: [] });
       await vi.waitFor(() => expect(showAlert).toHaveBeenLastCalledWith('There was an error saving this course'));
     } finally {
@@ -128,7 +131,7 @@ describe('CoursesAddComponent', () => {
     try {
       component.onCoverStateChange({ retained: [], removed: [], added: [ addedCover ] });
       await vi.waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalledOnce());
-      component.updateCourse(component.courseForm.getRawValue(), true);
+      component.updateCourse(component.courseForm.getRawValue());
       await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledOnce());
 
       expect((saveCourse.mock.calls[0][0] as any).coverFileName).toBe('cover-1.png');
@@ -136,7 +139,7 @@ describe('CoursesAddComponent', () => {
       expect(URL.createObjectURL).toHaveBeenCalledOnce();
 
       component.savedCourse._attachments['cover-1.png'] = {};
-      component.updateCourse(component.courseForm.getRawValue(), true);
+      component.updateCourse(component.courseForm.getRawValue());
       await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledTimes(2));
 
       expect((saveCourse.mock.calls[1][0] as any).coverFileName).toBe('cover-2.png');
@@ -146,20 +149,63 @@ describe('CoursesAddComponent', () => {
     }
   });
 
-  it('keeps a just-saved cover as a stub when the save stays on the page', () => {
-    vi.spyOn(TestBed.inject(PouchService), 'deleteDocEditing').mockImplementation(() => undefined);
+  const returnFromBuilder = (saved: any, stash: any) => {
+    vi.useFakeTimers();
+    TestBed.inject(CoursesService).course = stash;
+    (TestBed.inject(ActivatedRoute).snapshot.params as any).continue = 'true';
+    const saved$ = new Subject<any>();
+    vi.spyOn(TestBed.inject(PouchService), 'getDocEditing').mockReturnValue(of(undefined));
+    vi.spyOn(TestBed.inject(CouchService), 'get').mockReturnValue(saved$);
     vi.spyOn(TestBed.inject(StateService), 'getCouchState').mockReturnValue(of([]));
-    component.pageType = 'Edit';
+    vi.spyOn(component as any, 'normalizedCover').mockResolvedValue({});
+    const saveDraft = vi.spyOn(TestBed.inject(PouchService), 'saveDocEditing').mockImplementation(() => undefined);
+    const updateCourse = vi.spyOn(component, 'updateCourse');
+    const upload = new FileUploadComponent();
+    upload.stateChange.subscribe(state => component.onCoverStateChange(state));
+    component.coverUploadComponent = upload;
 
-    const savedCover = { content_type: 'image/webp', data: btoa('data') };
-    component.courseChangeComplete('Edited course', {
-      id: 'course-1',
-      doc: { _id: 'course-1', _rev: '2-rev', coverFileName: 'cover.webp', _attachments: { 'cover.webp': savedCover } }
-    }, false);
+    component.ngOnInit();
+    upload.ngOnChanges({ existingAttachments: {} as any });
+    saved$.next(saved);
+    saved$.complete();
+    upload.existingAttachments = component.existingCoverAttachments;
+    upload.ngOnChanges({ existingAttachments: {} as any });
+    vi.advanceTimersByTime(1500);
+    return { saveDraft, updateCourse };
+  };
 
-    expect(component.savedCourse._attachments['cover.webp']).toEqual({ content_type: 'image/webp', length: 4, stub: true });
-    expect((component as any).coverState.retained.map((cover: any) => cover.name)).toEqual([ 'cover.webp' ]);
-    expect((component as any).coverState.added).toEqual([]);
+  it('returns from the test or survey builder into the draft without saving the course', () => {
+    const cover = { file: new File([ 'image' ], 'cover.png', { type: 'image/png' }) };
+    const { saveDraft, updateCourse } = returnFromBuilder({ _id: 'course-1', _rev: '1-a', courseTitle: 'Course', steps: [] }, {
+      courseId: 'course-1',
+      form: { courseTitle: 'Course', description: 'Description' },
+      steps: [ { stepTitle: 'Step', description: '', resources: [], survey: { _id: 'survey-1' } } ],
+      coverState: { retained: [], removed: [], added: [ cover ] }
+    });
+
+    expect(updateCourse).not.toHaveBeenCalled();
+    expect(saveDraft).toHaveBeenLastCalledWith(expect.objectContaining({
+      steps: [ expect.objectContaining({ survey: { _id: 'survey-1' } }) ]
+    }), 'courses', undefined);
+    expect((component as any).coverState).toEqual({ retained: [], removed: [], added: [ expect.objectContaining({ file: cover.file }) ] });
+  });
+
+  it('writes no draft when nothing changed during the builder round trip', () => {
+    const step = { stepTitle: 'Step', description: '', resources: [], exam: { _id: 'exam-1' } };
+    const existingCover = { name: 'cover.webp', contentType: 'image/webp', url: 'cover-url' };
+    const { saveDraft, updateCourse } = returnFromBuilder(
+      { _id: 'course-1', _rev: '1-a', courseTitle: 'Course', description: 'Description', steps: [ step ] },
+      {
+        courseId: 'course-1',
+        form: { courseTitle: 'Course', description: 'Description' },
+        steps: [ step ],
+        coverState: { retained: [ existingCover ], removed: [], added: [] }
+      }
+    );
+
+    expect(updateCourse).not.toHaveBeenCalled();
+    expect(saveDraft).not.toHaveBeenCalled();
+    expect((component as any).coverState).toEqual({ retained: [ existingCover ], removed: [], added: [] });
   });
 
   it('clears an invalid cover when Save finishes before selection validation', async () => {
@@ -169,7 +215,7 @@ describe('CoursesAddComponent', () => {
 
     try {
       component.setCoverState({ retained: [], removed: [], added: [ addedCover ] });
-      component.updateCourse(component.courseForm.getRawValue(), true);
+      component.updateCourse(component.courseForm.getRawValue());
       await vi.waitFor(() => expect(showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be processed')));
 
       expect((component as any).coverState.added).toEqual([]);

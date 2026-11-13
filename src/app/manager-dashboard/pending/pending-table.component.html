@@ -1,7 +1,7 @@
-<mat-table #table [dataSource]="items">
+<mat-table #table class="card-mode" [dataSource]="items">
   <ng-container matColumnDef="item">
     <mat-header-cell *matHeaderCellDef i18n>Title</mat-header-cell>
-    <mat-cell *matCellDef="let element">
+    <mat-cell *matCellDef="let element" class="card-title">
       @if (element.db === 'resources') {
         {{ element.item.doc.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon>
       }
@@ -12,11 +12,11 @@
   </ng-container>
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef i18n>Date Sent</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Date Sent</span>{{ element.time | date}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-    <mat-cell *matCellDef="let element">
+    <mat-cell *matCellDef="let element" class="card-actions">
       <button mat-raised-button color="warn" (click)="deleteItem(element)"><mat-icon>delete</mat-icon><ng-container i18n>Delete</ng-container></button>
     </mat-cell>
   </ng-container>

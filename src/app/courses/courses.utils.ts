@@ -1,4 +1,6 @@
-const requiresPass = (step: any) => !!(step?.exam?.questions?.length && step.passingRequired);
+export const stepHasExam = (step: any) => !!step?.exam?.questions?.length;
+
+const requiresPass = (step: any) => stepHasExam(step) && !!step.passingRequired;
 
 const stepPassed = (progress: any[], stepNum: number) => progress.some((p: any) => p.stepNum === stepNum && p.passed);
 

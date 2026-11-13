@@ -7,7 +7,7 @@ import { findDocuments, inSelector } from '@shared/database/mango-queries';
 import { CouchService } from '@shared/database/couchdb.service';
 
 import { environment } from '../../../environments/environment';
-import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
+import { AIServiceStatus, AIProvider, ProviderName } from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -63,20 +63,12 @@ import { AIServices, AIProvider, ProviderName } from '../../chat/chat.model';
 
   private fetchAIProviders() {
     this.httpClient
-      .get<AIServices>(`${this.baseUrl}/checkproviders`)
+      .get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`)
       .pipe(
+        map(({ providers }) => providers.filter(({ configured }) => configured)),
         catchError((err) => {
           console.error(err);
-          return of({ openai: false, perplexity: false, deepseek: false, gemini: false });
-        }),
-        map((services: AIServices) => {
-          if (services) {
-            return (Object.entries(services) as [ ProviderName, boolean ][])
-              .filter(([ _, model ]) => model === true)
-              .map(([ key ]) => ({ name: key, model: key }));
-          } else {
-            return [];
-          }
+          return of([]);
         })
       )
       .subscribe((providers) => {

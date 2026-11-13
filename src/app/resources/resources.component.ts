@@ -179,7 +179,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   );
   trackById = trackById;
   initialSort = '';
-  readonly isMobile = this.deviceInfoService.isMobile;
   readonly isTabletOrSmaller = this.deviceInfoService.isTabletOrSmaller;
   showFiltersRow = false;
   get showInlineFilters() {
