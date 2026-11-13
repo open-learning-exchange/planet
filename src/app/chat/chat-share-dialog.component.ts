@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogContent, MatDialogClose, MatDialogActions } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogClose, MatDialogActions } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -18,9 +18,7 @@ import { MatOption } from '@angular/material/autocomplete';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
-import { ChallengesUserStatusService } from '@shared/challenges/challenges-user-status.service';
-import { ChallengesAnnouncementSuccessDialogComponent } from '@shared/challenges/challenges-announcement-dialog.component';
-import { ChallengesService } from '@shared/challenges/challenges.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 
 import { NewsService } from '../news/news.service';
@@ -95,9 +93,7 @@ export class ChatShareDialogComponent implements OnInit {
     private newsService: NewsService,
     private teamsService: TeamsService,
     private userService: UserService,
-    private dialog: MatDialog,
-    private userStatusService: ChallengesUserStatusService,
-    private challengesService: ChallengesService,
+    private challengesProgressService: ChallengesProgressService,
   ) {
     this.conversation = data || this.conversation;
   }
@@ -198,25 +194,9 @@ export class ChatShareDialogComponent implements OnInit {
     }
     this.conversation.chat = true;
     this.interact();
-    this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).subscribe(() => {});
-    this.challengesService.getActiveChallenge().subscribe(challenge => {
-      if (
-        challenge &&
-        this.userStatusService.getStatus('joinedCourse') &&
-        this.userStatusService.getStatus('surveyComplete') &&
-        !this.userStatusService.getStatus('hasPost')
-      ) {
-        this.dialog.open(ChallengesAnnouncementSuccessDialogComponent, {
-          width: '50vw',
-          maxHeight: '100vh',
-          data: challenge
-        });
-        this.userStatusService.updateStatus('hasPost', {
-          status: true,
-          amount: challenge.voicePostReward ?? 2
-        });
-      }
-    });
+    this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).pipe(
+      switchMap(() => this.challengesProgressService.record('voice_post'))
+    ).subscribe();
   }
 
   interact() {
