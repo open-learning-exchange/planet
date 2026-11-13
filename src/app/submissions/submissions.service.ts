@@ -8,7 +8,7 @@ import { appSourceLabel } from '@shared/android/app-source';
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
-import { ageFromUser, dedupeShelfReduce, localizedGender, toProperCase } from '@shared/utils';
+import { ageFromUser, dedupeShelfReduce, toProperCase } from '@shared/utils';
 import { CsvService } from '@shared/export/csv.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
@@ -17,6 +17,7 @@ import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, chartColors } from '@shared/charts/chart.utils';
 import { PdfService } from '@shared/export/pdf.service';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+import { getGenderLabel, parseGender } from '@shared/demographics/gender.constants';
 
 import { CoursesService } from '../courses/courses.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -300,10 +301,6 @@ export class SubmissionsService {
     return $localize`N/A`;
   }
 
-  private localizedGender(gender?: string) {
-    return localizedGender(gender, this.notAvailable());
-  }
-
   private localizedGroupType(type?: string) {
     switch (type) {
       case 'team':
@@ -345,7 +342,7 @@ export class SubmissionsService {
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
-            [$localize`Gender`]: this.localizedGender(submission.user.gender),
+            [$localize`Gender`]: getGenderLabel(submission.user.gender),
             [$localize`Age (years)`]: ageFromUser(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: appSourceLabel(submission),
@@ -590,7 +587,7 @@ export class SubmissionsService {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
       const userAge = ageFromUser(submission.lastUpdateTime, submission.user);
-      const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
+      const userGender = getGenderLabel(submission.user.gender, { fallback: '' });
       const communityOrNation = submission.planetName;
       const planetSource = appSourceLabel(submission);
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
@@ -817,7 +814,7 @@ export class SubmissionsService {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
         age: ageFromUser(submission.lastUpdateTime, submission.user),
-        gender: submission.user.gender
+        gender: parseGender(submission.user.gender)
       },
       answers: submission.answers
     }));

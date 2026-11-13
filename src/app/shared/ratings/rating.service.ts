@@ -10,9 +10,19 @@ import { StateService } from '@shared/state.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { createGenderCounts, normalizeGender } from '@shared/demographics/gender.constants';
 import { disableCommentWhenUnrated, ratingFormFields, RatingFormModel, RatingFormValue } from './rating-form';
 
-const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [] };
+const startingRating = {
+  rateSum: 0,
+  totalRating: 0,
+  maleRating: 0,
+  femaleRating: 0,
+  otherRating: 0,
+  didNotSpecifyRating: 0,
+  userRating: {},
+  allRatings: []
+};
 
 export type RatingType = 'course' | 'resource';
 
@@ -21,6 +31,8 @@ export interface RatingInfo {
   totalRating: number;
   maleRating: number;
   femaleRating: number;
+  otherRating: number;
+  didNotSpecifyRating: number;
   userRating: any;
   allRatings: any[];
 }
@@ -95,12 +107,18 @@ export class RatingService {
     // If totalRating is undefined, will start count at 1
     ratingInfo.totalRating = ratingInfo.totalRating + 1;
     ratingInfo.rateSum = ratingInfo.rateSum + rating.rate;
-    switch (rating.user.gender) {
+    switch (normalizeGender(rating.user.gender)) {
       case 'male':
         ratingInfo.maleRating = ratingInfo.maleRating + 1;
         break;
       case 'female':
         ratingInfo.femaleRating = ratingInfo.femaleRating + 1;
+        break;
+      case 'other':
+        ratingInfo.otherRating = ratingInfo.otherRating + 1;
+        break;
+      default:
+        ratingInfo.didNotSpecifyRating = ratingInfo.didNotSpecifyRating + 1;
         break;
     }
     ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;
@@ -115,11 +133,17 @@ export class RatingService {
 
   normalizeRatingInfo(ratingInfo: Partial<RatingInfo> = {}): RatingInfo {
     const allRatings = [ ...(ratingInfo.allRatings || []) ];
+    const genderCounts = allRatings.reduce((counts, rating) => {
+      counts[normalizeGender(rating.user?.gender)] += 1;
+      return counts;
+    }, createGenderCounts());
     return {
       rateSum: allRatings.reduce((sum, rating) => sum + (rating.rate || 0), 0),
       totalRating: allRatings.length,
-      maleRating: allRatings.filter(rating => rating.user?.gender === 'male').length,
-      femaleRating: allRatings.filter(rating => rating.user?.gender === 'female').length,
+      maleRating: genderCounts.male,
+      femaleRating: genderCounts.female,
+      otherRating: genderCounts.other,
+      didNotSpecifyRating: genderCounts.didNotSpecify,
       userRating: ratingInfo.userRating || {},
       allRatings
     };
