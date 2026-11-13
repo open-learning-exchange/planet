@@ -84,11 +84,6 @@
       }
     }
   }
-
-  .desktop-toolbar-stacked {
-    height: auto;
-    flex-wrap: wrap;
-  }
 }
 
 @media(max-width: #{v.$screen-md}) {

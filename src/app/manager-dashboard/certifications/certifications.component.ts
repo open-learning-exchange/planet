@@ -7,7 +7,7 @@ import {
   MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { finalize } from 'rxjs/operators';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
@@ -17,8 +17,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { CertificationsService } from '@shared/certifications/certifications.service';
 import { sortNumberOrString, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
 
 import { CertificationsManagerService } from './certifications-manager.service';
 
@@ -35,6 +35,7 @@ import { CertificationsManagerService } from './certifications-manager.service';
     }
   `],
   imports: [
+    ListToolbarComponent,
     MatToolbar,
     MatIconButton,
     RouterLink,
@@ -44,7 +45,6 @@ import { CertificationsManagerService } from './certifications-manager.service';
     MatSuffix,
     MatInput,
     MatTooltip,
-    MatToolbarRow,
     MatMiniFabAnchor,
     MatTable,
     MatSort,
@@ -72,15 +72,11 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  readonly deviceType = this.deviceInfoService.deviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
-  showFiltersRow = false;
   isLoading = true;
 
   constructor(
     private certificationsService: CertificationsService,
     private certificationsManagerService: CertificationsManagerService,
-    private deviceInfoService: DeviceInfoService,
     private dialogsLoadingService: DialogsLoadingService
   ) {}
 

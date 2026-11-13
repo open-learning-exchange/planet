@@ -94,20 +94,6 @@
   }
 }
 
-@mixin search-filters-stacked($list) {
-  display: block;
-
-  @include search-filter-lists($list);
-
-  > #{$list} {
-    display: block;
-
-    + #{$list} {
-      margin-top: 1rem;
-    }
-  }
-}
-
 @mixin unread-dot {
   width: 10px;
   height: 10px;
@@ -128,23 +114,6 @@
       min-height: 0;
       padding-top: 1rem;
       padding-bottom: 0.25rem;
-    }
-  }
-
-  .filter-row {
-    .search-title-input {
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-
-    .mat-mdc-outlined-button, .mat-mdc-raised-button {
-      flex: 0 0 auto;
-    }
-
-    @media (max-width: v.$screen-xs) {
-      .search-by-label {
-        display: none;
-      }
     }
   }
 }

@@ -10,12 +10,14 @@ import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption, MatOptgroup } from '@angular/material/autocomplete';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatInput } from '@angular/material/input';
-import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import {
+  MatDatepickerInput, MatDatepickerToggle, MatDatepicker, MatDateRangeInput, MatStartDate, MatEndDate, MatDateRangePicker
+} from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
@@ -33,9 +35,9 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { AppSourceFilter, appSourceLabel, appSources } from '@shared/android/app-source';
 import { findDocuments } from '@shared/database/mango-queries';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 import { reportGenderOptions, ReportGenderValue } from '@shared/demographics/gender.constants';
 
 import { ReportsService } from '../reports.service';
@@ -64,6 +66,7 @@ interface DateFilterForm {
   styleUrls: ['reports-detail.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
+    ListToolbarComponent,
     MatToolbar,
     MatToolbarRow,
     NgTemplateOutlet,
@@ -84,7 +87,10 @@ interface DateFilterForm {
     MatDatepickerToggle,
     MatSuffix,
     MatDatepicker,
-    MatError,
+    MatDateRangeInput,
+    MatStartDate,
+    MatEndDate,
+    MatDateRangePicker,
     MatTooltip,
     MatMenuTrigger,
     MatMenu,
@@ -139,9 +145,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   dateFilterForm: FormGroup<DateFilterForm>;
   teams: any;
   selectedTeam: any = 'All';
-  showFiltersRow = false;
-  readonly deviceType = this.deviceInfoService.deviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
+  activeFilters: ActiveFilter[] = [];
   dateQueryParams = {
     startDate: null,
     endDate: null
@@ -187,7 +191,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private usersProfileDialogService: UsersProfileDialogService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
@@ -233,6 +236,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           this.planetCode = this.codeParam || this.stateService.configuration.code;
           this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
           this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+          this.setActiveFilters();
           this.initializeData(!this.codeParam);
         });
     });
@@ -249,6 +253,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onFilterChange(filterValue: AppSourceFilter) {
     this.filter.app = filterValue;
+    this.setActiveFilters();
     this.filterData();
   }
 
@@ -507,6 +512,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.filterData();
     };
     this.selectedTeam = filterValue;
+    this.setActiveFilters();
     if (filterValue === 'All') {
       filterMembers([]);
       return;
@@ -968,6 +974,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
+    this.setActiveFilters();
     const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
     this.showCustomDateFields = showCustomDateFields;
 
@@ -991,6 +998,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.selectedTeam = 'All';
     this.filter.members = [];
     this.onTimeFilterChange('3m');
+  }
+
+  private setActiveFilters() {
+    const time = this.timeFilterOptions.find(option => option.value === this.selectedTimeFilter);
+    const source = this.appSources.find(option => option.value === this.filter.app);
+    this.activeFilters = [
+      ...(this.selectedTimeFilter !== '3m' ? [ { label: time.label, clear: () => this.onTimeFilterChange('3m') } ] : []),
+      ...(this.selectedTeam !== 'All' ? [ { label: this.selectedTeam.name, clear: () => this.onTeamsFilterChange('All') } ] : []),
+      ...(source ? [ { label: source.label, clear: () => this.onFilterChange('') } ] : [])
+    ];
   }
 
   onHealthLoadingChange(loading: boolean) {

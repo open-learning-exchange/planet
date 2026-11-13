@@ -6,10 +6,10 @@ import {
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { skip, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription, zip } from 'rxjs';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
@@ -28,7 +28,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { StateService } from '@shared/state.service';
-import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 import { SubmissionsService } from './submissions.service';
@@ -51,8 +51,8 @@ const columnsByFilterAndMode = {
   templateUrl: './submissions.component.html',
   styleUrls: ['./submission.scss'],
   imports: [
+    ListToolbarComponent,
     MatToolbar,
-    MatToolbarRow,
     MatIconButton,
     MatIcon,
     NgTemplateOutlet,
@@ -102,8 +102,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
-  readonly isMobile = this.deviceInfoService.isMobile;
-  showFiltersRow = false;
   statusOptions: any = [
     { text: $localize`Pending`, value: 'pending' },
     { text: $localize`Not Graded`, value: 'requires grading' },
@@ -114,6 +112,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     type: 'exam',
     status: 'requires grading'
   };
+  activeFilters: ActiveFilter[] = [];
+  defaultType = 'exam';
   surveyId: string | null = null;
   surveyView: 'responses' | 'charts' = 'responses';
   survey: any;
@@ -129,14 +129,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private coursesService: CoursesService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe(() => {
-      this.showFiltersRow = false;
-    });
     this.surveyId = this.route.snapshot.paramMap.get('surveyId');
     this.isManagerSurveysRoute = !!this.surveyId;
   }
@@ -152,6 +148,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (this.filter.type === 'survey') {
       this.filter.status = '';
     }
+    this.defaultType = this.filter.type;
+    this.setActiveFilters();
     this.coursesService.requestCourses();
     zip(
       this.submissionsService.submissionsUpdated$,
@@ -273,18 +271,39 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   onFilterChange(filterValue: string, field: string) {
     if (field === 'type') {
-      this.filter.status = filterValue === 'exam' && this.mode === 'grade' ? 'requires grading' : '';
+      this.filter.status = this.defaultStatus(filterValue);
     }
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
     this.displayedColumns = columnsByFilterAndMode[this.filter.type][this.mode] || this.displayedColumns;
+    this.setActiveFilters();
     this.submissions.paginator = undefined;
     this.submissions.sort = undefined;
   }
 
+  resetFilter() {
+    this.onFilterChange(this.defaultType, 'type');
+  }
+
   dropdownsFill() {
     return dropdownsFill(this.filter);
+  }
+
+  private defaultStatus(type: string) {
+    return type === 'exam' && this.mode === 'grade' ? 'requires grading' : '';
+  }
+
+  private setActiveFilters() {
+    const status = this.filter.status !== this.defaultStatus(this.filter.type) &&
+      (this.statusOptions.find(option => option.value === this.filter.status)?.text ?? $localize`All statuses`);
+    this.activeFilters = [
+      ...(this.filter.type !== this.defaultType ? [ {
+        label: this.filter.type === 'survey' ? $localize`Surveys` : $localize`Tests`,
+        clear: () => this.onFilterChange(this.defaultType, 'type')
+      } ] : []),
+      ...(status ? [ { label: status, clear: () => this.onFilterChange(this.defaultStatus(this.filter.type), 'status') } ] : [])
+    ];
   }
 
   showSurveyView(view: 'responses' | 'charts') {

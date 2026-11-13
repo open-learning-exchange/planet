@@ -1,16 +1,17 @@
-<mat-toolbar>
+<planet-list-toolbar [searchValue]="searchValue">
   <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Health Care</span>
-  <span class="toolbar-fill"></span>
-  <mat-icon class="input-icon">search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <mat-label i18n>Search name...</mat-label>
-    <input matInput [(ngModel)]="searchValue">
-    <button type="button" mat-icon-button matSuffix (click)="searchValue = ''; resetFilter()" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-</mat-toolbar>
+  <ng-template #listSearch>
+    <mat-icon class="input-icon">search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <mat-label i18n>Search name...</mat-label>
+      <input matInput [(ngModel)]="searchValue">
+      <button type="button" mat-icon-button matSuffix (click)="searchValue = ''; resetFilter()" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </ng-template>
+</planet-list-toolbar>
 
 <div class="space-container">
   <planet-users-table #table [users]="users" [search]="searchValue" [filter]="{}" [(tableState)]="tableState" [displayedColumns]="displayedColumns" containerClass="view-container view-full-height view-table" (tableDataChange)="tableDataChange($event)"></planet-users-table>

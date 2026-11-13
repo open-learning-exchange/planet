@@ -1,44 +1,8 @@
 <!-- Feedback Template -->
-<mat-toolbar>
-  @if (deviceType() === deviceTypes.DESKTOP) {
-    <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n>Feedback List</span>
-    <span class="toolbar-fill"></span>
-    <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-    <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
-  } @else {
-    <ng-container>
-      <mat-toolbar-row>
-        <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-        <span i18n>Feedback List</span>
-        <span class="toolbar-fill"></span>
-        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
-      </mat-toolbar-row>
-      @if (deviceType() === deviceTypes.TABLET) {
-        @if (showFiltersRow) {
-          <mat-toolbar-row>
-            <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-            <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
-          </mat-toolbar-row>
-        }
-      }
-      @if (isMobile()) {
-        @if (showFiltersRow) {
-          <mat-toolbar-row>
-            <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-          </mat-toolbar-row>
-        }
-        @if (showFiltersRow) {
-          <mat-toolbar-row>
-            <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
-          </mat-toolbar-row>
-        }
-      }
-    </ng-container>
-  }
-
-
-  <ng-template #filterOptions>
+<planet-list-toolbar [activeFilters]="activeFilters" [searchValue]="titleSearch" (clearFilters)="resetSearch()">
+  <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Feedback List</span>
+  <ng-template #listFilters>
     <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
       <mat-label i18n>Feedback Type</mat-label>
       <mat-select [value]="filter.type || 'All'" (selectionChange)="onFilterChange($event.value, 'type')">
@@ -58,7 +22,7 @@
       </mat-select>
     </mat-form-field>
   </ng-template>
-  <ng-template #searchOptions>
+  <ng-template #listSearch let-compact>
     <mat-icon class="input-icon">search</mat-icon>
     <mat-form-field class="font-size-1 mdc-toolbar-input">
       <mat-label i18n>Title</mat-label>
@@ -67,12 +31,14 @@
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
-    <button mat-button (click)="resetSearch()"
-      [disabled]="feedback.filter.trim() === '' && filter.type === '' && filter.status === '' && titleSearch.trim() === ''">
-      <span i18n>Clear filters</span>
-    </button>
+    @if (!compact) {
+      <button mat-button (click)="resetSearch()"
+        [disabled]="feedback.filter.trim() === '' && filter.type === '' && filter.status === '' && titleSearch.trim() === ''">
+        <span i18n>Clear filters</span>
+      </button>
+    }
   </ng-template>
-</mat-toolbar>
+</planet-list-toolbar>
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
