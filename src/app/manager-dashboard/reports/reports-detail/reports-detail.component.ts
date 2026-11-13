@@ -828,10 +828,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...demographicsForCsv(demographics(activity)),
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
-      [$localize`Chat Responses`]: activity.conversations?.length || 0,
+      [$localize`Chat Responses`]: activity.turns,
       [$localize`Assistant`]: activity.assistant ? $localize`Yes` : $localize`No`,
       [$localize`Shared`]: activity.shared ? $localize`Yes` : $localize`No`,
-      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? $localize`Yes` : $localize`No`
+      [$localize`Has Attachments`]: activity.hasAttachments ? $localize`Yes` : $localize`No`
     }));
     this.csvService.exportCSV({
       data: exportData,

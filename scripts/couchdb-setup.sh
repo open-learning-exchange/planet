@@ -161,6 +161,7 @@ upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
 upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
+upsert_doc chat_history _index '{"index":{"fields":[{"user":"asc"}]},"name":"user-index"}' POST
 upsert_doc submissions _index '{"index":{"fields":["user.name","type","status"]},"name":"user-type-status-index"}' POST
 upsert_doc courses_progress _index '{"index":{"fields":["userId","courseId"]},"name":"user-course-index"}' POST
 

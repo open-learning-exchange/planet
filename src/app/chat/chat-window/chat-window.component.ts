@@ -162,10 +162,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   fetchConversation(id) {
     if (id) {
       try {
-        this.chatService.findConversations([ id ]).subscribe(
-          (conversation: object) => {
-            const messages = conversation[0]?.conversations;
-            this.conversations = messages;
+        this.chatService.getConversation(id).subscribe(
+          (conversation) => {
+            this.conversations = conversation.conversations;
           }
         );
       } catch (error) {
