@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, forkJoin, of } from 'rxjs';
-import { switchMap, map, filter, take, tap } from 'rxjs/operators';
+import { switchMap, map, filter, take, tap, catchError } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
@@ -223,6 +223,25 @@ export class CoursesService {
 
   findCourses(ids, opts) {
     return this.couchService.findAll(this.dbName, findDocuments({ _id: inSelector(ids) }), opts);
+  }
+
+  libraryStepResources(course: any, parent = false) {
+    const copies = course.steps.flatMap(step => step.resources);
+    const ids = [ ...new Set<string>(copies.map(resource => resource._id)) ];
+    if (ids.length === 0) {
+      return of(new Map<string, any>());
+    }
+    const opts = { domain: parent ? this.stateService.configuration.parentDomain : '' };
+    return this.couchService.post('resources/_find', findDocuments({ _id: { $in: ids } }, 0, 0, ids.length), opts).pipe(
+      map(({ docs }: { docs: any[] }) => new Map<string, any>(docs.map(doc => [ doc._id, doc ]))),
+      catchError(() => of(new Map<string, any>(copies.map(resource => [ resource._id, resource ]))))
+    );
+  }
+
+  coursesUsingResources(resourceIds: string[]) {
+    return this.couchService.findAll(this.dbName, findDocuments(
+      { steps: { $elemMatch: { resources: { $elemMatch: { _id: { $in: resourceIds } } } } } }, [ 'courseTitle' ]
+    ));
   }
 
   findProgress(ids, opts) {

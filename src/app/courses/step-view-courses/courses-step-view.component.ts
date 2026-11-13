@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { EMPTY, Subject, combineLatest } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -23,9 +23,8 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 import { CoursesService } from '../courses.service';
-import { blockingStepIndex, stepHasExam } from '../courses.utils';
+import { blockingStepIndex, openableResources, stepHasExam } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { ResourcesService } from '../../resources/resources.service';
 import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
 import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
@@ -88,7 +87,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private chatService: AiChatService,
     private coursesService: CoursesService,
     private dialog: MatDialog,
-    private resourcesService: ResourcesService,
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
@@ -106,21 +104,23 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.attempts > 0 ||
       ((hasExam || hasSurvey) && this.isUserEnrolled) ||
       (this.canManage && (hasExam || hasSurvey)) ||
-      (this.stepDetail?.resources?.length || 0) !== 0;
+      (this.stepDetail?.resources?.length || 0) !== 0 ||
+      !!this.stepDetail?.unavailableResources;
   }
 
   ngOnInit() {
     combineLatest(
-      this.coursesService.courseUpdated$,
-      this.resourcesService.resourcesListener(this.parent),
+      this.coursesService.courseUpdated$.pipe(switchMap(({ course, progress }) =>
+        this.coursesService.libraryStepResources(course, this.parent).pipe(map(library => ({ course, progress, library })))
+      )),
       this.stateService.getCouchState('exams', 'local')
     ).pipe(takeUntil(this.onDestroy$)).subscribe(
-      ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
+      ([ { course, progress = [], library }, exams ]: [ { course: any, progress: any, library: Map<string, any> }, any[] ]) => {
         this.canManage = this.coursesService.canManageCourse(course, { readOnly: this.parent });
         if (this.redirectFromUnavailableStep(course, progress)) {
           return;
         }
-        this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
+        this.initCourse(course, progress, library, exams);
         if (this.countActivity) {
           this.coursesService.courseActivity('visit', course, this.stepNum);
           this.countActivity = false;
@@ -134,7 +134,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.attempts = 0;
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
-    this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
       this.hasAIProvider = providers.length > 0;
     });
@@ -179,10 +178,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  initCourse(course, progress, resources, exams) {
+  initCourse(course, progress, library: Map<string, any>, exams) {
     // To be readable by non-technical people stepNum param will start at 1
-    this.stepDetail = course.steps[this.stepNum - 1];
-    this.initResources(resources);
+    const step = course.steps[this.stepNum - 1];
+    this.stepDetail = { ...step, ...openableResources(step, library) };
+    this.initResources();
     // Fix for multiple progress docs created.  If there are more than one for a step, then we need to call updateProgress to fix.
     const stepProgressDocs = progress.filter(p => p.stepNum === this.stepNum);
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
@@ -207,10 +207,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
-  initResources(resources) {
+  initResources() {
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
-    this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
-    this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
+    // Each course update brings new library docs, and the toggle group matches its value by reference
+    this.resource = this.stepDetail.resources.find(resource => resource._id === this.resource?._id) || this.stepDetail.resources[0];
   }
 
   // direction = -1 for previous, 1 for next
@@ -312,13 +312,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       ],
       { relativeTo: this.route }
     );
-  }
-
-  filterResources(step, resources) {
-    const resourceIds = resources.map((res: any) => res._id);
-    return step.resources ?
-      step.resources.filter((resource) => resourceIds.indexOf(resource._id) !== -1 && resource._attachments) :
-      [];
   }
 
   openReviewDialog() {

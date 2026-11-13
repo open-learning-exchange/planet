@@ -104,7 +104,7 @@
               }
             </mat-expansion-panel-header>
             <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>
-            @if (step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0) {
+            @if (step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && !step.unavailableResources && step?.survey?.questions.length === 0) {
               <div i18n>
               There is no content for this step.
             </div>
@@ -118,6 +118,13 @@
                   <span i18n>{step.resources.length, plural, =1 {There is} other {There are}}</span>
                   {{ ' ' + step?.resources?.length + ' '}}
                   <span i18n>{step.resources.length, plural, =1 {resource} other {resources}}.</span>
+                  {{' '}}
+                </span>
+              }
+              @if (step.unavailableResources) {
+                <span>
+                  {{ step.unavailableResources + ' ' }}
+                  <span i18n>{step.unavailableResources, plural, =1 {resource is not available.} other {resources are not available.}}</span>
                   {{' '}}
                 </span>
               }

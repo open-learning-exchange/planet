@@ -57,10 +57,11 @@ describe('CoursesViewComponent enrollment', () => {
     expect(component.isUserEnrolled).toBe(true);
   });
 
-  it('prompts for a rating on leaving, except into its own pages or from a parent view', () => {
+  it('prompts for a rating on leaving, except into its own pages and step resources or from a parent view', () => {
     const ratingService = { promptRating: vi.fn().mockReturnValue(of(true)) };
     const component = createComponent({}, undefined, ratingService);
     component.courseDetail._id = 'course-1';
+    component.courseDetail.steps = [ { resources: [ { _id: 'res-1' } ] } ];
     const leave = (url: string) => component.canDeactivate(undefined, undefined, { url } as any);
 
     [
@@ -68,12 +69,13 @@ describe('CoursesViewComponent enrollment', () => {
       '/myDashboard/myCourses/view/course-1/step/1',
       '/courses/view/course-1/update',
       '/courses/progress/course-1',
-      '/courses/enrolled/course-1?tab=1'
+      '/courses/enrolled/course-1?tab=1',
+      '/resources/view/res-1'
     ].forEach(url => expect(leave(url), url).toBe(true));
     expect(ratingService.promptRating).not.toHaveBeenCalled();
 
-    [ '/courses/view/course-10', '/courses/submissions/course-1', '/teams/view/x/courses' ].forEach(leave);
-    expect(ratingService.promptRating).toHaveBeenCalledTimes(3);
+    [ '/courses/view/course-10', '/courses/submissions/course-1', '/teams/view/x/courses', '/resources/view/res-2' ].forEach(leave);
+    expect(ratingService.promptRating).toHaveBeenCalledTimes(4);
     expect(ratingService.promptRating).toHaveBeenCalledWith(component.courseDetail, 'course');
 
     ratingService.promptRating.mockClear();

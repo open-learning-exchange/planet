@@ -81,9 +81,9 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
         if (this.shownResourceId !== this.resourceId) {
-          this.shownResourceId = this.resourceId;
           this.resource = resources.find((r: any) => r._id === this.resourceId);
           if (this.resource) {
+            this.shownResourceId = this.resourceId;
             this.setResource(this.resource.doc);
           } else {
             this.formattedFileSize = '';
