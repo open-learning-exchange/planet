@@ -274,6 +274,8 @@ export const styleVariables: any = {
   grey: '#bdbdbd',
   greyText: 'rgba(0, 0, 0, 0.54)',
   white: '#ffffff',
+  planetGreen: '#4caf50',
+  warn: '#f44336',
   chartPalette: [
     '#2196f3', '#ffc107', '#43a047', '#e53935', '#ba68c8',
     '#00acc1', '#fb8c00', '#9575cd', '#7cb342', '#bdbdbd'
