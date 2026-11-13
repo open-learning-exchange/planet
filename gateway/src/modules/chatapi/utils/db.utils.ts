@@ -1,6 +1,6 @@
 import { chatDB, resourceDB } from '../../../config/couch.config';
 import { SessionInfo } from '../../../middleware/auth';
-import { DbDoc } from '../models/db-doc.model';
+import { Attachment, DbDoc } from '../models/db-doc.model';
 import { ChatMessage } from '../models/chat.model';
 
 export const isUserConversationOwner = (doc: Pick<DbDoc, 'user'>, session: SessionInfo): boolean => doc.user === session.name;
@@ -17,12 +17,11 @@ export async function retrieveChatHistory(id: string, messages: ChatMessage[]): 
   return stored;
 }
 
-export async function fetchFileFromCouchDB(docId: string, attachmentName: string) {
-  try {
-    return await resourceDB.attachment.get(docId, attachmentName);
-  } catch (error) {
-    return {
-      'error': 'Unable to retrieve file from CouchDB'
-    };
-  }
+export async function fetchResourceAttachments(docId: string): Promise<Record<string, Attachment>> {
+  const doc = await resourceDB.get(docId) as { _attachments?: Record<string, Attachment> };
+  return doc._attachments || {};
+}
+
+export function streamResourceAttachment(docId: string, attachmentName: string): NodeJS.ReadableStream {
+  return resourceDB.attachment.getAsStream(docId, encodeURIComponent(attachmentName));
 }

@@ -6,9 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
-import { dedupeShelfReduce, ageFromUser, genderBucket } from '@shared/utils';
+import { dedupeShelfReduce, ageFromUser } from '@shared/utils';
 import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
 import { StateService } from '@shared/state.service';
+import { createGenderCounts, normalizeGender } from '@shared/demographics/gender.constants';
 
 import { environment } from '../../../environments/environment';
 import { UsersService } from '../../users/users.service';
@@ -75,7 +76,11 @@ export class ReportsService {
     return this.groupBy(
       array.map(item => {
         const fullDate = new Date(item[dateField]);
-        return { ...item, date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf() };
+        return {
+          ...item,
+          gender: normalizeGender(item.gender),
+          date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf()
+        };
       }),
       [ 'date', 'gender' ],
       { uniqueField }
@@ -118,14 +123,14 @@ export class ReportsService {
   }
 
   groupUsers(users: any[]) {
-    const profiles = users.map((user: any) => user.doc || user);
+    const userDocs = users.map((user: any) => user.doc || user);
     return ({
-      count: profiles.length,
-      byGender: profiles.reduce((usersByGender: any, user: any) => {
-        usersByGender[genderBucket(user.gender)] += 1;
+      count: userDocs.length,
+      byGender: userDocs.reduce((usersByGender: any, user: any) => {
+        usersByGender[normalizeGender(user.gender)] += 1;
         return usersByGender;
-      }, { male: 0, female: 0, didNotSpecify: 0 }),
-      byMonth: this.groupByMonth(profiles, 'joinDate')
+      }, createGenderCounts()),
+      byMonth: this.groupByMonth(userDocs, 'joinDate')
     });
   }
 

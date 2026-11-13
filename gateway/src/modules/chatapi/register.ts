@@ -4,7 +4,7 @@ import WebSocket from 'ws';
 import { requireManager, SessionInfo } from '../../middleware/auth';
 import { ConfigurationUnavailableError } from '../../services/config.service';
 import { DbDoc } from './models/db-doc.model';
-import { configuredProviders } from './providers/clients';
+import { listProviders } from './providers/clients';
 import { chat, chatNoSave, ConversationAccessError } from './services/chat.service';
 import { chatUsage, conversationChange, getConversation, listConversations, updateConversation } from './services/history.service';
 
@@ -52,7 +52,7 @@ export function registerChatApiRoutes(app: Express) {
 
   app.get('/checkproviders', (req: any, res: any, next: any) => {
     void req;
-    configuredProviders().then((providers) => res.status(200).json(providers)).catch(next);
+    listProviders().then((providers) => res.status(200).json({ providers })).catch(next);
   });
 
   app.get('/chat/conversations', (req: any, res: any, next: any) => {

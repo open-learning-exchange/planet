@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { AIServices, AIProvider, Conversation, ConversationChange, ProviderName } from '../../chat/chat.model';
+import { AIServiceStatus, AIProvider, Conversation, ConversationChange, ProviderName } from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ import { AIServices, AIProvider, Conversation, ConversationChange, ProviderName 
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
-  private toggleAIService = new Subject<ProviderName>();
+  private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
@@ -58,20 +58,12 @@ import { AIServices, AIProvider, Conversation, ConversationChange, ProviderName 
 
   private fetchAIProviders() {
     this.httpClient
-      .get<AIServices>(`${this.baseUrl}/checkproviders`)
+      .get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`)
       .pipe(
+        map(({ providers }) => providers.filter(({ configured }) => configured)),
         catchError((err) => {
           console.error(err);
-          return of({ openai: false, perplexity: false, deepseek: false, gemini: false });
-        }),
-        map((services: AIServices) => {
-          if (services) {
-            return (Object.entries(services) as [ ProviderName, boolean ][])
-              .filter(([ _, model ]) => model === true)
-              .map(([ key ]) => ({ name: key, model: key }));
-          } else {
-            return [];
-          }
+          return of([]);
         })
       )
       .subscribe((providers) => {

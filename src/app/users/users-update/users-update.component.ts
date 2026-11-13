@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { NgClass } from '@angular/common';
 import {
   AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
@@ -30,6 +31,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-validator.directive';
 import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { genderOptions, parseGender } from '@shared/demographics/gender.constants';
 
 import { environment } from '../../../environments/environment';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -56,6 +58,7 @@ interface UsersUpdateFormGroup {
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss'],
   imports: [
+    NgClass,
     MatToolbar,
     MatIconButton,
     MatIcon,
@@ -92,6 +95,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };
   initialFormValues: UsersUpdateFormValue | null = null;
   educationLevel = educationLevel;
+  genderOptions = genderOptions;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup<UsersUpdateFormGroup>;
   currentImgKey: string | null = null;
@@ -386,7 +390,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       birthDate: user.birthDate ?? null,
       birthYear: user.birthYear ?? null,
       age: user.age ?? null,
-      gender: user.gender ?? '',
+      gender: parseGender(user.gender) ?? '',
       level: user.level ?? '',
       betaEnabled: user.betaEnabled ?? false
     };
