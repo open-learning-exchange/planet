@@ -102,18 +102,21 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.coursesService.libraryStepResources(course, this.parent).pipe(map(library => ({ course, progress, library })))
       ),
       switchMap(({ course, progress, library }) => {
-        this.courseDetail = course;
+        // A new object, because course is the service's cache and the step page reads its steps
+        this.courseDetail = {
+          ...course,
+          steps: course.steps.map((step, index) => {
+            const { resources, unavailableResources } = openableResources(step, library);
+            return {
+              ...step,
+              resources: resources.sort(this.coursesService.stepResourceSort),
+              unavailableResources,
+              progress: stepProgress(progress, index + 1)
+            };
+          })
+        };
         this.isLoading = false;
         this.coursesService.courseActivity('visit', course);
-        this.courseDetail.steps = this.courseDetail.steps.map((step, index) => {
-          const { resources, unavailableResources } = openableResources(step, library);
-          return {
-            ...step,
-            resources: resources.sort(this.coursesService.stepResourceSort),
-            unavailableResources,
-            progress: stepProgress(progress, index + 1)
-          };
-        });
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
         this.canManage = this.coursesService.canManageCourse(this.courseDetail, { readOnly: this.parent });

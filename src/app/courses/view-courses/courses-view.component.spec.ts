@@ -124,10 +124,13 @@ describe('CoursesViewComponent', () => {
 
     component.ngOnInit();
     const resources = [ { _id: 'in-library' }, { _id: 'deleted', _attachments: {} }, { _id: 'no-file' } ];
-    courseUpdated$.next({ course: { _id: 'c1', steps: [ { resources } ] } });
+    const course = { _id: 'c1', steps: [ { resources } ] };
+    courseUpdated$.next({ course });
 
     expect(component.courseDetail.steps[0].resources).toEqual([ inLibrary ]);
     expect(component.courseDetail.steps[0].unavailableResources).toBe(2);
+    // The step page reads the same cached course, so it has to keep every resource
+    expect(course.steps[0].resources).toBe(resources);
     component.ngOnDestroy();
   });
 });
