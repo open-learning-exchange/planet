@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 
 import { ReportsService } from './reports.service';
+import { demographicsForCsv } from './reports.utils';
 
 describe('ReportsService', () => {
   let service: ReportsService;
@@ -81,6 +82,15 @@ describe('ReportsService', () => {
       ]);
     });
 
+    it('keeps the gender raw so an unmatched profile exports a blank cell', () => {
+      service.users = [ { name: 'ada', gender: 'female' } ];
+
+      const [ unmatched ] = service.appendUserDemographics([ { user: 'nobody' } ], time);
+
+      expect(unmatched.gender).toBeUndefined();
+      expect(demographicsForCsv(unmatched).Gender).toBe('');
+    });
+
   });
 
   describe('demographicsFor', () => {
@@ -95,13 +105,26 @@ describe('ReportsService', () => {
 
   });
 
+  describe('groupLoginActivities', () => {
+
+    it('normalizes the gender when the activities are grouped for the charts', () => {
+      service.users = [ { name: 'ada', gender: ' Female ' } ];
+      const loginTime = new Date(2025, 0, 10).valueOf();
+
+      const { byMonth } = service.groupLoginActivities([ { user: 'ada', loginTime }, { user: 'nobody', loginTime } ]);
+
+      expect(byMonth.map(({ gender }) => gender)).toEqual([ 'female', 'didNotSpecify' ]);
+    });
+
+  });
+
   describe('groupUsers', () => {
 
     it('counts genders on the raw user docs', () => {
-      const grouped = service.groupUsers([ { gender: 'male' }, { gender: 'female' }, {} ]);
+      const grouped = service.groupUsers([ { gender: 'male' }, { gender: 'female' }, { gender: 'other' }, {}, { gender: ' ' } ]);
 
-      expect(grouped.count).toBe(3);
-      expect(grouped.byGender).toEqual({ male: 1, female: 1, didNotSpecify: 1 });
+      expect(grouped.count).toBe(5);
+      expect(grouped.byGender).toEqual({ male: 1, female: 1, other: 1, didNotSpecify: 2 });
     });
 
     it('counts genders on the { doc: user } shape the members list passes', () => {
@@ -111,13 +134,32 @@ describe('ReportsService', () => {
         { _id: 'c', doc: { gender: 'female' } }
       ]);
 
-      expect(grouped.byGender).toEqual({ male: 1, female: 2, didNotSpecify: 0 });
+      expect(grouped.byGender).toEqual({ male: 1, female: 2, other: 0, didNotSpecify: 0 });
     });
 
     it('keeps the totals numeric for genders the chart has no bucket for', () => {
-      const grouped = service.groupUsers([ { gender: 'nonbinary' }, { gender: 'Male' } ]);
+      const grouped = service.groupUsers([ { gender: 'nonbinary' }, { gender: 'Male' }, { gender: ' female ' }, { gender: 1 } ]);
 
-      expect(grouped.byGender).toEqual({ male: 1, female: 0, didNotSpecify: 1 });
+      expect(grouped.byGender).toEqual({ male: 1, female: 1, other: 0, didNotSpecify: 2 });
+    });
+
+    it('groups direct and wrapped user records by their gender and join month', () => {
+      const january = new Date(2025, 0, 1).valueOf();
+      const february = new Date(2025, 1, 1).valueOf();
+      const result = service.groupUsers([
+        { gender: 'male', joinDate: new Date(2025, 0, 10).valueOf() },
+        { doc: { gender: ' Female ', joinDate: new Date(2025, 0, 20).valueOf() } },
+        { doc: { gender: 'other', joinDate: new Date(2025, 1, 5).valueOf() } }
+      ]);
+
+      expect(result.count).toBe(3);
+      expect(result.byGender).toEqual({ male: 1, female: 1, other: 1, didNotSpecify: 0 });
+      expect(result.byMonth.map(({ date, gender, count }) => ({ date, gender, count }))).toEqual([
+        { date: january, gender: 'male', count: 1 },
+        { date: january, gender: 'female', count: 1 },
+        { date: february, gender: 'other', count: 1 }
+      ]);
+      expect(result.byMonth.every(({ date }) => !Number.isNaN(date))).toBe(true);
     });
 
   });

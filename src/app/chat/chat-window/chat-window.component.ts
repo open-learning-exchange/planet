@@ -85,6 +85,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.checkStreamingStatusAndInitialize();
     this.chatService.listAIProviders().subscribe((providers) => {
       this.providers = providers;
+      if (!this.provider && providers.length > 0) {
+        this.provider = { name: providers[0].name };
+      }
     });
   }
 

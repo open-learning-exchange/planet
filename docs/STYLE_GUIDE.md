@@ -151,6 +151,15 @@ When designing component toolbars, follow these patterns:
   - Primary color background with white text (`primary-color` class)
   - Use white icons and text for buttons (`mat-icon`, `font-size-1` classes)
 
+### Lists on phones and tablets
+Up to `$screen-md`, a `mat-table` with the `card-mode` class shows each row as a card in one centred column (rules in `styles.scss`). Opt a list in by putting a role class on its cells, never by styling its columns for phones:
+
+- `card-title` on exactly one cell; `card-select` on the selection column's header and row cells; `card-image` for an avatar or cover; `card-menu` for a ⋮ menu cell; `card-actions` for the action buttons, which become labelled text buttons.
+- Every other cell is a detail line. Start it with `<span class="card-label" i18n>…</span>` using the column header's exact text, so translators get no new string. Put the label inside the same `@if` as its value, so a blank cell renders empty and is hidden.
+- The header row becomes a strip of sort pills plus the select-all box; cells without `mat-sort-header` are hidden.
+- Card mode sets `--responsive-table-min-width: 0`, which is what cancels `.min-width-table` inside cards.
+- Wide data tables (reports, logs, the CSV preview) stay tables with `responsive-table`: they scroll inside the table, so the paginator beside them stays on screen.
+
 ### Loading Indicators
 For consistent loading states across the application, follow these standards:
 

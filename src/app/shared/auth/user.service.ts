@@ -6,6 +6,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { addToArray, removeFromArray, dedupeShelfReduce } from '@shared/utils';
 import { StateService } from '@shared/state.service';
+import { parseGender } from '@shared/demographics/gender.constants';
 
 import { environment } from '../../../environments/environment';
 
@@ -316,7 +317,7 @@ export class UserService {
 
   isProfileComplete() {
     const isComplete = !!(this.user.firstName && this.user.lastName && this.user.email && this.user.birthDate &&
-      this.user.gender && this.user.language && this.user.phoneNumber && this.user.level);
+      parseGender(this.user.gender) && this.user.language && this.user.phoneNumber && this.user.level);
     this.profileComplete.next(isComplete);
   }
 

@@ -212,6 +212,21 @@ describe('TeamsReportsComponent', () => {
     expect(component.filteredCards.map(card => card.report._id)).toEqual([ 'second', 'first', 'old' ]);
   });
 
+  it('charts the shown reports oldest first, labelled by their UTC month and label', () => {
+    component.reports = [
+      report({ _id: 'feb', startDate: Date.UTC(2026, 1, 1), endDate: Date.UTC(2026, 1, 28), label: 'Bakery' }),
+      report({ _id: 'jan', sales: 300 })
+    ];
+    component.ngOnChanges();
+
+    expect(component.reportsChart.labels).toEqual([ 'Jan 2026', [ 'Feb 2026', 'Bakery' ] ]);
+    expect(component.reportsChart.datasets.map(dataset => dataset.data)).toEqual([ [ 260, 60 ], [ 300, 100 ], [ 40, 40 ] ]);
+
+    search('bakery');
+
+    expect(component.reportsChart.labels).toEqual([ [ 'Feb 2026', 'Bakery' ] ]);
+  });
+
   describe('export', () => {
     beforeEach(() => {
       component.team = { name: 'Team' };
