@@ -178,7 +178,7 @@ describe('CoursesStepViewComponent', () => {
 
   describe('progress on open', () => {
     const openStep = (exam, progress = [], exams = []) => {
-      component.initCourse({ _id: 'c1', steps: [ { resources: [], exam } ] }, progress, [], exams);
+      component.initCourse({ _id: 'c1', steps: [ { resources: [], exam } ] }, progress, new Map(), exams);
     };
 
     beforeEach(() => {
