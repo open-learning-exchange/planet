@@ -44,20 +44,20 @@
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table">
-    <mat-table #table [dataSource]="meetups" matSort [matSortDisableClear]="true">
+    <mat-table #table class="card-mode" [dataSource]="meetups" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
+        <mat-header-cell *matHeaderCellDef class="card-select">
           <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null" [checked]="selection.hasValue() && pageSelection.isAllSelected()" [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
-        <mat-cell *matCellDef="let row" class="table-selection-top">
+        <mat-cell *matCellDef="let row" class="table-selection-top card-select">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null" [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n> Title </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu">
+        <mat-cell *matCellDef="let element" class="list-content-menu card-title">
           <h3 class="header">
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
             @if (element.participate) {
