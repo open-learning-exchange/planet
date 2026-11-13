@@ -1,7 +1,7 @@
-<mat-table #table [dataSource]="logs" matSortActive="lastSync" matSortDirection="desc" [matSortDisableClear]="true" matSort>
+<mat-table #table class="card-mode" [dataSource]="logs" matSortActive="lastSync" matSortDirection="desc" [matSortDisableClear]="true" matSort>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Planet</mat-header-cell>
-    <mat-cell *matCellDef="let element" class="action-buttons">
+    <mat-cell *matCellDef="let element" class="action-buttons card-title">
       <a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a>
       <button (click)="viewDetails(element.doc)" mat-stroked-button color="primary" i18n>Details</button>
     </mat-cell>
@@ -12,19 +12,19 @@
   </ng-container> -->
   <ng-container matColumnDef="views">
     <mat-header-cell *matHeaderCellDef i18n>Resource Views</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.resourceViews}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-value"><span class="card-label" i18n>Resource Views</span>{{element?.doc?.resourceViews}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="logins">
     <mat-header-cell *matHeaderCellDef i18n>Member Visits</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.userVisits}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-value"><span class="card-label" i18n>Member Visits</span>{{element?.doc?.userVisits}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastUpgrade">
     <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.lastUpgrade?.max?.time | date:'medium'}}</mat-cell>
+    <mat-cell *matCellDef="let element">@if (element?.doc?.lastUpgrade?.max?.time) {<span class="card-label" i18n>Last Upgrade</span>{{element.doc.lastUpgrade.max.time | date:'medium'}}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastSync">
     <mat-header-cell *matHeaderCellDef mat-sort-header="lastSync" i18n>Last Sync</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.lastSync?.max?.time | date:'medium'}}</mat-cell>
+    <mat-cell *matCellDef="let element">@if (element?.doc?.lastSync?.max?.time) {<span class="card-label" i18n>Last Sync</span>{{element.doc.lastSync.max.time | date:'medium'}}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

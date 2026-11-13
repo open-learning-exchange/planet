@@ -313,7 +313,7 @@
           }
           @if (!comparisonLoading && !summaryLoading && comparisonTableData.length > 0) {
             <div class="comparison-table-container">
-              <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width responsive-table">
+              <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width">
                 <ng-container matColumnDef="metric">
                   <th mat-header-cell *matHeaderCellDef i18n>Metric</th>
                   <td mat-cell *matCellDef="let row">{{row.metric}}</td>
