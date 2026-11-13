@@ -13,6 +13,7 @@ import { MatFormField, MatLabel, MatSuffix, MatPrefix, MatError } from '@angular
 import { MatInput } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
+import type { ChartDataset, ChartOptions } from 'chart.js';
 
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -25,6 +26,8 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { AttachmentInputState } from '@shared/forms/file-upload.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { PlanetChartComponent } from '@shared/charts/planet-chart.component';
+import { styleVariables } from '@shared/utils';
 
 import { CustomValidators } from '../../validators/custom-validators';
 import { TeamsService } from '../teams.service';
@@ -60,6 +63,7 @@ interface NewReportForm {
     MatIcon,
     MatTooltip,
     PlanetLoadingSpinnerComponent,
+    PlanetChartComponent,
     MatCard,
     MatCardContent,
     MatCardActions,
@@ -94,6 +98,12 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
   startDate: Date | undefined;
   endDate: Date | undefined;
   labelFilter = '';
+  showCharts = false;
+  reportsChart: { labels: (string | string[])[], datasets: ChartDataset[] };
+  // Chart.js joins a two-line label with a comma in the tooltip title, so the title takes the label's lines as they are
+  reportsChartOptions: ChartOptions = {
+    plugins: { tooltip: { callbacks: { title: ([ item ]) => item.chart.data.labels[item.dataIndex] as string | string[] } } }
+  };
   private onDestroy$ = new Subject<void>();
 
   get hasActiveFilters(): boolean {
@@ -151,6 +161,29 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
     this.filteredCards = start > end ? [] : this.reportCards.filter(card =>
       card.report.startDate <= end && card.report.endDate >= start && (!searchText || matchesFilter(card, searchText))
     );
+    this.setReportsChart();
+  }
+
+  private setReportsChart() {
+    const oldestFirst = [ ...this.filteredCards ].reverse();
+    this.reportsChart = {
+      labels: oldestFirst.map(({ report }) => {
+        const month = formatDate(report.startDate, 'MMM y', this.localeId, '+0000');
+        return report.label ? [ month, report.label ] : month;
+      }),
+      datasets: [
+        // Chart.js draws the first dataset on top, so the net line goes first to stay over the bars
+        {
+          type: 'line',
+          label: $localize`Net (Profit / Loss)`,
+          data: oldestFirst.map(card => card.net),
+          borderColor: styleVariables.primary,
+          backgroundColor: styleVariables.primary
+        },
+        { label: $localize`Credit`, data: oldestFirst.map(card => card.income), backgroundColor: styleVariables.planetGreen },
+        { label: $localize`Debit`, data: oldestFirst.map(card => card.expenses), backgroundColor: styleVariables.warn }
+      ]
+    };
   }
 
   clearLabelFilter() {

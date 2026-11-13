@@ -19,6 +19,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { ChallengesService } from '@shared/challenges/challenges.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
@@ -124,6 +125,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     private formBuilder: FormBuilder,
     private challengesService: ChallengesService,
     private location: Location,
+    private challengesProgressService: ChallengesProgressService,
   ) {
     this.examForm = this.formBuilder.group({
       answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: examAnswerValidator })
@@ -317,8 +319,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       } else {
         this.routeToNext(nextQuestion, previousStatus);
         if (isFinish) {
-          this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId))
-            .subscribe();
+          this.challengesProgressService.record('survey_complete', 'course_complete').pipe(
+            switchMap(completed => completed ? EMPTY : this.challengesService.openChallengeDialogOnce(
+              this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId)
+            ))
+          ).subscribe();
         }
       }
     }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));

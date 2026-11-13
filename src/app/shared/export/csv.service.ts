@@ -8,6 +8,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { couchAttachmentPath, formatDate } from '@shared/utils';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+import { createGenderCounts, reportGenderOptions, ReportGenderValue } from '@shared/demographics/gender.constants';
 
 import { ReportsService } from '../../manager-dashboard/reports/reports.service';
 import { monthDataLabels } from '../../manager-dashboard/reports/reports.utils';
@@ -151,38 +152,42 @@ export class CsvService {
   private processSection(
     formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]
   ): void {
-    const pushRow = (section, month, all, male, female, unspecified) => {
-      formattedData.push({
+    const pushRow = (
+      section: string, month: string, all: number | string, genderCounts: Partial<Record<ReportGenderValue, number>> = {}
+    ) => {
+      const row: Record<string, string | number> = {
         [$localize`Section`]: section,
         [$localize`Month`]: month,
-        [$localize`All`]: all,
-        [$localize`Male`]: male,
-        [$localize`Female`]: female,
-        [$localize`Unspecified`]: unspecified
+        [$localize`All`]: all
+      };
+      reportGenderOptions.forEach((genderOption) => {
+        row[genderOption.label] = genderCounts[genderOption.value] ?? '';
       });
+      formattedData.push(row);
     };
 
-    pushRow(title, '', '', '', '', '');
+    const totalGenderCounts = createGenderCounts();
+    pushRow(title, '', '');
     let totalAll = 0;
-    let totalMale = 0;
-    let totalFemale = 0;
-    let totalUnspecified = 0;
 
     sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       const all = this.getMonthlyData(month, groupedData, countUnique);
-      const male = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'male'), countUnique);
-      const female = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'female'), countUnique);
-      const unspecified = this.getMonthlyData(month, groupedData.filter(item => item.gender === undefined), countUnique);
+      const monthGenderCounts = reportGenderOptions.reduce((counts, genderOption) => {
+        counts[genderOption.value] = this.getMonthlyData(
+          month,
+          groupedData.filter(item => item.gender === genderOption.value),
+          countUnique
+        );
+        totalGenderCounts[genderOption.value] += counts[genderOption.value];
+        return counts;
+      }, {} as Record<ReportGenderValue, number>);
 
       totalAll += all;
-      totalMale += male;
-      totalFemale += female;
-      totalUnspecified += unspecified;
-      pushRow('', monthLabel, all, male, female, unspecified);
+      pushRow('', monthLabel, all, monthGenderCounts);
     });
 
-    pushRow('', $localize`Total`, totalAll, totalMale, totalFemale, totalUnspecified);
+    pushRow('', $localize`Total`, totalAll, totalGenderCounts);
   }
 
   formatValue(key: string, value: any, markdown = true) {
