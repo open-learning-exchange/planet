@@ -48,6 +48,12 @@ describe('CoursesStepViewComponent', () => {
     expect(component.stepDetail.resources).toEqual([ fileAddedLater, other ]);
     expect(component.stepDetail.unavailableResources).toBe(1);
     expect(component.resource).toBe(fileAddedLater);
+
+    component.resource = other;
+    const refetched = { ...other };
+    component.initCourse(course, [], new Map<string, any>([ [ 'file-added-later', fileAddedLater ], [ 'other', refetched ] ]), []);
+
+    expect(component.resource).toBe(refetched);
   });
 
   it('enables Next on a passingRequired step only once the pass is saved', () => {

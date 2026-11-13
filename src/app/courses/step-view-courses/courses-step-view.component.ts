@@ -209,7 +209,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   initResources() {
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
-    this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
+    // Each course update brings new library docs, and the toggle group matches its value by reference
+    this.resource = this.stepDetail.resources.find(resource => resource._id === this.resource?._id) || this.stepDetail.resources[0];
   }
 
   // direction = -1 for previous, 1 for next
