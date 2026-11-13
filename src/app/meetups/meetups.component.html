@@ -14,35 +14,39 @@
 </planet-list-toolbar>
 
 <div class="space-container primary-link-hover">
-  <mat-toolbar class="primary-color font-size-1">
+  <planet-list-actions [selected]="selection.selected.length" (clearSelection)="selection.clear()">
     @if (!parent && isAuthorized) {
       <button mat-mini-fab routerLink="add">
         <mat-icon>add</mat-icon>
       </button>
       <span class="toolbar-fill"></span>
-      <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
-        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
-        @if (selectedNotJoined > 0) {
-          <span> ({{selectedNotJoined}})</span>
-        }
-      </button>
-      <button mat-button [disabled]="selectedJoined === 0" (click)="meetupsToggle(selection.selected, 'remove')">
-        <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
-        @if (selectedJoined > 0) {
-          <span> ({{selectedJoined}})</span>
-        }
-      </button>
-      @if (currentUser.isUserAdmin) {
-        <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
-          <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
-          <span i18n>Delete</span>
-          @if (selection?.selected?.length) {
-            <span> ({{selection?.selected?.length}})</span>
+    }
+    <ng-template #listActions>
+      @if (!parent && isAuthorized) {
+        <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
+          <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
+          @if (selectedNotJoined > 0) {
+            <span> ({{selectedNotJoined}})</span>
           }
         </button>
+        <button mat-button [disabled]="selectedJoined === 0" (click)="meetupsToggle(selection.selected, 'remove')">
+          <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
+          @if (selectedJoined > 0) {
+            <span> ({{selectedJoined}})</span>
+          }
+        </button>
+        @if (currentUser.isUserAdmin) {
+          <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+            <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
+            <span i18n>Delete</span>
+            @if (selection?.selected?.length) {
+              <span> ({{selection?.selected?.length}})</span>
+            }
+          </button>
+        }
       }
-    }
-  </mat-toolbar>
+    </ng-template>
+  </planet-list-actions>
 
   <div class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="meetups" matSort [matSortDisableClear]="true">

@@ -9,7 +9,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil, finalize } from 'rxjs/operators';
-import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -27,6 +26,7 @@ import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { findByIdInArray } from '@shared/utils';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { ListActionsComponent } from '@shared/tables/list-actions.component';
 import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
 
 import { MeetupService } from './meetups.service';
@@ -54,8 +54,8 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     }
   `],
   imports: [
+    ListActionsComponent,
     ListToolbarComponent,
-    MatToolbar,
     MatIconButton,
     MatIcon,
     MatFormField,
