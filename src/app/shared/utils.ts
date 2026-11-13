@@ -270,9 +270,12 @@ export const styleVariables: any = {
   accent: '#ffc107',
   accentLighter: '#ffecb3',
   accentText: 'rgba(0, 0, 0, 0.87)',
+  greenLighter: '#c8e6c9',
   grey: '#bdbdbd',
   greyText: 'rgba(0, 0, 0, 0.54)',
   white: '#ffffff',
+  planetGreen: '#4caf50',
+  warn: '#f44336',
   chartPalette: [
     '#2196f3', '#ffc107', '#43a047', '#e53935', '#ba68c8',
     '#00acc1', '#fb8c00', '#9575cd', '#7cb342', '#bdbdbd'
@@ -347,25 +350,6 @@ export const ageFromUser = (
 ) => {
   const age = ageFromBirthDate(currentTime, user?.birthDate) ?? user?.age;
   return age === undefined || age === null || age === '' ? null : age;
-};
-
-export const genderBucket = (gender?: unknown) => {
-  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
-  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
-};
-
-export const localizedGender = (gender?: unknown, fallback = '') => {
-  if (typeof gender !== 'string' || !gender) {
-    return fallback;
-  }
-  switch (gender.toLowerCase()) {
-    case 'male':
-      return $localize`Male`;
-    case 'female':
-      return $localize`Female`;
-    default:
-      return toProperCase(gender);
-  }
 };
 
 export const formatStringDate = (date: string) =>

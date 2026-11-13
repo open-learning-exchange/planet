@@ -166,7 +166,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
     const stepClicked = this.courseDetail.steps[stepClickedNum];
-    // A saved pass counts when an exam edit hides the earlier attempts; a content step's visit pass doesn't
+    // A saved pass counts with no attempt here (another app saved it); a content step's visit pass doesn't
     const hasPassed = stepHasExam(step) && (this.progress || []).some(p => p.stepNum === stepNum + 1 && p.passed);
     const isTestTaken = attempts > 0 || hasPassed || (stepNum === 0 && !stepHasExam(step));
     stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;

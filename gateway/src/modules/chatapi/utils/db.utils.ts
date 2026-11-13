@@ -1,5 +1,5 @@
 import { chatDB, resourceDB } from '../../../config/couch.config';
-import { DbDoc } from '../models/db-doc.model';
+import { Attachment, DbDoc } from '../models/db-doc.model';
 import { ChatMessage } from '../models/chat.model';
 
 /**
@@ -33,12 +33,14 @@ export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) 
   return stored;
 }
 
-export async function fetchFileFromCouchDB(docId: string, attachmentName: string) {
-  try {
-    return await resourceDB.attachment.get(docId, attachmentName);
-  } catch (error) {
-    return {
-      'error': 'Unable to retrieve file from CouchDB'
-    };
-  }
+// nano sends `_design`/`_local` ids unencoded, so `_design/../<db>/<id>` would reach other databases as the gateway's admin
+export const isPlainDocId = (id: unknown): id is string => typeof id === 'string' && /^[^_/][^/]*$/.test(id);
+
+export async function fetchResourceAttachments(docId: string): Promise<Record<string, Attachment>> {
+  const doc = await resourceDB.get(docId) as { _attachments?: Record<string, Attachment> };
+  return doc._attachments || {};
+}
+
+export function streamResourceAttachment(docId: string, attachmentName: string): NodeJS.ReadableStream {
+  return resourceDB.attachment.getAsStream(docId, encodeURIComponent(attachmentName));
 }
