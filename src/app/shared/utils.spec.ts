@@ -32,6 +32,11 @@ describe('utils', () => {
       expect(safeAttachmentName('before+after (1).jpg')).toBe('before_after__1_.jpg');
     });
 
+    it('never returns a . or .. path segment', () => {
+      expect(safeAttachmentName('. ')).toBe('attachment');
+      expect(safeAttachmentName(' ..')).toBe('attachment');
+    });
+
   });
 
   describe('fullName', () => {

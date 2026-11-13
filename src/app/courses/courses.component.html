@@ -134,15 +134,15 @@
   </ng-template>
 
   <div class="card-table view-container view-full-height view-table" [ngClass]="{ 'fill-parent': isForm }">
-    <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
+    <mat-table #table class="card-mode" [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
+        <mat-header-cell *matHeaderCellDef class="card-select">
           <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
             [checked]="selection.hasValue() && pageSelection.isAllSelected()"
             [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
-        <mat-cell *matCellDef="let row" class="table-selection-top">
+        <mat-cell *matCellDef="let row" class="table-selection-top card-select">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
@@ -150,14 +150,8 @@
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu">
+        <mat-cell *matCellDef="let element" class="list-content-menu card-title">
           <h3 class="header">
-            @if (isMobile()) {
-              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
-                [checked]="selection.isSelected(element._id)">
-              </mat-checkbox>
-              <span class="margin-lr-5"></span>
-            }
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
               <a class="break-word" [ngClass]="{ 'cursor-pointer': !isDialog && !isForm }" [routerLink]="!isDialog && !isForm ? ['view', element._id] : ['/courses/view', element._id]" [target]="isDialog || isForm ? '_blank' : null">
@@ -298,13 +292,13 @@
       <ng-container matColumnDef="createdDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span class="created-label" i18n>Created: </span>
+          <span class="card-label" i18n>Created On</span>
           {{element.doc.createdDate | date}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
         <mat-header-cell *matHeaderCellDef class="rating-header"  mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="rating-cell">
+        <mat-cell *matCellDef="let element">
           <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
         </mat-cell>
       </ng-container>

@@ -27,7 +27,7 @@ import { RatingService } from '@shared/ratings/rating.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { CoursesService } from '../courses.service';
-import { blockingStepIndex, stepLocked, stepProgress } from '../courses.utils';
+import { blockingStepIndex, stepHasExam, stepLocked, stepProgress } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
 import { CoursesViewDetailComponent } from './courses-view-detail.component';
@@ -136,9 +136,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   setStepButtonStatus(step, stepNum, stepClickedNum = stepNum, getPrevious = true) {
     if (stepNum > 0 && getPrevious) {
       const previousStep = this.courseDetail.steps[stepNum - 1];
-      this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, previousStep.exam === undefined);
+      this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, !stepHasExam(previousStep));
     }
-    if (step.exam && step.submission === undefined) {
+    if (stepHasExam(step) && step.submission === undefined) {
       this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
         this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
         this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
@@ -167,8 +167,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
     const stepClicked = this.courseDetail.steps[stepClickedNum];
     // A saved pass counts when an exam edit hides the earlier attempts; a content step's visit pass doesn't
-    const hasPassed = step.exam !== undefined && (this.progress || []).some(p => p.stepNum === stepNum + 1 && p.passed);
-    const isTestTaken = attempts > 0 || hasPassed || (stepNum === 0 && step.exam === undefined);
+    const hasPassed = stepHasExam(step) && (this.progress || []).some(p => p.stepNum === stepNum + 1 && p.passed);
+    const isTestTaken = attempts > 0 || hasPassed || (stepNum === 0 && !stepHasExam(step));
     stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
   }
 
