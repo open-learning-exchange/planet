@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { defaultIfEmpty, map } from 'rxjs/operators';
 
-import { findDocuments } from '@shared/database/mango-queries';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -53,8 +52,13 @@ export class DialogsListService {
   getListAndColumns(db: string, selector?: any, planetField: string = 'local') {
     selector = selector || this.defaultSelectorFunctions()[db];
     if (db === '_users') {
-      return this.couchService.findAll('_users', findDocuments({}, this.userService.userProperties))
-        .pipe(map((newData) => ({ tableData: this.filterResults(newData, selector), columns: listColumns[db] })));
+      return this.couchService.findAll('_users').pipe(
+        map((newData: any[]) => newData.map(user => {
+          const { requestId, _attachments, ...profile } = this.userService.getUserProperties(user);
+          return profile;
+        })),
+        map((newData) => ({ tableData: this.filterResults(newData, selector), columns: listColumns[db] }))
+      );
     }
     return this.stateService.getCouchState(db, planetField).pipe(
       defaultIfEmpty([]),
