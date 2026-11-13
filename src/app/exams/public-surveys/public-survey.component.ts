@@ -13,6 +13,7 @@ import { MatCard } from '@angular/material/card';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { AndroidAppPromptService } from '@shared/android/android-app-prompt.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { genderOptions, type GenderValue } from '@shared/demographics/gender.constants';
 
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
@@ -42,6 +43,7 @@ export class PublicSurveyComponent implements OnInit {
   currentAnswer: ExamAnswerValue | null = null;
   isLoading = true;
   isSubmitting = false;
+  readonly genderOptions = genderOptions;
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
   readonly demographicsForm = this.fb.group({
     birthYear: this.fb.control<number | null>(null, [
@@ -49,7 +51,7 @@ export class PublicSurveyComponent implements OnInit {
       Validators.max(new Date().getFullYear() - 1),
       Validators.pattern(/^\d{4}$/)
     ]),
-    gender: this.fb.control('')
+    gender: this.fb.control<GenderValue | ''>('')
   });
 
   get question() {
