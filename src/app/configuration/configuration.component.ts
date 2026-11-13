@@ -1,19 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule
+  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators, ReactiveFormsModule
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatButton, MatMiniFabButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatIcon } from '@angular/material/icon';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatDialog } from '@angular/material/dialog';
 
 import { languages } from '@shared/language/languages';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -25,6 +25,7 @@ import { LowercaseDirective } from '@shared/forms/lowercase.directive';
 import { RestrictDiacriticsDirective } from '@shared/forms/restrict-diacritics.directive';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
@@ -80,8 +81,8 @@ interface ContactForm {
     .configuration-form mat-form-field {
       width: 100%;
     }
-    .advanced {
-      grid-column-start: 2;
+    .configuration-form mat-expansion-panel {
+      margin-bottom: 16px;
     }
     .advanced-options-container {
       display: flex;
@@ -100,7 +101,6 @@ interface ContactForm {
     MatStepper,
     MatStep,
     MatStepLabel,
-    FormsModule,
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
@@ -117,14 +117,13 @@ interface ContactForm {
     MatAutocomplete,
     MatSlideToggle,
     MatTooltip,
-    MatIcon,
-    MatCheckbox,
-    MatMiniFabButton,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
     MatStepperPrevious
   ]
 })
 export class ConfigurationComponent implements OnInit {
-  @ViewChild('stepper') stepper: MatStepper;
   configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
@@ -132,12 +131,15 @@ export class ConfigurationComponent implements OnInit {
   configurationFormGroup!: FormGroup<ConfigurationForm>;
   contactFormGroup!: FormGroup<ContactForm>;
   nations = [];
-  showAdvancedOptions = false;
-  isAdvancedOptionsChanged = false;
-  isAdvancedOptionConfirmed = false;
   configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
   languageNames = languages.map(list => list.name);
+  confirmedFields = [
+    { key: 'planetType', label: $localize`Nation/Community` },
+    { key: 'parentDomain', label: $localize`Parent` },
+    { key: 'localDomain', label: $localize`Local URL` },
+    { key: 'name', label: $localize`Name` }
+  ] as const;
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -148,7 +150,8 @@ export class ConfigurationComponent implements OnInit {
     private route: ActivatedRoute,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -194,6 +197,8 @@ export class ConfigurationComponent implements OnInit {
       autoAccept: this.formBuilder.control(true),
       alwaysOnline: this.formBuilder.control(false),
       betaEnabled: this.formBuilder.control('off')
+    }, {
+      validators: CustomValidators.requiredEvenIfDisabled('parentDomain')
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: this.formBuilder.control('', { validators: [ CustomValidators.required ] }),
@@ -212,6 +217,7 @@ export class ConfigurationComponent implements OnInit {
       this.configuration = data;
       this.nationOrCommunity = data.planetType;
       this.configurationFormGroup.patchValue(data);
+      this.configurationFormGroup.controls.code.disable();
       this.contactFormGroup.patchValue(data);
     }, error => {
       console.log(error);
@@ -233,25 +239,6 @@ export class ConfigurationComponent implements OnInit {
     };
   }
 
-  confirmConfigurationFormGroup() {
-    if (this.configurationFormGroup.valid) {
-      if (!this.isAdvancedOptionsChanged || this.isAdvancedOptionConfirmed) {
-        this.stepper.next();
-      }
-    }
-  }
-
-  localDomainChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.isAdvancedOptionsChanged = (this.defaultLocal !== target.value);
-  }
-
-  resetDefault() {
-    this.isAdvancedOptionConfirmed = false;
-    this.isAdvancedOptionsChanged = false;
-    this.configurationFormGroup.controls.localDomain.setValue(this.defaultLocal);
-  }
-
   planetNameChange() {
     if (this.configurationType !== 'update') {
       let code = this.configurationFormGroup.controls.name.value;
@@ -264,9 +251,12 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
+    const parentDomain = this.configurationFormGroup.controls.parentDomain;
+    parentDomain.disable();
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ planetType: 'nation', registrationRequest: 'accepted' }, 0 ),
       { domain: environment.centerAddress, protocol: environment.centerProtocol })
+      .pipe(finalize(() => parentDomain.enable()))
       .subscribe((data) => {
         this.nations = data.docs;
       }, (error) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`));
@@ -331,7 +321,7 @@ export class ConfigurationComponent implements OnInit {
         adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value
       },
       this.configuration,
-      this.configurationFormGroup.value,
+      this.configurationFormGroup.getRawValue(),
       this.contactFormGroup.value,
       chatConfig
     );
@@ -342,10 +332,33 @@ export class ConfigurationComponent implements OnInit {
     if (!this.allValid()) {
       return;
     }
+    const changes = this.configurationType === 'update' ?
+      this.confirmedFields.filter(({ key }) => this.configurationFormGroup.controls[key].value !== this.configuration[key]) :
+      [];
+    if (changes.length === 0) {
+      this.saveConfiguration();
+      return;
+    }
+    const reRegisters = changes.some(({ key }) => key === 'planetType' || key === 'parentDomain');
+    this.dialog.open(DialogsPromptComponent, {
+      data: {
+        showMainParagraph: false,
+        extraMessage: $localize`You are changing: <b>${changes.map(({ label }) => label).join(', ')}</b>.` + (reRegisters ?
+          ' ' + $localize`This planet will register again with the new parent, and existing data such as voices will not move.` :
+          '')
+      }
+    }).afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.saveConfiguration();
+      }
+    });
+  }
+
+  saveConfiguration() {
     this.dialogsLoadingService.start();
     const spinnerOff = () => this.dialogsLoadingService.stop();
     if (this.configurationType === 'update') {
-      const configPatch = { ...this.configurationFormGroup.value, ...this.contactFormGroup.value };
+      const configPatch = { ...this.configurationFormGroup.getRawValue(), ...this.contactFormGroup.value };
       this.configurationService.patchConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
         err => {

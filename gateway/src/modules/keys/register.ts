@@ -3,7 +3,7 @@ import { Express, NextFunction, Request, Response } from 'express';
 
 import { requireManager } from '../../middleware/auth';
 import { getKeys, KeyService, removeKey, setKey } from '../../services/keys.service';
-import { PROVIDER_NAMES } from '../chatapi/providers/clients';
+import { PROVIDER_NAMES } from '../chatapi/providers/registry';
 import { CURRENCY_PROVIDER } from '../currency/services/currency.service';
 
 const KEY_NAMES = new Map<KeyService, readonly string[]>([

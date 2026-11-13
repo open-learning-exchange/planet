@@ -6,7 +6,7 @@ import {
 } from '@angular/material/table';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgClass, CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
@@ -17,6 +17,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import type { ChartDataset } from 'chart.js';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -28,6 +29,8 @@ import { StateService } from '@shared/state.service';
 import { CsvService } from '@shared/export/csv.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { AttachmentInputState } from '@shared/forms/file-upload.component';
+import { PlanetChartComponent } from '@shared/charts/planet-chart.component';
+import { styleVariables } from '@shared/utils';
 
 import { TeamsService } from './teams.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -81,6 +84,7 @@ interface TransactionForm {
     MatMenuItem,
     MatMenuTrigger,
     PlanetLoadingSpinnerComponent,
+    PlanetChartComponent,
     CurrencyPipe,
     DatePipe
   ]
@@ -107,6 +111,9 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   configuration: any = {};
   planetName: any;
   totals = { credit: 0, debit: 0, balance: 0 };
+  showCharts = false;
+  balanceChart: { labels: string[], datasets: ChartDataset[] };
+  monthlyChart: { labels: string[], datasets: ChartDataset[] };
   private onDestroy$ = new Subject<void>();
 
   constructor(
@@ -122,7 +129,11 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
     private teamsAttachmentsService: TeamsAttachmentsService,
     @Inject(LOCALE_ID) private localeId: string,
     private dialogGuard: DialogGuardService
-  ) {}
+  ) {
+    const sortValue = this.table.sortingDataAccessor;
+    // Same-day transactions tie on date, so sort them in the order the running balance was summed
+    this.table.sortingDataAccessor = (row, column) => column === 'date' ? row.position : sortValue(row, column);
+  }
 
   ngOnDestroy() {
     this.onDestroy$.next();
@@ -130,9 +141,7 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges() {
-    if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
-      this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
-    }
+    this.setDisplayedColumns();
     if (!this.isLoading && this.finances) {
       this.allTransactions = this.setTransactionsTable(this.finances);
       this.applyDateFilter();
@@ -149,6 +158,13 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
         label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
         tone: negative ? 'warn' : 'net', value: balance, alert: negative
       }
+    ];
+  }
+
+  setDisplayedColumns() {
+    const dateOrder = (this.table.sort?.active ?? 'date') === 'date';
+    this.displayedColumns = [
+      'date', 'description', 'credit', 'debit', ...(dateOrder ? [ 'balance' ] : []), ...(this.editable ? [ 'action' ] : [])
     ];
   }
 
@@ -173,7 +189,7 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
     const previousBalance = index !== 0 ? newArray[index - 1].balance : 0;
     return [
       ...newArray,
-      { ...transaction, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
+      { ...transaction, position: index, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
     ];
   }
 
@@ -287,13 +303,21 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   }
 
   private transactionDocFields(transaction: any = {}) {
-    const { receiptImages, credit, debit, balance, ...docFields } = transaction;
+    const { receiptImages, credit, debit, balance, position, ...docFields } = transaction;
     return docFields;
   }
 
-  resetDateFilter() {
+  get defaultSort() {
+    const sort = this.table.sort;
+    return !sort || (sort.active === 'date' && sort.direction === 'desc');
+  }
+
+  clearFilters() {
     this.startDate = undefined;
     this.endDate = undefined;
+    if (!this.defaultSort) {
+      this.table.sort.sort({ id: 'date', start: 'desc', disableClear: true });
+    }
     this.applyDateFilter();
   }
 
@@ -311,6 +335,35 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
     const toDate = this.endDate ? endOfDay(this.endDate).getTime() : Infinity;
     this.table.data = this.allTransactions.filter(transaction => transaction.date >= fromDate && transaction.date <= toDate);
     this.updateTotals();
+    this.setCharts();
+  }
+
+  private setCharts() {
+    // Reversing keeps same-day rows in the order the balance was summed, which re-sorting by date would not
+    const oldestFirst = [ ...this.table.data ].reverse();
+    this.balanceChart = {
+      labels: oldestFirst.map(transaction => formatDate(transaction.date, 'mediumDate', this.localeId)),
+      datasets: [ {
+        label: $localize`Balance`,
+        data: oldestFirst.map(transaction => transaction.balance),
+        borderColor: styleVariables.primary,
+        backgroundColor: styleVariables.primary
+      } ]
+    };
+    const months = new Map<string, { credit: number, debit: number }>();
+    oldestFirst.forEach(({ date, credit, debit }) => {
+      const month = formatDate(date, 'MMM y', this.localeId);
+      const totals = months.get(month) || { credit: 0, debit: 0 };
+      months.set(month, { credit: totals.credit + credit, debit: totals.debit + debit });
+    });
+    const monthTotals = [ ...months.values() ];
+    this.monthlyChart = {
+      labels: [ ...months.keys() ],
+      datasets: [
+        { label: $localize`Credit`, data: monthTotals.map(month => month.credit), backgroundColor: styleVariables.planetGreen },
+        { label: $localize`Debit`, data: monthTotals.map(month => month.debit), backgroundColor: styleVariables.warn }
+      ]
+    };
   }
 
   private get sortedData(): any[] {
@@ -348,12 +401,13 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
   }
 
   private financeExportData(sourceData: any[]) {
+    const showBalance = this.displayedColumns.includes('balance');
     const data = sourceData.map(row => ({
       [$localize`date`]: fullLabel(row.date, this.localeId),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
       [$localize`debit`]: row.debit,
-      [$localize`balance`]: row.balance
+      ...(showBalance ? { [$localize`balance`]: row.balance } : {})
     }));
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.stateService.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;

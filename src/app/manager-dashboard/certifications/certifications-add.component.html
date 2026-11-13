@@ -15,6 +15,9 @@
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(true)" i18n class="margin-lr-5">Save & Return</button>
       <button mat-raised-button color="accent" type="button" (click)="openCourseDialog()" i18n>Add Courses</button>
       <button mat-raised-button color="accent" type="button" [disabled]="disableRemove" (click)="removeCourses()" i18n>Remove Courses</button>
+      @if (deletedCourseIds.length > 0) {
+        <button mat-raised-button color="warn" type="button" (click)="removeDeletedCourses()" i18n>Remove Deleted Courses ({{deletedCourseIds.length}})</button>
+      }
     </div>
     <form [formGroup]="certificateForm" novalidate>
       <mat-form-field class="full-width">
