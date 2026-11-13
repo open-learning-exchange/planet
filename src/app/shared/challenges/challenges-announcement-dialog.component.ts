@@ -1,25 +1,19 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject, of, Observable, forkJoin } from 'rxjs';
-import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { MatAnchor } from '@angular/material/button';
 
-import { findDocuments } from '@shared/database/mango-queries';
-import { CouchService } from '@shared/database/couchdb.service';
-import { StateService } from '@shared/state.service';
-import { UserService } from '@shared/auth/user.service';
-import { planetAndParentId } from '@shared/utils';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 import { CoursesService } from '../../courses/courses.service';
-import { NewsService } from '../../news/news.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { ChallengesUserStatusService } from './challenges-user-status.service';
-import { ChallengesService, PlanetChallenge } from './challenges.service';
+import { ChallengesProgressService, UserProgress } from './challenges-progress.service';
+import { ChallengeTask, ChallengesService, PlanetChallenge } from './challenges.service';
 
 @Component({
   template: `
@@ -53,59 +47,42 @@ export class ChallengesAnnouncementSuccessDialogComponent {
 export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject<void>();
-  currentUserName = this.userService.get().name;
-  configuration = this.stateService.configuration;
-  teamId = planetAndParentId(this.stateService.configuration);
   challenge: PlanetChallenge;
-  completedSurveyUserNames = new Set<string>();
-  groupSummary = [];
-  members: any;
-  enrolledMemberIds = new Set<string>();
-  courseId = '';
-  surveyExamId = '';
-  startDate: Date | undefined;
-  endDate: Date | undefined;
+  progress: UserProgress | undefined;
+  progressLoaded = false;
+  groupEarned = 0;
   isLoading = true;
-  voicePostReward = 2;
-  joinCourseReward = 0;
-  surveyCompletionReward = 1;
-  maxDailyPosts = 5;
-  goal = 500;
-  dailyPostDots = [ 0, 1, 2, 3, 4 ];
+  isJoining = false;
+  isPreview = !this.challengesProgressService.canTakePart();
 
   constructor(
     public dialogRef: MatDialogRef<ChallengesAnnouncementDialogComponent>,
     private router: Router,
-    private couchService: CouchService,
     private coursesService: CoursesService,
-    private newsService: NewsService,
-    private stateService: StateService,
-    private submissionsService: SubmissionsService,
-    private userService: UserService,
-    private userStatusService: ChallengesUserStatusService,
+    private planetMessageService: PlanetMessageService,
     private challengesService: ChallengesService,
+    private challengesProgressService: ChallengesProgressService,
     @Inject(MAT_DIALOG_DATA) public data: PlanetChallenge | null
   ) {}
 
   ngOnInit() {
     this.challenge = this.challengesService.normalizeChallenge(this.data || {});
-    this.courseId = this.challenge.courseId;
-    this.surveyExamId = this.challenge.surveyExamId;
-    this.startDate = this.challengesService.parseDateBoundary(this.challenge.startsAt, 'start');
-    this.endDate = this.challengesService.parseDateBoundary(this.challenge.endsAt, 'end');
-    this.voicePostReward = this.challenge.voicePostReward ?? 2;
-    this.joinCourseReward = this.challenge.joinCourseReward ?? 0;
-    this.surveyCompletionReward = this.challenge.surveyCompletionReward ?? 1;
-    this.maxDailyPosts = this.challenge.maxDailyPosts ?? 5;
-    this.goal = this.challenge.goal ?? 500;
-    this.dailyPostDots = Array.from({ length: Math.max(0, this.maxDailyPosts) }, (_, index) => index);
+    this.coursesService.requestCourses();
+    this.challengesProgressService.refresh(this.challenge).pipe(
+      map(({ progress }) => ({ progress, progressLoaded: true })),
+      catchError(() => of({ progress: this.challengesProgressService.userProgress(this.challenge, []), progressLoaded: false })),
+      switchMap(loaded => this.challengesProgressService.groupEarned(this.challenge).pipe(
+        catchError(() => of(0)),
+        map(groupEarned => ({ ...loaded, groupEarned }))
+      )),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ progress, progressLoaded, groupEarned }) => {
+      Object.assign(this, { progress, progressLoaded, groupEarned, isLoading: false });
+    });
+  }
 
-    if (!this.challenge.courseId || !this.challenge.surveyExamId) {
-      this.isLoading = false;
-      return;
-    }
-    this.configuration = this.stateService.configuration;
-    this.initializeData();
+  needsReminder() {
+    return this.progressLoaded && !this.isPreview && !this.progress.complete;
   }
 
   ngOnDestroy() {
@@ -117,207 +94,69 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
     this.dialogRef.close();
   }
 
-  initializeData() {
-    this.coursesService.requestCourses();
-    forkJoin([ this.fetchMembers(), this.fetchEnrolledMembers() ]).pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(([ members, enrolledMemberIds ]) => {
-      this.members = members;
-      this.enrolledMemberIds = enrolledMemberIds;
-      this.fetchCourseAndNews();
-      this.newsService.requestNews({
-        selectors: {
-          $or: [
-            { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
-            { viewIn: { $elemMatch: { _id: this.teamId, section: 'community' } } }
-          ]
-        },
-        viewId: this.teamId
-      });
-    }, () => this.isLoading = false);
+  goalPercentage(): number {
+    return this.challenge.goal > 0 ? (this.groupEarned / this.challenge.goal) * 100 : 0;
   }
 
-  joinCourse() {
-    const courseTitle = this.coursesService.getCourseNameFromId(this.courseId);
-    this.coursesService.courseResignAdmission(this.courseId, 'admission', courseTitle).subscribe((res) => {
-      this.router.navigate([ `/courses/view/${this.courseId}/step/1` ]);
-    }, (error) => ((error)));
+  maxEarnable(): number {
+    return this.challenge.tasks.reduce((total, task) => total + this.challengesProgressService.maxEarnable(task), 0);
+  }
+
+  countDots(task: ChallengeTask) {
+    return Array.from({ length: task.maxCount ?? 0 }, (_, index) => index);
+  }
+
+  courseTitle(courseId: string) {
+    return this.coursesService.getCourseNameFromId(courseId) || '';
+  }
+
+  joinCourse(task: ChallengeTask) {
+    this.isJoining = true;
+    this.coursesService.courseResignAdmission(task.targetId, 'admission', this.courseTitle(task.targetId)).pipe(
+      finalize(() => this.isJoining = false)
+    ).subscribe({
+      next: () => {
+        this.challengesProgressService.record('course_join').subscribe();
+        this.router.navigate([ `/courses/view/${task.targetId}/step/1` ]);
+        this.dialogRef.close();
+      },
+      error: () => this.planetMessageService.showAlert($localize`There was a problem joining the course.`)
+    });
+  }
+
+  openCourse(task: ChallengeTask) {
+    this.router.navigate([ `/courses/view/${task.targetId}` ]);
     this.dialogRef.close();
   }
 
-  doSurvey() {
-    const stepNum = this.getSurveyStepNum();
-    this.router.navigate([ `/courses/view/${this.courseId}/step/${stepNum}/exam`, {
-      id: this.courseId,
+  doSurvey(task: ChallengeTask) {
+    const step = this.surveyStep(task);
+    if (!step) {
+      return;
+    }
+    const { courseId, stepNum } = step;
+    this.router.navigate([ `/courses/view/${courseId}/step/${stepNum}/exam`, {
+      id: courseId,
       stepNum,
       questionNum: 1,
       type: 'survey',
       preview: 'false',
-      examId: this.surveyExamId
+      examId: task.targetId
     } ]);
     this.dialogRef.close();
   }
 
-  getSurveyStepNum() {
-    const course = this.coursesService.course?._id === this.courseId ?
-      this.coursesService.course :
-      this.coursesService.local.courses.find((localCourse: any) => localCourse._id === this.courseId);
-    const surveyStepIndex = course?.steps?.findIndex((step: any) => step.survey?._id === this.surveyExamId);
-    return surveyStepIndex > -1 ? surveyStepIndex + 1 : 5;
+  surveyStep(task: ChallengeTask): { courseId: string, stepNum: number } | undefined {
+    const isSurveyStep = (step: any) => step.survey?._id === task.targetId;
+    const hasSurvey = (candidate: any) =>
+      candidate && (!task.courseId || candidate._id === task.courseId) && candidate.steps?.some(isSurveyStep);
+    const { course: openCourse, local } = this.coursesService;
+    const course = local.courses.find(hasSurvey) ?? (hasSurvey(openCourse) ? openCourse : undefined);
+    return course && { courseId: course._id, stepNum: course.steps.findIndex(isSurveyStep) + 1 };
   }
 
   shareVoice() {
     this.router.navigate([ '/' ]);
     this.dialogRef.close();
-  }
-
-  hasCompletedSurvey(userName: string): boolean {
-    return this.completedSurveyUserNames.has(userName);
-  }
-
-  hasSubmittedVoice(news: any[], userName: string): number {
-    const uniqueDays = new Set<string>();
-
-    news.forEach(post => {
-      if (
-        post.doc.user.name === userName &&
-        (!this.startDate || post.doc.time > this.startDate) &&
-        (!this.endDate || post.doc.time < this.endDate) &&
-        !post.doc.replyTo
-      ) {
-        uniqueDays.add(new Date(post.doc.time).toDateString());
-      }
-    });
-    return Math.min(uniqueDays.size, this.maxDailyPosts);
-  }
-
-  hasEnrolledCourse(member: any): boolean {
-    return this.enrolledMemberIds.has(member._id);
-  }
-
-  fetchMembers(): Observable<any[]> {
-    return this.couchService.findAll('login_activities', findDocuments({
-      type: 'login',
-      ...(this.startDate ? { loginTime: { $gte: this.startDate.getTime() } } : {})
-    }, [ 'user' ])).pipe(
-      catchError(() => of([])),
-      map((res: any[]) => Array.from(new Set(res.map(doc => doc.user)))),
-      switchMap(uniqueUsers => {
-        if (uniqueUsers.length === 0) {
-          return of([]);
-        }
-        return this.couchService.findAll(
-          '_users',
-          findDocuments({ name: { $in: uniqueUsers } }, [ '_id', 'name' ])
-        );
-      }),
-      catchError(() => of([]))
-    );
-  }
-
-  fetchEnrolledMembers(): Observable<Set<string>> {
-    return this.couchService.findAll('shelf', {
-      selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
-    }).pipe(
-      map((members: any[]) => new Set<string>(members.map((member: any) => member._id)))
-    );
-  }
-
-  fetchGroupSummary(news) {
-    this.members.forEach((member) => {
-      const hasJoinedCourse = this.hasEnrolledCourse(member);
-      const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
-      const userPosts = this.hasSubmittedVoice(news, member.name);
-
-      if (!this.groupSummary.some(m => m.name === member.name)) {
-        this.groupSummary.push({
-          ...member,
-          userPosts,
-          courseAmount: hasJoinedCourse ? this.joinCourseReward : 0,
-          surveyAmount: hasCompletedSurvey ? this.surveyCompletionReward : 0
-        });
-      }
-    });
-  }
-
-  fetchIndividualSummary(news) {
-    this.userStatusService.updateStatus('surveyComplete', {
-      status: this.hasCompletedSurvey(this.currentUserName),
-      amount: this.surveyCompletionReward
-    });
-    this.userStatusService.updateStatus('hasPost', {
-      status: this.hasSubmittedVoice(news, this.currentUserName) > 0,
-      amount: this.voicePostReward
-    });
-    this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
-    this.members.some(member => {
-      if (member.name === this.currentUserName) {
-        this.userStatusService.updateStatus('joinedCourse', {
-          status: this.hasEnrolledCourse(member),
-          amount: this.joinCourseReward
-        });
-      }
-    });
-  }
-
-  fetchCourseAndNews() {
-    this.newsService.newsUpdated$.pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe(news => {
-      news.map(post => ({
-        ...post,
-        public: (
-          (post.doc.viewIn || []).find(
-            (view) =>
-              view._id ===
-              planetAndParentId(this.configuration)
-          ) || {}
-        ).public,
-      }));
-      this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
-        .subscribe((submissions: any[]) => {
-          this.completedSurveyUserNames = new Set(
-            submissions
-              .filter(s => s.parentId.includes(this.courseId) && s.status === 'complete')
-              .map(s => s.user.name)
-          );
-          this.fetchGroupSummary(news);
-          this.fetchIndividualSummary(news);
-          this.isLoading = false;
-        }, () => this.isLoading = false);
-    }, () => this.isLoading = false);
-  }
-
-  getIndividualMoneyEarned(): number {
-    const userStatus = this.userStatusService.printStatus();
-    const postsEarnings = Number(userStatus.userPosts) * this.voicePostReward;
-    const courseAmount = userStatus.joinedCourse.status ? userStatus.joinedCourse.amount : 0;
-    const surveyAmount = userStatus.surveyComplete.status ? userStatus.surveyComplete.amount : 0;
-    return postsEarnings + courseAmount + surveyAmount;
-  }
-
-  getGroupMoneyEarned(): number {
-    const totalEarned = this.groupSummary.reduce((total, member) => {
-      const postAmount = Number(member.userPosts * this.voicePostReward);
-      const stepAmounts = member.courseAmount + member.surveyAmount;
-      return total + (isNaN(postAmount) ? 0 : postAmount) + (isNaN(stepAmounts) ? 0 : stepAmounts);
-    }, 0);
-    return Math.min(totalEarned, this.goal);
-  }
-
-  getGoalPercentage(): number {
-    if (this.goal <= 0) {
-      return 0;
-    }
-    const totalMoneyEarned = this.getGroupMoneyEarned();
-    return (totalMoneyEarned / this.goal) * 100;
-  }
-
-  getStatus(key: string) {
-    return this.userStatusService.getStatus(key);
-  }
-
-  getPosts() {
-    return this.userStatusService.getPosts();
   }
 }
