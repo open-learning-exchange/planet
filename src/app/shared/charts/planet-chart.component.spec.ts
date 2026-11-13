@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
+import { LineController } from 'chart.js';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetChartComponent } from './planet-chart.component';
@@ -23,7 +24,8 @@ const { FakeChart } = vi.hoisted(() => {
 
 // Angular's test builder only lets vi.mock replace packages, so Chart.js itself is faked
 vi.mock('chart.js', () => ({
-  Chart: FakeChart, Legend: {}, Tooltip: {}, BarController: {}, BarElement: {}, CategoryScale: {}, LinearScale: {}
+  Chart: FakeChart, Legend: {}, Tooltip: {}, BarController: {}, BarElement: {}, CategoryScale: {}, LinearScale: {},
+  LineController: {}, LineElement: {}, PointElement: {}
 }));
 
 // jsdom has no IntersectionObserver, so @defer's viewport trigger gets one the test can fire
@@ -104,6 +106,13 @@ describe('PlanetChartComponent', () => {
 
     expect(FakeChart.instances.length).toBe(1);
     expect(FakeChart.instances[0].update).toHaveBeenLastCalledWith('none');
+  });
+
+  it('registers the line parts for a line dataset on a bar chart', async () => {
+    fixture.componentInstance.datasets = [ { type: 'line', data: [ 1, 2 ] }, { data: [ 3, 4 ] } ];
+    await renderInView();
+
+    expect(FakeChart.register.mock.calls.flat()).toContain(LineController);
   });
 
   it('destroys the chart when it is removed', async () => {

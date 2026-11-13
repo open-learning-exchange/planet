@@ -38,7 +38,7 @@ To run the gateway tests, install the repository root dependencies first, then r
 
 ## Modules
 
-- `modules/chatapi`: chat HTTP + WebSocket flow served through `/ml/`
+- `modules/chatapi`: chat HTTP + WebSocket flow served through `/ml/`, and the session member's chat history (plus the managers' usage rows) through `/api/chat/`
 - `modules/currency`: exchange rates served through `/currency/`
 - `modules/public`: scoped public endpoints served through `/public/`
 
