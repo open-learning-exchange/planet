@@ -9,7 +9,7 @@ import { StateService } from '@shared/state.service';
 import { TagsService } from '@shared/forms/tags/tags.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
-import { normalizedContentType } from '@shared/utils';
+import { couchAttachmentPath, normalizedContentType } from '@shared/utils';
 
 import { UsersService } from '../users/users.service';
 
@@ -125,7 +125,7 @@ export class ResourcesService {
           of(resourceRes),
           file ?
             this.couchService.putAttachment(
-              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev,
+              `${this.dbName}/${couchAttachmentPath(resourceRes.id, resourceInfo.filename)}?rev=${resourceRes.rev}`,
               file, { headers: { 'Content-Type': normalizedContentType(file) } }
             ) :
             of({}),

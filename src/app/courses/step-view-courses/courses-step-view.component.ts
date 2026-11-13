@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject, combineLatest } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { EMPTY, Subject, combineLatest } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -18,11 +18,12 @@ import { AiChatService } from '@shared/ai/ai-chat.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { coursesStepPrompt } from '@shared/ai/ai-prompts.constants';
 import { ChallengesService } from '@shared/challenges/challenges.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
 import { CoursesService } from '../courses.service';
-import { blockingStepIndex } from '../courses.utils';
+import { blockingStepIndex, stepHasExam } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
@@ -95,6 +96,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
     private challengesService: ChallengesService,
+    private challengesProgressService: ChallengesProgressService,
   ) {}
 
   get hasActionButtons(): boolean {
@@ -115,7 +117,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     ).pipe(takeUntil(this.onDestroy$)).subscribe(
       ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
         this.canManage = this.coursesService.canManageCourse(course, { readOnly: this.parent });
-        if (this.redirectFromLockedStep(course, progress)) {
+        if (this.redirectFromUnavailableStep(course, progress)) {
           return;
         }
         this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
@@ -134,7 +136,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.model === 'openai');
+      this.isOpenai = providers.some(provider => provider.name === 'openai');
     });
   }
 
@@ -166,12 +168,19 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  redirectFromLockedStep(course, progress): boolean {
+  redirectFromUnavailableStep(course, progress): boolean {
+    if (course.steps.length === 0) {
+      this.router.navigate([ '../../' ], { relativeTo: this.route, replaceUrl: true });
+      return true;
+    }
     const blocking = this.parent || this.canManage ? -1 : blockingStepIndex(course.steps, progress);
-    if (blocking === -1 || this.stepNum - 1 <= blocking) {
+    const lastOpenStep = blocking === -1 ? course.steps.length : blocking + 1;
+    // Math.max(NaN, 1) is NaN
+    const targetStep = Math.min(Math.max(Math.floor(this.stepNum) || 1, 1), lastOpenStep);
+    if (targetStep === this.stepNum) {
       return false;
     }
-    this.router.navigate([ '../' + (blocking + 1) ], { relativeTo: this.route, replaceUrl: true });
+    this.router.navigate([ '../' + targetStep ], { relativeTo: this.route, replaceUrl: true });
     return true;
   }
 
@@ -184,16 +193,19 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
     this.examPassed = !!this.progress.passed;
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
-    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
-      this.coursesService.updateProgress({
-        courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined || this.progress.passed
-      });
+    // The exams doc is saved first, so it can be ahead of the course's copy
+    const exam = this.stepDetail.exam && (exams.find(({ _id }) => _id === this.stepDetail.exam._id) || this.stepDetail.exam);
+    const hasExam = stepHasExam({ exam });
+    // Emptied tests and moved steps can leave a stored fail on a step without a test
+    const staleFail = !hasExam && !this.progress.passed;
+    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1 || staleFail)) {
+      this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: !hasExam || this.progress.passed });
     }
     this.maxStep = course.steps.length;
     if (this.stepDetail.exam) {
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
-        parent: exams.find(exam => exam._id === this.stepDetail.exam._id) || this.stepDetail.exam,
+        parent: exam,
         user: this.userService.get(),
         type: 'exam' });
     }
@@ -269,8 +281,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId))
-      .subscribe();
+    this.challengesProgressService.record('course_complete').pipe(
+      switchMap(completed => completed ? EMPTY : this.openCourseChallenge())
+    ).subscribe();
+  }
+
+  private openCourseChallenge() {
+    return this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId));
   }
 
   setResourceUrl(resourceUrl: string) {
