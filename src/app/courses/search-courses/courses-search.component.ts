@@ -27,7 +27,8 @@ export const coursesSearchCategories = [
         languageOfInstruction {Language}
         gradeLevel {Grade Level}
         subjectLevel {Subject Level}
-      }</ng-container>
+      }
+      </ng-container>
     </ng-template>
     @if (compact) {
       <mat-form-field subscriptSizing="dynamic" floatLabel="always">
