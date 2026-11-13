@@ -72,19 +72,35 @@ describe('CoursesViewComponent', () => {
     expect(component.courseDetail.steps[1].isPreviousTestTaken).toBe(true);
   });
 
-  it('does not count a visited content step as a taken test', () => {
+  it.each([ [ 'content step', {} ], [ 'step with an empty test', { exam: { questions: [] } } ] ])(
+    'does not count a visited %s as a taken test', (_, middleStep) => {
+      component.courseDetail = {
+        steps: [
+          { exam: { questions: [ {} ] }, submission: { answers: [] }, attempts: 0 },
+          { stepTitle: 'S2', ...middleStep },
+          { stepTitle: 'S3', exam: { questions: [ {} ] }, submission: { answers: [] }, attempts: 0 }
+        ]
+      };
+      component.progress = [ { stepNum: 2, passed: true } ];
+
+      component.setStepButtonStatus(component.courseDetail.steps[2], 2);
+
+      expect(component.courseDetail.steps[2].isPreviousTestTaken).toBeFalsy();
+    }
+  );
+
+  it('enables the test after an empty first test without visiting it', () => {
     component.courseDetail = {
       steps: [
-        { exam: { questions: [ {} ] }, submission: { answers: [] }, attempts: 0 },
-        { stepTitle: 'S2' },
-        { stepTitle: 'S3', exam: { questions: [ {} ] }, submission: { answers: [] }, attempts: 0 }
+        { exam: { questions: [] } },
+        { stepTitle: 'S2', exam: { questions: [ {} ] }, submission: { answers: [] }, attempts: 0 }
       ]
     };
-    component.progress = [ { stepNum: 2, passed: true } ];
+    component.progress = [];
 
-    component.setStepButtonStatus(component.courseDetail.steps[2], 2);
+    component.setStepButtonStatus(component.courseDetail.steps[1], 1);
 
-    expect(component.courseDetail.steps[2].isPreviousTestTaken).toBeFalsy();
+    expect(component.courseDetail.steps[1].isPreviousTestTaken).toBe(true);
   });
 
   it('lists the library\'s copy of each step resource it can open and counts the rest', () => {

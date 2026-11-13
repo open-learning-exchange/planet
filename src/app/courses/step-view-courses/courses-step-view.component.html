@@ -61,7 +61,7 @@
       <span i18n>{stepDetail.unavailableResources, plural, =1 {resource is not available.} other {resources are not available.}}</span>
     </span>
   }
-  @if (isOpenai && stepDetail?.description) {
+  @if (hasAIProvider && stepDetail?.description) {
     <button
       mat-stroked-button
       [ngClass]="{ 'margin-lr-3': !isMobile() }"

@@ -67,6 +67,28 @@ describe('public surveys', () => {
     expect(mocks.insertSubmission).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { 'sent': 'other', 'stored': 'other' },
+    { 'sent': ' other ', 'stored': 'other' }
+  ])('stores the respondent gender "$sent" as $stored', async ({ sent, stored }) => {
+    mocks.insertSubmission.mockResolvedValue({ 'id': 'submission-1', 'rev': '1-a' });
+    const res = response();
+
+    await createPublicSurveySubmission(request({ 'answers': [ tap, '4' ], 'user': { 'gender': sent } }), res);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(mocks.insertSubmission.mock.calls[0][0].user.gender).toBe(stored);
+  });
+
+  it.each([ 'Other', 'nonbinary' ])('rejects the respondent gender "%s"', async (gender) => {
+    const res = response();
+
+    await createPublicSurveySubmission(request({ 'answers': [ tap, '4' ], 'user': { gender } }), res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(mocks.insertSubmission).not.toHaveBeenCalled();
+  });
+
   it('serves a public survey without its answer key', async () => {
     const res = response();
 

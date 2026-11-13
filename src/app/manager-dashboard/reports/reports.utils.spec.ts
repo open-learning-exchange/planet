@@ -8,6 +8,11 @@ describe('reports utils', () => {
       expect(demographicsForCsv({ gender: 'FEMALE', age: 28 })).toEqual({ Gender: 'Female', 'Age (years)': 28 });
     });
 
+    it('labels the other option and buckets unrecognized genders', () => {
+      expect(demographicsForCsv({ gender: 'other' }).Gender).toBe('Other');
+      expect(demographicsForCsv({ gender: 'nonbinary' }).Gender).toBe('Did not specify');
+    });
+
     it('renders both columns blank when the record has no matching profile', () => {
       expect(demographicsForCsv({})).toEqual({ Gender: '', 'Age (years)': '' });
       expect(demographicsForCsv(undefined)).toEqual({ Gender: '', 'Age (years)': '' });

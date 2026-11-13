@@ -29,7 +29,7 @@ describe('CoursesStepViewComponent', () => {
       {} as any, coursesServiceMock, {} as any,
       routerMock, { snapshot: { data: {} } } as any, {} as any,
       submissionsServiceMock, { get: vi.fn(), shelf: { courseIds: [] } } as any,
-      { isMobile: signal(false) } as any, {} as any
+      { isMobile: signal(false) } as any, {} as any, {} as any
     );
     component.isLoading = false;
   });
@@ -64,69 +64,36 @@ describe('CoursesStepViewComponent', () => {
   });
 
   describe('exam results', () => {
-    const result = (grade: number, parentId = 'e1@c1') => ({
-      submission: { parentId, answers: [] },
-      attempts: 1,
-      bestAttempt: { grade, status: 'complete' }
-    });
+    const result = (passed: boolean, parentId = 'e1@c1') => ({ submission: { parentId, answers: [] }, attempts: 1, passed });
 
     beforeEach(() => {
       component.stepNum = 1;
       component.courseId = 'c1';
-      component.stepDetail = { exam: { _id: 'e1', totalMarks: 10, passingPercentage: 80 } };
+      component.stepDetail = { exam: { _id: 'e1' } };
       component.getSubmission();
     });
 
-    it('writes a pass once the best completed attempt meets the threshold', () => {
+    it('writes a pass once an attempt passes', () => {
       component.progress = { passed: false };
-      submissionsServiceMock.submissionUpdated$.next(result(7));
+      submissionsServiceMock.submissionUpdated$.next(result(false));
       expect(component.examPassed).toBe(false);
       expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
 
-      submissionsServiceMock.submissionUpdated$.next(result(8));
+      submissionsServiceMock.submissionUpdated$.next(result(true));
       expect(component.examPassed).toBe(true);
       expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: true });
     });
 
-    it('passes at exactly the pass mark', () => {
-      component.stepDetail.exam = { _id: 'e1', totalMarks: 50, passingPercentage: 58 };
-      component.progress = { passed: false };
-      submissionsServiceMock.submissionUpdated$.next(result(29));
-      expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: true });
-    });
-
-    it('keeps a stored pass without writing when no visible attempt passes', () => {
+    it('keeps a stored pass without writing when no attempt passes', () => {
       component.progress = { passed: true };
-      submissionsServiceMock.submissionUpdated$.next(result(0));
+      submissionsServiceMock.submissionUpdated$.next(result(false));
       expect(component.examPassed).toBe(true);
       expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
-    });
-
-    it.each([ undefined, { grade: 0 }, { grade: 10, status: 'pending' }, { grade: 10, status: 'ungraded' } ])(
-      'does not pass a zero-threshold exam without a completed attempt (%j)', (bestAttempt) => {
-        component.stepDetail.exam.passingPercentage = 0;
-        component.progress = { passed: false };
-
-        submissionsServiceMock.submissionUpdated$.next({ ...result(0), attempts: 0, bestAttempt });
-
-        expect(component.examPassed).toBe(false);
-        expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
-      }
-    );
-
-    it('passes a zero-threshold exam after a completed attempt graded zero', () => {
-      component.stepDetail.exam.passingPercentage = 0;
-      component.progress = { passed: false };
-
-      submissionsServiceMock.submissionUpdated$.next(result(0));
-
-      expect(component.examPassed).toBe(true);
-      expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: true });
     });
 
     it('ignores a late result that belongs to another exam', () => {
       component.progress = { passed: false };
-      submissionsServiceMock.submissionUpdated$.next(result(10, 'e0@c1'));
+      submissionsServiceMock.submissionUpdated$.next(result(true, 'e0@c1'));
       expect(component.examPassed).toBe(false);
       expect(component.attempts).toBe(0);
       expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
@@ -152,7 +119,7 @@ describe('CoursesStepViewComponent', () => {
       { listAIProviders: () => of([]) } as any, coursesServiceMock, {} as any, routerMock,
       { snapshot: { data: { parent } }, paramMap: of(new Map([ [ 'stepNum', '1' ], [ 'id', 'c1' ] ])) } as any,
       { getCouchState: () => of([]) } as any, submissionsServiceMock,
-      { get: vi.fn(), shelf: { courseIds: [] } } as any, { isMobile: signal(false) } as any, {} as any
+      { get: vi.fn(), shelf: { courseIds: [] } } as any, { isMobile: signal(false) } as any, {} as any, {} as any
     );
 
     component.ngOnInit();
@@ -165,14 +132,14 @@ describe('CoursesStepViewComponent', () => {
 
   it('redirects a locked step to the step that must be passed, replacing the history entry', () => {
     component.stepNum = 2;
-    expect(component.redirectFromLockedStep(lockedCourse, [ { stepNum: 1, passed: false } ])).toBe(true);
+    expect(component.redirectFromUnavailableStep(lockedCourse, [ { stepNum: 1, passed: false } ])).toBe(true);
     expect(routerMock.navigate).toHaveBeenCalledWith([ '../1' ], expect.objectContaining({ replaceUrl: true }));
   });
 
   it('exempts course managers from step locks and allows proceeding', () => {
     component.canManage = true;
     component.stepNum = 2;
-    expect(component.redirectFromLockedStep(lockedCourse, [ { stepNum: 1, passed: false } ])).toBe(false);
+    expect(component.redirectFromUnavailableStep(lockedCourse, [ { stepNum: 1, passed: false } ])).toBe(false);
 
     component.stepNum = 1;
     component.maxStep = 2;
@@ -183,13 +150,66 @@ describe('CoursesStepViewComponent', () => {
 
   it('counts a step as passed when any of its progress records passed', () => {
     component.stepNum = 2;
-    expect(component.redirectFromLockedStep(lockedCourse, [ { stepNum: 1, passed: false }, { stepNum: 1, passed: true } ])).toBe(false);
+    const progress = [ { stepNum: 1, passed: false }, { stepNum: 1, passed: true } ];
+    expect(component.redirectFromUnavailableStep(lockedCourse, progress)).toBe(false);
   });
 
   it('does not lock steps when the preceding exam does not require passing', () => {
     component.stepNum = 2;
     const course = { _id: 'c1', steps: [ { ...lockedCourse.steps[0], passingRequired: false }, lockedCourse.steps[1] ] };
-    expect(component.redirectFromLockedStep(course, [])).toBe(false);
+    expect(component.redirectFromUnavailableStep(course, [])).toBe(false);
     expect(routerMock.navigate).not.toHaveBeenCalled();
+  });
+
+  it.each([ [ 0, 1 ], [ -2, 1 ], [ +'abc', 1 ], [ 1.5, 1 ], [ 9, 2 ] ])(
+    'redirects step %s to step %s, replacing the history entry', (stepNum, target) => {
+      component.canManage = true;
+      component.stepNum = stepNum;
+      expect(component.redirectFromUnavailableStep(lockedCourse, [])).toBe(true);
+      expect(routerMock.navigate).toHaveBeenCalledWith([ `../${target}` ], expect.objectContaining({ replaceUrl: true }));
+    }
+  );
+
+  it.each([ 0, 1 ])('redirects step %s to the course page when the course has no steps', (stepNum) => {
+    component.stepNum = stepNum;
+    expect(component.redirectFromUnavailableStep({ _id: 'c1', steps: [] }, [])).toBe(true);
+    expect(routerMock.navigate).toHaveBeenCalledWith([ '../../' ], expect.objectContaining({ replaceUrl: true }));
+  });
+
+  describe('progress on open', () => {
+    const openStep = (exam, progress = [], exams = []) => {
+      component.initCourse({ _id: 'c1', steps: [ { resources: [], exam } ] }, progress, [], exams);
+    };
+
+    beforeEach(() => {
+      vi.spyOn(component, 'checkMyCourses').mockReturnValue(true);
+      submissionsServiceMock.openSubmission = vi.fn();
+      component.stepNum = 1;
+    });
+
+    it.each([ [ [], true ], [ [ {} ], false ] ])('saves a step whose test has questions %j as passed: %s', (questions, passed) => {
+      openStep({ _id: 'e1', questions });
+      expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed });
+    });
+
+    it('judges the test by the exams doc when it is ahead of the course copy', () => {
+      openStep({ _id: 'e1', questions: [] }, [], [ { _id: 'e1', questions: [ {} ] } ]);
+      expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: false });
+    });
+
+    it('rewrites a stored fail as a pass on a step without a test', () => {
+      openStep(undefined, [ { stepNum: 1, passed: false } ]);
+      expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: true });
+    });
+
+    it('keeps a stored fail on a step with a test', () => {
+      openStep({ _id: 'e1', questions: [ {} ] }, [ { stepNum: 1, passed: false } ]);
+      expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
+    });
+
+    it('writes nothing for a step without a test that is already passed', () => {
+      openStep(undefined, [ { stepNum: 1, passed: true } ]);
+      expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
+    });
   });
 });

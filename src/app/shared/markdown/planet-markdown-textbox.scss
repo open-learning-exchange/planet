@@ -153,6 +153,11 @@ planet-markdown-textbox {
   position: relative;
   z-index: 2;
 
+  // The empty hint row stays where the field was, over the fullscreen editor.
+  .mat-mdc-form-field-subscript-wrapper {
+    pointer-events: none;
+  }
+
   // This component only reports an error while the editor is empty (see setErrorState),
   // so the pinned message can overlay the editor's bottom edge without reserving space.
   &:has(planet-markdown-textbox.is-invalid) .mat-mdc-form-field-subscript-wrapper {
