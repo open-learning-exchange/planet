@@ -2,7 +2,7 @@
   <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Reports</span>
   <ng-template #listFilters let-compact>
-    <mat-form-field class="margin-lr-5 font-size-1 mdc-toolbar-input">
+    <mat-form-field class="margin-lr-5 font-size-1 mdc-toolbar-input list-toolbar-field">
       <mat-label i18n>Time Frame</mat-label>
       <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
         @for (option of timeFilterOptions; track option) {
@@ -11,27 +11,17 @@
       </mat-select>
     </mat-form-field>
     @if (showCustomDateFields) {
-      <div class="mdc-toolbar-input" [formGroup]="dateFilterForm">
-        <mat-form-field class="margin-lr-5 font-size-1">
-          <mat-label i18n>Start Date</mat-label>
-          <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
-          <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-          <mat-datepicker #startPicker></mat-datepicker>
-          @if (dateFilterForm.value.startDate > dateFilterForm.value.endDate) {
-            <mat-error i18n>Start date must be before end date</mat-error>
-          }
-        </mat-form-field>
-      </div>
-      <div class="mdc-toolbar-input" [formGroup]="dateFilterForm">
-        <mat-form-field class="margin-lr-5 font-size-1">
-          <mat-label i18n>End Date</mat-label>
-          <input matInput formControlName="endDate" [matDatepicker]="endPicker" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
-          <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-          <mat-datepicker #endPicker></mat-datepicker>
-        </mat-form-field>
-      </div>
+      <mat-form-field class="margin-lr-5 font-size-1 mdc-toolbar-input list-toolbar-date-range">
+        <mat-label i18n>Dates</mat-label>
+        <mat-date-range-input [formGroup]="dateFilterForm" [rangePicker]="rangePicker" [min]="minDate" [max]="today">
+          <input matStartDate formControlName="startDate" placeholder="Start Date" i18n-placeholder>
+          <input matEndDate formControlName="endDate" placeholder="End Date" i18n-placeholder>
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
+        <mat-date-range-picker #rangePicker></mat-date-range-picker>
+      </mat-form-field>
     }
-    <mat-form-field class="font-size-1 margin-lr-5 mdc-toolbar-input">
+    <mat-form-field class="font-size-1 margin-lr-5 mdc-toolbar-input list-toolbar-field">
       <mat-label i18n>Filter Member</mat-label>
       <mat-select (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
         <mat-option i18n value="All">All Members</mat-option>

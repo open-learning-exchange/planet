@@ -10,12 +10,14 @@ import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption, MatOptgroup } from '@angular/material/autocomplete';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatInput } from '@angular/material/input';
-import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import {
+  MatDatepickerInput, MatDatepickerToggle, MatDatepicker, MatDateRangeInput, MatStartDate, MatEndDate, MatDateRangePicker
+} from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
@@ -85,7 +87,10 @@ interface DateFilterForm {
     MatDatepickerToggle,
     MatSuffix,
     MatDatepicker,
-    MatError,
+    MatDateRangeInput,
+    MatStartDate,
+    MatEndDate,
+    MatDateRangePicker,
     MatTooltip,
     MatMenuTrigger,
     MatMenu,

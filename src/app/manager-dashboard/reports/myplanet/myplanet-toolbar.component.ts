@@ -3,11 +3,11 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
-import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatDateRangeInput, MatStartDate, MatEndDate, MatDatepickerToggle, MatDateRangePicker } from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
@@ -30,11 +30,12 @@ import { MyPlanetFiltersForm } from './filter.base';
     FormsModule,
     ReactiveFormsModule,
     MatInput,
-    MatDatepickerInput,
+    MatDateRangeInput,
+    MatStartDate,
+    MatEndDate,
     MatDatepickerToggle,
     MatSuffix,
-    MatDatepicker,
-    MatError,
+    MatDateRangePicker,
     MatButton,
     MatTooltip
   ]

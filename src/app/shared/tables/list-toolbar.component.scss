@@ -10,6 +10,23 @@ planet-list-toolbar {
     text-overflow: ellipsis;
   }
 
+  // A filter set too wide for one row wraps onto the next instead of clipping
+  .mat-toolbar:not(.list-toolbar-compact) > .mat-toolbar-row:first-child {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    height: auto;
+    min-height: var(--mat-toolbar-standard-height);
+  }
+
+  // Toolbars with many filters give up Material's 180px field so the row fits narrow desktops
+  .list-toolbar-field {
+    width: 11rem;
+  }
+
+  .list-toolbar-date-range {
+    width: 16rem;
+  }
+
   // Material skips blank badges, so the dot carries a character it doesn't show
   .list-toolbar-dot .mat-badge-content {
     width: 8px;
