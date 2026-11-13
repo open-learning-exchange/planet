@@ -152,13 +152,15 @@ When designing component toolbars, follow these patterns:
   - Use white icons and text for buttons (`mat-icon`, `font-size-1` classes)
 
 ### Lists on phones and tablets
-Up to `$screen-md`, a `mat-table` with the `card-mode` class shows each row as a card in one centred column (rules in `styles.scss`). Opt a list in by putting a role class on its cells, never by styling its columns for phones:
+Up to `$screen-md`, a `mat-table` with the `card-mode` class shows each row as a full-width card (rules in `styles.scss`). Opt a list in by putting a role class on its cells, never by styling its columns for phones:
 
 - `card-title` on exactly one cell; `card-select` on the selection column's header and row cells; `card-image` for an avatar or cover; `card-menu` for a ⋮ menu cell; `card-actions` for the action buttons, which become labelled text buttons.
+- `card-value` for a number or amount that should be read down the list (a balance, a count): it sits in the row's last column, right-aligned, and the detail lines pack beside it. Use it for one to three values with short labels; that column takes up to half the row, so a long label squeezes the title and the detail lines on a phone.
 - Every other cell is a detail line. Start it with `<span class="card-label" i18n>…</span>` using the column header's exact text, so translators get no new string. Put the label inside the same `@if` as its value, so a blank cell renders empty and is hidden.
+- From `$screen-xs` up, `card-actions` ends the title row instead of taking its own line, unless the row has a `card-value` cell.
 - The header row becomes a strip of sort pills plus the select-all box; cells without `mat-sort-header` are hidden.
 - Card mode sets `--responsive-table-min-width: 0`, which is what cancels `.min-width-table` inside cards.
-- Wide data tables (reports, logs, the CSV preview) stay tables with `responsive-table`: they scroll inside the table, so the paginator beside them stays on screen.
+- Only tables whose columns are built from the data stay tables with sideways scrolling: the health exams table and the CSV preview. A short table that fits a phone as it is (the reports week comparison) stays a plain table.
 
 ### Loading Indicators
 For consistent loading states across the application, follow these standards:

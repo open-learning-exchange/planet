@@ -563,7 +563,7 @@ body {
     }
   }
 
-  // On phones and tablets each row becomes a card in one centred column: role classes place the
+  // On phones and tablets each row becomes a full-width card: role classes place the
   // select box, image, title, menu and actions, every other cell is a labelled detail line, and the
   // header keeps only sort controls.
   mat-table.card-mode .card-label {
@@ -574,10 +574,9 @@ body {
     mat-table.card-mode {
       --responsive-table-min-width: 0;
       display: grid;
-      grid-template-columns: minmax(0, 640px);
+      grid-template-columns: minmax(0, 1fr);
       grid-auto-rows: max-content;
       align-content: start;
-      justify-content: center;
 
       &.hidden {
         display: none;
@@ -618,7 +617,7 @@ body {
 
       .mat-mdc-row {
         display: grid;
-        grid-template-columns: auto auto minmax(0, 1fr) auto;
+        grid-template-columns: auto auto minmax(0, 1fr) fit-content(50%);
         align-items: center;
         row-gap: 4px;
         min-height: 0;
@@ -684,6 +683,23 @@ body {
         margin-inline-end: -8px;
       }
 
+      // Values stack down the last column while the detail lines stack beside them, so each packs on its own.
+      .mat-mdc-row:has(> .card-value) {
+        grid-auto-flow: row dense;
+
+        > .mat-mdc-cell:not([class*='card-']) {
+          grid-column: 2 / 4;
+        }
+      }
+
+      .mat-mdc-row > .card-value {
+        grid-column: 4;
+        justify-content: flex-end;
+        padding-inline-start: 12px;
+        text-align: end;
+        font-variant-numeric: tabular-nums;
+      }
+
       .mat-mdc-row > .card-actions {
         margin-inline-start: -8px;
 
@@ -724,6 +740,24 @@ body {
             --mat-button-protected-state-layer-color: #{v.$warn-dark};
             --mat-button-protected-ripple-color: #{rgba(v.$warn-dark, 0.12)};
           }
+        }
+      }
+
+      // On tablets the actions end the title line, so the right side of a row of detail lines isn't empty.
+      @media (min-width: v.$screen-xs) {
+        .mat-mdc-row > .card-actions {
+          justify-content: flex-end;
+
+          .table-action-buttons {
+            justify-content: flex-end;
+          }
+        }
+
+        .mat-mdc-row:not(:has(> .card-value)) > .card-actions {
+          grid-column: 4;
+          grid-row: 1;
+          margin-inline-start: 0;
+          padding-inline-start: 12px;
         }
       }
 
