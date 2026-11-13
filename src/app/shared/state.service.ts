@@ -5,6 +5,8 @@ import { map, switchMap, filter, catchError } from 'rxjs/operators';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 
+const pageSize = 1000;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -54,7 +56,8 @@ export class StateService {
     return getData.pipe(
       map((changes) => {
         const newData = this.combineChanges(this.state[planetField][db].docs, changes, sort);
-        const inProgress = isInitialFind && changes.length > 0;
+        // Paging stops at the first page that is not full
+        const inProgress = isInitialFind && changes.length === pageSize;
         this.state[planetField][db].docs = newData;
         this.stateUpdated.next({ newData, db, planetField, inProgress });
         this.inProgress[planetField].set(db, inProgress);
@@ -62,6 +65,7 @@ export class StateService {
       }),
       catchError(() => {
         this.inProgress[planetField].set(db, false);
+        this.stateUpdated.next({ newData: this.state[planetField][db].docs, db, planetField, inProgress: false });
         return [];
       })
     );
@@ -82,7 +86,7 @@ export class StateService {
     return this.getChanges(db, opts, planetField).pipe(switchMap(() =>
       this.couchService.findAllStream(db, findDocuments({
         _id: { $gt: null }
-      }, 0, sort, 1000), opts)
+      }, 0, sort, pageSize), opts)
     ));
   }
 

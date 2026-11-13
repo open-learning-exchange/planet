@@ -124,10 +124,15 @@ export class CouchService {
     );
   }
 
+  findPage(db: string, query: any, opts?: any): Observable<{ docs: any[], bookmark: string }> {
+    return this.post(db + '/_find', query, opts);
+  }
+
   private findAllRequest(db: string, query: any, opts: any) {
-    return this.post(db + '/_find', query, opts).pipe(
-      catchError(() => of({ docs: [], rows: [] })),
-      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
+    // CouchDB returns 25 docs per page when the query has no limit
+    const pageSize = query.limit || 25;
+    return this.findPage(db, query, opts).pipe(
+      expand((res) => res.docs.length < pageSize ? empty() : this.findPage(db, { ...query, bookmark: res.bookmark }, opts))
     );
   }
 
