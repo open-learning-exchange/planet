@@ -45,7 +45,7 @@ describe('UsersAchievementsComponent', () => {
   let linkCopyService: { copyLink: ReturnType<typeof vi.fn> };
   let requestCourses: ReturnType<typeof vi.fn>;
   let requestData: ReturnType<typeof vi.fn>;
-  let isCourseCompleted: ReturnType<typeof vi.fn>;
+  let certifiedUsers: ReturnType<typeof vi.fn>;
   let configuration: { code?: string, parentCode?: string };
   let configurationUpdates$: Subject<any>;
   let coursesResult: any[];
@@ -97,14 +97,14 @@ describe('UsersAchievementsComponent', () => {
       progressListener$: () => progress$,
       requestCourses
     };
-    isCourseCompleted = vi.fn(() => true);
+    certifiedUsers = vi.fn((certification, courses, progress, users) => users);
     const certificationsService: any = {
       getCertifications: vi.fn(() => {
         const certificationRequest = new Subject<any[]>();
         certificationRequests.push(certificationRequest);
         return certificationRequest;
       }),
-      isCourseCompleted
+      certifiedUsers
     };
     component = new UsersAchievementsComponent(
       couchService as any,
@@ -475,10 +475,11 @@ describe('UsersAchievementsComponent', () => {
     const resolvedUser = { _id: 'org.couchdb.user:alice', name: 'alice', planetCode: 'local' };
     navigate('alice', 'local');
     request(userUrl('alice')).next(resolvedUser);
-    completeCertifications([ { name: 'certification', courseIds: [ 'course' ] } ]);
+    const certification = { name: 'certification', courseIds: [ 'course' ] };
+    completeCertifications([ certification ]);
     vi.advanceTimersByTime(600);
 
-    expect(isCourseCompleted).toHaveBeenCalledWith(expect.objectContaining({ _id: 'course' }), resolvedUser);
+    expect(certifiedUsers).toHaveBeenCalledWith(certification, coursesResult, progressResult, [ resolvedUser ]);
   });
 
   it('completes authenticated loading when the routed user lookup fails', () => {
@@ -574,7 +575,7 @@ describe('UsersAchievementsComponent template loading', () => {
         },
         {
           provide: CertificationsService,
-          useValue: { getCertifications: vi.fn(() => of([])), isCourseCompleted: vi.fn() }
+          useValue: { getCertifications: vi.fn(() => of([])), certifiedUsers: vi.fn() }
         },
         { provide: PlanetMessageService, useValue: { showAlert: vi.fn() } },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },

@@ -148,6 +148,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
+  @Input() requireSteps = false;
   dialogRef: MatDialogRef<DialogsListComponent> | null = null;
   filterDialogRef: MatDialogRef<any> | null = null;
   message = '';
@@ -257,7 +258,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       courses.sort((a, b) => b.doc.createdDate - a.doc.createdDate);
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
-        .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+        .filter((course: any) => this.excludeIds.indexOf(course._id) === -1)
+        .filter((course: any) => !this.requireSteps || course.doc.steps?.length > 0);
       this.stopLoading();
     }, () => this.stopLoading());
     this.selection.changed.subscribe(({ source }) => {

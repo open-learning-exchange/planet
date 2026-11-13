@@ -145,7 +145,8 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
         },
         noSpinner: true,
         mode: 'courses',
-        excludeIds: initialCourseIds
+        excludeIds: initialCourseIds,
+        requireSteps: true
       }
     });
   }

@@ -73,11 +73,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     if (this.certification.courseIds.length === 0 || !progress) {
       return;
     }
-    const certificateCourses = courses
-      .filter(course => this.certification.courseIds.indexOf(course._id) > -1)
-      .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
-    this.certifiedMembers = users
-      .filter(user => certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, user)));
+    this.certifiedMembers = this.certificationsService.certifiedUsers(this.certification, courses, progress, users);
   }
 
   routeToEdit(certificationId) {
