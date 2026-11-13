@@ -79,7 +79,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
-  isOpenai = false;
+  hasAIProvider = false;
   isLoading = true;
   readonly isMobile = this.deviceInfoService.isMobile;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
@@ -102,7 +102,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   get hasActionButtons(): boolean {
     const hasExam = !!this.stepDetail?.exam?.questions.length;
     const hasSurvey = !!this.stepDetail?.survey?.questions.length;
-    return (this.isOpenai && !!this.stepDetail?.description) ||
+    return (this.hasAIProvider && !!this.stepDetail?.description) ||
       this.attempts > 0 ||
       ((hasExam || hasSurvey) && this.isUserEnrolled) ||
       (this.canManage && (hasExam || hasSurvey)) ||
@@ -136,7 +136,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.name === 'openai');
+      this.hasAIProvider = providers.length > 0;
     });
   }
 
