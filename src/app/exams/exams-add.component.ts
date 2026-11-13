@@ -12,8 +12,8 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { forkJoin, of } from 'rxjs';
-import { finalize, switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -265,25 +265,45 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     ).pipe(switchMap((exams: Array<{ name: string }>) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.examsService.createExamDocument(examInfo);
-    }), finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
+    }), switchMap((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       this.initialFormState = JSON.stringify(this.examForm.getRawValue());
       this.hasUnsavedChanges = false;
-      if (this.examType === 'exam' || this.isCourseContent) {
-        this.appendToCourse(examInfo, this.examType);
-      }
+      return this.examType === 'exam' || this.isCourseContent ? this.appendToCourse(examInfo, this.examType) : of(true);
+    }), finalize(() => this.dialogsLoadingService.stop())).subscribe((isPublished) => {
       if (reRoute) {
         this.goBack();
       }
-      this.planetMessageService.showMessage(this.successMessage);
+      this.planetMessageService.showMessage(isPublished ? this.successMessage : this.unpublishedMessage());
     }, () => this.planetMessageService.showAlert(
       this.examType === 'survey' ? $localize`There was an error saving the survey` : $localize`There was an error saving the test`
     ));
   }
 
-  appendToCourse(info: ExamInfo, type: 'exam' | 'survey') {
+  appendToCourse(info: ExamInfo, type: 'exam' | 'survey'): Observable<boolean> {
     const courseExam = { ...info, ...this.documentInfo, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
     this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
+    const courseId = this.coursesService.course.courseId;
+    if (this.pageType !== 'Update' || !courseId) {
+      return of(false);
+    }
+    // Pass checks and attempt lookups (by _rev) read this copy, so every in-place save rewrites it.
+    // updatedDate is left alone so the course form doesn't see an edit and write a draft.
+    return this.couchService.get(`courses/${courseId}`).pipe(switchMap((course: any) => {
+      const index = (course.steps || []).findIndex(step => step[type]?._id === courseExam._id);
+      if (index < 0) {
+        return of(false);
+      }
+      const steps = course.steps.map((step, stepIndex) => stepIndex === index ? { ...step, [type]: courseExam } : step);
+      return this.couchService.updateDocument('courses', this.coursesService.storeMarkdownImages({ ...course, steps }))
+        .pipe(map(() => true));
+    }));
+  }
+
+  private unpublishedMessage() {
+    return this.examType === 'survey' ?
+      $localize`Survey saved. Submit the course to publish it.` :
+      $localize`Test saved. Submit the course to publish it.`;
   }
 
   totalMarks(examInfo: ExamInfo) {

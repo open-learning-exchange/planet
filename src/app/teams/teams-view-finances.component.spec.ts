@@ -113,6 +113,10 @@ describe('TeamsViewFinancesComponent', () => {
   const renderedDescriptions = () => fixture.debugElement.queryAll(By.css('.km-description'))
     .map(cell => cell.nativeElement.textContent.trim());
 
+  const balanceShown = () => fixture.debugElement.queryAll(By.css('.km-balance')).length === 1;
+
+  const clearFiltersButton = (): HTMLButtonElement | null => fixture.nativeElement.querySelector('.km-clear-filters');
+
   it('should create TeamsViewFinancesComponent', () => {
     expect(component).toBeTruthy();
   });
@@ -165,12 +169,32 @@ describe('TeamsViewFinancesComponent', () => {
     fixture.detectChanges();
     expect(component.emptyTable).toBe(true);
 
-    component.resetDateFilter();
+    component.startDate = undefined;
+    component.transactionFilter();
     fixture.detectChanges();
 
     expect(component.table.sort.active).toBe('credit');
     expect(component.table.sort.direction).toBe('asc');
     expect(renderedDescriptions()).toEqual([ 'Hardware Supplies', 'Grant Funding', 'Initial Deposit' ]);
+  });
+
+  it('should offer Clear filters after a sort change and restore the date sort and range', () => {
+    expect(clearFiltersButton()).toBeNull();
+    sortBy('credit', 'asc');
+    expect(clearFiltersButton()).not.toBeNull();
+    component.startDate = new Date('2026-07-04T00:00:00Z');
+    component.transactionFilter();
+    fixture.detectChanges();
+
+    clearFiltersButton().click();
+    fixture.detectChanges();
+
+    expect(component.table.sort.active).toBe('date');
+    expect(component.table.sort.direction).toBe('desc');
+    expect(component.startDate).toBeUndefined();
+    expect(renderedDescriptions()).toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
+    expect(balanceShown()).toBe(true);
+    expect(clearFiltersButton()).toBeNull();
   });
 
   it('should not reorder the table data source when exporting', () => {
@@ -180,6 +204,51 @@ describe('TeamsViewFinancesComponent', () => {
 
     expect(component.table.data.map(row => row.description))
       .toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
+  });
+
+  it('should show and export the balance only while sorted by date', () => {
+    const exportCsvSpy = vi.spyOn(csvService, 'exportCSV').mockImplementation(() => {});
+    sortBy('credit', 'asc');
+    component.exportTableData();
+
+    expect(balanceShown()).toBe(false);
+    expect(exportCsvSpy.mock.calls[0][0].data[0]).not.toHaveProperty('balance');
+
+    sortBy('date', 'asc');
+    component.exportTableData();
+
+    expect(balanceShown()).toBe(true);
+    expect(exportCsvSpy.mock.calls[1][0].data[0]).toHaveProperty('balance');
+  });
+
+  it('should show the balance again when a reload resets the sort to date', () => {
+    sortBy('credit', 'asc');
+    expect(balanceShown()).toBe(false);
+    component.isLoading = true;
+    component.ngOnChanges();
+    fixture.detectChanges();
+    component.isLoading = false;
+    component.ngOnChanges();
+    fixture.detectChanges();
+
+    expect(component.table.sort.active).toBe('date');
+    expect(balanceShown()).toBe(true);
+  });
+
+  it('should list same-day transactions in balance order when sorted oldest first', () => {
+    const sameDay = new Date('2026-07-12T00:00:00Z').getTime();
+    component.finances = [
+      ...mockFinances,
+      { _id: 'tx-4', date: sameDay, description: 'Bake Sale', type: 'credit', amount: 200, status: 'active' },
+      { _id: 'tx-5', date: sameDay, description: 'Bus Fare', type: 'debit', amount: 50, status: 'active' }
+    ];
+    component.ngOnChanges();
+    fixture.detectChanges();
+    const exportCsvSpy = vi.spyOn(csvService, 'exportCSV').mockImplementation(() => {});
+    sortBy('date', 'asc');
+    component.exportTableData();
+
+    expect(exportCsvSpy.mock.calls[0][0].data.map((row: any) => row['balance'])).toEqual([ 1000, 750, 1250, 1450, 1400 ]);
   });
 
   it('saves kept receipts as stubs, inlines new ones and lists unusable ones in one write', async () => {

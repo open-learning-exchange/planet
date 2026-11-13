@@ -15,10 +15,11 @@
 }
 
 .cell-content {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
 }
 
 .mat-column-stepNum {
@@ -55,13 +56,6 @@
 }
 
 @media (max-width: v.$screen-sm) {
-  // Let the rendered fixed columns determine the scroll width so each configuration only
-  // scrolls as far as its displayed columns require.
-  .min-width-table {
-    --responsive-table-min-width: 100%;
-    --table-column-flex-shrink: 0;
-  }
-
   .status-dropdown {
     max-width: 100px;
   }

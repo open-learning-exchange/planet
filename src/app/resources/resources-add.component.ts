@@ -26,7 +26,7 @@ import { StateService } from '@shared/state.service';
 import { languages } from '@shared/language/languages';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { showFormErrors } from '@shared/tables/table.helpers';
-import { deepEqual, normalizedContentType } from '@shared/utils';
+import { deepEqual, normalizedContentType, safeAttachmentName } from '@shared/utils';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
@@ -288,7 +288,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   private singleAttachment(file, mediaType) {
     const resource = {
-      filename: file.name,
+      filename: safeAttachmentName(file.name),
       mediaType,
       _attachments: {}
     };
