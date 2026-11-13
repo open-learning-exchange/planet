@@ -129,10 +129,9 @@ export class CouchService {
   }
 
   private findAllRequest(db: string, query: any, opts: any) {
-    // CouchDB returns 25 docs per page when the query has no limit
-    const pageSize = query.limit || 25;
-    return this.findPage(db, query, opts).pipe(
-      expand((res) => res.docs.length < pageSize ? empty() : this.findPage(db, { ...query, bookmark: res.bookmark }, opts))
+    const paged = { ...query, limit: query.limit || 1000 };
+    return this.findPage(db, paged, opts).pipe(
+      expand((res) => res.docs.length < paged.limit ? empty() : this.findPage(db, { ...paged, bookmark: res.bookmark }, opts))
     );
   }
 

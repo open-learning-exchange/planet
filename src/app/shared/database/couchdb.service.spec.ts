@@ -43,14 +43,15 @@ describe('CouchService findAll', () => {
     expect(result.length).toBe(4);
   });
 
-  it('treats 25 docs as a full page when the query has no limit', () => {
+  it('asks for 1000 docs per page when the query has no limit', () => {
     let result: any[];
     service.findAll('courses', { selector: {} }).subscribe(res => result = res);
 
-    http.expectOne(url).flush({ docs: docs(25), bookmark: 'a' });
-    http.expectOne(url).flush({ docs: docs(3), bookmark: 'b' });
+    const first = http.expectOne(url);
+    first.flush({ docs: docs(25), bookmark: 'a' });
 
-    expect(result.length).toBe(28);
+    expect(first.request.body).toContain('"limit":1000');
+    expect(result.length).toBe(25);
   });
 
   it('passes a failed first page to the caller', () => {
