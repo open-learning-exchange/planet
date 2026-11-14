@@ -99,9 +99,11 @@ export class LoginTasksService {
   private createParentSession({ name, password }: { name: string, password: string }) {
     const opts = { withCredentials: true, domain: this.stateService.configuration.parentDomain };
     const isRegisteredAdmin = name === this.stateService.configuration.adminName;
+    // Read before the request: the user may have changed by the time the parent answers
+    const { _id, _rev, _attachments, ...user } = { ...this.userService.get(), ...this.userService.credentials };
     return this.couchService.post('_session', { name, password }, opts).pipe(
       catchError(error => error.status === 401 && isRegisteredAdmin ?
-        this.restoreParentAccount(name).pipe(
+        this.restoreParentAccount(name, user).pipe(
           switchMap(() => this.couchService.post('_session', { name, password }, opts)),
           catchError(() => throwError(error))
         ) :
@@ -109,10 +111,9 @@ export class LoginTasksService {
     );
   }
 
-  private restoreParentAccount(adminName: string) {
+  private restoreParentAccount(adminName: string, user: any) {
     const localConfig = this.stateService.configuration;
     const opts = { domain: localConfig.parentDomain, withCredentials: false, suppressMessage: true };
-    const { _id, _rev, _attachments, ...user } = { ...this.userService.get(), ...this.userService.credentials };
     return this.parentRegistration(localConfig).pipe(
       switchMap(request => {
         if (!request) {

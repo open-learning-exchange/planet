@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { environment } from '../../environments/environment';
 import { LoginTasksService } from './login-tasks.service';
@@ -46,7 +46,7 @@ describe('LoginTasksService parent account repair', () => {
       planetMessageService as any,
       {} as any
     );
-    return { service, couchService, syncService, planetMessageService };
+    return { service, couchService, syncService, planetMessageService, userService };
   };
 
   const login = (service: LoginTasksService, name = 'admin') =>
@@ -96,6 +96,19 @@ describe('LoginTasksService parent account repair', () => {
     expect(couchService.post).toHaveBeenCalledTimes(1);
     expect(couchService.updateDocument).not.toHaveBeenCalled();
     expect(planetMessageService.showMessage).toHaveBeenCalledWith(expect.stringContaining('Can not login'));
+  });
+
+  it('recreates the account with the credentials read when the login started', async () => {
+    const firstSession = new Subject();
+    const { service, couchService, userService } = buildService({ sessions: [ firstSession, of({ ok: true }) ] });
+
+    const loggedIn = login(service);
+    userService.credentials = { derived_key: 'other', salt: 'other', iterations: 10, password_scheme: 'pbkdf2' };
+    firstSession.error(unauthorized);
+    await loggedIn;
+
+    const [ [ , parentUser ] ] = writesTo(couchService, '_users');
+    expect(parentUser).toMatchObject({ derived_key: 'key', salt: 'salt' });
   });
 
   it('falls back to a role-less account when the parent refuses the learner role', async () => {
