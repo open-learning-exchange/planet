@@ -1,27 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { CouchService } from '@shared/database/couchdb.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { SyncService } from '@shared/database/sync.service';
+import { StateService } from '@shared/state.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { TagsService } from '@shared/forms/tags/tags.service';
+import { SearchService } from '@shared/search/search.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+
 import { CoursesComponent } from './courses.component';
-import { CouchService } from '../shared/couchdb.service';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { CoursesService } from './courses.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
-import { SyncService } from '../shared/sync.service';
-import { StateService } from '../shared/state.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { TagsService } from '../shared/forms/tags.service';
-import { SearchService } from '../shared/forms/search.service';
-import { DeviceInfoService } from '../shared/device-info.service';
-import { FuzzySearchService } from '../shared/fuzzy-search.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -34,10 +35,11 @@ describe('CoursesComponent', () => {
   let coursedata2;
   let coursearray;
 
-  const completionService = new CertificationsService({} as any, {} as any, {} as any);
+  const completionService = new CertificationsService({} as any);
   const certificationsServiceMock = {
     getCertifications: vi.fn().mockReturnValue(of([])),
-    isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
+    isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user)),
+    certificationsRequiring: vi.fn()
   };
 
   const coursesServiceMock = {
@@ -57,9 +59,7 @@ describe('CoursesComponent', () => {
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const stateServiceMock = {
@@ -91,11 +91,10 @@ describe('CoursesComponent', () => {
         { provide: SyncService, useValue: { getReplicationState: vi.fn().mockReturnValue(of({})) } },
         { provide: StateService, useValue: stateServiceMock },
         { provide: DialogsLoadingService, useValue: { start: vi.fn(), stop: vi.fn() } },
-        { provide: DialogGuardService, useValue: { open: vi.fn() } },
+        { provide: DialogGuardService, useValue: { open: vi.fn(), isActive: vi.fn().mockReturnValue(false) } },
         { provide: TagsService, useValue: { updateManyTags: vi.fn().mockReturnValue(of({})) } },
         { provide: SearchService, useValue: { recordSearch: vi.fn() } },
         DeviceInfoService,
-        FuzzySearchService,
         { provide: CertificationsService, useValue: certificationsServiceMock },
         { provide: MatDialog, useValue: dialogMock },
         {
@@ -108,7 +107,8 @@ describe('CoursesComponent', () => {
             paramMap: of({ get: () => null })
           }
         },
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
       ]
     });
     fixture = TestBed.createComponent(CoursesComponent);
@@ -175,7 +175,7 @@ describe('CoursesComponent', () => {
     userServiceMock.shelfChange$.next(userServiceMock.shelf);
 
     expect(component.courses.data).not.toBe(previousData);
-    expect(component.courses.data[0].admission).toBe(true);
+    expect((component.courses.data[0] as { admission: boolean }).admission).toBe(true);
   });
 
   // TODO: Update tests to use vitest spies
@@ -267,5 +267,23 @@ describe('CoursesComponent', () => {
     expect(result[2]).toMatchObject({ inCertification: false, isCompleted: false });
     expect(result[3]).toMatchObject({ inCertification: false, isCompleted: false });
     expect(certificationsServiceMock.isCourseCompleted).toHaveBeenCalledTimes(3);
+  });
+
+  it('names the certifications that require a course in its delete confirmation', () => {
+    (TestBed.inject(DialogGuardService) as any).open.mockImplementation((key, work) => work());
+    dialogMock.open.mockReturnValue({ afterClosed: () => of(undefined) });
+    certificationsServiceMock.certificationsRequiring.mockReturnValueOnce(of([ { name: 'Health <b>' } ]));
+
+    component.deleteClick({ _id: 'c1', _rev: '1', courseTitle: 'Course' });
+
+    expect(certificationsServiceMock.certificationsRequiring).toHaveBeenCalledWith([ 'c1' ]);
+    expect(dialogMock.open.mock.lastCall[1].data.extraMessage).toBe('Required by certifications: Health &lt;b>');
+
+    certificationsServiceMock.certificationsRequiring.mockReturnValueOnce(throwError(() => new Error('failed')));
+
+    component.deleteClick({ _id: 'c1', _rev: '1', courseTitle: 'Course' });
+
+    expect(dialogMock.open.mock.lastCall[1].data.extraMessage).toBe('Could not check whether certifications require this.');
+    dialogMock.open.mockReturnValue(dialogRefMock);
   });
 });

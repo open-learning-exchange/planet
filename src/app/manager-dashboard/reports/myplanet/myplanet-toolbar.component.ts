@@ -1,8 +1,5 @@
-import { Component, DestroyRef, EventEmitter, Input, Output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
-import { MyPlanetFiltersForm } from './filter.base';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -14,6 +11,10 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+
+import { MyPlanetFiltersForm } from './filter.base';
 
 @Component({
   selector: 'planet-myplanet-toolbar',
@@ -43,8 +44,6 @@ import { MatTooltip } from '@angular/material/tooltip';
   ]
 })
 export class MyPlanetToolbarComponent {
-  private readonly destroyRef = inject(DestroyRef);
-
   @Input() title = '';
   @Input() versions: string[] = [];
   @Input() selectedVersion = '';
@@ -65,17 +64,11 @@ export class MyPlanetToolbarComponent {
   @Output() searchChange = new EventEmitter<string>();
   @Output() clear = new EventEmitter<void>();
   @Output() resetDateFilter = new EventEmitter<void>();
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
 
-  constructor(private deviceInfoService: DeviceInfoService) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-      });
-  }
+  constructor(private deviceInfoService: DeviceInfoService) {}
 
   onVersionChange(value: string) {
     this.versionChange.emit(value);

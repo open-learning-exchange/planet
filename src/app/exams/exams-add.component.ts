@@ -12,41 +12,45 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { forkJoin, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { ValidatorService } from '../validators/validator.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { CoursesService } from '../courses/courses.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { ExamsService, QuestionFormGroup } from './exams.service';
-import {
-  PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
-} from '../shared/forms/planet-step-list.component';
-import { ExamsPreviewComponent } from './exams-preview.component';
-import { MarkdownRenderService } from '../shared/markdown-render.service';
-import { SubmissionsService } from './../submissions/submissions.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes.component';
+import { forkJoin, Observable, of } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
-import { SubmitDirective } from '../shared/submit.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import {
+  PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
+} from '@shared/forms/planet-step-list.component';
+import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+import { MarkdownImagesService } from '@shared/markdown/markdown-images.service';
+import { dedupeObjectArray } from '@shared/utils';
+import { findDocuments } from '@shared/database/mango-queries';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { ImageInfo, PlanetMarkdownTextboxComponent, ValueWithImages } from '@shared/markdown/planet-markdown-textbox.component';
+
+import { ValidatorService } from '../validators/validator.service';
+import { CoursesService } from '../courses/courses.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { ExamsService, QuestionFormGroup, markdownText } from './exams.service';
+import { ExamsPreviewComponent } from './exams-preview.component';
+import { SubmissionsService } from './../submissions/submissions.service';
 import { ExamsQuestionComponent } from './exams-question.component';
 
 interface ExamFormControls {
   name: FormControl<string>;
-  description: FormControl<string>;
+  description: FormControl<string | ValueWithImages>;
   passingPercentage: FormControl<number>;
   questions: FormArray<QuestionFormGroup>;
   type: FormControl<'courses' | 'surveys'>;
@@ -61,6 +65,7 @@ interface ExamInfo {
   type: 'courses' | 'surveys';
   teamShareAllowed: boolean;
   teamId?: string | null;
+  images?: ImageInfo[];
   _id?: string;
   _rev?: string;
 }
@@ -81,7 +86,6 @@ interface ExamDocumentInfo {
     ReactiveFormsModule,
     NgClass,
     MatButton,
-    SubmitDirective,
     MatMenuTrigger,
     MatCheckbox,
     MatMenu,
@@ -114,6 +118,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   courseName = '';
   examType: 'exam' | 'survey';
   teamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
+  readonly imageGroup: 'community' | { [db: string]: string } = this.teamId ? { teams: this.teamId } : 'community';
+  images: ImageInfo[] = [];
   successMessage: string;
   steps = [];
   showFormError = false;
@@ -129,6 +135,10 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
   set question(newQuestion: QuestionFormGroup) {
     const question = this.questions.at(this.activeQuestionIndex);
+    const body = newQuestion.controls.body.value;
+    if (typeof body !== 'string') {
+      this.images = dedupeObjectArray([ ...this.images, ...body.images ], [ 'resourceId' ]);
+    }
     this.examsService.updateQuestion(question, newQuestion);
     this.#question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
@@ -149,7 +159,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     private planetStepListService: PlanetStepListService,
     private dialog: MatDialog,
     private submissionsService: SubmissionsService,
-    private markdownRenderer: MarkdownRenderService
+    private markdownRenderer: MarkdownRenderService,
+    private markdownImagesService: MarkdownImagesService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     const typeParam = this.route.snapshot.paramMap.get('type');
     this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
@@ -165,7 +177,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     };
     this.examForm = this.fb.group<ExamFormControls>({
       name: this.fb.control('', nameControlOptions),
-      description: this.fb.control(''),
+      description: this.fb.control<string | ValueWithImages>(''),
       passingPercentage: this.fb.control(100, { validators: [ CustomValidators.positiveNumberValidator, Validators.max(100) ] }),
       questions: this.fb.array<QuestionFormGroup>([]),
       type: this.fb.control<'courses' | 'surveys'>(examRecordType),
@@ -193,6 +205,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       this.documentInfo = { _rev: exam._rev, _id: exam._id };
       this.examForm.controls.name.setAsyncValidators(this.nameValidator(exam.name));
       this.examForm.patchValue(exam);
+      this.images = exam.images || [];
       this.initializeQuestions(exam.questions);
       if (submissions.length > 0) {
         this.pageType = 'Copy';
@@ -208,7 +221,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
       const formValue = this.examForm.getRawValue();
-      const examInfo: ExamInfo = { ...formValue, ...(this.teamId ? { teamId: this.teamId } : {}) };
+      const serializedExam = this.serializeExamData(formValue);
+      const examInfo: ExamInfo = { ...serializedExam, ...(this.teamId ? { teamId: this.teamId } : {}) };
       this.showFormError = false;
       this.addExam({ ...examInfo, ...this.documentInfo }, reRoute);
     } else {
@@ -217,6 +231,18 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       }
       this.showErrorMessage();
     }
+  }
+
+  private serializeExamData(formValue: any): ExamInfo {
+    const description = markdownText(formValue.description);
+    const questions = formValue.questions.map(question => ({ ...question, body: markdownText(question.body) }));
+    const images = this.markdownImagesService.createImagesArray({ ...formValue, images: this.images }, description, 'description');
+    return {
+      ...formValue,
+      description,
+      questions,
+      images: this.markdownImagesService.filterMissingImages([ description, ...questions.map(question => question.body) ], images)
+    };
   }
 
   nameValidator(exception = ''): AsyncValidatorFn {
@@ -233,31 +259,51 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
 
   addExam(examInfo: ExamInfo, reRoute: boolean) {
     const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
+    this.dialogsLoadingService.start();
     this.couchService.findAll(this.dbName,
       { selector: { type: this.examForm.controls.type.value, name: { $regex: namePrefix } } }
     ).pipe(switchMap((exams: Array<{ name: string }>) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.examsService.createExamDocument(examInfo);
-    })).subscribe((res) => {
+    }), switchMap((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       this.initialFormState = JSON.stringify(this.examForm.getRawValue());
       this.hasUnsavedChanges = false;
-      if (this.examType === 'exam' || this.isCourseContent) {
-        this.appendToCourse(examInfo, this.examType);
-      }
+      return this.examType === 'exam' || this.isCourseContent ? this.appendToCourse(examInfo, this.examType) : of(true);
+    }), finalize(() => this.dialogsLoadingService.stop())).subscribe((isPublished) => {
       if (reRoute) {
         this.goBack();
       }
-      this.planetMessageService.showMessage(this.successMessage);
-    }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
-    });
+      this.planetMessageService.showMessage(isPublished ? this.successMessage : this.unpublishedMessage());
+    }, () => this.planetMessageService.showAlert(
+      this.examType === 'survey' ? $localize`There was an error saving the survey` : $localize`There was an error saving the test`
+    ));
   }
 
-  appendToCourse(info: ExamInfo, type: 'exam' | 'survey') {
+  appendToCourse(info: ExamInfo, type: 'exam' | 'survey'): Observable<boolean> {
     const courseExam = { ...info, ...this.documentInfo, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
     this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
+    const courseId = this.coursesService.course.courseId;
+    if (this.pageType !== 'Update' || !courseId) {
+      return of(false);
+    }
+    // Pass checks and attempt lookups (by _rev) read this copy, so every in-place save rewrites it.
+    // updatedDate is left alone so the course form doesn't see an edit and write a draft.
+    return this.couchService.get(`courses/${courseId}`).pipe(switchMap((course: any) => {
+      const index = (course.steps || []).findIndex(step => step[type]?._id === courseExam._id);
+      if (index < 0) {
+        return of(false);
+      }
+      const steps = course.steps.map((step, stepIndex) => stepIndex === index ? { ...step, [type]: courseExam } : step);
+      return this.couchService.updateDocument('courses', this.coursesService.storeMarkdownImages({ ...course, steps }))
+        .pipe(map(() => true));
+    }));
+  }
+
+  private unpublishedMessage() {
+    return this.examType === 'survey' ?
+      $localize`Survey saved. Submit the course to publish it.` :
+      $localize`Test saved. Submit the course to publish it.`;
   }
 
   totalMarks(examInfo: ExamInfo) {
@@ -332,8 +378,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       this.showErrorMessage();
       return;
     }
+    const serializedExam = this.serializeExamData(this.examForm.getRawValue());
     this.dialog.open(ExamsPreviewComponent, {
-      data: { exam: this.examForm.getRawValue(), examType: this.examType },
+      data: { exam: serializedExam, examType: this.examType },
       minWidth: '75vw'
     });
   }

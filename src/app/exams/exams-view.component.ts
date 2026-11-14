@@ -6,30 +6,34 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { EMPTY, Observable, Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
-import { CoursesService } from '../courses/courses.service';
-import { UserService } from '../shared/user.service';
-import { SubmissionsService } from '../submissions/submissions.service';
-import { CouchService } from '../shared/couchdb.service';
-import { Exam, ExamQuestion } from './exams.model';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { ChallengesService } from '../shared/challenges/challenges.service';
 import { DatePipe, Location } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+
+import { CoursesService } from '../courses/courses.service';
+import { blockingStepIndex } from '../courses/courses.utils';
+import { SubmissionsService } from '../submissions/submissions.service';
+import { Exam, ExamQuestion } from './exams.model';
 import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -121,6 +125,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     private formBuilder: FormBuilder,
     private challengesService: ChallengesService,
     private location: Location,
+    private challengesProgressService: ChallengesProgressService,
   ) {
     this.examForm = this.formBuilder.group({
       answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: examAnswerValidator })
@@ -211,7 +216,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   // Only questionNum may differ between two views of one test, so any other change of destination
   // -- a different submission, mode or test id -- still counts as leaving
   isSameExamDestination(): boolean {
-    const destination = this.router.getCurrentNavigation()?.finalUrl;
+    const destination = this.router.currentNavigation()?.finalUrl;
     const identity = (url: string) => {
       const [ path, ...params ] = url.split(';');
       return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');
@@ -256,7 +261,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.fromSubmission = false;
     this.initialLoad = true;
     this.isLoading = true;
-    const recordingSurvey = this.router.getCurrentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
+    const recordingSurvey = this.router.currentNavigation()?.extras.state?.['recordingSurvey'] || history.state?.recordingSurvey;
     const survey$ = this.couchService.get(`exams/${surveyId}`).pipe(catchError(error => {
       if (error.status !== 404) {
         return throwError(error);
@@ -313,9 +318,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         this.currentAnswer = null;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
-        const challenge = isFinish ? this.challengesService.getActiveChallengeForCourse(this.courseId) : undefined;
-        if (challenge) {
-          this.challengesService.openChallengeDialog(this.dialog, challenge);
+        if (isFinish) {
+          this.challengesProgressService.record('survey_complete', 'course_complete').pipe(
+            switchMap(completed => completed ? EMPTY : this.challengesService.openChallengeDialogOnce(
+              this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId)
+            ))
+          ).subscribe();
         }
       }
     }, () => this.planetMessageService.showAlert($localize`Your answer could not be saved`));
@@ -384,7 +392,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   questionRouteParams() {
     const params = this.route.snapshot.params;
-    return params.surveyId && this.submissionId ?
+    return params.surveyId && !params.submissionId && this.submissionId ?
       { ...params, submissionId: this.submissionId, status: 'pending' } :
       params;
   }
@@ -455,6 +463,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           this.planetMessageService.showAlert($localize`This test is not available`);
           this.isInternalNavigation = true;
           this.goBack();
+          return EMPTY;
+        }
+        const blocking = this.previewMode || this.coursesService.canManageCourse(course) ? -1 : blockingStepIndex(course.steps, progress);
+        if (blocking > -1 && this.stepNum - 1 > blocking) {
+          this.isInternalNavigation = true;
+          this.router.navigate([ '/courses/view', course._id, 'step', blocking + 1 ], { replaceUrl: true });
           return EMPTY;
         }
         this.title = step.stepTitle;

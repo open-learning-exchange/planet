@@ -2,35 +2,50 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router, NavigationEnd, NavigationSkipped, NavigationSkippedCode } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { MaterialModule } from '../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Subject, of, throwError } from 'rxjs';
+import { AnimationEvent } from '@angular/animations';
+import { BehaviorSubject, Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { MaterialModule } from '@shared/material.module';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { DEFAULT_DEVICE_BREAKPOINTS, SHORT_VIEWPORT_QUERY } from '@shared/ui/device-info.service';
+
 import { HomeComponent } from './home.component';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { StateService } from '../shared/state.service';
-import { PouchAuthService } from '../shared/database/pouch-auth.service';
 
 describe('Home', () => {
 
   let activeFixture: ComponentFixture<HomeComponent>;
+  const mobileQuery = `(max-width: ${DEFAULT_DEVICE_BREAKPOINTS.mobile}px)`;
 
-  const setup = () => {
+  const setup = (matchingQueries: string[] = []) => {
     const routerEvents = new Subject<NavigationEnd | NavigationSkipped>();
+    const breakpoints$ = new BehaviorSubject({ matches: true });
     TestBed.configureTestingModule({
       imports: [ RouterTestingModule, BrowserAnimationsModule, CommonModule, MaterialModule, HomeComponent ],
-      providers: [ CouchService, UserService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting() ]
+      providers: [
+        CouchService,
+        UserService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        {
+          provide: BreakpointObserver,
+          useValue: { observe: () => breakpoints$, isMatched: (query: string) => matchingQueries.includes(query) }
+        }
+      ]
     });
     TestBed.overrideComponent(HomeComponent, {
       set: {
         template: `
           <mat-toolbar #toolbar></mat-toolbar>
           <mat-sidenav-container #content>
-            @if (usesOverlayNav) {
+            @if (usesOverlayNav()) {
               <mat-sidenav #mobileSidenav mode="over"></mat-sidenav>
             } @else {
               <mat-sidenav mode="side" opened></mat-sidenav>
@@ -45,14 +60,12 @@ describe('Home', () => {
     const fixture = TestBed.createComponent(HomeComponent);
     const comp = fixture.componentInstance;
     activeFixture = fixture;
-    return { fixture, comp, routerEvents };
+    return { fixture, comp, routerEvents, matchingQueries, breakpoints$ };
   };
 
   // Renders a real drawer without unrelated navigation directives.
   const renderNav = (isMobile: boolean, isShortViewport = false) => {
-    const context = setup();
-    context.comp.isMobile = isMobile;
-    context.comp.isShortViewport = isShortViewport;
+    const context = setup([ ...(isMobile ? [ mobileQuery ] : []), ...(isShortViewport ? [ SHORT_VIEWPORT_QUERY ] : []) ]);
     context.fixture.detectChanges();
     return context;
   };
@@ -70,7 +83,7 @@ describe('Home', () => {
 
   it('Should be a HomeComponent', () => {
     const { comp } = setup();
-    expect(comp instanceof HomeComponent).toBe(true, 'Should create HomeComponent');
+    expect(comp instanceof HomeComponent).toBe(true);
   });
 
   it('should close the mobile nav when a new page is selected', () => {
@@ -123,7 +136,7 @@ describe('Home', () => {
     expect(comp.animDisp).toBeUndefined();
   });
 
-  it('should stop the content margin interval when the desktop nav finishes animating', () => {
+  it('should stop the content margin interval only when the current toggle finishes or the side nav goes away', () => {
     const { comp } = renderNav(false);
 
     comp.toggleNav();
@@ -132,15 +145,24 @@ describe('Home', () => {
     comp.toggleNav();
 
     expect(firstRun.closed).toBe(true);
-    comp.endAnimation();
+    comp.sidenavAnimationDone({ toState: 'open' } as AnimationEvent);
+    expect(comp.animDisp.closed).toBe(false);
+    comp.sidenavAnimationDone({ toState: 'closed' } as AnimationEvent);
+    expect(comp.animDisp.closed).toBe(true);
+    comp.toggleNav();
+    comp.sidenavAnimationDone({ toState: 'void' } as AnimationEvent);
     expect(comp.animDisp.closed).toBe(true);
   });
 
-  it('should use the overlay nav on a short viewport that is too wide to count as mobile', () => {
-    const { comp } = renderNav(false, true);
+  it('should re-measure the content margins after the shown nav changes', () => {
+    const { fixture, comp, matchingQueries, breakpoints$ } = renderNav(false);
+    const updateContentMargins = vi.spyOn(comp['mainContent'], 'updateContentMargins');
 
-    expect(comp.usesOverlayNav).toBe(true);
-    expect(comp.mobileSidenav).toBeDefined();
+    matchingQueries.push(mobileQuery);
+    breakpoints$.next({ matches: true });
+    fixture.detectChanges();
+
+    expect(updateContentMargins).toHaveBeenCalled();
   });
 
   it('should close the overlay nav on navigation when the viewport is only short', () => {
@@ -161,6 +183,19 @@ describe('Home', () => {
     comp.syncToolbarLayout();
 
     expect(comp.forceModern).toBe(true);
+  });
+
+  it('should force the modern toolbar when a phone has zoomed out to fit the classic links', () => {
+    const { comp } = renderNav(false);
+    const clientWidth = vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(390);
+    const innerWidth = vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(930);
+    comp.classicToolbarWidth = 930;
+
+    comp.syncToolbarLayout();
+
+    expect(comp.forceModern).toBe(true);
+    clientWidth.mockRestore();
+    innerWidth.mockRestore();
   });
 
   it('should stop closing the nav once the component is destroyed', () => {
@@ -184,7 +219,7 @@ describe('Home', () => {
     const userService = TestBed.inject(UserService);
     vi.spyOn(userService, 'get').mockImplementation(() => currentUser);
     vi.spyOn(userService, 'endSessionLog').mockReturnValue(of({}));
-    vi.spyOn(TestBed.inject(PouchAuthService), 'logout').mockReturnValue(of({}));
+    vi.spyOn(TestBed.inject(PouchAuthService), 'logout').mockReturnValue(of([]));
     const unset = vi.spyOn(userService, 'unset').mockImplementation(() => currentUser = { name: '' });
     const deleteSession = vi.spyOn(TestBed.inject(CouchService), 'delete').mockReturnValue(parentDelete);
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);

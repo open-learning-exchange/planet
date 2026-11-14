@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { ManagerService } from '../manager-dashboard/manager.service';
 import { catchError, map, switchMap, mergeMap, takeWhile, toArray } from 'rxjs/operators';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
-import { findDocuments } from '../shared/mangoQueries';
-import { StateService } from '../shared/state.service';
-import { SyncService } from '../shared/sync.service';
-import { dedupeShelfReduce, stringToHex } from '../shared/utils';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { SyncService } from '@shared/database/sync.service';
+import { dedupeShelfReduce, deepObjectPatch, planetAndParentId, stringToHex } from '@shared/utils';
+
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +72,7 @@ export class ConfigurationService {
     };
     const meetupReplicator = {
       dbSource: 'meetups', db: 'community_meetups',
-      selector: { link: { teams: { $eq: `${configuration.code}@${configuration.parentCode}` } } },
+      selector: { link: { teams: { $eq: planetAndParentId(configuration) } } },
       continuous: true, type: 'internal'
     };
     return forkJoin([
@@ -171,7 +173,7 @@ export class ConfigurationService {
     delete fields._rev;
     return this.getConfiguration(fields._id).pipe(
       switchMap((configuration) =>
-        this.couchService.updateDocument('configurations', { ...configuration, ...fields }).pipe(
+        this.couchService.updateDocument('configurations', deepObjectPatch(configuration, fields)).pipe(
           map(({ doc }) => doc),
           catchError((error) => error?.status === 409 && retriesOnConflict > 0 ?
             this.patchLocalConfigurationWithRetry(patch, retriesOnConflict - 1) : throwError(error))

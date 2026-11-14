@@ -30,7 +30,10 @@ export const isAcceptableFile = (file: File, accept?: string): boolean => {
 };
 
 export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
-  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_') || 'attachment';
+  // CouchDB rejects attachment names that start with an underscore and reads + in a URL as a space; a parenthesis ends a markdown link;
+  // a URL drops . and .. path segments
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>+()]/g, '_').replace(/^_+/, '').replace(/^\.{1,2}$/, '') ||
+    'attachment';
   if (usedNames.indexOf(trimmed) === -1) {
     return trimmed;
   }
@@ -58,12 +61,14 @@ export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: strin
 };
 
 export const IMAGE_MAX_FALLBACK_BYTES = 2 * 1024 * 1024;
+export const UNPROCESSABLE_IMAGE_ERROR = 'unprocessable-image';
 
 export interface NormalizeImageOptions {
   maxDimension?: number;
   quality?: number;
   usedNames?: string[];
   maxFallbackBytes?: number;
+  keepUnderBytes?: number;
 }
 
 export interface NormalizedImage {
@@ -96,10 +101,25 @@ interface EncodedImage {
   extension: string;
 }
 
+const hasTransparency = (canvas: HTMLCanvasElement): boolean => {
+  const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+  for (let alpha = 3; alpha < data.length; alpha += 4) {
+    if (data[alpha] < 255) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const encodedImage = async (canvas: HTMLCanvasElement, quality: number): Promise<EncodedImage | null> => {
   const webp = await canvasToBlob(canvas, 'image/webp', quality);
   if (webp?.type === 'image/webp') {
     return { blob: webp, contentType: 'image/webp', extension: 'webp' };
+  }
+  // Safari can't encode WebP, and JPEG would turn transparent pixels black
+  if (hasTransparency(canvas)) {
+    const png = await canvasToBlob(canvas, 'image/png', quality);
+    return png?.type === 'image/png' ? { blob: png, contentType: 'image/png', extension: 'png' } : null;
   }
   const jpeg = await canvasToBlob(canvas, 'image/jpeg', quality);
   return jpeg?.type === 'image/jpeg' ? { blob: jpeg, contentType: 'image/jpeg', extension: 'jpg' } : null;
@@ -109,11 +129,13 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
   const maxDimension = opts.maxDimension ?? 600;
   const quality = opts.quality ?? 0.82;
   const maxFallbackBytes = opts.maxFallbackBytes ?? IMAGE_MAX_FALLBACK_BYTES;
-  const fallback = (): NormalizedImage | null => (file.size > maxFallbackBytes ? null : {
+  const keepUnderBytes = opts.keepUnderBytes ?? 0;
+  const unchanged = (): NormalizedImage => ({
     file,
     contentType: normalizedContentType(file),
     fileName: safeAttachmentName(file.name, opts.usedNames)
   });
+  const fallback = (): NormalizedImage | null => (file.size > maxFallbackBytes ? null : unchanged());
   let objectUrl = '';
   try {
     objectUrl = URL.createObjectURL(file);
@@ -129,6 +151,9 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
       return fallback();
     }
     const dimensions = scaledDimensions(sourceWidth, sourceHeight, maxDimension);
+    if (file.size < keepUnderBytes && dimensions.width === sourceWidth && dimensions.height === sourceHeight) {
+      return unchanged();
+    }
     const canvas = document.createElement('canvas');
     canvas.width = dimensions.width;
     canvas.height = dimensions.height;
@@ -136,6 +161,7 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
     if (!ctx) {
       return fallback();
     }
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(image, 0, 0, dimensions.width, dimensions.height);
     const encoded = await encodedImage(canvas, quality);
     if (!encoded) {
@@ -156,8 +182,69 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
   }
 };
 
+const blobToBase64 = (blob: Blob): Promise<string> => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve((reader.result as string).split(',')[1]);
+  reader.onerror = () => reject(reader.error);
+  reader.readAsDataURL(blob);
+});
+
+const inlineAttachment = async (blob: Blob, contentType: string) => ({ content_type: contentType, data: await blobToBase64(blob) });
+
+type ImageNormalizer = (file: File, usedNames: string[]) => Promise<NormalizedImage | null>;
+
+// An image that can't be read or normalized is skipped and named in the result, so each caller decides whether that fails the save
+export const withImageAttachments = async (
+  doc: any, state: { removed?: { name: string }[], added: { file: File }[] },
+  normalize: ImageNormalizer = (file, usedNames) => normalizeImage(file, { usedNames })
+): Promise<{ doc: any, added: string[], skipped: string[] }> => {
+  const { _attachments, ...rest } = doc;
+  const attachments = { ..._attachments };
+  (state.removed || []).forEach(({ name }) => delete attachments[name]);
+  const added: string[] = [];
+  const skipped: string[] = [];
+  for (const { file } of state.added) {
+    const image = await normalize(file, [ ...Object.keys(_attachments || {}), ...added ]);
+    if (!image) {
+      skipped.push(file.name);
+      continue;
+    }
+    try {
+      attachments[image.fileName] = await inlineAttachment(image.file, image.contentType);
+    } catch {
+      skipped.push(file.name);
+      continue;
+    }
+    added.push(image.fileName);
+  }
+  return { doc: { ...rest, ...(Object.keys(attachments).length ? { _attachments: attachments } : {}) }, added, skipped };
+};
+
+export const withImageAttachment = async (
+  doc: any, field: string, state: { retained: { name: string }[], added: { file: File }[] }, normalize?: ImageNormalizer
+): Promise<any> => {
+  const { [field]: currentName, ...rest } = doc;
+  const kept = !state.added.length && state.retained.some(attachment => attachment.name === currentName);
+  const removed = kept || !currentName ? [] : [ { name: currentName } ];
+  const result = await withImageAttachments(rest, { removed, added: state.added.slice(0, 1) }, normalize);
+  if (result.skipped.length) {
+    throw new Error(UNPROCESSABLE_IMAGE_ERROR);
+  }
+  const name = result.added[0] ?? (kept ? currentName : undefined);
+  return { ...result.doc, ...(name ? { [field]: name } : {}) };
+};
+
+// After a write with inlined attachments, keeps stubs on the doc so the next save doesn't send the data again
+export const attachmentStubs = (attachments?: Record<string, any>) => attachments && Object.fromEntries(
+  Object.entries(attachments).map(([ name, { data, ...attachment } ]) =>
+    [ name, data ? { ...attachment, length: Math.floor(data.replace(/=+$/, '').length * 3 / 4), stub: true } : attachment ]
+  )
+);
+
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
+
+export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
 export const dedupeShelfReduce = (ids, id) => {
   if (ids.indexOf(id) > -1) {
@@ -176,14 +263,6 @@ export const addToArray = (startArray = [], addArray = []) => startArray.concat(
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
 
-/*
- * styleVariables was previously imported from SCSS files as an ECMA module
- * Angular as of v14 throws an error when trying to do this
- * There might be a way to rework this, but with the low frequency of change
- * working on other priorities for now.
- * See https://github.com/angular/angular-cli/issues/23273
- */
-
 export const styleVariables: any = {
   primary: '#2196f3',
   primaryLighter: '#bbdefb',
@@ -191,8 +270,16 @@ export const styleVariables: any = {
   accent: '#ffc107',
   accentLighter: '#ffecb3',
   accentText: 'rgba(0, 0, 0, 0.87)',
+  greenLighter: '#c8e6c9',
   grey: '#bdbdbd',
-  greyText: 'rgba(0, 0, 0, 0.54)'
+  greyText: 'rgba(0, 0, 0, 0.54)',
+  white: '#ffffff',
+  planetGreen: '#4caf50',
+  warn: '#f44336',
+  chartPalette: [
+    '#2196f3', '#ffc107', '#43a047', '#e53935', '#ba68c8',
+    '#00acc1', '#fb8c00', '#9575cd', '#7cb342', '#bdbdbd'
+  ]
 };;
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
@@ -265,25 +352,6 @@ export const ageFromUser = (
   return age === undefined || age === null || age === '' ? null : age;
 };
 
-export const genderBucket = (gender?: unknown) => {
-  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
-  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
-};
-
-export const localizedGender = (gender?: unknown, fallback = '') => {
-  if (typeof gender !== 'string' || !gender) {
-    return fallback;
-  }
-  switch (gender.toLowerCase()) {
-    case 'male':
-      return $localize`Male`;
-    case 'female':
-      return $localize`Female`;
-    default:
-      return toProperCase(gender);
-  }
-};
-
 export const formatStringDate = (date: string) =>
   new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date));
 
@@ -301,6 +369,54 @@ export const deepEqual = (item1: any, item2: any) => {
     return Object.keys({ ...item1, ...item2 }).every((key) => deepEqual(item1[key], item2[key])) ;
   }
   return item1 === item2;
+};
+
+const isNullish = (value) => value === undefined || value === null;
+
+/*
+ * Deeply patches an object with the 'patchObject'.
+ * Assumes objects have roughly the same structure, including arrays.
+ * i.e. If old object includes an array of objects (or mixed) it will assume
+ * patch object has a similar array of objects structure.
+ * When property is an array in old object and not in patch object,
+ * ignores patch and maintains old object structure.
+ */
+export const deepObjectPatch = (oldObject: any, patchObject: any): any => {
+  const newObject: any = {};
+  const deepArrayPatch = (oldArray: any[], patchArray: any[]) => (
+    Array.isArray(patchArray) ? [
+      ...oldArray.map((oldValue: any, index: number): any[] => (
+        Array.isArray(oldValue) ?
+          deepArrayPatch(oldValue, patchArray[index]) :
+          typeof oldValue === 'object' ?
+            deepObjectPatch(oldValue, patchArray[index]) :
+            patchArray[index]
+      )),
+      ...patchArray.slice(oldArray.length)
+    ] : oldArray);
+  const patchObjectProp = (prop: string) => {
+    if (isNullish(patchObject) || isNullish(patchObject[prop])) {
+      return oldObject[prop];
+    }
+    if (Array.isArray(oldObject[prop])) {
+      return deepArrayPatch(oldObject[prop], patchObject[prop]);
+    }
+    if (typeof oldObject[prop] === 'object') {
+      return deepObjectPatch(oldObject[prop], patchObject[prop]);
+    }
+    return patchObject[prop];
+  };
+  for (const prop in oldObject) {
+    if (Object.prototype.hasOwnProperty.call(oldObject, prop)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
+  for (const prop in patchObject) {
+    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && (newObject[prop] === undefined || newObject[prop] === null)) {
+      newObject[prop] = patchObjectProp(prop);
+    }
+  }
+  return newObject;
 };
 
 export const fullName = (user: any) =>
@@ -456,7 +572,7 @@ export const normalizeMarkdownWhitespace = (content: string) => {
   return normalizedLines.join('\n').replace(/^\n+|\n+$/g, '');
 };
 
-export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
+export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif|webp)(?:\?.*?)?)\)/gi;
 
 // Content must be normalized first so pathological whitespace cannot inflate preview length.
 export const getMarkdownPreviewText = (content: string) => {

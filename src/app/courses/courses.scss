@@ -1,7 +1,18 @@
 @use '../mixins' as m;
+@use '../variables' as v;
 
 planet-courses {
   @include m.search-toolbar;
+
+  &.embedded {
+    display: block;
+    height: 100%;
+    min-height: v.$view-container-min-height;
+
+    > .primary-link-hover {
+      height: 100%;
+    }
+  }
 
   .column {
     display: flex;

@@ -18,8 +18,21 @@
 
 @mixin table-column-fixed($basis) {
   flex: 0 1 $basis;
-  flex-shrink: var(--table-column-flex-shrink, 1);
   min-width: 0;
+}
+
+// Out of sight but still read by screen readers, as CDK's .cdk-visually-hidden.
+@mixin visually-hidden {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 // $list is the child list element, e.g. 'planet-resources-search-list'.
@@ -95,6 +108,13 @@
   }
 }
 
+@mixin unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: v.$primary;
+}
+
 @mixin search-toolbar {
   .search-bar {
     height: v.$search-filters-height;
@@ -127,8 +147,43 @@
       }
     }
   }
+}
 
-  .view-full-height.view-with-search {
-    height: calc(#{v.$view-container-height} - #{v.$search-filters-height});
+@mixin label-chip {
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: v.$light-grey;
+  font-weight: 600;
+}
+
+@mixin cover-thumbnail($size) {
+  width: $size;
+  height: $size;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+@mixin markdown-alignment-and-tasks {
+  .markdown-align-left {
+    text-align: left;
+  }
+
+  .markdown-align-center {
+    text-align: center;
+  }
+
+  .markdown-align-right {
+    text-align: right;
+  }
+
+  .task-list-item {
+    list-style-type: none;
+  }
+
+  .markdown-task-checkbox {
+    display: inline-block;
+    margin: 0 0.35em 0.25em -1.6em;
+    color: v.$primary;
+    vertical-align: middle;
   }
 }

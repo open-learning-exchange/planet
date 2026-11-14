@@ -1,20 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterLink, RouterStateSnapshot } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject, defer } from 'rxjs';
-import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
-import { CoursesService } from '../courses.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { StateService } from '../../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { trackByIndex } from '../../shared/table-helpers';
+import { Observable, Subject, defer } from 'rxjs';
+import { takeUntil, switchMap, take, filter, map, finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
-import { CoursesViewDetailComponent } from './courses-view-detail.component';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
@@ -22,12 +14,25 @@ import {
   MatExpansionPanelDescription,
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
-import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
-import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { trackByIndex } from '@shared/tables/table.helpers';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { RatingService } from '@shared/ratings/rating.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+
+import { CoursesService } from '../courses.service';
+import { blockingStepIndex, stepHasExam, stepLocked, stepProgress } from '../courses.utils';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
+import { CoursesViewDetailComponent } from './courses-view-detail.component';
+import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
+import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -63,7 +68,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
-  progress = [ { stepNum: 1 } ];
+  progress: any[] = [ { stepNum: 1 } ];
   fullView = 'on';
   currentView: string;
   courseId: string;
@@ -72,7 +77,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  deviceType: DeviceType;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
@@ -84,12 +90,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private dialog: MatDialog
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-    });
-  }
+    private dialog: MatDialog,
+    private dialogsLoadingService: DialogsLoadingService,
+    private ratingService: RatingService
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -101,7 +105,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
           ...step,
           resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
-          progress: progress.find((p: any) => p.stepNum === (index + 1))
+          progress: stepProgress(progress, index + 1)
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
@@ -119,6 +123,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     ).subscribe(({ tags }) => this.courseDetail = { ...this.courseDetail, tags });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
+      this.ratingService.resetRatingInteraction(this.courseId);
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
     });
   }
@@ -131,9 +136,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   setStepButtonStatus(step, stepNum, stepClickedNum = stepNum, getPrevious = true) {
     if (stepNum > 0 && getPrevious) {
       const previousStep = this.courseDetail.steps[stepNum - 1];
-      this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, previousStep.exam === undefined);
+      this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, !stepHasExam(previousStep));
     }
-    if (step.exam && step.submission === undefined) {
+    if (stepHasExam(step) && step.submission === undefined) {
       this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
         this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
         this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
@@ -161,13 +166,22 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
     const stepClicked = this.courseDetail.steps[stepClickedNum];
-    const isTestTaken = attempts > 0 || (stepNum === 0 && step.exam === undefined);
+    // A saved pass counts with no attempt here (another app saved it); a content step's visit pass doesn't
+    const hasPassed = stepHasExam(step) && (this.progress || []).some(p => p.stepNum === stepNum + 1 && p.passed);
+    const isTestTaken = attempts > 0 || hasPassed || (stepNum === 0 && !stepHasExam(step));
     stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
   }
 
+  isStepLocked(stepIndex: number): boolean {
+    return !this.canManage && !this.parent && stepLocked(this.courseDetail.steps, this.progress, stepIndex);
+  }
+
   viewStep() {
-    const latestStep = this.progress.reduce((stepNum, prog) => prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
-    this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
+    const latestReached = (this.progress || []).reduce((stepNum: number, prog: any) =>
+      prog.stepNum > stepNum ? prog.stepNum : stepNum, 1);
+    const blocking = this.canManage || this.parent ? -1 : blockingStepIndex(this.courseDetail.steps, this.progress);
+    const targetStep = blocking > -1 ? Math.min(latestReached, blocking + 1) : latestReached;
+    this.router.navigate([ './step/' + targetStep ], { relativeTo: this.route });
   }
 
   goToSurvey(stepNum, preview = false) {
@@ -231,8 +245,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
-      this.isUserEnrolled = !this.isUserEnrolled;
+    this.dialogsLoadingService.start();
+    this.coursesService.courseResignAdmission(courseId, type, courseTitle).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
+      this.isUserEnrolled = true;
     }, (error) => ((error)));
   }
 
@@ -255,6 +272,25 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  canDeactivate(
+    currentRoute?: ActivatedRouteSnapshot,
+    currentState?: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    if (this.parent || this.canManage || this.isOwnRoute(nextState?.url)) {
+      return true;
+    }
+    return this.ratingService.promptRating(this.courseDetail, 'course');
+  }
+
+  // By segments because step links are absolute even under myCourses, and progress/enrolled are siblings of view
+  private isOwnRoute(url = '') {
+    const segments = this.router.parseUrl(url).root.children.primary?.segments.map(({ path }) => path) || [];
+    return segments.some((segment, index) =>
+      [ 'view', 'progress', 'enrolled' ].includes(segment) && segments[index + 1] === this.courseDetail._id
+    );
   }
 
 }

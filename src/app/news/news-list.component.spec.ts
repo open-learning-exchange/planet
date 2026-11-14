@@ -1,5 +1,8 @@
 import { Subject, of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+
 import { NewsListComponent } from './news-list.component';
 
 const createComponent = (items: any[] = []) => {
@@ -19,8 +22,44 @@ const createComponent = (items: any[] = []) => {
   component.pageSize = 10;
   component.pageEnd = { root: 10 };
   component.viewChange = { emit: vi.fn() };
+  component.unreadReplyIds = new Set<string>();
+  component.userService = { notificationStateChange$: new Subject<void>(), userChange$: new Subject<void>() };
+  component.notificationsService = {
+    getUnreadReplyIds$: vi.fn().mockReturnValue(of([])),
+    markReplyNotificationsAsRead: vi.fn()
+  };
+  component.newsService = { postSharedWithCommunity: () => true, requestNews: vi.fn() };
+  component.dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
   return component;
 };
+
+afterEach(() => vi.useRealTimers());
+
+describe('NewsListComponent reply form', () => {
+  it('checks the session and opens one form for replies requested while the check is pending', () => {
+    const component = createComponent();
+    const auth = new Subject<boolean>();
+    const closed = new Subject<void>();
+    const openDialogsForm = vi.fn(() => ({ afterClosed: () => closed }));
+    const checkAuthenticationStatus = vi.fn().mockReturnValueOnce(auth).mockReturnValue(of(true));
+    component.authGuard = { checkAuthenticationStatus };
+    component.dialogGuard = new DialogGuardService({ start: vi.fn(), stop: vi.fn() } as any);
+    component.dialogsFormService = { openDialogsForm };
+    const reply = { title: 'Reply', placeholder: 'Your message', news: { replyTo: 'root', viewIn: [] } };
+
+    component.openUpdateDialog(reply);
+    component.openUpdateDialog(reply);
+    auth.next(true);
+
+    expect(checkAuthenticationStatus).toHaveBeenCalledOnce();
+    expect(openDialogsForm).toHaveBeenCalledOnce();
+
+    closed.next();
+    component.openUpdateDialog(reply);
+
+    expect(openDialogsForm).toHaveBeenCalledTimes(2);
+  });
+});
 
 describe('NewsListComponent labels', () => {
   it('handles label removal from a legacy post without a labels array', () => {
@@ -33,6 +72,20 @@ describe('NewsListComponent labels', () => {
     expect(component.newsService.postNews).toHaveBeenCalledWith(
       { ...news, labels: [] },
       'Label removed'
+    );
+  });
+
+  it('stores a colored custom label by name only', () => {
+    const component = createComponent();
+    component.customLabels = [ { name: 'Meeting', color: '#e1bee7' } ];
+    component.newsService = { postNews: vi.fn().mockReturnValue(of({})) };
+    const news = { _id: 'news-1', labels: [ 'legacy-label' ] };
+
+    component.changeLabels({ news, label: 'Meeting', action: 'add' });
+
+    expect(component.newsService.postNews).toHaveBeenCalledWith(
+      { ...news, labels: [ 'legacy-label', 'Meeting' ] },
+      'Label added'
     );
   });
 
@@ -153,6 +206,15 @@ describe('NewsListComponent filtering', () => {
     expect(component.filteredItems.map(item => item._id)).toEqual([ 'root-1', 'reply-1', 'reply-2' ]);
   });
 
+  it('does not hang on a reply that points back at itself', () => {
+    const component = createComponent([ ...thread(), { _id: 'loop', doc: { message: 'Looping reply', replyTo: 'loop' } } ]);
+    component.messageSearch = 'sprint';
+
+    component.applyFilters();
+
+    expect(component.filteredItems.map(item => item._id)).toEqual([ 'root-1', 'reply-1' ]);
+  });
+
   it('restores the feed as soon as the search is cleared', () => {
     const component = createComponent(thread());
     component.messageSearch = 'sprint';
@@ -184,7 +246,7 @@ describe('NewsListComponent filtering', () => {
   });
 
   it('marks only the newest visible root as the latest message', () => {
-    const items = thread();
+    const items: any[] = thread();
     const component = createComponent(items);
     component.messageSearch = 'lunch';
 
@@ -214,11 +276,23 @@ describe('NewsListComponent filtering', () => {
     expect(component.router.navigate).toHaveBeenCalledWith([ '' ]);
   });
 
+  it('clears the filters when a link opens a thread they hide', () => {
+    const component = createComponent(thread());
+    component.messageSearch = 'lunch';
+    component.applyFilters();
+
+    component.filterNewsToShow('root-1');
+
+    expect(component.messageSearch).toBe('');
+    expect(component.replyViewing._id).toBe('root-1');
+    expect(component.displayedItems.map(item => item._id)).toEqual([ 'reply-1' ]);
+  });
+
   it('drops a keystroke still in flight when the list switches to another feed', () => {
     vi.useFakeTimers();
     const component = createComponent(thread());
     component.router = { events: new Subject() };
-    component.route = { firstChild: null };
+    component.route = { firstChild: null, snapshot: { paramMap: { get: () => null } } };
     component.ngOnInit();
 
     component.messageSearch$.next('sprint');
@@ -227,7 +301,6 @@ describe('NewsListComponent filtering', () => {
 
     expect(component.messageSearch).toBe('');
     expect(component.filteredItems.length).toBe(3);
-    vi.useRealTimers();
   });
 
   it('drops the filters when the list switches to another feed', () => {
@@ -241,5 +314,137 @@ describe('NewsListComponent filtering', () => {
     expect(component.messageSearch).toBe('');
     expect(component.selectedLabel).toBe('');
     expect(component.filteredItems.length).toBe(3);
+  });
+
+  it('keeps the current page when only the custom labels change', () => {
+    const component = createComponent(thread());
+    component.pageIndex = 2;
+
+    component.ngOnChanges({ customLabels: { firstChange: false } as any });
+
+    expect(component.pageIndex).toBe(2);
+  });
+});
+
+describe('NewsListComponent thread navigation', () => {
+  it('returns to the page holding the thread when leaving it', () => {
+    vi.useFakeTimers();
+    const items = Array.from({ length: 12 }, (_, index) => ({ _id: `root-${index}`, doc: { message: `Post ${index}` } }));
+    const component = createComponent(items);
+    component.applyFilters();
+
+    component.filterNewsToShow('root-11');
+    component.filterNewsToShow('root');
+
+    expect(component.pageIndex).toBe(1);
+    expect(component.displayedItems.map(item => item._id)).toEqual([ 'root-10', 'root-11' ]);
+  });
+
+});
+
+describe('NewsListComponent voice route', () => {
+  it('opens the routed voice once the items arrive', () => {
+    vi.useFakeTimers();
+    const component = createComponent([]);
+    component.route = { firstChild: { snapshot: { paramMap: { get: () => 'root-1' } } } };
+    component.initNews();
+
+    component.items = [ { _id: 'root-1', doc: { message: 'Weekly sprint planning' } } ];
+    component.ngOnChanges({ items: { previousValue: [], currentValue: component.items, firstChange: false } });
+
+    expect(component.replyViewing._id).toBe('root-1');
+  });
+
+  it('opens the voice named in a team page link', () => {
+    vi.useFakeTimers();
+    const component = createComponent([ { _id: 'root-1', doc: { message: 'Weekly sprint planning' } } ]);
+    component.route = { firstChild: null, snapshot: { paramMap: { get: key => key === 'voice' ? 'root-1' : null } } };
+
+    component.initNews();
+
+    expect(component.replyViewing._id).toBe('root-1');
+  });
+});
+
+describe('NewsListComponent unread replies', () => {
+  const thread = () => ([
+    { _id: 'root-1', doc: { message: 'Weekly sprint planning' } },
+    { _id: 'reply-1', doc: { message: 'I will bring the budget notes', replyTo: 'root-1' } }
+  ]);
+
+  it('marks reply notifications read when their thread opens', () => {
+    const component = createComponent(thread());
+    component.unreadReplyIds = new Set([ 'root-1' ]);
+
+    component.filterNewsToShow('root-1');
+
+    expect(component.notificationsService.markReplyNotificationsAsRead).toHaveBeenCalledWith('root-1');
+    expect(component.newsService.requestNews).toHaveBeenCalled();
+    expect(component.unreadReplyIds.has('root-1')).toBe(false);
+  });
+
+  it('marks an open thread read on the first unread load only', () => {
+    vi.useFakeTimers();
+    const unreadReplyIds$ = new Subject<string[]>();
+    const component = createComponent(thread());
+    component.notificationsService.getUnreadReplyIds$ = () => unreadReplyIds$;
+    component.router = { events: new Subject() };
+    component.route = { firstChild: { snapshot: { paramMap: { get: () => 'root-1' } } } };
+
+    component.ngOnInit();
+    unreadReplyIds$.next([ 'root-1', 'root-2' ]);
+    unreadReplyIds$.next([ 'root-1', 'root-2' ]);
+
+    expect(component.replyViewing._id).toBe('root-1');
+    expect(component.notificationsService.markReplyNotificationsAsRead).toHaveBeenCalledTimes(1);
+    expect(component.notificationsService.markReplyNotificationsAsRead).toHaveBeenCalledWith('root-1');
+    expect([ ...component.unreadReplyIds ]).toEqual([ 'root-1', 'root-2' ]);
+    component.ngOnDestroy();
+  });
+});
+
+describe('NewsListComponent reply notifications', () => {
+  const setup = (url: string, useReplyRoutes: boolean) => {
+    const posted$ = new Subject<void>();
+    const component = createComponent([ { _id: 'news-1', doc: { _id: 'news-1', user: { name: 'alex' } } } ]);
+    component.useReplyRoutes = useReplyRoutes;
+    component.router = { url };
+    component.newsService = { postNews: () => posted$ };
+    component.dialogsLoadingService = { stop: vi.fn() };
+    component.notificationsService.sendReplyNotification = vi.fn().mockReturnValue(of({}));
+    const dialogRef = { close: vi.fn() };
+    return { component, posted$, dialogRef, sendReplyNotification: component.notificationsService.sendReplyNotification };
+  };
+
+  it('notifies the author only after the reply is posted', () => {
+    const { component, posted$, dialogRef, sendReplyNotification } = setup('/', true);
+
+    component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' }, dialogRef);
+    expect(sendReplyNotification).not.toHaveBeenCalled();
+    expect(dialogRef.close).not.toHaveBeenCalled();
+    posted$.next();
+
+    expect(dialogRef.close).toHaveBeenCalledOnce();
+    expect(sendReplyNotification).toHaveBeenCalledWith(expect.objectContaining({ _id: 'news-1' }), '/voices/news-1', undefined);
+  });
+
+  it('links team reply notifications to the replied-to message without the page tab parameters', () => {
+    const { component, posted$, dialogRef, sendReplyNotification } = setup('/teams/view/team-1;activeTab=taskTab', false);
+
+    component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' }, dialogRef);
+    posted$.next();
+
+    expect(sendReplyNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ _id: 'news-1' }), '/teams/view/team-1', { voice: 'news-1' }
+    );
+  });
+
+  it('does not notify when an existing reply is edited', () => {
+    const { component, posted$, dialogRef, sendReplyNotification } = setup('/', true);
+
+    component.postNews({ _id: 'reply-1', replyTo: 'news-1' }, { message: 'Edited' }, dialogRef);
+    posted$.next();
+
+    expect(sendReplyNotification).not.toHaveBeenCalled();
   });
 });

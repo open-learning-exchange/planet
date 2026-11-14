@@ -1,52 +1,44 @@
-<mat-table #table class="responsive-table min-width-table" [dataSource]="communities" matSort [matSortDisableClear]="true">
+<mat-table #table class="responsive-table min-width-table card-mode" [dataSource]="communities" matSort [matSortDisableClear]="true">
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.nameDoc?.name || element.doc.name}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-title">{{element.nameDoc?.name || element.doc.name}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="code">
     <mat-header-cell *matHeaderCellDef mat-sort-header="code" i18n>Code</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.doc.code}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Code</span>{{element.doc.code}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="localDomain">
     <mat-header-cell *matHeaderCellDef mat-sort-header="localDomain" i18n>URL</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.doc.localDomain}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>URL</span>{{element.doc.localDomain}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="createdDate">
     <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Created Date</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.doc.createdDate | date: 'mediumDate'}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Created Date</span>{{element.doc.createdDate | date: 'mediumDate'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
-    <mat-cell *matCellDef="let element">
-      <div class="table-action-buttons" [class.horizontal-align]="isMobile">
-        <button mat-raised-button color="primary" (click)="view(element.doc)" i18n-matTooltip matTooltip="View" [matTooltipDisabled]="!isMobile">
+    <mat-cell *matCellDef="let element" class="card-actions">
+      <div class="table-action-buttons">
+        <button mat-raised-button color="primary" (click)="view(element.doc)">
           <mat-icon>visibility</mat-icon>
-          @if (!isMobile) {
-            <label i18n>View</label>
-          }
+          <label i18n>View</label>
         </button>
         @if (element.doc.registrationRequest === 'accepted') {
           @if (element.doc.planetType === 'nation') {
-            <button mat-raised-button color="primary" (click)="getChildPlanet(element.doc.localDomain)" i18n-matTooltip matTooltip="Communities" [matTooltipDisabled]="!isMobile">
+            <button mat-raised-button color="primary" (click)="getChildPlanet(element.doc.localDomain)">
               <mat-icon>groups</mat-icon>
-              @if (!isMobile) {
-                <label i18n>Communities</label>
-              }
+              <label i18n>Communities</label>
             </button>
           }
           @if ((hub==='sandbox' && hubs.length > 0) || hubs.length > 1) {
-            <button mat-raised-button color="primary" [matMenuTriggerFor]="hubMenu"
-              i18n-matTooltip matTooltip="{ hub, select, sandbox {Add to { planetType, select, nation {Network} center {Region} }} other {Move { planetType, select, nation {Networks} center {Regions} }} }"
-              [matTooltipDisabled]="!isMobile">
+            <button mat-raised-button color="primary" [matMenuTriggerFor]="hubMenu">
               <mat-icon>hub</mat-icon>
-              @if (!isMobile) {
-                <label i18n>
-                  { hub, select,
-                    sandbox {Add to { planetType, select, nation {Network} center {Region} }}
-                    other {Move { planetType, select, nation {Networks} center {Regions} }}
-                  }
-                </label>
-              }
+              <label i18n>
+                { hub, select,
+                  sandbox {Add to { planetType, select, nation {Network} center {Region} }}
+                  other {Move { planetType, select, nation {Networks} center {Regions} }}
+                }
+              </label>
             </button>
           }
           <mat-menu #hubMenu="matMenu">
@@ -59,26 +51,20 @@
               <button (click)="removeHubClick(element.doc.code)" mat-menu-item i18n>Sandbox</button>
             }
           </mat-menu>
-          <button mat-raised-button color="primary" (click)="openEditChildNameDialog(element)" i18n-matTooltip matTooltip="Edit Name" [matTooltipDisabled]="!isMobile">
+          <button mat-raised-button color="primary" (click)="openEditChildNameDialog(element)">
             <mat-icon>edit</mat-icon>
-            @if (!isMobile) {
-              <label i18n>Edit Name</label>
-            }
+            <label i18n>Edit Name</label>
           </button>
         }
         @if (element.doc.registrationRequest === 'pending') {
-          <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n-matTooltip matTooltip="Accept" [matTooltipDisabled]="!isMobile">
+          <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')">
             <mat-icon>link</mat-icon>
-            @if (!isMobile) {
-              <label i18n>Accept</label>
-            }
+            <label i18n>Accept</label>
           </button>
         }
-        <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')" i18n-matTooltip matTooltip="Delete" [matTooltipDisabled]="!isMobile">
+        <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')">
           <mat-icon>delete</mat-icon>
-          @if (!isMobile) {
-            <label i18n>Delete</label>
-          }
+          <label i18n>Delete</label>
         </button>
       </div>
     </mat-cell>

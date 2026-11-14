@@ -3,6 +3,7 @@
 :host {
 
   .view-container {
+    container-type: size;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
     grid-template-rows: 1fr;
@@ -71,6 +72,11 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+
+    .step-nav-action {
+      display: inline-flex;
+      align-items: center;
+    }
   }
 
 }

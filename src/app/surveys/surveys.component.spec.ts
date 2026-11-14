@@ -1,9 +1,11 @@
+import { signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { SurveysComponent } from './surveys.component';
-import { DeviceType } from '../shared/device-info.service';
 
 describe('SurveysComponent', () => {
   let couchService: any;
@@ -15,13 +17,16 @@ describe('SurveysComponent', () => {
   let stateService: any;
   let dialogsFormService: any;
   let linkCopyService: any;
+  let dialog: any;
+  let examsService: any;
+  let dialogGuard: any;
   let component: SurveysComponent;
 
   const createComponent = () => new SurveysComponent(
     couchService,
     submissionsService,
     planetMessageService,
-    {} as any,
+    dialog,
     router,
     route,
     stateService,
@@ -29,10 +34,11 @@ describe('SurveysComponent', () => {
     { doesUserHaveRole: vi.fn().mockReturnValue(false), get: vi.fn() } as any,
     dialogsFormService,
     { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
-    {} as any,
+    examsService,
     new FormBuilder().nonNullable,
-    { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any,
-    linkCopyService
+    { isMobile: signal(false) } as any,
+    linkCopyService,
+    dialogGuard
   );
 
   beforeEach(() => {
@@ -43,7 +49,8 @@ describe('SurveysComponent', () => {
     };
     submissionsService = {};
     planetMessageService = {
-      showAlert: vi.fn()
+      showAlert: vi.fn(),
+      showMessage: vi.fn()
     };
     dialogsLoadingService = {
       start: vi.fn(),
@@ -59,10 +66,12 @@ describe('SurveysComponent', () => {
     };
     stateService = { configuration: { name: 'Local Planet' } };
     dialogsFormService = {
-      openDialogsForm: vi.fn(),
-      closeDialogsForm: vi.fn()
+      openDialogsForm: vi.fn()
     };
     linkCopyService = { copyLink: vi.fn() };
+    dialog = {};
+    examsService = {};
+    dialogGuard = {};
     component = createComponent();
   });
 
@@ -162,6 +171,15 @@ describe('SurveysComponent', () => {
     expect(component.surveys.data).toEqual([ archivedSurvey ]);
   });
 
+  it('clears the selection when switching views', () => {
+    component.selection.select('survey-1');
+    component.currentFilter.viewMode = 'adopt';
+
+    component.toggleSurveysView();
+
+    expect(component.selection.isEmpty()).toBe(true);
+  });
+
   it('explains question-dependent actions when a survey has no questions', () => {
     const survey = { _id: 'survey-1', questions: [], taken: 1 };
 
@@ -250,5 +268,38 @@ describe('SurveysComponent', () => {
     expect(dialogsFormService.openDialogsForm).toHaveBeenCalled();
     const fields = dialogsFormService.openDialogsForm.mock.calls[0][1];
     expect(fields.find(field => field.name === 'includeCharts').disabled).toBe(true);
+  });
+
+  it('ends the page overlay once, though sends reload the list', () => {
+    couchService.findAll = vi.fn().mockReturnValue(of([]));
+    couchService.get = vi.fn().mockReturnValue(of({ rows: [] }));
+    (component as any).isDialogLoading = true;
+
+    (component as any).loadSurveys();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
+
+    (component as any).loadSurveys();
+    component.ngOnDestroy();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves the send to teams overlay to the dialog that started it and ends it once', () => {
+    let okClick: (selection: any[]) => void;
+    dialog = { open: vi.fn((_, config) => {
+      okClick = config.data.okClick;
+      return { close: vi.fn() };
+    }) };
+    examsService = { createExamDocument: vi.fn().mockReturnValue(of({})) };
+    dialogGuard = { open: (_, openDialog) => openDialog() };
+    component = createComponent();
+    couchService.findAll = vi.fn().mockReturnValue(of([]));
+    couchService.get = vi.fn().mockReturnValue(of({ rows: [] }));
+
+    component.openSendSurveyToTeamsDialog({ _id: 'survey-1', name: 'Survey 1' });
+    okClick([ { doc: { _id: 'team-1', name: 'Team 1' } } ]);
+
+    expect(dialog.open.mock.calls[0][1].data.noSpinner).toBeFalsy();
+    expect(dialogsLoadingService.start).not.toHaveBeenCalled();
+    expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
   });
 });

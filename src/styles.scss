@@ -1,6 +1,7 @@
 @use 'app/variables' as v;
 @use 'app/mixins' as m;
 @use 'planet-mat-theme';
+@use '@angular/cdk';
 
 :root {
   --planet-vh: 100vh;
@@ -65,6 +66,10 @@ body {
 
   .bg-grey {
     background-color: v.$grey;
+  }
+
+  .bg-green-lighter {
+    background-color: v.$planet-green-lighter;
   }
 
   .display-flex {
@@ -298,6 +303,17 @@ body {
       grid-area: total;
     }
 
+    .stats-legend {
+      font-size: 0.75rem;
+    }
+
+    .stats-legend-swatch {
+      display: inline-block;
+      width: 0.6rem;
+      height: 0.6rem;
+      margin-right: 0.25rem;
+    }
+
     .avg-rating {
       grid-area: rating;
       align-self: start;
@@ -416,7 +432,6 @@ body {
   }
 
   .view-container.view-full-height {
-    height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
 
@@ -425,8 +440,7 @@ body {
     }
   }
 
-  // Keep this path bounded so nested dialog and tab views retain their own sizing.
-  mat-sidenav-content > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height) {
+  :is(mat-sidenav-content, .mat-mdc-dialog-content) > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height, > * > .space-container > .view-full-height) {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -453,11 +467,16 @@ body {
     }
   }
 
+  .mat-mdc-dialog-content:has(> * > .view-full-height, > * > .space-container > .view-full-height, > * > .space-container > * > .view-full-height, > planet-resources-viewer :is(iframe, .csv-container)) {
+    height: 100vh;
+  }
+
   .view-container.view-full-height.view-table {
     padding: 0;
     position: relative;
     display: grid;
     grid-template-rows: 1fr auto;
+    grid-template-columns: minmax(0, 1fr);
     mat-table {
       overflow-y: auto;
       mat-header-row {
@@ -477,29 +496,22 @@ body {
     margin: 0 8px;
   }
 
+  // Wide tables scroll inside themselves, so the paginator beside them stays on screen.
   @media (max-width: v.$screen-md) {
-    .view-container.view-table {
+    .view-container.view-table,
+    :is(mat-table.responsive-table, .responsive-table mat-table) {
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
   }
 
   @media (max-width: v.$screen-sm) {
-    mat-table.responsive-table,
-    table.mat-mdc-table.responsive-table {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+    :is(mat-table.responsive-table, .responsive-table mat-table) > :is(.mat-mdc-header-row, .mat-mdc-row) {
       min-width: var(--responsive-table-min-width, 800px);
     }
 
-    .responsive-table:not(mat-table):not(table) {
+    table.mat-mdc-table.responsive-table {
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-
-      mat-table,
-      table.mat-mdc-table {
-        min-width: var(--responsive-table-min-width, 800px);
-      }
+      min-width: var(--responsive-table-min-width, 800px);
     }
   }
 
@@ -518,34 +530,11 @@ body {
     width: max-content;
     max-width: 100%;
 
-    &.horizontal-align {
-      justify-items: center;
-    }
-
     button[mat-raised-button] {
       width: 100%;
       text-align: center;
       padding: 8px 12px;
       white-space: nowrap;
-    }
-
-    @media (max-width: v.$screen-md) {
-      gap: 0.75rem;
-    }
-
-    @media (max-width: v.$screen-sm) {
-      grid-template-columns: minmax(120px, max-content);
-
-      button[mat-raised-button] {
-        min-width: 0;
-        padding: 0 3px;
-      }
-    }
-
-    @media (max-width: v.$screen-xs) {
-      button[mat-raised-button] {
-        white-space: normal;
-      }
     }
   }
 
@@ -580,74 +569,186 @@ body {
       padding: 0;
     }
 
-    .created-label {
-      display: none;
-    }
-
     .rating-header {
       justify-content: center;
-    }
-
-    .preview-content {
-      height: 9rem;
-      overflow: hidden;
-    }
-
-    .preview-toggle {
-      text-align: center;
     }
 
     .expanded-row .content {
       max-height: none;
     }
+  }
 
-    @media (max-width: v.$screen-sm) {
-      .mat-mdc-header-row {
+  // On phones and tablets each row becomes a card in one centred column: role classes place the
+  // select box, image, title, menu and actions, every other cell is a labelled detail line, and the
+  // header keeps only sort controls.
+  mat-table.card-mode .card-label {
+    display: none;
+  }
+
+  @media (max-width: v.$screen-md) {
+    mat-table.card-mode {
+      --responsive-table-min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 640px);
+      grid-auto-rows: max-content;
+      align-content: start;
+      justify-content: center;
+
+      &.hidden {
         display: none;
+      }
+
+      .mat-mdc-header-row:not(:has(.mat-sort-header, .card-select)) {
+        @include m.visually-hidden;
+      }
+
+      .mat-mdc-header-row {
+        gap: 8px;
+        min-height: 0;
+        padding: 8px 16px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .mat-mdc-header-row > .mat-mdc-header-cell {
+        flex: 0 0 auto;
+        align-self: center;
+        min-width: 0;
+        max-width: none;
+        min-height: 32px;
+        padding: 0;
+        border: none;
+
+        &.mat-sort-header {
+          padding: 0 12px;
+          white-space: nowrap;
+          border: 1px solid v.$grey;
+          border-radius: 16px;
+        }
+
+        &:not(.mat-sort-header):not(.card-select) {
+          @include m.visually-hidden;
+        }
       }
 
       .mat-mdc-row {
-        flex-direction: column;
-        align-items: start;
-        padding: 8px 24px;
+        display: grid;
+        grid-template-columns: auto auto minmax(0, 1fr) auto;
+        align-items: center;
+        row-gap: 4px;
+        min-height: 0;
+        padding: 12px 16px;
+        border-bottom: 1px solid v.$medium-grey;
       }
 
-      .mat-column-select,
-      .mat-column-courseTitle,
-      .mat-column-title,
-      .mat-column-info,
-      .mat-column-createdDate,
-      .mat-column-rating {
-        flex: 1;
+      .mat-mdc-row > .mat-mdc-cell {
+        grid-column: 2 / -1;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: flex-start;
         min-width: 0;
-        max-width: 100%;
+        max-width: none;
+        min-height: 0;
+        padding: 0;
+        border: none;
+        text-align: start;
+
+        &:empty {
+          display: none;
+        }
+
+        &:not([class*='card-']) > .mat-icon {
+          align-self: center;
+          width: 18px;
+          height: 18px;
+          font-size: 18px;
+          margin-inline-end: 4px;
+        }
       }
 
-      .mat-column-info,
-      .mat-column-createdDate {
-        max-width: fit-content;
+      .preview-content {
+        height: auto;
+        max-height: 9rem;
       }
 
-      .mat-column-rating {
-        max-width: 9rem;
+      .mat-mdc-standard-chip {
+        --mat-chip-container-height: 24px;
       }
 
-      .created-label {
-        display: inline-block;
+      .mat-mdc-row > .card-select {
+        grid-column: 1;
+        grid-row: 1;
+        margin-inline-end: 8px;
       }
 
-      .table-selection-top {
-        display: none;
+      .mat-mdc-row > .card-image {
+        grid-column: 2;
+        grid-row: 1;
+        margin-inline-end: 12px;
       }
 
-      .rating-cell {
-        align-self: flex-end;
+      .mat-mdc-row > .card-title {
+        grid-column: 3;
+        grid-row: 1;
+        align-items: center;
+      }
+
+      .mat-mdc-row > .card-menu {
+        grid-column: 4;
+        grid-row: 1;
+        margin-inline-end: -8px;
+      }
+
+      .mat-mdc-row > .card-actions {
+        margin-inline-start: -8px;
+
+        &:has(> .table-action-buttons:empty) {
+          display: none;
+        }
+
+        .table-action-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0 4px;
+          width: auto;
+          padding: 0;
+        }
+
+        .mat-mdc-raised-button {
+          --mat-button-protected-container-color: transparent;
+          --mat-button-protected-disabled-container-color: transparent;
+          --mat-button-protected-container-elevation-shadow: none;
+          --mat-button-protected-hover-container-elevation-shadow: none;
+          --mat-button-protected-focus-container-elevation-shadow: none;
+          --mat-button-protected-pressed-container-elevation-shadow: none;
+          --mat-button-protected-label-text-color: #{v.$primary-dark};
+          --mat-button-protected-state-layer-color: #{v.$primary-dark};
+          --mat-button-protected-ripple-color: #{rgba(v.$primary-dark, 0.12)};
+          --mat-button-protected-horizontal-padding: 8px;
+          width: auto;
+          min-width: 0;
+          margin: 0;
+          padding: 0 8px;
+
+          &:hover {
+            background-color: transparent;
+          }
+
+          &[color="warn"] {
+            --mat-button-protected-label-text-color: #{v.$warn-dark};
+            --mat-button-protected-state-layer-color: #{v.$warn-dark};
+            --mat-button-protected-ripple-color: #{rgba(v.$warn-dark, 0.12)};
+          }
+        }
+      }
+
+      .card-label {
+        display: inline;
+        margin-inline-end: 8px;
+        color: v.$grey-text;
+        font-size: 12px;
       }
     }
-  }
-
-  .view-container.view-full-height.no-toolbar {
-    height: v.$view-container-height-no-toolbar;
   }
 
   .form-width-3 {
@@ -664,7 +765,7 @@ body {
   }
 
   mat-toolbar:first-child > mat-form-field,
-  mat-toolbar:first-child > planet-selector,
+  mat-toolbar:first-child > planet-courses-progress-planet-selector,
   .mat-toolbar form .mat-mdc-form-field,
   .input-icon {
     &.mat-form-field-type-no-underline {
@@ -694,6 +795,23 @@ body {
 
   .fit-screen-dialog .mat-mdc-dialog-content {
     max-height: calc(90vh - 96px);
+  }
+
+  .cdk-overlay-pane.mat-mdc-dialog-panel {
+    max-height: var(--planet-vh);
+  }
+
+  @media (max-width: v.$screen-sm) {
+    .cdk-overlay-pane.mat-mdc-dialog-panel {
+      min-width: 0 !important;
+      max-width: calc(100vw - 32px) !important;
+    }
+  }
+
+  @media (max-width: v.$screen-xs) {
+    .cdk-overlay-pane.mat-mdc-dialog-panel {
+      width: calc(100vw - 32px) !important;
+    }
   }
 
   mat-row mat-cell {
@@ -817,6 +935,13 @@ body {
     background-color: v.$light-grey;
   }
 
+  @each $key, $color in v.$label-colors {
+    .label-color-#{$key},
+    .mat-mdc-chip.label-color-#{$key} {
+      background-color: $color;
+    }
+  }
+
   .form-container {
     width: calc(#{v.$form-width-3} + 20px);
   }
@@ -881,11 +1006,12 @@ body {
 
   @media only screen and (max-width: v.$screen-sm) {
     .form-container {
-      width: calc(#{v.$form-width-1} + 20px);
+      width: 100%;
     }
 
     .form-spacing {
-      width: v.$form-width-1;
+      width: 100%;
+      grid-template-columns: 1fr;
     }
   }
 
@@ -1076,4 +1202,11 @@ body {
   ::-webkit-scrollbar-thumb:hover {
     opacity: 0.8;
   }
+}
+
+.navigation-blocker {
+  position: fixed;
+  inset: 0;
+  z-index: cdk.$overlay-container-z-index;
+  cursor: progress;
 }

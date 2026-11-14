@@ -1,30 +1,32 @@
 import {
   Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
-  ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
+  ChangeDetectorRef, HostBinding, computed, forwardRef, input, signal
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
-import { TeamsService } from '../teams/teams.service';
-import { CoursesService } from '../courses/courses.service';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatCard } from '@angular/material/card';
 import { NgClass, NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { UserService } from '@shared/auth/user.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { couchAttachmentUrl } from '@shared/utils';
+
+import { TeamsService } from '../teams/teams.service';
+import { CoursesService } from '../courses/courses.service';
 import { environment } from '../../environments/environment';
-import { couchAttachmentUrl } from '../shared/utils';
 
 @Component({
   selector: 'planet-dashboard-tile-title',
@@ -53,6 +55,7 @@ export class DashboardTileTitleComponent {
     forwardRef(() => DashboardTileTitleComponent),
     MatIcon,
     CdkDropList,
+    CdkScrollable,
     NgClass,
     AuthorizedRolesDirective,
     CdkDrag,
@@ -64,19 +67,9 @@ export class DashboardTileTitleComponent {
     TruncateTextPipe
   ]
 })
-export class DashboardTileComponent implements AfterViewChecked, OnInit {
-  private readonly destroyRef = inject(DestroyRef);
+export class DashboardTileComponent implements AfterViewChecked {
   @Input() cardTitle: string;
-  #cardType: string;
-  @Input() set cardType(value: string) {
-    this.#cardType = value;
-    if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
-      this.isExpanded = true;
-    }
-  }
-  get cardType(): string {
-    return this.#cardType;
-  }
+  readonly cardType = input<string>();
   @Input() color: string;
   @Input() itemData;
   @Input() link;
@@ -89,14 +82,15 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   tileLines = 2;
   courseTileLines = 2;
   recentlyDragged = false;
-  isExpanded = false;
-  deviceType: DeviceType;
+  readonly isAccordionMode = this.deviceInfoService.isMobile;
+  private readonly expandedByUser = signal<boolean | undefined>(undefined);
+  readonly isExpanded = computed(() => this.expandedByUser() ?? (this.cardType() === 'myLife' && this.isAccordionMode()));
 
   @HostBinding('class.accordion-collapsed') get isCollapsed() {
-    return !this.isExpanded;
+    return !this.isExpanded();
   }
   @HostBinding('class.accordion-expanded') get isExpandedClass() {
-    return this.isExpanded;
+    return this.isExpanded();
   }
   constructor(
     private planetMessageService: PlanetMessageService,
@@ -106,22 +100,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-        if (this.cardType === 'myLife' && (deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE)) {
-          this.isExpanded = true;
-        }
-      });
-  }
-
-  ngOnInit() {
-    if (this.cardType === 'myLife' && (this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE)) {
-      this.isExpanded = true;
-    }
-  }
+  ) {}
 
   ngAfterViewChecked() {
     const itemDiv = this.itemDiv?.nativeElement;
@@ -172,16 +151,12 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   toggleAccordion(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.isExpanded = !this.isExpanded;
-    if (this.isExpanded) {
+    this.expandedByUser.set(!this.isExpanded());
+    if (this.isExpanded()) {
       setTimeout(() => {
         this.cd.detectChanges();
       }, 100);
     }
-  }
-
-  get isAccordionMode(): boolean {
-    return this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
   }
 
   removeFromShelf(event, item: any) {
@@ -228,11 +203,9 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
         displayName: item.title,
         okClick: {
           request: defer(() => this.coursesService.courseResignAdmission(item._id, 'resign', item.title)),
-          onNext: () => {
-            this.dialogPrompt.close();
-            this.removeMessage(item);
-          },
-          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+          onNext: () => this.dialogPrompt.close(),
+          // CoursesService reports the failure
+          onError: () => {}
         }
       }
     });
@@ -298,13 +271,18 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   dashboardTextLines(item: any): number | 'none' {
-    if (this.isAccordionMode) {
+    if (this.isAccordionMode()) {
       return 'none';
     }
-    return this.cardType === 'myCourses' && item.coverFileName ? this.courseTileLines : this.tileLines;
+    return this.hasCover(item) ? this.courseTileLines : this.tileLines;
+  }
+
+  hasCover(item: any): boolean {
+    return (this.cardType() === 'myCourses' || this.cardType() === 'myTeams') && !!item.coverFileName;
   }
 
   coverImageUrl(item: any): string {
-    return couchAttachmentUrl(environment.couchAddress, 'courses', item._id, item.coverFileName);
+    const db = this.cardType() === 'myTeams' ? 'teams' : 'courses';
+    return couchAttachmentUrl(environment.couchAddress, db, item._id, item.coverFileName);
   }
 }

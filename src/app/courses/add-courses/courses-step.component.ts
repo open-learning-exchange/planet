@@ -4,30 +4,35 @@ import { NonNullableFormBuilder, FormControl, FormGroup, ReactiveFormsModule } f
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CoursesService } from '../courses.service';
-import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import {
   PlanetStepListComponent,
   PlanetStepListItemComponent,
   PlanetStepListNumberDirective,
   PlanetStepListFormDirective,
   PlanetStepListActionsDirective
-} from '../../shared/forms/planet-step-list.component';
-import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+} from '@shared/forms/planet-step-list.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { CoursesService } from '../courses.service';
+import { ResourcesPickerDialogComponent } from '../../resources/resources-picker-dialog.component';
 import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
-import { MatIcon } from '@angular/material/icon';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 interface CoursesStepForm {
   id: FormControl<string>;
   stepTitle: FormControl<string>;
   description: FormControl<string>;
+  passingRequired: FormControl<boolean>;
 }
 
 @Component({
@@ -40,7 +45,7 @@ interface CoursesStepForm {
     CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
     ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
     MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, TruncateTextPipe
+    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent, MatSlideToggle
   ]
 })
 export class CoursesStepComponent implements OnDestroy {
@@ -50,7 +55,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepEditorOpenChange = new EventEmitter<boolean>();
 
   stepForm: FormGroup<CoursesStepForm>;
-  dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
+  dialogRef: MatDialogRef<ResourcesPickerDialogComponent>;
   activeStep: any;
   activeStepIndex = -1;
   courseIcons = courseIcons;
@@ -75,10 +80,12 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepForm = this.fb.group<CoursesStepForm>({
       id: this.fb.control(''),
       stepTitle: this.fb.control(''),
-      description: this.fb.control('')
+      description: this.fb.control(''),
+      passingRequired: this.fb.control(false)
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
+      this.activeStep = this.steps[this.activeStepIndex];
       this.stepsChange.emit(this.steps);
     });
   }
@@ -92,13 +99,16 @@ export class CoursesStepComponent implements OnDestroy {
     this.activeStepIndex = index;
     if (index > -1) {
       this.activeStep = this.steps[index];
-      this.stepForm.patchValue(this.steps[index]);
+      this.stepForm.patchValue({
+        ...this.steps[index],
+        passingRequired: !!this.steps[index].passingRequired
+      });
     }
     this.stepEditorOpenChange.emit(index > -1);
   }
 
   addResources() {
-    this.dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+    this.dialogRef = this.dialog.open(ResourcesPickerDialogComponent, {
       width: '80vw',
       data: {
         okClick: this.resourcsDialogOkClick.bind(this),

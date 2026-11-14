@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 
 export interface MeetupAuthorizationContext {
   leaderOfTeamId?: string;
@@ -26,7 +28,8 @@ export class MeetupService {
     private dialog: MatDialog,
     private couchService: CouchService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private stateService: StateService
   ) {
     this.userService.shelfChange$
       .subscribe((shelf: any) => {
@@ -42,7 +45,10 @@ export class MeetupService {
     }
     const isCommunityLeader = user.roles?.includes('leader') === true;
     const isTeamLeader = !!context.leaderOfTeamId && meetup?.link?.teams === context.leaderOfTeamId;
-    return user.isUserAdmin || isCommunityLeader || isTeamLeader || user.name === meetup?.createdBy;
+    // Names are unique only within a planet, so a replicated meetup's creator must also be from this planet
+    const planetCode = this.stateService.configuration.code;
+    const isLocalCreator = !!planetCode && user.name === meetup.createdBy && meetup.sourcePlanet === planetCode;
+    return user.isUserAdmin || isCommunityLeader || isTeamLeader || isLocalCreator;
   }
 
   updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {

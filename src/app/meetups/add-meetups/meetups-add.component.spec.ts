@@ -143,6 +143,25 @@ describe('MeetupsAddComponent authorization', () => {
     consoleError.mockRestore();
   });
 
+  it('keeps the stored owner and placement when the form and route would rewrite them', () => {
+    const { component, couchService } = createComponent(admin);
+    const stored = {
+      _id: 'm1', _rev: '1-a', createdBy: 'ann', sourcePlanet: 'child',
+      link: { teams: 'team-1' }, sync: { type: 'sync', planetCode: 'child' }
+    };
+    component.setMeetupData(stored);
+
+    component.updateMeetup({
+      title: 'Changed meetup', startDate: null, endDate: null,
+      createdBy: 'admin', sourcePlanet: 'planet', link: {}, sync: undefined
+    });
+
+    expect(couchService.updateDocument).toHaveBeenCalledWith('meetups', expect.objectContaining({
+      title: 'Changed meetup', createdBy: 'ann', sourcePlanet: 'child',
+      link: { teams: 'team-1' }, sync: { type: 'sync', planetCode: 'child' }
+    }));
+  });
+
   it('rechecks authorization against the loaded meetup before persisting', () => {
     const { component, couchService, planetMessageService, setUser } = createComponent(creator);
     component.setMeetupData({ _id: 'm1', _rev: '1-a', createdBy: 'ann' });

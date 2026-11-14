@@ -40,6 +40,12 @@
     }
   }
 
+  .team-table-cover {
+    @include m.cover-thumbnail(36px);
+    vertical-align: middle;
+    margin-inline-end: 8px;
+  }
+
   .highlighted {
     background-color: v.$accent;
   }

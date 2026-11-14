@@ -2,23 +2,38 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { Subject, combineLatest } from 'rxjs';
 import { switchMap, takeUntil, auditTime } from 'rxjs/operators';
-import { CertificationsService } from './certifications.service';
-import { TableState, UsersTableComponent } from '../../users/users-table.component';
-import { CoursesService } from '../../courses/courses.service';
-import { UsersService } from '../../users/users.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 
+import { CertificationsService } from '@shared/certifications/certifications.service';
+
+import { TableState, UsersTableComponent } from '../../users/users-table.component';
+import { CoursesService } from '../../courses/courses.service';
+import { UsersService } from '../../users/users.service';
 import { CoursesComponent } from '../../courses/courses.component';
 
 @Component({
   templateUrl: './certifications-view.component.html',
   styles: [`
+    .view-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    mat-tab-group {
+      min-height: 0;
+    }
+
     .placeholder-message {
       margin-top: 20px;
       display: block;
+    }
+
+    planet-users-table {
+      display: block;
+      height: 100%;
     }
   `],
   imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, MatTabGroup, MatTab, CoursesComponent, UsersTableComponent]
@@ -27,6 +42,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
 
   certification: any = { courseIds: [] };
   certifiedMembers: any[] = [];
+  hasDeletedCourse = false;
   certifiedTableState = new TableState();
   onDestroy$ = new Subject<void>();
 
@@ -67,11 +83,8 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     if (this.certification.courseIds.length === 0 || !progress) {
       return;
     }
-    const certificateCourses = courses
-      .filter(course => this.certification.courseIds.indexOf(course._id) > -1)
-      .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
-    this.certifiedMembers = users
-      .filter(user => certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, user)));
+    this.hasDeletedCourse = this.certification.courseIds.some(id => !courses.some(course => course._id === id));
+    this.certifiedMembers = this.certificationsService.certifiedUsers(this.certification, courses, progress, users);
   }
 
   routeToEdit(certificationId) {

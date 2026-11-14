@@ -1,0 +1,46 @@
+import { Component, Input, OnChanges, HostBinding } from '@angular/core';
+import { NgClass, NgStyle, PercentPipe } from '@angular/common';
+
+@Component({
+  selector: 'planet-stacked-bar',
+  template: `
+    @for (item of data; track item; let i = $index) {
+      <div class="stacked-bar"
+        [ngClass]="item.class"
+        [ngStyle]="{'grid-column-start':i+1}">
+        <span [ngStyle]="{'float':item.align || 'left'}" [ngClass]="{'invisible':item.noLabel}">
+          {{item.percent | percent}}
+        </span>
+      </div>
+    }
+    `,
+  styles: [`
+    :host {
+      height: 0.75rem;
+      display: grid;
+      align-content: center;
+    }
+    .stacked-bar {
+      overflow: hidden;
+      font-size: 0.7em;
+      line-height: 0.75rem;
+    }
+    .stacked-bar span {
+      margin: 0 0.2rem;
+    }
+  `],
+  imports: [NgClass, NgStyle, PercentPipe]
+})
+export class PlanetStackedBarComponent implements OnChanges {
+
+  @Input() data = [];
+  @HostBinding('style.grid-template-columns') barSizes = '1fr';
+
+  ngOnChanges() {
+    const total = this.data.reduce((t, item) => t + item.amount, 0);
+    this.data = this.data.map(item => ({ ...item, percent: total ? item.amount / total : 0 }));
+    this.barSizes = this.data.reduce((sizes, item) => sizes + (item.percent + 'fr '), '');
+    this.barSizes = this.barSizes.trim();
+  }
+
+}

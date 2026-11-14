@@ -1,7 +1,26 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
-import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
+
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+
 import { TeamsViewComponent } from './teams-view.component';
+
+describe('TeamsViewComponent services page', () => {
+  it('stops loading and alerts when the services doc cannot be loaded', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    component.teamDataLoading = true;
+    component.teamsService = { ensureServicesDoc: () => throwError({ status: 500 }) };
+    component.planetMessageService = { showAlert: vi.fn() };
+    component.getMembers = vi.fn();
+
+    component.initServices('local@parent');
+
+    expect(component.teamDataLoading).toBe(false);
+    expect(component.planetMessageService.showAlert).toHaveBeenCalled();
+    expect(component.getMembers).not.toHaveBeenCalled();
+    expect(component.userStatus).toBeUndefined();
+  });
+});
 
 describe('TeamsViewComponent task projections', () => {
   it('projects secondary assignments and separates same-id members by planet', () => {
@@ -52,7 +71,7 @@ describe('TeamsViewComponent task projections', () => {
 
     component.openInviteMemberDialog();
     const selected = { _id: 'u1' };
-    const addTable = new DialogsAddTableComponent(dialogRef as any, dialogCfg.data, dialogsLoadingService as any);
+    const addTable = new TablesAddDialogComponent(dialogRef as any, dialogCfg.data, dialogsLoadingService as any);
     addTable.usersComponent = {
       usersTable: { tableData: { data: [ selected ] }, selection: { selected: [ selected ] } }
     } as any;
@@ -62,5 +81,24 @@ describe('TeamsViewComponent task projections', () => {
     expect(dialogsLoadingService.start).toHaveBeenCalledTimes(1);
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
     expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('notifies members only when a join request is written', () => {
+    const component: any = Object.create(TeamsViewComponent.prototype);
+    const sendNotifications = vi.fn(() => of({}));
+    component.team = { _id: 't1' };
+    component.user = { _id: 'alex' };
+    component.members = [];
+    component.getMembers = () => of([]);
+    component.sendNotifications = sendNotifications;
+    component.dialogsLoadingService = { stop: vi.fn() };
+
+    component.teamsService = { requestToJoinTeam: () => of(false) };
+    component.changeMembershipRequest('request')().subscribe();
+    expect(sendNotifications).not.toHaveBeenCalled();
+
+    component.teamsService = { requestToJoinTeam: () => of(true) };
+    component.changeMembershipRequest('request')().subscribe();
+    expect(sendNotifications).toHaveBeenCalledTimes(1);
   });
 });

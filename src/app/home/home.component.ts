@@ -2,36 +2,38 @@ import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, On
 import {
   Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
 } from '@angular/router';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { AnimationEvent, trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { PouchAuthService } from '../shared/database/pouch-auth.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '../shared/device-info.service';
-import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
-import { LoginDialogComponent } from '../login/login-dialog.component';
-import { PlanetLanguageComponent } from '../shared/planet-language.component';
-import { ChallengesService } from '../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetBetaDirective } from '../shared/beta.directive';
-import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
-import { FeedbackDirective } from '../feedback/feedback.directive';
-import { SyncDirective } from '../manager-dashboard/sync.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatBadge } from '@angular/material/badge';
-import { ChangePasswordDirective } from '../shared/dialogs/change-password.directive';
 import { MatDivider } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { PouchAuthService } from '@shared/database/pouch-auth.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
+import { ANDROID_APPS } from '@shared/android/android-apps';
+
+import { environment } from '../../environments/environment';
+import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
+import { LoginDialogComponent, loginDialogId } from '../login/login-dialog.component';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { SyncDirective } from '../manager-dashboard/sync.directive';
 import { PulsateIconDirective } from './pulsate-icon.directive';
-import { ANDROID_APPS } from '../shared/android-apps';
 
 @Component({
   templateUrl: './home.component.html',
@@ -42,7 +44,7 @@ import { ANDROID_APPS } from '../shared/android-apps';
         width: '72px'
       })),
       state('open', style({
-        width: '175px'
+        width: '210px'
       })),
       transition('closed <=> open', animate('500ms ease'))
     ]),
@@ -61,6 +63,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   @ViewChild('mobileSidenav') mobileSidenav: MatSidenav;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
+  // Material measures a newly shown drawer before sidenavState sets its width, and keeps the side margin after switching to overlay.
+  @ViewChild(MatSidenav) set shownSidenav(sidenav: MatSidenav | undefined) {
+    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
+  }
   private onDestroy$ = new Subject<void>();
   notifications = [];
   user: any = {};
@@ -70,10 +76,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   sidenavState = 'closed';
   classicToolbarWidth = 0;
   planetName;
-  deviceType: DeviceType;
   isAndroid: boolean;
-  isMobile: boolean;
-  isShortViewport: boolean;
+  readonly isShortViewport = this.deviceInfoService.isShortViewport;
+  readonly usesOverlayNav = this.deviceInfoService.usesOverlayNav;
   showBanner = true;
   readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
@@ -88,10 +93,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
-
-  get usesOverlayNav(): boolean {
-    return this.isMobile || this.isShortViewport;
-  }
 
   get notificationsLabel(): string {
     return $localize`Notifications: ${this.notifications.length}:count:`;
@@ -114,17 +115,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         this.onUserUpdate();
         this.getNotification();
       });
-    this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
+    this.couchService.get('_node/nonode@nohost/_config/planet').pipe(takeUntil(this.onDestroy$))
+      .subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
-    this.deviceInfoService.watchViewport().pipe(takeUntil(this.onDestroy$)).subscribe(({ deviceType, isShortViewport }) => {
-      const usedOverlayNav = this.usesOverlayNav;
-      this.deviceType = deviceType;
-      this.isMobile = isMobileOrSmaller(deviceType);
-      this.isShortViewport = isShortViewport;
-      if (this.usesOverlayNav !== usedOverlayNav) {
-        this.resetContentMargins();
-      }
-    });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
 
@@ -150,7 +143,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       ),
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
-      if (this.usesOverlayNav) {
+      if (this.usesOverlayNav()) {
         this.mobileSidenav?.close();
       }
     });
@@ -185,15 +178,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   syncToolbarLayout() {
-    const needsModern = window.innerWidth < this.classicToolbarWidth || this.isShortViewport;
+    const needsModern = document.documentElement.clientWidth < this.classicToolbarWidth || this.isShortViewport();
     if (this.forceModern !== needsModern) {
       this.forceModern = needsModern;
     }
-  }
-
-  // Material can retain the side drawer's content margin after switching to overlay.
-  private resetContentMargins() {
-    afterNextRender(() => this.mainContent?.updateContentMargins(), { injector: this.injector });
   }
 
   openLanguageSelector(): void {
@@ -263,7 +251,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       },
       0,
       [ { time: 'desc' } ])
-    ).subscribe(data => {
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(data => {
       this.notifications = data;
     }, (error) => console.log(error));
   }
@@ -279,12 +267,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.notificationsService.setNotificationsAsRead(this.notifications);
   }
 
-  sizeChange(forceModern: boolean) {
-    this.forceModern = forceModern;
-  }
-
   toggleNav() {
-    if (this.usesOverlayNav) {
+    if (this.usesOverlayNav()) {
       this.mobileSidenav?.toggle();
       return;
     }
@@ -299,15 +283,22 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
+  // An interrupted toggle reports done after the next toggle has started its interval; a removed drawer reports void.
+  sidenavAnimationDone({ toState }: AnimationEvent) {
+    if (toState === this.sidenavState || toState === 'void') {
+      this.endAnimation();
+    }
+  }
+
   openLoginDialog() {
-    this.dialog.open(LoginDialogComponent);
+    if (!this.dialog.getDialogById(loginDialogId)) {
+      this.dialog.open(LoginDialogComponent, { id: loginDialogId });
+    }
   }
 
   openAnnouncementDialog(notification) {
     this.readNotification(notification);
-    const challenge = this.challengesService.getChallengeForNotification(notification);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getChallengeForNotification(notification))
+      .subscribe();
   }
 }

@@ -11,26 +11,28 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable, defer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById,
-  isAllVisibleSelected, toggleVisibleSelection
-} from '../shared/table-helpers';
-import { UserService } from '../shared/user.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { UsersService } from './users.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+
+import {
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
+} from '@shared/tables/table.helpers';
+import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
+
+import { UsersService } from './users.service';
+import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -104,6 +106,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       (newState.filterType === 'associated' ? undefined : this.configuration.code);
     this.filterType = newState.filterType;
     this.#tableState = newState;
+    this.updateColumns();
   }
   get tableData() {
     return this.usersTable;
@@ -117,16 +120,15 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   usersTable = new MatTableDataSource();
   filterType = 'local';
   isUserAdmin = false;
+  columns: string[] = [];
   selection = new SelectionModel(true, [], true,
     (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
   );
-  renderedData: any[] = [];
+  pageSelection = new PaginatedSelection(this.selection, { selectValue: (row: any) => row.doc, keepAcrossPages: true });
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
   promptDialog: MatDialogRef<DialogsPromptComponent>;
-  deviceType: DeviceType;
-  isMobile: boolean;
   trackById = trackById;
 
   constructor(
@@ -138,16 +140,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private route: ActivatedRoute,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+    private dialogsLoadingService: DialogsLoadingService
+  ) {}
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.updateColumns();
     this.usersTable.sortingDataAccessor = (item: any, property) => {
       if (item[property]) {
         return sortNumberOrString(item, property);
@@ -161,8 +159,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
     this.usersTable.filterPredicate = this.filterPredicate();
+    this.pageSelection.connect(this.usersTable, this.onDestroy$);
     this.usersTable.connect().pipe(takeUntil(this.onDestroy$)).subscribe(data => {
-      this.renderedData = data;
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
@@ -174,6 +172,15 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     if (this.isDialog) {
       this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles' ];
     }
+    this.updateColumns();
+  }
+
+  updateColumns() {
+    const showActions = this.isUserAdmin && this.filterType === 'local' && !this.isDialog;
+    const showSelect = this.isUserAdmin || this.isDialog;
+    this.columns = this.displayedColumns.filter(column =>
+      (column !== 'action' || showActions) && (column !== 'select' || showSelect)
+    );
   }
 
   ngOnDestroy() {
@@ -182,30 +189,15 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   ngAfterViewInit() {
-    if (!this.isDialog && !this.isUserAdmin) {
-      this.displayedColumns = this.displayedColumns.filter(column => column !== 'select');
-    }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
-  }
-
-  isAllSelected() {
-    return isAllVisibleSelected(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
   }
 
   onlyManagerSelected() {
     return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
-  masterToggle() {
-    toggleVisibleSelection(this.selection, this.renderedData, { selectValue: (row: any) => row.doc });
-  }
-
-  gotoProfileView(userName: string, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
+  gotoProfileView(userName: string) {
     if (this.isDialog) {
       return;
     }
@@ -305,10 +297,13 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   setRoles(user, roles, event) {
     event.stopPropagation();
-    this.usersService.setRoles(user, roles).subscribe(() => {
+    this.dialogsLoadingService.start();
+    this.usersService.setRoles(user, roles).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
       this.usersService.requestUsers(true);
       this.planetMessageService.showMessage($localize`${user.name} roles modified`);
-    });
+    }, () => this.planetMessageService.showAlert($localize`There was an error modifying ${user.name} roles`));
   }
 
 }

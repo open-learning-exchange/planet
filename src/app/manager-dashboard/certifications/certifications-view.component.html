@@ -12,8 +12,11 @@
       <mat-icon>edit</mat-icon> Edit
     </button>
   </mat-toolbar>
-  <div class="view-container view-full-height">
-    <mat-tab-group>
+  <div class="view-container view-full-height tab-scroll-shell">
+    @if (hasDeletedCourse) {
+      <span i18n>A course this certification requires was deleted, so no members can be certified. Click on <b>Edit</b> to remove it.</span>
+    }
+    <mat-tab-group class="tab-scroll-layout">
       <mat-tab i18n-label label="Course Requirements">
         @if (certification.courseIds.length > 0) {
           <planet-courses [displayedColumns] = "[ 'courseTitle', 'info', 'createdDate', 'rating' ]" [isForm]="true" [includeIds]="certification.courseIds"></planet-courses>
@@ -24,7 +27,7 @@
       </mat-tab>
       <mat-tab i18n-label label="Certified Members">
         @if (certifiedMembers.length) {
-          <planet-users-table [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" [shouldOpenProfileDialog]="true" containerClass="view-container view-table"></planet-users-table>
+          <planet-users-table [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" [shouldOpenProfileDialog]="true" containerClass="view-container view-full-height view-table fill-parent"></planet-users-table>
         }
         @if (!certifiedMembers.length) {
           <span class="placeholder-message" i18n>No members have been certified.</span>

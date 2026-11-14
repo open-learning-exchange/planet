@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
-import { findDocuments } from '../../shared/mangoQueries';
-import { dedupeShelfReduce, ageFromUser, genderBucket } from '../../shared/utils';
-import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
-import { StateService } from '../../shared/state.service';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { dedupeShelfReduce, ageFromUser } from '@shared/utils';
+import { DialogsViewComponent } from '@shared/dialogs/dialogs-view.component';
+import { StateService } from '@shared/state.service';
+import { createGenderCounts, normalizeGender } from '@shared/demographics/gender.constants';
+
+import { environment } from '../../../environments/environment';
+import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../../courses/courses.service';
 import { startOfDay, subtractMonthsClamped } from './reports.utils';
 
@@ -23,6 +28,7 @@ interface ActivityRequestObject {
 export class ReportsService {
 
   users: any[] = [];
+  private readonly chatUsageUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat/usage`;
   readonly standardTimeFilters = [
     { value: '24h', label: $localize`Last 24 Hours` },
     { value: '7d', label: $localize`Last 7 Days` },
@@ -39,7 +45,8 @@ export class ReportsService {
     private usersService: UsersService,
     private dialog: MatDialog,
     private stateService: StateService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private httpClient: HttpClient
   ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', includeDocs = false } = {}) {
@@ -69,7 +76,11 @@ export class ReportsService {
     return this.groupBy(
       array.map(item => {
         const fullDate = new Date(item[dateField]);
-        return { ...item, date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf() };
+        return {
+          ...item,
+          gender: normalizeGender(item.gender),
+          date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf()
+        };
       }),
       [ 'date', 'gender' ],
       { uniqueField }
@@ -112,14 +123,14 @@ export class ReportsService {
   }
 
   groupUsers(users: any[]) {
-    const profiles = users.map((user: any) => user.doc || user);
+    const userDocs = users.map((user: any) => user.doc || user);
     return ({
-      count: profiles.length,
-      byGender: profiles.reduce((usersByGender: any, user: any) => {
-        usersByGender[genderBucket(user.gender)] += 1;
+      count: userDocs.length,
+      byGender: userDocs.reduce((usersByGender: any, user: any) => {
+        usersByGender[normalizeGender(user.gender)] += 1;
         return usersByGender;
-      }, { male: 0, female: 0, didNotSpecify: 0 }),
-      byMonth: this.groupByMonth(profiles, 'joinDate')
+      }, createGenderCounts()),
+      byMonth: this.groupByMonth(userDocs, 'joinDate')
     });
   }
 
@@ -309,8 +320,7 @@ export class ReportsService {
   }
 
   getChatHistory() {
-    return this.couchService.get('chat_history/_all_docs', { params: { include_docs: 'true' } })
-      .pipe(map((data: any) => data.rows.map((row: any) => row.doc)));
+    return this.httpClient.get<any[]>(this.chatUsageUrl, { withCredentials: true });
   }
 
   groupChatUsage(chats: any) {

@@ -1,22 +1,12 @@
-import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, OnChanges, OnDestroy, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
   MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { finalize, map, switchMap, tap } from 'rxjs/operators';
-import { TeamsService } from './teams.service';
-import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { StateService } from '../shared/state.service';
-import { CsvService } from '../shared/csv.service';
-import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { NgClass, CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
@@ -25,20 +15,36 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { AttachmentInputState } from '../shared/forms/file-upload.component';
-import { TeamsAttachmentsService } from './teams-attachments.service';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import type { ChartDataset } from 'chart.js';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { StateService } from '@shared/state.service';
+import { CsvService } from '@shared/export/csv.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { AttachmentInputState } from '@shared/forms/file-upload.component';
+import { PlanetChartComponent } from '@shared/charts/planet-chart.component';
+import { styleVariables } from '@shared/utils';
+
+import { TeamsService } from './teams.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { TeamsAttachmentsService } from './teams-attachments.service';
 import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface TransactionForm {
+  [key: string]: any;
   amount: number | string;
   date: Date | number;
   description: string;
   receiptImages?: AttachmentInputState;
   type: 'credit' | 'debit';
-  [key: string]: any;
 }
 
 @Component({
@@ -78,11 +84,12 @@ interface TransactionForm {
     MatMenuItem,
     MatMenuTrigger,
     PlanetLoadingSpinnerComponent,
+    PlanetChartComponent,
     CurrencyPipe,
     DatePipe
   ]
 })
-export class TeamsViewFinancesComponent implements OnChanges {
+export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
 
   @Input() finances: any[] = [];
   @Input() team: any = {};
@@ -104,6 +111,42 @@ export class TeamsViewFinancesComponent implements OnChanges {
   configuration: any = {};
   planetName: any;
   totals = { credit: 0, debit: 0, balance: 0 };
+  showCharts = false;
+  balanceChart: { labels: string[], datasets: ChartDataset[] };
+  monthlyChart: { labels: string[], datasets: ChartDataset[] };
+  private onDestroy$ = new Subject<void>();
+
+  constructor(
+    private csvService: CsvService,
+    private couchService: CouchService,
+    private dialog: MatDialog,
+    private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private planetMessageService: PlanetMessageService,
+    private teamsTablePdfExportService: TeamsTablePdfExportService,
+    private stateService: StateService,
+    private teamsService: TeamsService,
+    private teamsAttachmentsService: TeamsAttachmentsService,
+    @Inject(LOCALE_ID) private localeId: string,
+    private dialogGuard: DialogGuardService
+  ) {
+    const sortValue = this.table.sortingDataAccessor;
+    // Same-day transactions tie on date, so sort them in the order the running balance was summed
+    this.table.sortingDataAccessor = (row, column) => column === 'date' ? row.position : sortValue(row, column);
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  ngOnChanges() {
+    this.setDisplayedColumns();
+    if (!this.isLoading && this.finances) {
+      this.allTransactions = this.setTransactionsTable(this.finances);
+      this.applyDateFilter();
+    }
+  }
 
   get stats() {
     const { credit, debit, balance } = this.totals;
@@ -118,28 +161,11 @@ export class TeamsViewFinancesComponent implements OnChanges {
     ];
   }
 
-  constructor(
-    private csvService: CsvService,
-    private couchService: CouchService,
-    private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private planetMessageService: PlanetMessageService,
-    private teamsTablePdfExportService: TeamsTablePdfExportService,
-    private stateService: StateService,
-    private teamsService: TeamsService,
-    private teamsAttachmentsService: TeamsAttachmentsService,
-    @Inject(LOCALE_ID) private localeId: string
-  ) {}
-
-  ngOnChanges() {
-    if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
-      this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
-    }
-    if (!this.isLoading && this.finances) {
-      this.allTransactions = this.setTransactionsTable(this.finances);
-      this.applyDateFilter();
-    }
+  setDisplayedColumns() {
+    const dateOrder = (this.table.sort?.active ?? 'date') === 'date';
+    this.displayedColumns = [
+      'date', 'description', 'credit', 'debit', ...(dateOrder ? [ 'balance' ] : []), ...(this.editable ? [ 'action' ] : [])
+    ];
   }
 
   private setTransactionsTable(transactions: any[]): any[] {
@@ -163,13 +189,13 @@ export class TeamsViewFinancesComponent implements OnChanges {
     const previousBalance = index !== 0 ? newArray[index - 1].balance : 0;
     return [
       ...newArray,
-      { ...transaction, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
+      { ...transaction, position: index, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
     ];
   }
 
 
   openEditTransactionDialog(transaction: any = {}) {
-    this.couchService.currentTime().subscribe((time: number) => {
+    this.dialogGuard.open('team-transaction', () => this.couchService.currentTime().pipe(map((time: number) =>
       this.dialogsFormService.openDialogsForm(
         transaction._id ? $localize`Edit Transaction` : $localize`Add Transaction`,
         [
@@ -203,22 +229,22 @@ export class TeamsViewFinancesComponent implements OnChanges {
           receiptImages: [ this.teamsAttachmentsService.attachmentStateForDoc(transaction) ]
         },
         {
-          onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
+          onSubmit: (newTransaction: TransactionForm, _form, dialogRef) => this.submitTransaction(newTransaction, transaction).subscribe({
             next: (result: any) => {
               this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
-              if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
+              if (result?.skippedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be included.`);
               }
-              this.dialogsFormService.closeDialogsForm();
+              dialogRef.close();
             },
             error: () => {
               this.dialogsLoadingService.stop();
-              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the transaction.`);
+              this.dialogsFormService.showErrorMessage(dialogRef, $localize`There was a problem saving the transaction.`);
             }
           })
         }
-      );
-    });
+      )
+    ))).pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   submitTransaction(newTransaction: TransactionForm, oldTransaction: any) {
@@ -238,19 +264,18 @@ export class TeamsViewFinancesComponent implements OnChanges {
       teamType,
       teamPlanetCode
     };
-    if (receiptImages) {
-      transaction._attachments = this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages);
-    }
-    return this.teamsService.updateTeam(transaction).pipe(
-      switchMap(savedTransaction => receiptImages ?
-        this.teamsAttachmentsService.uploadReceiptImages(savedTransaction._id, savedTransaction._rev, receiptImages, false) :
-        of({ failedAttachments: [] })
-      ),
+    const transaction$: Observable<{ doc: any, skipped: string[] }> = receiptImages ?
+      this.teamsAttachmentsService.withReceiptImages(
+        { ...transaction, _attachments: this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages) },
+        receiptImages
+      ) :
+      of({ doc: transaction, skipped: [] });
+    return transaction$.pipe(
+      switchMap(({ doc, skipped }) => this.teamsService.updateTeam(doc).pipe(map(() => ({ skippedAttachments: skipped })))),
       tap(() => {
         this.financesChanged.emit();
         this.dialogsLoadingService.stop();
-      }),
-      map(uploadResult => ({ failedAttachments: uploadResult.failedAttachments }))
+      })
     );
   }
 
@@ -278,13 +303,21 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   private transactionDocFields(transaction: any = {}) {
-    const { receiptImages, credit, debit, balance, ...docFields } = transaction;
+    const { receiptImages, credit, debit, balance, position, ...docFields } = transaction;
     return docFields;
   }
 
-  resetDateFilter() {
+  get defaultSort() {
+    const sort = this.table.sort;
+    return !sort || (sort.active === 'date' && sort.direction === 'desc');
+  }
+
+  clearFilters() {
     this.startDate = undefined;
     this.endDate = undefined;
+    if (!this.defaultSort) {
+      this.table.sort.sort({ id: 'date', start: 'desc', disableClear: true });
+    }
     this.applyDateFilter();
   }
 
@@ -302,6 +335,35 @@ export class TeamsViewFinancesComponent implements OnChanges {
     const toDate = this.endDate ? endOfDay(this.endDate).getTime() : Infinity;
     this.table.data = this.allTransactions.filter(transaction => transaction.date >= fromDate && transaction.date <= toDate);
     this.updateTotals();
+    this.setCharts();
+  }
+
+  private setCharts() {
+    // Reversing keeps same-day rows in the order the balance was summed, which re-sorting by date would not
+    const oldestFirst = [ ...this.table.data ].reverse();
+    this.balanceChart = {
+      labels: oldestFirst.map(transaction => formatDate(transaction.date, 'mediumDate', this.localeId)),
+      datasets: [ {
+        label: $localize`Balance`,
+        data: oldestFirst.map(transaction => transaction.balance),
+        borderColor: styleVariables.primary,
+        backgroundColor: styleVariables.primary
+      } ]
+    };
+    const months = new Map<string, { credit: number, debit: number }>();
+    oldestFirst.forEach(({ date, credit, debit }) => {
+      const month = formatDate(date, 'MMM y', this.localeId);
+      const totals = months.get(month) || { credit: 0, debit: 0 };
+      months.set(month, { credit: totals.credit + credit, debit: totals.debit + debit });
+    });
+    const monthTotals = [ ...months.values() ];
+    this.monthlyChart = {
+      labels: [ ...months.keys() ],
+      datasets: [
+        { label: $localize`Credit`, data: monthTotals.map(month => month.credit), backgroundColor: styleVariables.planetGreen },
+        { label: $localize`Debit`, data: monthTotals.map(month => month.debit), backgroundColor: styleVariables.warn }
+      ]
+    };
   }
 
   private get sortedData(): any[] {
@@ -311,7 +373,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
 
   exportTableData() {
     const { data, title } = this.financeExportData(this.sortedData);
-    this.csvService.exportCSV({ data, title });
+    this.csvService.exportCSV({ data, title, markdown: false });
   }
 
   exportTablePdf() {
@@ -339,12 +401,13 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   private financeExportData(sourceData: any[]) {
+    const showBalance = this.displayedColumns.includes('balance');
     const data = sourceData.map(row => ({
       [$localize`date`]: fullLabel(row.date, this.localeId),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
       [$localize`debit`]: row.debit,
-      [$localize`balance`]: row.balance
+      ...(showBalance ? { [$localize`balance`]: row.balance } : {})
     }));
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.stateService.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;

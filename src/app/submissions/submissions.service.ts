@@ -2,23 +2,27 @@ import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
-import { findDocuments } from '../shared/mangoQueries';
-import { appSourceLabel } from '../shared/app-source';
-import { CouchService } from '../shared/couchdb.service';
-import { StateService } from '../shared/state.service';
+
+import { findDocuments } from '@shared/database/mango-queries';
+import { appSourceLabel } from '@shared/android/app-source';
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { UserService } from '@shared/auth/user.service';
+import { ageFromUser, dedupeShelfReduce, toProperCase } from '@shared/utils';
+import { CsvService } from '@shared/export/csv.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, chartColors } from '@shared/charts/chart.utils';
+import { PdfService } from '@shared/export/pdf.service';
+import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+import { getGenderLabel, parseGender } from '@shared/demographics/gender.constants';
+
 import { CoursesService } from '../courses/courses.service';
-import { UserService } from '../shared/user.service';
-import { ageFromUser, dedupeShelfReduce, localizedGender, toProperCase } from '../shared/utils';
-import { CsvService } from '../shared/csv.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { ChatService } from '../shared/chat.service';
-import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
-import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import { PdfService } from '../shared/pdf.service';
-import { MarkdownRenderService } from '../shared/markdown-render.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +38,7 @@ export class SubmissionsService {
   private submissionUpdated = new Subject<any>();
   submissionUpdated$ = this.submissionUpdated.asObservable();
   submissionAttempts = 0;
+  private readonly imageHost = `${environment.couchAddress}/`;
 
   constructor(
     private couchService: CouchService,
@@ -44,7 +49,7 @@ export class SubmissionsService {
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private pdfService: PdfService,
     private markdownRenderer: MarkdownRenderService,
     @Inject(LOCALE_ID) private localeId: string
@@ -91,20 +96,35 @@ export class SubmissionsService {
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending', team }: any) {
-    const selector = submissionId ? { _id: submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
-    const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
-    obs.subscribe((res) => {
-      let attempts = res.docs.length - 1;
-      const bestAttempt = res.docs.reduce((best: any, submission: any) =>
-        submission.grade > best.grade ? submission : best, res.docs[0]);
-      this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
+    // A test's attempts count across its edits, leaving out uploads with no copy of its questions;
+    // a survey response stays tied to the questions it answered
+    const selector = submissionId ? { _id: submissionId } : {
+      parentId, 'user.name': user.name,
+      ...(type === 'survey' ? { 'parent._rev': parent._rev } : { 'parent.questions': { $type: 'array' } })
+    };
+    const obs = user.name || submissionId ? this.couchService.findAll('submissions', findDocuments(selector)) : of([]);
+    obs.subscribe((docs: any[]) => {
+      const attempts = docs.filter((submission: any) => submission.status !== 'pending').length;
+      const passed = type === 'exam' && docs.some((submission: any) => this.attemptPasses(submission));
+      // Answers saved against an older revision may not line up with the current questions, so that attempt starts over
+      this.submission = docs.find(submission => type === 'survey' ||
+        (submission.status === status && (submissionId || submission.parent._rev === parent._rev)));
       if (this.submission === undefined) {
-        attempts += 1;
         this.newSubmission({ parentId, parent, user, type, team });
       }
       this.submissionAttempts = attempts;
-      this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
+      this.submissionUpdated.next({ submission: this.submission, attempts, passed });
     });
+  }
+
+  // Judged against the test as the learner took it, so a later edit never takes a pass away
+  attemptPasses({ status, grade, parent: { questions, passingPercentage } }: any) {
+    // Planet's copy has no totalMarks, so the marks are summed. myPlanet sends marks and the pass mark as '',
+    // and scores those as 1 per question and a pass mark of 100.
+    const totalMarks = questions.reduce((total: number, question: any) => total + (question.marks === '' ? 1 : Number(question.marks)), 0);
+    const passMark = passingPercentage === '' ? 100 : passingPercentage ?? 100;
+    // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
+    return status === 'complete' && totalMarks > 0 && grade * 100 >= passMark * totalMarks;
   }
 
   startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
@@ -296,10 +316,6 @@ export class SubmissionsService {
     return $localize`N/A`;
   }
 
-  private localizedGender(gender?: string) {
-    return localizedGender(gender, this.notAvailable());
-  }
-
   private localizedGroupType(type?: string) {
     switch (type) {
       case 'team':
@@ -341,7 +357,7 @@ export class SubmissionsService {
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
-            [$localize`Gender`]: this.localizedGender(submission.user.gender),
+            [$localize`Gender`]: getGenderLabel(submission.user.gender),
             [$localize`Age (years)`]: ageFromUser(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: appSourceLabel(submission),
@@ -350,7 +366,7 @@ export class SubmissionsService {
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text).replace(/"/g, '""')}"`]:
+              [`${$localize`Question`} ${index + 1}: ${this.markdownRenderer.toPlainText(text)}`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };
@@ -404,7 +420,7 @@ export class SubmissionsService {
       question.index = i;
       docContent.push({
         stack: htmlToPdfmake(
-          `<strong>${$localize`Question `} ${i + 1}:</strong> ${this.markdownRenderer.render(question.body)}`
+          `<strong>${$localize`Question `} ${i + 1}:</strong> ${this.markdownRenderer.render(question.body, this.imageHost)}`
         )
       });
       if (question.type === 'selectMultiple') {
@@ -586,7 +602,7 @@ export class SubmissionsService {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
       const userAge = ageFromUser(submission.lastUpdateTime, submission.user);
-      const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
+      const userGender = getGenderLabel(submission.user.gender, { fallback: '' });
       const communityOrNation = submission.planetName;
       const planetSource = appSourceLabel(submission);
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
@@ -613,7 +629,7 @@ export class SubmissionsService {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
       const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
-      const renderedText = this.markdownRenderer.render(text);
+      const renderedText = this.markdownRenderer.render(text, this.imageHost);
       return `<div class="markdown-align-${alignment}"><strong>${localizedLabel} ${index + 1}:</strong><br>${renderedText}</div>`;
     };
     return (question, questionIndex) =>
@@ -643,7 +659,7 @@ export class SubmissionsService {
     const axisTitleFont = { size: 12, weight: 'bold' as const };
     const xAxisText = isRatingScale ? $localize`Rating` : $localize`Choice`;
     const yAxisText = isRatingScale ? $localize`Number of responses` : $localize`% of responders`;
-    const backgroundColor = data.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
+    const backgroundColor = chartColors(data.labels.length);
     const chartConfig: ChartConfiguration<'bar' | 'doughnut', number[], string> = {
       type: isBar ? 'bar' : 'doughnut',
       data: {
@@ -730,7 +746,7 @@ export class SubmissionsService {
     question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users'
   ) {
     const totalUsers = submissions.length;
-    const counts: Record<string, Set<string>> = {};
+    const counts: Record<string, Set<string>> = Object.create(null);
     const scaleMax = question.scaleMax ?? 9;
 
     if (question.type === 'ratingScale') {
@@ -763,7 +779,9 @@ export class SubmissionsService {
       } else {
         const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
         selections.forEach(selection => {
-          if (selection.isOther || selection.id === 'other') {
+          // myPlanet saves a single choice's Other answer as the typed text alone
+          const isMyPlanetOther = question.hasOtherOption && typeof selection === 'string' && !counts[selection];
+          if (selection.isOther || selection.id === 'other' || isMyPlanetOther) {
             counts[$localize`Other`]?.add(userId);
           } else {
             const txt = selection.text ?? selection;
@@ -811,7 +829,7 @@ export class SubmissionsService {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
         age: ageFromUser(submission.lastUpdateTime, submission.user),
-        gender: submission.user.gender
+        gender: parseGender(submission.user.gender)
       },
       answers: submission.answers
     }));
@@ -860,8 +878,7 @@ export class SubmissionsService {
       response = await this.chatService.getPrompt(
         {
           content: surveyAnalysisPrompt(exam.type, exam.name, exam.description, payloadString),
-          aiProvider: { name: 'openai' },
-          assistant: false
+          aiProvider: { name: 'openai' }
         },
         false
       ).toPromise();

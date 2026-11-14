@@ -1,0 +1,3 @@
+<div [ngClass]="{ 'warn-text-color': errorState }" (focusout)="onFocusOut()">
+  <textarea #textarea class="planet-markdown-textbox-input" [value]="textValue ?? ''" (input)="writeValue(textarea.value)"></textarea>
+</div>

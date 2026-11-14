@@ -1,6 +1,7 @@
-import { millisecondsToDay } from '../../meetups/constants';
-import type { CsvService } from '../../shared/csv.service';
-import { localizedGender } from '../../shared/utils';
+import type { CsvService } from '@shared/export/csv.service';
+import { getGenderLabel } from '@shared/demographics/gender.constants';
+
+import { millisecondsToDay } from '../../meetups/meetups.constants';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -63,8 +64,6 @@ export const isSelectedMember = (item, members) => members.length === 0 ||
 
 export const filterByMember = (array, members = []) => array.filter(item => isSelectedMember(item, members));
 
-export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
-
 export const getDomainParams = (configuration, isHub) => isHub ?
   { planetCode: configuration.parentCode, domain: configuration.parentDomain } :
   { planetCode: undefined, domain: undefined };
@@ -109,7 +108,7 @@ export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleStri
 );
 
 export const demographicsForCsv = (data: any) => ({
-  [$localize`Gender`]: localizedGender(data?.gender),
+  [$localize`Gender`]: getGenderLabel(data?.gender, { fallback: '' }),
   [$localize`Age (years)`]: data?.age ?? ''
 });
 

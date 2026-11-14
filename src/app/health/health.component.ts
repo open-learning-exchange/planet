@@ -5,26 +5,29 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
   MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { UserService } from '../shared/user.service';
-import { HealthService } from './health.service';
-import { HealthEventDialogComponent } from './health-event-dialog.component';
-import { environment } from '../../environments/environment';
-import { takeUntil, switchMap } from 'rxjs/operators';
-import { Subject, of } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
-import { conditionAndTreatmentFields } from './health.constants';
-import { findDocuments } from '../shared/mangoQueries';
+import { map, takeUntil, switchMap } from 'rxjs/operators';
+import { Observable, Subject, of } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DatePipe } from '@angular/common';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatDivider } from '@angular/material/list';
-import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { LabelComponent } from '../shared/label.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { FullNamePipe } from '../shared/full-name.pipe';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { LabelComponent } from '@shared/ui/label.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
+
+import { HealthService } from './health.service';
+import { HealthEventDialogComponent } from './health-event-dialog.component';
+import { environment } from '../../environments/environment';
+import { conditionAndTreatmentFields } from './health.constants';
 
 @Component({
   templateUrl: './health.component.html',
@@ -79,7 +82,8 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dialogGuard: DialogGuardService
   ) {}
 
   ngOnInit() {
@@ -138,16 +142,16 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   examClick(eventDate) {
     if (eventDate !== 'label') {
       const event = this.events.find(e => e.date === +eventDate);
-      (event._id ?
+      const eventDocs$: Observable<any[]> = event._id ?
         this.healthService.getHealthData(this.userDetail._id, { docId: event._id })
-        : of([ event ])
-      ).subscribe(([ eventDoc ]) => {
+        : of([ event ]);
+      this.dialogGuard.open('health-exam', () => eventDocs$.pipe(map(([ eventDoc ]) =>
         this.dialog.open(HealthEventDialogComponent, {
           data: { event: eventDoc, user: this.userDetail._id, route: this.route },
           width: '50vw',
           maxHeight: '90vh'
-        });
-      });
+        })
+      ))).pipe(takeUntil(this.onDestroy$)).subscribe();
     }
   }
 

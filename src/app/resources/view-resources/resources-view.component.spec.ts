@@ -1,3 +1,4 @@
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -5,32 +6,42 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
+import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { RatingService } from '@shared/ratings/rating.service';
+
 import { ResourcesViewComponent } from './resources-view.component';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { LinkCopyService } from '../../shared/link-copy.service';
 
 describe('ResourcesViewComponent', () => {
 
   let component: ResourcesViewComponent;
+  const deviceType = signal(DeviceType.DESKTOP);
   let fixture: ComponentFixture<ResourcesViewComponent>;
   let statusElement;
   let testimage;
   let de;
 
+  const ratingServiceMock = {
+    promptRating: vi.fn().mockReturnValue(of(true)),
+    resetRatingInteraction: vi.fn(),
+    normalizeRatingInfo: vi.fn(rating => ({
+      rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, otherRating: 0, didNotSpecifyRating: 0,
+      userRating: {}, allRatings: [], ...rating
+    }))
+  };
+
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const stateServiceMock = {
@@ -62,6 +73,8 @@ describe('ResourcesViewComponent', () => {
   };
 
   beforeEach(() => {
+    ratingServiceMock.promptRating.mockReturnValue(of(true));
+    deviceType.set(DeviceType.DESKTOP);
     resourcesServiceMock.resourcesListener.mockReturnValue(of([]));
     linkCopyServiceMock.copyLink.mockReset();
     TestBed.configureTestingModule({
@@ -72,8 +85,9 @@ describe('ResourcesViewComponent', () => {
         { provide: StateService, useValue: stateServiceMock },
         { provide: UserService, useValue: userServiceMock },
         { provide: ResourcesService, useValue: resourcesServiceMock },
+        { provide: RatingService, useValue: ratingServiceMock },
         { provide: PlanetMessageService, useValue: planetMessageServiceMock },
-        { provide: DeviceInfoService, useValue: { watchDeviceType: () => of(DeviceType.DESKTOP) } },
+        { provide: DeviceInfoService, useValue: { deviceType, isMobile: computed(() => isMobileOrSmaller(deviceType())) } },
         { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: CouchService, useValue: couchServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },
@@ -125,7 +139,7 @@ describe('ResourcesViewComponent', () => {
   });
 
   it('renders a labeled menu item for link copying on smaller screens', async () => {
-    component.deviceType = DeviceType.MOBILE;
+    deviceType.set(DeviceType.MOBILE);
     resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
     fixture.detectChanges();
 
@@ -178,6 +192,34 @@ describe('ResourcesViewComponent', () => {
 
     expect(component.downloadFileSize).toBe('2.4 MB');
     expect(component.formattedFileSize).toBe('');
+  });
+
+  it('starts a new rating visit and prompts on leaving', () => {
+    ratingServiceMock.resetRatingInteraction.mockClear();
+    component.ngOnInit();
+    expect(ratingServiceMock.resetRatingInteraction).toHaveBeenCalledWith('id');
+    component.resource = { _id: 'r-1' };
+    component.canManage = false;
+
+    const result = component.canDeactivate();
+    (result as Observable<boolean>).subscribe(val => expect(val).toBe(true));
+
+    expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource');
+  });
+
+  it('never prompts on a parent view or for a manager', () => {
+    component.resource = { _id: 'r-1' };
+    ratingServiceMock.promptRating.mockClear();
+
+    component.parent = true;
+    component.canManage = false;
+    expect(component.canDeactivate()).toBe(true);
+
+    component.parent = false;
+    component.canManage = true;
+    expect(component.canDeactivate()).toBe(true);
+
+    expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
   });
 
 

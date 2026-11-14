@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,13 +10,16 @@ import { MatInput } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatCard } from '@angular/material/card';
 
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { AndroidAppPromptService } from '@shared/android/android-app-prompt.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { genderOptions, type GenderValue } from '@shared/demographics/gender.constants';
+
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService, PublicSurveyTeam } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { AndroidAppPromptService } from '../../shared/android-app-prompt.service';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 type PublicSurveyStep = 'intro' | 'questions' | 'demographics' | 'submitted';
 
@@ -41,6 +43,7 @@ export class PublicSurveyComponent implements OnInit {
   currentAnswer: ExamAnswerValue | null = null;
   isLoading = true;
   isSubmitting = false;
+  readonly genderOptions = genderOptions;
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
   readonly demographicsForm = this.fb.group({
     birthYear: this.fb.control<number | null>(null, [
@@ -48,7 +51,7 @@ export class PublicSurveyComponent implements OnInit {
       Validators.max(new Date().getFullYear() - 1),
       Validators.pattern(/^\d{4}$/)
     ]),
-    gender: this.fb.control('')
+    gender: this.fb.control<GenderValue | ''>('')
   });
 
   get question() {

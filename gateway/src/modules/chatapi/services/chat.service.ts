@@ -1,11 +1,23 @@
 import { DocumentInsertResponse } from 'nano';
 
 import { chatDB } from '../../../config/couch.config';
-import { retrieveChatHistory } from '../utils/db.utils';
+import { SessionInfo } from '../../../middleware/auth';
+import { ConfigurationUnavailableError, getConfiguration } from '../../../services/config.service';
+import { isPlainDocId, isUserConversationOwner, retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 
+export class ConversationAccessError extends Error {
+  constructor() {
+    super('Only the owner can continue this conversation');
+    this.name = 'ConversationAccessError';
+  }
+}
+
 function handleChatError(error: any) {
+  if (error instanceof ConfigurationUnavailableError) {
+    throw error;
+  }
   if (error.response) {
     throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
   } else {
@@ -16,29 +28,44 @@ function handleChatError(error: any) {
 /**
  * Create a chat conversation & save in couchdb
  * @param data - Chat data including content and additional information
+ * @param session - The member chatting, from the gateway's session check
  * @param stream - Boolean to set streaming on or off
  * @param callback - Callback function used when streaming is enabled
  * @returns Object with completion text and CouchDB save response
  */
-export async function chat(data: any, stream?: boolean, callback?: (response: string) => void): Promise<{
+export async function chat(data: any, session: SessionInfo, stream?: boolean, callback?: (response: string) => void): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
-  const { content, ...dbData } = data;
+  const { content, context } = data;
   const messages: ChatMessage[] = [];
-  const aiProvider = dbData.aiProvider as AIProvider || { 'name': 'openai' };
+  const aiProvider = data.aiProvider as AIProvider || { 'name': 'openai' };
 
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');
   }
 
-  if (dbData._id) {
-    await retrieveChatHistory(dbData, messages);
+  const { assistant } = await getConfiguration();
+  let dbData: any;
+
+  if (data._id) {
+    if (!isPlainDocId(data._id)) {
+      throw new ConversationAccessError();
+    }
+    const stored = await retrieveChatHistory(data._id, messages);
+    if (!isUserConversationOwner(stored, session)) {
+      throw new ConversationAccessError();
+    }
+    dbData = { ...stored, 'context': context ?? stored.context };
   } else {
-    dbData.title = content;
-    dbData.conversations = [];
-    dbData.createdDate = Date.now();
-    dbData.aiProvider = aiProvider.name;
+    dbData = {
+      'user': session.name,
+      'title': content,
+      'conversations': [],
+      'createdDate': Date.now(),
+      'aiProvider': aiProvider.name,
+      context
+    };
   }
 
   dbData.conversations.push({ 'id': Date.now().toString(), 'query': content, 'response': '' });
@@ -47,7 +74,7 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, dbData.assistant, dbData.context, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, assistant.instructions, dbData.context, stream, callback);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
@@ -68,7 +95,6 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
 export async function chatNoSave(
   content: any,
   aiProvider: AIProvider,
-  assistant: boolean,
   context?: any
 ): Promise<string | undefined> {
   const messages: ChatMessage[] = [];
@@ -76,7 +102,8 @@ export async function chatNoSave(
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, assistant, context);
+    // One-off prompts such as survey analysis carry their own instructions, so they skip the Planet prompt
+    const completionText = await aiChat(messages, aiProvider, '', context);
     return completionText;
   } catch (error: any) {
     handleChatError(error);

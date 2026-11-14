@@ -1,8 +1,10 @@
+import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { DeviceType } from '@shared/ui/device-info.service';
+
 import { SubmissionsComponent } from './submissions.component';
-import { DeviceType } from '../shared/device-info.service';
 
 describe('SubmissionsComponent', () => {
   const createComponent = () => new SubmissionsComponent(
@@ -14,9 +16,11 @@ describe('SubmissionsComponent', () => {
     { configuration: {} } as any,
     { start: vi.fn() } as any,
     {
-      watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)),
-      getDeviceType: vi.fn().mockReturnValue(DeviceType.DESKTOP)
-    } as any
+      isMobile: signal(false),
+      watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP))
+    } as any,
+    {} as any,
+    {} as any
   );
 
   it('keeps the search input synchronized with the table filter', () => {

@@ -5,18 +5,9 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
-import { appSourceLabel } from '../shared/app-source';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { skip, takeUntil } from 'rxjs/operators';
-import { Subject, zip } from 'rxjs';
-import { SubmissionsService } from './submissions.service';
-import { UserService } from '../shared/user.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { CoursesService } from '../courses/courses.service';
-import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { Subject, Subscription, zip } from 'rxjs';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
@@ -29,6 +20,20 @@ import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { appSourceLabel } from '@shared/android/app-source';
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+
+import { SubmissionsService } from './submissions.service';
+import { SubmissionsResultsComponent } from './submissions-results.component';
+import { CoursesService } from '../courses/courses.service';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -79,7 +84,8 @@ const columnsByFilterAndMode = {
     MatRow,
     MatNoDataRow,
     MatPaginator,
-    DatePipe
+    DatePipe,
+    SubmissionsResultsComponent
   ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -96,8 +102,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
-  isMobile: boolean;
-  deviceType: DeviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   showFiltersRow = false;
   statusOptions: any = [
     { text: $localize`Pending`, value: 'pending' },
@@ -110,6 +115,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     status: 'requires grading'
   };
   surveyId: string | null = null;
+  surveyView: 'responses' | 'charts' = 'responses';
+  survey: any;
+  private surveyRequest: Subscription;
   isManagerSurveysRoute = false;
   searchValue = '';
 
@@ -121,16 +129,14 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private coursesService: CoursesService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe(() => {
       this.showFiltersRow = false;
     });
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.surveyId = this.route.snapshot.paramMap.get('surveyId');
     this.isManagerSurveysRoute = !!this.surveyId;
   }
@@ -247,7 +253,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   setupTable() {
     this.submissions.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord([ 'parent.name' ]),
+      filterSpecificFieldsHybrid([ 'parent.name' ]),
       filterDropdowns(this.filter)
     ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {
@@ -279,6 +285,20 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   dropdownsFill() {
     return dropdownsFill(this.filter);
+  }
+
+  showSurveyView(view: 'responses' | 'charts') {
+    this.surveyView = view;
+    if (view === 'charts' && !this.surveyRequest) {
+      this.surveyRequest = this.couchService.get(`exams/${this.surveyId}`).subscribe(
+        survey => this.survey = survey,
+        () => {
+          this.surveyRequest = undefined;
+          this.surveyView = 'responses';
+          this.planetMessageService.showAlert($localize`There was a problem loading the survey charts.`);
+        }
+      );
+    }
   }
 
   goBack() {

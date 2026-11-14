@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Subject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { StateService } from '../shared/state.service';
-import { UserService } from '../shared/user.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { Subject, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { UserService } from '@shared/auth/user.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { dedupeObjectArray, planetAndParentId } from '@shared/utils';
+
 import { environment } from '../../environments/environment';
-import { dedupeObjectArray } from '../shared/utils';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -119,11 +120,11 @@ export class NewsService {
 
   shareNews(news, planets?: any[], successMessage = $localize`Message has been successfully shared`) {
     const viewInObject = (planet) => (
-      { _id: `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
+      { _id: planetAndParentId(planet), section: 'community', sharedDate: this.couchService.datePlaceholder }
     );
     const existingPlanetIds = (news.viewIn || []).map(view => view._id);
     const newPlanets = planets ? planets
-      .filter(planet => !existingPlanetIds.includes(`${planet.code}@${planet.parentCode}`))
+      .filter(planet => !existingPlanetIds.includes(planetAndParentId(planet)))
       .map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     if (newPlanets.length === 0) {
       return of(undefined);
@@ -144,5 +145,18 @@ export class NewsService {
 
   postSharedWithCommunity(post) {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
+  }
+
+  saveReaction(newsDoc: any) {
+    return this.couchService.updateDocument(this.dbName, newsDoc).pipe(
+      tap(() => this.requestNews()),
+      catchError((error) => {
+        if (error?.status === 409) {
+          this.requestNews();
+        }
+        this.planetMessageService.showAlert($localize`There was a problem saving your reaction.`);
+        return throwError(error);
+      })
+    );
   }
 }

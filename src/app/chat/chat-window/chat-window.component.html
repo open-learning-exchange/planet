@@ -17,7 +17,7 @@
           mat-icon-button
           matIconSuffix
           [planetSubmit]="promptForm.valid && spinnerOn"
-          [disabled]="!promptForm.valid || providers.length === 0"
+          [disabled]="!promptForm.valid || providers.length === 0 || !spinnerOn"
           i18n-matTooltip
           matTooltip="chat is disabled, contact community admin"
           [matTooltipDisabled]="providers.length > 0"

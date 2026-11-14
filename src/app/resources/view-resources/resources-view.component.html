@@ -6,11 +6,11 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
-    @if (deviceType === deviceTypes.DESKTOP) {
+    @if (deviceType() === deviceTypes.DESKTOP) {
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
     }
-    @if ( deviceType === deviceTypes.TABLET) {
+    @if ( deviceType() === deviceTypes.TABLET) {
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
@@ -19,7 +19,7 @@
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
       </mat-menu>
     }
-    @if (deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE) {
+    @if (isMobile()) {
       <span class="toolbar-fill"></span>
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
@@ -58,7 +58,7 @@
         Remove from myLibrary
       </button>
       }
-      @if (deviceType === deviceTypes.DESKTOP) {
+      @if (deviceType() === deviceTypes.DESKTOP) {
         <button class="km-copy-resource-link" mat-icon-button type="button" (click)="copyLink()" matTooltip="Copy Resource Link" i18n-matTooltip aria-label="Copy Resource Link" i18n-aria-label>
           <mat-icon>link</mat-icon>
         </button>

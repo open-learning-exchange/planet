@@ -1,22 +1,24 @@
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, NEVER, of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
+
 import { DashboardComponent } from './dashboard.component';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CoursesService } from '../courses/courses.service';
-import { StateService } from '../shared/state.service';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent> | undefined;
-  let shelfChange$: Subject<void>;
+  let shelfChange$: BehaviorSubject<any>;
   let deviceType$: BehaviorSubject<DeviceType>;
   let userServiceMock: any;
   let couchServiceMock: any;
@@ -44,7 +46,7 @@ describe('DashboardComponent', () => {
   };
 
   beforeEach(() => {
-    shelfChange$ = new Subject<void>();
+    shelfChange$ = new BehaviorSubject<any>({});
     deviceType$ = new BehaviorSubject<DeviceType>(DeviceType.DESKTOP);
     userServiceMock = {
       get: vi.fn().mockReturnValue({ ...mockUser }),
@@ -52,7 +54,8 @@ describe('DashboardComponent', () => {
       shelfChange$,
       profileBanner: new BehaviorSubject<boolean>(true),
       profileComplete$: new BehaviorSubject<boolean>(false),
-      isProfileComplete: vi.fn()
+      isProfileComplete: vi.fn(),
+      doesUserHaveRole: vi.fn().mockReturnValue(true)
     };
     couchServiceMock = {
       currentTime: vi.fn().mockReturnValue(of(1700000000000)),
@@ -65,12 +68,18 @@ describe('DashboardComponent', () => {
       coursesListener$: vi.fn().mockReturnValue(of([]))
     };
     stateServiceMock = { configuration: { name: 'Planet Earth', code: 'earth_code' } };
-    const completionService = new CertificationsService({} as any, {} as any, {} as any);
+    const completionService = new CertificationsService({} as any);
     certificationsServiceMock = {
       getCertifications: vi.fn().mockReturnValue(of([])),
       isCourseCompleted: vi.fn((course, user) => completionService.isCourseCompleted(course, user))
     };
-    deviceInfoServiceMock = { watchDeviceType: vi.fn().mockReturnValue(deviceType$.asObservable()) };
+    const deviceType = signal(deviceType$.value);
+    deviceType$.subscribe(value => deviceType.set(value));
+    deviceInfoServiceMock = {
+      deviceType,
+      isMobile: computed(() => isMobileOrSmaller(deviceType())),
+      watchDeviceType: vi.fn().mockReturnValue(deviceType$.asObservable())
+    };
     matDialogMock = { open: vi.fn() };
 
     TestBed.configureTestingModule({
@@ -148,7 +157,6 @@ describe('DashboardComponent', () => {
     couchServiceMock.bulkGet.mockImplementation((db: string) => ({
       resources: of([ { _id: 'res_1', title: 'Resource 1' } ]),
       courses: of([ { _id: 'course_1', courseTitle: 'Course 1' } ]),
-      meetups: of([ { _id: 'meetup_1', title: 'Meetup 1' } ]),
       teams: of([ { _id: 'team_1', name: 'Team 1' } ])
     })[db] || of([]));
 
@@ -156,20 +164,27 @@ describe('DashboardComponent', () => {
 
     expect(component.data.resources[0]).toMatchObject({ title: 'Resource 1', link: '/resources/view/res_1' });
     expect(component.data.courses[0]).toMatchObject({ title: 'Course 1', link: '/courses/view/course_1' });
-    expect(component.data.meetups[0]).toMatchObject({ title: 'Meetup 1', link: '/meetups/view/meetup_1' });
     expect(component.data.myTeams[0]).toMatchObject({ title: 'Team 1', link: '/teams/view/team_1' });
-    expect(component.isLoading).toBe(false);
+    expect(component.loading).toEqual({ resources: false, courses: false, myTeams: false });
   });
 
-  it('clears stale dashboard data immediately for an empty shelf', () => {
-    userServiceMock.shelf = { resourceIds: [], courseIds: [], meetupIds: [], myTeamIds: [] };
-    couchServiceMock.bulkGet.mockReturnValue(NEVER);
-    createComponent();
-    component.data = { resources: [ {} ], courses: [ {} ], meetups: [ {} ], myTeams: [ {} ] };
+  it('loads every dashboard query once', () => {
+    createComponent().detectChanges();
 
-    component.initDashboard();
+    expect(couchServiceMock.bulkGet.mock.calls.map(([ db ]) => db)).toEqual([ 'resources', 'courses', 'teams', 'teams' ]);
+    expect(couchServiceMock.findAll.mock.calls.map(([ db ]) => db)).toEqual([ 'teams', 'login_activities' ]);
+    expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledTimes(2);
+  });
 
-    expect(component.data).toEqual({ resources: [], courses: [], meetups: [], myTeams: [] });
+  it('shows a tile while a slower tile is still loading', () => {
+    couchServiceMock.bulkGet.mockImplementation((db: string) =>
+      db === 'teams' ? NEVER : of([ { _id: 'res_1', title: 'Resource 1' } ])
+    );
+
+    createComponent().detectChanges();
+
+    expect(component.loading).toEqual({ resources: false, courses: false, myTeams: true });
+    expect(component.data.resources).toHaveLength(1);
   });
 
   it('filters falsy shelf IDs before bulk loading data', () => {
@@ -220,6 +235,17 @@ describe('DashboardComponent', () => {
     }));
     expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
       selector: { type: 'exam', status: 'requires grading', 'user.name': { $gt: null } }
+    }));
+  });
+
+  it('skips the grading count for users who cannot see Submissions', () => {
+    userServiceMock.doesUserHaveRole.mockReturnValue(false);
+
+    createComponent().detectChanges();
+
+    expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledTimes(1);
+    expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
+      selector: expect.objectContaining({ type: 'survey' })
     }));
   });
 
@@ -287,21 +313,34 @@ describe('DashboardComponent', () => {
     createComponent();
 
     deviceType$.next(DeviceType.SMALL_MOBILE);
-    expect(component.isMobile).toBe(true);
+    expect(component.isMobile()).toBe(true);
     expect(component.isAccordionMode).toBe(false);
 
     deviceType$.next(DeviceType.MOBILE);
-    expect(component.isMobile).toBe(true);
+    expect(component.isMobile()).toBe(true);
     expect(component.isAccordionMode).toBe(true);
   });
 
-  it('reloads dashboard data when the shelf changes', () => {
+  it('reformats the myLife titles when the device type changes', () => {
+    createComponent();
+    const chatFirstLine = () => component.myLifeItems.find(item => item.link === '/chat').firstLine;
+
+    expect(chatFirstLine()).toBe(' my ');
+
+    deviceType$.next(DeviceType.MOBILE);
+    expect(chatFirstLine()).toBe(' my Chat');
+  });
+
+  it('reloads only the tile whose shelf changed', () => {
     createComponent().detectChanges();
     couchServiceMock.bulkGet.mockClear();
+    submissionsServiceMock.getSubmissions.mockClear();
 
-    shelfChange$.next();
+    userServiceMock.shelf = { ...userServiceMock.shelf, resourceIds: [ 'res_1', 'res_2' ] };
+    shelfChange$.next(userServiceMock.shelf);
 
-    expect(couchServiceMock.bulkGet).toHaveBeenCalledWith('resources', [ 'res_1' ]);
+    expect(couchServiceMock.bulkGet.mock.calls).toEqual([ [ 'resources', [ 'res_1', 'res_2' ] ] ]);
+    expect(submissionsServiceMock.getSubmissions).not.toHaveBeenCalled();
   });
 
   it('stops responding to shelf changes after destruction', () => {
@@ -311,7 +350,8 @@ describe('DashboardComponent', () => {
 
     testFixture.destroy();
     fixture = undefined;
-    shelfChange$.next();
+    userServiceMock.shelf = { ...userServiceMock.shelf, resourceIds: [ 'res_2' ] };
+    shelfChange$.next(userServiceMock.shelf);
 
     expect(couchServiceMock.bulkGet).not.toHaveBeenCalled();
   });
@@ -332,7 +372,7 @@ describe('DashboardComponent', () => {
       component.setCompletedCourses(courses, []);
 
       deviceType$.next(DeviceType.DESKTOP);
-      expect(component.isMobile).toBe(false);
+      expect(component.isMobile()).toBe(false);
       expect(component.maxVisibleBadges).toBe(8);
       expect(component.visibleBadges).toHaveLength(8);
       expect(component.remainingBadgesCount).toBe(2);
@@ -343,7 +383,7 @@ describe('DashboardComponent', () => {
       expect(component.hiddenBadges.map(course => course._id)).toEqual([ 'c_6', 'c_7', 'c_8', 'c_9' ]);
 
       deviceType$.next(DeviceType.MOBILE);
-      expect(component.isMobile).toBe(true);
+      expect(component.isMobile()).toBe(true);
       expect(component.maxVisibleBadges).toBe(6);
       expect(component.visibleBadges).toHaveLength(6);
       expect(component.remainingBadgesCount).toBe(4);

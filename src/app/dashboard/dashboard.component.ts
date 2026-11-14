@@ -1,27 +1,29 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
-import { of, forkJoin, Subject, combineLatest } from 'rxjs';
-import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { environment } from '../../environments/environment';
-import { SubmissionsService } from '../submissions/submissions.service';
-import { StateService } from '../shared/state.service';
-import { dedupeShelfReduce, dedupeObjectArray, fullName } from '../shared/utils';
-import { CoursesService } from '../courses/courses.service';
-import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { of, forkJoin, Subject, combineLatest, Observable } from 'rxjs';
 import { NgClass, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
-import { PlanetRoleComponent } from '../shared/planet-role.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+
+import { UserService } from '@shared/auth/user.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { dedupeShelfReduce, dedupeObjectArray, fullName } from '@shared/utils';
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+
+import { environment } from '../../environments/environment';
+import { SubmissionsService } from '../submissions/submissions.service';
+import { CoursesService } from '../courses/courses.service';
+import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { DashboardTileComponent } from './dashboard-tile.component';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -45,27 +47,28 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   user = this.userService.get();
-  data = { resources: [], courses: [], meetups: [], myTeams: [] };
+  data = { resources: [], courses: [], myTeams: [] };
+  loading = { resources: true, courses: true, myTeams: true };
+  loadedShelf: any = {};
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/';
   displayName: string;
   roles: string[];
   planetName: string;
   completedCourses: any[] = [];
   dateNow: any;
-  visits = 0;
+  visits: number;
   surveysCount = 0;
   examsCount = 0;
   leaderIds = [];
   onDestroy$ = new Subject<void>();
   showBanner = false;
-  isLoading = true;
-  deviceType: DeviceType;
-  isMobile = false;
+  readonly deviceType = this.deviceInfoService.deviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   myLifeItems: any[] = [];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
   @HostBinding('class.accordion-mode') get isAccordionMode() {
-    return this.deviceType === DeviceType.MOBILE;
+    return this.deviceType() === DeviceType.MOBILE;
   }
 
   constructor(
@@ -80,10 +83,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {
     const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
-    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.ngOnInit();
-      });
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
     this.coursesService.requestCourses();
     combineLatest(
@@ -93,9 +92,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.setCompletedCourses(courses, certifications);
     });
     this.initMyLifeItems();
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.updateMyLifeItemsFormat();
     });
   }
@@ -104,8 +101,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.displayName = fullName(this.user) || this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
-    this.getExams();
-    this.initDashboard();
+    // Same roles as the Submissions item's authorization
+    if (this.userService.doesUserHaveRole([ '_admin', 'manager', 'leader' ])) {
+      this.getExams();
+    }
+    // shelfChange$ replays its latest value on subscribe, so this also does the first load
+    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => this.loadTiles());
     this.couchService.findAll('login_activities', findDocuments({ user: this.user.name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
@@ -140,31 +141,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
   updateMyLifeItemsFormat() {
     this.myLifeItems = this.myLifeItems.map(item => ({
       ...item,
-      firstLine: this.isMobile ? item.baseFirstLine + item.title : item.baseFirstLine
+      firstLine: this.isMobile() ? item.baseFirstLine + item.title : item.baseFirstLine
     }));
   }
 
-  initDashboard() {
-    this.isLoading = true;
-    const userShelf = this.userService.shelf;
-    if (this.isEmptyShelf(userShelf)) {
-      this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
+  loadTiles() {
+    const shelf = this.userService.shelf;
+    const loadedShelf = this.loadedShelf;
+    this.loadedShelf = shelf;
+    // A shelf update replaces only the changed id array, so an unchanged tile keeps the same array
+    if (shelf.resourceIds !== loadedShelf.resourceIds) {
+      this.loadTile('resources', this.getData('resources', shelf.resourceIds, { linkPrefix: '/resources/view/', addId: true }));
     }
+    if (shelf.courseIds !== loadedShelf.courseIds) {
+      this.loadTile(
+        'courses', this.getData('courses', shelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/courses/view/', addId: true })
+      );
+    }
+    if (shelf.myTeamIds !== loadedShelf.myTeamIds) {
+      this.loadTile('myTeams', this.getTeams(shelf.myTeamIds));
+    }
+  }
 
-    forkJoin([
-      this.getData('resources', userShelf.resourceIds, { linkPrefix: '/resources/view/', addId: true }),
-      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/courses/view/', addId: true }),
-      this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
-      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
-      this.getTeamMembership()
-    ]).pipe(finalize(() => this.isLoading = false)).subscribe(dashboardItems => {
-      this.data.resources = dashboardItems[0];
-      this.data.courses = dashboardItems[1];
-      this.data.meetups = dashboardItems[2];
-      const allTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
-      this.data.myTeams = dedupeObjectArray(allTeams, [ '_id' ])
-        .filter(team => team.status !== 'archived');
+  loadTile(tile: 'resources' | 'courses' | 'myTeams', request: Observable<any[]>) {
+    this.loading[tile] = true;
+    request.pipe(finalize(() => this.loading[tile] = false), takeUntil(this.onDestroy$)).subscribe(items => {
+      this.data[tile] = items;
     });
+  }
+
+  getTeams(myTeamIds: string[]) {
+    return forkJoin([
+      this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
+      this.getTeamMembership()
+    ]).pipe(map(([ shelfTeams, membershipTeams ]) =>
+      dedupeObjectArray([ ...shelfTeams.map(team => ({ ...team, fromShelf: true })), ...membershipTeams ], [ '_id' ])
+        .filter(team => team.status !== 'archived')
+    ));
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
@@ -198,13 +211,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return this.urlPrefix + Object.keys(attachments)[0];
     }
     return 'assets/image.png';
-  }
-
-  isEmptyShelf(shelf) {
-    return shelf.courseIds.length === 0
-      && shelf.meetupIds.length === 0
-      && shelf.myTeamIds.length === 0
-      && shelf.resourceIds.length === 0;
   }
 
   getSubmissions(type: string, status: string, username?: string) {
@@ -257,7 +263,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   get maxVisibleBadges(): number {
-    return this.deviceType === DeviceType.DESKTOP ? 8 : 6;
+    return this.deviceType() === DeviceType.DESKTOP ? 8 : 6;
   }
 
   get visibleBadges(): any[] {

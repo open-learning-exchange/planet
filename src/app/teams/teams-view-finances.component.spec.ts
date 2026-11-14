@@ -6,15 +6,19 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { By } from '@angular/platform-browser';
 import { MatSortHeader } from '@angular/material/sort';
 import { LOCALE_ID } from '@angular/core';
+import { of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { CsvService } from '@shared/export/csv.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { IMAGE_MAX_FALLBACK_BYTES } from '@shared/utils';
+
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
-import { CsvService } from '../shared/csv.service';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsTablePdfExportService } from './teams-table-pdf-export.service';
-import { StateService } from '../shared/state.service';
 import { TeamsService } from './teams.service';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 
@@ -89,6 +93,16 @@ describe('TeamsViewFinancesComponent', () => {
     vi.restoreAllMocks();
   });
 
+  // JSDOM never settles an image load, so fail it and take the raw-file fallback
+  beforeEach(() => vi.stubGlobal('Image', class {
+    set src(_value: string) {
+      setTimeout(() => this.onerror());
+    }
+
+    onerror: () => void = () => {};
+  }));
+  afterEach(() => vi.unstubAllGlobals());
+
   const sortBy = (id: string, start: 'asc' | 'desc') => {
     component.table.sort.sort({ id, start, disableClear: true });
     fixture.detectChanges();
@@ -99,8 +113,42 @@ describe('TeamsViewFinancesComponent', () => {
   const renderedDescriptions = () => fixture.debugElement.queryAll(By.css('.km-description'))
     .map(cell => cell.nativeElement.textContent.trim());
 
+  const balanceShown = () => fixture.debugElement.queryAll(By.css('.km-balance')).length === 1;
+
+  const clearFiltersButton = (): HTMLButtonElement | null => fixture.nativeElement.querySelector('.km-clear-filters');
+
   it('should create TeamsViewFinancesComponent', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should chart the balance oldest first, ending at the newest row when transactions share a date', () => {
+    const sameDay = new Date('2026-07-12T00:00:00Z').getTime();
+    component.finances = [
+      ...mockFinances,
+      { _id: 'tx-4', date: sameDay, description: 'Bake Sale', type: 'credit', amount: 200, status: 'active' },
+      { _id: 'tx-5', date: sameDay, description: 'Rent', type: 'debit', amount: 300, status: 'active' }
+    ];
+    component.ngOnChanges();
+
+    expect(component.balanceChart.datasets[0].data).toEqual([ 1000, 750, 1250, 1450, 1150 ]);
+    expect(component.table.data[0].balance).toBe(1150);
+  });
+
+  it('should chart credit and debit by month within the date filter', () => {
+    component.finances = [
+      ...mockFinances,
+      { _id: 'tx-4', date: new Date('2026-08-03T10:00:00Z').getTime(), description: 'Rent', type: 'debit', amount: 100, status: 'active' }
+    ];
+    component.ngOnChanges();
+
+    expect(component.monthlyChart.labels).toEqual([ 'Jul 2026', 'Aug 2026' ]);
+    expect(component.monthlyChart.datasets.map(dataset => dataset.data)).toEqual([ [ 1500, 0 ], [ 250, 100 ] ]);
+
+    component.startDate = new Date(2026, 6, 4);
+    component.transactionFilter();
+
+    expect(component.monthlyChart.datasets.map(dataset => dataset.data)).toEqual([ [ 500, 0 ], [ 250, 100 ] ]);
+    expect(component.balanceChart.datasets[0].data).toEqual([ 750, 1250, 1150 ]);
   });
 
   it('should bind MatSort to the table data source', () => {
@@ -151,12 +199,32 @@ describe('TeamsViewFinancesComponent', () => {
     fixture.detectChanges();
     expect(component.emptyTable).toBe(true);
 
-    component.resetDateFilter();
+    component.startDate = undefined;
+    component.transactionFilter();
     fixture.detectChanges();
 
     expect(component.table.sort.active).toBe('credit');
     expect(component.table.sort.direction).toBe('asc');
     expect(renderedDescriptions()).toEqual([ 'Hardware Supplies', 'Grant Funding', 'Initial Deposit' ]);
+  });
+
+  it('should offer Clear filters after a sort change and restore the date sort and range', () => {
+    expect(clearFiltersButton()).toBeNull();
+    sortBy('credit', 'asc');
+    expect(clearFiltersButton()).not.toBeNull();
+    component.startDate = new Date('2026-07-04T00:00:00Z');
+    component.transactionFilter();
+    fixture.detectChanges();
+
+    clearFiltersButton().click();
+    fixture.detectChanges();
+
+    expect(component.table.sort.active).toBe('date');
+    expect(component.table.sort.direction).toBe('desc');
+    expect(component.startDate).toBeUndefined();
+    expect(renderedDescriptions()).toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
+    expect(balanceShown()).toBe(true);
+    expect(clearFiltersButton()).toBeNull();
   });
 
   it('should not reorder the table data source when exporting', () => {
@@ -166,5 +234,74 @@ describe('TeamsViewFinancesComponent', () => {
 
     expect(component.table.data.map(row => row.description))
       .toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
+  });
+
+  it('should show and export the balance only while sorted by date', () => {
+    const exportCsvSpy = vi.spyOn(csvService, 'exportCSV').mockImplementation(() => {});
+    sortBy('credit', 'asc');
+    component.exportTableData();
+
+    expect(balanceShown()).toBe(false);
+    expect(exportCsvSpy.mock.calls[0][0].data[0]).not.toHaveProperty('balance');
+
+    sortBy('date', 'asc');
+    component.exportTableData();
+
+    expect(balanceShown()).toBe(true);
+    expect(exportCsvSpy.mock.calls[1][0].data[0]).toHaveProperty('balance');
+  });
+
+  it('should show the balance again when a reload resets the sort to date', () => {
+    sortBy('credit', 'asc');
+    expect(balanceShown()).toBe(false);
+    component.isLoading = true;
+    component.ngOnChanges();
+    fixture.detectChanges();
+    component.isLoading = false;
+    component.ngOnChanges();
+    fixture.detectChanges();
+
+    expect(component.table.sort.active).toBe('date');
+    expect(balanceShown()).toBe(true);
+  });
+
+  it('should list same-day transactions in balance order when sorted oldest first', () => {
+    const sameDay = new Date('2026-07-12T00:00:00Z').getTime();
+    component.finances = [
+      ...mockFinances,
+      { _id: 'tx-4', date: sameDay, description: 'Bake Sale', type: 'credit', amount: 200, status: 'active' },
+      { _id: 'tx-5', date: sameDay, description: 'Bus Fare', type: 'debit', amount: 50, status: 'active' }
+    ];
+    component.ngOnChanges();
+    fixture.detectChanges();
+    const exportCsvSpy = vi.spyOn(csvService, 'exportCSV').mockImplementation(() => {});
+    sortBy('date', 'asc');
+    component.exportTableData();
+
+    expect(exportCsvSpy.mock.calls[0][0].data.map((row: any) => row['balance'])).toEqual([ 1000, 750, 1250, 1450, 1400 ]);
+  });
+
+  it('saves kept receipts as stubs, inlines new ones and lists unusable ones in one write', async () => {
+    const updateTeam = vi.spyOn(TestBed.inject(TeamsService), 'updateTeam').mockReturnValue(of({}));
+    const stub = { content_type: 'image/png', length: 4, stub: true };
+    const oldTransaction: any = { ...mockFinances[1], _rev: '1-a', _attachments: { 'kept.png': stub, 'dropped.png': stub } };
+    const receiptImages = {
+      retained: [ { name: 'kept.png' } ],
+      removed: [ { name: 'dropped.png' } ],
+      added: [
+        { file: new File([ 'data' ], 'new.png', { type: 'image/png' }) },
+        { file: new File([ new Uint8Array(IMAGE_MAX_FALLBACK_BYTES + 1) ], 'photo.heic', { type: 'image/heic' }) }
+      ]
+    } as any;
+    component.team = { _id: 'team-1', teamType: 'local', teamPlanetCode: 'planet' };
+
+    const result = await component.submitTransaction({ ...oldTransaction, receiptImages }, oldTransaction).toPromise();
+
+    expect(updateTeam).toHaveBeenCalledOnce();
+    expect(updateTeam.mock.calls[0][0]._attachments).toEqual({
+      'kept.png': stub,
+      'new.png': { content_type: 'image/png', data: btoa('data') }
+    });
+    expect(result).toEqual({ skippedAttachments: [ 'photo.heic' ] });
   });
 });

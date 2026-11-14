@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { NgClass } from '@angular/common';
 import {
   AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
@@ -6,35 +7,37 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
-import { FileUploadComponent } from '../../shared/forms/file-upload.component';
-import { UserService } from '../../shared/user.service';
-import { environment } from '../../../environments/environment';
-import { languages } from '../../shared/languages';
-import { CustomValidators } from '../../validators/custom-validators';
-import { StateService } from '../../shared/state.service';
-import { ValidatorService } from '../../validators/validator.service';
-import { showFormErrors } from '../../shared/table-helpers';
-import { educationLevel } from '../user-constants';
-import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes.component';
-import { CouchService } from '../../shared/couchdb.service';
-import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 import { MatToolbar } from '@angular/material/toolbar';
-
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError, MatSuffix, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
-import { SubmitDirective } from '../../shared/submit.directive';
 import { CdkScrollable } from '@angular/cdk/scrolling';
+
+import { FileUploadComponent } from '@shared/forms/file-upload.component';
+import { UserService } from '@shared/auth/user.service';
+import { languages } from '@shared/language/languages';
+import { StateService } from '@shared/state.service';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
+import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { CouchService } from '@shared/database/couchdb.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-validator.directive';
+import { SubmitDirective } from '@shared/dialogs/submit.directive';
+import { genderOptions, parseGender } from '@shared/demographics/gender.constants';
+
+import { environment } from '../../../environments/environment';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
+import { educationLevel } from '../users.constants';
+import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 
 interface UsersUpdateFormGroup {
   firstName: FormControl<string>;
@@ -55,6 +58,7 @@ interface UsersUpdateFormGroup {
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss'],
   imports: [
+    NgClass,
     MatToolbar,
     MatIconButton,
     MatIcon,
@@ -91,6 +95,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };
   initialFormValues: UsersUpdateFormValue | null = null;
   educationLevel = educationLevel;
+  genderOptions = genderOptions;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup<UsersUpdateFormGroup>;
   currentImgKey: string | null = null;
@@ -129,7 +134,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private dialog: MatDialog
   ) {
     this.userData();
-    const nav = this.router.getCurrentNavigation();
+    const nav = this.router.currentNavigation();
     this.title = nav?.extras?.state?.['title'] || '';
   }
 
@@ -385,7 +390,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       birthDate: user.birthDate ?? null,
       birthYear: user.birthYear ?? null,
       age: user.age ?? null,
-      gender: user.gender ?? '',
+      gender: parseGender(user.gender) ?? '',
       level: user.level ?? '',
       betaEnabled: user.betaEnabled ?? false
     };

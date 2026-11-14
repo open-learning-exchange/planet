@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
 import {
   ageFromBirthDate, ageFromUser, couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName,
-  genderBucket, hasMarkdownImages, IMAGE_MAX_FALLBACK_BYTES, localizedGender, normalizeImage,
-  normalizeMarkdownWhitespace, scaledDimensions
+  hasMarkdownImages, IMAGE_MAX_FALLBACK_BYTES, normalizeImage,
+  normalizeMarkdownWhitespace, safeAttachmentName, scaledDimensions, withImageAttachments
 } from './utils';
 
 describe('utils', () => {
@@ -16,6 +16,25 @@ describe('utils', () => {
       expect(couchAttachmentUrl('http://localhost:2200/', '/resources/', 'doc/id', 'site/index.html')).toBe(
         'http://localhost:2200/resources/doc%2Fid/site/index.html'
       );
+    });
+
+  });
+
+  describe('safeAttachmentName', () => {
+
+    it('strips leading underscores, which CouchDB rejects in attachment names', () => {
+      expect(safeAttachmentName('_DSC1234.JPG')).toBe('DSC1234.JPG');
+      expect(safeAttachmentName('/cover.png')).toBe('cover.png');
+      expect(safeAttachmentName('___')).toBe('attachment');
+    });
+
+    it('replaces characters that break attachment URLs and markdown links', () => {
+      expect(safeAttachmentName('before+after (1).jpg')).toBe('before_after__1_.jpg');
+    });
+
+    it('never returns a . or .. path segment', () => {
+      expect(safeAttachmentName('. ')).toBe('attachment');
+      expect(safeAttachmentName(' ..')).toBe('attachment');
     });
 
   });
@@ -260,6 +279,10 @@ ${'\t'.repeat(18)}
       expect(hasMarkdownImages('![Guatemala](images/guatemala.jpg)')).toBe(true);
     });
 
+    it('detects images resized to WebP at upload', () => {
+      expect(hasMarkdownImages('![](resources/image-id/photo.webp)')).toBe(true);
+    });
+
   });
 
   describe('scaledDimensions', () => {
@@ -329,6 +352,87 @@ ${'\t'.repeat(18)}
 
       expect(await normalizeImage(file, { maxFallbackBytes: 1024 })).toBeNull();
       expect(await normalizeImage(file, { maxFallbackBytes: 4096 })).not.toBeNull();
+    });
+
+    describe('with a decoded image', () => {
+      class LoadedImage {
+        naturalWidth = 1000;
+        naturalHeight = 500;
+        onload: () => void = () => {};
+        onerror: () => void = () => {};
+
+        set src(_value: string) {
+          setTimeout(() => this.onload());
+        }
+      }
+
+      const useCanvas = (alpha: number, encodes: string[]) => {
+        const canvas = {
+          width: 0,
+          height: 0,
+          getContext: () => ({ drawImage: vi.fn(), getImageData: () => ({ data: new Uint8ClampedArray([ 0, 0, 0, alpha ]) }) }),
+          toBlob: (done: (blob: Blob) => void, type: string) =>
+            done(new Blob([ 'encoded' ], { type: encodes.includes(type) ? type : 'image/png' }))
+        };
+        vi.spyOn(document, 'createElement').mockReturnValue(canvas as any);
+        (window as any).Image = LoadedImage;
+      };
+      const file = () => new File([ 'original' ], 'diagram.png', { type: 'image/png' });
+
+      it('keeps transparent pixels as PNG when the browser cannot encode WebP', async () => {
+        useCanvas(0, [ 'image/jpeg' ]);
+        const original = file();
+
+        const result = await normalizeImage(original);
+
+        expect(result?.contentType).toBe('image/png');
+        expect(result?.fileName).toBe('diagram.png');
+        expect(result?.file).not.toBe(original);
+      });
+
+      it('uses JPEG for opaque images when the browser cannot encode WebP', async () => {
+        useCanvas(255, [ 'image/jpeg' ]);
+
+        const result = await normalizeImage(file());
+
+        expect(result?.contentType).toBe('image/jpeg');
+        expect(result?.fileName).toBe('diagram.jpg');
+      });
+
+      it('keeps the original only when it fits and is under keepUnderBytes', async () => {
+        useCanvas(255, [ 'image/webp' ]);
+        const original = file();
+
+        expect((await normalizeImage(original, { maxDimension: 1000, keepUnderBytes: 1024 }))?.file).toBe(original);
+        expect((await normalizeImage(original, { maxDimension: 600, keepUnderBytes: 1024 }))?.contentType).toBe('image/webp');
+        expect((await normalizeImage(original, { maxDimension: 1000, keepUnderBytes: 1 }))?.contentType).toBe('image/webp');
+      });
+    });
+
+  });
+
+  describe('withImageAttachments', () => {
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it('skips an image that can no longer be read and keeps the others', async () => {
+      const readAsDataURL = FileReader.prototype.readAsDataURL;
+      vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function(this: FileReader, blob: Blob) {
+        return (blob as File).name === 'gone.png'
+          ? this.onerror(new ProgressEvent('error') as ProgressEvent<FileReader>)
+          : readAsDataURL.call(this, blob);
+      });
+      const added = [ 'gone.png', 'kept.png' ].map(name => ({ file: new File([ 'data' ], name, { type: 'image/png' }) }));
+
+      const result = await withImageAttachments({ _id: 'doc' }, { added }, async file => ({
+        file, contentType: 'image/png', fileName: file.name
+      }));
+
+      expect(result).toEqual({
+        doc: { _id: 'doc', _attachments: { 'kept.png': { content_type: 'image/png', data: btoa('data') } } },
+        added: [ 'kept.png' ],
+        skipped: [ 'gone.png' ]
+      });
     });
 
   });
@@ -430,43 +534,6 @@ ${'\t'.repeat(18)}
     it('returns null when no age is available', () => {
       expect(ageFromUser(now, {})).toBeNull();
       expect(ageFromUser(now)).toBeNull();
-    });
-
-  });
-
-  describe('localizedGender', () => {
-
-    it('translates known genders case-insensitively', () => {
-      expect(localizedGender('male')).toBe('Male');
-      expect(localizedGender('FEMALE')).toBe('Female');
-    });
-
-    it('capitalizes other strings', () => {
-      expect(localizedGender('nonbinary')).toBe('Nonbinary');
-    });
-
-    it('falls back for missing or non-string values', () => {
-      expect(localizedGender(undefined)).toBe('');
-      expect(localizedGender('', 'N/A')).toBe('N/A');
-      expect(localizedGender(1, 'N/A')).toBe('N/A');
-      expect(localizedGender({}, 'N/A')).toBe('N/A');
-    });
-
-  });
-
-  describe('genderBucket', () => {
-
-    it('matches the casing localizedGender accepts', () => {
-      expect(genderBucket('male')).toBe('male');
-      expect(genderBucket('Male')).toBe('male');
-      expect(genderBucket('FEMALE')).toBe('female');
-    });
-
-    it('counts anything the charts have no bucket for as unspecified', () => {
-      expect(genderBucket('nonbinary')).toBe('didNotSpecify');
-      expect(genderBucket(undefined)).toBe('didNotSpecify');
-      expect(genderBucket('')).toBe('didNotSpecify');
-      expect(genderBucket(1)).toBe('didNotSpecify');
     });
 
   });

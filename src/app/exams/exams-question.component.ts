@@ -5,21 +5,22 @@ import {
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { uniqueId } from '../shared/utils';
-import { ExamsService, QuestionChoiceFormGroup, QuestionFormGroup } from './exams.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { trackByIdVal } from '../shared/table-helpers';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
+
+import { uniqueId } from '@shared/utils';
+import { trackByIdVal } from '@shared/tables/table.helpers';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+import { ExamsService, QuestionChoiceFormGroup, QuestionFormGroup } from './exams.service';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   selector: 'planet-exam-question',
@@ -50,6 +51,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   @Input() question: QuestionFormGroup;
   @Output() questionChange = new EventEmitter<QuestionFormGroup>();
   @Input() examType = 'courses';
+  @Input() imageGroup: 'community' | { [db: string]: string } = 'community';
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
   correctCheckboxes: any = {};

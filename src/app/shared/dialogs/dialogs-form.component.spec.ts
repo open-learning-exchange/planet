@@ -4,11 +4,14 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { FormBuilder, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
+
+import { UserService } from '@shared/auth/user.service';
 
 import { DialogsFormComponent } from './dialogs-form.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
-import { UserService } from '../user.service';
 import { DialogGuardService } from './dialog-guard.service';
 import { DialogField } from './dialogs-form.service';
 
@@ -94,6 +97,34 @@ describe('DialogsFormComponent', () => {
     vi.restoreAllMocks();
   });
 
+  it('uses custom action labels', () => {
+    createComponent({
+      title: 'Prompt',
+      fields: [ { type: 'textbox', name: 'rate', placeholder: 'Rate' } ],
+      formGroup: { rate: [ 0 ] },
+      cancelLabel: 'Not now',
+      submitLabel: 'Done'
+    });
+    const buttons = fixture.debugElement.queryAll(By.css('mat-dialog-actions button')).map(b => b.nativeElement.textContent.trim());
+
+    expect(buttons).toEqual([ 'Not now', 'Done' ]);
+  });
+
+  it('hands the submit handler the dialog it was opened in', () => {
+    const onSubmit = vi.fn();
+    createComponent({
+      title: 'Prompt',
+      fields: [ { type: 'textbox', name: 'rate', placeholder: 'Rate' } ],
+      formGroup: { rate: [ 1 ] },
+      onSubmit
+    });
+
+    fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
+
+    expect(onSubmit.mock.calls[0][2]).toBe(dialogRef);
+    expect(dialogRef.close).not.toHaveBeenCalled();
+  });
+
   it('renders required asterisks on required radio labels', () => {
     createComponent();
 
@@ -148,5 +179,37 @@ describe('DialogsFormComponent', () => {
     fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
 
     expect(scrollSpy).toHaveBeenCalledTimes(1);
+  });
+
+  describe('label suggestions', () => {
+    const renderSuggestions = async (suggestions: string[]) => {
+      createComponent({
+        title: 'Report',
+        fields: [ { name: 'label', type: 'textbox', placeholder: 'Label', suggestions } ],
+        formGroup: { label: [ '' ] },
+        closeOnSubmit: true
+      });
+      return TestbedHarnessEnvironment.loader(fixture).getHarness(MatAutocompleteHarness);
+    };
+
+    it('finds a misspelled multiword label and keeps the selected label unchanged', async () => {
+      const input = await renderSuggestions([ 'Quarterly Review', 'Annual Review' ]);
+
+      await input.enterText('reveiw quartrly');
+      const options = await input.getOptions();
+      expect(await Promise.all(options.map(option => option.getText()))).toEqual([ 'Quarterly Review' ]);
+
+      await input.selectOption({ text: 'Quarterly Review' });
+      expect(component.modalForm.controls['label'].value).toBe('Quarterly Review');
+    });
+
+    it('keeps numeric label codes and years exact in suggestions', async () => {
+      const input = await renderSuggestions([ 'Q1 Audit 2026', 'Q2 Audit 2026', 'Q2 Audit 2027' ]);
+
+      await input.enterText('Q2 audti 2027');
+      const options = await input.getOptions();
+
+      expect(await Promise.all(options.map(option => option.getText()))).toEqual([ 'Q2 Audit 2027' ]);
+    });
   });
 });

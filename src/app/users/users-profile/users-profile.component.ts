@@ -2,28 +2,32 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
-import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
-import { findDocuments } from '../../shared/mangoQueries';
-import { StateService } from '../../shared/state.service';
-import { educationLevel } from '../user-constants';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { ChangePasswordDirective } from '../../shared/dialogs/change-password.directive';
 import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } from '@angular/material/list';
-import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
-import { AvatarComponent } from '../../shared/avatar.component';
-import { FullNamePipe } from '../../shared/full-name.pipe';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
+import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
+import { LanguageLabelComponent } from '@shared/language/language-label.component';
+import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { AvatarComponent } from '@shared/ui/avatar.component';
+import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { getGenderIcon } from '@shared/demographics/gender.constants';
+
+import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
+import { educationLevel } from '../users.constants';
+import { userDocPath, userRelationship } from '../users.utils';
+import { TeamsService } from '../../teams/teams.service';
 
 @Component({
   selector: 'planet-users-profile',
@@ -59,22 +63,23 @@ import { FullNamePipe } from '../../shared/full-name.pipe';
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
-  private dbName = '_users';
   user: any = {};
   userDetail: any = {};
   urlName = '';
   editable = false;
   hasAchievement = false;
-  totalLogins = 0;
+  totalLogins: number | null = null;
   lastLogin = 0;
   educationLevel = educationLevel;
-  deviceType: DeviceType;
-  isMobile: boolean;
+  readonly isMobile = this.deviceInfoService.isMobile;
   teams: any[] = [];
   enterprises: any[] = [];
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
+  get profileGenderIcon() {
+    return getGenderIcon(this.userDetail?.gender);
+  }
   @Input() userName: string;
 
   constructor(
@@ -86,12 +91,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private teamsService: TeamsService
-  ) {
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
-      this.deviceType = deviceType;
-      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.user = this.userService.get();
@@ -136,29 +136,25 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   profileView() {
-    const relationship = this.userRelationship(this.planetCode);
-    const dbName = relationship === 'local' ? this.dbName : `${relationship}_users`;
-    const userId = relationship === 'local' || relationship === 'parent'
-      ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.couchService.get(dbName + '/' + userId).subscribe((response) => {
+    // Only the dialog's link may show early: with an empty userDetail, planetChangePassword targets the logged-in user
+    this.editable = this.isDialog && this.canEdit();
+    this.couchService.get(userDocPath(this.urlName, this.planetCode, this.stateService.configuration)).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
-      this.editable = relationship === 'local' && (
-        userDetail.name === this.userService.get().name ||
-        (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName.split('@')[0] !== this.urlName)
-      );
+      this.editable = this.canEdit();
       this.checkHasAchievments();
     }, (error) => {
       console.log(error);
+      this.editable = false;
     });
   }
 
-  userRelationship(planetCode: string) {
-    return planetCode === this.stateService.configuration.parentCode ?
-      'parent' :
-      planetCode === null || planetCode === this.stateService.configuration.code ?
-        'local' :
-        'child';
+  canEdit() {
+    const adminName = this.stateService.configuration.adminName?.split('@')[0];
+    return userRelationship(this.planetCode, this.stateService.configuration) === 'local' && (
+      this.urlName === this.userService.get().name ||
+      (this.userService.doesUserHaveRole([ '_admin' ]) && !!adminName && adminName !== this.urlName)
+    );
   }
 
   goBack() {

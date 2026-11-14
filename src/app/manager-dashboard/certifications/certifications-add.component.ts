@@ -2,19 +2,24 @@ import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } fro
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { CustomValidators } from '../../validators/custom-validators';
-import { CertificationsService } from './certifications.service';
-import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
-import { CoursesComponent } from '../../courses/courses.component';
-import { showFormErrors } from '../../shared/table-helpers';
-import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { finalize } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+
+import { CertificationsService } from '@shared/certifications/certifications.service';
+import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
+import { showFormErrors } from '@shared/tables/table.helpers';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+
+import { CustomValidators } from '../../validators/custom-validators';
+import { CertificationsManagerService } from './certifications-manager.service';
+import { CoursesComponent } from '../../courses/courses.component';
+import { ValidatorService } from '../../validators/validator.service';
 
 
 interface CertificationFormControls {
@@ -23,6 +28,12 @@ interface CertificationFormControls {
 
 @Component({
   templateUrl: './certifications-add.component.html',
+  styles: [`
+    .view-container {
+      display: flex;
+      flex-direction: column;
+    }
+  `],
   imports: [
     MatToolbar,
     MatIconButton,
@@ -44,6 +55,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup<CertificationFormControls>;
   courseIds: string[] = [];
+  deletedCourseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
@@ -54,9 +66,11 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private certificationsService: CertificationsService,
+    private certificationsManagerService: CertificationsManagerService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.certificateForm = this.fb.group({
       name: this.fb.control('', {
@@ -78,6 +92,10 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
+          this.certificationsService.deletedCourseIds(this.courseIds).subscribe(
+            deletedCourseIds => this.deletedCourseIds = deletedCourseIds,
+            () => {}
+          );
         });
       } else {
         this.certificateInfo._id = undefined;
@@ -105,11 +123,12 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       return;
     }
     const certificateFormValue = this.certificateForm.getRawValue();
-    this.certificationsService.addCertification({
+    this.dialogsLoadingService.start();
+    this.certificationsManagerService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds
-    }).subscribe((res) => {
+    }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(
         this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`
@@ -117,12 +136,12 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       if (reroute) {
         this.goBack();
       }
-    });
+    }, () => this.planetMessageService.showAlert($localize`There was an error saving the certification`));
   }
 
   openCourseDialog() {
     const initialCourseIds = this.courseIds || [];
-    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
+    const dialogRef = this.dialog.open(TablesAddDialogComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {
@@ -131,13 +150,19 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
         },
         noSpinner: true,
         mode: 'courses',
-        excludeIds: initialCourseIds
+        excludeIds: initialCourseIds,
+        requireSteps: true
       }
     });
   }
 
   removeCourses() {
     this.courseIds = this.courseIds.filter(id => this.courseTable.selection.selected.indexOf(id) === -1);
+  }
+
+  removeDeletedCourses() {
+    this.courseIds = this.courseIds.filter(id => !this.deletedCourseIds.includes(id));
+    this.deletedCourseIds = [];
   }
 
 }

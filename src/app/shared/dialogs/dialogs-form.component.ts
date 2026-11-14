@@ -1,34 +1,37 @@
 import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DialogsLoadingService } from './dialogs-loading.service';
-import { DialogsListService } from './dialogs-list.service';
-import { DialogsListComponent } from './dialogs-list.component';
-import { DialogGuardService } from './dialog-guard.service';
 import { map } from 'rxjs/operators';
-import { UserService } from '../user.service';
-import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { MatIcon } from '@angular/material/icon';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgClass } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../forms/form-error-messages.component';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
-import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
-import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '../forms/file-upload.component';
-import { AuthorizedRolesDirective } from '../authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { SubmitDirective } from '../submit.directive';
-import { deepEqual } from '../utils';
-import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
+
+import { UserService } from '@shared/auth/user.service';
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { PlanetRatingStarsComponent } from '@shared/ratings/planet-rating-stars.component';
+import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
+import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '@shared/forms/file-upload.component';
+import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
+import { deepEqual } from '@shared/utils';
+import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
+import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+
+import { DialogsLoadingService } from './dialogs-loading.service';
+import { DialogsListService } from './dialogs-list.service';
+import { DialogsListComponent } from './dialogs-list.component';
+import { DialogGuardService } from './dialog-guard.service';
+import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
+import { SubmitDirective } from './submit.directive';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -59,6 +62,10 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
       display: block;
       height: 24px;
     }
+
+    .file-upload-spaced {
+      margin-bottom: 20px;
+    }
   `],
   imports: [
     FormsModule,
@@ -74,10 +81,13 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
     MatLabel,
     MatInput,
     MatError,
+    MatHint,
     FormErrorMessagesComponent,
     MatIconButton,
     MatSuffix,
     MatSelect,
+    MatAutocomplete,
+    MatAutocompleteTrigger,
     MatOption,
     MatRadioGroup,
     MatRadioButton,
@@ -105,6 +115,8 @@ export class DialogsFormComponent {
   readonly emptyAttachments: ExistingAttachment[] = [];
   dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
+  cancelLabel = $localize`Cancel`;
+  submitLabel = $localize`Submit`;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsFormComponent>,
@@ -123,6 +135,8 @@ export class DialogsFormComponent {
       this.fields = this.data.fields.filter(field => !field.planetBeta || this.userService.isBetaEnabled());
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
+      this.cancelLabel = this.data.cancelLabel || this.cancelLabel;
+      this.submitLabel = this.data.submitLabel || this.submitLabel;
       this.fields.forEach(field => {
         if (field.disabled) {
           this.modalForm.get(field.name)?.disable({ emitEvent: false });
@@ -166,7 +180,7 @@ export class DialogsFormComponent {
     }
     if (this.data && this.data.onSubmit) {
       this.dialogsLoadingService.start();
-      this.data.onSubmit(mForm.value, mForm);
+      this.data.onSubmit(mForm.value, mForm, dialog);
     }
     if (!this.data || this.data.closeOnSubmit === true) {
       this.dialogsLoadingService.stop();
@@ -184,6 +198,12 @@ export class DialogsFormComponent {
     this.passwordVisibility.set(fieldName, !visibility);
   }
 
+  filteredSuggestions(field: DialogField) {
+    const matchesValue = filterSpecificFieldsHybrid([ 'suggestion' ]);
+    const value = (this.modalForm.controls[field.name].value || '').toString();
+    return field.suggestions.filter(suggestion => matchesValue({ suggestion }, value));
+  }
+
   clearRating(fieldName: string) {
     const control = this.modalForm.controls[fieldName];
     control.setValue(0);
@@ -196,7 +216,6 @@ export class DialogsFormComponent {
     const currentValue = control.value as Array<{ _id: string }> | null;
     const initialSelection = (currentValue || []).map((value) => value._id);
     const key = `dialogs-form:${field.db}:${field.name}`;
-    this.dialogsLoadingService.start();
     this.dialogGuard.open(key, () =>
       this.dialogsListService.attachDocsData(field.db, 'title', this.dialogOkClick(field).bind(this), initialSelection).pipe(
         map(data => this.dialog.open(DialogsListComponent, {
@@ -206,14 +225,7 @@ export class DialogsFormComponent {
           autoFocus: false
         }))
       )
-    ).subscribe({
-      next: ref => {
-        this.dialogsLoadingService.stop();
-        this.dialogListRef = ref;
-      },
-      error: () => this.dialogsLoadingService.stop(),
-      complete: () => this.dialogsLoadingService.stop()
-    });
+    ).subscribe(ref => this.dialogListRef = ref);
   }
 
   dialogOkClick(field: DialogField) {

@@ -1,5 +1,5 @@
 import {
-  formatResourceAttachmentSize, formatResourceAttachmentsSize, resourceAttachmentFilename
+  formatResourceAttachmentSize, formatResourceAttachmentsSize, resourceAttachmentFilename, resourceFileType
 } from './resources.utils';
 
 describe('resource attachment utilities', () => {
@@ -49,6 +49,31 @@ describe('resource attachment utilities', () => {
     expect(resourceAttachmentFilename({ openWhichFile: '', _attachments: attachments })).toBe('index.html');
     expect(resourceAttachmentFilename({ openWhichFile: 'missing.html', _attachments: attachments })).toBe('index.html');
     expect(formatResourceAttachmentSize({ openWhichFile: '', _attachments: attachments })).toBe('48.8 KB');
+  });
+
+  it.each([
+    [ 'no attachment', {}, undefined ],
+    [ 'the stored content type', { _attachments: { lesson: { content_type: 'application/pdf' } } }, 'pdf' ],
+    [ 'the extension for a generic type', { _attachments: { 'Story.EPUB': { content_type: 'application/octet-stream' } } }, 'document' ],
+    [ 'the extension for a nonstandard type', { _attachments: { 'a.docx': { content_type: 'application/wps-office.docx' } } }, 'document' ],
+    [ 'the extension when no type is stored', { _attachments: { 'clip.mp4': {} } }, 'video' ],
+    [ 'audio families', { _attachments: { 'song.opus': { content_type: 'audio/ogg; codecs=opus' } } }, 'audio' ],
+    [ 'images including svg', { _attachments: { 'map.svg': { content_type: 'image/svg+xml' } } }, 'image' ],
+    [ 'csv as a spreadsheet', { _attachments: { 'scores.csv': { content_type: 'text/csv' } } }, 'spreadsheet' ],
+    [ 'csv type aliases', { _attachments: { 'scores.csv': { content_type: 'text/comma-separated-values' } } }, 'spreadsheet' ],
+    [ 'csv types without an extension', { _attachments: { scores: { content_type: 'application/csv' } } }, 'spreadsheet' ],
+    [ 'office slides', { _attachments: { 'talk.pptx': {} } }, 'slides' ],
+    [ 'office documents', { _attachments: { 'essay.docx': {} } }, 'document' ],
+    [ 'plain text and markdown', { _attachments: { 'notes.md': { content_type: 'text/markdown' } } }, 'text' ],
+    [ 'archives', { _attachments: { 'data.tar.gz': {} } }, 'archive' ],
+    [ 'xz archives', { _attachments: { 'logs.tar.xz': {} } }, 'archive' ],
+    [ 'unknown types', { _attachments: { 'app.apk': { content_type: 'application/vnd.android.package-archive' } } }, 'other' ],
+    [ 'unzipped bundles', { _attachments: { 'index.html': {}, 'style.css': {} } }, 'html' ],
+    [ 'games with a start file', { openWhichFile: 'game/index.html', _attachments: { 'game/index.html': {}, 'game/a.js': {} } }, 'html' ],
+    [ 'unzipped files without a web page', { _attachments: { 'week1.pdf': {}, 'week2.pdf': {} } }, 'pdf' ],
+    [ 'the start file of a bundle', { openWhichFile: 'week1.pdf', _attachments: { 'week1.pdf': {}, 'week2.pdf': {} } }, 'pdf' ]
+  ])('classifies the file type from %s', (_, doc, fileType) => {
+    expect(resourceFileType(doc)?.value).toBe(fileType);
   });
 
 });

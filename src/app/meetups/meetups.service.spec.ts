@@ -7,7 +7,7 @@ describe('MeetupService authorization', () => {
   const admin = { _id: 'org.couchdb.user:admin', name: 'admin', isUserAdmin: true };
   const unrelated = { _id: 'org.couchdb.user:bob', name: 'bob', isUserAdmin: false };
 
-  const createContext = (user: any) => {
+  const createContext = (user: any, configuration: any = { code: 'local' }) => {
     const dialog = { open: vi.fn() };
     const planetMessageService = { showAlert: vi.fn() };
     const service = new MeetupService(
@@ -18,7 +18,8 @@ describe('MeetupService authorization', () => {
         shelfChange$: new Subject(),
         get: vi.fn(() => user)
       } as any,
-      planetMessageService as any
+      planetMessageService as any,
+      { configuration } as any
     );
     return { service, dialog, planetMessageService };
   };
@@ -26,7 +27,7 @@ describe('MeetupService authorization', () => {
   const createService = (user: any) => createContext(user).service;
 
   it('lets a creator edit their own meetup', () => {
-    expect(createService(creator).canEditMeetup({ createdBy: 'ann' })).toBe(true);
+    expect(createService(creator).canEditMeetup({ createdBy: 'ann', sourcePlanet: 'local' })).toBe(true);
   });
 
   it('lets an administrator edit another creator\'s meetup', () => {
@@ -57,6 +58,15 @@ describe('MeetupService authorization', () => {
 
   it('rejects an unrelated member', () => {
     expect(createService(unrelated).canEditMeetup({ createdBy: 'ann' })).toBe(false);
+  });
+
+  it('does not let a same-name member from another planet edit as the creator', () => {
+    expect(createService(creator).canEditMeetup({ createdBy: 'ann', sourcePlanet: 'nation' })).toBe(false);
+  });
+
+  it('does not treat a meetup without sourcePlanet as created here, even before the configuration loads', () => {
+    expect(createService(creator).canEditMeetup({ createdBy: 'ann' })).toBe(false);
+    expect(createContext(creator, {}).service.canEditMeetup({ createdBy: 'ann' })).toBe(false);
   });
 
   it('rejects a user without a session', () => {
@@ -95,7 +105,7 @@ describe('MeetupService authorization', () => {
 
   it('opens the delete dialog for an authorized meetup', () => {
     const { service, dialog, planetMessageService } = createContext(creator);
-    const meetup = { _id: 'm1', title: 'Meetup', createdBy: 'ann' };
+    const meetup = { _id: 'm1', title: 'Meetup', createdBy: 'ann', sourcePlanet: 'local' };
 
     service.openDeleteDialog(meetup, vi.fn());
 

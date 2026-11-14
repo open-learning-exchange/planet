@@ -1,19 +1,29 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
 import http from 'http';
 import WebSocket from 'ws';
 
+import { authenticateUpgrade, OpenRoute, requireSessionExcept } from './middleware/auth';
+import { browserCors } from './middleware/origin';
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
+import { registerCurrencyRoutes } from './modules/currency/register';
+import { getConfiguration } from './services/config.service';
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ 'noServer': true });
 
-app.use(cors());
+const openRoutes: OpenRoute[] = [
+  { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/$/ },
+  { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i },
+  { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/public\/surveys\//i }
+];
+
+app.use(browserCors);
+app.use(requireSessionExcept(openRoutes));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
@@ -28,6 +38,8 @@ app.get('/', (req: Request, res: Response) => {
 registerChatApiRoutes(app);
 registerPublicRoutes(app);
 registerChatApiWebSocket(wss);
+registerCurrencyRoutes(app);
+server.on('upgrade', authenticateUpgrade(wss));
 
 app.use((error: any, req: Request, res: Response, next: any) => {
   void req;
@@ -41,3 +53,6 @@ app.use((error: any, req: Request, res: Response, next: any) => {
 const port = Number(process.env.SERVE_PORT || 5000);
 
 server.listen(port, () => console.log(`Gateway running on port ${port}`)); // eslint-disable-line no-console
+
+// A failed read is logged, and the next request tries again
+getConfiguration().catch(() => undefined);

@@ -14,7 +14,7 @@
                 }
               </ng-container>
               @if (canManageLabels) {
-                <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+                <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" [disabled]="!teamLoaded" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
                   <mat-icon>label</mat-icon>
                 </button>
               }
@@ -143,7 +143,7 @@
             }
           </mat-tab>
         }
-        @if (deviceType !== deviceTypes.DESKTOP) {
+        @if (deviceType() !== deviceTypes.DESKTOP) {
           <mat-tab i18n-label label="Calendar" #calendarTab>
             @if (calendarTab.isActive) {
               <planet-calendar [type]="'community'" [link]="{ teams: teamId }"
@@ -153,7 +153,7 @@
         }
       </mat-tab-group>
     </div>
-    @if (deviceType === deviceTypes.DESKTOP) {
+    @if (deviceType() === deviceTypes.DESKTOP) {
       <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }" [editable]="!isRemoteExchange"></planet-calendar>
     }
   </div>

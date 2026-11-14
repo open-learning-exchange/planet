@@ -39,12 +39,20 @@
         <planet-markdown-textbox class="full-width" [formControl]="stepForm.controls.description" imageGroup="community"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      @if (activeStep?.exam?.questions?.length) {
+        <div class="step-progression-setting">
+          <mat-slide-toggle formControlName="passingRequired" color="primary">
+            <span i18n>Require passing score to unlock next step</span>
+          </mat-slide-toggle>
+        </div>
+      }
     </form>
     @if (activeStep?.resources?.length) {
       <span i18n class="margin-lr-4">Attached Resources: </span>
       <mat-chip-set class="tags-list" aria-label="Attached resources" i18n-aria-label>
         @for (resource of activeStep.resources; track resource; let i = $index) {
           <mat-chip>
+            <planet-resource-icon [resource]="resource"></planet-resource-icon>
             <a matChipAction type="button" target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
             <button matChipRemove type="button" aria-label="Remove resource" i18n-aria-label (click)="removeResource(i)">
               <mat-icon>clear</mat-icon>

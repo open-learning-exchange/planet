@@ -1,30 +1,35 @@
-import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
-import { CoursesService } from '../courses.service';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject, combineLatest } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { UserService } from '../../shared/user.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
-import { ResourcesService } from '../../resources/resources.service';
-import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
-import { StateService } from '../../shared/state.service';
-import { ChatService } from '../../shared/chat.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
-import { ChallengesService } from '../../shared/challenges/challenges.service';
+import { EMPTY, Subject, combineLatest } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
-import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
-import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+
+import { UserService } from '@shared/auth/user.service';
+import { StateService } from '@shared/state.service';
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { coursesStepPrompt } from '@shared/ai/ai-prompts.constants';
+import { ChallengesService } from '@shared/challenges/challenges.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
+import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+
+import { CoursesService } from '../courses.service';
+import { blockingStepIndex, stepHasExam } from '../courses.utils';
+import { SubmissionsService } from '../../submissions/submissions.service';
+import { ResourcesService } from '../../resources/resources.service';
+import { CoursesStepAttemptsDialogComponent } from './courses-step-attempts-dialog.component';
+import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -48,7 +53,8 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatButtonToggle,
     MatTooltip,
     ResourcesViewerComponent,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    ResourcesIconComponent
   ]
 })
 
@@ -73,13 +79,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
-  isOpenai = false;
+  hasAIProvider = false;
   isLoading = true;
-  deviceType: DeviceType;
+  readonly isMobile = this.deviceInfoService.isMobile;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   constructor(
-    private chatService: ChatService,
+    private chatService: AiChatService,
     private coursesService: CoursesService,
     private dialog: MatDialog,
     private resourcesService: ResourcesService,
@@ -90,22 +96,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
     private challengesService: ChallengesService,
-  ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  get isMobile(): boolean {
-    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-  }
+    private challengesProgressService: ChallengesProgressService,
+  ) {}
 
   get hasActionButtons(): boolean {
     const hasExam = !!this.stepDetail?.exam?.questions.length;
     const hasSurvey = !!this.stepDetail?.survey?.questions.length;
-    return (this.isOpenai && !!this.stepDetail?.description) ||
+    return (this.hasAIProvider && !!this.stepDetail?.description) ||
       this.attempts > 0 ||
       ((hasExam || hasSurvey) && this.isUserEnrolled) ||
       (this.canManage && (hasExam || hasSurvey)) ||
@@ -119,12 +116,15 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.stateService.getCouchState('exams', 'local')
     ).pipe(takeUntil(this.onDestroy$)).subscribe(
       ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
+        this.canManage = this.coursesService.canManageCourse(course, { readOnly: this.parent });
+        if (this.redirectFromUnavailableStep(course, progress)) {
+          return;
+        }
         this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
         if (this.countActivity) {
           this.coursesService.courseActivity('visit', course, this.stepNum);
           this.countActivity = false;
         }
-        this.canManage = this.coursesService.canManageCourse(course);
       });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -136,22 +136,24 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.model === 'openai');
+      this.hasAIProvider = providers.length > 0;
     });
   }
 
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+      .subscribe(({ submission, attempts, passed = false }) => {
+        // A slow lookup for the previous step's exam can land after Next has moved on
+        if (submission.parentId !== `${this.stepDetail.exam?._id}@${this.courseId}`) {
+          return;
+        }
         this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
         this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         this.attempts = attempts;
-        const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
-        this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
-        if (!this.parent && this.progress.passed !== this.examPassed) {
-          this.coursesService.updateProgress({
-            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
-          });
+        // A stored pass stands even when no attempt here passes (another app saved it), and progress never un-passes
+        this.examPassed = !!this.progress.passed || passed;
+        if (!this.parent && passed && !this.progress.passed) {
+          this.coursesService.updateProgress({ courseId: this.courseId, stepNum: this.stepNum, passed: true });
         }
       });
   }
@@ -161,6 +163,22 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  redirectFromUnavailableStep(course, progress): boolean {
+    if (course.steps.length === 0) {
+      this.router.navigate([ '../../' ], { relativeTo: this.route, replaceUrl: true });
+      return true;
+    }
+    const blocking = this.parent || this.canManage ? -1 : blockingStepIndex(course.steps, progress);
+    const lastOpenStep = blocking === -1 ? course.steps.length : blocking + 1;
+    // Math.max(NaN, 1) is NaN
+    const targetStep = Math.min(Math.max(Math.floor(this.stepNum) || 1, 1), lastOpenStep);
+    if (targetStep === this.stepNum) {
+      return false;
+    }
+    this.router.navigate([ '../' + targetStep ], { relativeTo: this.route, replaceUrl: true });
+    return true;
+  }
+
   initCourse(course, progress, resources, exams) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
@@ -168,17 +186,21 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     // Fix for multiple progress docs created.  If there are more than one for a step, then we need to call updateProgress to fix.
     const stepProgressDocs = progress.filter(p => p.stepNum === this.stepNum);
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
+    this.examPassed = !!this.progress.passed;
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
-    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
-      this.coursesService.updateProgress({
-        courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined || this.progress.passed
-      });
+    // The exams doc is saved first, so it can be ahead of the course's copy
+    const exam = this.stepDetail.exam && (exams.find(({ _id }) => _id === this.stepDetail.exam._id) || this.stepDetail.exam);
+    const hasExam = stepHasExam({ exam });
+    // Emptied tests and moved steps can leave a stored fail on a step without a test
+    const staleFail = !hasExam && !this.progress.passed;
+    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1 || staleFail)) {
+      this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: !hasExam || this.progress.passed });
     }
     this.maxStep = course.steps.length;
     if (this.stepDetail.exam) {
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
-        parent: exams.find(exam => exam._id === this.stepDetail.exam._id) || this.stepDetail.exam,
+        parent: exam,
         user: this.userService.get(),
         type: 'exam' });
     }
@@ -220,20 +242,47 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     if (this.stepNum > this.maxStep) {
       return false;
     }
-    if (!this.parent &&
-        this.stepDetail?.exam?.questions?.length > 0 &&
-        !this.attempts && !this.examPassed) {
-      return false;
+    if (this.canManage || this.parent) {
+      return true;
+    }
+    if (this.stepDetail?.exam?.questions?.length > 0) {
+      // The next step's lock reads saved progress, so wait for the pass to be saved or Next would bounce back
+      if (this.stepDetail.passingRequired) {
+        return !!this.progress?.passed;
+      }
+      if (!this.attempts && !this.examPassed) {
+        return false;
+      }
     }
     return true;
   }
 
+  get nextStepTooltip(): string {
+    if (this.isLoading) {
+      return $localize`Loading...`;
+    }
+    if (!this.canProceedToNextStep()) {
+      if (this.stepDetail?.passingRequired) {
+        return this.stepNum === this.maxStep
+          ? $localize`You must pass the exam to finish the course`
+          : $localize`You must pass the exam to unlock the next step`;
+      }
+      return this.stepNum === this.maxStep
+        ? $localize`You must complete the exam to finish the course`
+        : $localize`You must complete the exam to unlock the next step`;
+    }
+    return this.stepNum === this.maxStep ? $localize`Finish course` : $localize`Next step`;
+  }
+
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);
-    if (challenge) {
-      this.challengesService.openChallengeDialog(this.dialog, challenge);
-    }
+    this.challengesProgressService.record('course_complete').pipe(
+      switchMap(completed => completed ? EMPTY : this.openCourseChallenge())
+    ).subscribe();
+  }
+
+  private openCourseChallenge() {
+    return this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId));
   }
 
   setResourceUrl(resourceUrl: string) {
@@ -273,7 +322,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   openReviewDialog() {
-    this.dialog.open(DialogsSubmissionsComponent, {
+    this.dialog.open(CoursesStepAttemptsDialogComponent, {
       minWidth: '500px',
       maxWidth: '90vw',
       maxHeight: '90vh',

@@ -3,14 +3,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { CouchService } from '@shared/database/couchdb.service';
+import { UserService } from '@shared/auth/user.service';
+import { MaterialModule } from '@shared/material.module';
+
 import { UsersProfileComponent } from './users-profile.component';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
-import { MaterialModule } from '../../shared/material.module';
 
 describe('UserProfileComponent', () => {
   let component: UsersProfileComponent;
@@ -20,7 +23,7 @@ describe('UserProfileComponent', () => {
   beforeEach((() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, UsersProfileComponent],
-      providers: [CouchService, UserService, DialogsFormService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [CouchService, UserService, DialogsFormService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
     });
     userService = TestBed.inject(UserService);
     const couchService = TestBed.inject(CouchService);

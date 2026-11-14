@@ -10,26 +10,34 @@
         <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
       }
       <span class="toolbar-fill"></span>
-      @if (!isMobile && !surveyId) {
+      @if (!isMobile() && !surveyId) {
         <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
         <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
         <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
       }
-      @if (isMobile) {
+      @if (surveyId && !isMobile()) {
+        <ng-container *ngTemplateOutlet="surveyViewToggle"></ng-container>
+      }
+      @if (isMobile()) {
         <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
           <mat-icon>filter_list</mat-icon>
         </button>
       }
     </mat-toolbar-row>
-    @if (showFiltersRow && isMobile && !surveyId) {
+    @if (showFiltersRow && isMobile() && !surveyId) {
       <mat-toolbar-row>
         <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
         <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
       </mat-toolbar-row>
     }
-    @if (showFiltersRow && isMobile && !surveyId) {
+    @if (showFiltersRow && isMobile() && !surveyId) {
       <mat-toolbar-row>
         <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
+      </mat-toolbar-row>
+    }
+    @if (surveyId && isMobile()) {
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="surveyViewToggle"></ng-container>
       </mat-toolbar-row>
     }
   </mat-toolbar>
@@ -66,6 +74,12 @@
     </mat-button-toggle>
   </mat-button-toggle-group>
 </ng-template>
+<ng-template #surveyViewToggle>
+  <mat-button-toggle-group class="margin-lr-5 font-size-1" [value]="surveyView" (change)="showSurveyView($event.value)">
+    <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
+    <mat-button-toggle value="charts" i18n>Charts</mat-button-toggle>
+  </mat-button-toggle-group>
+</ng-template>
 <ng-template #filterSearch>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1 mdc-toolbar-input">
@@ -78,28 +92,32 @@
 </ng-template>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
-  <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog, 'no-toolbar': !isDialog && !showCourseHeader }">
-    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog"
+  <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog }">
+    @if (surveyView === 'charts') {
+      <planet-submissions-results [survey]="survey" [submissions]="submissions.filteredData"></planet-submissions-results>
+    }
+    <mat-table #table class="responsive-table card-mode" [class.min-width-table]="!isDialog" [class.hidden]="surveyView === 'charts'"
       [class.no-name-column]="!displayedColumns.includes('name')" [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="mat-cell-name"><div class="cell-content" style="cursor: pointer">{{element.parent.name}}</div></mat-cell>
+        <mat-cell *matCellDef="let element" class="card-title"><div class="cell-content" style="cursor: pointer">{{element.parent.name}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="mat-cell-courseTitle"><div class="cell-content" style="cursor: pointer">{{element.courseTitle}}</div></mat-cell>
+        <mat-cell *matCellDef="let element">@if (element.courseTitle) {<span class="card-label" i18n>Course Name</span><div class="cell-content" style="cursor: pointer">{{element.courseTitle}}</div>}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="stepNum">
         <mat-header-cell *matHeaderCellDef mat-sort-header="stepNum" i18n>Course Step</mat-header-cell>
-        <mat-cell *matCellDef="let element" style="cursor: pointer"><div class="cell-content">{{element.stepLabel || element.stepNum || ''}}</div></mat-cell>
+        <mat-cell *matCellDef="let element" style="cursor: pointer">@if (element.stepLabel || element.stepNum) {<span class="card-label" i18n>Course Step</span>}<div class="cell-content">{{element.stepLabel || element.stepNum || ''}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="docSource">
         <mat-header-cell *matHeaderCellDef mat-sort-header="docSource" i18n>Source</mat-header-cell>
-        <mat-cell *matCellDef="let element" style="cursor: pointer">{{element.docSource || ''}}</mat-cell>
+        <mat-cell *matCellDef="let element" style="cursor: pointer">@if (element.docSource) {<span class="card-label" i18n>Source</span>{{element.docSource}}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
         <mat-cell *matCellDef="let element" style="cursor: pointer">
+          <span class="card-label" i18n>Status</span>
           @switch (element.status) {
             @case ('pending') {
               <mat-chip-set aria-label="Submission status" i18n-aria-label><mat-chip i18n>pending</mat-chip></mat-chip-set>
@@ -120,13 +138,14 @@
         <mat-header-cell *matHeaderCellDef i18n>Grade</mat-header-cell>
         <mat-cell *matCellDef="let element" style="cursor: pointer">
           @if (element.status === 'complete') {
-            {{element?.grade}}/{{element.answers.length}}
+            <span class="card-label" i18n>Grade</span>{{element?.grade}}/{{element.answers.length}}
           }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header="user" i18n>Submitted by</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          <span class="card-label" i18n>Submitted by</span>
           @if (element?.user?.name) {
             <span class="cursor-pointer" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
           } @else {
@@ -141,22 +160,25 @@
       <ng-container matColumnDef="lastUpdateTime">
         <mat-header-cell *matHeaderCellDef mat-sort-header="lastUpdateTime" i18n>Updated On</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          <span class="card-label" i18n>Updated On</span>
           <span style="cursor: pointer">{{((isNumber(element.lastUpdateTime) ? element.lastUpdateTime : null) | date: 'medium') || '--'}}</span>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="gradeTime">
         <mat-header-cell *matHeaderCellDef mat-sort-header="gradeTime" i18n>Graded On</mat-header-cell>
         <mat-cell *matCellDef="let element">
+          <span class="card-label" i18n>Graded On</span>
           <span style="cursor: pointer">{{((isNumber(element.gradeTime) ? element.gradeTime : null) | date: 'medium') || '--'}}</span>
         </mat-cell>
       </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)" [ngClass]="{'cursor-pointer': row.status==='complete' || mode === 'survey'}"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>No Record Found</div></td>
       </tr>
     </mat-table>
     <mat-paginator #paginator
+      [class.hidden]="surveyView === 'charts'"
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>

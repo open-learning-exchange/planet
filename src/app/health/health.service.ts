@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { of, forkJoin, BehaviorSubject } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
+import { of, forkJoin, BehaviorSubject, throwError } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
-import { StateService } from '../shared/state.service';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { StateService } from '@shared/state.service';
+import { stringToHex, ageFromBirthDate } from '@shared/utils';
+import { findDocuments } from '@shared/database/mango-queries';
+
 import { UsersService } from '../users/users.service';
-import { stringToHex, ageFromBirthDate } from '../shared/utils';
-import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
@@ -106,14 +108,25 @@ export class HealthService {
         const userKey = healthDoc.userKey || this.generateKey(32);
         const creatorKey = newEvent.selfExamination ? userKey : (creatorHealthDoc.userKey || this.generateKey(32));
         const age = ageFromBirthDate(time, user.birthDate);
-        const eventData = this.newEventDoc(oldEvent, newEvent, time);
+        const eventDoc = {
+          ...this.newEventDoc(oldEvent, newEvent, time), profileId: userKey, creatorId: creatorKey, gender: user.gender, age
+        };
         return forkJoin([
           this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
-          this.postHealthDoc({}, { ...eventData, profileId: userKey, creatorId: creatorKey, gender: user.gender, age }, keyDoc),
           creatorHealthDoc.userKey || newEvent.selfExamination ?
             of({}) :
             this.postHealthDoc(creatorHealthDoc, { userKey: creatorKey }, creatorKeyDoc)
-        ]);
+        ]).pipe(switchMap(() =>
+          this.postHealthDoc({}, eventDoc, keyDoc).pipe(
+            // A new examination conflicts only when an earlier attempt already saved it
+            catchError(error => error.status === 409 && !oldEvent._rev ?
+              this.couchService.get(`health/${eventDoc._id}`).pipe(
+                switchMap(({ _rev, date }) => this.postHealthDoc({}, { ...eventDoc, _rev, date }, keyDoc))
+              ) :
+              throwError(() => error)
+            )
+          )
+        ));
       })
     );
   }

@@ -1,21 +1,23 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+
+import { CouchService } from '@shared/database/couchdb.service';
+import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
+import { StateService } from '@shared/state.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
+import { UserService } from '@shared/auth/user.service';
 
 import { RequestsComponent } from './requests.component';
-import { CouchService } from '../../shared/couchdb.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
-import { DeviceInfoService } from '../../shared/device-info.service';
-import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
-import { UserService } from '../../shared/user.service';
 
 describe('RequestsComponent', () => {
   let component: RequestsComponent;
@@ -23,9 +25,7 @@ describe('RequestsComponent', () => {
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
-    openDialogsForm: vi.fn(),
-    closeDialogsForm: vi.fn(),
-    showErrorMessage: vi.fn()
+    openDialogsForm: vi.fn()
   };
 
   const dialogsListServiceMock = {
@@ -43,8 +43,8 @@ describe('RequestsComponent', () => {
     get: vi.fn().mockReturnValue({ isUserAdmin: true })
   };
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [RequestsComponent, NoopAnimationsModule],
       providers: [
         CouchService,
@@ -63,11 +63,12 @@ describe('RequestsComponent', () => {
         ReportsService,
         ManagerService,
         DeviceInfoService,
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RequestsComponent);

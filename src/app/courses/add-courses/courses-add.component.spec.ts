@@ -1,21 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { CoursesAddComponent } from './courses-add.component';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { ValidatorService } from '../../validators/validator.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CouchService } from '../../shared/couchdb.service';
-import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
-
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { PouchService } from '../../shared/database/pouch.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+
+import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { CouchService } from '@shared/database/couchdb.service';
+import { MaterialModule } from '@shared/material.module';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
+import { PouchService } from '@shared/database/pouch.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { StateService } from '@shared/state.service';
+import { FileUploadComponent } from '@shared/forms/file-upload.component';
+
+import { CoursesAddComponent } from './courses-add.component';
+import { CoursesService } from '../courses.service';
+import { ValidatorService } from '../../validators/validator.service';
 
 describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;
@@ -49,8 +54,9 @@ describe('CoursesAddComponent', () => {
       ]), MaterialModule, BrowserAnimationsModule, CoursesAddComponent, FormErrorMessagesComponent],
       providers: [
         CouchService,
-        ValidatorService,
+        { provide: ValidatorService, useValue: { isUnique$: () => of(null) } },
         provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -76,6 +82,7 @@ describe('CoursesAddComponent', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -106,7 +113,7 @@ describe('CoursesAddComponent', () => {
       expect((component as any).coverState.added).toEqual([]);
 
       component.setCoverState({ retained: [], removed: [], added: [ addedCover ] });
-      component.updateCourse(component.courseForm.getRawValue(), true);
+      component.updateCourse(component.courseForm.getRawValue());
       component.setCoverState({ retained: [], removed: [], added: [] });
       await vi.waitFor(() => expect(showAlert).toHaveBeenLastCalledWith('There was an error saving this course'));
     } finally {
@@ -117,28 +124,88 @@ describe('CoursesAddComponent', () => {
   it('reuses a cover check until the existing attachment names change', async () => {
     const restoreImage = stubUndecodableImage();
     const addedCover = { file: new File([ 'image' ], 'cover.png', { type: 'image/png' }) } as any;
-    const saveCover = vi.spyOn(component as any, 'saveCourseWithNewCover').mockReturnValue(of([ {} ]));
+    const saveCourse = vi.spyOn(component as any, 'saveCourseDocument').mockReturnValue(of([ {} ]));
     vi.spyOn(component, 'courseChangeComplete').mockImplementation(() => undefined);
     component.savedCourse = { _attachments: { 'cover.png': {} } };
 
     try {
       component.onCoverStateChange({ retained: [], removed: [], added: [ addedCover ] });
       await vi.waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalledOnce());
-      component.updateCourse(component.courseForm.getRawValue(), true);
-      await vi.waitFor(() => expect(saveCover).toHaveBeenCalledOnce());
+      component.updateCourse(component.courseForm.getRawValue());
+      await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledOnce());
 
-      expect(saveCover.mock.calls[0][1].fileName).toBe('cover-1.png');
+      expect((saveCourse.mock.calls[0][0] as any).coverFileName).toBe('cover-1.png');
+      expect(Object.keys((saveCourse.mock.calls[0][0] as any)._attachments)).toEqual([ 'cover.png', 'cover-1.png' ]);
       expect(URL.createObjectURL).toHaveBeenCalledOnce();
 
       component.savedCourse._attachments['cover-1.png'] = {};
-      component.updateCourse(component.courseForm.getRawValue(), true);
-      await vi.waitFor(() => expect(saveCover).toHaveBeenCalledTimes(2));
+      component.updateCourse(component.courseForm.getRawValue());
+      await vi.waitFor(() => expect(saveCourse).toHaveBeenCalledTimes(2));
 
-      expect(saveCover.mock.calls[1][1].fileName).toBe('cover-2.png');
+      expect((saveCourse.mock.calls[1][0] as any).coverFileName).toBe('cover-2.png');
       expect(URL.createObjectURL).toHaveBeenCalledTimes(2);
     } finally {
       restoreImage();
     }
+  });
+
+  const returnFromBuilder = (saved: any, stash: any) => {
+    vi.useFakeTimers();
+    TestBed.inject(CoursesService).course = stash;
+    (TestBed.inject(ActivatedRoute).snapshot.params as any).continue = 'true';
+    const saved$ = new Subject<any>();
+    vi.spyOn(TestBed.inject(PouchService), 'getDocEditing').mockReturnValue(of(undefined));
+    vi.spyOn(TestBed.inject(CouchService), 'get').mockReturnValue(saved$);
+    vi.spyOn(TestBed.inject(StateService), 'getCouchState').mockReturnValue(of([]));
+    vi.spyOn(component as any, 'normalizedCover').mockResolvedValue({});
+    const saveDraft = vi.spyOn(TestBed.inject(PouchService), 'saveDocEditing').mockImplementation(() => undefined);
+    const updateCourse = vi.spyOn(component, 'updateCourse');
+    const upload = new FileUploadComponent();
+    upload.stateChange.subscribe(state => component.onCoverStateChange(state));
+    component.coverUploadComponent = upload;
+
+    component.ngOnInit();
+    upload.ngOnChanges({ existingAttachments: {} as any });
+    saved$.next(saved);
+    saved$.complete();
+    upload.existingAttachments = component.existingCoverAttachments;
+    upload.ngOnChanges({ existingAttachments: {} as any });
+    vi.advanceTimersByTime(1500);
+    return { saveDraft, updateCourse };
+  };
+
+  it('returns from the test or survey builder into the draft without saving the course', () => {
+    const cover = { file: new File([ 'image' ], 'cover.png', { type: 'image/png' }) };
+    const { saveDraft, updateCourse } = returnFromBuilder({ _id: 'course-1', _rev: '1-a', courseTitle: 'Course', steps: [] }, {
+      courseId: 'course-1',
+      form: { courseTitle: 'Course', description: 'Description' },
+      steps: [ { stepTitle: 'Step', description: '', resources: [], survey: { _id: 'survey-1' } } ],
+      coverState: { retained: [], removed: [], added: [ cover ] }
+    });
+
+    expect(updateCourse).not.toHaveBeenCalled();
+    expect(saveDraft).toHaveBeenLastCalledWith(expect.objectContaining({
+      steps: [ expect.objectContaining({ survey: { _id: 'survey-1' } }) ]
+    }), 'courses', undefined);
+    expect((component as any).coverState).toEqual({ retained: [], removed: [], added: [ expect.objectContaining({ file: cover.file }) ] });
+  });
+
+  it('writes no draft when nothing changed during the builder round trip', () => {
+    const step = { stepTitle: 'Step', description: '', resources: [], exam: { _id: 'exam-1' } };
+    const existingCover = { name: 'cover.webp', contentType: 'image/webp', url: 'cover-url' };
+    const { saveDraft, updateCourse } = returnFromBuilder(
+      { _id: 'course-1', _rev: '1-a', courseTitle: 'Course', description: 'Description', steps: [ step ] },
+      {
+        courseId: 'course-1',
+        form: { courseTitle: 'Course', description: 'Description' },
+        steps: [ step ],
+        coverState: { retained: [ existingCover ], removed: [], added: [] }
+      }
+    );
+
+    expect(updateCourse).not.toHaveBeenCalled();
+    expect(saveDraft).not.toHaveBeenCalled();
+    expect((component as any).coverState).toEqual({ retained: [ existingCover ], removed: [], added: [] });
   });
 
   it('clears an invalid cover when Save finishes before selection validation', async () => {
@@ -148,7 +215,7 @@ describe('CoursesAddComponent', () => {
 
     try {
       component.setCoverState({ retained: [], removed: [], added: [ addedCover ] });
-      component.updateCourse(component.courseForm.getRawValue(), true);
+      component.updateCourse(component.courseForm.getRawValue());
       await vi.waitFor(() => expect(showAlert).toHaveBeenCalledWith(expect.stringContaining('could not be processed')));
 
       expect((component as any).coverState.added).toEqual([]);
@@ -216,7 +283,7 @@ describe('CoursesAddComponent', () => {
         displayName: 'Test draft'
       })
     }));
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -253,7 +320,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
@@ -299,7 +366,7 @@ describe('CoursesAddComponent', () => {
     component.draftExists = true;
 
     component.deleteDraft();
-    const config = openSpy.mock.calls[0][1];
+    const config = openSpy.mock.calls[0][1] as any;
     if (config === undefined) {
       throw new Error('Expected the course draft dialog configuration');
     }
