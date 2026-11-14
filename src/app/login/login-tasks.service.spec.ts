@@ -1,8 +1,17 @@
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+import { environment } from '../../environments/environment';
 import { LoginTasksService } from './login-tasks.service';
 
 describe('LoginTasksService parent account repair', () => {
+  // The test environment skips parent requests
+  beforeEach(() => {
+    environment.test = false;
+  });
+  afterEach(() => {
+    environment.test = true;
+  });
+
   const configuration = {
     _id: 'config-1', planetType: 'community', code: 'planet1', parentDomain: 'nation.org', adminName: 'admin@planet1'
   };
@@ -142,6 +151,19 @@ describe('LoginTasksService parent account repair', () => {
     await login(service);
 
     expect(syncService.sync).toHaveBeenCalledOnce();
+    expect(planetMessageService.showMessage).toHaveBeenCalledWith(expect.stringContaining('Can not login'));
+  });
+
+  it('reports the failed login when the sync-down fails too', async () => {
+    const { service, syncService, planetMessageService } = buildService({
+      sessions: [ throwError(unauthorized) ],
+      updateDocument: vi.fn().mockReturnValue(throwError({ status: 409 })),
+      registrationRequest: 'pending'
+    });
+    syncService.sync.mockReturnValue(throwError({ status: 500 }));
+
+    await login(service);
+
     expect(planetMessageService.showMessage).toHaveBeenCalledWith(expect.stringContaining('Can not login'));
   });
 

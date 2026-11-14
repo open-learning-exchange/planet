@@ -88,7 +88,7 @@ export class LoginTasksService {
     // Waits for the session to restore the parent account, but runs even if it fails: the server may reach the parent when we can't
     obsArr.push(localConfig.registrationRequest === 'pending' ?
       parentSession.pipe(
-        catchError(error => syncDown().pipe(switchMap(() => throwError(error)))),
+        catchError(error => syncDown().pipe(catchError(() => of(null)), switchMap(() => throwError(error)))),
         switchMap(syncDown)
       ) :
       parentSession
