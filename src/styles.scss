@@ -751,6 +751,159 @@ body {
     }
   }
 
+  // Course and library rows on phones and tablets: a compact row with its main action, and the
+  // description, details and rating shown once the row is expanded.
+  .card-table :is(.card-summary, .card-toggle, .card-main-action, .card-meta, .card-progress-count) {
+    display: none;
+  }
+
+  @media (max-width: v.$screen-md) {
+    .card-table mat-table.card-mode {
+      .list-content-menu {
+        grid-template-areas:
+          'hd hd summary toggle'
+          'tags tags tags tags'
+          'meta meta meta meta'
+          'progress action action mn'
+          'cn cn cn cn';
+        grid-template-columns: minmax(0, 1fr) auto auto auto;
+        grid-template-rows: auto;
+        align-items: center;
+        column-gap: 8px;
+
+        @media (min-width: v.$screen-sm) {
+          grid-template-areas:
+            'hd progress summary action mn toggle'
+            'tags tags tags tags tags tags'
+            'meta meta meta meta meta meta'
+            'cn cn cn cn cn cn';
+          grid-template-columns: minmax(0, 1fr) auto auto auto auto auto;
+        }
+
+        .header {
+          margin: 0;
+          font-size: 15px;
+          font-weight: 500;
+        }
+      }
+
+      .card-summary {
+        display: inline-flex;
+        grid-area: summary;
+        align-items: center;
+        gap: 2px;
+        font-size: 13px;
+      }
+
+      .card-toggle {
+        display: inline-flex;
+        grid-area: toggle;
+      }
+
+      .card-main-action {
+        display: inline-flex;
+        grid-area: action;
+        justify-self: end;
+      }
+
+      // The levels sit under the title until the row opens and shows them as labelled lines.
+      .card-meta {
+        display: block;
+        grid-area: meta;
+        color: v.$grey-text;
+        font-size: 13px;
+
+        > span:not(:last-child)::after {
+          content: ' · ';
+        }
+      }
+
+      .course-progress {
+        grid-template-columns: 1fr max-content;
+        align-items: center;
+        margin: 0;
+        font-size: 12px;
+        color: v.$grey-text;
+
+        > span:not(.card-progress-count) {
+          display: none;
+        }
+
+        planet-courses-progress-bar {
+          height: 10px;
+        }
+
+        @media (min-width: v.$screen-sm) {
+          min-width: 11rem;
+        }
+      }
+
+      .card-progress-count {
+        display: inline;
+      }
+
+      // The rating block lays out as a summary line (average, total, who rated) above the member's own stars.
+      .compress-rating .list-item-rating {
+        grid-template-areas:
+          'rating ratio'
+          'total total'
+          'your-label your';
+        grid-template-columns: auto minmax(0, 10rem);
+        grid-template-rows: auto;
+        justify-content: space-between;
+        gap: 8px 12px;
+        max-width: none;
+        margin: 4px 0 0;
+        padding-top: 8px;
+        border-top: 1px solid v.$medium-grey;
+
+        @media (min-width: v.$screen-sm) {
+          grid-template-areas:
+            'rating total ratio'
+            'your-label your your';
+          grid-template-columns: auto minmax(0, 1fr) minmax(0, 10rem);
+        }
+
+        .avg-rating {
+          display: flex;
+          align-items: baseline;
+          align-self: center;
+          gap: 6px;
+
+          .rating-number {
+            display: inline;
+            font-size: 1.5rem;
+          }
+        }
+
+        .stats-total,
+        .your-rating-label {
+          text-align: start;
+        }
+
+        .your-rating-label {
+          color: v.$grey-text;
+          font-size: 13px;
+        }
+
+        .your-rating {
+          justify-self: end;
+        }
+      }
+
+      .mat-mdc-row > .mat-column-rating planet-rating {
+        flex: 1;
+      }
+
+      .preview-toggle,
+      .expanded-row .card-meta,
+      .mat-mdc-row:not(.expanded-row) .list-content-menu .content,
+      .mat-mdc-row:not(.expanded-row) > :is(.mat-column-info, .mat-column-createdDate, .mat-column-rating) {
+        display: none;
+      }
+    }
+  }
+
   .form-width-3 {
     width: 550px;
   }
