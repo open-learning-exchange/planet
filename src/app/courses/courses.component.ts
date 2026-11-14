@@ -61,6 +61,7 @@ import { CoursesService } from './courses.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
 import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
+import { stepProgress } from './courses.utils';
 
 @Component({
   selector: 'planet-courses',
@@ -660,6 +661,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (tag.trim()) {
       this.tagInputComponent.writeValue([ tag ]);
     }
+  }
+
+  completedSteps(element: any): number {
+    return element.doc.steps.filter((_: any, index: number) => stepProgress(element.progress, index + 1)?.passed).length;
   }
 
   toggleRow(element: any) {
