@@ -1,8 +1,15 @@
 import OpenAI from 'openai';
 
+import { HttpError } from '../../../middleware/errors';
 import { getConfiguration, getKeys } from '../../../services/config.service';
-import { ProviderStatus } from '../models/chat.model';
+import { AIProvider, ProviderStatus } from '../models/chat.model';
 import { PROVIDER_NAMES, PROVIDER_REGISTRY, ProviderName } from './registry';
+
+export interface ProviderClient {
+  name: ProviderName;
+  client: OpenAI;
+  model: string;
+}
 
 export async function listProviders(): Promise<ProviderStatus[]> {
   const [ keys, { models } ] = await Promise.all([ getKeys(), getConfiguration() ]);
@@ -13,16 +20,19 @@ export async function listProviders(): Promise<ProviderStatus[]> {
   }));
 }
 
-export async function providerClient(name: ProviderName): Promise<{ client: OpenAI; defaultModel: string }> {
+export async function providerClient(aiProvider: AIProvider): Promise<ProviderClient> {
+  const name = aiProvider?.name;
   if (!PROVIDER_NAMES.includes(name)) {
-    throw new Error('Unsupported AI provider');
+    throw new HttpError(400, '"aiProvider.name" must name a supported AI provider');
   }
   const [ keys, { models } ] = await Promise.all([ getKeys(), getConfiguration() ]);
-  if (!keys[name]) {
-    throw new Error(`${name} is not configured`);
+  const model = aiProvider.model ?? models[name];
+  if (!keys[name] || !model) {
+    throw new HttpError(503, `${PROVIDER_REGISTRY[name].label} is not configured on this planet`);
   }
   return {
+    name,
     'client': new OpenAI({ 'apiKey': keys[name], 'baseURL': PROVIDER_REGISTRY[name].baseURL }),
-    'defaultModel': models[name] || ''
+    model
   };
 }
