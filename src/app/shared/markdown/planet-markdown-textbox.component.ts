@@ -397,6 +397,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
 
   writeValue(val: string) {
     this.value = typeof this._value === 'string' || this.imageGroup === undefined ? val : { ...this._value, text: val || '' };
+    this.setErrorState();
   }
 
   onChange(_: any) {}
@@ -420,9 +421,17 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     }
   }
 
+  setErrorState() {
+    this.errorState = this.ngControl.touched && (typeof this._value === 'string' ? this._value : this._value.text) === '';
+  }
+
+  onFocusOut() {
+    this.ngControl.control.markAsTouched({ onlySelf: true });
+    this.setErrorState();
+  }
+
   checkHighlight() {
-    // Nothing marks this touched on blur, so the error waits for typing or a submit.
-    if ((this.ngControl.dirty || this.ngControl.touched) && this.ngControl.valid !== true) {
+    if (this.ngControl.touched && this.ngControl.valid !== true) {
       this.errorState = true;
       this.stateChanges.next();
     } else {

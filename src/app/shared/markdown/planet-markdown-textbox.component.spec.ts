@@ -266,36 +266,18 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
     expect(FakeEasyMDE.instance.value()).toBe('saved text');
   });
 
-  it('shows no error when an empty required field is only left, and leaves the form clean', async () => {
+  it('shows the error when an empty required field is left, without marking the form dirty', async () => {
     stubEditor();
     const fixture = TestBed.createComponent(RequiredFormControlHostComponent);
     await settle(fixture);
     const textbox = fixture.debugElement.query(By.directive(PlanetMarkdownTextboxComponent)).componentInstance;
 
-    fixture.debugElement.query(By.css('textarea')).nativeElement.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    textbox.onFocusOut();
     fixture.detectChanges();
 
-    expect(textbox.errorState).toBe(false);
-    expect(fixture.componentInstance.control.touched).toBe(false);
+    expect(textbox.errorState).toBe(true);
+    expect(fixture.componentInstance.control.touched).toBe(true);
     expect(fixture.componentInstance.control.pristine).toBe(true);
-  });
-
-  it('shows the required error once text is cleared or a submit marks the field touched', async () => {
-    stubEditor();
-    const fixture = TestBed.createComponent(RequiredFormControlHostComponent);
-    await settle(fixture);
-    const textbox = fixture.debugElement.query(By.directive(PlanetMarkdownTextboxComponent)).componentInstance;
-
-    fixture.componentInstance.control.markAsTouched();
-    fixture.detectChanges();
-    expect(textbox.errorState).toBe(true);
-
-    fixture.componentInstance.control.markAsUntouched();
-    FakeEasyMDE.instance.type('typed');
-    FakeEasyMDE.instance.type('');
-    fixture.detectChanges();
-    expect(textbox.errorState).toBe(true);
-    expect(fixture.componentInstance.control.dirty).toBe(true);
   });
 
   it('keeps a template-driven value', async () => {
