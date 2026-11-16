@@ -2,8 +2,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { UnsavedChangesPromptComponent } from './unsaved-changes-prompt.component';
 
-// A fullscreen markdown editor holds its dialog here until its leaving Escape has passed,
-// since that Escape still reaches the dialog's keydown listener.
+// Dialogs a fullscreen editor holds until the Escape that leaves fullscreen has passed their keydown listener.
 export const heldOpenDialogs = new WeakSet<MatDialogRef<unknown>>();
 
 export const closeUnlessUnsaved = (dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean) => {
