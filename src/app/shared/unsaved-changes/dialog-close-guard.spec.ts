@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 import { guardDialogClose, heldOpenDialogs } from './dialog-close-guard';
 
 describe('guardDialogClose', () => {
-  const setup = (hasChanges: boolean, confirmed = true, onEscape?: () => void) => {
+  const setup = (hasChanges: boolean, confirmed = true, options?: { close?: () => void, onEscape?: () => void }) => {
     const keydown = new Subject<KeyboardEvent>();
     const backdrop = new Subject<MouseEvent>();
     const dialogRef = {
@@ -14,7 +14,7 @@ describe('guardDialogClose', () => {
       backdropClick: () => backdrop
     } as any;
     const dialog = { open: vi.fn(() => ({ afterClosed: () => of(confirmed) })) } as any;
-    guardDialogClose(dialogRef, dialog, () => hasChanges, onEscape);
+    guardDialogClose(dialogRef, dialog, () => hasChanges, options);
     const escape = () => keydown.next(new KeyboardEvent('keydown', { key: 'Escape' }));
     return { dialogRef, dialog, escape, backdrop };
   };
@@ -54,7 +54,7 @@ describe('guardDialogClose', () => {
 
   it('hands Escape to its own handler, still skipping the held Escape, while the backdrop still closes', () => {
     const onEscape = vi.fn();
-    const { dialogRef, escape, backdrop } = setup(false, true, onEscape);
+    const { dialogRef, escape, backdrop } = setup(false, true, { onEscape });
 
     heldOpenDialogs.add(dialogRef);
     escape();
@@ -64,5 +64,16 @@ describe('guardDialogClose', () => {
 
     expect(onEscape).toHaveBeenCalledTimes(1);
     expect(dialogRef.close).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes through the dialog\'s own close action', () => {
+    const close = vi.fn();
+    const { dialogRef, escape, backdrop } = setup(false, true, { close });
+
+    escape();
+    backdrop.next(new MouseEvent('click'));
+
+    expect(close).toHaveBeenCalledTimes(2);
+    expect(dialogRef.close).not.toHaveBeenCalled();
   });
 });

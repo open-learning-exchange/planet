@@ -38,7 +38,7 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
-    guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges(), () => this.escape());
+    guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges(), { onEscape: () => this.escape() });
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
       this.updateResource = true;

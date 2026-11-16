@@ -21,13 +21,15 @@ export const closeUnlessUnsaved = (dialogRef: MatDialogRef<unknown>, dialog: Mat
   leaveUnlessUnsaved(dialog, hasChanges, () => dialogRef.close());
 
 export const guardDialogClose = (
-  dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean, onEscape?: () => void
+  dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean,
+  { close = () => dialogRef.close(), onEscape }: { close?: () => void, onEscape?: () => void } = {}
 ) => {
+  const leave = () => leaveUnlessUnsaved(dialog, hasChanges, close);
   dialogRef.disableClose = true;
-  dialogRef.backdropClick().subscribe(() => closeUnlessUnsaved(dialogRef, dialog, hasChanges));
+  dialogRef.backdropClick().subscribe(leave);
   dialogRef.keydownEvents().subscribe(event => {
     if (event.key === 'Escape' && !heldOpenDialogs.has(dialogRef)) {
-      (onEscape ?? (() => closeUnlessUnsaved(dialogRef, dialog, hasChanges)))();
+      (onEscape ?? leave)();
     }
   });
 };
