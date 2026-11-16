@@ -100,7 +100,7 @@ export class TeamsService {
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
     };
-    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type, team), formGroup, true)
+    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type, team), formGroup, true, true)
       .pipe(
         switchMap((response: any) => {
           if (response === undefined) {

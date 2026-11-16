@@ -24,7 +24,7 @@ import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '@
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { deepEqual } from '@shared/utils';
 import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
-import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { closeUnlessUnsaved, guardDialogClose } from '@shared/unsaved-changes/dialog-close-guard';
 
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
@@ -144,32 +144,12 @@ export class DialogsFormComponent {
       });
     }
     if (this.data && this.data.confirmUnsavedChanges) {
-      this.dialogRef.disableClose = true;
-      this.dialogRef.backdropClick().subscribe(() => {
-        this.checkUnsavedChangesAndClose();
-      });
-      this.dialogRef.keydownEvents().subscribe((event) => {
-        if (event.key === 'Escape') {
-          this.checkUnsavedChangesAndClose();
-        }
-      });
+      guardDialogClose(this.dialogRef, this.dialog, () => this.isDirty());
     }
   }
 
   onCancel() {
-    this.checkUnsavedChangesAndClose();
-  }
-
-  checkUnsavedChangesAndClose() {
-    if (this.data && this.data.confirmUnsavedChanges && this.isDirty()) {
-      UnsavedChangesPromptComponent.open(this.dialog).subscribe(confirmed => {
-        if (confirmed) {
-          this.dialogRef.close();
-        }
-      });
-    } else {
-      this.dialogRef.close();
-    }
+    closeUnlessUnsaved(this.dialogRef, this.dialog, () => !!this.data?.confirmUnsavedChanges && this.isDirty());
   }
 
   onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {

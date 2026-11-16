@@ -1,9 +1,10 @@
 import { Component, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { closeUnlessUnsaved, guardDialogClose } from '@shared/unsaved-changes/dialog-close-guard';
 
 import { ResourcesComponent } from './resources.component';
 import { ResourcesAddComponent } from './resources-add.component';
@@ -16,8 +17,7 @@ import { ResourcesAddComponent } from './resources-add.component';
     ResourcesComponent,
     ResourcesAddComponent,
     MatDialogActions,
-    MatButton,
-    MatDialogClose
+    MatButton
   ]
 })
 export class ResourcesPickerDialogComponent implements AfterViewInit {
@@ -35,14 +35,24 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
     public dialogRef: MatDialogRef<ResourcesPickerDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
+    guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges());
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
       this.updateResource = true;
       this.view = 'resourcesAdd';
       this.existingResource = { doc: this.data.resource, _id: this.data.resource._id, _rev: this.data.resource._rev };
     }
+  }
+
+  hasUnsavedChanges() {
+    return this.view === 'resourcesAdd' && !this.resourcesAddComponent.canDeactivate();
+  }
+
+  cancel() {
+    closeUnlessUnsaved(this.dialogRef, this.dialog, () => this.hasUnsavedChanges());
   }
 
   ngAfterViewInit() {
