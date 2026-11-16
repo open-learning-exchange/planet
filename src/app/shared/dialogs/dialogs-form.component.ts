@@ -24,7 +24,7 @@ import { AttachmentInputState, ExistingAttachment, FileUploadComponent } from '@
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { deepEqual } from '@shared/utils';
 import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
-import { closeUnlessUnsaved, guardDialogClose } from '@shared/unsaved-changes/dialog-close-guard';
+import { guardDialogClose } from '@shared/unsaved-changes/dialog-close-guard';
 
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
@@ -117,6 +117,7 @@ export class DialogsFormComponent {
   disableIfInvalid = false;
   cancelLabel = $localize`Cancel`;
   submitLabel = $localize`Submit`;
+  private leave: () => void;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsFormComponent>,
@@ -143,13 +144,13 @@ export class DialogsFormComponent {
         }
       });
     }
-    if (this.data && this.data.confirmUnsavedChanges) {
-      guardDialogClose(this.dialogRef, this.dialog, () => this.isDirty());
-    }
+    this.leave = this.data?.confirmUnsavedChanges ?
+      guardDialogClose(this.dialogRef, this.dialog, () => this.isDirty()) :
+      () => this.dialogRef.close();
   }
 
   onCancel() {
-    closeUnlessUnsaved(this.dialogRef, this.dialog, () => !!this.data?.confirmUnsavedChanges && this.isDirty());
+    this.leave();
   }
 
   onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {

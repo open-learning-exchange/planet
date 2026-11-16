@@ -17,9 +17,6 @@ export const leaveUnlessUnsaved = (dialog: MatDialog, hasChanges: () => boolean,
   });
 };
 
-export const closeUnlessUnsaved = (dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean) =>
-  leaveUnlessUnsaved(dialog, hasChanges, () => dialogRef.close());
-
 export const guardDialogClose = (
   dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean,
   { close = () => dialogRef.close(), onEscape }: { close?: () => void, onEscape?: () => void } = {}
@@ -32,4 +29,5 @@ export const guardDialogClose = (
       (onEscape ?? leave)();
     }
   });
+  return leave;
 };

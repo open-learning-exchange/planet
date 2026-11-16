@@ -4,7 +4,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { closeUnlessUnsaved, guardDialogClose, leaveUnlessUnsaved } from '@shared/unsaved-changes/dialog-close-guard';
+import { guardDialogClose, leaveUnlessUnsaved } from '@shared/unsaved-changes/dialog-close-guard';
 
 import { ResourcesComponent } from './resources.component';
 import { ResourcesAddComponent } from './resources-add.component';
@@ -30,6 +30,7 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   updateResource = false;
   existingResource: any = {};
   isSubmitting = false;
+  private leave: () => void;
 
   constructor(
     public dialogRef: MatDialogRef<ResourcesPickerDialogComponent>,
@@ -38,7 +39,7 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
-    guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges(), { onEscape: () => this.escape() });
+    this.leave = guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges(), { onEscape: () => this.escape() });
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
       this.updateResource = true;
@@ -52,7 +53,7 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   }
 
   cancel() {
-    closeUnlessUnsaved(this.dialogRef, this.dialog, () => this.hasUnsavedChanges());
+    this.leave();
   }
 
   escape() {

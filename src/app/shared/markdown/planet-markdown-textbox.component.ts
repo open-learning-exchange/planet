@@ -248,7 +248,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     // It goes in as a model write, because onChange would mark an untouched form dirty.
     Promise.resolve().then(() => {
       if (!this.destroyed) {
-        this.ngControl?.control.setValue(this.value, { emitModelToViewChange: false });
+        this.ngControl.control.setValue(this.value, { emitModelToViewChange: false });
       }
     });
     this.loadEditor().then(({ default: EasyMDE }) => {

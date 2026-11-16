@@ -14,9 +14,9 @@ describe('guardDialogClose', () => {
       backdropClick: () => backdrop
     } as any;
     const dialog = { open: vi.fn(() => ({ afterClosed: () => of(confirmed) })) } as any;
-    guardDialogClose(dialogRef, dialog, () => hasChanges, options);
+    const leave = guardDialogClose(dialogRef, dialog, () => hasChanges, options);
     const escape = () => keydown.next(new KeyboardEvent('keydown', { key: 'Escape' }));
-    return { dialogRef, dialog, escape, backdrop };
+    return { dialogRef, dialog, escape, backdrop, leave };
   };
 
   it('closes an unchanged dialog on Escape or a backdrop click without asking', () => {
@@ -75,5 +75,14 @@ describe('guardDialogClose', () => {
 
     expect(close).toHaveBeenCalledTimes(2);
     expect(dialogRef.close).not.toHaveBeenCalled();
+  });
+
+  it('hands back the same leave for Cancel, asking first when changed', () => {
+    const { dialogRef, dialog, leave } = setup(true);
+
+    leave();
+
+    expect(dialog.open).toHaveBeenCalledTimes(1);
+    expect(dialogRef.close).toHaveBeenCalledTimes(1);
   });
 });
