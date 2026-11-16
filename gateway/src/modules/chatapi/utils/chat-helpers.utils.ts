@@ -105,7 +105,9 @@ async function withDeadline(
   const timer = setTimeout(() => deadline.abort(), PROVIDER_DEADLINE_MS);
   const expired = new Promise<never>((resolve, reject) => deadline.signal.addEventListener('abort', reject));
   const send = (text: string) => {
-    timer.refresh();
+    if (text) {
+      timer.refresh();
+    }
     callback?.(text);
   };
   try {

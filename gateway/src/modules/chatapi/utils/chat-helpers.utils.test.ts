@@ -249,6 +249,20 @@ describe('provider deadline and failures', () => {
     await reply;
   });
 
+  it('fails a stream that keeps sending chunks without reply text', async () => {
+    vi.useFakeTimers();
+    mocks.completionsCreate.mockResolvedValue((async function* () {
+      for (;;) {
+        await new Promise((resolve) => setTimeout(resolve, 100000));
+        yield { 'choices': [ { 'delta': {} } ] };
+      }
+    })());
+
+    const reply = expect(aiChatStream(history, provider('deepseek'), '', '', () => undefined)).rejects.toMatchObject({ 'statusCode': 504 });
+    await vi.advanceTimersByTimeAsync(120000);
+    await reply;
+  });
+
   it('lets a reply stream past the deadline while text keeps arriving', async () => {
     vi.useFakeTimers();
     mocks.completionsCreate.mockResolvedValue((async function* () {
