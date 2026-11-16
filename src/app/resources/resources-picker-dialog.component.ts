@@ -4,7 +4,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { closeUnlessUnsaved, guardDialogClose } from '@shared/unsaved-changes/dialog-close-guard';
+import { closeUnlessUnsaved, guardDialogClose, leaveUnlessUnsaved } from '@shared/unsaved-changes/dialog-close-guard';
 
 import { ResourcesComponent } from './resources.component';
 import { ResourcesAddComponent } from './resources-add.component';
@@ -38,7 +38,7 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
-    guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges());
+    guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges(), () => this.escape());
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
       this.updateResource = true;
@@ -53,6 +53,14 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
 
   cancel() {
     closeUnlessUnsaved(this.dialogRef, this.dialog, () => this.hasUnsavedChanges());
+  }
+
+  escape() {
+    if (this.view === 'resourcesAdd' && !this.updateResource) {
+      this.toggleNewOrExisting();
+    } else {
+      this.cancel();
+    }
   }
 
   ngAfterViewInit() {
@@ -92,9 +100,11 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   }
 
   toggleNewOrExisting() {
-    this.view = this.view === 'resources' ? 'resourcesAdd' : 'resources';
-    // Use setTimeout to wait for Angular building the component being switched to
-    setTimeout(() => this.initOkDisableChange());
+    leaveUnlessUnsaved(this.dialog, () => this.hasUnsavedChanges(), () => {
+      this.view = this.view === 'resources' ? 'resourcesAdd' : 'resources';
+      // Use setTimeout to wait for Angular building the component being switched to
+      setTimeout(() => this.initOkDisableChange());
+    });
   }
 
   initOkDisableChange() {

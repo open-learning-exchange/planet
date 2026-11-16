@@ -2,28 +2,32 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { UnsavedChangesPromptComponent } from './unsaved-changes-prompt.component';
 
-// A fullscreen markdown editor holds its dialog here until its leaving Escape has passed,
-// since that Escape still reaches the dialog's keydown listener.
+// Dialogs a fullscreen editor holds until the Escape that leaves fullscreen has passed their keydown listener.
 export const heldOpenDialogs = new WeakSet<MatDialogRef<unknown>>();
 
-export const closeUnlessUnsaved = (dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean) => {
+export const leaveUnlessUnsaved = (dialog: MatDialog, hasChanges: () => boolean, leave: () => void) => {
   if (!hasChanges()) {
-    dialogRef.close();
+    leave();
     return;
   }
   UnsavedChangesPromptComponent.open(dialog).subscribe(confirmed => {
     if (confirmed) {
-      dialogRef.close();
+      leave();
     }
   });
 };
 
-export const guardDialogClose = (dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean) => {
+export const closeUnlessUnsaved = (dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean) =>
+  leaveUnlessUnsaved(dialog, hasChanges, () => dialogRef.close());
+
+export const guardDialogClose = (
+  dialogRef: MatDialogRef<unknown>, dialog: MatDialog, hasChanges: () => boolean, onEscape?: () => void
+) => {
   dialogRef.disableClose = true;
   dialogRef.backdropClick().subscribe(() => closeUnlessUnsaved(dialogRef, dialog, hasChanges));
   dialogRef.keydownEvents().subscribe(event => {
     if (event.key === 'Escape' && !heldOpenDialogs.has(dialogRef)) {
-      closeUnlessUnsaved(dialogRef, dialog, hasChanges);
+      (onEscape ?? (() => closeUnlessUnsaved(dialogRef, dialog, hasChanges)))();
     }
   });
 };
