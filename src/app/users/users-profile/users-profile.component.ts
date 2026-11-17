@@ -26,7 +26,7 @@ import { getGenderIcon } from '@shared/demographics/gender.constants';
 
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { educationLevel } from '../users.constants';
-import { userDocPath, userRelationship } from '../users.utils';
+import { avatarMayExist, userDocPath, userRelationship } from '../users.utils';
 import { TeamsService } from '../../teams/teams.service';
 
 @Component({
@@ -79,6 +79,9 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   @Input() isDialog: boolean;
   get profileGenderIcon() {
     return getGenderIcon(this.userDetail?.gender);
+  }
+  get hasAvatarToLoad() {
+    return avatarMayExist(this.userDetail, this.planetCode, this.stateService.configuration);
   }
   @Input() userName: string;
 

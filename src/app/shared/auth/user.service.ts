@@ -287,7 +287,7 @@ export class UserService {
           const attachment = user._attachments?.img;
           const attachmentDoc = attachmentDocs.find(aDoc => aDoc.userId === user._id);
           const replicatedDigest = attachmentDoc?._attachments?.img?.digest;
-          if (attachment && ((attachmentDoc === undefined && addNew) || attachment.digest !== replicatedDigest)) {
+          if ((attachment || replicatedDigest) && ((attachmentDoc === undefined && addNew) || attachment?.digest !== replicatedDigest)) {
             return [ ...obsArr, this.getProfileImage(user, attachmentDoc) ];
           }
           return obsArr;

@@ -47,7 +47,7 @@
         @if (achievements !== undefined) {
           <div class="achievements-container">
             <div class="user-info">
-              @if (user._id) {
+              @if (user._id && hasAvatarToLoad) {
                 <planet-avatar class="profile-image" [username]="userName" [planetCode]="userPlanetCode"
                   [attachment]="user._attachments?.img"></planet-avatar>
               } @else {

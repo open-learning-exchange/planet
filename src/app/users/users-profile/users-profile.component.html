@@ -59,7 +59,7 @@
   <div class="view-container">
     <div class="profile-container">
       <div class="profile-image-section">
-        @if (userDetail.name) {
+        @if (userDetail.name && hasAvatarToLoad) {
           <planet-avatar class="profile-image-large" [username]="userDetail.name" [planetCode]="planetCode"
             [attachment]="userDetail._attachments?.img"></planet-avatar>
         } @else {
