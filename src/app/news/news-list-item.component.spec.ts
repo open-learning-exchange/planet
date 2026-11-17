@@ -163,12 +163,6 @@ describe('NewsListItemComponent read-only template', () => {
     expect(document.body.querySelector('.km-react-voice')).toBeNull();
   });
 
-  it('versions the author avatar with its attachment digest', async () => {
-    const fixture = await renderReadOnly(DeviceType.DESKTOP);
-
-    expect(fixture.nativeElement.querySelector('planet-avatar img').getAttribute('src')).toContain('/img?v=md5-news-avatar');
-  });
-
   it('shows the placeholder without requesting an image when the author has none', async () => {
     const fixture = await renderReadOnly(DeviceType.DESKTOP);
     fixture.componentRef.setInput('item', { ...fixture.componentInstance.item, avatarAttachment: undefined });

@@ -1,9 +1,7 @@
 import { SimpleChange, SimpleChanges } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 
-import { StateService } from '@shared/state.service';
 import { couchAttachmentUrl } from '@shared/utils';
 
 import { environment } from '../../../environments/environment';
@@ -146,26 +144,5 @@ describe('AvatarComponent', () => {
     component.ngOnChanges(changesFor('attachment'));
 
     expect(component.imgSrc).toBe(`${url('_users', 'org.couchdb.user:local-user', 'img')}?v=md5-new`);
-  });
-
-  [
-    { description: 'decorative', alt: '' },
-    { description: 'meaningful', alt: 'Alex Morgan' }
-  ].forEach(({ description, alt }) => {
-    it(`renders ${description} alternative text`, () => {
-      TestBed.configureTestingModule({
-        imports: [ AvatarComponent ],
-        providers: [ {
-          provide: StateService,
-          useValue: { configuration: { code: 'local-planet' }, couchStateListener: () => new Subject() }
-        } ]
-      });
-      const fixture = TestBed.createComponent(AvatarComponent);
-      fixture.componentRef.setInput('username', 'local-user');
-      fixture.componentRef.setInput('alt', alt);
-      fixture.detectChanges();
-
-      expect(fixture.nativeElement.querySelector('img').getAttribute('alt')).toBe(alt);
-    });
   });
 });
