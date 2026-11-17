@@ -155,7 +155,7 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     } else {
       const name = nameParam.split('@')[0];
       achievementsId = 'org.couchdb.user:' + name + '@' + planetCode;
-      // Set synchronously so the name and avatar of the newly routed user show while its document is still loading
+      // Set synchronously so the newly routed user's name shows while its document is still loading; the avatar waits for it
       this.userName = name;
       this.userPlanetCode = planetCode;
       this.user = { name, planetCode };

@@ -1,6 +1,9 @@
 import { SimpleChange, SimpleChanges } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
+import { vi } from 'vitest';
 
+import { StateService } from '@shared/state.service';
 import { couchAttachmentUrl } from '@shared/utils';
 
 import { environment } from '../../../environments/environment';
@@ -13,7 +16,7 @@ describe('AvatarComponent', () => {
 
   const url = (db: string, docName: string, filename: string) =>
     couchAttachmentUrl(environment.couchAddress, db, docName, filename);
-  const changesFor = (...inputs: ('username' | 'planetCode' | 'imgClass')[]): SimpleChanges =>
+  const changesFor = (...inputs: ('username' | 'planetCode' | 'attachment')[]): SimpleChanges =>
     Object.fromEntries(inputs.map(input => [ input, new SimpleChange(undefined, component[input], true) ]));
 
   beforeEach(() => {
@@ -55,13 +58,15 @@ describe('AvatarComponent', () => {
     expect(component.imgSrc).toBe(url('attachments', 'org.couchdb.user:child-user@child-planet', 'img'));
   });
 
-  it('falls back to the underscore variant before using the placeholder', () => {
+  it('uses the placeholder when the stable attachment is missing', () => {
+    const imageError = vi.spyOn(component.imageError, 'emit');
     component.username = 'local-user';
     component.ngOnChanges(changesFor('username'));
 
     component.imgLoadError();
 
-    expect(component.imgSrc).toBe(url('_users', 'org.couchdb.user:local-user', 'img_'));
+    expect(component.imgSrc).toBe('assets/image.png');
+    expect(imageError).toHaveBeenCalledTimes(1);
   });
 
   it('does not fall back to a same-named local avatar for a remote user', () => {
@@ -70,10 +75,8 @@ describe('AvatarComponent', () => {
     component.ngOnChanges(changesFor('username', 'planetCode'));
 
     component.imgLoadError();
-    component.imgLoadError();
 
     expect(component.imgSrc).toBe('assets/image.png');
-    expect(component.imgSources.every(({ db }) => db === 'attachments')).toBe(true);
   });
 
   it('restarts resolution when identity inputs change on a reused instance', () => {
@@ -85,7 +88,6 @@ describe('AvatarComponent', () => {
     component.planetCode = 'child-planet';
     component.ngOnChanges(changesFor('username', 'planetCode'));
 
-    expect(component.srcIndex).toBe(0);
     expect(component.imgSrc).toBe(url('attachments', 'org.couchdb.user:child-user@child-planet', 'img'));
   });
 
@@ -98,8 +100,6 @@ describe('AvatarComponent', () => {
     component.imgLoadError();
 
     expect(component.imgSrc).toBe('');
-    expect(component.imgSources).toEqual([]);
-    expect(component.srcIndex).toBe(0);
   });
 
   it('encodes identity values used in attachment URLs', () => {
@@ -113,18 +113,6 @@ describe('AvatarComponent', () => {
     );
   });
 
-  it('does not restart resolution when only the image class changes', () => {
-    component.username = 'local-user';
-    component.ngOnChanges(changesFor('username'));
-    component.imgLoadError();
-
-    component.imgClass = 'large-avatar';
-    component.ngOnChanges(changesFor('imgClass'));
-
-    expect(component.srcIndex).toBe(1);
-    expect(component.imgSrc).toBe(url('_users', 'org.couchdb.user:local-user', 'img_'));
-  });
-
   it('shows the placeholder until an explicit local planet can be resolved', () => {
     configuration = {};
     component.username = 'local-user';
@@ -133,11 +121,51 @@ describe('AvatarComponent', () => {
     component.ngOnChanges(changesFor('username', 'planetCode'));
 
     expect(component.imgSrc).toBe('assets/image.png');
-    expect(component.imgSources).toEqual([]);
 
     configuration = { code: 'local-planet' };
     configurationUpdates.next({ planetField: 'local' });
 
     expect(component.imgSrc).toBe(url('_users', 'org.couchdb.user:local-user', 'img'));
+  });
+
+  it('versions the avatar URL with the attachment digest', () => {
+    component.username = 'local-user';
+    component.attachment = { digest: 'md5-a/b+=' };
+
+    component.ngOnChanges(changesFor('username', 'attachment'));
+
+    expect(component.imgSrc).toBe(`${url('_users', 'org.couchdb.user:local-user', 'img')}?v=md5-a%2Fb%2B%3D`);
+  });
+
+  it('re-resolves the URL when the digest changes', () => {
+    component.username = 'local-user';
+    component.attachment = { digest: 'md5-old' };
+    component.ngOnChanges(changesFor('username', 'attachment'));
+
+    component.attachment = { digest: 'md5-new' };
+    component.ngOnChanges(changesFor('attachment'));
+
+    expect(component.imgSrc).toBe(`${url('_users', 'org.couchdb.user:local-user', 'img')}?v=md5-new`);
+  });
+
+  [
+    { description: 'decorative', alt: '' },
+    { description: 'meaningful', alt: 'Alex Morgan' }
+  ].forEach(({ description, alt }) => {
+    it(`renders ${description} alternative text`, () => {
+      TestBed.configureTestingModule({
+        imports: [ AvatarComponent ],
+        providers: [ {
+          provide: StateService,
+          useValue: { configuration: { code: 'local-planet' }, couchStateListener: () => new Subject() }
+        } ]
+      });
+      const fixture = TestBed.createComponent(AvatarComponent);
+      fixture.componentRef.setInput('username', 'local-user');
+      fixture.componentRef.setInput('alt', alt);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('img').getAttribute('alt')).toBe(alt);
+    });
   });
 });

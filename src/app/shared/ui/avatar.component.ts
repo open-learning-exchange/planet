@@ -1,5 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
@@ -8,37 +7,42 @@ import { couchAttachmentUrl } from '@shared/utils';
 
 import { environment } from '../../../environments/environment';
 
-interface AvatarSource {
-  db: '_users' | 'attachments';
-  filename: string;
+export interface AvatarAttachment {
+  digest?: string;
 }
+
+export const avatarUrl = (db: '_users' | 'attachments', docId: string, digest?: string): string => {
+  const url = couchAttachmentUrl(environment.couchAddress, db, docId, 'img');
+  return digest ? `${url}?v=${encodeURIComponent(digest)}` : url;
+};
 
 @Component({
   selector: 'planet-avatar',
   template: `
     @if (imgSrc) {
-      <img [src]="imgSrc" [ngClass]="imgClass" (error)="imgLoadError()">
+      <img [src]="imgSrc" [alt]="alt" (error)="imgLoadError()">
     }
-    `,
-  imports: [NgClass]
+  `,
+  styles: [`
+    :host { display: inline-block; aspect-ratio: 1; }
+    img { display: block; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+  `]
 })
 export class AvatarComponent implements OnChanges, OnDestroy {
 
   @Input() username: string;
   @Input() planetCode: string;
-  @Input() imgClass: string;
+  @Input() alt = '';
+  @Input() attachment?: AvatarAttachment;
+  @Output() imageError = new EventEmitter<void>();
   imgSrc: string;
-  imgSources: AvatarSource[] = [];
-  srcIndex = 0;
-  imgUrlPrefix = environment.couchAddress;
-  readonly filenames = [ 'img', 'img_' ];
   private readonly onDestroy$ = new Subject<void>();
   private waitingForConfiguration = false;
 
   constructor(private stateService: StateService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!changes.username && !changes.planetCode) {
+    if (!changes.username && !changes.planetCode && !changes.attachment) {
       return;
     }
     this.resolveAvatar();
@@ -50,8 +54,6 @@ export class AvatarComponent implements OnChanges, OnDestroy {
   }
 
   private resolveAvatar() {
-    this.srcIndex = 0;
-    this.imgSources = [];
     if (!this.username) {
       this.imgSrc = '';
       return;
@@ -63,9 +65,7 @@ export class AvatarComponent implements OnChanges, OnDestroy {
     }
     // Remote avatars only live in attachments. Falling back to _users could show an unrelated
     // local user's avatar when both users share the same name.
-    const db = this.isLocal() ? '_users' : 'attachments';
-    this.imgSources = this.filenames.map(filename => ({ db, filename }));
-    this.setImgSrc(this.imgSources[0]);
+    this.setImgSrc(this.isLocal() ? '_users' : 'attachments');
   }
 
   private waitForConfiguration() {
@@ -90,20 +90,16 @@ export class AvatarComponent implements OnChanges, OnDestroy {
   }
 
   imgLoadError() {
-    if (!this.username) {
+    if (!this.username || this.imgSrc === 'assets/image.png') {
       return;
     }
-    this.srcIndex = this.srcIndex + 1;
-    if (this.srcIndex >= this.imgSources.length) {
-      this.imgSrc = 'assets/image.png';
-      return;
-    }
-    this.setImgSrc(this.imgSources[this.srcIndex]);
+    this.imgSrc = 'assets/image.png';
+    this.imageError.emit();
   }
 
-  setImgSrc({ db, filename }: AvatarSource) {
+  setImgSrc(db: '_users' | 'attachments') {
     const docName = `org.couchdb.user:${this.username}${db === 'attachments' ? '@' + this.planetCode : ''}`;
-    this.imgSrc = couchAttachmentUrl(this.imgUrlPrefix, db, docName, filename);
+    this.imgSrc = avatarUrl(db, docName, this.attachment?.digest);
   }
 
 }
