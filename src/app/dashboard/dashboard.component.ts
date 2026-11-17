@@ -16,10 +16,10 @@ import { StateService } from '@shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray, fullName } from '@shared/utils';
 import { CertificationsService } from '@shared/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { AvatarComponent } from '@shared/ui/avatar.component';
 import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 
-import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
@@ -41,7 +41,8 @@ import { DashboardTileComponent } from './dashboard-tile.component';
     DashboardTileComponent,
     DecimalPipe,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    AvatarComponent
   ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
@@ -50,7 +51,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   data = { resources: [], courses: [], myTeams: [] };
   loading = { resources: true, courses: true, myTeams: true };
   loadedShelf: any = {};
-  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/';
   displayName: string;
   roles: string[];
   planetName: string;
@@ -203,14 +203,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }))
       )
     );
-  }
-
-  get profileImg() {
-    const attachments = this.user._attachments;
-    if (attachments) {
-      return this.urlPrefix + Object.keys(attachments)[0];
-    }
-    return 'assets/image.png';
   }
 
   getSubmissions(type: string, status: string, username?: string) {

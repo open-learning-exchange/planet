@@ -67,3 +67,18 @@ describe('NewsService reaction saves', () => {
     expect(messages.showAlert).toHaveBeenCalledWith('There was a problem saving your reaction.');
   });
 });
+
+describe('NewsService avatar metadata', () => {
+  const service = new NewsService({} as any, {} as any, {} as any, {} as any);
+  const user = { _id: 'org.couchdb.user:ann', planetCode: 'community-a', _attachments: { img: { digest: 'md5-snapshot' } } };
+
+  it('prefers the replicated attachment over the snapshot in the post', () => {
+    const attachments = new Map([ [ 'org.couchdb.user:ann@community-a', { _attachments: { img: { digest: 'md5-current' } } } ] ]);
+
+    expect(service.findAvatarAttachment(user, attachments)).toEqual({ digest: 'md5-current' });
+  });
+
+  it('falls back to the snapshot in the post when nothing was replicated', () => {
+    expect(service.findAvatarAttachment(user, new Map())).toEqual({ digest: 'md5-snapshot' });
+  });
+});
