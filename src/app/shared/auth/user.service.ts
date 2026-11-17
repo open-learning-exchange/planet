@@ -284,10 +284,10 @@ export class UserService {
     return this.couchService.findAll('attachments', query).pipe(
       switchMap((attachmentDocs: any[]) => {
         const obs = users.reduce((obsArr, user) => {
-          const key = user._attachments && Object.keys(user._attachments)[0];
+          const attachment = user._attachments?.img;
           const attachmentDoc = attachmentDocs.find(aDoc => aDoc.userId === user._id);
-          const aDocDigest = attachmentDoc && attachmentDoc._attachments[key] && attachmentDoc._attachments[key].digest;
-          if (key && ((attachmentDoc === undefined && addNew) || user._attachments[key].digest !== aDocDigest)) {
+          const replicatedDigest = attachmentDoc?._attachments?.img?.digest;
+          if (attachment && ((attachmentDoc === undefined && addNew) || attachment.digest !== replicatedDigest)) {
             return [ ...obsArr, this.getProfileImage(user, attachmentDoc) ];
           }
           return obsArr;
