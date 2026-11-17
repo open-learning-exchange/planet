@@ -13,6 +13,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { AvatarComponent } from '@shared/ui/avatar.component';
 import { UserService } from '@shared/auth/user.service';
 import { trackById } from '@shared/tables/table.helpers';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -22,10 +23,10 @@ import { StateService } from '@shared/state.service';
 
 import { TasksService } from './tasks.service';
 import { TasksAssigneesDialogComponent } from './tasks-assignees-dialog.component';
-import { environment } from '../../environments/environment';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { MeetupsAddDialogComponent } from '../meetups/meetups-add-dialog.component';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
+import { memberAvatarAttachment } from '../teams/teams.utils';
 import {
   assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees,
   effectiveTaskStatus, storedAssignee, TaskStatus, taskStatusBadgeLabel
@@ -72,7 +73,8 @@ interface AssigneeUpdateState {
     MatMenuContent,
     MatMenuItem,
     DatePipe,
-    AssigneeNamePipe
+    AssigneeNamePipe,
+    AvatarComponent
   ]
 })
 export class TasksComponent implements OnInit {
@@ -110,14 +112,12 @@ export class TasksComponent implements OnInit {
   myTasks: any[] = [];
   taskViews: any[] = [];
   filteredTaskViews: any[] = [];
-  imgUrlPrefix = environment.couchAddress;
   filter: TaskFilter = 'self';
   trackById = trackById;
   statusOptions = ([ 'to_do', 'in_progress', 'completed' ] as TaskStatus[])
     .map(status => ({ status, label: taskStatusBadgeLabel(status) }));
   private assigneesList: any[] = [];
   private currentAssignees = new Map<string, any>();
-  private failedAvatarSources = new Map<string, string>();
   private assigneeUpdates = new Map<string, AssigneeUpdateState>();
   private statusSaves = new Set<string>();
 
@@ -417,49 +417,20 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  avatarSrc(assignee) {
-    const attachmentName = Object.keys(assignee?.attachmentDoc?._attachments || {})[0];
-    if (attachmentName) {
-      return `${this.imgUrlPrefix}/attachments/${assignee.attachmentDoc._id}/${attachmentName}`;
-    }
-    if (!assignee?.avatar) {
-      return 'assets/image.png';
-    }
-    return assignee.avatar.startsWith('/') ? this.imgUrlPrefix + assignee.avatar : assignee.avatar;
-  }
-
-  useDefaultAvatar(taskView) {
-    const failureKey = this.avatarFailureKey(taskView.task, taskView.assignee);
-    if (failureKey && taskView.avatarSrc && taskView.avatarSrc !== 'assets/image.png') {
-      this.failedAvatarSources.set(failureKey, taskView.avatarSrc);
-    }
-    taskView.avatarSrc = 'assets/image.png';
-  }
-
   private setTaskViews() {
     this.taskViews = this.tasks.map(task => {
       const assignees = this.taskAssignees(task).map(item => this.currentAssigneeMetadata(item));
       const assignee = assignees[0];
-      const avatarSrc = assignee ? this.avatarSrc(assignee) : undefined;
-      const failureKey = this.avatarFailureKey(task, assignee);
-      const failedAvatarSrc = failureKey && this.failedAvatarSources.get(failureKey);
-      if (failureKey && failedAvatarSrc && failedAvatarSrc !== avatarSrc) {
-        this.failedAvatarSources.delete(failureKey);
-      }
       const status = effectiveTaskStatus(task);
       return {
         task,
         assignees,
         assignee,
-        avatarSrc: failedAvatarSrc === avatarSrc ? 'assets/image.png' : avatarSrc,
+        avatarAttachment: memberAvatarAttachment(assignee, this.localPlanetCode),
         status,
         statusLabel: taskStatusBadgeLabel(status)
       };
     });
-  }
-
-  private avatarFailureKey(task, assignee) {
-    return assigneeKey(assignee, this.localPlanetCode) || task?._id;
   }
 
   // An assignment being saved is not on the task document yet, so the pending list wins until it lands.
