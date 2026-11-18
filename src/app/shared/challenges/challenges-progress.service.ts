@@ -31,6 +31,7 @@ export interface TaskProgress {
   rewarded: number;
   earned: number;
   done: boolean;
+  settled: boolean;
 }
 
 export interface UserProgress {
@@ -88,7 +89,7 @@ export class ChallengesProgressService {
     return this.userDocs(challenge, user.name).pipe(
       switchMap(existing => {
         const tasks = this.userProgress(challenge, existing).tasks
-          .filter(({ task, done, rewarded }) => !done || rewarded < (task.maxCount ?? 1))
+          .filter(({ settled }) => !settled)
           .map(({ task }) => task);
         const evidenceByTask$ = tasks.length ?
           forkJoin(tasks.map(task => this.evidence(challenge, task, user).pipe(catchError(() => of([]))))) :
@@ -129,7 +130,8 @@ export class ChallengesProgressService {
     const tasks = challenge.tasks.map(task => {
       const count = this.units(task, this.dayCounts(docs.filter(doc => doc.taskId === task.id)));
       const rewarded = Math.min(count, task.maxCount ?? Infinity);
-      return { task, count, rewarded, earned: rewarded * task.reward, done: count >= (task.requiredCount || 1) };
+      const done = count >= (task.requiredCount || 1);
+      return { task, count, rewarded, earned: rewarded * task.reward, done, settled: done && rewarded >= (task.maxCount ?? 1) };
     });
     const required = tasks.filter(({ task }) => !task.optional);
     return {

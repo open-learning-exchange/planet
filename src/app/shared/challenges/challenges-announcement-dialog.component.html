@@ -81,7 +81,7 @@
                 <br><span i18n>{{ taskProgress.rewarded }} of {{ task.maxCount }} rewarded</span>
               }
             </span>
-            @if (!taskProgress.done) {
+            @if (!taskProgress.settled) {
               @switch (task.type) {
                 @case ('course_join') {
                   <a mat-raised-button color="primary" type="button" [disabled]="isJoining" (click)="joinCourse(task)" i18n>Join</a>

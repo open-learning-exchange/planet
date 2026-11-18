@@ -87,6 +87,8 @@ describe('ChallengesProgressService', () => {
     const joinDocs = docs.map(doc => ({ ...doc, taskId: 'join' }));
 
     expect(voiceProgress({ ...voiceTask, maxCount: 3 })).toEqual(expect.objectContaining({ count: 4, rewarded: 3, earned: 6 }));
+    expect(voiceProgress({ ...voiceTask, maxCount: 3 }).settled).toBe(true);
+    expect(voiceProgress({ ...voiceTask, maxCount: 5 })).toEqual(expect.objectContaining({ done: true, settled: false }));
     expect(voiceProgress({ ...voiceTask, countBy: 'day' })).toEqual(expect.objectContaining({ count: 3, done: true }));
     expect(voiceProgress({ ...voiceTask, countBy: 'day', requiredCount: 4 }).done).toBe(false);
     expect(service.userProgress(normalized([ joinTask ]), joinDocs).tasks[0]).toEqual(expect.objectContaining({ count: 1, earned: 1 }));
