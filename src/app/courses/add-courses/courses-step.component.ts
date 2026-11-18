@@ -10,7 +10,8 @@ import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
@@ -46,7 +47,7 @@ interface CoursesStepForm {
     CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
     ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
     MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent, MatSlideToggle, MatButton
+    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent, MatSlideToggle, MatIconButton, MatTooltip
   ]
 })
 export class CoursesStepComponent implements OnDestroy {
