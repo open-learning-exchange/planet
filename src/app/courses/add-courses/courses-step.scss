@@ -85,6 +85,7 @@ planet-courses-step planet-step-list {
   @media (max-width: v.$screen-xs) {
     .attach-grid {
       grid-template-columns: 1fr;
+      flex-basis: 100%;
     }
   }
 }

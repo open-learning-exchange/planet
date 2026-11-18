@@ -89,5 +89,11 @@
         }
       </button>
     </div>
+    @if (activeStep?.exam) {
+      <button mat-stroked-button color="warn" type="button" (click)="removeExam('exam')" i18n>Remove Test</button>
+    }
+    @if (activeStep?.survey) {
+      <button mat-stroked-button color="warn" type="button" (click)="removeExam('survey')" i18n>Remove Survey</button>
+    }
   </div>
 </planet-step-list>

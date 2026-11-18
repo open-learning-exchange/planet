@@ -10,8 +10,10 @@ import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatButton } from '@angular/material/button';
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import {
   PlanetStepListComponent,
   PlanetStepListItemComponent,
@@ -29,7 +31,6 @@ import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { ResourcesIconComponent } from '../../resources/resources-icon.component';
 
 interface CoursesStepForm {
-  id: FormControl<string>;
   stepTitle: FormControl<string>;
   description: FormControl<string>;
   passingRequired: FormControl<boolean>;
@@ -45,7 +46,7 @@ interface CoursesStepForm {
     CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
     ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
     MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent, MatSlideToggle
+    PlanetStepListActionsDirective, TruncateTextPipe, ResourcesIconComponent, MatSlideToggle, MatButton
   ]
 })
 export class CoursesStepComponent implements OnDestroy {
@@ -78,7 +79,6 @@ export class CoursesStepComponent implements OnDestroy {
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.stepForm = this.fb.group<CoursesStepForm>({
-      id: this.fb.control(''),
       stepTitle: this.fb.control(''),
       description: this.fb.control(''),
       passingRequired: this.fb.control(false)
@@ -145,6 +145,28 @@ export class CoursesStepComponent implements OnDestroy {
     } else {
       this.router.navigate([ '/courses/exam/', { type } ]);
     }
+  }
+
+  removeExam(type: 'exam' | 'survey') {
+    const { [type]: exam, ...step } = this.activeStep;
+    const question = type === 'exam' ? $localize`Remove this test from the step?` : $localize`Remove this survey from the step?`;
+    const unlocks = type === 'exam' && step.passingRequired ? ' ' + $localize`The next step will no longer wait for a passing score.` : '';
+    this.dialog.open(DialogsPromptComponent, {
+      data: {
+        showMainParagraph: false,
+        displayName: exam.name,
+        extraMessage: `${question} ${$localize`Learners' results stay in Submissions.`}${unlocks}`
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+      this.steps[this.activeStepIndex] = type === 'exam' ? { ...step, passingRequired: false } : step;
+      this.activeStep = this.steps[this.activeStepIndex];
+      // The form writes every field back on the next edit, so its toggle has to match the step
+      this.stepForm.controls.passingRequired.setValue(this.activeStep.passingRequired, { emitEvent: false });
+      this.stepsChange.emit(this.steps);
+    });
   }
 
   stepsMoved(steps) {
