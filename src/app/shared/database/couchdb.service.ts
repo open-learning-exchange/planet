@@ -4,6 +4,7 @@ import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
 import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { normalizedContentType } from '@shared/utils';
 
 import { environment } from '../../../environments/environment';
 import { findDocuments } from './mango-queries';
@@ -75,6 +76,34 @@ export class CouchService {
 
   putAttachment(db: string, file: File | FormData, opts?: any) {
     return this.couchDBReq('put', db, this.setOpts(opts), file);
+  }
+
+  putDocumentWithFiles(db: string, doc: any, files: { [name: string]: File }) {
+    const boundary = this.randomId();
+    return this.currentTime().pipe(
+      switchMap((date) => {
+        const _attachments = {
+          ...doc._attachments,
+          ...Object.fromEntries(Object.entries(files).map(([ name, file ]) =>
+            [ name, { follows: true, content_type: normalizedContentType(file), length: file.size } ]
+          ))
+        };
+        const docWithFiles = { ...this.fillInDateFields(doc, date), _id: doc._id || this.randomId(), _attachments };
+        // CouchDB pairs the file parts with the follows entries in the order the JSON lists them
+        const body = new Blob([
+          `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(docWithFiles)}\r\n`,
+          ...Object.keys(_attachments).filter(name => Object.hasOwn(files, name))
+            .flatMap(name => [ `--${boundary}\r\n\r\n`, files[name], '\r\n' ]),
+          `--${boundary}--`
+        ]);
+        const headers = { 'Content-Type': `multipart/related; boundary="${boundary}"` };
+        return this.couchDBReq('put', `${db}/${encodeURIComponent(docWithFiles._id)}`, this.setOpts({ headers }), body);
+      })
+    );
+  }
+
+  private randomId() {
+    return Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
   }
 
   updateDocument(db: string, doc: any, opts?: any) {
