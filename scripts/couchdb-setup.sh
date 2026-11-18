@@ -164,6 +164,10 @@ upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":
 upsert_doc chat_history _index '{"index":{"fields":[{"user":"asc"}]},"name":"user-index"}' POST
 upsert_doc submissions _index '{"index":{"fields":["user.name","type","status"]},"name":"user-type-status-index"}' POST
 upsert_doc courses_progress _index '{"index":{"fields":["userId","courseId"]},"name":"user-course-index"}' POST
+upsert_doc login_activities _index '{"index":{"fields":["user","loginTime"]},"name":"user-time-index"}' POST
+upsert_doc resource_activities _index '{"index":{"fields":["user","time"]},"name":"user-time-index"}' POST
+upsert_doc ratings _index '{"index":{"fields":["user.name","type"]},"name":"user-type-index"}' POST
+upsert_doc teams _index '{"index":{"fields":["docType","userPlanetCode","userId"]},"name":"membership-index"}' POST
 
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
