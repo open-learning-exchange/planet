@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -65,6 +66,7 @@ describe('ConfigurationService patches', () => {
     TestBed.configureTestingModule({
       providers: [
         ConfigurationService,
+        { provide: HttpClient, useValue: {} },
         { provide: CouchService, useValue: couchServiceMock },
         { provide: StateService, useValue: stateServiceMock },
         { provide: UserService, useValue: { get: () => ({ name: 'admin' }), credentials: { name: 'admin' } } },

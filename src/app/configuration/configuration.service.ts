@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { catchError, map, switchMap, mergeMap, takeWhile, toArray } from 'rxjs/operators';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 
@@ -7,16 +8,23 @@ import { UserService } from '@shared/auth/user.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
 import { SyncService } from '@shared/database/sync.service';
-import { dedupeShelfReduce, deepObjectPatch, planetAndParentId, stringToHex } from '@shared/utils';
+import { dedupeShelfReduce, planetAndParentId, stringToHex } from '@shared/utils';
 
 import { ManagerService } from '../manager-dashboard/manager.service';
+import { environment } from '../../environments/environment';
+
+export type KeyService = 'ai' | 'currency';
+export type KeyStatus = Record<string, Record<string, boolean>>;
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigurationService {
 
+  private readonly keysUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/keys`;
+
   constructor(
+    private httpClient: HttpClient,
     private couchService: CouchService,
     private userService: UserService,
     private managerService: ManagerService,
@@ -164,6 +172,7 @@ export class ConfigurationService {
     }));
   }
 
+  // Each top-level field replaces the stored one whole, so send nested objects complete
   patchLocalConfiguration(patch: any): Observable<any> {
     return this.patchLocalConfigurationWithRetry(patch, 1);
   }
@@ -173,7 +182,7 @@ export class ConfigurationService {
     delete fields._rev;
     return this.getConfiguration(fields._id).pipe(
       switchMap((configuration) =>
-        this.couchService.updateDocument('configurations', deepObjectPatch(configuration, fields)).pipe(
+        this.couchService.updateDocument('configurations', { ...configuration, ...fields }).pipe(
           map(({ doc }) => doc),
           catchError((error) => error?.status === 409 && retriesOnConflict > 0 ?
             this.patchLocalConfigurationWithRetry(patch, retriesOnConflict - 1) : throwError(error))
@@ -207,6 +216,18 @@ export class ConfigurationService {
       const userDetail = { ...this.userService.get(), ...this.userService.credentials };
       return this.addPlanetToParent(parentConfiguration, res.docs.length === 0, userDetail);
     }));
+  }
+
+  getKeyStatus(): Observable<KeyStatus> {
+    return this.httpClient.get<KeyStatus>(this.keysUrl, { withCredentials: true });
+  }
+
+  setKey(service: KeyService, name: string, key: string) {
+    return this.httpClient.put(`${this.keysUrl}/${service}/${name}`, { key }, { withCredentials: true });
+  }
+
+  removeKey(service: KeyService, name: string) {
+    return this.httpClient.delete(`${this.keysUrl}/${service}/${name}`, { withCredentials: true });
   }
 
   createUser(name, details, opts?) {
