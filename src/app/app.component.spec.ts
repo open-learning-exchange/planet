@@ -39,7 +39,6 @@ describe('App navigation blocker', () => {
   beforeEach(() => {
     gate = new Subject<boolean | UrlTree>();
     guard.mockClear();
-    vi.stubGlobal('gtag', vi.fn());
     TestBed.configureTestingModule({
       imports: [ AppComponent ],
       providers: [
@@ -48,8 +47,6 @@ describe('App navigation blocker', () => {
       ]
     });
   });
-
-  afterEach(() => vi.unstubAllGlobals());
 
   it.each([
     [ 'ends', () => gate.next(true) ],
