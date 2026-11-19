@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { EMPTY, of } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { UserService } from '@shared/auth/user.service';
@@ -14,11 +14,14 @@ import { ResourcesService } from './resources.service';
 
 describe('ResourcesService', () => {
 
-  it('uploads the file under the name the doc stores, not the picked file name', () => {
-    const couchService = {
+  const file = new File([ '%PDF' ], 'canción #1.pdf', { type: 'application/pdf' });
+  let couchService;
+
+  const setup = (putDocumentWithFiles) => {
+    couchService = {
       datePlaceholder: {},
-      updateDocument: vi.fn().mockReturnValue(of({ id: 'res-1', rev: '1-a' })),
-      putAttachment: vi.fn().mockReturnValue(of({})),
+      putDocumentWithFiles,
+      updateDocument: vi.fn(),
       bulkDocs: vi.fn().mockReturnValue(of([]))
     };
     TestBed.configureTestingModule({
@@ -32,13 +35,27 @@ describe('ResourcesService', () => {
         { provide: PlanetMessageService, useValue: {} }
       ]
     });
-    const file = new File([ '%PDF' ], 'canción #1.pdf', { type: 'application/pdf' });
+    return TestBed.inject(ResourcesService);
+  };
 
-    TestBed.inject(ResourcesService).updateResource({ filename: 'canción__1.pdf' }, file).subscribe();
+  it('saves an edit that replaces the file as one write carrying the doc and the new file', () => {
+    const edit = { _id: 'res-1', _rev: '1-a', filename: 'canción__1.pdf', _attachments: {} };
 
-    expect(couchService.putAttachment).toHaveBeenCalledWith(
-      'resources/res-1/canci%C3%B3n__1.pdf?rev=1-a', file, { headers: { 'Content-Type': 'application/pdf' } }
-    );
+    setup(vi.fn().mockReturnValue(of({ ok: true, id: 'res-1', rev: '2-b' }))).updateResource(edit, file).subscribe();
+
+    expect(couchService.putDocumentWithFiles).toHaveBeenCalledWith('resources', expect.objectContaining(edit), { 'canción__1.pdf': file });
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('writes nothing else when the write with the file fails', () => {
+    const error = vi.fn();
+
+    setup(vi.fn().mockReturnValue(throwError(() => new Error('offline'))))
+      .updateResource({ filename: 'canción__1.pdf' }, file).subscribe({ error });
+
+    expect(error).toHaveBeenCalled();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
   });
 
 });
