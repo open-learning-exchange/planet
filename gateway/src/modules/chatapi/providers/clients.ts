@@ -1,7 +1,8 @@
 import OpenAI from 'openai';
 
 import { HttpError } from '../../../middleware/errors';
-import { getConfiguration, getKeys } from '../../../services/config.service';
+import { getConfiguration } from '../../../services/config.service';
+import { getKeys } from '../../../services/keys.service';
 import { AIProvider, ProviderStatus } from '../models/chat.model';
 import { PROVIDER_NAMES, PROVIDER_REGISTRY, ProviderName } from './registry';
 
@@ -12,7 +13,7 @@ export interface ProviderClient {
 }
 
 export async function listProviders(): Promise<ProviderStatus[]> {
-  const [ keys, { models } ] = await Promise.all([ getKeys(), getConfiguration() ]);
+  const [ keys, { models } ] = await Promise.all([ getKeys('ai'), getConfiguration() ]);
   return PROVIDER_NAMES.map((name) => ({
     name,
     'label': PROVIDER_REGISTRY[name].label,
@@ -25,7 +26,7 @@ export async function providerClient(aiProvider: AIProvider): Promise<ProviderCl
   if (!PROVIDER_NAMES.includes(name)) {
     throw new HttpError(400, '"aiProvider.name" must name a supported AI provider');
   }
-  const [ keys, { models } ] = await Promise.all([ getKeys(), getConfiguration() ]);
+  const [ keys, { models } ] = await Promise.all([ getKeys('ai'), getConfiguration() ]);
   const model = aiProvider.model ?? models[name];
   if (!keys[name] || !model) {
     throw new HttpError(503, `${PROVIDER_REGISTRY[name].label} is not configured on this planet`);
