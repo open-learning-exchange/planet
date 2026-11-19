@@ -1,8 +1,28 @@
 import { Request, Response } from 'express';
 
+import { teamsDB } from '../../../config/couch.config';
 import { getKeys } from '../../../services/keys.service';
 
 export const CURRENCY_PROVIDER = 'openexchangerates';
+
+/**
+ * Interface for transaction documents in CouchDB
+ */
+export interface TransactionDoc {
+  _id?: string;
+  _rev?: string;
+  docType: 'transaction';
+  teamId: string;
+  teamType: string;
+  teamPlanetCode: string;
+  type: 'credit' | 'debit';
+  amount: number;
+  date: number;
+  description: string;
+  status?: string;
+  receiptImages?: any;
+  _attachments?: any;
+}
 
 // See https://docs.openexchangerates.org/reference/historical-json
 const OPENEXCHANGERATES_MIN_YEAR = 1999;
@@ -23,10 +43,8 @@ const isValidDate = (dateString: string, timestamp: number): boolean => {
 
 };
 
-export const getCurrencyRate = async (req: Request, res: Response) => {
-
-  const { timestamp } = req.params;
-  const parsedTimestamp = parseInt(timestamp, 10);
+const fetchCurrencyRate = async (timestamp: string | number) => {
+  const parsedTimestamp = typeof timestamp === 'string' ? parseInt(timestamp, 10) : timestamp;
 
   const dateObject = timestamp ? new Date(parsedTimestamp) : new Date();
   // Use Chinese locale because that matches closest to YYYY-MM-DD used in the API
@@ -38,10 +56,10 @@ export const getCurrencyRate = async (req: Request, res: Response) => {
   }).replace(/\//g, '-');
 
   if (!isValidDate(date, parsedTimestamp)) {
-    return res.status(400).json({
+    return {
       'error': 'Invalid date',
-      'message': 'Number must parse to valid date after 1st January 1999 and before current time'
-    });
+      'description': 'Number must parse to valid date after 1st January 1999 and before current time'
+    };
   }
 
   const key = (await getKeys('currency'))[CURRENCY_PROVIDER];
@@ -52,21 +70,113 @@ export const getCurrencyRate = async (req: Request, res: Response) => {
   try {
     const apiResponse = await fetch(`https://openexchangerates.org/api/historical/${date}.json?app_id=${key}&symbols=GTQ`);
     const data = await apiResponse.json();
-    if (data.error) {
-      return res.status(data.status).json({
-        'error': data.error,
-        'message': data.description
-      });
-    }
-    return res.status(200).json({
-      'status': 'Success',
-      data
-    });
+    return data;
   } catch (e) {
-    return res.status(400).json({
-      'error': e,
-      'message': 'Request to currency exchange API failed.'
+    return {
+      'error': e
+    };
+  }
+};
+
+export const getCurrencyRate = async (req: Request, res: Response) => {
+
+  const { timestamp } = req.params;
+
+  const response = await fetchCurrencyRate(timestamp);
+
+  if (response.error) {
+    return res.status(response.status || 400).json({
+      'error': response.error,
+      'message': response.description || 'Request to currency exchange API failed.'
     });
   }
+  return res.status(200).json({
+    'status': 'Success',
+    response
+  });
 
 };
+
+/**
+ * Validates transaction data
+ */
+const validateTransaction = (data: any): void => {
+  const requiredFields = [ 'teamId', 'teamType', 'teamPlanetCode', 'type', 'amount', 'date', 'description' ];
+
+  for (const field of requiredFields) {
+    if (data[field] === undefined || data[field] === null) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+
+  if (data.type !== 'credit' && data.type !== 'debit') {
+    throw new Error('Invalid transaction type. Must be "credit" or "debit"');
+  }
+
+  if (typeof data.amount !== 'number' || data.amount < 0) {
+    throw new Error('Amount must be a non-negative number');
+  }
+
+  if (typeof data.date !== 'number' || isNaN(data.date)) {
+    throw new Error('Date must be a valid timestamp');
+  }
+};
+
+/**
+ * Create or update a transaction document in CouchDB
+ * @param req - Express request with transaction data
+ * @param res - Express response
+ */
+export const submitTransaction = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { teamId, teamType, teamPlanetCode, type, description, amount, date, status, _attachments, _id, _rev } = req.body;
+
+    validateTransaction(req.body);
+
+    const exchangeRate = key ? await fetchCurrencyRate(date) : undefined;
+
+    const transactionDoc: TransactionDoc = {
+      'docType': 'transaction',
+      teamId,
+      teamType,
+      teamPlanetCode,
+      type,
+      'amount': Number(amount),
+      'date': Number(date),
+      description,
+      _attachments,
+      _id,
+      _rev,
+      ...(exchangeRate && !exchangeRate.error ? { exchangeRate } : {}),
+      ...(status ? { status } : {}),
+      // _attachments will be set by the caller if needed
+    };
+
+    // Save document to CouchDB
+    const response = await teamsDB.insert(transactionDoc);
+
+    res.status(201).json({
+      'status': 'Success',
+      'couchDBResponse': response
+    });
+  } catch (error: any) {
+
+    if (error.status === 404) {
+      res.status(404).json({
+        'error': 'Not Found',
+        'message': 'Team document not found'
+      });
+    } else if (error.status === 409) {
+      res.status(409).json({
+        'error': 'Conflict',
+        'message': 'Document update conflict. Please refresh and try again.'
+      });
+    } else {
+      res.status(500).json({
+        'error': 'Internal Server Error',
+        'message': error.message || 'Failed to save transaction'
+      });
+    }
+  }
+};
+

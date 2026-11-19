@@ -190,6 +190,10 @@ export class TeamsService {
     return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => of({ ...team, _rev: res.rev, _id: res.id })));
   }
 
+  updateTransaction(transaction: any) {
+    return this.couchService.updateDocumentGateway('/currency/transaction', transaction);
+  }
+
   requestToJoinTeam(team, user) {
     const memberInfo = { userId: user._id, userPlanetCode: this.stateService.configuration.code };
     return this.couchService.post(`${this.dbName}/_find`, findDocuments(this.requestSelector(team, memberInfo), [ '_id' ], 0, 1)).pipe(
