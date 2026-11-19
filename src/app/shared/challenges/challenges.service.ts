@@ -68,7 +68,6 @@ export class ChallengesService {
   }
 
   getChallenges(): Observable<PlanetChallenge[]> {
-    // Not findAll: it turns errors into an empty list
     return this.couchService.post('challenges/_find', findDocuments({ type: 'challenge' })).pipe(
       map(({ docs }) => docs.map(challenge => this.normalizeChallenge(challenge))),
       catchError(error => error.status === 404 ? of([]) : throwError(error))
