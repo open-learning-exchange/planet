@@ -170,7 +170,7 @@
   <mat-dialog-content class="profile-image-section">
     <img class="profile-image-update" [src]="previewSrc" alt="Profile image preview" i18n-alt/>
     <div class="profile-image-upload">
-      <image-cropper [imageFile]="imageFile" format="webp" output="base64" (imageCropped)="onImageSelect($event)"></image-cropper>
+      <image-cropper [imageFile]="imageFile" format="webp" output="base64" [resizeToWidth]="512" [onlyScaleDown]="true" (imageCropped)="onImageSelect($event)"></image-cropper>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>

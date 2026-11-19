@@ -82,14 +82,18 @@ describe('ChallengesService', () => {
         { id: 'voice', type: 'voice_post', reward: '2', countBy: 'day', maxCount: 5.7, requiredCount: '2' },
         { id: 'join', type: 'course_join', targetId: 'course-1', requiredCount: 2 }, { id: 'untargeted', type: 'course_join' },
         { id: 'voice', type: 'voice_post' }, { id: 'complete', type: 'voice_post' }, { id: 'a:b', type: 'voice_post' },
-        { id: 'login', type: 'login' }, { type: 'voice_post' }, { id: 'uncapped', type: 'voice_post', requiredCount: 3 }
+        { id: 'meetup', type: 'meetup' }, { type: 'voice_post' }, { id: 'uncapped', type: 'voice_post', requiredCount: 3 },
+        { id: 'login', type: 'login', optional: true }, { id: 'team', type: 'team_join' }, { id: 'steps', type: 'course_step' },
+        { id: 'library', type: 'resource_open', optional: 'yes' }
       ]
     } as any);
 
     expect(normalized.tasks).toEqual([
-      { id: 'voice', type: 'voice_post', reward: 2, countBy: 'day', maxCount: 5, requiredCount: 2 },
-      { id: 'join', type: 'course_join', targetId: 'course-1', reward: 0, countBy: 'each' },
-      { id: 'uncapped', type: 'voice_post', reward: 0, countBy: 'each', maxCount: 3, requiredCount: 3 }
+      { id: 'voice', type: 'voice_post', reward: 2, countBy: 'day', maxCount: 5, requiredCount: 2, optional: false },
+      { id: 'join', type: 'course_join', targetId: 'course-1', reward: 0, countBy: 'each', optional: false },
+      { id: 'uncapped', type: 'voice_post', reward: 0, countBy: 'each', maxCount: 3, requiredCount: 3, optional: false },
+      { id: 'login', type: 'login', reward: 0, countBy: 'each', maxCount: 1, optional: true },
+      { id: 'library', type: 'resource_open', reward: 0, countBy: 'each', maxCount: 1, optional: false }
     ]);
   });
 

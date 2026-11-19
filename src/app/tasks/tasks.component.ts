@@ -193,7 +193,8 @@ export class TasksComponent implements OnInit {
           });
         }
       },
-      autoFocus: true
+      autoFocus: true,
+      confirmUnsavedChanges: true
     });
   }
 

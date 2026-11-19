@@ -5,7 +5,6 @@ import { forkJoin, of, Subject } from 'rxjs';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -18,7 +17,7 @@ import { StateService } from '@shared/state.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 
 import { ValidatorService } from '../../validators/validator.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -31,11 +30,11 @@ import { RequestsTableComponent } from './requests-table.component';
   templateUrl: './requests.component.html',
   styleUrls: ['./requests.component.scss'],
   imports: [
+    ListToolbarComponent,
     MatToolbar,
     MatIconButton,
     RouterLink,
     MatIcon,
-    NgTemplateOutlet,
     MatButtonToggleGroup,
     MatButtonToggle,
     MatFormField,
@@ -62,8 +61,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   shownStatus = 'pending';
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
-  readonly isMobile = this.deviceInfoService.isMobile;
-  showFilterRow = false;
+  activeFilters: ActiveFilter[] = [];
   get childType() {
     return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
   }
@@ -77,7 +75,6 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
     private managerService: ManagerService,
-    private deviceInfoService: DeviceInfoService,
     private dialogsLoadingService: DialogsLoadingService
   ) {}
 
@@ -98,6 +95,9 @@ export class RequestsComponent implements OnInit, OnDestroy {
 
   shownStatusChange(newStatus: string) {
     this.shownStatus = newStatus;
+    this.activeFilters = newStatus === 'accepted' ?
+      [ { label: $localize`Connected`, clear: () => this.shownStatusChange('pending') } ] :
+      [];
     this.filterData();
   }
 
@@ -169,9 +169,5 @@ export class RequestsComponent implements OnInit, OnDestroy {
   view(planetId) {
     const hubPlanet = this.data.find(planet => planet.doc._id === planetId);
     this.reportsService.viewPlanetDetails(hubPlanet.doc);
-  }
-
-  toggleMobileFilterList() {
-    this.showFilterRow = !this.showFilterRow;
   }
 }

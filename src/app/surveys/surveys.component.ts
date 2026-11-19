@@ -11,8 +11,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { EMPTY, forkJoin, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap, takeUntil } from 'rxjs/operators';
-import { DatePipe, NgTemplateOutlet } from '@angular/common';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { DatePipe } from '@angular/common';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
@@ -36,10 +35,11 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
-import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
+import { ListActionsComponent } from '@shared/tables/list-actions.component';
 
 import { SubmissionsService } from '../submissions/submissions.service';
 import { ExamsService } from '../exams/exams.service';
@@ -64,9 +64,8 @@ interface SurveyFilterForm {
     '[class.embedded]': 'teamId'
   },
   imports: [
-    MatToolbar,
-    MatToolbarRow,
-    NgTemplateOutlet,
+    ListActionsComponent,
+    ListToolbarComponent,
     MatIconButton,
     MatIcon,
     MatFormField,
@@ -133,8 +132,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
   availableAIProviders: any[] = [];
-  readonly isMobile = this.deviceInfoService.isMobile;
-  showFiltersRow = false;
 
   get teamSurveyMode() {
     return !!(this.teamId || this.routeTeamId);
@@ -154,7 +151,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private chatService: AiChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService,
     private linkCopyService: LinkCopyService,
     private dialogGuard: DialogGuardService
   ) {}

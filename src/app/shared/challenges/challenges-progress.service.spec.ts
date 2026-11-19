@@ -1,8 +1,9 @@
-import { EMPTY, of, throwError } from 'rxjs';
+import { EMPTY, NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
+import { ChallengesAnnouncementSuccessDialogComponent } from './challenges-announcement-dialog.component';
 import { ChallengesProgressService } from './challenges-progress.service';
 import { ChallengesService } from './challenges.service';
 
@@ -31,7 +32,10 @@ describe('ChallengesProgressService', () => {
 
   beforeEach(() => {
     challenge = { _id: 'reto', type: 'challenge', goal: 500, tasks: [ voiceTask ] };
-    data = { news: [], submissions: [], courses_progress: [], shelf: [], courses: [] };
+    data = {
+      news: [], submissions: [], courses_progress: [], shelf: [], courses: [],
+      login_activities: [], resource_activities: [], ratings: [], teams: []
+    };
     progressDocs = {};
     couchService = {
       findAll: vi.fn((db: string) => of(data[db])),
@@ -83,6 +87,8 @@ describe('ChallengesProgressService', () => {
     const joinDocs = docs.map(doc => ({ ...doc, taskId: 'join' }));
 
     expect(voiceProgress({ ...voiceTask, maxCount: 3 })).toEqual(expect.objectContaining({ count: 4, rewarded: 3, earned: 6 }));
+    expect(voiceProgress({ ...voiceTask, maxCount: 3 }).settled).toBe(true);
+    expect(voiceProgress({ ...voiceTask, maxCount: 5 })).toEqual(expect.objectContaining({ done: true, settled: false }));
     expect(voiceProgress({ ...voiceTask, countBy: 'day' })).toEqual(expect.objectContaining({ count: 3, done: true }));
     expect(voiceProgress({ ...voiceTask, countBy: 'day', requiredCount: 4 }).done).toBe(false);
     expect(service.userProgress(normalized([ joinTask ]), joinDocs).tasks[0]).toEqual(expect.objectContaining({ count: 1, earned: 1 }));
@@ -152,6 +158,102 @@ describe('ChallengesProgressService', () => {
     const queries = couchService.findAll.mock.calls.length;
     service.record('course_complete').subscribe();
     expect(couchService.findAll.mock.calls.length).toBe(queries);
+  });
+
+  it('counts a unit once however often the learner repeats it', () => {
+    challenge.tasks = [
+      { id: 'visits', type: 'login', reward: 1, maxCount: 5 },
+      { id: 'reads', type: 'resource_open', reward: 1, maxCount: 5 },
+      { id: 'ratings', type: 'rating', reward: 1, maxCount: 5 },
+      { id: 'steps', type: 'course_step', targetId: 'course-1', reward: 1, maxCount: 5 },
+      { id: 'replies', type: 'voice_reply', reward: 1, maxCount: 5 }
+    ];
+    data.login_activities = [ { _id: 'l1', loginTime: day(2, 9) }, { _id: 'l2', loginTime: day(2, 15) }, { _id: 'l3', loginTime: day(3) } ];
+    data.resource_activities = [ { _id: 'v1', resourceId: 'r1', time: day(2) }, { _id: 'v2', resourceId: 'r1', time: day(3) } ];
+    data.ratings = [ { _id: 'rating-1', item: 'r1', createdTime: day(2) }, { _id: 'rating-2', item: 'r1', createdTime: day(4) } ];
+    data.courses_progress = [ { _id: 'p1', stepNum: 1, updatedDate: day(2) }, { _id: 'p1-copy', stepNum: 1, updatedDate: day(3) } ];
+    data.news = [ voice('a', day(2)), voice('reply', day(3), { replyTo: 'a' }) ];
+
+    service.record('login').subscribe();
+
+    expect(taskDocIds().sort()).toEqual([
+      'reto:guatemala:maria:ratings:r1', 'reto:guatemala:maria:reads:r1', 'reto:guatemala:maria:replies:reply',
+      'reto:guatemala:maria:steps:1', 'reto:guatemala:maria:visits:2026-10-02', 'reto:guatemala:maria:visits:2026-10-03'
+    ]);
+  });
+
+  it('reads the new evidence through the learner\'s own indexed fields, on this planet', () => {
+    challenge.tasks = [
+      { id: 'visits', type: 'login', reward: 1 },
+      { id: 'reads', type: 'resource_open', targetId: 'r1', reward: 1 },
+      { id: 'ratings', type: 'rating', reward: 1 },
+      { id: 'team', type: 'team_join', targetId: 'team-1', reward: 1 }
+    ];
+
+    service.record('login').subscribe();
+
+    expect(selectorFor('login_activities')).toEqual({ user: 'maria', loginTime: { $gte: 0 }, createdOn: 'guatemala' });
+    expect(selectorFor('resource_activities')).toEqual({
+      user: 'maria', time: { $gte: 0 }, type: 'visit', createdOn: 'guatemala', resourceId: 'r1'
+    });
+    expect(selectorFor('ratings')).toEqual(expect.objectContaining({ 'user.name': 'maria', createdOn: 'guatemala' }));
+    expect(selectorFor('teams')).toEqual({ docType: 'membership', userPlanetCode: 'guatemala', userId: user._id, teamId: 'team-1' });
+  });
+
+  it('counts a test only when an attempt passes', () => {
+    const examTask = { id: 'test', type: 'exam_pass', targetId: 'exam-1', courseId: 'course-1', reward: 2 };
+    const parent = { questions: [ { marks: 1 }, { marks: 1 } ], passingPercentage: 50 };
+    const attempt = (_id: string, grade: number) => ({ _id, grade, status: 'complete', lastUpdateTime: day(2), parent });
+    challenge.tasks = [ examTask ];
+    data.submissions = [ attempt('failed', 0) ];
+
+    service.record('exam_pass').subscribe();
+    expect(taskDocIds()).toEqual([]);
+    expect(selectorFor('submissions')).toEqual(expect.objectContaining({
+      type: 'exam', parentId: 'exam-1@course-1', 'parent.questions': { $type: 'array' }
+    }));
+
+    data.submissions.push(attempt('passed', 1));
+    service.record('exam_pass').subscribe();
+    expect(progressDocs['reto:guatemala:maria:test'].evidence).toBe('submissions/passed');
+  });
+
+  it('succeeds without the optional tasks, but pays for them', () => {
+    const tasks = [ joinTask, { ...voiceTask, optional: true } ];
+    const joined = [ progress('join', { taskId: 'join' }) ];
+
+    expect(service.userProgress(normalized(tasks), joined)).toEqual(expect.objectContaining({ complete: true, earned: 1 }));
+    expect(service.userProgress(normalized(tasks), [ ...joined, progress('a') ]).earned).toBe(3);
+    expect(service.userProgress(normalized([ { ...joinTask, optional: true } ]), joined).complete).toBe(false);
+  });
+
+  it('announces the course\'s challenge after a course action, unless that action finished it', () => {
+    dialog.open.mockReturnValue({ afterClosed: () => NEVER });
+    challenge.tasks = [ joinTask, surveyTask ];
+
+    service.recordThenAnnounce('course-1', 'survey_complete').subscribe();
+    expect(dialog.open.mock.calls[0][1].data._id).toBe('reto');
+
+    dialog.open.mockClear();
+    data.shelf = [ { _id: user._id, courseIds: [ 'course-1' ] } ];
+    data.submissions = [ { _id: 's1', lastUpdateTime: day(2) } ];
+    service.recordThenAnnounce('course-1', 'survey_complete').subscribe();
+    expect(dialog.open).toHaveBeenCalledTimes(1);
+    expect(dialog.open.mock.calls[0][0]).toBe(ChallengesAnnouncementSuccessDialogComponent);
+  });
+
+  it('stops reading a task\'s evidence once it is done and paid in full', () => {
+    challenge.tasks = [ { ...voiceTask, maxCount: 2 } ];
+    data.news = [ voice('a', day(2)) ];
+    service.record('voice_post').subscribe();
+    data.news.push(voice('b', day(3)));
+    service.record('voice_post').subscribe();
+    const reads = couchService.findAll.mock.calls.length;
+
+    service.record('voice_post').subscribe();
+
+    expect(taskDocIds()).toHaveLength(2);
+    expect(couchService.findAll.mock.calls.length).toBe(reads);
   });
 
   it('writes nothing for managers', () => {

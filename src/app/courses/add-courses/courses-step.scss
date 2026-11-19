@@ -82,6 +82,24 @@ planet-courses-step planet-step-list {
     }
   }
 
+  .attach-item {
+    position: relative;
+    display: flex;
+
+    .attach-card {
+      flex: 1;
+    }
+  }
+
+  .attach-remove.mat-mdc-icon-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    --mat-icon-button-state-layer-size: 40px;
+    padding: 8px;
+    color: v.$warn;
+  }
+
   @media (max-width: v.$screen-xs) {
     .attach-grid {
       grid-template-columns: 1fr;

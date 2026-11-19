@@ -9,7 +9,6 @@ import { StateService } from '@shared/state.service';
 import { TagsService } from '@shared/forms/tags/tags.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
-import { couchAttachmentPath, normalizedContentType } from '@shared/utils';
 
 import { UsersService } from '../users/users.service';
 
@@ -119,19 +118,15 @@ export class ResourcesService {
   }
 
   updateResource(resourceInfo, file, { newTags, existingTags } = { newTags: [], existingTags: [] }) {
-    return this.couchService.updateDocument(this.dbName, { createdDate: this.couchService.datePlaceholder, ...resourceInfo }, ).pipe(
-      switchMap((resourceRes) =>
-        forkJoin([
-          of(resourceRes),
-          file ?
-            this.couchService.putAttachment(
-              `${this.dbName}/${couchAttachmentPath(resourceRes.id, resourceInfo.filename)}?rev=${resourceRes.rev}`,
-              file, { headers: { 'Content-Type': normalizedContentType(file) } }
-            ) :
-            of({}),
-          this.couchService.bulkDocs('tags', this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, newTags, existingTags))
-        ])
-      )
+    const resource = { createdDate: this.couchService.datePlaceholder, ...resourceInfo };
+    const resourceWrite = file ?
+      this.couchService.putDocumentWithFiles(this.dbName, resource, { [resourceInfo.filename]: file }) :
+      this.couchService.updateDocument(this.dbName, resource);
+    return resourceWrite.pipe(
+      switchMap((resourceRes) => forkJoin([
+        of(resourceRes),
+        this.couchService.bulkDocs('tags', this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, newTags, existingTags))
+      ]))
     );
   }
 

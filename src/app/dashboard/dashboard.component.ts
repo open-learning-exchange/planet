@@ -205,16 +205,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  getSubmissions(type: string, status: string, username?: string) {
+  getSubmissions(type: string, status: string, fields: string[], username?: string) {
     return this.submissionsService.getSubmissions(findDocuments({
       type,
       status,
       'user.name': username || { $gt: null }
-    }));
+    }, fields));
   }
 
   getSurveys() {
-    this.getSubmissions('survey', 'pending', this.user.name).subscribe((surveys) => {
+    this.getSubmissions('survey', 'pending', [ 'parentId' ], this.user.name).subscribe((surveys) => {
       this.surveysCount = dedupeObjectArray(surveys, [ 'parentId' ]).length;
       this.myLifeItems = this.myLifeItems.map(item =>
         item.link === 'mySurveys' ? { ...item, badge: this.surveysCount } : item
@@ -223,7 +223,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getExams() {
-    this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
+    this.getSubmissions('exam', 'requires grading', [ '_id' ]).subscribe((exams) => {
       this.examsCount = exams.length;
       this.myLifeItems = this.myLifeItems.map(item =>
         item.link === 'submissions' ? { ...item, badge: this.examsCount } : item

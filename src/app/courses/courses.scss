@@ -27,10 +27,6 @@ planet-courses {
     margin-top: 0.5rem;
   }
 
-  .ellipsis-menu {
-    text-align: center;
-  }
-
   .break-word {
     word-break: break-word;
   }
@@ -40,6 +36,8 @@ planet-courses {
   }
 }
 
-.filter-dialog planet-courses-search {
-  @include m.search-filters-stacked('planet-courses-search-list');
+.list-filters-sheet planet-courses-search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }

@@ -2,27 +2,23 @@ import { DocumentInsertResponse } from 'nano';
 
 import { chatDB } from '../../../config/couch.config';
 import { SessionInfo } from '../../../middleware/auth';
-import { ConfigurationUnavailableError, getConfiguration } from '../../../services/config.service';
+import { HttpError } from '../../../middleware/errors';
+import { getConfiguration } from '../../../services/config.service';
 import { isPlainDocId, isUserConversationOwner, retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
+import { ProviderClient, providerClient } from '../providers/clients';
 
-export class ConversationAccessError extends Error {
-  constructor() {
-    super('Only the owner can continue this conversation');
-    this.name = 'ConversationAccessError';
-  }
-}
+const notOwner = () => new HttpError(403, 'Only the owner can continue this conversation');
+const missing = (error: any): never => {
+  throw error?.statusCode === 404 ? new HttpError(404, 'Conversation not found') : error;
+};
 
-function handleChatError(error: any) {
-  if (error instanceof ConfigurationUnavailableError) {
-    throw error;
+async function checkTurn(content: unknown, aiProvider?: AIProvider): Promise<ProviderClient> {
+  if (!content || typeof content !== 'string') {
+    throw new HttpError(400, '"data.content" must be a non-empty string');
   }
-  if (error.response) {
-    throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
-  } else {
-    throw new Error(error.message);
-  }
+  return providerClient(aiProvider || { 'name': 'openai' });
 }
 
 /**
@@ -36,25 +32,21 @@ function handleChatError(error: any) {
 export async function chat(data: any, session: SessionInfo, stream?: boolean, callback?: (response: string) => void): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
-} | undefined> {
+}> {
   const { content, context } = data;
   const messages: ChatMessage[] = [];
-  const aiProvider = data.aiProvider as AIProvider || { 'name': 'openai' };
 
-  if (!content || typeof content !== 'string') {
-    throw new Error('"data.content" is a required non-empty string field');
-  }
-
+  const provider = await checkTurn(content, data.aiProvider);
   const { assistant } = await getConfiguration();
   let dbData: any;
 
   if (data._id) {
     if (!isPlainDocId(data._id)) {
-      throw new ConversationAccessError();
+      throw notOwner();
     }
-    const stored = await retrieveChatHistory(data._id, messages);
+    const stored = await retrieveChatHistory(data._id, messages).catch(missing);
     if (!isUserConversationOwner(stored, session)) {
-      throw new ConversationAccessError();
+      throw notOwner();
     }
     dbData = { ...stored, 'context': context ?? stored.context };
   } else {
@@ -63,7 +55,7 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
       'title': content,
       'conversations': [],
       'createdDate': Date.now(),
-      'aiProvider': aiProvider.name,
+      'aiProvider': provider.name,
       context
     };
   }
@@ -73,39 +65,31 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
 
   messages.push({ 'role': 'user', content });
 
-  try {
-    const completionText = await aiChat(messages, aiProvider, assistant.instructions, dbData.context, stream, callback);
+  const completionText = await aiChat(messages, provider, assistant.instructions, dbData.context, stream, callback);
 
-    dbData.conversations[dbData.conversations.length - 1].response = completionText;
+  dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
-    dbData.updatedDate = Date.now();
-    dbData._id = res?.id;
-    dbData._rev = res?.rev;
-    const couchSaveResponse = await chatDB.insert(dbData);
+  dbData.updatedDate = Date.now();
+  dbData._id = res?.id;
+  dbData._rev = res?.rev;
+  const couchSaveResponse = await chatDB.insert(dbData);
 
-    return {
-      completionText,
-      couchSaveResponse
-    };
-  } catch (error: any) {
-    handleChatError(error);
-  }
+  return {
+    completionText,
+    couchSaveResponse
+  };
 }
 
 export async function chatNoSave(
   content: any,
-  aiProvider: AIProvider,
+  aiProvider?: AIProvider,
   context?: any
-): Promise<string | undefined> {
+): Promise<string> {
+  const provider = await checkTurn(content, aiProvider);
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });
 
-  try {
-    // One-off prompts such as survey analysis carry their own instructions, so they skip the Planet prompt
-    const completionText = await aiChat(messages, aiProvider, '', context);
-    return completionText;
-  } catch (error: any) {
-    handleChatError(error);
-  }
+  // One-off prompts such as survey analysis carry their own instructions, so they skip the Planet prompt
+  return await aiChat(messages, provider, '', context);
 }

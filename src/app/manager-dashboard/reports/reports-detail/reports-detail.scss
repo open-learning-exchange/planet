@@ -81,13 +81,14 @@
         .negative-change {
           color: red;
         }
+
+        @media (max-width: v.$screen-sm) {
+          th, td {
+            padding: 0 8px;
+          }
+        }
       }
     }
-  }
-
-  .desktop-toolbar-stacked {
-    height: auto;
-    flex-wrap: wrap;
   }
 }
 

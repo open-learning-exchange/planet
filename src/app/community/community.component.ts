@@ -356,7 +356,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       $localize`Add Voice`,
       [ { name: 'message', placeholder: $localize`Your Voice`, type: 'markdown', required: true, imageGroup: 'community' } ],
       { message: [ message, CustomValidators.requiredMarkdown ] },
-      { autoFocus: true, onSubmit: this.postMessage.bind(this) }
+      { autoFocus: true, confirmUnsavedChanges: true, onSubmit: this.postMessage.bind(this) }
     );
   }
 
@@ -605,6 +605,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       formGroup,
       {
         autoFocus: true,
+        confirmUnsavedChanges: true,
         onSubmit: ({ description }: { description: string }, _form, dialogRef) => {
           const trimmedDescription = description.trim();
 

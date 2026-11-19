@@ -10,8 +10,8 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
@@ -31,6 +31,7 @@ import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
 
 import { TeamsService } from './teams.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
@@ -42,12 +43,11 @@ import { enterpriseJoinAgreement } from './teams.utils';
   styleUrls: ['./teams.scss'],
   selector: 'planet-teams',
   imports: [
+    ListToolbarComponent,
     MatToolbar,
-    MatToolbarRow,
     MatIconButton,
     RouterLink,
     MatIcon,
-    NgTemplateOutlet,
     MatFormField,
     MatLabel,
     MatSuffix,
@@ -113,7 +113,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   filter: string;
   readonly isMobile = this.deviceInfoService.isMobile;
   userNotInShelf = false;
-  showFiltersRow = false;
   selection = new SelectionModel(true, []);
   selectedIds: string[] = [];
   get tableData() {
