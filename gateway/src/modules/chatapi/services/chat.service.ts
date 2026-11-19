@@ -3,10 +3,9 @@ import { DocumentInsertResponse } from 'nano';
 import { chatDB } from '../../../config/couch.config';
 import { SessionInfo } from '../../../middleware/auth';
 import { ConfigurationUnavailableError, getConfiguration } from '../../../services/config.service';
-import { isPlainDocId, retrieveChatHistory } from '../utils/db.utils';
+import { isPlainDocId, isUserConversationOwner, retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
-import { DbDoc } from '../models/db-doc.model';
 
 export class ConversationAccessError extends Error {
   constructor() {
@@ -14,9 +13,6 @@ export class ConversationAccessError extends Error {
     this.name = 'ConversationAccessError';
   }
 }
-
-export const isUserConversationOwner = (doc: Pick<DbDoc, 'user'>, session: SessionInfo): boolean => doc.user === session.name;
-
 
 function handleChatError(error: any) {
   if (error instanceof ConfigurationUnavailableError) {
@@ -41,30 +37,35 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
-  const { content, ...dbData } = data;
+  const { content, context } = data;
   const messages: ChatMessage[] = [];
-  const aiProvider = dbData.aiProvider as AIProvider || { 'name': 'openai' };
+  const aiProvider = data.aiProvider as AIProvider || { 'name': 'openai' };
 
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');
   }
 
-  dbData.user = session.name;
   const { assistant } = await getConfiguration();
+  let dbData: any;
 
-  if (dbData._id) {
-    if (!isPlainDocId(dbData._id)) {
+  if (data._id) {
+    if (!isPlainDocId(data._id)) {
       throw new ConversationAccessError();
     }
-    const stored = await retrieveChatHistory(dbData, messages);
+    const stored = await retrieveChatHistory(data._id, messages);
     if (!isUserConversationOwner(stored, session)) {
       throw new ConversationAccessError();
     }
+    dbData = { ...stored, 'context': context ?? stored.context };
   } else {
-    dbData.title = content;
-    dbData.conversations = [];
-    dbData.createdDate = Date.now();
-    dbData.aiProvider = aiProvider.name;
+    dbData = {
+      'user': session.name,
+      'title': content,
+      'conversations': [],
+      'createdDate': Date.now(),
+      'aiProvider': aiProvider.name,
+      context
+    };
   }
 
   dbData.conversations.push({ 'id': Date.now().toString(), 'query': content, 'response': '' });

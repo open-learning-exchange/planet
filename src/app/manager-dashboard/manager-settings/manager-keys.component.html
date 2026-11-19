@@ -1,0 +1,40 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ heading }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @if (statusFailed) {
+      <p class="hint" i18n>The keys could not be loaded, so they can't be changed right now.</p>
+    } @else if (!status) {
+      <p class="hint" i18n>Loading keys...</p>
+    } @else {
+      <mat-list>
+        @for (name of names; track name) {
+          <mat-list-item>
+            <div matListItemTitle class="list-item-content">
+              <span>{{ name | titlecase }}</span>
+              <div class="key-entry">
+                @if (status[name]) {
+                  <span class="key-status" i18n>Set</span>
+                } @else {
+                  <span class="key-status" i18n>Not set</span>
+                }
+                <mat-form-field>
+                  @if (status[name]) {
+                    <mat-label i18n>Replace {{ name | titlecase }} key</mat-label>
+                  } @else {
+                    <mat-label i18n>Enter {{ name | titlecase }} key</mat-label>
+                  }
+                  <input matInput type="password" autocomplete="new-password" [formControl]="keyControls[name]">
+                </mat-form-field>
+                @if (status[name]) {
+                  <button mat-button color="warn" type="button" (click)="removeKey(name)" i18n>Remove {{ name | titlecase }} key</button>
+                }
+              </div>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+  </mat-card-content>
+</mat-card>

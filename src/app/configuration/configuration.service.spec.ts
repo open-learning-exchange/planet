@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -65,6 +66,7 @@ describe('ConfigurationService patches', () => {
     TestBed.configureTestingModule({
       providers: [
         ConfigurationService,
+        { provide: HttpClient, useValue: {} },
         { provide: CouchService, useValue: couchServiceMock },
         { provide: StateService, useValue: stateServiceMock },
         { provide: UserService, useValue: { get: () => ({ name: 'admin' }), credentials: { name: 'admin' } } },
@@ -158,6 +160,22 @@ describe('ConfigurationService patches', () => {
     });
     expect(parentDocument._rev).toBeUndefined();
     expect(parentDocument.keys).toBeUndefined();
+  });
+
+  it('creates a new parent registration\'s account without the local attachment stubs, then its shelf and notification', () => {
+    storedConfiguration.adminName = 'admin@guatemala';
+    couchServiceMock.post.mockReturnValue(of({ docs: [] }));
+    vi.spyOn(TestBed.inject(UserService), 'get').mockReturnValue({
+      _id: 'org.couchdb.user:admin', _rev: '2-local', name: 'admin', _attachments: { img: { stub: true } }
+    } as any);
+
+    service.patchConfiguration({ registrationRequest: 'pending' }).subscribe();
+
+    const [ [ , parentUser ] ] = writesTo('_users');
+    expect(parentUser).toMatchObject({ name: 'admin@guatemala', requestId: 'config_id', isUserAdmin: false, roles: [] });
+    expect(parentUser._attachments).toBeUndefined();
+    expect(couchServiceMock.put).toHaveBeenCalledWith('shelf/org.couchdb.user:admin@guatemala', {}, { domain: 'planet.earth' });
+    expect(writesTo('notifications')).toHaveLength(1);
   });
 
   it('updates security only when a public patch owns autoAccept', () => {

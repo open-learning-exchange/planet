@@ -1,4 +1,4 @@
-<mat-horizontal-stepper [linear]="true" #stepper>
+<mat-horizontal-stepper [linear]="true">
   @if (configurationType === 'new') {
     <mat-step [stepControl]="loginForm" [optional]="configurationType === 'update'">
       <ng-template matStepLabel i18n>Create Admin</ng-template>
@@ -75,47 +75,36 @@
           }
         </mat-autocomplete>
       </mat-form-field>
-      @if (showAdvancedOptions) {
-        <div class="full-width advanced-options-container">
-          <span i18n>Advanced Options:</span>
+      <mat-expansion-panel class="full-width mat-elevation-z0">
+        <mat-expansion-panel-header>
+          <mat-panel-title i18n>Advanced Options</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="advanced-options-container">
           <mat-form-field>
-              <mat-label i18n>Local URL</mat-label>
-              <input matInput formControlName="localDomain" (keyup)="localDomainChange($event)">
-            </mat-form-field>
-            <mat-slide-toggle formControlName="autoAccept" i18n>Auto accept Members</mat-slide-toggle>
-            <mat-form-field>
-              <mat-label i18n>Beta features</mat-label>
-              <mat-select
-                formControlName="betaEnabled"
-                i18n-matTooltip
-                matTooltip="Beta features may not work as intended. It's recommended to leave this off">
-                <mat-option value="off" i18n>Always off</mat-option>
-                <mat-option value="on" i18n>Always on</mat-option>
-                <mat-option value="user" i18n>User preferences</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-slide-toggle formControlName="alwaysOnline" i18n>Always Online Planet</mat-slide-toggle>
+            <mat-label i18n>Local URL</mat-label>
+            <input matInput formControlName="localDomain">
+          </mat-form-field>
+          <mat-slide-toggle formControlName="autoAccept" i18n>Auto accept Members</mat-slide-toggle>
+          <mat-form-field>
+            <mat-label i18n>Beta features</mat-label>
+            <mat-select
+              formControlName="betaEnabled"
+              i18n-matTooltip
+              matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+              <mat-option value="off" i18n>Always off</mat-option>
+              <mat-option value="on" i18n>Always on</mat-option>
+              <mat-option value="user" i18n>User preferences</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-slide-toggle formControlName="alwaysOnline" i18n>Always Online Planet</mat-slide-toggle>
         </div>
-      }
+      </mat-expansion-panel>
     </form>
-    <div>
-      <mat-slide-toggle [(ngModel)]="showAdvancedOptions" i18n style="margin-bottom: 16px;">Show Advanced Options</mat-slide-toggle>
-    </div>
-    @if (isAdvancedOptionsChanged) {
-      <div>
-        <mat-icon>warning</mat-icon><span i18n>You have changed the advanced option. Please confirm that you wanted to change it.</span><br/>
-        <mat-checkbox [(ngModel)]="isAdvancedOptionConfirmed" i18n>I confirm the changes.</mat-checkbox><br/>
-        <span i18n>I accidently changed it, Please reset to default</span>
-        <button mat-mini-fab (click)="resetDefault()">
-          <mat-icon>replay</mat-icon>
-        </button>
-      </div>
-    }
     <div>
       @if (configurationType === 'new') {
         <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
       }
-      <button mat-raised-button color="primary" (click)="confirmConfigurationFormGroup()" i18n>Next</button>
+      <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
     </div>
   </mat-step>
 
@@ -148,7 +137,12 @@
       </mat-form-field>
       <div class="full-width">
         <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-        <button mat-raised-button type="submit" color="primary" i18n>{ configurationType, select, new {Submit} update {Update}}</button>
+        <button
+          mat-raised-button
+          type="submit"
+          color="primary"
+          [disabled]="configurationType === 'update' && !configurationFormGroup.dirty && !contactFormGroup.dirty"
+          i18n>{ configurationType, select, new {Submit} update {Update}}</button>
       </div>
     </form>
   </mat-step>

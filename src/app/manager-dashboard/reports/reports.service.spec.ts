@@ -9,7 +9,7 @@ describe('ReportsService', () => {
   const time = new Date(2026, 8, 4);
 
   beforeEach(() => {
-    service = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any);
+    service = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any, {} as any);
   });
 
   describe('appendGender', () => {
