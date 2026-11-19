@@ -23,7 +23,6 @@ export class CertificationsService {
     return this.couchService.get(`${this.dbName}/${id}`);
   }
 
-  // Posts directly because findAll turns a failed request into an empty list
   certificationsRequiring(courseIds: string[]) {
     return this.couchService.post(`${this.dbName}/_find`, findDocuments({ courseIds: { $elemMatch: { $in: courseIds } } }))
       .pipe(map(({ docs }) => docs));

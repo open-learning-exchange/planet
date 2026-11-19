@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, forkJoin, of } from 'rxjs';
-import { switchMap, map, filter, take, tap } from 'rxjs/operators';
+import { switchMap, map, filter, take, tap, finalize } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
@@ -195,8 +195,7 @@ export class CoursesService {
         return of({});
       }
       return this.couchService.bulkDocs(this.progressDb, this.newProgressDocs(currentProgress, newProgress));
-    })).subscribe(() => {
-      this.progressUpdateInProgress = false;
+    }), finalize(() => this.progressUpdateInProgress = false)).subscribe(() => {
       this.requestCourse({ courseId });
     });
   }

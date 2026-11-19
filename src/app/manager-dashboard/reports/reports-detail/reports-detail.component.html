@@ -1,128 +1,54 @@
-<mat-toolbar>
-  @if (deviceType() === deviceTypes.DESKTOP) {
-    <mat-toolbar-row>
-      <ng-container *ngTemplateOutlet="backBtn"></ng-container>
-      @if (showCustomDateFields) {
-        <ng-container *ngTemplateOutlet="startDateField"></ng-container>
-        <ng-container *ngTemplateOutlet="endDateField"></ng-container>
-      }
-      <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
-      <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
-      <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
-      <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
-    </mat-toolbar-row>
-  } @else {
-    <ng-container>
-      <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="backBtn"></ng-container>
-        <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
-          <mat-icon>filter_list</mat-icon>
-        </button>
-      </mat-toolbar-row>
-      @if (showFiltersRow) {
-        <mat-toolbar-row>
-          <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
-        </mat-toolbar-row>
-      }
-      @if (showFiltersRow && showCustomDateFields) {
-        <mat-toolbar-row>
-          <div class="full-width">
-            <ng-container *ngTemplateOutlet="startDateField"></ng-container>
-          </div>
-        </mat-toolbar-row>
-      }
-      @if (showFiltersRow && showCustomDateFields) {
-        <mat-toolbar-row>
-          <div class="full-width">
-            <ng-container *ngTemplateOutlet="endDateField"></ng-container>
-          </div>
-        </mat-toolbar-row>
-      }
-      @if (showFiltersRow) {
-        <mat-toolbar-row>
-          <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
-        </mat-toolbar-row>
-      }
-      @if (showFiltersRow) {
-        <mat-toolbar-row>
-          <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
-          <span class="toolbar-fill"></span>
-          <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
-        </mat-toolbar-row>
-      }
-    </ng-container>
-  }
-
-</mat-toolbar>
-
-<!-- Shared templates -->
-<ng-template #backBtn>
+<planet-list-toolbar [activeFilters]="activeFilters" (clearFilters)="clearFilters()">
   <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Reports</span>
-  <span class="toolbar-fill"></span>
-</ng-template>
-<ng-template #timeFilterSelect>
-  <mat-form-field class="margin-lr-5 font-size-1 mdc-toolbar-input">
-    <mat-label i18n>Time Frame</mat-label>
-    <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
-      @for (option of timeFilterOptions; track option) {
-        <mat-option [value]="option.value">{{option.label}}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-</ng-template>
-<ng-template #teamsFilterSelect>
-  <mat-form-field class="font-size-1 margin-lr-5 mdc-toolbar-input">
-    <mat-label i18n>Filter Member</mat-label>
-    <mat-select (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
-      <mat-option i18n value="All">All Members</mat-option>
-      <mat-optgroup label="Teams" i18n-label>
-        @for (team of teams?.team; track team) {
-          <mat-option [value]="team">{{team.name}}</mat-option>
+  <ng-template #listFilters let-compact>
+    <mat-form-field class="margin-lr-5 font-size-1 mdc-toolbar-input list-toolbar-field">
+      <mat-label i18n>Time Frame</mat-label>
+      <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+        @for (option of timeFilterOptions; track option) {
+          <mat-option [value]="option.value">{{option.label}}</mat-option>
         }
-      </mat-optgroup>
-      <mat-optgroup label="Enterprises" i18n-label>
-        @for (team of teams?.enterprise; track team) {
-          <mat-option [value]="team">{{team.name}}</mat-option>
-        }
-      </mat-optgroup>
-    </mat-select>
-  </mat-form-field>
-</ng-template>
-<ng-template #planetToggleGroup>
-  <mat-button-toggle-group class="font-size-1 margin-lr-5 app-source-toggle" (change)="onFilterChange($event.value)" #filterGroup="matButtonToggleGroup">
-    @for (source of appSources; track source.value) {
-      <mat-button-toggle [value]="source.value" [checked]="this.filter.app === source.value">{{source.label}}</mat-button-toggle>
+      </mat-select>
+    </mat-form-field>
+    @if (showCustomDateFields) {
+      <mat-form-field class="margin-lr-5 font-size-1 mdc-toolbar-input list-toolbar-date-range">
+        <mat-label i18n>Dates</mat-label>
+        <mat-date-range-input [formGroup]="dateFilterForm" [rangePicker]="rangePicker" [min]="minDate" [max]="today">
+          <input matStartDate formControlName="startDate" placeholder="Start Date" i18n-placeholder>
+          <input matEndDate formControlName="endDate" placeholder="End Date" i18n-placeholder>
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
+        <mat-date-range-picker #rangePicker></mat-date-range-picker>
+      </mat-form-field>
     }
-    <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>All</mat-button-toggle>
-  </mat-button-toggle-group>
-</ng-template>
-<ng-template #clearBtn>
-  <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5"><span i18n>Clear</span></button>
-</ng-template>
-<ng-template #startDateField>
-  <div class="mdc-toolbar-input" [formGroup]="dateFilterForm">
-    <mat-form-field class="margin-lr-5 font-size-1">
-      <mat-label i18n>Start Date</mat-label>
-      <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
-      <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-      <mat-datepicker #startPicker></mat-datepicker>
-      @if (dateFilterForm.value.startDate > dateFilterForm.value.endDate) {
-        <mat-error i18n>Start date must be before end date</mat-error>
+    <mat-form-field class="font-size-1 margin-lr-5 mdc-toolbar-input list-toolbar-field">
+      <mat-label i18n>Filter Member</mat-label>
+      <mat-select (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
+        <mat-option i18n value="All">All Members</mat-option>
+        <mat-optgroup label="Teams" i18n-label>
+          @for (team of teams?.team; track team) {
+            <mat-option [value]="team">{{team.name}}</mat-option>
+          }
+        </mat-optgroup>
+        <mat-optgroup label="Enterprises" i18n-label>
+          @for (team of teams?.enterprise; track team) {
+            <mat-option [value]="team">{{team.name}}</mat-option>
+          }
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <mat-button-toggle-group class="font-size-1 margin-lr-5 app-source-toggle" (change)="onFilterChange($event.value)">
+      @for (source of appSources; track source.value) {
+        <mat-button-toggle [value]="source.value" [checked]="filter.app === source.value">{{source.label}}</mat-button-toggle>
       }
-    </mat-form-field>
-  </div>
-</ng-template>
-<ng-template #endDateField>
-  <div class="mdc-toolbar-input" [formGroup]="dateFilterForm">
-    <mat-form-field class="margin-lr-5 font-size-1">
-      <mat-label i18n>End Date</mat-label>
-      <input matInput formControlName="endDate" [matDatepicker]="endPicker" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
-      <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-      <mat-datepicker #endPicker></mat-datepicker>
-    </mat-form-field>
-  </div>
-</ng-template>
+      <mat-button-toggle value="" [checked]="filter.app === ''" i18n>All</mat-button-toggle>
+    </mat-button-toggle-group>
+    @if (!compact) {
+      <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5"><span i18n>Clear</span></button>
+    }
+  </ng-template>
+</planet-list-toolbar>
+
 <ng-template #chartWithActions let-chartId="chartId">
   <div class="chart-wrapper">
     <div class="chart-actions">
