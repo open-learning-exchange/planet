@@ -18,7 +18,7 @@ export class CouchService {
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
   private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
-  private gatewayUrl = environment.chatAddress;
+  private gatewayUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
   private reqNum = 0;
   datePlaceholder = new DatePlaceholder();
 
@@ -111,15 +111,23 @@ export class CouchService {
     return Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
   }
 
-  updateDocument(db: string, doc: any, opts?: any) {
+  private updateDocumentWithTimeStamps(updateFn: (url: string, doc: any, opts?: any) => Observable<any>, db: string, doc: any, opts?: any) {
     let docWithDate: any;
     return this.currentTime().pipe(
       switchMap((date) => {
         docWithDate = this.fillInDateFields(doc, date, opts && opts.utcKeys);
-        return this.post(db, docWithDate, opts);
+        return updateFn(db, docWithDate, opts);
       }),
       map((res: any) => ({ ...res, res, doc: { ...docWithDate, _rev: res.rev, _id: res.id } }))
     );
+  }
+
+  updateDocument(db: string, doc: any, opts?: any) {
+    return this.updateDocumentWithTimeStamps(this.post.bind(this), db, doc, opts);
+  }
+
+  updateDocumentGateway(url: string, doc: any) {
+    return this.updateDocumentWithTimeStamps(this.gatewayPost.bind(this), url, doc);
   }
 
   localComparison(db: string, parentDocs: any[]) {

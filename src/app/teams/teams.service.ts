@@ -191,7 +191,7 @@ export class TeamsService {
   }
 
   updateTransaction(transaction: any) {
-    return this.couchService.gatewayPost('/currency/transaction', transaction);
+    return this.couchService.updateDocumentGateway('/currency/transaction', transaction);
   }
 
   requestToJoinTeam(team, user) {
