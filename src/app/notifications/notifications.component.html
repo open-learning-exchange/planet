@@ -15,9 +15,9 @@
     </mat-form-field>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <mat-table #table [dataSource]="notifications">
+    <mat-table #table class="card-mode" [dataSource]="notifications">
       <ng-container matColumnDef="message">
-        <mat-cell *matCellDef="let element" (click)="readNotification(element)">
+        <mat-cell *matCellDef="let element" class="card-title" (click)="readNotification(element)">
           <div class="notification-row-content" [class.unread]="element.status === 'unread'">
             <span class="unread-indicator-container">
               @if (element.status === 'unread') {
@@ -45,7 +45,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="read">
-        <mat-cell *matCellDef="let element" >
+        <mat-cell *matCellDef="let element" class="card-actions">
           @if (element.status==='unread') {
             <button mat-stroked-button (click)="readNotification(element)" i18n>Mark as Read</button>
           }

@@ -8,7 +8,7 @@ import { appSourceLabel } from '@shared/android/app-source';
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
-import { ageFromUser, dedupeShelfReduce, localizedGender, toProperCase } from '@shared/utils';
+import { ageFromUser, dedupeShelfReduce, toProperCase } from '@shared/utils';
 import { CsvService } from '@shared/export/csv.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
@@ -17,6 +17,7 @@ import { surveyAnalysisPrompt } from '@shared/ai/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, chartColors } from '@shared/charts/chart.utils';
 import { PdfService } from '@shared/export/pdf.service';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
+import { getGenderLabel, parseGender } from '@shared/demographics/gender.constants';
 
 import { CoursesService } from '../courses/courses.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -95,20 +96,35 @@ export class SubmissionsService {
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending', team }: any) {
-    const selector = submissionId ? { _id: submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
-    const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
-    obs.subscribe((res) => {
-      let attempts = res.docs.length - 1;
-      const bestAttempt = res.docs.filter((submission: any) => submission.status === 'complete').reduce((best: any, submission: any) =>
-        best === undefined || submission.grade > best.grade ? submission : best, undefined) || { grade: 0 };
-      this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
+    // A test's attempts count across its edits, leaving out uploads with no copy of its questions;
+    // a survey response stays tied to the questions it answered
+    const selector = submissionId ? { _id: submissionId } : {
+      parentId, 'user.name': user.name,
+      ...(type === 'survey' ? { 'parent._rev': parent._rev } : { 'parent.questions': { $type: 'array' } })
+    };
+    const obs = user.name || submissionId ? this.couchService.findAll('submissions', findDocuments(selector)) : of([]);
+    obs.subscribe((docs: any[]) => {
+      const attempts = docs.filter((submission: any) => submission.status !== 'pending').length;
+      const passed = type === 'exam' && docs.some((submission: any) => this.attemptPasses(submission));
+      // Answers saved against an older revision may not line up with the current questions, so that attempt starts over
+      this.submission = docs.find(submission => type === 'survey' ||
+        (submission.status === status && (submissionId || submission.parent._rev === parent._rev)));
       if (this.submission === undefined) {
-        attempts += 1;
         this.newSubmission({ parentId, parent, user, type, team });
       }
       this.submissionAttempts = attempts;
-      this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
+      this.submissionUpdated.next({ submission: this.submission, attempts, passed });
     });
+  }
+
+  // Judged against the test as the learner took it, so a later edit never takes a pass away
+  attemptPasses({ status, grade, parent: { questions, passingPercentage } }: any) {
+    // Planet's copy has no totalMarks, so the marks are summed. myPlanet sends marks and the pass mark as '',
+    // and scores those as 1 per question and a pass mark of 100.
+    const totalMarks = questions.reduce((total: number, question: any) => total + (question.marks === '' ? 1 : Number(question.marks)), 0);
+    const passMark = passingPercentage === '' ? 100 : passingPercentage ?? 100;
+    // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
+    return status === 'complete' && totalMarks > 0 && grade * 100 >= passMark * totalMarks;
   }
 
   startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
@@ -300,10 +316,6 @@ export class SubmissionsService {
     return $localize`N/A`;
   }
 
-  private localizedGender(gender?: string) {
-    return localizedGender(gender, this.notAvailable());
-  }
-
   private localizedGroupType(type?: string) {
     switch (type) {
       case 'team':
@@ -345,7 +357,7 @@ export class SubmissionsService {
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
-            [$localize`Gender`]: this.localizedGender(submission.user.gender),
+            [$localize`Gender`]: getGenderLabel(submission.user.gender),
             [$localize`Age (years)`]: ageFromUser(time, submission.user) ?? this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: appSourceLabel(submission),
@@ -590,7 +602,7 @@ export class SubmissionsService {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
       const userAge = ageFromUser(submission.lastUpdateTime, submission.user);
-      const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
+      const userGender = getGenderLabel(submission.user.gender, { fallback: '' });
       const communityOrNation = submission.planetName;
       const planetSource = appSourceLabel(submission);
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
@@ -817,7 +829,7 @@ export class SubmissionsService {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
         age: ageFromUser(submission.lastUpdateTime, submission.user),
-        gender: submission.user.gender
+        gender: parseGender(submission.user.gender)
       },
       answers: submission.answers
     }));

@@ -1,13 +1,14 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { tap } from 'rxjs/operators';
-import { NgClass } from '@angular/common';
+import { NgClass, PercentPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetStackedBarComponent } from '@shared/charts/planet-stacked-bar.component';
+import { getGenderLabel } from '@shared/demographics/gender.constants';
 
 import { RatingInfo, RatingService, RatingType } from './rating.service';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
@@ -23,7 +24,7 @@ interface RateFormModel {
     max-width: 225px;
   } `],
   selector: 'planet-rating',
-  imports: [NgClass, MatIcon, PlanetStackedBarComponent, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
+  imports: [NgClass, PercentPipe, MatIcon, PlanetStackedBarComponent, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
 })
 export class PlanetRatingComponent implements OnChanges {
 
@@ -37,6 +38,7 @@ export class PlanetRatingComponent implements OnChanges {
   popupForm: FormGroup<RatingFormModel>;
   isPopupOpen = false;
   stackedBarData = [];
+  legendData = [];
   get rateFormField() {
     return { rate: this.rating.userRating.rate || 0 };
   }
@@ -66,16 +68,16 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   private updateStackedBarData() {
+    const unlabelled = [
+      { class: 'bg-green-lighter', amount: this.rating.otherRating, label: getGenderLabel('other'), noLabel: true },
+      { class: 'bg-grey', amount: this.rating.didNotSpecifyRating, label: getGenderLabel('didNotSpecify'), noLabel: true }
+    ];
     this.stackedBarData = [
       { class: 'primary-color', amount: this.rating.maleRating },
-      { class: 'primary-light-color',
-        amount: this.rating.totalRating === 0 ?
-          1 :
-          this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
-        noLabel: true
-      },
+      ...unlabelled,
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
     ];
+    this.legendData = unlabelled.filter(({ amount }) => amount > 0);
   }
 
   private isEnrolled(): boolean {

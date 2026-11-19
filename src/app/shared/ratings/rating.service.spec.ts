@@ -46,6 +46,19 @@ const setup = ({ inShelf = true, updateResponse }: { inShelf?: boolean, updateRe
 
 const unrated = (extra = {}) => ({ _id: 'resource-1', title: 'Resource', rating: { userRating: {}, allRatings: [] }, ...extra });
 
+describe('RatingService gender counts', () => {
+  it('counts each rating under its normalized gender when listing and when normalizing', () => {
+    const { service } = setup();
+    const ratings = [ 'male', ' Female ', 'other', 'nonbinary', undefined ].map((gender, index) => ({
+      _id: `r-${index}`, item: 'resource-1', rate: 1, user: { name: `user-${index}`, gender }
+    }));
+    const counts = { totalRating: 5, maleRating: 1, femaleRating: 1, otherRating: 1, didNotSpecifyRating: 2 };
+
+    expect(service.normalizeRatingInfo({ allRatings: ratings })).toMatchObject(counts);
+    expect(service.createItemList([ { _id: 'resource-1' } ], ratings)[0].rating).toMatchObject(counts);
+  });
+});
+
 describe('RatingService persistence', () => {
   it('saves a resource wrapper title and returns complete aggregates', () => {
     const { service, couch, loading } = setup();

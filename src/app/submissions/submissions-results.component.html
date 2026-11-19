@@ -10,6 +10,7 @@
       <planet-markdown [content]="questionChart.body"></planet-markdown>
       <planet-chart
         [chartId]="'survey-question-' + (questionChart.index + 1)"
+        ariaLabel="Responses to question {{questionChart.index + 1}}" i18n-ariaLabel
         [type]="questionChart.type"
         [labels]="questionChart.labels"
         [datasets]="questionChart.datasets"

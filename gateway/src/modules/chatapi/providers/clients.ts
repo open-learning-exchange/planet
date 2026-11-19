@@ -1,11 +1,12 @@
 import OpenAI from 'openai';
 
-import { getConfiguration, getKeys } from '../../../services/config.service';
+import { getConfiguration } from '../../../services/config.service';
+import { getKeys } from '../../../services/keys.service';
 import { ProviderStatus } from '../models/chat.model';
 import { PROVIDER_NAMES, PROVIDER_REGISTRY, ProviderName } from './registry';
 
 export async function listProviders(): Promise<ProviderStatus[]> {
-  const [ keys, { models } ] = await Promise.all([ getKeys(), getConfiguration() ]);
+  const [ keys, { models } ] = await Promise.all([ getKeys('ai'), getConfiguration() ]);
   return PROVIDER_NAMES.map((name) => ({
     name,
     'label': PROVIDER_REGISTRY[name].label,
@@ -17,7 +18,7 @@ export async function providerClient(name: ProviderName): Promise<{ client: Open
   if (!PROVIDER_NAMES.includes(name)) {
     throw new Error('Unsupported AI provider');
   }
-  const [ keys, { models } ] = await Promise.all([ getKeys(), getConfiguration() ]);
+  const [ keys, { models } ] = await Promise.all([ getKeys('ai'), getConfiguration() ]);
   if (!keys[name]) {
     throw new Error(`${name} is not configured`);
   }

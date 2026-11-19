@@ -34,7 +34,8 @@ describe('ResourcesViewComponent', () => {
     promptRating: vi.fn().mockReturnValue(of(true)),
     resetRatingInteraction: vi.fn(),
     normalizeRatingInfo: vi.fn(rating => ({
-      rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [], ...rating
+      rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, otherRating: 0, didNotSpecifyRating: 0,
+      userRating: {}, allRatings: [], ...rating
     }))
   };
 

@@ -20,6 +20,8 @@ export interface Conversation {
   context?: any;
 }
 
+export type ConversationChange = { title: string } | { shared: true };
+
 export interface Message {
   id: string;
   query: string;

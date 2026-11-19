@@ -20,10 +20,6 @@ export class StateService {
     return safeConfig;
   }
 
-  get keys(): any {
-    return this.state.local.configurations?.docs[0]?.keys || {};
-  }
-
   constructor(
     private couchService: CouchService
   ) {}

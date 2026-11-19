@@ -30,9 +30,9 @@ describe('configuration service', () => {
     vi.restoreAllMocks();
   });
 
-  it('reads the document the client edits, keeping keys apart from the rest', async () => {
+  it('reads the document the client edits, leaving out any keys still stored there', async () => {
     mocks.find.mockResolvedValue(found(planetDoc));
-    const { getConfiguration, getKeys } = await loadService();
+    const { getConfiguration } = await loadService();
 
     expect(await getConfiguration()).toEqual({
       'code': 'planet-1',
@@ -40,26 +40,25 @@ describe('configuration service', () => {
       'models': { 'openai': 'gpt-test' },
       'assistant': { 'instructions': 'PLANET PROMPT' }
     });
-    expect(await getKeys()).toEqual({ 'openai': 'sk-1', 'currency': 'oxr-1' });
     expect(mocks.find).toHaveBeenCalledWith({ 'selector': { '_id': { '$gt': null } }, 'limit': 1 });
   });
 
   it('keeps the configuration until the gateway restarts', async () => {
     mocks.find
       .mockResolvedValueOnce(found(planetDoc))
-      .mockResolvedValueOnce(found({ ...planetDoc, 'keys': { 'openai': 'sk-2' } }));
-    const { getKeys } = await loadService();
+      .mockResolvedValueOnce(found({ ...planetDoc, 'models': { 'openai': 'gpt-other' } }));
+    const { getConfiguration } = await loadService();
 
-    expect((await getKeys()).openai).toEqual('sk-1');
-    expect((await getKeys()).openai).toEqual('sk-1');
+    expect((await getConfiguration()).models.openai).toEqual('gpt-test');
+    expect((await getConfiguration()).models.openai).toEqual('gpt-test');
     expect(mocks.find).toHaveBeenCalledTimes(1);
   });
 
   it('treats a document without AI fields as nothing configured', async () => {
-    mocks.find.mockResolvedValue(found({ '_id': 'configuration-1', 'code': 'planet-1', 'keys': { 'openai': null } }));
-    const { getConfiguration, getKeys } = await loadService();
+    mocks.find.mockResolvedValue(found({ '_id': 'configuration-1', 'code': 'planet-1', 'models': { 'openai': null } }));
+    const { getConfiguration } = await loadService();
 
-    expect(await getKeys()).toEqual({});
+    expect((await getConfiguration()).models).toEqual({});
     expect((await getConfiguration()).assistant.instructions).toEqual('');
   });
 
@@ -73,9 +72,9 @@ describe('configuration service', () => {
 
   it('shares one read between concurrent requests', async () => {
     mocks.find.mockResolvedValue(found(planetDoc));
-    const { getConfiguration, getKeys } = await loadService();
+    const { getConfiguration } = await loadService();
 
-    await Promise.all([ getConfiguration(), getKeys(), getConfiguration() ]);
+    await Promise.all([ getConfiguration(), getConfiguration() ]);
 
     expect(mocks.find).toHaveBeenCalledTimes(1);
   });
@@ -95,9 +94,9 @@ describe('configuration service', () => {
 
   it('answers 503 until CouchDB answers, as when the gateway starts first', async () => {
     mocks.find.mockRejectedValueOnce(new Error('connection refused')).mockResolvedValueOnce(found(planetDoc));
-    const { getKeys } = await loadService();
+    const { getConfiguration } = await loadService();
 
-    await expect(getKeys()).rejects.toMatchObject({ 'statusCode': 503 });
-    expect((await getKeys()).openai).toEqual('sk-1');
+    await expect(getConfiguration()).rejects.toMatchObject({ 'statusCode': 503 });
+    expect((await getConfiguration()).code).toEqual('planet-1');
   });
 });
