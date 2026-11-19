@@ -61,4 +61,30 @@ describe('chat ownership', () => {
     await chat({ 'content': 'And a third?', '_id': 'chat-1' }, amara, false);
     expect(mocks.insert).toHaveBeenLastCalledWith(expect.objectContaining({ '_id': 'chat-1', 'user': 'amara' }));
   });
+
+  it('stores only the turn\'s fields from the body', async () => {
+    await chat({ 'content': 'Hello', 'title': 'Not this', 'shared': true, 'createdDate': 0 }, amara, false);
+    const saved = mocks.insert.mock.lastCall?.[0];
+    expect(saved).toMatchObject({ 'title': 'Hello' });
+    expect(saved).not.toHaveProperty('shared');
+    expect(saved.createdDate).toBeGreaterThan(0);
+  });
+
+  it('continues from the stored revision and fields, not the body\'s', async () => {
+    const sentRevisions: string[] = [];
+    mocks.insert.mockImplementation(async (doc) => {
+      sentRevisions.push(doc._rev);
+      return { 'id': 'chat-1', 'rev': '2-b' };
+    });
+    mocks.get.mockResolvedValue({ ...brianConversation, 'user': 'amara', 'shared': true, 'context': { 'type': 'coursestep' } });
+
+    await chat({ 'content': 'And a third?', '_id': 'chat-1', '_rev': '0-stale' }, amara, false);
+
+    expect(sentRevisions[0]).toEqual('1-a');
+    expect(mocks.insert).toHaveBeenLastCalledWith(expect.objectContaining({
+      'shared': true,
+      'title': 'Fractions',
+      'context': { 'type': 'coursestep' }
+    }));
+  });
 });

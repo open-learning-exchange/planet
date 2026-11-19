@@ -36,6 +36,7 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { reportGenderOptions, ReportGenderValue } from '@shared/demographics/gender.constants';
 
 import { ReportsService } from '../reports.service';
 import { CustomValidators } from '../../../validators/custom-validators';
@@ -161,6 +162,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   comparisonLoading = false;
   comparisonTableData: any[] = [];
   comparisonColumns = ['metric', 'week1', 'week2', 'change'];
+  reportGenderOptions = reportGenderOptions;
   week1Label = $localize`Week 1`;
   week2Label = $localize`Week 2`;
   comparisonData1: any = {};
@@ -521,7 +523,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
     const labels = months.map(month => monthDataLabels(month, this.localeId));
 
-    const genderFilter = (gender: string) =>
+    // `data` is expected to have already passed through normalizeGender in the reports service.
+    const genderFilter = (gender: ReportGenderValue) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
       const monthlyData = data.filter((datum: any) => datum.date === month);
@@ -534,9 +537,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          datasetObject($localize`Male`, xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
-          datasetObject($localize`Female`, xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
-          datasetObject($localize`Did not specify`, xyChartData(genderFilter(undefined), unique), styleVariables.grey),
+          ...this.reportGenderOptions.map((genderOption) =>
+            datasetObject(genderOption.label, xyChartData(genderFilter(genderOption.value), unique), genderOption.color)
+          ),
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
@@ -825,10 +828,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...demographicsForCsv(demographics(activity)),
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
-      [$localize`Chat Responses`]: activity.conversations?.length || 0,
+      [$localize`Chat Responses`]: activity.turns,
       [$localize`Assistant`]: activity.assistant ? $localize`Yes` : $localize`No`,
       [$localize`Shared`]: activity.shared ? $localize`Yes` : $localize`No`,
-      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? $localize`Yes` : $localize`No`
+      [$localize`Has Attachments`]: activity.hasAttachments ? $localize`Yes` : $localize`No`
     }));
     this.csvService.exportCSV({
       data: exportData,

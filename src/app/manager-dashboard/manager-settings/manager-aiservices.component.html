@@ -6,39 +6,7 @@
 </mat-toolbar>
 
 <form class="container" [formGroup]="configForm">
-  <mat-card class="card">
-    <mat-card-header>
-      <mat-card-title i18n>API Keys</mat-card-title>
-    </mat-card-header>
-    @if (configuration.keys) {
-      <mat-card-content>
-        <mat-list>
-          @for (apiKey of configuration.keys | keyvalue; track apiKey.key) {
-            <mat-list-item>
-              <div matListItemTitle class="list-item-content">
-                <span>{{ apiKey.key | titlecase }}</span>
-                <mat-form-field>
-                  <mat-label i18n></mat-label>
-                  <input
-                    matInput
-                    [type]="hideKey[apiKey.key] ? 'password' : 'text'"
-                    [formControlName]="'keys_' + apiKey.key"
-                    />
-                  <button mat-icon-button matIconSuffix type="button" (click)="toggleHideKey(apiKey.key)" [matTooltip]="getHideKeyTooltip(apiKey.key)">
-                    <mat-icon>{{ hideKey[apiKey.key] ? 'visibility_off' : 'visibility' }}</mat-icon>
-                  </button>
-                  <button mat-icon-button matIconSuffix type="button" (click)="copyKey(apiKey.key)" matTooltip="Copy to clipboard" i18n-matTooltip>
-                    <mat-icon>content_copy</mat-icon>
-                  </button>
-                </mat-form-field>
-              </div>
-            </mat-list-item>
-          }
-        </mat-list>
-      </mat-card-content>
-    }
-  </mat-card>
-
+  <planet-manager-keys class="card" service="ai" heading="API Keys" i18n-heading></planet-manager-keys>
 
   <mat-card class="card">
     <mat-card-header>

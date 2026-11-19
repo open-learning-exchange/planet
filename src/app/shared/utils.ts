@@ -270,9 +270,12 @@ export const styleVariables: any = {
   accent: '#ffc107',
   accentLighter: '#ffecb3',
   accentText: 'rgba(0, 0, 0, 0.87)',
+  greenLighter: '#c8e6c9',
   grey: '#bdbdbd',
   greyText: 'rgba(0, 0, 0, 0.54)',
   white: '#ffffff',
+  planetGreen: '#4caf50',
+  warn: '#f44336',
   chartPalette: [
     '#2196f3', '#ffc107', '#43a047', '#e53935', '#ba68c8',
     '#00acc1', '#fb8c00', '#9575cd', '#7cb342', '#bdbdbd'
@@ -349,25 +352,6 @@ export const ageFromUser = (
   return age === undefined || age === null || age === '' ? null : age;
 };
 
-export const genderBucket = (gender?: unknown) => {
-  const value = typeof gender === 'string' ? gender.toLowerCase() : '';
-  return value === 'male' || value === 'female' ? value : 'didNotSpecify';
-};
-
-export const localizedGender = (gender?: unknown, fallback = '') => {
-  if (typeof gender !== 'string' || !gender) {
-    return fallback;
-  }
-  switch (gender.toLowerCase()) {
-    case 'male':
-      return $localize`Male`;
-    case 'female':
-      return $localize`Female`;
-    default:
-      return toProperCase(gender);
-  }
-};
-
 export const formatStringDate = (date: string) =>
   new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date));
 
@@ -385,54 +369,6 @@ export const deepEqual = (item1: any, item2: any) => {
     return Object.keys({ ...item1, ...item2 }).every((key) => deepEqual(item1[key], item2[key])) ;
   }
   return item1 === item2;
-};
-
-const isNullish = (value) => value === undefined || value === null;
-
-/*
- * Deeply patches an object with the 'patchObject'.
- * Assumes objects have roughly the same structure, including arrays.
- * i.e. If old object includes an array of objects (or mixed) it will assume
- * patch object has a similar array of objects structure.
- * When property is an array in old object and not in patch object,
- * ignores patch and maintains old object structure.
- */
-export const deepObjectPatch = (oldObject: any, patchObject: any): any => {
-  const newObject: any = {};
-  const deepArrayPatch = (oldArray: any[], patchArray: any[]) => (
-    Array.isArray(patchArray) ? [
-      ...oldArray.map((oldValue: any, index: number): any[] => (
-        Array.isArray(oldValue) ?
-          deepArrayPatch(oldValue, patchArray[index]) :
-          typeof oldValue === 'object' ?
-            deepObjectPatch(oldValue, patchArray[index]) :
-            patchArray[index]
-      )),
-      ...patchArray.slice(oldArray.length)
-    ] : oldArray);
-  const patchObjectProp = (prop: string) => {
-    if (isNullish(patchObject) || isNullish(patchObject[prop])) {
-      return oldObject[prop];
-    }
-    if (Array.isArray(oldObject[prop])) {
-      return deepArrayPatch(oldObject[prop], patchObject[prop]);
-    }
-    if (typeof oldObject[prop] === 'object') {
-      return deepObjectPatch(oldObject[prop], patchObject[prop]);
-    }
-    return patchObject[prop];
-  };
-  for (const prop in oldObject) {
-    if (Object.prototype.hasOwnProperty.call(oldObject, prop)) {
-      newObject[prop] = patchObjectProp(prop);
-    }
-  }
-  for (const prop in patchObject) {
-    if (Object.prototype.hasOwnProperty.call(patchObject, prop) && (newObject[prop] === undefined || newObject[prop] === null)) {
-      newObject[prop] = patchObjectProp(prop);
-    }
-  }
-  return newObject;
 };
 
 export const fullName = (user: any) =>

@@ -22,6 +22,8 @@ const initialRating = () => ({
   totalRating: 2,
   maleRating: 1,
   femaleRating: 1,
+  otherRating: 0,
+  didNotSpecifyRating: 0,
   userRating: {
     _id: 'r-1',
     _rev: '1-a',
@@ -43,6 +45,8 @@ const normalizeRatingInfo = (ratingInfo: any = {}) => {
     totalRating: allRatings.length,
     maleRating: allRatings.filter(rating => rating.user?.gender === 'male').length,
     femaleRating: allRatings.filter(rating => rating.user?.gender === 'female').length,
+    otherRating: allRatings.filter(rating => rating.user?.gender === 'other').length,
+    didNotSpecifyRating: allRatings.filter(rating => ![ 'male', 'female', 'other' ].includes(rating.user?.gender)).length,
     userRating: ratingInfo.userRating || {},
     allRatings
   };
@@ -285,6 +289,15 @@ describe('PlanetRatingComponent', () => {
     expect(planetMessage.showMessage).toHaveBeenCalledWith('Please join the course before rating!');
     expect(ratingService.saveRating).not.toHaveBeenCalled();
     expect(component.rateForm.value).toEqual({ rate: 5 });
+  });
+
+  it('names only the unlabelled gender segments that have ratings', () => {
+    const { component } = createComponent();
+
+    component.rating = { userRating: {}, allRatings: [ { rate: 4, user: { gender: 'other' } }, { rate: 2, user: { gender: 'male' } } ] };
+    component.ngOnChanges();
+
+    expect(component.legendData.map(({ label, amount }) => ({ label, amount }))).toEqual([ { label: 'Other', amount: 1 } ]);
   });
 
   it('saves a star clicked in the rendered widget and opens the comment dialog', () => {

@@ -8,12 +8,10 @@ describe('PouchAuthService', () => {
       getAuthDB: vi.fn().mockReturnValue(authDB),
       deconfigureDBs: vi.fn().mockReturnValue([])
     };
-    const userStatusService = { resetStatus: vi.fn() };
-    const service = new PouchAuthService(pouchService as any, {} as any, userStatusService as any);
+    const service = new PouchAuthService(pouchService as any, {} as any);
 
     await expect(service.logout().toPromise()).resolves.toEqual([]);
     expect(authDB.logOut).toHaveBeenCalledOnce();
     expect(pouchService.deconfigureDBs).toHaveBeenCalledOnce();
-    expect(userStatusService.resetStatus).toHaveBeenCalledOnce();
   });
 });

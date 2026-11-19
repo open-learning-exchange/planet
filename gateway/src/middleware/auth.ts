@@ -32,6 +32,7 @@ const SESSION_TIMEOUT_MS = 10000;
 const SESSION_SLOT_WAIT_MS = 2000;
 const SESSION_VALIDATION_CONCURRENCY = Number(process.env.SESSION_VALIDATION_CONCURRENCY) || 16;
 const UNAVAILABLE_SESSION_STATUSES = new Set([ 408, 429 ]);
+const MANAGER_ROLES = [ '_admin', 'manager' ];
 let sessionValidationsInFlight = 0;
 const sessionSlotWaiters = new Set<SessionSlotWaiter>();
 
@@ -153,6 +154,15 @@ export async function requireSession(req: Request, res: Response, next: NextFunc
     res.append('Set-Cookie', check.renewedCookie);
   }
   res.locals.session = check.session;
+  next();
+}
+
+export function requireManager(req: Request, res: Response, next: NextFunction) {
+  const session: SessionInfo | undefined = res.locals.session;
+  if (!session?.roles.some((role) => MANAGER_ROLES.includes(role))) {
+    res.status(403).json({ 'error': 'Forbidden', 'message': 'A manager session is required' });
+    return;
+  }
   next();
 }
 

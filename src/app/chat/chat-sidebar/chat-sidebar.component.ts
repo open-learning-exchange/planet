@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NonNullableFormBuilder, FormGroup, Validators, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,19 +15,18 @@ import { CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 
 import { AiChatService } from '@shared/ai/ai-chat.service';
-import { CouchService } from '@shared/database/couchdb.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { SearchService } from '@shared/search/search.service';
 import { fuzzyWordMatch } from '@shared/search/fuzzy-search';
 import { showFormErrors, trackById } from '@shared/tables/table.helpers';
-import { UserService } from '@shared/auth/user.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 
-import { Conversation, AIProvider } from '../chat.model';
+import { Conversation, ConversationChange, AIProvider } from '../chat.model';
 import { ChatShareDialogComponent } from '../chat-share-dialog.component';
 import { ChatWindowComponent } from '../chat-window/chat-window.component';
+import { CustomValidators } from '../../validators/custom-validators';
 
 interface TitleForm {
   title: FormControl<string>;
@@ -94,12 +93,10 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   constructor(
     private chatService: AiChatService,
-    private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
     private formBuilder: NonNullableFormBuilder,
-    private searchService: SearchService,
-    private userService: UserService
+    private searchService: SearchService
   ) {
     this.lastRenderedConversation = -1;
   }
@@ -161,18 +158,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.overlayOpen = !this.overlayOpen;
   }
 
-  updateConversation(conversation: Conversation, title?: string | null, shared?: boolean) {
-    this.couchService.updateDocument(
-      this.dbName, {
-        ...conversation,
-        title: title !== undefined && title !== null ? title : conversation.title,
-        shared,
-        updatedDate: this.couchService.datePlaceholder
-      }
-    ).subscribe((data) => {
-      this.getChatHistory();
-      return data;
-    });
+  updateConversation(conversation: Conversation, change: ConversationChange) {
+    this.chatService.updateConversation(conversation._id, change).subscribe(() => this.getChatHistory());
   }
 
   submitTitle(conversation: Conversation) {
@@ -182,7 +169,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     }
     if (formGroup.valid) {
       const title = formGroup.controls.title.value;
-      this.updateConversation(conversation, title);
+      this.updateConversation(conversation, { title });
       this.toggleEditTitle();
     } else {
       showFormErrors(formGroup.controls);
@@ -192,7 +179,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   initializeFormGroups() {
     this.conversations.forEach((conversation: Conversation) => {
       this.titleForm[conversation._id] = this.formBuilder.group({
-        title: this.formBuilder.control(conversation?.title ?? '', { validators: [ Validators.required ] })
+        title: this.formBuilder.control(conversation?.title ?? '', { validators: [ CustomValidators.required ] })
       });
     });
   }
@@ -200,7 +187,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   getChatHistory(newChat: boolean = false) {
     this.isLoading = true;
     this.chatService
-      .findConversations([], [ this.userService.get().name ])
+      .listConversations()
       .subscribe(
         (conversations: Conversation[]) => {
           this.conversations = conversations
@@ -315,7 +302,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.updateConversation(conversation, null, true);
+        this.updateConversation(conversation, { shared: true });
       }
     });
   }

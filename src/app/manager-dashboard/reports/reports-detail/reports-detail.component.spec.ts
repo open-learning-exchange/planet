@@ -70,11 +70,11 @@ describe('ReportsDetailComponent exports', () => {
       user: 'ada',
       createdDate: new Date(2026, 8, 1).valueOf(),
       aiProvider: 'openai',
-      conversations: [ { query: 'hello' } ]
+      turns: 1
     } ];
 
     it('exports the gender and age of the member who created each chat', () => {
-      const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any);
+      const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any, {} as any);
       activityService.users = [ { name: 'ada', gender: 'female', birthDate: new Date(1998, 8, 4) } ];
       const { component, csvService } = createComponent(activityService);
       component.today = new Date(2026, 8, 4);
@@ -88,8 +88,8 @@ describe('ReportsDetailComponent exports', () => {
       expect(data[0]['Chat Responses']).toBe(1);
     });
 
-    it('builds the rows without copying the conversations off the chat document', () => {
-      const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any);
+    it('leaves the demographics blank for a member without a profile', () => {
+      const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any, {} as any);
       activityService.users = [];
       const { component, csvService } = createComponent(activityService);
       component.today = new Date(2026, 8, 4);
@@ -98,7 +98,6 @@ describe('ReportsDetailComponent exports', () => {
       component.exportChatData({ startDate: new Date(2026, 7, 1), endDate: new Date(2026, 8, 4) }, [], null);
 
       const [ { data } ] = csvService.exportCSV.mock.calls[0];
-      expect(data[0]).not.toHaveProperty('conversations');
       expect(data[0]['Gender']).toBe('');
       expect(data[0]['Age (years)']).toBe('');
     });
@@ -158,7 +157,7 @@ describe('ReportsDetailComponent exports', () => {
   });
 
   it('exports a localized source and user demographics instead of the raw app value for logins', () => {
-    const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any);
+    const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any, {} as any);
     activityService.users = [ { name: 'learner', gender: 'female', birthDate: new Date(1998, 0, 15) } ];
     component.activityService = activityService;
     component.today = new Date(2026, 0, 15);
@@ -176,7 +175,7 @@ describe('ReportsDetailComponent exports', () => {
   });
 
   it('exports a localized source and user demographics for resource views', () => {
-    const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any);
+    const activityService = new ReportsService({} as any, {} as any, {} as any, {} as any, {} as any, {} as any);
     activityService.users = [ { name: 'learner', gender: 'female', birthDate: new Date(1998, 0, 15) } ];
     component.activityService = activityService;
     component.today = new Date(2026, 0, 15);

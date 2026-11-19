@@ -1,11 +1,11 @@
-<mat-table #table class="responsive-table" [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
+<mat-table #table class="responsive-table card-mode" [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.max?.title}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-title">{{element?.max?.title}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="weekOf">
     <mat-header-cell *matHeaderCellDef mat-sort-header="weekOf" i18n>Week Starting</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.weekOf | date}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-title">{{element?.weekOf | date}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
     <mat-header-cell *matHeaderCellDef mat-sort-header="count">
@@ -15,59 +15,68 @@
         <ng-container i18n>Views</ng-container>
       }
     </mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.count}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-value">
+      <span class="card-label">
+        @if (activityType==='health') {
+          <ng-container i18n>Examinations</ng-container>
+        } @else {
+          <ng-container i18n>Views</ng-container>
+        }
+      </span>
+      {{element?.count}}
+    </mat-cell>
   </ng-container>
   <ng-container matColumnDef="unique">
     <mat-header-cell *matHeaderCellDef mat-sort-header="unique" i18n>Patients Seen</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.unique?.length}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-value"><span class="card-label" i18n>Patients Seen</span>{{element?.unique?.length}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="averageRating">
     <mat-header-cell *matHeaderCellDef mat-sort-header="averageRating" i18n>Average Rating</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.averageRating}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-value">@if (element?.averageRating) {<span class="card-label" i18n>Average Rating</span>{{element.averageRating}}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="enrollments">
     <mat-header-cell *matHeaderCellDef mat-sort-header="enrollments" i18n>Enrolled</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.enrollments}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Enrolled</span>{{element?.enrollments}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="completions">
     <mat-header-cell *matHeaderCellDef mat-sort-header="completions" i18n>Courses Completed</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.completions}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Courses Completed</span>{{element?.completions}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="steps">
     <mat-header-cell *matHeaderCellDef mat-sort-header="steps" i18n>Steps</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.max?.steps}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Steps</span>{{element?.max?.steps}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="exams">
     <mat-header-cell *matHeaderCellDef mat-sort-header="exams" i18n>Tests</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.max?.exams}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Tests</span>{{element?.max?.exams}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="stepsCompleted">
     <mat-header-cell *matHeaderCellDef mat-sort-header="stepsCompleted" i18n>Steps Completed</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.stepsCompleted}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Steps Completed</span>{{element?.stepsCompleted}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="aiProvider">
     <mat-header-cell *matHeaderCellDef mat-sort-header="aiProvider" i18n>AI Provider</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.aiProvider}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-title">{{element?.aiProvider}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="user">
     <mat-header-cell *matHeaderCellDef mat-sort-header="user" i18n>User</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.user}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>User</span>{{element?.user}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="createdDate">
     <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Timestamp</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.createdDate | date:'medium'}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Timestamp</span>{{element?.createdDate | date:'medium'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="conversationLength">
     <mat-header-cell *matHeaderCellDef mat-sort-header="conversationLength" i18n>Chat Responses</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.conversationLength}}</mat-cell>
+    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Chat Responses</span>{{element?.conversationLength}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="assistant">
     <mat-header-cell *matHeaderCellDef mat-sort-header="assistant" i18n>Assistant</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.assistant}}</mat-cell>
+    <mat-cell *matCellDef="let element">@if (element?.assistant) {<span class="card-label" i18n>Assistant</span>{{element.assistant}}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="shared">
     <mat-header-cell *matHeaderCellDef mat-sort-header="shared" i18n>Shared</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.shared}}</mat-cell>
+    <mat-cell *matCellDef="let element">@if (element?.shared) {<span class="card-label" i18n>Shared</span>{{element.shared}}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>
