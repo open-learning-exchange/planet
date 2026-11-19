@@ -113,7 +113,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   readonly isMobile = this.deviceInfoService.isMobile;
   userNotInShelf = false;
   selection = new SelectionModel(true, []);
-  selectedIds: string[] = [];
+  selectedId = '';
   get tableData() {
     return this.teams;
   }
@@ -250,13 +250,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamClick(teamId, teamType) {
     if (this.isDialog) {
-      // Toggle selection
-      const index = this.selectedIds.indexOf(teamId);
-      if (index === -1) {
-        this.selectedIds.push(teamId);
-      } else {
-        this.selectedIds.splice(index, 1);
-      }
+      this.selectedId = teamId;
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }

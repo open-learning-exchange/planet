@@ -55,7 +55,7 @@
                (keydown.enter)="$event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
                tabindex="0" role="button"
                [attr.aria-label]="element.doc.name"
-               [attr.aria-pressed]="isDialog ? selectedIds.includes(element.doc._id) : null">
+               [attr.aria-pressed]="isDialog ? selectedId === element.doc._id : null">
               {{element.doc.name | truncateText:150}}
             </a>
             @if (element.userStatus === 'member' && mode === 'enterprise') {
@@ -169,7 +169,7 @@
       <mat-row
         (click)="teamClick(row.doc._id, row.doc.teamType)"
         *matRowDef="let row; columns: displayedColumns;"
-        [class.highlighted]="selectedIds.includes(row.doc._id)">
+        [class.highlighted]="selectedId === row.doc._id">
       </mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td>@if (!isLoading) {
