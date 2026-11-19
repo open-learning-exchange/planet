@@ -55,6 +55,12 @@
 </mat-toolbar>
 
 <ng-template #actionButtons>
+  @if (stepDetail.unavailableResources) {
+    <span [ngClass]="{ 'margin-lr-10': !isMobile() }">
+      {{ stepDetail.unavailableResources + ' ' }}
+      <span i18n>{stepDetail.unavailableResources, plural, =1 {resource is not available.} other {resources are not available.}}</span>
+    </span>
+  }
   @if (hasAIProvider && stepDetail?.description) {
     <button
       mat-stroked-button

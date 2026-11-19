@@ -27,7 +27,7 @@ import { RatingService } from '@shared/ratings/rating.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
 import { CoursesService } from '../courses.service';
-import { blockingStepIndex, stepHasExam, stepLocked, stepProgress } from '../courses.utils';
+import { blockingStepIndex, openableResources, stepHasExam, stepLocked, stepProgress } from '../courses.utils';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
 import { CoursesViewDetailComponent } from './courses-view-detail.component';
@@ -98,15 +98,25 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isLoading = true;
     this.coursesService.courseUpdated$.pipe(
-      switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
-        this.courseDetail = course;
+      switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) =>
+        this.coursesService.libraryStepResources(course, this.parent).pipe(map(library => ({ course, progress, library })))
+      ),
+      switchMap(({ course, progress, library }) => {
+        // A new object, because course is the service's cache and the step page reads its steps
+        this.courseDetail = {
+          ...course,
+          steps: course.steps.map((step, index) => {
+            const { resources, unavailableResources } = openableResources(step, library);
+            return {
+              ...step,
+              resources: resources.sort(this.coursesService.stepResourceSort),
+              unavailableResources,
+              progress: stepProgress(progress, index + 1)
+            };
+          })
+        };
         this.isLoading = false;
         this.coursesService.courseActivity('visit', course);
-        this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
-          ...step,
-          resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
-          progress: stepProgress(progress, index + 1)
-        }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
         this.canManage = this.coursesService.canManageCourse(this.courseDetail, { readOnly: this.parent });
@@ -288,6 +298,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   // By segments because step links are absolute even under myCourses, and progress/enrolled are siblings of view
   private isOwnRoute(url = '') {
     const segments = this.router.parseUrl(url).root.children.primary?.segments.map(({ path }) => path) || [];
+    const [ first, second, resourceId ] = segments;
+    if (first === 'resources' && second === 'view') {
+      return this.courseDetail.steps.some(step => step.resources.some(resource => resource._id === resourceId));
+    }
     return segments.some((segment, index) =>
       [ 'view', 'progress', 'enrolled' ].includes(segment) && segments[index + 1] === this.courseDetail._id
     );
