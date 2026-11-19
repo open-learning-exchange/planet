@@ -710,7 +710,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       $localize`Add message`,
       [ { name: 'message', placeholder: $localize`Message`, type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
       { message: [ message, CustomValidators.requiredMarkdown ] },
-      { autoFocus: true, onSubmit: this.postMessage.bind(this) }
+      { autoFocus: true, confirmUnsavedChanges: true, onSubmit: this.postMessage.bind(this) }
     );
   }
 

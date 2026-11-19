@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { EMPTY } from 'rxjs';
+import { EMPTY, Subject, of } from 'rxjs';
 import { vi } from 'vitest';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -48,15 +48,20 @@ describe('MeetupsAddDialogComponent', () => {
   let data: any;
   let dialogRef: any;
   let dialogsLoadingService: any;
+  let keydown: Subject<KeyboardEvent>;
+  let dialog: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     data = {
       onMeetupsChange: vi.fn(),
       leaderOfTeamId: 'team-1'
     };
+    keydown = new Subject<KeyboardEvent>();
+    dialog = { open: vi.fn(() => ({ afterClosed: () => of(true) })) };
     dialogRef = {
       disableClose: false,
       backdropClick: () => EMPTY,
+      keydownEvents: () => keydown,
       close: vi.fn()
     };
     dialogsLoadingService = {
@@ -68,7 +73,7 @@ describe('MeetupsAddDialogComponent', () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: dialogRef },
-        { provide: MatDialog, useValue: {} },
+        { provide: MatDialog, useValue: dialog },
         { provide: DialogsLoadingService, useValue: dialogsLoadingService }
       ]
     });
@@ -137,6 +142,18 @@ describe('MeetupsAddDialogComponent', () => {
 
     expect(() => component.meetupsChange()).not.toThrow();
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
+    expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('asks on Escape when the add form has changes, then closes and refreshes meetups', () => {
+    const meetupsAdd = fixture.debugElement.query(By.directive(MeetupsAddStubComponent)).componentInstance as MeetupsAddStubComponent;
+    meetupsAdd.canDeactivateValue = false;
+
+    keydown.next(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+    expect(dialog.open).toHaveBeenCalledTimes(1);
+    expect(meetupsAdd.hasUnsavedChanges).toBe(false);
+    expect(data.onMeetupsChange).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalled();
   });
 });

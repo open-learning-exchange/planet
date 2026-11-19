@@ -34,7 +34,8 @@ const chatDB = db.use('chat_history');
 const resourceDB = db.use('resources');
 const configurationDB = db.use('configurations');
 const examsDB = db.use('exams');
+const keysDB = db.use('keys');
 const submissionsDB = db.use('submissions');
 const teamsDB = db.use('teams');
 
-export { chatDB, configurationDB, couchBaseUrl, examsDB, resourceDB, submissionsDB, teamsDB };
+export { chatDB, configurationDB, couchBaseUrl, examsDB, keysDB, resourceDB, submissionsDB, teamsDB };
