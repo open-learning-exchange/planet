@@ -4,6 +4,7 @@ import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
 import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { normalizedContentType } from '@shared/utils';
 
 import { environment } from '../../../environments/environment';
 import { findDocuments } from './mango-queries';
@@ -26,11 +27,11 @@ export class CouchService {
   ) {}
 
   private setOpts(opts: any = {}) {
-    const { domain, protocol, ...httpOpts } = opts;
-    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
+    const { domain, protocol, suppressMessage, ...httpOpts } = opts;
+    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts, suppressMessage ];
   }
 
-  private couchDBReq(type: string, db: string, [ domain, protocol, opts ]: any[], data?: any) {
+  private couchDBReq(type: string, db: string, [ domain, protocol, opts, suppressMessage ]: any[], data?: any) {
     const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
@@ -39,13 +40,13 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return this.formatHttpReq(httpReq);
+    return this.formatHttpReq(httpReq, suppressMessage);
   }
 
-  formatHttpReq(httpReq: Observable<any>) {
+  formatHttpReq(httpReq: Observable<any>, suppressMessage = false) {
     return httpReq
       .pipe(catchError(err => {
-        if (err.status === 403) {
+        if (err.status === 403 && !suppressMessage) {
           this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
         }
         return throwError(err);
@@ -75,6 +76,34 @@ export class CouchService {
 
   putAttachment(db: string, file: File | FormData, opts?: any) {
     return this.couchDBReq('put', db, this.setOpts(opts), file);
+  }
+
+  putDocumentWithFiles(db: string, doc: any, files: { [name: string]: File }) {
+    const boundary = this.randomId();
+    return this.currentTime().pipe(
+      switchMap((date) => {
+        const _attachments = {
+          ...doc._attachments,
+          ...Object.fromEntries(Object.entries(files).map(([ name, file ]) =>
+            [ name, { follows: true, content_type: normalizedContentType(file), length: file.size } ]
+          ))
+        };
+        const docWithFiles = { ...this.fillInDateFields(doc, date), _id: doc._id || this.randomId(), _attachments };
+        // CouchDB pairs the file parts with the follows entries in the order the JSON lists them
+        const body = new Blob([
+          `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(docWithFiles)}\r\n`,
+          ...Object.keys(_attachments).filter(name => Object.hasOwn(files, name))
+            .flatMap(name => [ `--${boundary}\r\n\r\n`, files[name], '\r\n' ]),
+          `--${boundary}--`
+        ]);
+        const headers = { 'Content-Type': `multipart/related; boundary="${boundary}"` };
+        return this.couchDBReq('put', `${db}/${encodeURIComponent(docWithFiles._id)}`, this.setOpts({ headers }), body);
+      })
+    );
+  }
+
+  private randomId() {
+    return Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
   }
 
   updateDocument(db: string, doc: any, opts?: any) {
@@ -124,10 +153,14 @@ export class CouchService {
     );
   }
 
+  findPage(db: string, query: any, opts?: any): Observable<{ docs: any[], bookmark: string }> {
+    return this.post(db + '/_find', query, opts);
+  }
+
   private findAllRequest(db: string, query: any, opts: any) {
-    return this.post(db + '/_find', query, opts).pipe(
-      catchError(() => of({ docs: [], rows: [] })),
-      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
+    const paged = { ...query, limit: query.limit || 1000 };
+    return this.findPage(db, paged, opts).pipe(
+      expand((res) => res.docs.length < paged.limit ? empty() : this.findPage(db, { ...paged, bookmark: res.bookmark }, opts))
     );
   }
 

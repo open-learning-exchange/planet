@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   'get': vi.fn(),
   'insert': vi.fn(),
-  'aiChat': vi.fn()
+  'aiChat': vi.fn(),
+  'providerClient': vi.fn()
 }));
 
 vi.mock('../../../config/couch.config', () => ({
@@ -13,11 +14,12 @@ vi.mock('../../../config/couch.config', () => ({
 }));
 vi.mock('../utils/chat.utils', () => ({ 'aiChat': mocks.aiChat }));
 vi.mock('../../../services/config.service', () => ({
-  'ConfigurationUnavailableError': class extends Error {},
   'getConfiguration': async () => ({ 'assistant': { 'instructions': '' } })
 }));
+vi.mock('../providers/clients', () => ({ 'providerClient': mocks.providerClient }));
 
-import { chat, ConversationAccessError } from './chat.service';
+import { HttpError } from '../../../middleware/errors';
+import { chat, chatNoSave } from './chat.service';
 
 const amara = { 'name': 'amara', 'roles': [ 'learner' ] };
 const brianConversation = {
@@ -35,6 +37,7 @@ describe('chat ownership', () => {
     vi.clearAllMocks();
     mocks.insert.mockResolvedValue({ 'id': 'chat-1', 'rev': '2-b' });
     mocks.aiChat.mockResolvedValue('An answer');
+    mocks.providerClient.mockResolvedValue({ 'name': 'openai', 'client': {}, 'model': 'model-test' });
   });
 
   it('saves a new conversation under the session member, whatever the body says', async () => {
@@ -45,14 +48,32 @@ describe('chat ownership', () => {
   it('refuses turns on another member\'s conversation and writes nothing', async () => {
     mocks.get.mockResolvedValue(brianConversation);
     await expect(chat({ 'content': 'And a third?', '_id': 'chat-1', 'user': 'brian' }, amara, false))
-      .rejects.toBeInstanceOf(ConversationAccessError);
+      .rejects.toMatchObject({ 'statusCode': 403 });
     expect(mocks.insert).not.toHaveBeenCalled();
     expect(mocks.aiChat).not.toHaveBeenCalled();
   });
 
   it('refuses a design-document id before reading anything', async () => {
-    await expect(chat({ 'content': 'x', '_id': '_design/../chat-1' }, amara, false)).rejects.toBeInstanceOf(ConversationAccessError);
+    await expect(chat({ 'content': 'x', '_id': '_design/../chat-1' }, amara, false)).rejects.toMatchObject({ 'statusCode': 403 });
     expect(mocks.get).not.toHaveBeenCalled();
+    expect(mocks.insert).not.toHaveBeenCalled();
+  });
+
+  it('refuses a turn without content, saved or not, before anything else', async () => {
+    await expect(chat({ 'aiProvider': { 'name': 'openai' } }, amara, false)).rejects.toMatchObject({ 'statusCode': 400 });
+    await expect(chatNoSave(undefined, { 'name': 'openai' })).rejects.toMatchObject({ 'statusCode': 400 });
+    expect(mocks.providerClient).not.toHaveBeenCalled();
+  });
+
+  it('answers a conversation that no longer exists with 404', async () => {
+    mocks.get.mockRejectedValue({ 'statusCode': 404, 'error': 'not_found', 'message': 'deleted' });
+    await expect(chat({ 'content': 'Still there?', '_id': 'chat-1' }, amara, false))
+      .rejects.toMatchObject({ 'statusCode': 404, 'message': 'Conversation not found' });
+  });
+
+  it('refuses a provider that cannot answer before writing anything', async () => {
+    mocks.providerClient.mockRejectedValue(new HttpError(400, 'unknown provider'));
+    await expect(chat({ 'content': 'Hello', 'aiProvider': { 'name': 'nope' } }, amara, false)).rejects.toMatchObject({ 'statusCode': 400 });
     expect(mocks.insert).not.toHaveBeenCalled();
   });
 

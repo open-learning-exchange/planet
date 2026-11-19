@@ -20,6 +20,7 @@ import { MarkdownRenderService } from '@shared/markdown/markdown-render.service'
 import { getGenderLabel, parseGender } from '@shared/demographics/gender.constants';
 
 import { CoursesService } from '../courses/courses.service';
+import { attemptPasses, questionMarks } from '../courses/courses.utils';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { environment } from '../../environments/environment';
@@ -105,7 +106,7 @@ export class SubmissionsService {
     const obs = user.name || submissionId ? this.couchService.findAll('submissions', findDocuments(selector)) : of([]);
     obs.subscribe((docs: any[]) => {
       const attempts = docs.filter((submission: any) => submission.status !== 'pending').length;
-      const passed = type === 'exam' && docs.some((submission: any) => this.attemptPasses(submission));
+      const passed = type === 'exam' && docs.some(attemptPasses);
       // Answers saved against an older revision may not line up with the current questions, so that attempt starts over
       this.submission = docs.find(submission => type === 'survey' ||
         (submission.status === status && (submissionId || submission.parent._rev === parent._rev)));
@@ -115,20 +116,6 @@ export class SubmissionsService {
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, passed });
     });
-  }
-
-  // Judged against the test as the learner took it, so a later edit never takes a pass away
-  attemptPasses({ status, grade, parent: { questions, passingPercentage } }: any) {
-    // Planet's copy has no totalMarks, so the marks are summed. myPlanet sends the pass mark as '' and scores it as 100.
-    const totalMarks = questions.reduce((total: number, question: any) => total + this.questionMarks(question), 0);
-    const passMark = passingPercentage === '' ? 100 : passingPercentage ?? 100;
-    // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
-    return status === 'complete' && totalMarks > 0 && grade * 100 >= passMark * totalMarks;
-  }
-
-  // myPlanet sends marks as '' and scores each such question as 1
-  private questionMarks({ marks }: any) {
-    return marks === '' ? 1 : Number(marks);
   }
 
   startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
@@ -187,14 +174,14 @@ export class SubmissionsService {
       const stepNum = course.steps.findIndex((step: any) => step.exam?._id === examId) + 1;
       // A test removed from its step before the attempt was graded has no step left to record
       if (stepNum > 0) {
-        this.courseService.updateProgress({ courseId, stepNum, passed: this.attemptPasses(submission) }, submission.user._id);
+        this.courseService.updateProgress({ courseId, stepNum, passed: attemptPasses(submission) }, submission.user._id);
       }
     }, error => console.log(error));
   }
 
   calcTotalGrade(submission: any) {
     return submission.answers.reduce((total: number, answer: any, index: number) =>
-      total + (this.questionMarks(submission.parent.questions[index]) * (answer && answer.grade || 0)), 0);
+      total + (questionMarks(submission.parent.questions[index]) * (answer && answer.grade || 0)), 0);
   }
 
   updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {

@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
 
 import { SubmissionsService } from './submissions.service';
+import { attemptPasses } from '../courses/courses.utils';
 
 describe('SubmissionsService survey exports', () => {
   let service: SubmissionsService;
@@ -139,7 +140,7 @@ describe('SubmissionsService survey exports', () => {
       [ 'from myPlanet, below full marks', 'complete', 1, testCopy('1-a', [ '', '' ], ''), false ],
       [ 'from myPlanet, at full marks', 'complete', 2, testCopy('1-a', [ '', '' ], ''), true ]
     ])('judges an attempt %s', (_, status, grade, parent, passes) => {
-      expect(service.attemptPasses({ status, grade, parent })).toBe(passes);
+      expect(attemptPasses({ status, grade, parent })).toBe(passes);
     });
   });
 

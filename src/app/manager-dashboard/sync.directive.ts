@@ -124,13 +124,9 @@ export class SyncDirective {
   }
 
   updateReplicatorUsers() {
-    const userProperties = this.userService.userProperties.filter(prop => prop !== 'requestId');
     return forkJoin([
-      this.couchService.findAll('_users', findDocuments(
-        { isUserAdmin: { $exists: true }, requestId: { $exists: false } },
-        userProperties
-      )),
-      this.couchService.findAll('replicator_users', findDocuments({}, [ ...userProperties, 'couchId', 'planetCode' ]))
+      this.couchService.findAll('_users', findDocuments({ isUserAdmin: { $exists: true }, requestId: { $exists: false } })),
+      this.couchService.findAll('replicator_users', findDocuments({}, [ '_id', '_rev', 'couchId' ]))
     ]).pipe(
       switchMap(([ users, repUsers ]) => {
         const newRepUsers = this.createReplicatorUserDoc(users, repUsers);
@@ -146,7 +142,8 @@ export class SyncDirective {
     const planetCode = this.planetConfiguration.code;
     return users.map((user: any) => {
       const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {};
-      const { _id, _rev, ...userProps } = user;
+      // Attachment stubs can not be saved on another doc, and credentials stay on this planet
+      const { _id, _rev, _attachments, ...userProps } = this.userService.getUserProperties(user);
       return {
         ...repUser,
         ...userProps,

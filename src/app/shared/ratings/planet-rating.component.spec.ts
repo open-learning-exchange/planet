@@ -8,6 +8,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 
 import { PlanetRatingComponent } from './planet-rating.component';
 import { RatingService } from './rating.service';
@@ -85,18 +86,20 @@ const createComponent = (
       allRatings: ratingInfo.allRatings.filter(itemRating => itemRating._id !== rating._id)
     })))
   };
+  const challengesProgressService = { record: vi.fn().mockReturnValue(of(false)) };
   const component = new PlanetRatingComponent(
     new FormBuilder().nonNullable,
     planetMessage as any,
     { countInShelf: () => ({ inShelf: true }) } as any,
     dialogsForm as any,
-    ratingService as any
+    ratingService as any,
+    challengesProgressService as any
   );
   component.item = { _id: 'item-1', title: 'Item' };
   component.ratingType = 'resource';
   component.rating = initialRating();
   component.ngOnChanges();
-  return { component, dialogClosed, dialogsForm, planetMessage, ratingService };
+  return { component, dialogClosed, dialogsForm, planetMessage, ratingService, challengesProgressService };
 };
 
 describe('PlanetRatingComponent', () => {
@@ -130,7 +133,7 @@ describe('PlanetRatingComponent', () => {
   });
 
   it('auto-saves an inline rating and updates its displayed aggregates', () => {
-    const { component, dialogClosed, ratingService } = createComponent();
+    const { component, dialogClosed, ratingService, challengesProgressService } = createComponent();
     component.rateForm.setValue({ rate: 4 });
 
     component.onStarClick();
@@ -142,6 +145,7 @@ describe('PlanetRatingComponent', () => {
       comment: 'Original comment',
       existingRating: expect.objectContaining({ _id: 'r-1' })
     }));
+    expect(challengesProgressService.record).toHaveBeenCalledWith('rating');
     expect(component.rating.rateSum).toBe(7);
     expect(component.rating.totalRating).toBe(2);
     dialogClosed.next({ rate: 4, comment: 'Original comment' });
@@ -312,7 +316,8 @@ describe('PlanetRatingComponent', () => {
         { provide: PlanetMessageService, useValue: { showMessage: vi.fn() } },
         { provide: UserService, useValue: { countInShelf: () => ({ inShelf: 1 }) } },
         { provide: DialogsFormService, useValue: dialogsForm },
-        { provide: RatingService, useValue: ratingService }
+        { provide: RatingService, useValue: ratingService },
+        { provide: ChallengesProgressService, useValue: { record: vi.fn().mockReturnValue(of(false)) } }
       ]
     });
     const fixture = TestBed.createComponent(PlanetRatingComponent);

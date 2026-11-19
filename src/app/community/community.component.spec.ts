@@ -128,13 +128,15 @@ describe('CommunityComponent remote exchange behavior', () => {
     const teamsService = { getTeamMembers: vi.fn(() => of([])) };
     const couchService = {
       findAll: vi.fn((_db: unknown, _query: unknown) => of([])),
-      get: vi.fn(() => of({ _id: 'remote@local', description: '' }))
+      get: vi.fn(() => of({ _id: 'remote@local', description: '' })),
+      updateDocument: vi.fn((_db: string, _doc: unknown) => of({}))
     };
     const userChange$ = new Subject<any>();
     const currentUser: any = { value: user };
     const userService = { get: vi.fn(() => currentUser.value), userChange$ };
     const usersService = { usersListener: vi.fn(() => EMPTY), requestUsers: vi.fn() };
     const deviceInfoService = { deviceType: signal(DeviceType.DESKTOP) };
+    const challengesService: any = { getActiveChallenge: vi.fn(() => of(undefined)), announceOnce: vi.fn(() => EMPTY) };
     const component = new CommunityComponent(
       dialog as any,
       router as any,
@@ -152,14 +154,34 @@ describe('CommunityComponent remote exchange behavior', () => {
       deviceInfoService as any,
       {} as any,
       { checkConfiguration: vi.fn(() => of(undefined)) } as any,
-      { getActiveChallenge: vi.fn(() => of(undefined)), announceOnce: vi.fn(() => EMPTY) } as any
+      challengesService
     );
 
     return {
       component, couchService, dialog, dialogsFormService, newsService, routeParamMap, router, stateService, teamsService, userChange$,
-      currentUser
+      currentUser, challengesService
     };
   };
+
+  it.each([
+    [ 'unfinished', true, 1 ],
+    [ 'finished, or its progress didn\'t load', false, 0 ]
+  ])('reminds a learner once the announcement closes with the challenge %s', (_, needsReminder, reminders) => {
+    const { component, couchService, challengesService } = createComponent('nation', null);
+    const closed = new Subject<void>();
+    const announcement = { needsReminder: () => needsReminder, challenge: { _id: 'reto' } };
+    challengesService.announceOnce = vi.fn(() => of({ afterClosed: () => closed, componentInstance: announcement }));
+    challengesService.createChallengeNotification = vi.fn((userId, challenge) => ({ _id: `challenge:${challenge._id}:${userId}` }));
+
+    component.communityChallenge();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    closed.next();
+
+    expect(couchService.updateDocument).toHaveBeenCalledTimes(reminders);
+    if (reminders) {
+      expect(couchService.updateDocument).toHaveBeenCalledWith('notifications', { _id: 'challenge:reto:user' });
+    }
+  });
 
   it('treats a missing team doc as a community without one', () => {
     const { component, couchService } = createComponent();

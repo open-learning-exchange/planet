@@ -1,0 +1,119 @@
+planet-list-toolbar {
+  display: block;
+  // The full-height layout keeps only direct mat-toolbar children from shrinking
+  flex-shrink: 0;
+
+  // A long or translated title shrinks instead of pushing the buttons off screen
+  .list-toolbar-compact > .mat-toolbar-row:first-child > span:first-of-type {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // A filter set too wide for one row wraps onto the next instead of clipping
+  .mat-toolbar:not(.list-toolbar-compact) > .mat-toolbar-row:first-child {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    height: auto;
+    min-height: var(--mat-toolbar-standard-height);
+  }
+
+  // Toolbars with many filters give up Material's 180px field so the row fits narrow desktops
+  .list-toolbar-field {
+    width: 11rem;
+  }
+
+  .list-toolbar-date-range {
+    width: 16rem;
+  }
+
+  // Material skips blank badges, so the dot carries a character it doesn't show
+  .list-toolbar-dot .mat-badge-content {
+    width: 8px;
+    height: 8px;
+    min-width: 0;
+    min-height: 0;
+    font-size: 0;
+  }
+
+  .list-toolbar-search {
+    .toolbar-search,
+    .mat-mdc-form-field {
+      flex: 1 1 auto;
+      width: auto;
+      min-width: 0;
+    }
+
+    .mat-mdc-form-field-infix {
+      width: auto;
+    }
+  }
+
+  .list-toolbar-chips {
+    --mat-chip-container-height: 28px;
+    height: auto;
+    min-height: 40px;
+    padding-block: 0.25rem;
+    gap: 0.5rem;
+
+    .mat-mdc-chip-set {
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: normal;
+    }
+
+    .mat-mdc-chip-remove .mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.mat-mdc-option.list-filters-sub-option {
+  padding-inline-start: 2.5rem;
+}
+
+.list-filters-sheet .mat-bottom-sheet-container {
+  // Material narrows the sheet only from 960px; one width keeps it the same across tablets
+  min-width: min(100vw, 640px);
+  max-width: 100vw;
+  padding: 1.5rem 1rem 1rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+
+  .list-filters-title {
+    margin: 0 0 1rem;
+  }
+
+  .list-filters-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    > * {
+      align-self: stretch;
+      margin: 0;
+    }
+
+    > mat-button-toggle-group {
+      align-self: flex-start;
+      max-width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .mat-mdc-form-field {
+      width: 100%;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper:not(:has(mat-error)) {
+      display: none;
+    }
+  }
+
+  .list-filters-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+  }
+}

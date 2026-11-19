@@ -493,7 +493,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges, AfterViewInit
           });
         }
       },
-      autoFocus: true
+      autoFocus: true,
+      confirmUnsavedChanges: true
     });
   }
 
