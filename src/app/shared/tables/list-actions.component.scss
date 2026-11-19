@@ -1,0 +1,53 @@
+planet-list-actions {
+  display: block;
+  // The full-height layout keeps only direct mat-toolbar children from shrinking
+  flex-shrink: 0;
+
+  .list-actions-idle {
+    display: contents;
+  }
+
+  .list-actions-hidden {
+    display: none;
+  }
+}
+
+// Lists render their toolbar buttons here, so they are made to read as menu rows
+.list-actions-menu .mat-mdc-menu-content {
+  --mat-button-text-label-text-size: var(--mat-menu-item-label-text-size, 16px);
+  --mat-button-text-label-text-weight: var(--mat-menu-item-label-text-weight, 400);
+  --mat-button-outlined-label-text-size: var(--mat-menu-item-label-text-size, 16px);
+  --mat-button-outlined-label-text-weight: var(--mat-menu-item-label-text-weight, 400);
+  --mat-button-outlined-outline-color: transparent;
+
+  .mat-mdc-form-field {
+    display: block;
+    margin: 0;
+
+    planet-tag-input {
+      display: block;
+    }
+
+    .mat-mdc-form-field-infix {
+      width: auto;
+      min-height: 0;
+      padding: 0;
+    }
+  }
+
+  .mat-mdc-button-base:not(.mat-mdc-menu-item) {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 0;
+
+    .mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      margin: 0 16px 0 0;
+    }
+  }
+}
