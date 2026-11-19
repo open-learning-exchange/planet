@@ -15,6 +15,6 @@
     </button>
     <span class="margin-lr-8" i18n>OR</span>
   }
-  <button mat-raised-button mat-dialog-close i18n>Cancel</button>
+  <button mat-raised-button (click)="cancel()" i18n>Cancel</button>
   <button color="primary" mat-raised-button [disabled]="okDisabled || isSubmitting" (click)="ok()" i18n>OK</button>
 </mat-dialog-actions>

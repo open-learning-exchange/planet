@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -19,6 +19,7 @@ import { StateService } from '@shared/state.service';
 import { FileUploadComponent } from '@shared/forms/file-upload.component';
 
 import { CoursesAddComponent } from './courses-add.component';
+import { CoursesStepComponent } from './courses-step.component';
 import { CoursesService } from '../courses.service';
 import { ValidatorService } from '../../validators/validator.service';
 
@@ -206,6 +207,26 @@ describe('CoursesAddComponent', () => {
     expect(updateCourse).not.toHaveBeenCalled();
     expect(saveDraft).not.toHaveBeenCalled();
     expect((component as any).coverState).toEqual({ retained: [ existingCover ], removed: [], added: [] });
+  });
+
+  it('writes no draft when a step saved before passingRequired existed is opened', () => {
+    vi.useFakeTimers();
+    vi.spyOn(TestBed.inject(PouchService), 'getDocEditing').mockReturnValue(of(undefined));
+    vi.spyOn(TestBed.inject(CouchService), 'get').mockReturnValue(of({
+      _id: 'course-1', _rev: '1-a', courseTitle: 'Course', description: 'Description',
+      steps: [ { stepTitle: 'Step', description: 'Text', resources: [] } ]
+    }));
+    vi.spyOn(TestBed.inject(StateService), 'getCouchState').mockReturnValue(of([]));
+    const saveDraft = vi.spyOn(TestBed.inject(PouchService), 'saveDocEditing').mockImplementation(() => undefined);
+    component.ngOnInit();
+    const stepEditor = new CoursesStepComponent({} as any, new FormBuilder().nonNullable, {} as any, {} as any, {} as any);
+    stepEditor.steps = component.steps;
+    stepEditor.stepsChange.subscribe(steps => component.steps = steps);
+
+    stepEditor.stepClick(0);
+    vi.advanceTimersByTime(1000);
+
+    expect(saveDraft).not.toHaveBeenCalled();
   });
 
   it('clears an invalid cover when Save finishes before selection validation', async () => {

@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { MatPaginator } from '@angular/material/paginator';
 
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '@shared/export/csv.service';
 import { couchAttachmentPath } from '@shared/utils';
@@ -76,7 +77,8 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private userService: UserService,
     private couchService: CouchService,
     private csvService: CsvService,
-    private router: Router
+    private router: Router,
+    private challengesProgressService: ChallengesProgressService
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
@@ -122,9 +124,9 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       url: this.router.url,
       private: resource.private
     };
-    this.couchService.updateDocument('resource_activities', data)
-      .subscribe((response) => {
-      }, (error) => console.log('Error'));
+    this.couchService.updateDocument('resource_activities', data).pipe(
+      switchMap(() => this.challengesProgressService.record('resource_open'))
+    ).subscribe({ error: () => console.log('Error') });
   }
 
   setResource(resource: any) {

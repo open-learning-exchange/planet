@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, forkJoin, of } from 'rxjs';
+import { EMPTY, Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
@@ -8,6 +8,8 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
 import { formatDate, planetAndParentId } from '@shared/utils';
+
+import { attemptPasses } from '../../courses/courses.utils';
 
 import { ChallengesAnnouncementSuccessDialogComponent } from './challenges-announcement-dialog.component';
 import {
@@ -19,6 +21,8 @@ const DB = 'challenge_progress';
 interface Evidence {
   id: string;
   time: number;
+  // The thing done, so repeating the action doesn't count again
+  unit?: string;
 }
 
 export interface TaskProgress {
@@ -27,6 +31,7 @@ export interface TaskProgress {
   rewarded: number;
   earned: number;
   done: boolean;
+  settled: boolean;
 }
 
 export interface UserProgress {
@@ -68,6 +73,14 @@ export class ChallengesProgressService {
     );
   }
 
+  recordThenAnnounce(courseId: string, ...types: ChallengeTaskType[]) {
+    return this.record(...types).pipe(
+      switchMap(completed => completed ? EMPTY : this.challengesService.openChallengeDialogOnce(
+        this.dialog, this.challengesService.getActiveChallengeForCourse(courseId)
+      ))
+    );
+  }
+
   refresh(challenge: PlanetChallenge): Observable<{ progress: UserProgress, completedNow: boolean }> {
     if (!this.canTakePart()) {
       return of({ progress: this.userProgress(challenge, []), completedNow: false });
@@ -75,9 +88,9 @@ export class ChallengesProgressService {
     const user = this.userService.get();
     return this.userDocs(challenge, user.name).pipe(
       switchMap(existing => {
-        const tasks = challenge.tasks.filter(task =>
-          REPEATABLE_TASK_TYPES.includes(task.type) || !existing.some(doc => doc.taskId === task.id)
-        );
+        const tasks = this.userProgress(challenge, existing).tasks
+          .filter(({ settled }) => !settled)
+          .map(({ task }) => task);
         const evidenceByTask$ = tasks.length ?
           forkJoin(tasks.map(task => this.evidence(challenge, task, user).pipe(catchError(() => of([]))))) :
           of([]);
@@ -117,12 +130,14 @@ export class ChallengesProgressService {
     const tasks = challenge.tasks.map(task => {
       const count = this.units(task, this.dayCounts(docs.filter(doc => doc.taskId === task.id)));
       const rewarded = Math.min(count, task.maxCount ?? Infinity);
-      return { task, count, rewarded, earned: rewarded * task.reward, done: count >= (task.requiredCount || 1) };
+      const done = count >= (task.requiredCount || 1);
+      return { task, count, rewarded, earned: rewarded * task.reward, done, settled: done && rewarded >= (task.maxCount ?? 1) };
     });
+    const required = tasks.filter(({ task }) => !task.optional);
     return {
       tasks,
       earned: tasks.reduce((total, task) => total + task.earned, 0),
-      complete: tasks.length > 0 && tasks.every(task => task.done),
+      complete: required.length > 0 && required.every(task => task.done),
       succeeded: docs.some(doc => doc.taskId === COMPLETE_TASK_ID)
     };
   }
@@ -185,8 +200,8 @@ export class ChallengesProgressService {
   private progressDocs(challenge: PlanetChallenge, task: ChallengeTask, userName: string, evidence: Evidence[]) {
     const repeatable = REPEATABLE_TASK_TYPES.includes(task.type);
     const earliestFirst = [ ...evidence ].sort((a, b) => a.time - b.time);
-    const docs = (repeatable ? earliestFirst : earliestFirst.slice(0, 1)).map(({ id, time }) => ({
-      _id: [ this.idPrefix(challenge, userName), task.id, ...(repeatable ? [ id.slice(id.indexOf('/') + 1) ] : []) ].join(':'),
+    const docs = (repeatable ? earliestFirst : earliestFirst.slice(0, 1)).map(({ id, time, unit }) => ({
+      _id: [ this.idPrefix(challenge, userName), task.id, ...(repeatable ? [ unit ?? id.slice(id.indexOf('/') + 1) ] : []) ].join(':'),
       challengeId: challenge._id,
       planetCode: this.stateService.configuration.code,
       user: userName,
@@ -214,7 +229,8 @@ export class ChallengesProgressService {
   private evidence(challenge: PlanetChallenge, task: ChallengeTask, user: any): Observable<Evidence[]> {
     const { start, end } = this.challengesService.challengeWindow(challenge);
     const inWindow = (time: number) => (!start || time >= start.getTime()) && (!end || time <= end.getTime());
-    const timeRange = { ...(start ? { $gte: start.getTime() } : {}), ...(end ? { $lte: end.getTime() } : {}) };
+    const code = this.stateService.configuration.code;
+    const timeRange = { $gte: 0, ...(start ? { $gte: start.getTime() } : {}), ...(end ? { $lte: end.getTime() } : {}) };
     switch (task.type) {
       case 'course_join':
         // The shelf has no join time, so enrolment during the challenge counts
@@ -232,30 +248,74 @@ export class ChallengesProgressService {
           const last = progress.reduce((latest, doc) => doc.updatedDate > (latest?.updatedDate ?? -1) ? doc : latest, undefined);
           return finished && last && inWindow(last.updatedDate) ? [ { id: `courses_progress/${last._id}`, time: last.updatedDate } ] : [];
         }));
+      case 'course_step':
+        // A step can have several progress docs
+        return this.couchService.findAll('courses_progress', findDocuments(
+          { userId: user._id, courseId: task.targetId, passed: true }, [ '_id', 'stepNum', 'updatedDate' ]
+        )).pipe(map((progress: any[]) => progress.filter(doc => inWindow(doc.updatedDate)).map(doc =>
+          ({ id: `courses_progress/${doc._id}`, time: doc.updatedDate, unit: `${doc.stepNum}` })
+        )));
       case 'survey_complete':
-        return this.couchService.findAll('submissions', findDocuments({
-          'user.name': user.name,
-          type: 'survey',
-          status: 'complete',
-          parentId: task.courseId ? `${task.targetId}@${task.courseId}` : { $regex: `^${escapeRegex(task.targetId || '')}(@|$)` },
-          ...(start || end ? { lastUpdateTime: timeRange } : {})
-        }, [ '_id', 'lastUpdateTime' ])).pipe(
-          map((submissions: any[]) => submissions.map(({ _id, lastUpdateTime }) => ({ id: `submissions/${_id}`, time: lastUpdateTime })))
-        );
+        return this.submissions(task, user, 'survey', timeRange);
+      case 'exam_pass':
+        return this.submissions(task, user, 'exam', timeRange);
       case 'voice_post':
+      case 'voice_reply':
         return this.couchService.findAll('news', findDocuments({
           'user.name': user.name,
-          time: { $gte: 0, ...timeRange },
+          time: timeRange,
           $or: [
-            { messagePlanetCode: this.stateService.configuration.code, viewableBy: 'community' },
+            { messagePlanetCode: code, viewableBy: 'community' },
             { viewIn: { $elemMatch: { _id: planetAndParentId(this.stateService.configuration), section: 'community' } } }
           ]
-        }, [ '_id', 'time', 'replyTo' ])).pipe(
-          map((posts: any[]) => posts.filter(post => !post.replyTo).map(post => ({ id: `news/${post._id}`, time: post.time })))
-        );
+        }, [ '_id', 'time', 'replyTo' ])).pipe(map((posts: any[]) => posts
+          .filter(post => !!post.replyTo === (task.type === 'voice_reply'))
+          .map(post => ({ id: `news/${post._id}`, time: post.time }))
+        ));
+      case 'login':
+        return this.couchService.findAll('login_activities', findDocuments(
+          { user: user.name, loginTime: timeRange, createdOn: code }, [ '_id', 'loginTime' ]
+        )).pipe(map((logins: any[]) => logins.map(({ _id, loginTime }) =>
+          ({ id: `login_activities/${_id}`, time: loginTime, unit: formatDate(new Date(loginTime)) })
+        )));
+      case 'resource_open':
+        return this.couchService.findAll('resource_activities', findDocuments({
+          user: user.name, time: timeRange, type: 'visit', createdOn: code, ...(task.targetId ? { resourceId: task.targetId } : {})
+        }, [ '_id', 'time', 'resourceId' ])).pipe(map((visits: any[]) => visits.map(({ _id, time, resourceId }) =>
+          ({ id: `resource_activities/${_id}`, time, unit: resourceId })
+        )));
+      case 'rating':
+        // One rating doc per item, but deleting and rating again makes a new one
+        return this.couchService.findAll('ratings', findDocuments(
+          { 'user.name': user.name, type: { $in: [ 'course', 'resource' ] }, createdTime: timeRange, createdOn: code },
+          [ '_id', 'createdTime', 'item' ]
+        )).pipe(map((ratings: any[]) => ratings.map(({ _id, createdTime, item }) =>
+          ({ id: `ratings/${_id}`, time: createdTime, unit: item })
+        )));
+      case 'team_join':
+        // Membership has no join time either
+        return this.couchService.findAll('teams', findDocuments(
+          { docType: 'membership', userPlanetCode: code, userId: user._id, teamId: task.targetId }, [ '_id' ]
+        )).pipe(map((memberships: any[]) => memberships.slice(0, 1).map(({ _id }) => ({ id: `teams/${_id}`, time: Date.now() }))));
       default:
         return of([]);
     }
+  }
+
+  private submissions(task: ChallengeTask, user: any, type: 'survey' | 'exam', timeRange: any): Observable<Evidence[]> {
+    return this.couchService.findAll('submissions', findDocuments({
+      'user.name': user.name,
+      type,
+      status: 'complete',
+      parentId: task.courseId ? `${task.targetId}@${task.courseId}` : { $regex: `^${escapeRegex(task.targetId || '')}(@|$)` },
+      lastUpdateTime: timeRange,
+      // Some uploaded attempts carry no copy of the test, so they can't be judged
+      ...(type === 'exam' ? { 'parent.questions': { $type: 'array' } } : {})
+    }, [ '_id', 'lastUpdateTime', 'status', 'grade', 'parent.questions', 'parent.passingPercentage' ])).pipe(
+      map((submissions: any[]) => submissions
+        .filter(submission => type === 'survey' || attemptPasses(submission))
+        .map(({ _id, lastUpdateTime }) => ({ id: `submissions/${_id}`, time: lastUpdateTime })))
+    );
   }
 
   private openSuccessDialog(challenge: PlanetChallenge) {

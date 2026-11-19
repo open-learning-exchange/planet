@@ -12,10 +12,17 @@ import { ChallengesAnnouncementDialogComponent } from './challenges-announcement
 
 const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
 
-export type ChallengeTaskType = 'course_join' | 'course_complete' | 'survey_complete' | 'voice_post';
+export type ChallengeTaskType = 'course_join' | 'course_complete' | 'course_step' | 'exam_pass' | 'survey_complete' |
+  'voice_post' | 'voice_reply' | 'login' | 'resource_open' | 'rating' | 'team_join';
 
-export const CHALLENGE_TASK_TYPES: ChallengeTaskType[] = [ 'course_join', 'course_complete', 'survey_complete', 'voice_post' ];
-export const REPEATABLE_TASK_TYPES: ChallengeTaskType[] = [ 'voice_post' ];
+export const CHALLENGE_TASK_TYPES: ChallengeTaskType[] = [
+  'course_join', 'course_complete', 'course_step', 'exam_pass', 'survey_complete',
+  'voice_post', 'voice_reply', 'login', 'resource_open', 'rating', 'team_join'
+];
+export const REPEATABLE_TASK_TYPES: ChallengeTaskType[] = [
+  'voice_post', 'voice_reply', 'login', 'resource_open', 'rating', 'course_step'
+];
+const UNTARGETED_TASK_TYPES: ChallengeTaskType[] = [ 'voice_post', 'voice_reply', 'login', 'resource_open', 'rating' ];
 export const COMPLETE_TASK_ID = 'complete';
 
 export interface ChallengeTask {
@@ -27,6 +34,7 @@ export interface ChallengeTask {
   countBy?: 'each' | 'day';
   maxCount?: number;
   requiredCount?: number;
+  optional?: boolean;
 }
 
 export interface PlanetChallenge {
@@ -69,7 +77,7 @@ export class ChallengesService {
 
   getActiveChallenges(referenceDate = new Date()): Observable<PlanetChallenge[]> {
     return this.getChallenges().pipe(
-      // An announcement that can't load just doesn't show; getChallenges() keeps the error for editors
+      // An announcement that can't load just doesn't show; getChallenges() keeps the error for the manager's challenges page
       catchError(() => of([])),
       map(challenges => challenges.filter(challenge => this.isChallengeActive(challenge, referenceDate)))
     );
@@ -164,7 +172,7 @@ export class ChallengesService {
 
   private isUsableTask(task: Partial<ChallengeTask>) {
     return typeof task?.id === 'string' && task.id !== '' && !task.id.includes(':') && task.id !== COMPLETE_TASK_ID &&
-      CHALLENGE_TASK_TYPES.includes(task.type) && (task.type === 'voice_post' || !!task.targetId);
+      CHALLENGE_TASK_TYPES.includes(task.type) && (UNTARGETED_TASK_TYPES.includes(task.type) || !!task.targetId);
   }
 
   private normalizeTask(task: Partial<ChallengeTask>): ChallengeTask {
@@ -179,7 +187,8 @@ export class ChallengesService {
       countBy: task.countBy === 'day' ? 'day' : 'each',
       // Progress docs are only checked for who wrote them, so the cap is what bounds a learner's share of the group total
       maxCount: limit(task.maxCount) ?? (repeatable ? requiredCount || 1 : undefined),
-      requiredCount
+      requiredCount,
+      optional: task.optional === true
     };
   }
 

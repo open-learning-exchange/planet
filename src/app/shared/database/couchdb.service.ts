@@ -27,11 +27,11 @@ export class CouchService {
   ) {}
 
   private setOpts(opts: any = {}) {
-    const { domain, protocol, ...httpOpts } = opts;
-    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
+    const { domain, protocol, suppressMessage, ...httpOpts } = opts;
+    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts, suppressMessage ];
   }
 
-  private couchDBReq(type: string, db: string, [ domain, protocol, opts ]: any[], data?: any) {
+  private couchDBReq(type: string, db: string, [ domain, protocol, opts, suppressMessage ]: any[], data?: any) {
     const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
@@ -40,13 +40,13 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return this.formatHttpReq(httpReq);
+    return this.formatHttpReq(httpReq, suppressMessage);
   }
 
-  formatHttpReq(httpReq: Observable<any>) {
+  formatHttpReq(httpReq: Observable<any>, suppressMessage = false) {
     return httpReq
       .pipe(catchError(err => {
-        if (err.status === 403) {
+        if (err.status === 403 && !suppressMessage) {
           this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
         }
         return throwError(err);

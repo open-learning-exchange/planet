@@ -10,6 +10,7 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { MarkdownImagesDialogComponent } from './markdown-images-dialog.component';
 import { MarkdownRenderService } from './markdown-render.service';
 import { normalizeMarkdownWhitespace } from '@shared/utils';
+import { heldOpenDialogs } from '@shared/unsaved-changes/dialog-close-guard';
 import { NgClass } from '@angular/common';
 import { environment } from '../../../environments/environment';
 
@@ -238,14 +239,16 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
         {}
       )
     };
-    this._value = this.imageGroup ? { text: '', images: [] } : '';
+    // A form's first write can land before this, so keep its text.
+    this._value = this.imageGroup ? { text: this.textValue ?? '', images: [] } : this.textValue ?? '';
   }
 
   ngAfterViewInit() {
     // The first write lands before registerOnChange, and forms read their { text, images } value from this echo.
+    // It goes in as a model write, because onChange would mark an untouched form dirty.
     Promise.resolve().then(() => {
       if (!this.destroyed) {
-        this.writeValue(this.textValue);
+        this.ngControl.control.setValue(this.value, { emitModelToViewChange: false });
       }
     });
     this.loadEditor().then(({ default: EasyMDE }) => {
@@ -336,12 +339,14 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
         this.dialogDisableClose = this.dialogRef.disableClose;
       }
       this.dialogRef.disableClose = true;
+      heldOpenDialogs.add(this.dialogRef);
       return;
     }
     // A microtask would restore it before the leaving Escape reaches the dialog's listener on body.
     this.restoreDisableClose = setTimeout(() => {
       this.restoreDisableClose = undefined;
       this.dialogRef.disableClose = this.dialogDisableClose;
+      heldOpenDialogs.delete(this.dialogRef);
     });
   }
 
@@ -428,7 +433,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
   checkHighlight() {
     if (this.ngControl.touched && this.ngControl.valid !== true) {
       this.errorState = true;
-      this.value = typeof this.value === 'string' ? '' : { text: '', images: [] };
+      this.stateChanges.next();
     } else {
       this.errorState = false;
     }
