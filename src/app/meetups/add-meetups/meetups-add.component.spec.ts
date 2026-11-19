@@ -172,4 +172,18 @@ describe('MeetupsAddComponent authorization', () => {
     expect(couchService.updateDocument).not.toHaveBeenCalled();
     expect(planetMessageService.showAlert).toHaveBeenCalledWith('You are not authorized to edit this meetup');
   });
+
+  describe('weekdays', () => {
+    it('lets the edit dialog save a change to the weekdays alone', () => {
+      const { component } = createComponent(creator);
+      component.isDialog = true;
+      component.meetup = { _id: 'm1', createdBy: 'ann', recurring: 'weekly', day: [ 'Monday' ] };
+      component.ngOnInit();
+      expect(component.meetupForm.dirty).toBe(false);
+
+      component.onDayChange('Wednesday', true);
+
+      expect(component.meetupForm.dirty).toBe(true);
+    });
+  });
 });

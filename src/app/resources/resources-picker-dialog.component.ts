@@ -1,9 +1,10 @@
 import { Component, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
+import { guardDialogClose, leaveUnlessUnsaved } from '@shared/unsaved-changes/dialog-close-guard';
 
 import { ResourcesComponent } from './resources.component';
 import { ResourcesAddComponent } from './resources-add.component';
@@ -16,8 +17,7 @@ import { ResourcesAddComponent } from './resources-add.component';
     ResourcesComponent,
     ResourcesAddComponent,
     MatDialogActions,
-    MatButton,
-    MatDialogClose
+    MatButton
   ]
 })
 export class ResourcesPickerDialogComponent implements AfterViewInit {
@@ -30,18 +30,37 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   updateResource = false;
   existingResource: any = {};
   isSubmitting = false;
+  private leave: () => void;
 
   constructor(
     public dialogRef: MatDialogRef<ResourcesPickerDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
+    this.leave = guardDialogClose(this.dialogRef, this.dialog, () => this.hasUnsavedChanges(), { onEscape: () => this.escape() });
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
       this.updateResource = true;
       this.view = 'resourcesAdd';
       this.existingResource = { doc: this.data.resource, _id: this.data.resource._id, _rev: this.data.resource._rev };
+    }
+  }
+
+  hasUnsavedChanges() {
+    return this.view === 'resourcesAdd' && !this.resourcesAddComponent.canDeactivate();
+  }
+
+  cancel() {
+    this.leave();
+  }
+
+  escape() {
+    if (this.view === 'resourcesAdd' && !this.updateResource) {
+      this.toggleNewOrExisting();
+    } else {
+      this.cancel();
     }
   }
 
@@ -82,9 +101,11 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   }
 
   toggleNewOrExisting() {
-    this.view = this.view === 'resources' ? 'resourcesAdd' : 'resources';
-    // Use setTimeout to wait for Angular building the component being switched to
-    setTimeout(() => this.initOkDisableChange());
+    leaveUnlessUnsaved(this.dialog, () => this.hasUnsavedChanges(), () => {
+      this.view = this.view === 'resources' ? 'resourcesAdd' : 'resources';
+      // Use setTimeout to wait for Angular building the component being switched to
+      setTimeout(() => this.initOkDisableChange());
+    });
   }
 
   initOkDisableChange() {
