@@ -67,8 +67,8 @@
   </mat-form-field>
 </ng-template>
 
-<div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
-  <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog }">
+<div class="primary-link-hover space-container">
+  <div class="view-container view-table view-full-height">
     @if (surveyView === 'charts') {
       <planet-submissions-results [survey]="survey" [submissions]="submissions.filteredData"></planet-submissions-results>
     }
