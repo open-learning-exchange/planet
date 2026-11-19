@@ -1,0 +1,52 @@
+<mat-toolbar [class.list-toolbar-compact]="compact()">
+  <mat-toolbar-row>
+    <ng-content></ng-content>
+    <span class="toolbar-fill"></span>
+    <ng-content select="[planetListToolbarEnd]"></ng-content>
+    @if (compact()) {
+      @if (searchTemplate) {
+        <button mat-icon-button (click)="searchOpen.set(!searchOpen())" [attr.aria-expanded]="searchOpen()" aria-label="Search" i18n-aria-label>
+          <mat-icon class="list-toolbar-dot" matBadge="•" [matBadgeHidden]="searchOpen() || !searchValue()" matBadgeColor="accent" matBadgeSize="small">search</mat-icon>
+        </button>
+      }
+      @if (filtersTemplate) {
+        <button mat-icon-button (click)="openFilters()" aria-label="Filters" i18n-aria-label>
+          <mat-icon [matBadge]="activeFilters().length" [matBadgeHidden]="!activeFilters().length" matBadgeColor="accent" matBadgeSize="small">filter_list</mat-icon>
+        </button>
+      }
+    } @else {
+      <ng-container *ngTemplateOutlet="filtersTemplate; context: { $implicit: false }"></ng-container>
+      <ng-container *ngTemplateOutlet="searchTemplate; context: { $implicit: false }"></ng-container>
+    }
+  </mat-toolbar-row>
+  <ng-content select="[planetListToolbarRow]"></ng-content>
+  @if (compact() && searchTemplate && searchOpen()) {
+    <mat-toolbar-row class="list-toolbar-search">
+      <ng-container *ngTemplateOutlet="searchTemplate; context: { $implicit: true }"></ng-container>
+    </mat-toolbar-row>
+  }
+  @if (compact() && activeFilters().length) {
+    <mat-toolbar-row class="list-toolbar-chips">
+      <mat-chip-set aria-label="Active filters" i18n-aria-label>
+        @for (filter of activeFilters(); track $index) {
+          <mat-chip (removed)="filter.clear()">
+            {{ filter.label }}
+            <button matChipRemove aria-label="Remove {{ filter.label }}" i18n-aria-label><mat-icon>close</mat-icon></button>
+          </mat-chip>
+        }
+      </mat-chip-set>
+      <button mat-button (click)="clearFilters.emit()" i18n>Clear filters</button>
+    </mat-toolbar-row>
+  }
+</mat-toolbar>
+
+<ng-template #filtersSheet>
+  <h2 class="list-filters-title" i18n>Filters</h2>
+  <div class="list-filters-fields">
+    <ng-container *ngTemplateOutlet="filtersTemplate; context: { $implicit: true }"></ng-container>
+  </div>
+  <div class="list-filters-actions">
+    <button mat-button (click)="clearFilters.emit()" [disabled]="!activeFilters().length" i18n>Clear filters</button>
+    <button mat-raised-button color="primary" (click)="closeFilters()" i18n>Done</button>
+  </div>
+</ng-template>

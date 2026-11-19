@@ -34,6 +34,8 @@ export class HealthService {
 
   getUserKey(userDb: string, createIfNone = false) {
     return this.couchService.findAll(userDb).pipe(
+      // A user whose health database is missing or unreadable has no key yet
+      catchError(() => of([])),
       switchMap((docs: any[]) => {
         const first = docs.reduce((minDoc, doc) => doc.createdOn < minDoc.createdOn ? doc : minDoc, { createdOn: Infinity });
         return first.key && first.iv ?
