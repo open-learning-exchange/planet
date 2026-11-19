@@ -28,7 +28,7 @@ const openRoutes: OpenRoute[] = [
 app.use(browserCors);
 app.use(requireSessionExcept(openRoutes));
 // Parse JSON bodies (as sent by API clients)
-app.use(express.json());
+app.use(express.json({ 'limit': '10MB' }));
 
 app.get('/', (req: Request, res: Response) => {
   void req;
