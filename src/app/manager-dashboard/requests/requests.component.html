@@ -1,49 +1,35 @@
-<mat-toolbar>
+<planet-list-toolbar [activeFilters]="activeFilters" [searchValue]="searchValue" (clearFilters)="shownStatusChange('pending')">
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
-  <span class="toolbar-fill"></span>
-  @if (!isMobile()) {
-    <ng-container *ngTemplateOutlet="filterItems"></ng-container>
-  }
-  @if (isMobile()) {
-    <button mat-icon-button (click)="toggleMobileFilterList()">
-      <mat-icon>filter_list</mat-icon>
-    </button>
-  }
-</mat-toolbar>
-@if (isMobile() && showFilterRow) {
-  <mat-toolbar class="mobile-filter-toolbar">
-    <div class="mobile-filter-row">
-      <ng-container *ngTemplateOutlet="filterItems"></ng-container>
-    </div>
-  </mat-toolbar>
-}
-<ng-template #filterItems>
-  <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
-    (change)="shownStatusChange($event.value)"
-    #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'" i18n>
-        Pending
-      </mat-button-toggle>
-    <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'" i18n>
-        Connected
-      </mat-button-toggle>
-  </mat-button-toggle-group>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <mat-label i18n>Search</mat-label>
-    <input
-      matInput
-      (keyup)="requestListFilter($event.target.value)"
-      [value]="searchValue">
-    <button type="button" mat-icon-button matSuffix (click)="searchValue = ''; requestListFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-</ng-template>
+  <ng-template #listFilters>
+    <mat-button-toggle-group
+      class="margin-lr-5 font-size-1"
+      (change)="shownStatusChange($event.value)"
+      #filterGroup="matButtonToggleGroup">
+      <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'" i18n>
+          Pending
+        </mat-button-toggle>
+      <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'" i18n>
+          Connected
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+  </ng-template>
+  <ng-template #listSearch>
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <mat-label i18n>Search</mat-label>
+      <input
+        matInput
+        (keyup)="requestListFilter($event.target.value)"
+        [value]="searchValue">
+      <button type="button" mat-icon-button matSuffix (click)="searchValue = ''; requestListFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </ng-template>
+</planet-list-toolbar>
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">

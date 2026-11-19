@@ -10,7 +10,7 @@ import {
   MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgTemplateOutlet, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
@@ -32,9 +32,9 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { truncateText } from '@shared/utils';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 
 import { FeedbackService } from './feedback.service';
 import { UsersService } from '../users/users.service';
@@ -59,10 +59,10 @@ import {
     }
   `],
   imports: [
+    ListToolbarComponent,
     MatToolbar,
     MatIconButton,
     MatIcon,
-    NgTemplateOutlet,
     MatToolbarRow,
     MatFormField,
     MatLabel,
@@ -118,6 +118,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     type: '',
     status: ''
   };
+  activeFilters: ActiveFilter[] = [];
   #titleSearch = '';
   get titleSearch(): string {
     return this.#titleSearch;
@@ -132,10 +133,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   user: any = {};
   private onDestroy$ = new Subject<void>();
   users = [];
-  readonly deviceType = this.deviceInfoService.deviceType;
-  readonly isMobile = this.deviceInfoService.isMobile;
-  deviceTypes: typeof DeviceType = DeviceType;
-  showFiltersRow = false;
 
   constructor(
     private couchService: CouchService,
@@ -146,8 +143,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
@@ -266,11 +262,18 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.feedback.filter = this.feedback.filter ? this.feedback.filter : ' ';
+    this.activeFilters = [ { field: 'type', options: this.typeOptions }, { field: 'status', options: this.statusOptions } ]
+      .filter(({ field: name }) => this.filter[name] !== '')
+      .map(({ field: name, options }) => ({
+        label: options.find(option => option.value === this.filter[name]).text,
+        clear: () => this.onFilterChange('All', name)
+      }));
   }
 
   resetSearch() {
     this.filter.type = '';
     this.filter.status = '';
+    this.activeFilters = [];
     this.titleSearch = '';
   }
 

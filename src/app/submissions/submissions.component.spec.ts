@@ -1,8 +1,4 @@
-import { signal } from '@angular/core';
-import { of } from 'rxjs';
 import { vi } from 'vitest';
-
-import { DeviceType } from '@shared/ui/device-info.service';
 
 import { SubmissionsComponent } from './submissions.component';
 
@@ -15,10 +11,6 @@ describe('SubmissionsComponent', () => {
     {} as any,
     { configuration: {} } as any,
     { start: vi.fn() } as any,
-    {
-      isMobile: signal(false),
-      watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP))
-    } as any,
     {} as any,
     {} as any
   );
@@ -30,5 +22,16 @@ describe('SubmissionsComponent', () => {
 
     expect(component.searchValue).toBe('learner name');
     expect(component.submissions.filter).toBe('learner name');
+  });
+
+  it('shows no chip for the default status, and clearing restores the defaults', () => {
+    const component = createComponent();
+    component.onFilterChange('survey', 'type');
+
+    component.resetFilter();
+
+    expect(component.filter.type).toBe('exam');
+    expect(component.filter.status).toBe('requires grading');
+    expect(component.activeFilters).toEqual([]);
   });
 });

@@ -30,11 +30,6 @@
     }
   }
 
-  .filtered-amount-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   planet-resources-search {
     @include m.search-filters('planet-resources-search-list');
   }
@@ -49,10 +44,8 @@
   }
 }
 
-.ellipsis-menu {
-  text-align: center;
-}
-
-.filter-dialog planet-resources-search {
-  @include m.search-filters-stacked('planet-resources-search-list');
+.list-filters-sheet planet-resources-search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
