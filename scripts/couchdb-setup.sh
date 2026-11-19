@@ -131,6 +131,7 @@ DBS=(
   "search_activities"
   "community_meetups"
   "chat_history"
+  "keys"
   "challenges"
   "challenge_progress"
 )
@@ -171,6 +172,8 @@ upsert_doc teams _index '{"index":{"fields":["docType","userPlanetCode","userId"
 
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
+# Provider keys are for server admins only: not in security-update.json, which makes managers database admins
+upsert_doc keys _security '{"admins":{"names":[],"roles":[]},"members":{"names":[],"roles":["_admin"]}}'
 set_couch_per_user
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"2400"'

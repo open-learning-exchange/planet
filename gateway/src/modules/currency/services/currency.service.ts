@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 
-import { getKeys } from '../../../services/config.service';
+import { getKeys } from '../../../services/keys.service';
+
+export const CURRENCY_PROVIDER = 'openexchangerates';
 
 // See https://docs.openexchangerates.org/reference/historical-json
 const OPENEXCHANGERATES_MIN_YEAR = 1999;
@@ -42,7 +44,10 @@ export const getCurrencyRate = async (req: Request, res: Response) => {
     });
   }
 
-  const key = (await getKeys()).currency;
+  const key = (await getKeys('currency'))[CURRENCY_PROVIDER];
+  if (!key) {
+    return res.status(503).json({ 'error': 'Service Unavailable', 'message': 'The exchange rate provider is not configured' });
+  }
 
   try {
     const apiResponse = await fetch(`https://openexchangerates.org/api/historical/${date}.json?app_id=${key}&symbols=GTQ`);

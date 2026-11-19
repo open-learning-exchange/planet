@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
-import { Router, NavigationStart, NavigationEnd, RouterOutlet } from '@angular/router';
+import { Router, NavigationStart, RouterOutlet } from '@angular/router';
 import { Dir } from '@angular/cdk/bidi';
 
 import { StateService } from '@shared/state.service';
-declare let gtag: (type: string, account: string, params: { 'page_path': string }) => void;
 
 @Component({
   selector: 'planet-app',
@@ -91,9 +90,6 @@ export class AppComponent {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.stateService.requestData('configurations', 'local');
-      }
-      if (event instanceof NavigationEnd) {
-        gtag('config', 'UA-118745384-1', { page_path: event.urlAfterRedirects });
       }
     });
   }
