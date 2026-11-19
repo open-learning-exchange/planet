@@ -408,7 +408,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
             );
           }
         },
-        autoFocus: true
+        autoFocus: true,
+        confirmUnsavedChanges: true
       })
     ))).subscribe();
   }
