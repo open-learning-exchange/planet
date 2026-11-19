@@ -1,7 +1,7 @@
 <mat-dialog-content>
   <mat-form-field class="full-width">
     <mat-label i18n>Share with</mat-label>
-    <mat-select [(ngModel)]="selectedLink">
+    <mat-select [(ngModel)]="selectedLink" (selectionChange)="teamForm.reset()">
       @for (link of links; track link) {
         <mat-option [value]="link">{{link.title}}</mat-option>
       }
