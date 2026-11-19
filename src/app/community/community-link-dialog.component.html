@@ -10,6 +10,7 @@
   </mat-form-field>
 
   @if (selectedLink?.db === 'teams') {
+    <planet-teams [hidden]="linkForm.controls.linkId.value" [mode]="selectedLink?.selector?.type" [excludeIds]="data.excludeIds" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
     @if (linkForm.controls.linkId.value) {
       <form [formGroup]="linkForm">
         <mat-form-field class="full-width">
@@ -18,8 +19,6 @@
           <mat-error><planet-form-error-messages [control]="linkForm.controls.title"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </form>
-    } @else {
-      <planet-teams [mode]="selectedLink?.selector?.type" [excludeIds]="data.excludeIds" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
     }
   }
 
@@ -73,6 +72,7 @@
 <mat-dialog-actions>
   @if (selectedLink?.db === 'teams' && linkForm.controls.linkId.value) {
     <button type="button" mat-raised-button (click)="linkForm.reset()" i18n>Back</button>
+    <span class="toolbar-fill"></span>
   }
   <button type="button" mat-raised-button (click)="cancelForm()" i18n>Cancel</button>
   <button mat-raised-button color="primary" type="button" (click)="linkSubmit()" [disabled]="!linkForm.valid" i18n>OK</button>

@@ -28,6 +28,7 @@
       </form>
     }
     @case ('teams') {
+      <planet-teams [hidden]="teamForm.controls.linkId.value" [mode]="selectedLink?.selector?.type" [isDialog]="true" [excludeIds]="excludeIds" (rowClick)="teamSelect($event)"></planet-teams>
       @if (teamForm.controls.linkId.value) {
         <form [formGroup]="teamForm" (ngSubmit)="shareWithTeam()">
           <mat-form-field class="full-width">
@@ -39,8 +40,6 @@
             Share
           </button>
         </form>
-      } @else {
-        <planet-teams [mode]="selectedLink?.selector?.type" [isDialog]="true" [excludeIds]="excludeIds" (rowClick)="teamSelect($event)"></planet-teams>
       }
     }
   }
@@ -48,6 +47,7 @@
 <mat-dialog-actions>
   @if (selectedLink?.db === 'teams' && teamForm.controls.linkId.value) {
     <button type="button" mat-raised-button (click)="teamForm.reset()" i18n>Back</button>
+    <span class="toolbar-fill"></span>
   }
   <button mat-raised-button mat-dialog-close i18n>Close</button>
 </mat-dialog-actions>
