@@ -34,7 +34,6 @@ import { fullName } from '@shared/utils';
       align-items: center;
       justify-content: flex-end;
     }
-    /* Only the table scrolls, so it is the part that shrinks when the list is taller than the dialog. */
     mat-dialog-content {
       display: flex;
       flex-direction: column;
