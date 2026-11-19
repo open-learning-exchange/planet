@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { heldOpenDialogs } from '@shared/unsaved-changes/dialog-close-guard';
+import { CustomValidators } from '../../validators/custom-validators';
 import { PlanetMarkdownTextboxComponent } from './planet-markdown-textbox.component';
 
 describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
@@ -122,12 +124,15 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
 
     component.options.onToggleFullScreen(true);
     expect(dialogRef.disableClose).toBe(true);
+    expect(heldOpenDialogs.has(dialogRef as any)).toBe(true);
 
     component.options.onToggleFullScreen(false);
     await Promise.resolve();
     expect(dialogRef.disableClose).toBe(true);
+    expect(heldOpenDialogs.has(dialogRef as any)).toBe(true);
     await new Promise(resolve => setTimeout(resolve));
     expect(dialogRef.disableClose).toBe(disableClose);
+    expect(heldOpenDialogs.has(dialogRef as any)).toBe(false);
   });
 
   it('keeps holding its dialog when fullscreen comes back before the restore runs', async () => {
@@ -190,6 +195,22 @@ class FormControlHostComponent {
 }
 
 @Component({
+  template: '<planet-markdown-textbox [formControl]="control"></planet-markdown-textbox>',
+  imports: [ ReactiveFormsModule, PlanetMarkdownTextboxComponent ]
+})
+class PlainFormControlHostComponent {
+  control = new FormControl<any>('saved text');
+}
+
+@Component({
+  template: '<planet-markdown-textbox [formControl]="control" imageGroup="community"></planet-markdown-textbox>',
+  imports: [ ReactiveFormsModule, PlanetMarkdownTextboxComponent ]
+})
+class RequiredFormControlHostComponent {
+  control = new FormControl<any>('', CustomValidators.requiredMarkdown);
+}
+
+@Component({
   template: '<planet-markdown-textbox [(ngModel)]="comment"></planet-markdown-textbox>',
   imports: [ FormsModule, PlanetMarkdownTextboxComponent ]
 })
@@ -231,7 +252,32 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
     await settle(fixture);
 
     expect(fixture.componentInstance.control.value).toEqual({ text: 'saved text', images: [] });
+    expect(fixture.componentInstance.control.pristine).toBe(true);
     expect(FakeEasyMDE.instance.value()).toBe('saved text');
+  });
+
+  it('keeps a plain form value without marking the form dirty', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(PlainFormControlHostComponent);
+    await settle(fixture);
+
+    expect(fixture.componentInstance.control.value).toBe('saved text');
+    expect(fixture.componentInstance.control.pristine).toBe(true);
+    expect(FakeEasyMDE.instance.value()).toBe('saved text');
+  });
+
+  it('shows the error when an empty required field is left, without marking the form dirty', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(RequiredFormControlHostComponent);
+    await settle(fixture);
+    const textbox = fixture.debugElement.query(By.directive(PlanetMarkdownTextboxComponent)).componentInstance;
+
+    textbox.onFocusOut();
+    fixture.detectChanges();
+
+    expect(textbox.errorState).toBe(true);
+    expect(fixture.componentInstance.control.touched).toBe(true);
+    expect(fixture.componentInstance.control.pristine).toBe(true);
   });
 
   it('keeps a template-driven value', async () => {
@@ -250,6 +296,7 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
 
     FakeEasyMDE.instance.type('typed');
     expect(fixture.componentInstance.control.value).toEqual({ text: 'typed', images: [] });
+    expect(fixture.componentInstance.control.dirty).toBe(true);
 
     fixture.componentInstance.control.setValue('from the form');
     expect(FakeEasyMDE.instance.value()).toBe('from the form');
