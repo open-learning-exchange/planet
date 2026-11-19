@@ -1,42 +1,24 @@
-<mat-toolbar>
-  <mat-toolbar-row>
-    @if (!isDialog) {
-      <button mat-icon-button [routerLink]="[ '..' ]"><mat-icon>arrow_back</mat-icon></button>
-    }
-    <span i18n>{ mode, select,
-      team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
-      enterprise {Enterprises}
-    }</span>
-    <span class="toolbar-fill"></span>
-    @if (!isMobile()) {
-      <ng-container *ngTemplateOutlet="searchView"></ng-container>
-    }
-    @if (isMobile()) {
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
-    }
-  </mat-toolbar-row>
-  @if (showFiltersRow) {
-    <mat-toolbar-row>
-      @if (isMobile()) {
-        <ng-container *ngTemplateOutlet="searchView"></ng-container>
-      }
-    </mat-toolbar-row>
+<planet-list-toolbar [searchValue]="filter">
+  @if (!isDialog) {
+    <button mat-icon-button [routerLink]="[ '..' ]"><mat-icon>arrow_back</mat-icon></button>
   }
-</mat-toolbar>
-
-<ng-template #searchView>
-  <span class="toolbar-fill"></span>
-  <div class="toolbar-search">
-    <mat-icon>search</mat-icon>
-    <mat-form-field subscriptSizing="dynamic" class="font-size-1">
-      <mat-label i18n>Type name to search...</mat-label>
-      <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
-      <button type="button" mat-icon-button matSuffix (click)="filter = ''; resetSearch()" [style.visibility]="filter ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
-  </div>
-</ng-template>
+  <span i18n>{ mode, select,
+    team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
+    enterprise {Enterprises}
+  }</span>
+  <ng-template #listSearch>
+    <div class="toolbar-search">
+      <mat-icon>search</mat-icon>
+      <mat-form-field subscriptSizing="dynamic" class="font-size-1">
+        <mat-label i18n>Type name to search...</mat-label>
+        <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
+        <button type="button" mat-icon-button matSuffix (click)="filter = ''; resetSearch()" [style.visibility]="filter ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </ng-template>
+</planet-list-toolbar>
 
 <div [ngClass]="{'space-container':!isDialog}">
   @if (!isDialog) {
