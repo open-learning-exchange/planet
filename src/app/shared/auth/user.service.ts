@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { catchError, switchMap, map, tap } from 'rxjs/operators';
-import { of, Observable, Subject, BehaviorSubject, forkJoin } from 'rxjs';
+import { of, Observable, Subject, BehaviorSubject, forkJoin, throwError } from 'rxjs';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
@@ -37,8 +37,6 @@ export class UserService {
     this.skipNextShelfRefresh = false;
   }
   currentSession: any;
-  userProperties: string[] = [];
-  additionalProperties: string[] = [ 'requestId', '_attachments' ];
   credentialProperties = [ 'derived_key', 'iterations', 'password_scheme', 'salt', 'key', 'iv' ];
   credentials: any;
   emptyShelf = { meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] };
@@ -82,20 +80,19 @@ export class UserService {
   }
 
   setUserAndShelf(user: any) {
-    return this.couchService.findAll('_users')
-      .pipe(catchError(() => {
+    return this.couchService.get(`${this.usersDb}/org.couchdb.user:${user.name}`)
+      .pipe(catchError((error) => {
+        if (error.status !== 404) {
+          return throwError(error);
+        }
         // If not found in users database, just use userCtx object
         this.user = user;
-        return of(false);
+        return of(undefined);
       }),
-      switchMap((users: any[]) => {
-        this.setUserProperties(users);
-        const userData = users.find(u => u.name === user.name);
+      switchMap((userData: any) => {
         if (userData) {
-          // Remove hashed password information from the data object
-          const profile = this.getUserProperties(userData);
-          this.credentials = this.getUserProperties(userData, this.credentialProperties);
-          this.user = profile;
+          this.credentials = this.getCredentials(userData);
+          this.user = this.getUserProperties(userData);
           this.user.roles = [ ...this.user.roles, ...user.roles ].reduce(dedupeShelfReduce, []);
           this.userChange.next(this.user);
         }
@@ -112,8 +109,13 @@ export class UserService {
       }));
   }
 
-  getUserProperties(user, properties: string[] = [ ...this.userProperties, ...this.additionalProperties ]): any {
-    return properties.reduce((object, key) => ({ ...object, [key]: user[key] }), {});
+  // The user doc without hashed password and health key information
+  getUserProperties(user): any {
+    return Object.fromEntries(Object.entries(user).filter(([ key ]) => !this.credentialProperties.includes(key)));
+  }
+
+  private getCredentials(user): any {
+    return this.credentialProperties.reduce((object, key) => ({ ...object, [key]: user[key] }), {});
   }
 
   getCurrentSession() {
@@ -125,13 +127,6 @@ export class UserService {
         this.currentSession = data.docs[0];
         return this.currentSession;
       }));
-  }
-
-  private setUserProperties(users) {
-    this.userProperties = users.reduce((properties: string[], user: any) => {
-      const { requestId, _attachments, ...profile } = user;
-      return [ ...properties, ...Object.keys(profile).filter((prop: string) => this.credentialProperties.indexOf(prop) === -1) ];
-    }, []).reduce(dedupeShelfReduce, []);
   }
 
   unset(): any {
@@ -249,7 +244,7 @@ export class UserService {
       if (this.user.roles.indexOf('_admin') !== -1) {
         profile.roles.push('_admin');
       }
-      this.credentials = this.getUserProperties(newUser, this.credentialProperties);
+      this.credentials = this.getCredentials(newUser);
       this.set(profile);
     }));
   }
