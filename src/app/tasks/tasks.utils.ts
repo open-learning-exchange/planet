@@ -33,7 +33,7 @@ export const isTaskAssignedTo = (
   task: any, identity: Partial<AssigneeIdentity>, localPlanetCode?: string
 ): boolean => effectiveAssignees(task).some(assignee => assigneeMatches(assignee, identity, localPlanetCode));
 
-export const assigneeName = (assignee: any): string => assignee?.userDoc?.fullName || assignee?.name;
+export const assigneeName = (assignee: any): string => assignee?.userDoc?.fullName || assignee?.name || '';
 
 export const storedAssignee = (assignee: any, localPlanetCode?: string): any => ({
   userId: assignee?.userId,

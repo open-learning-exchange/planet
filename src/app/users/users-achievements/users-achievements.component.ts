@@ -27,7 +27,7 @@ import { LinkCopyService } from '@shared/ui/link-copy.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
-import { userDocPath } from '../users.utils';
+import { avatarMayExist, userDocPath } from '../users.utils';
 
 interface AchievementsRoute {
   achievementsId: string | null;
@@ -155,7 +155,7 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     } else {
       const name = nameParam.split('@')[0];
       achievementsId = 'org.couchdb.user:' + name + '@' + planetCode;
-      // Set synchronously so the name and avatar of the newly routed user show while its document is still loading
+      // Set synchronously so the newly routed user's name shows while its document is still loading; the avatar waits for it
       this.userName = name;
       this.userPlanetCode = planetCode;
       this.user = { name, planetCode };
@@ -296,6 +296,10 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
+
+  get hasAvatarToLoad() {
+    return avatarMayExist(this.user, this.userPlanetCode, this.stateService.configuration);
+  }
 
   get resumeUrl() {
     if (!this.achievements?._attachments?.[this.resumeAttachmentKey] || !this.achievements?._id) {
