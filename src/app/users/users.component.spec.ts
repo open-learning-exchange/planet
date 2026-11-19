@@ -44,6 +44,18 @@ describe('Users', () => {
     expect(comp instanceof UsersComponent).toBe(true);
   });
 
+  it('clears the association filter along with the role', () => {
+    const { comp } = setup();
+    comp.changePlanetFilter('associated');
+    comp.onFilterChange('manager');
+    expect(comp.activeFilters.length).toBe(2);
+
+    comp.resetFilter();
+
+    expect(comp.tableState.filterType).toBe('local');
+    expect(comp.activeFilters).toEqual([]);
+  });
+
   // describe('Init', () => {
 
   //   it('Should display restricted message for nonadmin', () => {

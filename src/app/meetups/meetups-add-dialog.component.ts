@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
-import { UnsavedChangesPromptComponent } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
+import { guardDialogClose } from '@shared/unsaved-changes/dialog-close-guard';
 
 import { MeetupsAddComponent } from './add-meetups/meetups-add.component';
 import { MeetupsViewComponent } from './view-meetups/meetups-view.component';
@@ -39,6 +39,7 @@ export class MeetupsAddDialogComponent implements CanComponentDeactivate {
   sync: { type: 'local' | 'sync', planetCode: string };
   editable = true;
   leaderOfTeamId?: string;
+  private leave: () => void;
 
   constructor(
     public dialogRef: MatDialogRef<MeetupsAddDialogComponent>,
@@ -52,10 +53,7 @@ export class MeetupsAddDialogComponent implements CanComponentDeactivate {
     this.meetup = this.data.meetup || this.meetup;
     this.editable = this.data.editable !== undefined && this.data.editable !== null ? this.data.editable : this.editable;
     this.leaderOfTeamId = this.data.leaderOfTeamId;
-    this.dialogRef.disableClose = true;
-    this.dialogRef.backdropClick().subscribe(() => {
-      this.checkUnsavedChangesAndClose();
-    });
+    this.leave = guardDialogClose(this.dialogRef, this.dialog, () => !this.canDeactivate(), { close: () => this.discardAndClose() });
   }
 
   canDeactivate(): boolean {
@@ -63,17 +61,14 @@ export class MeetupsAddDialogComponent implements CanComponentDeactivate {
   }
 
   private checkUnsavedChangesAndClose(): void {
-    if (this.meetupsAdd && this.meetupsAdd.canDeactivate() === false) {
-      const dialogResult = UnsavedChangesPromptComponent.open(this.dialog);
-      dialogResult.subscribe(confirmed => {
-        if (confirmed) {
-          this.meetupsAdd.hasUnsavedChanges = false;
-          this.meetupsChange();
-        }
-      });
-    } else {
-      this.meetupsChange();
+    this.leave();
+  }
+
+  private discardAndClose() {
+    if (this.meetupsAdd) {
+      this.meetupsAdd.hasUnsavedChanges = false;
     }
+    this.meetupsChange();
   }
 
   meetupsChange() {

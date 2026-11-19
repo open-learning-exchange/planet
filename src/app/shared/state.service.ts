@@ -5,6 +5,8 @@ import { map, switchMap, filter, catchError } from 'rxjs/operators';
 import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 
+const pageSize = 1000;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,10 +20,6 @@ export class StateService {
     const config = this.state.local.configurations?.docs[0] || {};
     const { keys, ...safeConfig } = config;
     return safeConfig;
-  }
-
-  get keys(): any {
-    return this.state.local.configurations?.docs[0]?.keys || {};
   }
 
   constructor(
@@ -54,7 +52,8 @@ export class StateService {
     return getData.pipe(
       map((changes) => {
         const newData = this.combineChanges(this.state[planetField][db].docs, changes, sort);
-        const inProgress = isInitialFind && changes.length > 0;
+        // Paging stops at the first page that is not full
+        const inProgress = isInitialFind && changes.length === pageSize;
         this.state[planetField][db].docs = newData;
         this.stateUpdated.next({ newData, db, planetField, inProgress });
         this.inProgress[planetField].set(db, inProgress);
@@ -62,6 +61,7 @@ export class StateService {
       }),
       catchError(() => {
         this.inProgress[planetField].set(db, false);
+        this.stateUpdated.next({ newData: this.state[planetField][db].docs, db, planetField, inProgress: false });
         return [];
       })
     );
@@ -82,7 +82,7 @@ export class StateService {
     return this.getChanges(db, opts, planetField).pipe(switchMap(() =>
       this.couchService.findAllStream(db, findDocuments({
         _id: { $gt: null }
-      }, 0, sort, 1000), opts)
+      }, 0, sort, pageSize), opts)
     ));
   }
 
@@ -100,25 +100,19 @@ export class StateService {
   }
 
   combineChanges(docs: any[], changesDocs: any[], sort) {
-    const combinedDocs = docs.reduce((newDocs: any[], doc: any) => {
-      const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);
-      return newDocs.concat(this.newDoc(changesDoc, doc));
-    }, []).concat(
-      changesDocs.filter((cDoc: any) =>
-        cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
-    );
+    const docsById = new Map(docs.map((doc: any) => [ doc._id, doc ]));
+    changesDocs.forEach((cDoc: any) => {
+      if (cDoc._deleted === true) {
+        docsById.delete(cDoc._id);
+      } else {
+        docsById.set(cDoc._id, cDoc);
+      }
+    });
+    const combinedDocs = [ ...docsById.values() ];
     if (sort !== undefined && docs.length > 0 && changesDocs.length > 0) {
       return this.sortDocs(combinedDocs, sort);
     }
     return combinedDocs;
-  }
-
-  newDoc(changesDoc, oldDoc) {
-    return changesDoc === undefined ?
-      oldDoc :
-      changesDoc._deleted === true ?
-        [] :
-        changesDoc;
   }
 
   sortDocs(docs, sort) {

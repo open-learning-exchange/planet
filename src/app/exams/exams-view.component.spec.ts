@@ -38,7 +38,6 @@ describe('ExamsViewComponent', () => {
       dialog,
       dialogsLoadingService,
       new FormBuilder(),
-      {} as any,
       location,
       {} as any
     );

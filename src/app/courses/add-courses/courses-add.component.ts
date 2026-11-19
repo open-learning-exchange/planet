@@ -99,10 +99,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     return this.#steps;
   }
   set steps(value: any[]) {
+    // Steps saved before passingRequired existed lack it, and the step form would write it back on open as a draft
     this.#steps = value.map(step => ({
       ...step,
       description: step.description?.text ?? step.description ?? '',
-      images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
+      images: [ ...(step.description?.images ?? []), ...(step.images || []) ],
+      passingRequired: !!step.passingRequired
     }));
     this.coursesService.course = { form: this.courseForm.value, steps: this.#steps };
     this.stepsChange$.next(value);
