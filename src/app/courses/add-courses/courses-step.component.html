@@ -64,14 +64,22 @@
   </div>
   <div planetStepListActions class="course-attach">
     <div class="attach-grid">
-      <button type="button" class="attach-card" (click)="addExam()">
-        <mat-icon>assignment</mat-icon>
-        <span class="ac-title">{{ examButtonLabel }}</span>
-        <span class="ac-sub" i18n>Quiz learners</span>
-        @if (activeStep?.exam?.questions?.length) {
-          <span class="ac-count">{{ activeStep.exam.questions.length }}&nbsp;<span i18n>questions</span></span>
+      <div class="attach-item">
+        <button type="button" class="attach-card" (click)="addExam()">
+          <mat-icon>assignment</mat-icon>
+          <span class="ac-title">{{ examButtonLabel }}</span>
+          <span class="ac-sub" i18n>Quiz learners</span>
+          @if (activeStep?.exam?.questions?.length) {
+            <span class="ac-count">{{ activeStep.exam.questions.length }}&nbsp;<span i18n>questions</span></span>
+          }
+        </button>
+        @if (activeStep?.exam) {
+          <button mat-icon-button type="button" class="attach-remove" (click)="removeExam('exam')"
+            matTooltip="Remove test" i18n-matTooltip aria-label="Remove test" i18n-aria-label>
+            <mat-icon>close</mat-icon>
+          </button>
         }
-      </button>
+      </div>
       <button type="button" class="attach-card" (click)="addResources()">
         <mat-icon>attach_file</mat-icon>
         <span class="ac-title" i18n>Add Resource</span>
@@ -80,14 +88,22 @@
           <span class="ac-count">{{ activeStep.resources.length }}&nbsp;<span i18n>attached</span></span>
         }
       </button>
-      <button type="button" class="attach-card" (click)="addExam('survey')">
-        <mat-icon>description</mat-icon>
-        <span class="ac-title">{{ surveyButtonLabel }}</span>
-        <span class="ac-sub" i18n>Collect feedback</span>
-        @if (activeStep?.survey?.questions?.length) {
-          <span class="ac-count">{{ activeStep.survey.questions.length }}&nbsp;<span i18n>questions</span></span>
+      <div class="attach-item">
+        <button type="button" class="attach-card" (click)="addExam('survey')">
+          <mat-icon>description</mat-icon>
+          <span class="ac-title">{{ surveyButtonLabel }}</span>
+          <span class="ac-sub" i18n>Collect feedback</span>
+          @if (activeStep?.survey?.questions?.length) {
+            <span class="ac-count">{{ activeStep.survey.questions.length }}&nbsp;<span i18n>questions</span></span>
+          }
+        </button>
+        @if (activeStep?.survey) {
+          <button mat-icon-button type="button" class="attach-remove" (click)="removeExam('survey')"
+            matTooltip="Remove survey" i18n-matTooltip aria-label="Remove survey" i18n-aria-label>
+            <mat-icon>close</mat-icon>
+          </button>
         }
-      </button>
+      </div>
     </div>
   </div>
 </planet-step-list>

@@ -38,7 +38,8 @@ describe('ResourcesViewerComponent CSV preview', () => {
       { get: vi.fn(() => ({ name: 'user' })) } as any,
       couchService as any,
       csvService as any,
-      { url: '/resources' } as any
+      { url: '/resources' } as any,
+      { record: vi.fn().mockReturnValue(of(false)) } as any
     );
   });
 

@@ -131,6 +131,9 @@ DBS=(
   "search_activities"
   "community_meetups"
   "chat_history"
+  "keys"
+  "challenges"
+  "challenge_progress"
 )
 
 insert_dbs $DBS
@@ -145,6 +148,8 @@ upsert_doc resource_activities _design/resource_activities @./design/activities/
 upsert_doc login_activities _design/login_activities @./design/activities/activities-design.json
 upsert_doc courses_progress _design/courses_progress @./design/courses-progress/courses-progress-design.json
 upsert_doc submissions _design/surveyData @./design/submissions/submissions-design.json
+upsert_doc challenges _design/challenges @./design/challenges/challenges-design.json
+upsert_doc challenge_progress _design/challenge_progress @./design/challenge-progress/challenge-progress-design.json
 
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
@@ -157,9 +162,18 @@ upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
 upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
+upsert_doc chat_history _index '{"index":{"fields":[{"user":"asc"}]},"name":"user-index"}' POST
+upsert_doc submissions _index '{"index":{"fields":["user.name","type","status"]},"name":"user-type-status-index"}' POST
+upsert_doc courses_progress _index '{"index":{"fields":["userId","courseId"]},"name":"user-course-index"}' POST
+upsert_doc login_activities _index '{"index":{"fields":["user","loginTime"]},"name":"user-time-index"}' POST
+upsert_doc resource_activities _index '{"index":{"fields":["user","time"]},"name":"user-time-index"}' POST
+upsert_doc ratings _index '{"index":{"fields":["user.name","type"]},"name":"user-type-index"}' POST
+upsert_doc teams _index '{"index":{"fields":["docType","userPlanetCode","userId"]},"name":"membership-index"}' POST
 
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
+# Provider keys are for server admins only: not in security-update.json, which makes managers database admins
+upsert_doc keys _security '{"admins":{"names":[],"roles":[]},"members":{"names":[],"roles":["_admin"]}}'
 set_couch_per_user
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"2400"'

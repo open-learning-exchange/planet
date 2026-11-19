@@ -8,11 +8,12 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { formatDate, styleVariables } from '@shared/utils';
 import { loadChart, RegisterableKey } from './chart.utils';
 
-export type PlanetChartType = 'bar' | 'doughnut';
+export type PlanetChartType = 'bar' | 'doughnut' | 'line';
 
 const registerablesByType: Record<PlanetChartType, RegisterableKey[]> = {
   bar: [ 'BarController', 'BarElement', 'CategoryScale', 'LinearScale' ],
-  doughnut: [ 'DoughnutController', 'ArcElement' ]
+  doughnut: [ 'DoughnutController', 'ArcElement' ],
+  line: [ 'LineController', 'LineElement', 'PointElement', 'CategoryScale', 'LinearScale' ]
 };
 
 @Component({
@@ -24,8 +25,9 @@ const registerablesByType: Record<PlanetChartType, RegisterableKey[]> = {
 export class PlanetChartComponent implements OnChanges, OnDestroy {
 
   @Input() chartId: string;
+  @Input() ariaLabel: string;
   @Input() type: PlanetChartType = 'bar';
-  @Input() labels: string[] = [];
+  @Input() labels: (string | string[])[] = [];
   @Input() datasets: ChartDataset[] = [];
   @Input() options: ChartOptions = {};
   @ViewChild('canvas') set canvas(canvas: ElementRef<HTMLCanvasElement> | undefined) {
@@ -81,7 +83,8 @@ export class PlanetChartComponent implements OnChanges, OnDestroy {
       this.destroyChart();
       return;
     }
-    const { Chart: ChartJs } = await loadChart([ 'Legend', 'Tooltip', ...registerablesByType[this.type] ]);
+    const types = new Set([ this.type, ...this.datasets.map(dataset => dataset.type as PlanetChartType).filter(type => type) ]);
+    const { Chart: ChartJs } = await loadChart([ 'Legend', 'Tooltip', ...[ ...types ].flatMap(type => registerablesByType[type]) ]);
     // The canvas can be replaced while Chart.js loads, and the render for the new one draws it
     if (canvas !== this.canvasElement) {
       return;

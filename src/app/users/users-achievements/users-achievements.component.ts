@@ -309,12 +309,9 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
       this.certifications = [];
       return;
     }
-    this.certifications = certifications.filter(certification => {
-      const certificateCourses = courses
-        .filter(course => certification.courseIds.indexOf(course._id) > -1)
-        .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
-      return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, user));
-    });
+    this.certifications = certifications.filter(
+      certification => this.certificationsService.certifiedUsers(certification, courses, progress, [ user ]).length > 0
+    );
   }
 
   copyLink() {

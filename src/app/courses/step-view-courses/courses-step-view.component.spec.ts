@@ -48,69 +48,36 @@ describe('CoursesStepViewComponent', () => {
   });
 
   describe('exam results', () => {
-    const result = (grade: number, parentId = 'e1@c1') => ({
-      submission: { parentId, answers: [] },
-      attempts: 1,
-      bestAttempt: { grade, status: 'complete' }
-    });
+    const result = (passed: boolean, parentId = 'e1@c1') => ({ submission: { parentId, answers: [] }, attempts: 1, passed });
 
     beforeEach(() => {
       component.stepNum = 1;
       component.courseId = 'c1';
-      component.stepDetail = { exam: { _id: 'e1', totalMarks: 10, passingPercentage: 80 } };
+      component.stepDetail = { exam: { _id: 'e1' } };
       component.getSubmission();
     });
 
-    it('writes a pass once the best completed attempt meets the threshold', () => {
+    it('writes a pass once an attempt passes', () => {
       component.progress = { passed: false };
-      submissionsServiceMock.submissionUpdated$.next(result(7));
+      submissionsServiceMock.submissionUpdated$.next(result(false));
       expect(component.examPassed).toBe(false);
       expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
 
-      submissionsServiceMock.submissionUpdated$.next(result(8));
+      submissionsServiceMock.submissionUpdated$.next(result(true));
       expect(component.examPassed).toBe(true);
       expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: true });
     });
 
-    it('passes at exactly the pass mark', () => {
-      component.stepDetail.exam = { _id: 'e1', totalMarks: 50, passingPercentage: 58 };
-      component.progress = { passed: false };
-      submissionsServiceMock.submissionUpdated$.next(result(29));
-      expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: true });
-    });
-
-    it('keeps a stored pass without writing when no visible attempt passes', () => {
+    it('keeps a stored pass without writing when no attempt passes', () => {
       component.progress = { passed: true };
-      submissionsServiceMock.submissionUpdated$.next(result(0));
+      submissionsServiceMock.submissionUpdated$.next(result(false));
       expect(component.examPassed).toBe(true);
       expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
-    });
-
-    it.each([ undefined, { grade: 0 }, { grade: 10, status: 'pending' }, { grade: 10, status: 'ungraded' } ])(
-      'does not pass a zero-threshold exam without a completed attempt (%j)', (bestAttempt) => {
-        component.stepDetail.exam.passingPercentage = 0;
-        component.progress = { passed: false };
-
-        submissionsServiceMock.submissionUpdated$.next({ ...result(0), attempts: 0, bestAttempt });
-
-        expect(component.examPassed).toBe(false);
-        expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();
-      }
-    );
-
-    it('passes a zero-threshold exam after a completed attempt graded zero', () => {
-      component.stepDetail.exam.passingPercentage = 0;
-      component.progress = { passed: false };
-
-      submissionsServiceMock.submissionUpdated$.next(result(0));
-
-      expect(component.examPassed).toBe(true);
-      expect(coursesServiceMock.updateProgress).toHaveBeenCalledWith({ courseId: 'c1', stepNum: 1, passed: true });
     });
 
     it('ignores a late result that belongs to another exam', () => {
       component.progress = { passed: false };
-      submissionsServiceMock.submissionUpdated$.next(result(10, 'e0@c1'));
+      submissionsServiceMock.submissionUpdated$.next(result(true, 'e0@c1'));
       expect(component.examPassed).toBe(false);
       expect(component.attempts).toBe(0);
       expect(coursesServiceMock.updateProgress).not.toHaveBeenCalled();

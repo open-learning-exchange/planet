@@ -17,7 +17,7 @@ import { StateService } from '@shared/state.service';
 import { AiChatService } from '@shared/ai/ai-chat.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { coursesStepPrompt } from '@shared/ai/ai-prompts.constants';
-import { ChallengesService } from '@shared/challenges/challenges.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 
@@ -78,7 +78,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
-  isOpenai = false;
+  hasAIProvider = false;
   isLoading = true;
   readonly isMobile = this.deviceInfoService.isMobile;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
@@ -94,13 +94,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
-    private challengesService: ChallengesService,
+    private challengesProgressService: ChallengesProgressService,
   ) {}
 
   get hasActionButtons(): boolean {
     const hasExam = !!this.stepDetail?.exam?.questions.length;
     const hasSurvey = !!this.stepDetail?.survey?.questions.length;
-    return (this.isOpenai && !!this.stepDetail?.description) ||
+    return (this.hasAIProvider && !!this.stepDetail?.description) ||
       this.attempts > 0 ||
       ((hasExam || hasSurvey) && this.isUserEnrolled) ||
       (this.canManage && (hasExam || hasSurvey)) ||
@@ -134,13 +134,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.name === 'openai');
+      this.hasAIProvider = providers.length > 0;
     });
   }
 
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+      .subscribe(({ submission, attempts, passed = false }) => {
         // A slow lookup for the previous step's exam can land after Next has moved on
         if (submission.parentId !== `${this.stepDetail.exam?._id}@${this.courseId}`) {
           return;
@@ -148,14 +148,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
         this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         this.attempts = attempts;
-        const totalMarks = this.stepDetail.exam.totalMarks || 0;
-        const passingPercentage = this.stepDetail.exam.passingPercentage ?? 100;
-        // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
-        const passedNow = bestAttempt.status === 'complete' && totalMarks > 0 &&
-          bestAttempt.grade * 100 >= passingPercentage * totalMarks;
-        // A stored pass stands even when no visible attempt passes (exam edited since), and progress never un-passes
-        this.examPassed = !!this.progress.passed || passedNow;
-        if (!this.parent && passedNow && !this.progress.passed) {
+        // A stored pass stands even when no attempt here passes (another app saved it), and progress never un-passes
+        this.examPassed = !!this.progress.passed || passed;
+        if (!this.parent && passed && !this.progress.passed) {
           this.coursesService.updateProgress({ courseId: this.courseId, stepNum: this.stepNum, passed: true });
         }
       });
@@ -233,6 +228,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resetCourseStep();
     this.countActivity = true;
     this.router.navigate([ '../' + targetStep ], { relativeTo: this.route });
+    this.challengesProgressService.record('course_step').subscribe();
   }
 
   resetCourseStep() {
@@ -279,8 +275,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId))
-      .subscribe();
+    this.challengesProgressService.recordThenAnnounce(this.courseId, 'course_step', 'course_complete').subscribe();
   }
 
   setResourceUrl(resourceUrl: string) {

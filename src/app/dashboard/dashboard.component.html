@@ -13,7 +13,7 @@
     </a>
     <div class="dashboard-name">
       <a [routerLink]="['/users/profile', user.name]" class="profile-link">
-        <h1 class="mat-headline-6">{{displayName | truncateText:(isMobile() ? 20 : 40)}} @if (!isLoading) {
+        <h1 class="mat-headline-6">{{displayName | truncateText:(isMobile() ? 20 : 40)}} @if (visits !== undefined) {
           <span> ({{visits | number}})</span>
         }</h1>
       </a>
@@ -66,7 +66,7 @@
   [link]="'myLibrary'"
   [emptyLink]="'/resources'"
   [shelfName]="'resourceIds'"
-  [isLoading]="isLoading">
+  [isLoading]="loading.resources">
 </planet-dashboard-tile>
 <planet-dashboard-tile
   [cardTitle]="cardTitles.myCourses"
@@ -76,7 +76,7 @@
   [link]="'myCourses'"
   [emptyLink]="'/courses'"
   [shelfName]="'courseIds'"
-  [isLoading]="isLoading">
+  [isLoading]="loading.courses">
 </planet-dashboard-tile>
 <planet-dashboard-tile
   [cardTitle]="cardTitles.myTeams"
@@ -86,7 +86,7 @@
   [link]="'myTeams'"
   [emptyLink]="'/teams'"
   [shelfName]="'myTeamIds'"
-  [isLoading]="isLoading"
+  [isLoading]="loading.myTeams"
   (teamRemoved)="teamRemoved($event)">
 </planet-dashboard-tile>
 <planet-dashboard-tile

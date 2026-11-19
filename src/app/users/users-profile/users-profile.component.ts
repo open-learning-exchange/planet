@@ -22,6 +22,7 @@ import { LanguageLabelComponent } from '@shared/language/language-label.componen
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { AvatarComponent } from '@shared/ui/avatar.component';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { getGenderIcon } from '@shared/demographics/gender.constants';
 
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { educationLevel } from '../users.constants';
@@ -76,6 +77,9 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
+  get profileGenderIcon() {
+    return getGenderIcon(this.userDetail?.gender);
+  }
   @Input() userName: string;
 
   constructor(

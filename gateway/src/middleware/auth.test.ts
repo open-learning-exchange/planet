@@ -5,6 +5,7 @@ vi.mock('../config/couch.config', () => ({ 'couchBaseUrl': 'http://couchdb:5984'
 import {
   authenticateUpgrade,
   authSessionCookie,
+  requireManager,
   requireSession,
   requireSessionExcept
 } from './auth';
@@ -130,6 +131,19 @@ describe('gateway authentication', () => {
       'signal': expect.any(AbortSignal)
     });
     expect(next).toHaveBeenCalled();
+  });
+
+  it('lets only managers and server admins past the manager check', () => {
+    const allowed = (roles: string[]) => {
+      const res = mockResponse();
+      res.locals.session = { 'name': 'amara', roles };
+      const next = vi.fn();
+      requireManager({} as any, res, next);
+      return next.mock.calls.length === 1 && res.status.mock.calls.length === 0;
+    };
+    expect(allowed([ 'learner' ])).toBe(false);
+    expect(allowed([ 'manager' ])).toBe(true);
+    expect(allowed([ '_admin' ])).toBe(true);
   });
 
   it('returns 503 when CouchDB session validation is unavailable', async () => {

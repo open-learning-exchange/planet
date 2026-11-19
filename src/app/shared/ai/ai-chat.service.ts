@@ -1,27 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { findDocuments, inSelector } from '@shared/database/mango-queries';
-import { CouchService } from '@shared/database/couchdb.service';
-
 import { environment } from '../../../environments/environment';
-import { AIServiceStatus, AIProvider, ProviderName } from '../../chat/chat.model';
+import { AIServiceStatus, AIProvider, Conversation, ConversationChange, ProviderName } from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
 }) export class AiChatService {
-  readonly dbName = 'chat_history';
-
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
+  private conversationsUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat/conversations`;
   private socket: WebSocket;
 
   private chatStreamSubject: Subject<string> = new Subject<string>();
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
-  private toggleAIService = new Subject<ProviderName>();
+  private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
@@ -34,8 +30,7 @@ import { AIServiceStatus, AIProvider, ProviderName } from '../../chat/chat.model
   currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
 
   constructor(
-    private httpClient: HttpClient,
-    private couchService: CouchService
+    private httpClient: HttpClient
   ) {
     this.fetchAIProviders();
   }
@@ -110,8 +105,16 @@ import { AIServiceStatus, AIProvider, ProviderName } from '../../chat/chat.model
     }
   }
 
-  findConversations(ids, user?, opts?) {
-    return this.couchService.findAll(this.dbName, findDocuments({ _id: inSelector(ids), user: inSelector(user) }), opts);
+  listConversations(): Observable<Conversation[]> {
+    return this.httpClient.get<Conversation[]>(this.conversationsUrl, { withCredentials: true });
+  }
+
+  getConversation(id: string): Observable<Conversation> {
+    return this.httpClient.get<Conversation>(`${this.conversationsUrl}/${id}`, { withCredentials: true });
+  }
+
+  updateConversation(id: string, change: ConversationChange): Observable<Conversation> {
+    return this.httpClient.patch<Conversation>(`${this.conversationsUrl}/${id}`, change, { withCredentials: true });
   }
 
   sendNewChatAddedSignal() {
