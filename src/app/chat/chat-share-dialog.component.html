@@ -1,66 +1,53 @@
 <mat-dialog-content>
-  <mat-accordion [multi]="false">
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title i18n="@@share-with-community-panel-title">Share with Community</mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <mat-checkbox [checked]="showForm" (change)="showForm = !showForm">
-          <i i18n>add note</i>
-        </mat-checkbox>
-        <form [formGroup]="communityForm" (ngSubmit)="shareWithCommunity()">
-          @if (showForm) {
-            <mat-form-field class="full-width">
-              <mat-label i18n>Optional message</mat-label>
-              <textarea
-                matInput
-                formControlName="message"
-              ></textarea>
-            </mat-form-field>
-          }
+  <mat-form-field class="full-width">
+    <mat-label i18n>Share with</mat-label>
+    <mat-select [(ngModel)]="selectedLink" (selectionChange)="teamForm.reset()">
+      @for (link of links; track link) {
+        <mat-option [value]="link">{{link.title}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  @switch (selectedLink?.db) {
+    @case ('community') {
+      <mat-checkbox [checked]="showForm" (change)="showForm = !showForm">
+        <i i18n>add note</i>
+      </mat-checkbox>
+      <form [formGroup]="communityForm" (ngSubmit)="shareWithCommunity()">
+        @if (showForm) {
+          <mat-form-field class="full-width">
+            <mat-label i18n>Optional message</mat-label>
+            <textarea
+              matInput
+              formControlName="message"
+            ></textarea>
+          </mat-form-field>
+        }
+        <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
+          Share
+        </button>
+      </form>
+    }
+    @case ('teams') {
+      <planet-teams [hidden]="teamForm.controls.linkId.value" [mode]="selectedLink?.selector?.type" [isDialog]="true" [excludeIds]="excludeIds" (rowClick)="teamSelect($event)"></planet-teams>
+      @if (teamForm.controls.linkId.value) {
+        <form [formGroup]="teamForm" (ngSubmit)="shareWithTeam()">
+          <mat-form-field class="full-width">
+            <mat-label i18n>Message</mat-label>
+            <textarea matInput formControlName="message"></textarea>
+            <mat-error><planet-form-error-messages [control]="teamForm.controls.message"></planet-form-error-messages></mat-error>
+          </mat-form-field>
           <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
             Share
           </button>
         </form>
-      </ng-template>
-    </mat-expansion-panel>
-    <br>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title i18n="@@share-with-team-enterprise-panel-title">Share with Team/Enterprise</mat-panel-title>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <mat-form-field class="full-width">
-            <mat-label i18n>Team or Enterprise</mat-label>
-            <mat-select [(ngModel)]="selectedLink">
-              @for (link of links; track link) {
-                <mat-option [value]="link">{{link.title}}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          @if (selectedLink?.db === 'teams') {
-            <form [formGroup]="teamForm" (ngSubmit)="shareWithTeam()">
-              <mat-horizontal-stepper #linkStepper linear (selectionChange)="linkStepperChange($event)">
-                <mat-step i18n-label completed="false" label="Select">
-                  <planet-teams [mode]="selectedLink?.selector?.type" [isDialog]="true" [excludeIds]="excludeIds" (rowClick)="teamSelect($event)"></planet-teams>
-                </mat-step>
-                <mat-step i18n-label label="Message" [stepControl]="teamForm">
-                  <mat-form-field class="full-width">
-                    <mat-label i18n>Message</mat-label>
-                    <textarea matInput formControlName="message"></textarea>
-                    <mat-error><planet-form-error-messages [control]="teamForm.controls.message"></planet-form-error-messages></mat-error>
-                  </mat-form-field>
-                  <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
-                Share
-              </button>
-                </mat-step>
-              </mat-horizontal-stepper>
-            </form>
-          }
-        </ng-template>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-raised-button mat-dialog-close i18n>Close</button>
-  </mat-dialog-actions>
+      }
+    }
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  @if (selectedLink?.db === 'teams' && teamForm.controls.linkId.value) {
+    <button type="button" mat-raised-button (click)="teamForm.reset()" i18n>Back</button>
+    <span class="toolbar-fill"></span>
+  }
+  <button mat-raised-button mat-dialog-close i18n>Close</button>
+</mat-dialog-actions>

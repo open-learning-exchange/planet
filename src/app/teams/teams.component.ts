@@ -11,7 +11,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgClass, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
@@ -55,7 +55,6 @@ import { enterpriseJoinAgreement } from './teams.utils';
     FormsModule,
     MatButton,
     MatTooltip,
-    NgClass,
     MatMiniFabButton,
     MatTable,
     MatSort,
@@ -114,7 +113,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   readonly isMobile = this.deviceInfoService.isMobile;
   userNotInShelf = false;
   selection = new SelectionModel(true, []);
-  selectedIds: string[] = [];
+  selectedId = '';
   get tableData() {
     return this.teams;
   }
@@ -251,13 +250,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamClick(teamId, teamType) {
     if (this.isDialog) {
-      // Toggle selection
-      const index = this.selectedIds.indexOf(teamId);
-      if (index === -1) {
-        this.selectedIds.push(teamId);
-      } else {
-        this.selectedIds.splice(index, 1);
-      }
+      this.selectedId = teamId;
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }

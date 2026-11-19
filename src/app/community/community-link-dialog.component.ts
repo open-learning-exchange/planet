@@ -1,8 +1,6 @@
-import { Component, ViewChild, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { MatStepper, MatStep } from '@angular/material/stepper';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { finalize } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
@@ -45,6 +43,10 @@ interface TeamSelectionEvent {
 @Component({
   templateUrl: './community-link-dialog.component.html',
   styles: [`
+    mat-dialog-content {
+      display: flex;
+      flex-direction: column;
+    }
     .platform-icon {
       vertical-align: middle;
       margin-right: 5px;
@@ -60,8 +62,6 @@ interface TeamSelectionEvent {
     FormsModule,
     MatOption,
     ReactiveFormsModule,
-    MatStepper,
-    MatStep,
     TeamsComponent,
     MatInput,
     MatError,
@@ -74,7 +74,6 @@ interface TeamSelectionEvent {
 })
 export class CommunityLinkDialogComponent {
 
-  @ViewChild('linkStepper') linkStepper: MatStepper;
   selectedLink?: CommunityLinkSelection;
   links: CommunityLinkSelection[] = [
     { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
@@ -115,30 +114,11 @@ export class CommunityLinkDialogComponent {
     });
   }
 
-  get linkTitleForm(): FormControl<string> {
-    return this.linkForm.controls.title;
-  }
-
   teamSelect({ mode, teamId, teamType }: TeamSelectionEvent) {
     this.linkForm.controls.route.setValue(this.teamsService.teamLinkRoute(mode, teamId));
     this.linkForm.controls.linkId.setValue(teamId);
     this.linkForm.controls.teamType.setValue(teamType);
     this.linkForm.controls.icon.setValue(mode === 'team' ? 'groups' : 'work');
-    this.linkStepper.selected.completed = true;
-    this.linkStepper.next();
-  }
-
-  linkStepperChange({ selectedIndex }: StepperSelectionEvent) {
-    if (selectedIndex === 0 && this.linkForm.pristine !== true) {
-      this.linkForm.reset({
-        title: '',
-        route: '',
-        linkId: '',
-        teamType: '',
-        icon: '',
-        platform: ''
-      });
-    }
   }
 
   linkSubmit() {

@@ -2,7 +2,7 @@
 <mat-dialog-content>
   <mat-form-field class="full-width">
     <mat-label i18n>Type of Link</mat-label>
-    <mat-select [(ngModel)]="selectedLink">
+    <mat-select [(ngModel)]="selectedLink" (selectionChange)="linkForm.reset()">
       @for (link of links; track link) {
         <mat-option [value]="link">{{link.title}}</mat-option>
       }
@@ -10,20 +10,16 @@
   </mat-form-field>
 
   @if (selectedLink?.db === 'teams') {
-    <form [formGroup]="linkForm">
-      <mat-horizontal-stepper #linkStepper linear (selectionChange)="linkStepperChange($event)">
-        <mat-step i18n-label completed="false" label="Select">
-          <planet-teams [mode]="selectedLink?.selector?.type" [excludeIds]="data.excludeIds" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
-        </mat-step>
-        <mat-step i18n-label label="Title" [stepControl]="linkTitleForm">
-          <mat-form-field class="full-width">
-            <mat-label i18n>Title</mat-label>
-            <input matInput formControlName="title" required>
-            <mat-error><planet-form-error-messages [control]="linkForm.controls.title"></planet-form-error-messages></mat-error>
-          </mat-form-field>
-        </mat-step>
-      </mat-horizontal-stepper>
-    </form>
+    <planet-teams [hidden]="linkForm.controls.linkId.value" [mode]="selectedLink?.selector?.type" [excludeIds]="data.excludeIds" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
+    @if (linkForm.controls.linkId.value) {
+      <form [formGroup]="linkForm">
+        <mat-form-field class="full-width">
+          <mat-label i18n>Title</mat-label>
+          <input matInput formControlName="title" required>
+          <mat-error><planet-form-error-messages [control]="linkForm.controls.title"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </form>
+    }
   }
 
   @if (selectedLink?.db === 'social') {
@@ -74,6 +70,10 @@
   }
 </mat-dialog-content>
 <mat-dialog-actions>
+  @if (selectedLink?.db === 'teams' && linkForm.controls.linkId.value) {
+    <button type="button" mat-raised-button (click)="linkForm.reset()" i18n>Back</button>
+    <span class="toolbar-fill"></span>
+  }
   <button type="button" mat-raised-button (click)="cancelForm()" i18n>Cancel</button>
   <button mat-raised-button color="primary" type="button" (click)="linkSubmit()" [disabled]="!linkForm.valid" i18n>OK</button>
 </mat-dialog-actions>
