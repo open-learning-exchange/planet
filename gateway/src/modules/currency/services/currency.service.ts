@@ -123,7 +123,7 @@ const validateTransaction = (data: any): void => {
  */
 export const submitTransaction = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { teamId, teamType, teamPlanetCode, type, description, amount, date, receiptImages, status } = req.body;
+    const { teamId, teamType, teamPlanetCode, type, description, amount, date, status, _attachments, _id, _rev } = req.body;
 
     validateTransaction(req.body);
 
@@ -136,27 +136,15 @@ export const submitTransaction = async (req: Request, res: Response): Promise<vo
       'amount': Number(amount),
       'date': Number(date),
       description,
+      _attachments,
+      _id,
+      _rev,
       ...(status ? { status } : {}),
-      ...(receiptImages ? { receiptImages } : {}),
       // _attachments will be set by the caller if needed
     };
 
-    // Check if this is an update (has _id)
-    if (req.body._id) {
-      transactionDoc._id = req.body._id;
-
-      // Fetch existing document to get _rev
-      const existingDoc = await teamsDB.get(req.body._id);
-      transactionDoc._rev = existingDoc._rev;
-
-      // Preserve attachments if updating
-      if ((existingDoc as any)._attachments) {
-        transactionDoc._attachments = (existingDoc as any)._attachments;
-      }
-    }
-
     // Save document to CouchDB
-    const response = await (teamsDB as any).post(transactionDoc);
+    const response = await teamsDB.insert(transactionDoc);
 
     res.status(201).json({
       'status': 'Success',

@@ -271,7 +271,7 @@ export class TeamsViewFinancesComponent implements OnChanges, OnDestroy {
       ) :
       of({ doc: transaction, skipped: [] });
     return transaction$.pipe(
-      switchMap(({ doc, skipped }) => this.teamsService.updateTeam(doc).pipe(map(() => ({ skippedAttachments: skipped })))),
+      switchMap(({ doc, skipped }) => this.teamsService.updateTransaction(doc).pipe(map(() => ({ skippedAttachments: skipped })))),
       tap(() => {
         this.financesChanged.emit();
         this.dialogsLoadingService.stop();

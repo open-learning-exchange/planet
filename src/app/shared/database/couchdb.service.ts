@@ -18,6 +18,7 @@ export class CouchService {
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
   private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
+  private gatewayUrl = environment.chatAddress;
   private reqNum = 0;
   datePlaceholder = new DatePlaceholder();
 
@@ -59,6 +60,10 @@ export class CouchService {
 
   post(db: string, data: any, opts?: any): Observable<any> {
     return this.couchDBReq('post', db, this.setOpts(opts), JSON.stringify(data) || '');
+  }
+
+  gatewayPost(url: string, data: any) {
+    return this.formatHttpReq(this.http.post(`${this.gatewayUrl}${url}`, data));
   }
 
   get(db: string, opts?: any): Observable<any> {
