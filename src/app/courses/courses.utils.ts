@@ -2,6 +2,16 @@ export const stepHasExam = (step: any) => !!step?.exam?.questions?.length;
 
 const requiresPass = (step: any) => stepHasExam(step) && !!step.passingRequired;
 
+// Judged against the test as the learner took it, so a later edit never takes a pass away
+export const attemptPasses = ({ status, grade, parent: { questions, passingPercentage } }: any) => {
+  // Planet's copy has no totalMarks, so the marks are summed. myPlanet sends marks and the pass mark as '',
+  // and scores those as 1 per question and a pass mark of 100.
+  const totalMarks = questions.reduce((total: number, question: any) => total + (question.marks === '' ? 1 : Number(question.marks)), 0);
+  const passMark = passingPercentage === '' ? 100 : passingPercentage ?? 100;
+  // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
+  return status === 'complete' && totalMarks > 0 && grade * 100 >= passMark * totalMarks;
+};
+
 const stepPassed = (progress: any[], stepNum: number) => progress.some((p: any) => p.stepNum === stepNum && p.passed);
 
 // Index of the first step whose exam must be passed and isn't (-1 when none); every later step is locked behind it

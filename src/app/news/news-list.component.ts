@@ -23,6 +23,7 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { AuthGuard } from '@shared/auth/auth.guard';
@@ -149,7 +150,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private dialogGuard: DialogGuardService,
     private router: Router,
     private route: ActivatedRoute,
-    private authGuard: AuthGuard
+    private authGuard: AuthGuard,
+    private challengesProgressService: ChallengesProgressService
   ) {}
 
   ngOnInit() {
@@ -429,6 +431,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         const link = this.useReplyRoutes ? `/voices/${repliedTo._id}` : this.router.url.split(/[;?#]/)[0];
         const linkParams = this.useReplyRoutes ? undefined : { voice: repliedTo._id };
         this.notificationsService.sendReplyNotification(repliedTo, link, linkParams).subscribe();
+      }
+      if (!oldNews._id && this.viewableBy === 'community') {
+        this.challengesProgressService.record('voice_reply').subscribe();
       }
     });
   }

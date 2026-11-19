@@ -17,6 +17,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
 import { RatingService } from '@shared/ratings/rating.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 
 import { ResourcesViewComponent } from './resources-view.component';
 import { ResourcesService } from '../resources.service';
@@ -90,6 +91,7 @@ describe('ResourcesViewComponent', () => {
         { provide: DeviceInfoService, useValue: { deviceType, isMobile: computed(() => isMobileOrSmaller(deviceType())) } },
         { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: CouchService, useValue: couchServiceMock },
+        { provide: ChallengesProgressService, useValue: { record: vi.fn(() => of(false)) } },
         { provide: Router, useValue: { navigate: vi.fn() } },
         {
           provide: ActivatedRoute,
