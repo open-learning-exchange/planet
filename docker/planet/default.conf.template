@@ -150,6 +150,8 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
     client_max_body_size 1024M;
+    # Above the gateway's 120 s AI provider deadline
+    proxy_read_timeout 150s;
   }
 
   location /api/ {
