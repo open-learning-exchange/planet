@@ -11,7 +11,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of, throwError } from 'rxjs';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgClass, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
@@ -55,7 +55,6 @@ import { enterpriseJoinAgreement } from './teams.utils';
     FormsModule,
     MatButton,
     MatTooltip,
-    NgClass,
     MatMiniFabButton,
     MatTable,
     MatSort,
