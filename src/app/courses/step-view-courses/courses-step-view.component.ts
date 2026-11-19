@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { EMPTY, Subject, combineLatest } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
@@ -17,7 +17,6 @@ import { StateService } from '@shared/state.service';
 import { AiChatService } from '@shared/ai/ai-chat.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { coursesStepPrompt } from '@shared/ai/ai-prompts.constants';
-import { ChallengesService } from '@shared/challenges/challenges.service';
 import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
@@ -93,7 +92,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
-    private challengesService: ChallengesService,
     private challengesProgressService: ChallengesProgressService,
   ) {}
 
@@ -230,6 +228,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resetCourseStep();
     this.countActivity = true;
     this.router.navigate([ '../' + targetStep ], { relativeTo: this.route });
+    this.challengesProgressService.record('course_step').subscribe();
   }
 
   resetCourseStep() {
@@ -276,13 +275,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    this.challengesProgressService.record('course_complete').pipe(
-      switchMap(completed => completed ? EMPTY : this.openCourseChallenge())
-    ).subscribe();
-  }
-
-  private openCourseChallenge() {
-    return this.challengesService.openChallengeDialogOnce(this.dialog, this.challengesService.getActiveChallengeForCourse(this.courseId));
+    this.challengesProgressService.recordThenAnnounce(this.courseId, 'course_step', 'course_complete').subscribe();
   }
 
   setResourceUrl(resourceUrl: string) {

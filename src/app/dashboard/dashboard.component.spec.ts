@@ -231,10 +231,12 @@ describe('DashboardComponent', () => {
     expect(component.surveysCount).toBe(2);
     expect(component.examsCount).toBe(2);
     expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
-      selector: { type: 'survey', status: 'pending', 'user.name': 'johndoe' }
+      selector: { type: 'survey', status: 'pending', 'user.name': 'johndoe' },
+      fields: [ 'parentId' ]
     }));
     expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
-      selector: { type: 'exam', status: 'requires grading', 'user.name': { $gt: null } }
+      selector: { type: 'exam', status: 'requires grading', 'user.name': { $gt: null } },
+      fields: [ '_id' ]
     }));
   });
 

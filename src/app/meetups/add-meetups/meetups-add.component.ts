@@ -355,6 +355,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
         dayFormArray.removeAt(index);
       }
     }
+    // The day checkboxes aren't form controls, so nothing else marks the form dirty for Save.
+    dayFormArray.markAsDirty();
     dayFormArray.updateValueAndValidity();
   }
 

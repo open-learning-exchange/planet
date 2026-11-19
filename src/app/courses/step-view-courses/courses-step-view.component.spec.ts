@@ -29,7 +29,7 @@ describe('CoursesStepViewComponent', () => {
       {} as any, coursesServiceMock, {} as any,
       routerMock, { snapshot: { data: {} } } as any, {} as any,
       submissionsServiceMock, { get: vi.fn(), shelf: { courseIds: [] } } as any,
-      { isMobile: signal(false) } as any, {} as any, {} as any
+      { isMobile: signal(false) } as any, {} as any
     );
     component.isLoading = false;
   });
@@ -125,7 +125,7 @@ describe('CoursesStepViewComponent', () => {
       { listAIProviders: () => of([]) } as any, coursesServiceMock, {} as any, routerMock,
       { snapshot: { data: { parent } }, paramMap: of(new Map([ [ 'stepNum', '1' ], [ 'id', 'c1' ] ])) } as any,
       { getCouchState: () => of([]) } as any, submissionsServiceMock,
-      { get: vi.fn(), shelf: { courseIds: [] } } as any, { isMobile: signal(false) } as any, {} as any, {} as any
+      { get: vi.fn(), shelf: { courseIds: [] } } as any, { isMobile: signal(false) } as any, {} as any
     );
 
     component.ngOnInit();

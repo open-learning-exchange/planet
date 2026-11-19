@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
+import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetStackedBarComponent } from '@shared/charts/planet-stacked-bar.component';
 import { getGenderLabel } from '@shared/demographics/gender.constants';
@@ -51,7 +52,8 @@ export class PlanetRatingComponent implements OnChanges {
     private planetMessage: PlanetMessageService,
     private userService: UserService,
     private dialogsForm: DialogsFormService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private challengesProgressService: ChallengesProgressService
   ) {
     this.rateForm = this.fb.group({ rate: 0 });
     this.popupForm = this.fb.group({ rate: 0, comment: '' });
@@ -140,7 +142,10 @@ export class PlanetRatingComponent implements OnChanges {
       comment: 'comment' in value ? value.comment : this.rating.userRating.comment || '',
       existingRating: this.rating.userRating,
       ratingInfo: this.rating
-    }).pipe(tap(ratingInfo => this.applyRatingInfo(ratingInfo)));
+    }).pipe(tap(ratingInfo => {
+      this.applyRatingInfo(ratingInfo);
+      this.challengesProgressService.record('rating').subscribe();
+    }));
   }
 
   openDialog() {

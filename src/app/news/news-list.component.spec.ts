@@ -30,6 +30,7 @@ const createComponent = (items: any[] = []) => {
   };
   component.newsService = { postSharedWithCommunity: () => true, requestNews: vi.fn() };
   component.dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
+  component.challengesProgressService = { record: vi.fn().mockReturnValue(of(false)) };
   return component;
 };
 
@@ -426,13 +427,17 @@ describe('NewsListComponent reply notifications', () => {
 
     expect(dialogRef.close).toHaveBeenCalledOnce();
     expect(sendReplyNotification).toHaveBeenCalledWith(expect.objectContaining({ _id: 'news-1' }), '/voices/news-1', undefined);
+    expect(component.challengesProgressService.record).toHaveBeenCalledWith('voice_reply');
   });
 
   it('links team reply notifications to the replied-to message without the page tab parameters', () => {
     const { component, posted$, dialogRef, sendReplyNotification } = setup('/teams/view/team-1;activeTab=taskTab', false);
+    component.viewableBy = 'teams';
 
     component.postNews({ replyTo: 'news-1' }, { message: 'Thanks' }, dialogRef);
     posted$.next();
+
+    expect(component.challengesProgressService.record).not.toHaveBeenCalled();
 
     expect(sendReplyNotification).toHaveBeenCalledWith(
       expect.objectContaining({ _id: 'news-1' }), '/teams/view/team-1', { voice: 'news-1' }
@@ -446,5 +451,6 @@ describe('NewsListComponent reply notifications', () => {
     posted$.next();
 
     expect(sendReplyNotification).not.toHaveBeenCalled();
+    expect(component.challengesProgressService.record).not.toHaveBeenCalled();
   });
 });

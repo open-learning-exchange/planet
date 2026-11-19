@@ -20,6 +20,7 @@ import { MarkdownRenderService } from '@shared/markdown/markdown-render.service'
 import { getGenderLabel, parseGender } from '@shared/demographics/gender.constants';
 
 import { CoursesService } from '../courses/courses.service';
+import { attemptPasses } from '../courses/courses.utils';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { environment } from '../../environments/environment';
@@ -105,7 +106,7 @@ export class SubmissionsService {
     const obs = user.name || submissionId ? this.couchService.findAll('submissions', findDocuments(selector)) : of([]);
     obs.subscribe((docs: any[]) => {
       const attempts = docs.filter((submission: any) => submission.status !== 'pending').length;
-      const passed = type === 'exam' && docs.some((submission: any) => this.attemptPasses(submission));
+      const passed = type === 'exam' && docs.some(attemptPasses);
       // Answers saved against an older revision may not line up with the current questions, so that attempt starts over
       this.submission = docs.find(submission => type === 'survey' ||
         (submission.status === status && (submissionId || submission.parent._rev === parent._rev)));
@@ -115,16 +116,6 @@ export class SubmissionsService {
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, passed });
     });
-  }
-
-  // Judged against the test as the learner took it, so a later edit never takes a pass away
-  attemptPasses({ status, grade, parent: { questions, passingPercentage } }: any) {
-    // Planet's copy has no totalMarks, so the marks are summed. myPlanet sends marks and the pass mark as '',
-    // and scores those as 1 per question and a pass mark of 100.
-    const totalMarks = questions.reduce((total: number, question: any) => total + (question.marks === '' ? 1 : Number(question.marks)), 0);
-    const passMark = passingPercentage === '' ? 100 : passingPercentage ?? 100;
-    // Compared without dividing: 29 / 50 * 100 is 57.99999999999999 and would miss a 58% pass mark
-    return status === 'complete' && totalMarks > 0 && grade * 100 >= passMark * totalMarks;
   }
 
   startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {

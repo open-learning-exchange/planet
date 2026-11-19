@@ -13,7 +13,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 
 import { CoursesService } from '../../courses/courses.service';
 import { ChallengesProgressService, UserProgress } from './challenges-progress.service';
-import { ChallengeTask, ChallengesService, PlanetChallenge } from './challenges.service';
+import { ChallengeTask, ChallengesService, PlanetChallenge, REPEATABLE_TASK_TYPES } from './challenges.service';
 
 @Component({
   template: `
@@ -102,6 +102,24 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
     return this.challenge.tasks.reduce((total, task) => total + this.challengesProgressService.maxEarnable(task), 0);
   }
 
+  isRepeatable(task: ChallengeTask) {
+    return REPEATABLE_TASK_TYPES.includes(task.type);
+  }
+
+  rewardLabel(task: ChallengeTask): string {
+    if (this.isRepeatable(task) && (task.countBy === 'day' || task.type === 'login')) {
+      return $localize`$${task.reward}:reward: per day`;
+    }
+    switch (task.type) {
+      case 'voice_post': return $localize`$${task.reward}:reward: per voice`;
+      case 'voice_reply': return $localize`$${task.reward}:reward: per reply`;
+      case 'resource_open': return $localize`$${task.reward}:reward: per resource`;
+      case 'rating': return $localize`$${task.reward}:reward: per rating`;
+      case 'course_step': return $localize`$${task.reward}:reward: per step`;
+      default: return `$${task.reward}`;
+    }
+  }
+
   countDots(task: ChallengeTask) {
     return Array.from({ length: task.maxCount ?? 0 }, (_, index) => index);
   }
@@ -129,8 +147,18 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
     this.dialogRef.close();
   }
 
+  openPage(path: string) {
+    this.router.navigate([ path ]);
+    this.dialogRef.close();
+  }
+
+  openTestStep(task: ChallengeTask) {
+    const { courseId, stepNum } = this.taskStep(task);
+    this.openPage(`/courses/view/${courseId}/step/${stepNum}`);
+  }
+
   doSurvey(task: ChallengeTask) {
-    const step = this.surveyStep(task);
+    const step = this.taskStep(task);
     if (!step) {
       return;
     }
@@ -146,13 +174,13 @@ export class ChallengesAnnouncementDialogComponent implements OnInit, OnDestroy 
     this.dialogRef.close();
   }
 
-  surveyStep(task: ChallengeTask): { courseId: string, stepNum: number } | undefined {
-    const isSurveyStep = (step: any) => step.survey?._id === task.targetId;
-    const hasSurvey = (candidate: any) =>
-      candidate && (!task.courseId || candidate._id === task.courseId) && candidate.steps?.some(isSurveyStep);
+  taskStep(task: ChallengeTask): { courseId: string, stepNum: number } | undefined {
+    const isTaskStep = (step: any) => step[task.type === 'exam_pass' ? 'exam' : 'survey']?._id === task.targetId;
+    const hasTaskStep = (candidate: any) =>
+      candidate && (!task.courseId || candidate._id === task.courseId) && candidate.steps?.some(isTaskStep);
     const { course: openCourse, local } = this.coursesService;
-    const course = local.courses.find(hasSurvey) ?? (hasSurvey(openCourse) ? openCourse : undefined);
-    return course && { courseId: course._id, stepNum: course.steps.findIndex(isSurveyStep) + 1 };
+    const course = local.courses.find(hasTaskStep) ?? (hasTaskStep(openCourse) ? openCourse : undefined);
+    return course && { courseId: course._id, stepNum: course.steps.findIndex(isTaskStep) + 1 };
   }
 
   shareVoice() {

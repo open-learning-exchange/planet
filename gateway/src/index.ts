@@ -8,7 +8,9 @@ import { browserCors } from './middleware/origin';
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
 import { registerCurrencyRoutes } from './modules/currency/register';
+import { registerKeyRoutes } from './modules/keys/register';
 import { getConfiguration } from './services/config.service';
+import { getKeys } from './services/keys.service';
 
 dotenv.config();
 
@@ -39,6 +41,7 @@ registerChatApiRoutes(app);
 registerPublicRoutes(app);
 registerChatApiWebSocket(wss);
 registerCurrencyRoutes(app);
+registerKeyRoutes(app);
 server.on('upgrade', authenticateUpgrade(wss));
 
 app.use((error: any, req: Request, res: Response, next: any) => {
@@ -56,3 +59,4 @@ server.listen(port, () => console.log(`Gateway running on port ${port}`)); // es
 
 // A failed read is logged, and the next request tries again
 getConfiguration().catch(() => undefined);
+getKeys('ai').catch(() => undefined);

@@ -38,7 +38,8 @@ describe('ResourcesViewerComponent CSV preview', () => {
       { get: vi.fn(() => ({ name: 'user' })) } as any,
       couchService as any,
       csvService as any,
-      { url: '/resources' } as any
+      { url: '/resources' } as any,
+      { record: vi.fn().mockReturnValue(of(false)) } as any
     );
   });
 
@@ -123,7 +124,7 @@ describe('ResourcesViewerComponent library pages', () => {
       {} as any,
       { resourcesListener: () => library, requestResourcesUpdate: vi.fn() } as any,
       { snapshot: { data: { parent: false } } } as any,
-      { configuration: {} } as any, {} as any, {} as any, {} as any, {} as any
+      { configuration: {} } as any, {} as any, {} as any, {} as any, {} as any, {} as any
     );
     const setResource = vi.spyOn(component, 'setResource').mockImplementation(() => {});
     component.resourceId = 'on-page-2';

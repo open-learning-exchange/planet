@@ -1,5 +1,6 @@
 import { EMPTY, of, throwError } from 'rxjs';
 
+import { UserService } from '@shared/auth/user.service';
 import { SyncDirective } from './sync.directive';
 
 describe('SyncDirective loading', () => {
@@ -26,7 +27,7 @@ describe('SyncDirective loading', () => {
     dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
     directive = new SyncDirective(
       couchService,
-      { userProperties: [ 'name' ] } as any,
+      new UserService(couchService, {} as any),
       syncService,
       planetMessageService,
       { addAdminLog: vi.fn().mockReturnValue(of({})) } as any,
@@ -43,6 +44,19 @@ describe('SyncDirective loading', () => {
 
     expect(dialogsLoadingService.stop).toHaveBeenCalledTimes(1);
     expect(planetMessageService.showMessage).toHaveBeenCalledWith('offline');
+  });
+
+  it('copies a user to the replica without credentials or attachment stubs', () => {
+    const user = {
+      _id: 'org.couchdb.user:ana', _rev: '3-a', name: 'ana', gender: 'female',
+      derived_key: 'hash', salt: 'salt', iterations: 10, password_scheme: 'pbkdf2', key: 'k', iv: 'v',
+      _attachments: { 'img.png': { stub: true } }
+    };
+    const repUser = { _id: 'ana@local', _rev: '1-b', couchId: user._id, planetCode: 'local', name: 'ana' };
+
+    expect(directive.createReplicatorUserDoc([ user ], [ repUser ])).toEqual([
+      { _id: 'ana@local', _rev: '1-b', couchId: user._id, planetCode: 'local', name: 'ana', gender: 'female' }
+    ]);
   });
 
   it('ends the overlay and reports when sync fails before the password prompt', () => {
