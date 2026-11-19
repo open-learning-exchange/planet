@@ -4,6 +4,7 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { authenticateUpgrade, OpenRoute, requireSessionExcept } from './middleware/auth';
+import { respondWithError } from './middleware/errors';
 import { browserCors } from './middleware/origin';
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
@@ -44,14 +45,7 @@ registerCurrencyRoutes(app);
 registerKeyRoutes(app);
 server.on('upgrade', authenticateUpgrade(wss));
 
-app.use((error: any, req: Request, res: Response, next: any) => {
-  void req;
-  void next;
-  res.status(error?.statusCode || 500).json({
-    'error': error?.name || 'Internal Server Error',
-    'message': error?.message || 'Unexpected error'
-  });
-});
+app.use(respondWithError);
 
 const port = Number(process.env.SERVE_PORT || 5000);
 

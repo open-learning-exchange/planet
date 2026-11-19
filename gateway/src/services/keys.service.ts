@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { keysDB } from '../config/couch.config';
-import { ConfigurationUnavailableError } from './config.service';
+import { HttpError } from '../middleware/errors';
 
 export type KeyService = 'ai' | 'currency';
 type Keys = Record<string, string>;
@@ -20,7 +20,7 @@ const allKeys = async (): Promise<Record<string, Keys>> => {
     return cached;
   } catch (error) {
     console.error(`Error reading the provider keys: ${error}`);
-    throw new ConfigurationUnavailableError('The provider keys could not be read');
+    throw new HttpError(503, 'The provider keys could not be read');
   }
 };
 

@@ -23,8 +23,11 @@ describe('provider clients', () => {
     ]);
   });
 
-  it('refuses a provider without a key, and a name that is not a provider', async () => {
-    await expect(providerClient('openai')).rejects.toThrow('openai is not configured');
-    await expect(providerClient('constructor' as ProviderName)).rejects.toThrow('Unsupported AI provider');
+  it('refuses a name that is not a provider with 400, and a provider without a key or a model with 503', async () => {
+    await expect(providerClient({ 'name': 'constructor' as ProviderName })).rejects.toMatchObject({ 'statusCode': 400 });
+    await expect(providerClient(undefined as any)).rejects.toMatchObject({ 'statusCode': 400 });
+    await expect(providerClient({ 'name': 'openai' })).rejects.toMatchObject({ 'statusCode': 503 });
+    await expect(providerClient({ 'name': 'gemini' })).rejects.toMatchObject({ 'statusCode': 503 });
+    await expect(providerClient({ 'name': 'deepseek' })).resolves.toMatchObject({ 'model': 'deepseek-model' });
   });
 });

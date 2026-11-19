@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { configurationDB } from '../config/couch.config';
+import { HttpError } from '../middleware/errors';
 
 export interface Configuration {
   code: string;
@@ -8,17 +9,10 @@ export interface Configuration {
   assistant: { instructions: string };
 }
 
-export class ConfigurationUnavailableError extends Error {
-  statusCode = 503;
-
-  constructor(message = 'The planet configuration could not be read') {
-    super(message);
-    this.name = 'Service Unavailable';
-  }
-}
-
 let snapshot: Configuration | undefined;
 let reading: Promise<Configuration> | undefined;
+
+const unavailable = () => new HttpError(503, 'The planet configuration could not be read');
 
 const stringOrEmpty = (value: unknown): string => (typeof value === 'string' ? value : '');
 
@@ -48,7 +42,7 @@ const read = async (): Promise<Configuration> => {
     return snapshot;
   } catch (error) {
     console.error(`Error reading the planet configuration: ${error}`);
-    throw new ConfigurationUnavailableError();
+    throw unavailable();
   } finally {
     reading = undefined;
   }
@@ -67,7 +61,7 @@ export const getConfiguration = async (): Promise<Configuration> => {
 export const getCurrentConfiguration = async (): Promise<Configuration> => {
   const doc = await readDocument().catch((error) => {
     console.error(`Error reading the planet configuration: ${error}`);
-    throw new ConfigurationUnavailableError();
+    throw unavailable();
   });
   return toConfiguration(doc || {});
 };
