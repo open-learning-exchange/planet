@@ -1,14 +1,9 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { MatStepper, MatStep } from '@angular/material/stepper';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogClose, MatDialogActions } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import {
-  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
-} from '@angular/material/expansion';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -38,18 +33,14 @@ interface CommunityForm {
 @Component({
   templateUrl: './chat-share-dialog.component.html',
   styles: [`
-    .mat-expansion-panel {
-      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+    mat-dialog-content {
+      display: flex;
+      flex-direction: column;
     }
   `],
   imports: [
     CdkScrollable,
     MatDialogContent,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelContent,
     MatCheckbox,
     FormsModule,
     ReactiveFormsModule,
@@ -60,8 +51,6 @@ interface CommunityForm {
     MatDialogClose,
     MatSelect,
     MatOption,
-    MatStepper,
-    MatStep,
     TeamsComponent,
     MatError,
     FormErrorMessagesComponent,
@@ -78,9 +67,9 @@ export class ChatShareDialogComponent implements OnInit {
   teamForm: FormGroup<TeamForm>;
   communityForm: FormGroup<CommunityForm>;
 
-  @ViewChild('linkStepper') linkStepper: MatStepper;
   selectedLink: { db, title, selector? };
   links: { db, title, selector? }[] = [
+    { db: 'community', title: $localize`Community` },
     { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
     { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } }
   ];
@@ -113,18 +102,6 @@ export class ChatShareDialogComponent implements OnInit {
   teamSelect({ teamId, teamType }: { teamId: string, teamType: string }) {
     this.teamForm.controls.linkId.setValue(teamId);
     this.teamForm.controls.teamType.setValue(teamType);
-    this.linkStepper.selected.completed = true;
-    this.linkStepper.next();
-  }
-
-  linkStepperChange({ selectedIndex }: StepperSelectionEvent) {
-    if (selectedIndex === 0 && this.teamForm.pristine !== true) {
-      this.teamForm.reset({
-        message: '',
-        linkId: '',
-        teamType: ''
-      });
-    }
   }
 
   getTeam(linkId: string) {
