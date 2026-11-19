@@ -124,10 +124,14 @@ export class CouchService {
     );
   }
 
+  findPage(db: string, query: any, opts?: any): Observable<{ docs: any[], bookmark: string }> {
+    return this.post(db + '/_find', query, opts);
+  }
+
   private findAllRequest(db: string, query: any, opts: any) {
-    return this.post(db + '/_find', query, opts).pipe(
-      catchError(() => of({ docs: [], rows: [] })),
-      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
+    const paged = { ...query, limit: query.limit || 1000 };
+    return this.findPage(db, paged, opts).pipe(
+      expand((res) => res.docs.length < paged.limit ? empty() : this.findPage(db, { ...paged, bookmark: res.bookmark }, opts))
     );
   }
 
