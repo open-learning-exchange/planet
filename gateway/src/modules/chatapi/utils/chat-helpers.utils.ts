@@ -1,7 +1,8 @@
 import OpenAI from 'openai';
 
-import { AIProvider, ChatMessage } from '../models/chat.model';
-import { providerClient } from '../providers/clients';
+import { HttpError } from '../../../middleware/errors';
+import { ChatMessage } from '../models/chat.model';
+import { ProviderClient } from '../providers/clients';
 import { openaiChat } from '../providers/openai.provider';
 import { fetchResourceAttachments, isPlainDocId, streamResourceAttachment } from './db.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
@@ -9,6 +10,8 @@ import { extractTextFromDocument } from './text-extraction.utils';
 // Characters, about 15k tokens: one long PDF must not overflow the model or bill the whole book every turn
 const REFERENCE_MAX_LENGTH = 60000;
 const EXTRACTED_TEXT_CACHE_SIZE = 32;
+// Under nginx's proxy_read_timeout, which also restarts with each piece of text, so the gateway answers first
+const PROVIDER_DEADLINE_MS = 120000;
 
 const extractedTexts = new Map<string, Promise<string>>();
 
@@ -92,18 +95,48 @@ async function withReference(messages: ChatMessage[], context: any): Promise<Cha
   return [ { ...first, 'content': `${referenceBlock}\n\n${first.content}` }, ...rest ];
 }
 
+// Races the call, because the SDK sleeps through a Retry-After without watching the signal, and ends a stream quietly when it aborts
+async function withDeadline(
+  provider: ProviderClient,
+  call: (signal: AbortSignal, send: (text: string) => void) => Promise<string>,
+  callback?: (text: string) => void
+): Promise<string> {
+  const deadline = new AbortController();
+  const timer = setTimeout(() => deadline.abort(), PROVIDER_DEADLINE_MS);
+  const expired = new Promise<never>((resolve, reject) => deadline.signal.addEventListener('abort', reject));
+  const send = (text: string) => {
+    if (text) {
+      timer.refresh();
+    }
+    callback?.(text);
+  };
+  try {
+    return await Promise.race([ call(deadline.signal, send), expired ]);
+  } catch (error) {
+    if (!deadline.signal.aborted) {
+      console.error(`AI provider ${provider.name} failed: ${error}`); // eslint-disable-line no-console
+      throw new HttpError(502, 'The AI provider could not answer');
+    }
+    console.error(`AI provider ${provider.name} sent no text for ${PROVIDER_DEADLINE_MS} ms`); // eslint-disable-line no-console
+    throw new HttpError(504, 'The AI provider took too long to answer');
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function openaiResponse(
-  client: OpenAI,
-  model: string,
+  provider: ProviderClient,
   messages: ChatMessage[],
   instructions: string,
+  signal: AbortSignal,
   callback?: (response: string) => void
 ): Promise<string> {
-  const result = await openaiChat(client, {
-    model,
+  const result = await openaiChat(provider.client, {
+    'model': provider.model,
     messages,
     'instructions': instructions || undefined,
-    'onDelta': callback
+    'onDelta': callback,
+    signal
   });
   return result.text;
 }
@@ -115,76 +148,72 @@ function completionMessages(messages: ChatMessage[], instructions: string): Open
 /**
  * Generates a chat completion with streaming enabled: OpenAI through the Responses API, other providers through their completions endpoint
  * @param messages - Array of chat messages
- * @param aiProvider - AI provider option
+ * @param provider - The AI provider's client and model
  * @param instructions - Planet prompt
  * @returns Completion text
  */
 export async function aiChatStream(
   messages: ChatMessage[],
-  aiProvider: AIProvider,
+  provider: ProviderClient,
   instructions: string,
   context: any = '',
   callback?: (response: string) => void
 ): Promise<string> {
-  const { client, defaultModel } = await providerClient(aiProvider.name);
-  const model = aiProvider.model ?? defaultModel;
-  const input = await withReference(messages, context);
+  return withDeadline(provider, async (signal, send) => {
+    const input = await withReference(messages, context);
+    if (provider.name === 'openai') {
+      return await openaiResponse(provider, input, instructions, signal, send);
+    }
 
-  if (aiProvider.name === 'openai') {
-    return await openaiResponse(client, model, input, instructions, callback);
-  }
+    const completion = await provider.client.chat.completions.create({
+      'model': provider.model,
+      'messages': completionMessages(input, instructions),
+      'stream': true,
+    }, { signal });
 
-  const completion = await client.chat.completions.create({
-    model,
-    'messages': completionMessages(input, instructions),
-    'stream': true,
-  });
-
-  let completionText = '';
-  for await (const chunk of completion) {
-    if (chunk.choices && chunk.choices.length > 0) {
-      const response = chunk.choices[0].delta?.content || '';
-      completionText += response;
-      if (callback) {
-        callback(response);
+    let completionText = '';
+    for await (const chunk of completion) {
+      if (chunk.choices && chunk.choices.length > 0) {
+        const response = chunk.choices[0].delta?.content || '';
+        completionText += response;
+        send(response);
       }
     }
-  }
 
-  return completionText;
+    return completionText;
+  }, callback);
 }
 
 
 /**
  * Generates a chat completion with streaming disabled: OpenAI through the Responses API, other providers through their completions endpoint
  * @param messages - Array of chat messages
- * @param aiProvider - AI provider option
+ * @param provider - The AI provider's client and model
  * @param instructions - Planet prompt
  * @returns Completion text
  */
 export async function aiChatNonStream(
   messages: ChatMessage[],
-  aiProvider: AIProvider,
+  provider: ProviderClient,
   instructions: string,
   context: any = '',
 ): Promise<string> {
-  const { client, defaultModel } = await providerClient(aiProvider.name);
-  const model = aiProvider.model ?? defaultModel;
-  const input = await withReference(messages, context);
+  return withDeadline(provider, async (signal) => {
+    const input = await withReference(messages, context);
+    if (provider.name === 'openai') {
+      return await openaiResponse(provider, input, instructions, signal);
+    }
 
-  if (aiProvider.name === 'openai') {
-    return await openaiResponse(client, model, input, instructions);
-  }
+    const completion = await provider.client.chat.completions.create({
+      'model': provider.model,
+      'messages': completionMessages(input, instructions),
+    }, { signal });
 
-  const completion = await client.chat.completions.create({
-    model,
-    'messages': completionMessages(input, instructions),
+    const completionText = completion.choices[0]?.message?.content;
+    if (!completionText) {
+      throw new Error('Unexpected API response');
+    }
+
+    return completionText;
   });
-
-  const completionText = completion.choices[0]?.message?.content;
-  if (!completionText) {
-    throw new Error('Unexpected API response');
-  }
-
-  return completionText;
 }

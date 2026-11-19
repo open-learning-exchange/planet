@@ -2,24 +2,24 @@ import { Express } from 'express';
 import WebSocket from 'ws';
 
 import { requireManager, SessionInfo } from '../../middleware/auth';
-import { ConfigurationUnavailableError } from '../../services/config.service';
+import { HttpError, toHttpError } from '../../middleware/errors';
 import { DbDoc } from './models/db-doc.model';
 import { listProviders } from './providers/clients';
-import { chat, chatNoSave, ConversationAccessError } from './services/chat.service';
+import { chat, chatNoSave } from './services/chat.service';
 import { chatUsage, conversationChange, getConversation, listConversations, updateConversation } from './services/history.service';
 
 const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
 
-const respondWithConversation = (res: any, conversation?: DbDoc) => conversation ?
+const respondWithConversation = (res: any, next: any, conversation?: DbDoc) => conversation ?
   res.status(200).json(conversation) :
-  res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
+  next(new HttpError(404, 'Conversation not found'));
 
 export function registerChatApiRoutes(app: Express) {
   app.post('/', async (req: any, res: any, next: any) => {
     const { data, save } = req.body;
 
     if (!isValidData(data)) {
-      return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
+      return next(new HttpError(400, 'The "data" field must be a non-empty object'));
     }
 
     try {
@@ -33,20 +33,11 @@ export function registerChatApiRoutes(app: Express) {
       const response = await chat(data, res.locals.session, false);
       return res.status(201).json({
         'status': 'Success',
-        'chat': response?.completionText,
-        'couchDBResponse': response?.couchSaveResponse
+        'chat': response.completionText,
+        'couchDBResponse': response.couchSaveResponse
       });
-    } catch (error: any) {
-      if (error instanceof ConversationAccessError) {
-        return res.status(403).json({ 'error': 'Forbidden', 'message': error.message });
-      }
-      if (error instanceof ConfigurationUnavailableError) {
-        return next(error);
-      }
-      if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
-        return res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
-      }
-      return res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
+    } catch (error) {
+      return next(error);
     }
   });
 
@@ -61,16 +52,16 @@ export function registerChatApiRoutes(app: Express) {
   });
 
   app.get('/chat/conversations/:id', (req: any, res: any, next: any) => {
-    getConversation(req.params.id, res.locals.session).then((conversation) => respondWithConversation(res, conversation)).catch(next);
+    getConversation(req.params.id, res.locals.session).then((conversation) => respondWithConversation(res, next, conversation)).catch(next);
   });
 
   app.patch('/chat/conversations/:id', (req: any, res: any, next: any) => {
     const change = conversationChange(req.body);
     if (!change) {
-      return res.status(400).json({ 'error': 'Bad Request', 'message': 'Send a non-empty "title" or "shared": true' });
+      return next(new HttpError(400, 'Send a non-empty "title" or "shared": true'));
     }
     return updateConversation(req.params.id, res.locals.session, change)
-      .then((conversation) => respondWithConversation(res, conversation))
+      .then((conversation) => respondWithConversation(res, next, conversation))
       .catch(next);
   });
 
@@ -90,7 +81,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
       try {
         const payload = JSON.parse(data.toString());
         if (!isValidData(payload)) {
-          ws.send(JSON.stringify({ 'error': 'Invalid data format.' }));
+          ws.send(JSON.stringify({ 'type': 'error', 'error': 'Invalid data format.' }));
           return;
         }
 
@@ -98,23 +89,13 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           ws.send(JSON.stringify({ 'type': 'partial', response }));
         });
 
-        if (chatResponse) {
-          ws.send(JSON.stringify({
-            'type': 'final',
-            'completionText': chatResponse.completionText,
-            'couchDBResponse': chatResponse.couchSaveResponse
-          }));
-        }
-      } catch (error: any) {
-        if (error instanceof ConversationAccessError) {
-          ws.send(JSON.stringify({ 'type': 'error', 'error': error.message }));
-        } else if (error instanceof ConfigurationUnavailableError) {
-          ws.send(JSON.stringify({ 'error': error.name, 'message': error.message }));
-        } else if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
-          ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
-        } else {
-          ws.send(JSON.stringify({ 'error': 'Internal Server Error', 'message': error.message }));
-        }
+        ws.send(JSON.stringify({
+          'type': 'final',
+          'completionText': chatResponse.completionText,
+          'couchDBResponse': chatResponse.couchSaveResponse
+        }));
+      } catch (error) {
+        ws.send(JSON.stringify({ 'type': 'error', 'error': toHttpError(error).message }));
       }
     });
 
