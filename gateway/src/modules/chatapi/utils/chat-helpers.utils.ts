@@ -180,6 +180,9 @@ export async function aiChatStream(
       }
     }
 
+    if (!completionText) {
+      throw new Error('Unexpected API response');
+    }
     return completionText;
   }, callback);
 }
