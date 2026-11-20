@@ -166,7 +166,7 @@ export class ChangePasswordDirective implements OnChanges {
   }
 
   passwordError(reason: string) {
-    return () => of({ error: { ok: false, reason } });
+    return () => of({ ok: false, reason });
   }
 
   reinitSession(username, password) {
