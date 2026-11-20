@@ -110,10 +110,6 @@ export class UsersService {
     return userInfo;
   }
 
-  toggleAdminStatus(user) {
-    return user.isUserAdmin ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
-  }
-
   demoteFromAdmin(user) {
     const planetConfig = this.stateService.configuration;
     const parentUserId = `org.couchdb.user:${user.name}@${planetConfig.code}`;
@@ -131,31 +127,14 @@ export class UsersService {
     ));
   }
 
+  // The admin's parent planet account is created at their first login that reaches the parent (LoginTasksService)
   promoteToAdmin(user) {
     const { name, password_scheme, derived_key, salt, iterations } = user;
-    const { code, _id: requestId, parentDomain: domain } = this.stateService.configuration;
-    const adminName = name + '@' + code;
-    const adminId = `org.couchdb.user:${adminName}`;
-    const parentUser = {
-      ...user,
-      _id: adminId,
-      requestId,
-      isUserAdmin: false,
-      roles: [ 'learner' ],
-      name: adminName,
-      sync: true,
-      _attachments: undefined,
-      _rev: undefined
-    };
-    return this.couchService.get(this.dbName + '/' + adminId, { domain }).pipe(
-      catchError(() => of(null)),
-      switchMap(oldDoc => forkJoin([
-        oldDoc ? of({}) : this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false }),
-        this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
-        this.setRoles({ ...user, isUserAdmin: true }, []),
-        this.removeFromTabletUsers(user)
-      ]))
-    );
+    return forkJoin([
+      this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
+      this.setRoles({ ...user, isUserAdmin: true }, []),
+      this.removeFromTabletUsers(user)
+    ]);
   }
 
   toggleManagerStatus(user) {
