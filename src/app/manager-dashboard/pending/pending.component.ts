@@ -4,7 +4,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
@@ -22,6 +22,7 @@ import { PendingTableComponent } from './pending-table.component';
     RouterLink,
     MatIcon,
     MatToolbarRow,
+    MatAccordion,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,

@@ -50,6 +50,7 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
 
   ngOnChanges() {
     this.myPlanets.data = this.data;
+    this.paginator?.firstPage();
   }
 
   ngAfterViewInit() {
