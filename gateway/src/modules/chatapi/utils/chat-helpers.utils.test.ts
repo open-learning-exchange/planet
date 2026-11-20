@@ -277,7 +277,7 @@ describe('provider deadline and failures', () => {
     await expect(reply).resolves.toEqual('one two three');
   });
 
-  it('answers 502 when a stream ends without reply text, so no empty reply is saved', async () => {
+  it('answers 502 when a stream ends without reply text', async () => {
     mocks.completionsCreate.mockResolvedValue((async function* () {
       yield { 'choices': [ { 'delta': {}, 'finish_reason': 'length' } ] };
     })());

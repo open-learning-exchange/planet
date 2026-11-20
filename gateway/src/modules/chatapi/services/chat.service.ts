@@ -10,7 +10,6 @@ import { AIProvider, ChatItem, ChatMessage } from '../models/chat.model';
 import { DbDoc } from '../models/db-doc.model';
 import { ProviderClient, providerClient } from '../providers/clients';
 
-// The conversation is one document rewritten every turn, so this bounds the writes and the history replayed
 const MAX_TURNS = 40;
 const TITLE_MAX_LENGTH = 60;
 
@@ -39,20 +38,17 @@ async function openConversation(id: string, session: SessionInfo): Promise<DbDoc
   return doc;
 }
 
-// The whole conversation, unchanged, so each turn extends the prefix the providers cached on the last one
 const historyMessages = (turns: ChatItem[]): ChatMessage[] => turns.flatMap(({ query, response }) => [
   { 'role': 'user' as const, 'content': query },
   { 'role': 'assistant' as const, 'content': response }
 ]);
 
-// By code point: a cut by UTF-16 unit can leave half an emoji, and CouchDB refuses the whole document
+// By code point: CouchDB refuses a title ending in half an emoji
 const truncateTitle = (content: string): string => {
   const characters = Array.from(content);
   return characters.length > TITLE_MAX_LENGTH ? `${characters.slice(0, TITLE_MAX_LENGTH - 1).join('')}…` : content;
 };
 
-// A reply can take minutes, so a rename, a share or another tab's turn may have written first:
-// add the turn to that newer document once, keeping its context unless this request sent one
 async function addTurn(stored: DbDoc, session: SessionInfo, change: Partial<DbDoc>, turn: ChatItem): Promise<DocumentInsertResponse> {
   const withTurn = (doc: DbDoc) => ({
     ...doc, ...change, 'context': change.context ?? doc.context, 'conversations': [ ...doc.conversations, turn ], 'updatedDate': Date.now()
@@ -68,7 +64,7 @@ async function addTurn(stored: DbDoc, session: SessionInfo, change: Partial<DbDo
 }
 
 /**
- * Answer a chat turn and save it once the provider has answered, so a failed turn leaves nothing behind
+ * Create a chat conversation & save in couchdb
  * @param data - Chat data including content and additional information
  * @param session - The member chatting, from the gateway's session check
  * @param stream - Boolean to set streaming on or off

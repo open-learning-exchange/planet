@@ -2,7 +2,6 @@ import { STATUS_CODES } from 'http';
 import { NextFunction, Request, Response } from 'express';
 
 export class HttpError extends Error {
-  // `code` lets clients tell apart refusals that share a status, such as a conversation's turn limit and a conflict
   constructor(public statusCode: number, message: string, public code?: string) {
     super(message);
     this.name = 'HttpError';

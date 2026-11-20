@@ -32,7 +32,7 @@ describe('respondWithError', () => {
     expect(res.json).toHaveBeenCalledWith({ 'error': 'Gateway Timeout', 'message': 'The AI provider took too long to answer' });
   });
 
-  it('adds the error\'s code, so clients can tell it from another refusal with the same status', () => {
+  it('adds the error\'s code when it has one', () => {
     const res = { 'status': vi.fn().mockReturnThis(), 'json': vi.fn() };
 
     const limit = new HttpError(409, 'Turn limit reached', 'conversation_turn_limit');

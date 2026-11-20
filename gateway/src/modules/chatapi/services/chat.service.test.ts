@@ -169,7 +169,7 @@ describe('chat saving', () => {
     expect(mocks.insert).not.toHaveBeenCalled();
   });
 
-  it('records the provider that answered, which may not be the one the conversation started with', async () => {
+  it('records the provider that answered', async () => {
     mocks.providerClient.mockResolvedValue({ 'name': 'deepseek', 'client': {}, 'model': 'model-test' });
 
     await chat({ 'content': 'And a third?', '_id': 'chat-1', 'aiProvider': { 'name': 'deepseek' } }, amara, false);
@@ -177,7 +177,7 @@ describe('chat saving', () => {
     expect(mocks.insert).toHaveBeenLastCalledWith(expect.objectContaining({ 'aiProvider': 'deepseek' }));
   });
 
-  it('titles a new conversation with at most 60 characters of its first message, never half an emoji', async () => {
+  it('cuts the title to 60 characters without splitting an emoji', async () => {
     await chat({ 'content': `${'a'.repeat(58)}😀 and what comes after` }, amara, false);
 
     expect(mocks.insert.mock.lastCall?.[0].title).toEqual(`${'a'.repeat(58)}😀…`);
