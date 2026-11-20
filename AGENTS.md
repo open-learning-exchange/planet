@@ -21,7 +21,7 @@ Prerequisites: Node.js v22.12 or later, npm v10, Angular CLI v21. A CouchDB inst
 
 ### gateway (`gateway/`)
 
-Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`, plus `CORS_ORIGINS=http://localhost:3000` so `ng serve` can reach it. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`. Every route except `GET /`, `GET /checkproviders` and `/public/surveys/...` needs a CouchDB session; from curl, use Basic auth with a local account (`curl -u admin:admin`).
+Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`, plus `CORS_ORIGINS=http://localhost:3000` so `ng serve` can reach it. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`. Every route lives under `/api/`, and every one except `GET /api/`, `GET /api/chat/providers` and `/api/public/...` needs a CouchDB session; from curl, use Basic auth with a local account (`curl -u admin:admin localhost:5000/api/currency`).
 
 - `cd gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.
@@ -35,7 +35,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 ## Architecture
 
-Planet Learning is an Angular 21 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
+Planet Learning is an Angular 21 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `gatewayAddress` points at the local gateway's `/api`.
 
 ### Repository layout
 
@@ -52,7 +52,7 @@ Planet Learning is an Angular 21 + CouchDB learning platform. There are two tier
   - Code that belongs to one feature lives in that feature even when others use it, as `news/` holds the voice labels that `community/` and `teams/` open.
   - Per `docs/STYLE_GUIDE.md`, keep each bucket under ~9 distinct concerns; split it rather than letting it sprawl.
 - `src/app/manager-dashboard/` — admin surfaces (sync, fetch, AI configuration, reports, requests, certifications). AI models are read from the CouchDB `configurations` database and provider keys from the admin-only `keys` database, which only the gateway reads; do not hardcode them.
-- `gateway/` — standalone Express + WebSocket gateway with internal `chatapi` and `public` modules. It serves chat on the existing `/ml/` namespace, each member's own chat history on `/api/chat/` (the client never reads `chat_history` directly), and scoped public operations on `/api/`. Models come from the CouchDB `configurations` doc and provider keys from the `keys` database (one document per service, written through the manager-only `/keys` routes, never read back), not env vars.
+- `gateway/` — standalone Express + WebSocket gateway with internal `chatapi` and `public` modules. Every route lives under `/api/`, which nginx passes through unchanged: chat and its WebSocket on `/api/chat`, each member's own chat history on `/api/chat/conversations` (the client never reads `chat_history` directly), and scoped public operations on `/api/public/`. Models come from the CouchDB `configurations` doc and provider keys from the `keys` database (one document per service, written through the manager-only `/api/keys` routes, never read back), not env vars.
 - `docker/` — Dockerfiles for `planet` (nginx + built Angular bundle), `gateway`, and `db-init`. `docker/planet/default.conf.template` and `docker/planet/scripts/` drive the production entrypoint.
 - `scripts/` — project maintenance helpers: local dev environment templating (`dev-env.sh`), i18n catalog normalization (`i18n-normalize.mjs`), and CouchDB bootstrap (`couchdb-setup.sh`, plus the `design/` documents it uploads: edit the per-db `.js` map/reduce views and re-run it).
 - `docs/` — developer documentation (`STYLE_GUIDE.md`, `AGENT_SPELLBOOK.md`); `CONTRIBUTING.md` lives in `.github/`.

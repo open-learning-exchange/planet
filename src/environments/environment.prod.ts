@@ -3,7 +3,7 @@ export const environment = {
   test: false,
   // Change this to Docker address
   // couchAddress: 'planet-db-host:planet-db-port/',
-  chatAddress: window.location.origin,
+  gatewayAddress: window.location.origin + '/api',
   couchAddress: window.location.origin + '/db',
   centerAddress: 'planet-center-address',
   centerProtocol: 'https',
