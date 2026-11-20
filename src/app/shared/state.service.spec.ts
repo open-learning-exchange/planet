@@ -1,3 +1,5 @@
+import { throwError } from 'rxjs';
+
 import { StateService } from './state.service';
 
 describe('StateService combineChanges', () => {
@@ -32,5 +34,17 @@ describe('StateService combineChanges', () => {
   it('leaves the first page in the order it arrived', () => {
     const page = [ { _id: 'b', title: 'B' }, { _id: 'a', title: 'A' } ];
     expect(service.combineChanges([], page, { title: 'asc' })).toEqual(page);
+  });
+});
+
+describe('StateService getCouchState', () => {
+  it('tells listeners when a request failed', () => {
+    const service = new StateService({ get: () => throwError(() => new Error('offline')) } as any);
+    const updates = [];
+    service.couchStateListener('courses').subscribe(update => updates.push(update));
+
+    service.getCouchState('courses', 'local').subscribe();
+
+    expect(updates).toMatchObject([ { db: 'courses', planetField: 'local', failed: true } ]);
   });
 });

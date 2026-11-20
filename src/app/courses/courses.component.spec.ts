@@ -126,6 +126,24 @@ describe('CoursesComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('reports a failed course load until a later load succeeds', () => {
+    const updates = new Subject<any>();
+    stateServiceMock.couchStateListener.mockReturnValueOnce(updates);
+    const showAlert = vi.spyOn(TestBed.inject(PlanetMessageService), 'showAlert');
+    component.ngOnInit();
+
+    updates.next({ planetField: 'local', failed: true });
+    expect(component.loadFailed).toBe(false);
+
+    updates.next({ planetField: 'parent', failed: true });
+    updates.next({ planetField: 'parent', failed: true });
+    expect(component.loadFailed).toBe(true);
+    expect(showAlert).toHaveBeenCalledOnce();
+
+    updates.next({ planetField: 'parent' });
+    expect(component.loadFailed).toBe(false);
+  });
+
   it('creates a single-course leave request only after confirmation', () => {
     component.courseToggle('1', 'resign');
 
