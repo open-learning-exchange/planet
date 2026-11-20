@@ -28,7 +28,7 @@ interface ActivityRequestObject {
 export class ReportsService {
 
   users: any[] = [];
-  private readonly chatUsageUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat/usage`;
+  private readonly chatUsageUrl = `${environment.gatewayAddress}/chat/usage`;
   readonly standardTimeFilters = [
     { value: '24h', label: $localize`Last 24 Hours` },
     { value: '7d', label: $localize`Last 7 Days` },

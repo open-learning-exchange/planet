@@ -9,8 +9,8 @@ import { AIServiceStatus, AIProvider, Conversation, ConversationChange, Provider
 @Injectable({
   providedIn: 'root'
 }) export class AiChatService {
-  private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
-  private conversationsUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat/conversations`;
+  private baseUrl = `${environment.gatewayAddress}/chat`;
+  private conversationsUrl = `${this.baseUrl}/conversations`;
   private socket: WebSocket;
 
   private chatStreamSubject: Subject<string> = new Subject<string>();
@@ -58,7 +58,7 @@ import { AIServiceStatus, AIProvider, Conversation, ConversationChange, Provider
 
   private fetchAIProviders() {
     this.httpClient
-      .get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`)
+      .get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/providers`)
       .pipe(
         map(({ providers }) => providers.filter(({ configured }) => configured)),
         catchError((err) => {
@@ -76,7 +76,7 @@ import { AIServiceStatus, AIProvider, Conversation, ConversationChange, Provider
   }
 
   getPrompt(data: object, save: boolean): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}/`, {
+    return this.httpClient.post(this.baseUrl, {
       data,
       save,
     }, { withCredentials: true });

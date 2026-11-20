@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Express, NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 
 import { requireManager } from '../../middleware/auth';
 import { getKeys, KeyService, removeKey, setKey } from '../../services/keys.service';
@@ -33,7 +33,7 @@ const respondToWrite = (res: Response, write: Promise<void>) => write.then(() =>
   res.status(503).json({ 'error': 'Service Unavailable', 'message': 'The key could not be saved' });
 });
 
-export function registerKeyRoutes(app: Express) {
+export function registerKeyRoutes(app: Router) {
   app.use('/keys', requireManager);
 
   app.get('/keys', (req: Request, res: Response, next: NextFunction) => {

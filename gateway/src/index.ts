@@ -17,12 +17,13 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ 'noServer': true });
+const wss = new WebSocket.Server({ 'noServer': true, 'path': '/api/chat' });
+const api = express.Router();
 
 const openRoutes: OpenRoute[] = [
-  { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/$/ },
-  { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i },
-  { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/public\/surveys\//i }
+  { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/api\/?$/i },
+  { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/api\/chat\/providers\/?$/i },
+  { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/api\/public\//i }
 ];
 
 app.use(browserCors);
@@ -30,7 +31,7 @@ app.use(requireSessionExcept(openRoutes));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
+api.get('/', (req: Request, res: Response) => {
   void req;
   res.status(200).json({
     'status': 'Success',
@@ -38,11 +39,12 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-registerChatApiRoutes(app);
-registerPublicRoutes(app);
+registerChatApiRoutes(api);
+registerPublicRoutes(api);
 registerChatApiWebSocket(wss);
-registerCurrencyRoutes(app);
-registerKeyRoutes(app);
+registerCurrencyRoutes(api);
+registerKeyRoutes(api);
+app.use('/api', api);
 server.on('upgrade', authenticateUpgrade(wss));
 
 app.use(respondWithError);

@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import { Router } from 'express';
 import WebSocket from 'ws';
 
 import { requireManager, SessionInfo } from '../../middleware/auth';
@@ -14,8 +14,8 @@ const respondWithConversation = (res: any, next: any, conversation?: DbDoc) => c
   res.status(200).json(conversation) :
   next(new HttpError(404, 'Conversation not found'));
 
-export function registerChatApiRoutes(app: Express) {
-  app.post('/', async (req: any, res: any, next: any) => {
+export function registerChatApiRoutes(app: Router) {
+  app.post('/chat', async (req: any, res: any, next: any) => {
     const { data, save } = req.body;
 
     if (!isValidData(data)) {
@@ -41,7 +41,7 @@ export function registerChatApiRoutes(app: Express) {
     }
   });
 
-  app.get('/checkproviders', (req: any, res: any, next: any) => {
+  app.get('/chat/providers', (req: any, res: any, next: any) => {
     void req;
     listProviders().then((providers) => res.status(200).json({ providers })).catch(next);
   });

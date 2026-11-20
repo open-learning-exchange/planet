@@ -3,6 +3,12 @@ upstream couchdb {
   keepalive 16;
 }
 
+# Only a WebSocket handshake asks the gateway to upgrade; any other Upgrade (h2c) would reach its socket handler and get a 404
+map $http_upgrade $connection_upgrade {
+  ~*^websocket$ upgrade;
+  default       close;
+}
+
 server {
 
   listen 80;
@@ -141,24 +147,18 @@ server {
     client_max_body_size 1024M;
   }
 
-  location /ml/ {
-    proxy_pass       http://chatapi:5000/;
+  location /api/ {
+    # No URI after the port, so the gateway gets the path with /api/ kept, as in dev
+    proxy_pass       http://chatapi:5000;
     proxy_http_version 1.1;
     # $http_host keeps the port, which the gateway compares with the browser's Origin
     proxy_set_header Host      $http_host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+    proxy_set_header Connection $connection_upgrade;
     client_max_body_size 1024M;
     # Above the gateway's 120 s AI provider deadline
     proxy_read_timeout 150s;
-  }
-
-  location /api/ {
-    proxy_pass       http://chatapi:5000/;
-    proxy_set_header Host      $http_host;
-    proxy_set_header X-Real-IP $remote_addr;
-    client_max_body_size 1024M;
   }
 
   location /db/ {

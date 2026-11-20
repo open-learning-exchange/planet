@@ -21,7 +21,7 @@ export type KeyStatus = Record<string, Record<string, boolean>>;
 })
 export class ConfigurationService {
 
-  private readonly keysUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/keys`;
+  private readonly keysUrl = `${environment.gatewayAddress}/keys`;
 
   constructor(
     private httpClient: HttpClient,
