@@ -157,7 +157,6 @@
           @if (resource?._attachments) {
             <planet-resources-viewer
               [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
-              [fetchRating]="false"
               [resourceId]="resource._id"
               (resourceUrl)="setResourceUrl($event)">
             </planet-resources-viewer>
@@ -183,7 +182,6 @@
           @if (resource?._attachments) {
             <planet-resources-viewer
               [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
-              [fetchRating]="false"
               [resourceId]="resource._id"
               (resourceUrl)="setResourceUrl($event)">
             </planet-resources-viewer>

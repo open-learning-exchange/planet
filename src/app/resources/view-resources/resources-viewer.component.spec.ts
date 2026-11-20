@@ -18,10 +18,6 @@ describe('ResourcesViewerComponent CSV preview', () => {
   });
 
   beforeEach(() => {
-    const resourcesService = {
-      resourcesListener: vi.fn(() => of([])),
-      requestResourcesUpdate: vi.fn()
-    };
     const stateService = {
       configuration: { code: 'planet', parentCode: 'parent', parentDomain: 'parent.example' }
     };
@@ -32,7 +28,6 @@ describe('ResourcesViewerComponent CSV preview', () => {
     csvService = { loadCsvAttachment: vi.fn() };
     component = new ResourcesViewerComponent(
       { bypassSecurityTrustResourceUrl: vi.fn() } as any,
-      resourcesService as any,
       { snapshot: { data: { parent: false } } } as any,
       stateService as any,
       { get: vi.fn(() => ({ name: 'user' })) } as any,
@@ -117,23 +112,49 @@ describe('ResourcesViewerComponent CSV preview', () => {
 
 });
 
-describe('ResourcesViewerComponent library pages', () => {
-  it('keeps looking until the page holding its resource arrives', () => {
-    const library = new Subject<any[]>();
-    const component = new ResourcesViewerComponent(
+describe('ResourcesViewerComponent resource loading', () => {
+  let component: ResourcesViewerComponent;
+  let couchGet: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    couchGet = vi.fn();
+    component = new ResourcesViewerComponent(
       {} as any,
-      { resourcesListener: () => library, requestResourcesUpdate: vi.fn() } as any,
       { snapshot: { data: { parent: false } } } as any,
-      { configuration: {} } as any, {} as any, {} as any, {} as any, {} as any, {} as any
+      { configuration: {} } as any, {} as any, { get: couchGet } as any, {} as any, {} as any, {} as any
     );
-    const setResource = vi.spyOn(component, 'setResource').mockImplementation(() => {});
-    component.resourceId = 'on-page-2';
-    const doc = { _id: 'on-page-2' };
+    vi.spyOn(component, 'setResource').mockImplementation(() => {});
+  });
 
-    library.next([ { _id: 'on-page-1', doc: { _id: 'on-page-1' } } ]);
-    library.next([ { _id: 'on-page-1', doc: { _id: 'on-page-1' } }, { _id: 'on-page-2', doc } ]);
+  it('fetches only the resource it shows and ignores a stale fetch', () => {
+    const firstFetch = new Subject<any>();
+    const secondFetch = new Subject<any>();
+    couchGet.mockReturnValueOnce(firstFetch).mockReturnValueOnce(secondFetch);
 
-    expect(setResource).toHaveBeenCalledTimes(1);
-    expect(setResource).toHaveBeenCalledWith(doc);
+    component.resourceId = 'first';
+    component.ngOnChanges();
+    component.resourceId = 'second';
+    component.ngOnChanges();
+    firstFetch.next({ _id: 'first' });
+
+    expect(component.isLoading).toBe(true);
+    expect(component.setResource).not.toHaveBeenCalled();
+
+    secondFetch.next({ _id: 'second' });
+
+    expect(couchGet).toHaveBeenLastCalledWith('resources/second', {});
+    expect(component.isLoading).toBe(false);
+    expect(component.setResource).toHaveBeenCalledWith({ _id: 'second' });
+  });
+
+  it('stops loading and flags a resource that cannot be fetched', () => {
+    couchGet.mockReturnValue(throwError(new Error('not_found')));
+
+    component.resourceId = 'deleted';
+    component.ngOnChanges();
+
+    expect(component.isLoading).toBe(false);
+    expect(component.resourceMissing).toBe(true);
+    expect(component.setResource).not.toHaveBeenCalled();
   });
 });
