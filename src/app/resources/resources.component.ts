@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip, finalize, catchError } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, finalize, catchError, filter } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -128,6 +128,7 @@ import { CoursesService } from '../courses/courses.service';
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
+  loadFailed = false;
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -230,6 +231,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.paginator = this.paginator;
       this.stopLoading();
     }, () => this.stopLoading());
+    this.stateService.couchStateListener(this.dbName).pipe(
+      filter(({ planetField }) => planetField === (this.parent ? 'parent' : 'local')),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ failed }) => {
+      if (failed === true && !this.loadFailed) {
+        this.planetMessageService.showAlert($localize`There was a problem getting resources.`);
+      }
+      this.loadFailed = failed === true;
+    });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;

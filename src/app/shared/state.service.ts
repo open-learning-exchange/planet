@@ -61,7 +61,7 @@ export class StateService {
       }),
       catchError(() => {
         this.inProgress[planetField].set(db, false);
-        this.stateUpdated.next({ newData: this.state[planetField][db].docs, db, planetField, inProgress: false });
+        this.stateUpdated.next({ newData: this.state[planetField][db].docs, db, planetField, inProgress: false, failed: true });
         return [];
       })
     );
@@ -96,7 +96,7 @@ export class StateService {
   }
 
   couchStateListener(db: string) {
-    return this.stateUpdated.pipe(filter((stateObj: { newData, db, planetField, inProgress }) => db === stateObj.db));
+    return this.stateUpdated.pipe(filter((stateObj: { newData, db, planetField, inProgress, failed? }) => db === stateObj.db));
   }
 
   combineChanges(docs: any[], changesDocs: any[], sort) {
