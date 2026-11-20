@@ -278,7 +278,7 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td>@if (loadFailed) {
+        <td>@if (loadFailed && !resources.data.length) {
           <div class="view-container" i18n>There was a problem getting resources.</div>
         } @else if (!isLoading) {
           <div class="view-container" i18n>No Resource Found</div>
