@@ -51,9 +51,12 @@ const truncateTitle = (content: string): string => {
   return characters.length > TITLE_MAX_LENGTH ? `${characters.slice(0, TITLE_MAX_LENGTH - 1).join('')}…` : content;
 };
 
-// A reply can take minutes, so a rename, a share or another tab's turn may have written first: add the turn to that newer document once
+// A reply can take minutes, so a rename, a share or another tab's turn may have written first:
+// add the turn to that newer document once, keeping its context unless this request sent one
 async function addTurn(stored: DbDoc, session: SessionInfo, change: Partial<DbDoc>, turn: ChatItem): Promise<DocumentInsertResponse> {
-  const withTurn = (doc: DbDoc) => ({ ...doc, ...change, 'conversations': [ ...doc.conversations, turn ], 'updatedDate': Date.now() });
+  const withTurn = (doc: DbDoc) => ({
+    ...doc, ...change, 'context': change.context ?? doc.context, 'conversations': [ ...doc.conversations, turn ], 'updatedDate': Date.now()
+  });
   try {
     return await chatDB.insert(withTurn(stored));
   } catch (error: any) {
@@ -90,7 +93,7 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
   const completionText = await aiChat(messages, provider, assistant.instructions, context, stream, callback);
 
   const turn: ChatItem = { 'id': Date.now().toString(), 'query': content, 'response': completionText };
-  const change = { 'aiProvider': provider.name, context };
+  const change = { 'aiProvider': provider.name, 'context': data.context };
   if (stored) {
     return { completionText, 'couchSaveResponse': await addTurn(stored, session, change, turn) };
   }

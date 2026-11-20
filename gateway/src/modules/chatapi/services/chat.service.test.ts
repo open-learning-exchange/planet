@@ -144,15 +144,19 @@ describe('chat saving', () => {
     ]);
   });
 
-  it('adds the turn to the newer document when a rename wrote first, without asking the provider again', async () => {
+  it('adds the turn to the newer document when another request wrote first, without asking the provider again', async () => {
     mocks.get.mockResolvedValueOnce(amaraConversation)
-      .mockResolvedValueOnce({ ...amaraConversation, '_rev': '2-renamed', 'title': 'Thirds' });
+      .mockResolvedValueOnce({ ...amaraConversation, '_rev': '2-renamed', 'title': 'Thirds', 'context': { 'type': 'coursestep' } });
     mocks.insert.mockRejectedValueOnce({ 'statusCode': 409, 'error': 'conflict' });
 
     await chat({ 'content': 'And a third?', '_id': 'chat-1' }, amara, false);
 
     expect(mocks.aiChat).toHaveBeenCalledOnce();
-    expect(mocks.insert).toHaveBeenLastCalledWith(expect.objectContaining({ '_rev': '2-renamed', 'title': 'Thirds' }));
+    expect(mocks.insert).toHaveBeenLastCalledWith(expect.objectContaining({
+      '_rev': '2-renamed',
+      'title': 'Thirds',
+      'context': { 'type': 'coursestep' }
+    }));
     expect(mocks.insert.mock.lastCall?.[0].conversations).toHaveLength(2);
   });
 
