@@ -15,6 +15,7 @@ vi.mock('../../../config/couch.config', () => ({
 }));
 vi.mock('../../../services/config.service', () => ({ 'getCurrentConfiguration': mocks.getCurrentConfiguration }));
 
+import { HttpError } from '../../../middleware/errors';
 import { createPublicSurveySubmission, getPublicSurvey } from './surveys.service';
 
 const well = { 'id': 'a', 'text': 'Well' };
@@ -86,6 +87,16 @@ describe('public surveys', () => {
     await createPublicSurveySubmission(request({ 'answers': [ tap, '4' ], 'user': { gender } }), res);
 
     expect(res.status).toHaveBeenCalledWith(400);
+    expect(mocks.insertSubmission).not.toHaveBeenCalled();
+  });
+
+  it('fails a submission without writing it when the planet configuration can\'t be read', async () => {
+    mocks.getCurrentConfiguration.mockRejectedValue(new HttpError(503, 'The planet configuration could not be read'));
+    const res = response();
+
+    await expect(createPublicSurveySubmission(request({ 'answers': [ tap, '4' ] }), res)).rejects.toMatchObject({ 'statusCode': 503 });
+
+    expect(res.status).not.toHaveBeenCalled();
     expect(mocks.insertSubmission).not.toHaveBeenCalled();
   });
 
