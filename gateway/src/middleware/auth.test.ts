@@ -33,11 +33,12 @@ const mockSocket = () => {
   return socket;
 };
 
-const upgrade = async (headers: Record<string, string>, ws: unknown = {}) => {
+const upgrade = async (headers: Record<string, string>, ws: unknown = {}, url = '/api/chat') => {
   const socket = mockSocket();
   const responseHeaders: string[] = [];
   let onHeaders: (headers: string[], request: unknown) => void = () => undefined;
   const wss = {
+    'shouldHandle': vi.fn((request: { url: string }) => request.url === '/api/chat'),
     'on': vi.fn((event: string, listener: typeof onHeaders) => {
       onHeaders = listener;
     }),
@@ -47,7 +48,7 @@ const upgrade = async (headers: Record<string, string>, ws: unknown = {}) => {
     }),
     'emit': vi.fn()
   };
-  const req: any = { 'headers': { 'host': 'planet.local', ...headers } };
+  const req: any = { url, 'headers': { 'host': 'planet.local', ...headers } };
   await authenticateUpgrade(wss as any)(req, socket, Buffer.alloc(0));
   return { req, responseHeaders, socket, wss };
 };
@@ -223,19 +224,19 @@ describe('gateway authentication', () => {
   });
 
   describe('default-deny guard', () => {
-    const guard = requireSessionExcept([ { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i } ]);
+    const guard = requireSessionExcept([ { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/api\/chat\/providers\/?$/i } ]);
     const request = (method: string, path: string): any => ({ method, path, 'headers': {} });
 
     it('lets an open route through without a session', () => {
       const next = vi.fn();
-      guard(request('GET', '/checkproviders'), mockResponse(), next);
+      guard(request('GET', '/api/chat/providers'), mockResponse(), next);
       expect(next).toHaveBeenCalled();
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
     it.each([
-      [ 'POST', '/checkproviders' ],
-      [ 'GET', '/a-route-added-later' ]
+      [ 'POST', '/api/chat/providers' ],
+      [ 'GET', '/api/a-route-added-later' ]
     ])('requires a session for %s %s', async (method, path) => {
       const res = mockResponse();
       const next = vi.fn();
@@ -246,6 +247,13 @@ describe('gateway authentication', () => {
   });
 
   describe('WebSocket upgrade', () => {
+    it('refuses a path other than the chat socket before checking the origin or session', async () => {
+      const { socket, wss } = await upgrade({ 'origin': 'http://evil.test', 'cookie': 'AuthSession=deadbeef' }, {}, '/');
+      expect(socket.end).toHaveBeenCalledWith(expect.stringMatching(/^HTTP\/1\.1 404 /));
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(wss.handleUpgrade).not.toHaveBeenCalled();
+    });
+
     it('refuses an untrusted origin before checking the session', async () => {
       const { socket, wss } = await upgrade({ 'origin': 'http://evil.test', 'cookie': 'AuthSession=deadbeef' });
       expect(socket.end).toHaveBeenCalledWith(expect.stringMatching(/^HTTP\/1\.1 403 /));

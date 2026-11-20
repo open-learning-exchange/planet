@@ -1,8 +1,8 @@
-import { Express, NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 
 import { createPublicSurveySubmission, getPublicSurvey } from './services/surveys.service';
 
-export function registerPublicRoutes(app: Express) {
+export function registerPublicRoutes(app: Router) {
   app.get('/public/surveys/:teamId/:surveyId', (req: Request, res: Response, next: NextFunction) => {
     getPublicSurvey(req, res).catch(next);
   });

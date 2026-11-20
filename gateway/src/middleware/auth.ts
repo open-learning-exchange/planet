@@ -193,6 +193,10 @@ export const authenticateUpgrade = (wss: WebSocket.Server) => {
       console.error(`gateway: WebSocket upgrade failed: ${error.message}`); // eslint-disable-line no-console
     };
     socket.on('error', onSocketError);
+    if (!wss.shouldHandle(req)) {
+      rejectUpgrade(socket, 404);
+      return;
+    }
     if (!isAllowedOrigin(req.headers)) {
       rejectUpgrade(socket, 403);
       return;
