@@ -49,6 +49,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('submitButton', { read: ElementRef }) submitButton: ElementRef<HTMLButtonElement>;
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
+  isSubmitting = false;
   streaming: boolean;
   disabled = false;
   clearChat = true;
@@ -152,6 +153,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   resetConversation() {
     this.conversations = [];
     this.selectedConversationId = null;
+    this.isSubmitting = false;
   }
 
   createForm() {
@@ -218,6 +220,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         error: true
       };
       this.spinnerOn = true;
+      this.isSubmitting = false;
       this.promptForm.controls.prompt.setValue('');
     });
   }
@@ -247,6 +250,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit() {
     this.spinnerOn = true;
+    this.isSubmitting = false;
     this.promptForm.controls.prompt.setValue('');
     this.chatService.sendNewChatAddedSignal();
   }
@@ -257,12 +261,15 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     keyboardEvent.preventDefault();
-    if (this.promptForm.valid && this.providers.length > 0 && this.spinnerOn) {
+    if (!this.isSubmitting && this.promptForm.valid && this.providers.length > 0 && this.spinnerOn) {
       this.submitButton?.nativeElement.click();
     }
   }
 
   onSubmit() {
+    if (this.isSubmitting) {
+      return;
+    }
     if (this.promptForm.valid) {
       this.submitPrompt();
     } else {
@@ -271,6 +278,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
+    this.isSubmitting = true;
     const content = this.promptForm.controls.prompt.value;
     this.data = { ...this.data, content, aiProvider: this.provider };
 
@@ -297,6 +305,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         (error: any) => {
           this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
           this.spinnerOn = true;
+          this.isSubmitting = false;
           this.promptForm.controls.prompt.setValue('');
         }
       );
