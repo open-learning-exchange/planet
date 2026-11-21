@@ -15,6 +15,7 @@ import {
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
@@ -59,6 +60,7 @@ import { ResourcesMenuComponent } from '../../resources/view-resources/resources
     MatAnchor,
     RouterLink,
     MatMenuItem,
+    MatTooltip,
     PlanetLoadingSpinnerComponent
   ]
 })
