@@ -294,6 +294,13 @@
                 <div class="mat-subtitle-1">
                   <b>{{course.courseTitle | truncateText:75}}</b>
                 </div>
+                <mat-chip class="planet-chip-label visibility-badge" [ngClass]="enrolledCourseIds.has(course._id) ? 'chip-outline-primary' : 'chip-outline-grey'">
+                  @if (enrolledCourseIds.has(course._id)) {
+                    <span i18n>Joined</span>
+                  } @else {
+                    <span i18n>Not Joined</span>
+                  }
+                </mat-chip>
                 <mat-card-content>
                   <planet-markdown [content]="course.description | truncateText:120"></planet-markdown>
                 </mat-card-content>
