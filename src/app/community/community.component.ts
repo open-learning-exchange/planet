@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -73,6 +74,7 @@ interface CommunityDescriptionForm {
     MatListItemIcon,
     MatListItemTitle,
     MatListItemMeta,
+    NgTemplateOutlet,
     CommunityListComponent,
     TeamsViewFinancesComponent,
     TeamsReportsComponent,
@@ -424,19 +426,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }));
   }
 
+  private sortLinks(links: any[]): any[] {
+    return [ ...links ].sort((a, b) => {
+      const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+      const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+      return orderA !== orderB ? orderA - orderB : (a.createdDate || 0) - (b.createdDate || 0);
+    });
+  }
+
   setLinksAndFinances({ links, finances, reports }) {
-    this.links = (links || []).map(link => ({
+    this.links = this.sortLinks((links || []).map(link => ({
       ...link,
       // for backward compatibility, some old links might have 'web' as icon instead of 'website'
       icon: link.icon === 'web' ? 'website' : link.icon
-    })).sort((a, b) => {
-      const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
-      const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
-      if (orderA !== orderB) {
-        return orderA - orderB;
-      }
-      return (a.createdDate || 0) - (b.createdDate || 0);
-    });
+    })));
     this.finances = finances;
     this.reports = reports;
     this.communityDataLoading = false;
@@ -482,21 +485,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
-  openAddLinkDialog() {
-    if (this.isRemoteExchange) {
-      return;
-    }
-    this.dialog.open(CommunityLinkDialogComponent, {
-      width: '50vw',
-      maxHeight: '90vh',
-      data: {
-        getLinks: () => this.getLinks().pipe(tap(res => this.setLinksAndFinances(res))),
-        excludeIds: this.links.map(link => link.linkId || link.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
-      }
-    });
-  }
-
-  openEditLinkDialog(link: any) {
+  openAddLinkDialog(link?: any) {
     if (this.isRemoteExchange) {
       return;
     }
@@ -507,43 +496,32 @@ export class CommunityComponent implements OnInit, OnDestroy {
         link,
         getLinks: () => this.getLinks().pipe(tap(res => this.setLinksAndFinances(res))),
         excludeIds: this.links
-          .filter(item => item._id !== link._id)
+          .filter(item => !link || item._id !== link._id)
           .map(item => item.linkId || item.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
       }
     });
   }
 
   moveLink(sectionLinks: any[], index: number, direction: -1 | 1) {
-    if (this.isRemoteExchange || this.reorderingLinks) {
-      return;
-    }
     const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= sectionLinks.length) {
+    if (this.isRemoteExchange || this.reorderingLinks || targetIndex < 0 || targetIndex >= sectionLinks.length) {
       return;
     }
     const reordered = [ ...sectionLinks ];
     [ reordered[index], reordered[targetIndex] ] = [ reordered[targetIndex], reordered[index] ];
-    const updatedById = new Map(reordered.map((item, idx) => [ item._id, { ...item, order: idx } ]));
-    const updatedDocs = reordered
-      .map((item, idx) => ({ ...item, order: idx }))
-      .filter((item, idx) => sectionLinks.find(orig => orig._id === item._id)?.order !== idx);
-
+    const updated = reordered.map((item, idx) => ({ ...item, order: idx }));
+    const updatedDocs = updated.filter((item, idx) => sectionLinks.find(orig => orig._id === item._id)?.order !== idx);
     if (updatedDocs.length === 0) {
       return;
     }
 
+    const updatedById = new Map(updated.map(item => [ item._id, item ]));
     const previousLinks = this.links;
-    this.links = this.links.map(item => updatedById.get(item._id) || item).sort((a, b) => {
-      const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
-      const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
-      return orderA !== orderB ? orderA - orderB : (a.createdDate || 0) - (b.createdDate || 0);
-    });
+    this.links = this.sortLinks(this.links.map(item => updatedById.get(item._id) || item));
     this.reorderingLinks = true;
     this.couchService.bulkDocs('teams', updatedDocs).pipe(
       switchMap(() => this.getLinks()),
-      finalize(() => {
-        this.reorderingLinks = false;
-      })
+      finalize(() => this.reorderingLinks = false)
     ).subscribe({
       next: (res) => this.setLinksAndFinances(res),
       error: () => {

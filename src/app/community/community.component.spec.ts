@@ -311,7 +311,7 @@ describe('CommunityComponent remote exchange behavior', () => {
     component.openAddMessageDialog();
     component.postMessage({ message: 'Voice' }, undefined, undefined);
     component.openAddLinkDialog();
-    component.openEditLinkDialog({});
+    component.openAddLinkDialog({});
     component.openDeleteLinkDialog({});
     component.moveLink([ { _id: 'l1' }, { _id: 'l2' } ], 0, 1);
     component.confirmDeleteDescription();
