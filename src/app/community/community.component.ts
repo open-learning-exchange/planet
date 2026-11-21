@@ -515,17 +515,36 @@ export class CommunityComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const previousOrderById = new Map(sectionLinks.map(item => [ item._id, item.order ]));
     const updatedById = new Map(updated.map(item => [ item._id, item ]));
-    const previousLinks = this.links;
     this.links = this.sortLinks(this.links.map(item => updatedById.get(item._id) || item));
     this.reorderingLinks = true;
     this.couchService.bulkDocs('teams', updatedDocs).pipe(
-      switchMap(() => this.getLinks()),
+      switchMap((results: any) => {
+        const entries = Array.isArray(results) ? results : [];
+        const revById = new Map(entries.filter(r => r?.ok && r.id && r.rev).map(r => [ r.id, r.rev ]));
+        if (revById.size > 0) {
+          this.links = this.links.map(item => revById.has(item._id) ? { ...item, _rev: revById.get(item._id) } : item);
+        }
+        if (entries.some(r => r?.error)) {
+          this.planetMessageService.showAlert($localize`There was an error reordering links`);
+        }
+        return this.getLinks().pipe(
+          catchError(() => {
+            this.planetMessageService.showAlert(
+              $localize`There was a problem refreshing the links. Reload the page to see the updated links.`
+            );
+            return EMPTY;
+          })
+        );
+      }),
       finalize(() => this.reorderingLinks = false)
     ).subscribe({
       next: (res) => this.setLinksAndFinances(res),
       error: () => {
-        this.links = previousLinks;
+        this.links = this.sortLinks(this.links.map(item =>
+          previousOrderById.has(item._id) ? { ...item, order: previousOrderById.get(item._id) } : item
+        ));
         this.planetMessageService.showAlert($localize`There was an error reordering links`);
       }
     });

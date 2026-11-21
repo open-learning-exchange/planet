@@ -110,7 +110,8 @@ export class CommunityLinkDialogComponent {
       title: this.fb.control(editLink?.title || '', {
         validators: [CustomValidators.required],
         asyncValidators: [ac => this.validatorService.isUnique$('teams', 'title', ac, {
-          exceptions: editLink ? [ editLink.title ] : []
+          exceptions: editLink ? [ editLink.title ] : [],
+          selectors: editLink?._id ? { _id: { $ne: editLink._id } } : {}
         })]
       }),
       route: this.fb.control(editLink?.route || '', { validators: [CustomValidators.required] }),
