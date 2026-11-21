@@ -82,7 +82,7 @@
         @for (step of courseDetail.steps; track trackByFn($index); let stepNum = $index) {
           <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header
-              (focus)="isUserEnrolled && isStepLocked(stepNum) && statusIcon.showTooltip()"
+              (focus)="isUserEnrolled && isStepLocked(stepNum) && statusIcon.showTooltipOnKeyboardFocus($event)"
               (blur)="statusIcon.hideTooltip()">
               <mat-panel-title class="step-title" i18n>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}

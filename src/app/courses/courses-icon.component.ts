@@ -57,8 +57,10 @@ export class CoursesIconComponent {
   @Input() icon: CourseIcon = '';
   @ViewChild(MatTooltip) tooltip?: MatTooltip;
 
-  showTooltip() {
-    this.tooltip?.show();
+  showTooltipOnKeyboardFocus(event: FocusEvent) {
+    if ((event.currentTarget as HTMLElement)?.matches(':focus-visible')) {
+      this.tooltip?.show();
+    }
   }
 
   hideTooltip() {
