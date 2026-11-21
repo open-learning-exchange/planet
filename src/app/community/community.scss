@@ -42,6 +42,11 @@
   gap: 0.5rem;
 }
 
+.link-actions {
+  display: inline-flex;
+  align-items: center;
+}
+
 .new-voice-btn {
   flex: 0 0 auto;
   align-self: center;

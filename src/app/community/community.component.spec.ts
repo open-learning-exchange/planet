@@ -311,15 +311,15 @@ describe('CommunityComponent remote exchange behavior', () => {
     component.openAddMessageDialog();
     component.postMessage({ message: 'Voice' }, undefined, undefined);
     component.openAddLinkDialog();
+    component.openEditLinkDialog({});
     component.openDeleteLinkDialog({});
+    component.moveLink([ { _id: 'l1' }, { _id: 'l2' } ], 0, 1);
     component.confirmDeleteDescription();
     component.openChangeTitleDialog({ member: {} });
     component.openDescriptionDialog();
-    component.toggleDeleteMode();
 
     expect(dialog.open).not.toHaveBeenCalled();
     expect(dialogsFormService.openDialogsForm).not.toHaveBeenCalled();
-    expect(component.deleteMode).toBe(false);
   });
 
   it('cancels the previous exchange load when the route code changes', () => {

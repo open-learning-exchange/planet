@@ -75,32 +75,58 @@
                 <mat-nav-list>
                   @if (localLinks.length > 0) {
                     <h3 mat-subheader i18n>Local</h3>
-                    @for (link of localLinks; track link) {
+                    @for (link of localLinks; track link._id || link; let i = $index; let first = $first; let last = $last) {
                       <mat-list-item [routerLink]="(link.teamType === 'sync' || !isRemoteExchange) ? link.route : []" [matTooltip]="localLinkTooltip(link)" [disableRipple]="link.teamType === 'local' && isRemoteExchange">
                         <mat-icon matListItemIcon>{{link.icon || 'link'}}</mat-icon>
                         <span matListItemTitle>{{link.title}}</span>
-                        <span matListItemMeta>
-                          @if (deleteMode) {
-                            <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()">
-                              <mat-icon>delete</mat-icon>
-                            </button>
-                          }
+                        <span matListItemMeta class="link-actions">
+                          <ng-container *planetAuthorizedRoles="''">
+                            @if (!isRemoteExchange) {
+                              @if (localLinks.length > 1) {
+                                <button mat-icon-button type="button" [disabled]="first || reorderingLinks" matTooltip="Move up" i18n-matTooltip aria-label="Move up" i18n-aria-label (click)="moveLink(localLinks, i, -1); $event.preventDefault(); $event.stopPropagation()">
+                                  <mat-icon>arrow_upward</mat-icon>
+                                </button>
+                                <button mat-icon-button type="button" [disabled]="last || reorderingLinks" matTooltip="Move down" i18n-matTooltip aria-label="Move down" i18n-aria-label (click)="moveLink(localLinks, i, 1); $event.preventDefault(); $event.stopPropagation()">
+                                  <mat-icon>arrow_downward</mat-icon>
+                                </button>
+                              }
+                              <button mat-icon-button type="button" matTooltip="Edit link" i18n-matTooltip aria-label="Edit link" i18n-aria-label (click)="openEditLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
+                                <mat-icon>edit</mat-icon>
+                              </button>
+                              <button mat-icon-button type="button" matTooltip="Delete link" i18n-matTooltip aria-label="Delete link" i18n-aria-label (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            }
+                          </ng-container>
                         </span>
                       </mat-list-item>
                     }
                   }
                   @if (socialWebLinks.length > 0) {
                     <h3 mat-subheader i18n>Social & Web</h3>
-                    @for (link of socialWebLinks; track link) {
+                    @for (link of socialWebLinks; track link._id || link; let i = $index; let first = $first; let last = $last) {
                       <a mat-list-item [href]="link.route" target="_blank" rel="noopener">
                         <mat-icon matListItemIcon [svgIcon]="link.icon === 'website' ? '' : link.icon">{{ link.icon === 'website' ? 'public' : '' }}</mat-icon>
                         <span matListItemTitle>{{link.title}}</span>
-                        <span matListItemMeta>
-                          @if (deleteMode) {
-                            <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
-                              <mat-icon>delete</mat-icon>
-                            </button>
-                          }
+                        <span matListItemMeta class="link-actions">
+                          <ng-container *planetAuthorizedRoles="''">
+                            @if (!isRemoteExchange) {
+                              @if (socialWebLinks.length > 1) {
+                                <button mat-icon-button type="button" [disabled]="first || reorderingLinks" matTooltip="Move up" i18n-matTooltip aria-label="Move up" i18n-aria-label (click)="moveLink(socialWebLinks, i, -1); $event.preventDefault(); $event.stopPropagation()">
+                                  <mat-icon>arrow_upward</mat-icon>
+                                </button>
+                                <button mat-icon-button type="button" [disabled]="last || reorderingLinks" matTooltip="Move down" i18n-matTooltip aria-label="Move down" i18n-aria-label (click)="moveLink(socialWebLinks, i, 1); $event.preventDefault(); $event.stopPropagation()">
+                                  <mat-icon>arrow_downward</mat-icon>
+                                </button>
+                              }
+                              <button mat-icon-button type="button" matTooltip="Edit link" i18n-matTooltip aria-label="Edit link" i18n-aria-label (click)="openEditLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
+                                <mat-icon>edit</mat-icon>
+                              </button>
+                              <button mat-icon-button type="button" matTooltip="Delete link" i18n-matTooltip aria-label="Delete link" i18n-aria-label (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            }
+                          </ng-container>
                         </span>
                       </a>
                     }
@@ -111,14 +137,6 @@
             <div *planetAuthorizedRoles="''">
               @if (!isRemoteExchange) {
                 <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-                <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-                  @if (!deleteMode) {
-                    <span i18n>Remove Links</span>
-                  }
-                  @if (deleteMode) {
-                    <span i18n>Done Removing Links</span>
-                  }
-                </button>
               }
             </div>
           </mat-tab>

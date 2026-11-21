@@ -93,7 +93,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   communityDataLoading = false;
   councillors: any[] = [];
   reports: any[] = [];
-  deleteMode = false;
+  reorderingLinks = false;
   onDestroy$ = new Subject<void>();
   communityDataRequest$ = new Subject<boolean>();
   newsRequestSubscription?: Subscription;
@@ -429,8 +429,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
       ...link,
       // for backward compatibility, some old links might have 'web' as icon instead of 'website'
       icon: link.icon === 'web' ? 'website' : link.icon
-    }));
-    this.deleteMode = this.deleteMode && this.links.length !== 0;
+    })).sort((a, b) => {
+      const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+      const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      return (a.createdDate || 0) - (b.createdDate || 0);
+    });
     this.finances = finances;
     this.reports = reports;
     this.communityDataLoading = false;
@@ -490,6 +496,63 @@ export class CommunityComponent implements OnInit, OnDestroy {
     });
   }
 
+  openEditLinkDialog(link: any) {
+    if (this.isRemoteExchange) {
+      return;
+    }
+    this.dialog.open(CommunityLinkDialogComponent, {
+      width: '50vw',
+      maxHeight: '90vh',
+      data: {
+        link,
+        getLinks: () => this.getLinks().pipe(tap(res => this.setLinksAndFinances(res))),
+        excludeIds: this.links
+          .filter(item => item._id !== link._id)
+          .map(item => item.linkId || item.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
+      }
+    });
+  }
+
+  moveLink(sectionLinks: any[], index: number, direction: -1 | 1) {
+    if (this.isRemoteExchange || this.reorderingLinks) {
+      return;
+    }
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= sectionLinks.length) {
+      return;
+    }
+    const reordered = [ ...sectionLinks ];
+    [ reordered[index], reordered[targetIndex] ] = [ reordered[targetIndex], reordered[index] ];
+    const updatedById = new Map(reordered.map((item, idx) => [ item._id, { ...item, order: idx } ]));
+    const updatedDocs = reordered
+      .map((item, idx) => ({ ...item, order: idx }))
+      .filter((item, idx) => sectionLinks.find(orig => orig._id === item._id)?.order !== idx);
+
+    if (updatedDocs.length === 0) {
+      return;
+    }
+
+    const previousLinks = this.links;
+    this.links = this.links.map(item => updatedById.get(item._id) || item).sort((a, b) => {
+      const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+      const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+      return orderA !== orderB ? orderA - orderB : (a.createdDate || 0) - (b.createdDate || 0);
+    });
+    this.reorderingLinks = true;
+    this.couchService.bulkDocs('teams', updatedDocs).pipe(
+      switchMap(() => this.getLinks()),
+      finalize(() => {
+        this.reorderingLinks = false;
+      })
+    ).subscribe({
+      next: (res) => this.setLinksAndFinances(res),
+      error: () => {
+        this.links = previousLinks;
+        this.planetMessageService.showAlert($localize`There was an error reordering links`);
+      }
+    });
+  }
+
   openDeleteLinkDialog(link) {
     if (this.isRemoteExchange) {
       return;
@@ -543,13 +606,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   toggleShowButton(data) {
     this.activeReplyId = data._id === 'root' ? null : data._id;
-  }
-
-  toggleDeleteMode() {
-    if (this.isRemoteExchange) {
-      return;
-    }
-    this.deleteMode = !this.deleteMode;
   }
 
   openChangeTitleDialog({ member: councillor }) {
