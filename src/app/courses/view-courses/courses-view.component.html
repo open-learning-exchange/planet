@@ -82,9 +82,8 @@
         @for (step of courseDetail.steps; track trackByFn($index); let stepNum = $index) {
           <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header
-              i18n-matTooltip
-              matTooltip="Pass previous test to unlock."
-              [matTooltipDisabled]="!(isUserEnrolled && isStepLocked(stepNum))">
+              (focus)="isUserEnrolled && isStepLocked(stepNum) && statusIcon.showTooltip()"
+              (blur)="statusIcon.hideTooltip()">
               <mat-panel-title class="step-title" i18n>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
@@ -99,13 +98,10 @@
                   <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
                 }
               </mat-panel-description>
-              @if (isUserEnrolled && isStepLocked(stepNum)) {
-                <planet-course-icon [icon]="courseIcons.lock"></planet-course-icon>
-              } @else if (step.progress && step.progress.passed) {
-                <planet-course-icon [icon]="courseIcons.done"></planet-course-icon>
-              } @else if (step.progress && !step.progress.passed) {
-                <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
-              }
+              <planet-course-icon
+                #statusIcon
+                [icon]="isUserEnrolled && isStepLocked(stepNum) ? courseIcons.lock : (step.progress?.passed ? courseIcons.done : (step.progress ? courseIcons.rotateRight : ''))">
+              </planet-course-icon>
             </mat-expansion-panel-header>
             <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>
             @if (step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && !step.unavailableResources && step?.survey?.questions.length === 0) {

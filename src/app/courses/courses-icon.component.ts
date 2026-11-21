@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
@@ -55,5 +55,14 @@ export class CoursesIconComponent {
 
   courseIcons = courseIcons;
   @Input() icon: CourseIcon = '';
+  @ViewChild(MatTooltip) tooltip?: MatTooltip;
+
+  showTooltip() {
+    this.tooltip?.show();
+  }
+
+  hideTooltip() {
+    this.tooltip?.hide();
+  }
 
 }
