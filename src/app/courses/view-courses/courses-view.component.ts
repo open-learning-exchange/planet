@@ -125,11 +125,20 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe((exams) => {
       const latestDoc = (doc) => doc && exams.find(exam => exam._id === doc._id) || doc;
-      this.courseDetail.steps = this.courseDetail.steps.map(step => ({
-        ...step,
-        exam: latestDoc(step.exam),
-        survey: latestDoc(step.survey)
-      }));
+      this.courseDetail.steps = this.courseDetail.steps.map((step, index) => {
+        const survey = latestDoc(step.survey);
+        const surveyChanged = step.survey?._id !== survey?._id || step.survey?._rev !== survey?._rev;
+        const nextStep = {
+          ...step,
+          exam: latestDoc(step.exam),
+          survey,
+          ...(surveyChanged ? { surveyText: undefined, surveyStatusRev: undefined } : {})
+        };
+        if (surveyChanged && step.surveyStatusRev !== undefined && survey?.questions?.length) {
+          this.loadStepSurveyStatus(nextStep, index);
+        }
+        return nextStep;
+      });
     }, () => this.isLoading = false);
     this.coursesService.courseTagsListener$(this.parent).pipe(
       filter(({ courseId }) => courseId === this.courseDetail._id),
@@ -152,10 +161,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       const previousStep = this.courseDetail.steps[stepNum - 1];
       this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, !stepHasExam(previousStep));
     }
-    if (stepNum === stepClickedNum && step?.survey?.questions?.length && step.surveySubmission === undefined) {
-      this.getStepSurveySubmission(step).subscribe((surveyStatus) => {
-        this.courseDetail.steps[stepNum] = { ...this.courseDetail.steps[stepNum], ...surveyStatus };
-      });
+    if (stepNum === stepClickedNum && step?.survey?.questions?.length && step.surveyStatusRev !== step.survey._rev) {
+      this.loadStepSurveyStatus(step, stepNum);
     }
     if (stepHasExam(step) && step.submission === undefined) {
       this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
@@ -167,22 +174,18 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, step.attempts);
   }
 
-  getStepSurveySubmission(step) {
-    this.submissionsService.openSubmission({
-      parentId: step.survey._id + '@' + this.courseDetail._id,
-      parent: step.survey,
-      user: this.userService.get(),
-      type: 'survey'
-    });
-    return this.submissionsService.submissionUpdated$.pipe(
-      filter(({ submission }) => submission.parentId === `${step.survey._id}@${this.courseDetail._id}`),
-      take(1),
-      takeUntil(this.onDestroy$),
-      map(({ submission, attempts }) => ({
-        surveyText: submission.status === 'pending' && submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake',
-        surveySubmission: submission
-      }))
-    );
+  loadStepSurveyStatus(step, stepNum: number) {
+    const surveyId = step.survey._id;
+    const surveyRev = step.survey._rev;
+    this.courseDetail.steps[stepNum] = { ...this.courseDetail.steps[stepNum], surveyStatusRev: surveyRev };
+    this.submissionsService.getSurveyButtonStatus(`${surveyId}@${this.courseDetail._id}`, surveyRev, this.userService.get().name)
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((surveyText) => {
+        const current = this.courseDetail.steps[stepNum];
+        if (current?.survey?._id === surveyId && current?.survey?._rev === surveyRev) {
+          this.courseDetail.steps[stepNum] = { ...current, surveyText, surveyStatusRev: surveyRev };
+        }
+      });
   }
 
   getStepSubmission(step) {

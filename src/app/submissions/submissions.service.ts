@@ -118,6 +118,21 @@ export class SubmissionsService {
     });
   }
 
+  getSurveyButtonStatus(parentId: string, surveyRev: string, userName: string): Observable<'continue' | 'retake' | 'take'> {
+    if (!userName || !parentId) {
+      return of('take');
+    }
+    const selector = { parentId, 'user.name': userName, 'parent._rev': surveyRev };
+    return this.couchService.findAll('submissions', findDocuments(selector)).pipe(
+      map((docs: any[]) => {
+        if (docs.some((doc: any) => doc.status !== 'pending')) {
+          return 'retake';
+        }
+        return docs.some((doc: any) => doc.status === 'pending' && doc.answers?.length > 0) ? 'continue' : 'take';
+      })
+    );
+  }
+
   startNewSubmission({ parentId, parent, user, type, team }: { parentId, parent, user, type, team? }) {
     this.newSubmission({ parentId, parent, user, type, team });
     this.submissionAttempts = 0;

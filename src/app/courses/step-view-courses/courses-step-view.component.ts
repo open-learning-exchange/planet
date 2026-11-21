@@ -142,11 +142,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(({ submission, attempts, passed = false }) => {
-        if (submission.parentId === `${this.stepDetail.survey?._id}@${this.courseId}`) {
-          this.surveyText = submission.status === 'pending' && submission.answers.length > 0
-            ? 'continue' : attempts === 0 ? 'take' : 'retake';
-          return;
-        }
         // A slow lookup for the previous step's exam can land after Next has moved on
         if (submission.parentId !== `${this.stepDetail.exam?._id}@${this.courseId}`) {
           return;
@@ -211,11 +206,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     const survey = this.stepDetail.survey && (exams.find(({ _id }) => _id === this.stepDetail.survey._id) || this.stepDetail.survey);
     if (survey?.questions?.length) {
-      this.submissionsService.openSubmission({
-        parentId: survey._id + '@' + course._id,
-        parent: survey,
-        user: this.userService.get(),
-        type: 'survey' });
+      this.submissionsService.getSurveyButtonStatus(`${survey._id}@${course._id}`, survey._rev, this.userService.get().name)
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe((surveyText) => {
+          if (this.stepDetail?.survey?._id === survey._id && this.courseId === course._id) {
+            this.surveyText = surveyText;
+          }
+        });
     }
     this.isLoading = false;
   }
