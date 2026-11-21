@@ -93,7 +93,7 @@
       color="accent"
       [ngClass]="{ 'margin-lr-10': !isMobile() }"
       (click)="goToExam('survey')" i18n>
-      Take Survey
+      {surveyText, select, take {Take Survey} continue {Continue Survey} retake {Retake Survey}}
     </button>
   }
   @if (canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)) {
