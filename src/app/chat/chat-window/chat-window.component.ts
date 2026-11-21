@@ -46,6 +46,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() conversations: any[] | null = null;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
+  @ViewChild('submitButton', { read: ElementRef }) submitButton: ElementRef<HTMLButtonElement>;
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
   streaming: boolean;
@@ -248,6 +249,17 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.spinnerOn = true;
     this.promptForm.controls.prompt.setValue('');
     this.chatService.sendNewChatAddedSignal();
+  }
+
+  onEnter(event: Event) {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.shiftKey || keyboardEvent.isComposing) {
+      return;
+    }
+    keyboardEvent.preventDefault();
+    if (this.promptForm.valid && this.providers.length > 0 && this.spinnerOn) {
+      this.submitButton?.nativeElement.click();
+    }
   }
 
   onSubmit() {

@@ -12,8 +12,9 @@
     <form [formGroup]="promptForm" class="form-space" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label i18n>Chat</mat-label>
-        <textarea #chatInput matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
+        <textarea #chatInput matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder (keydown.enter)="onEnter($event)"></textarea>
         <button
+          #submitButton
           mat-icon-button
           matIconSuffix
           [planetSubmit]="promptForm.valid && spinnerOn"
