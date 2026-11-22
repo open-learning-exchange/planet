@@ -98,8 +98,9 @@
               </mat-panel-description>
               @if (step.progress && step.progress.passed) {
                 <planet-course-icon [icon]="courseIcons.done"></planet-course-icon>
-              }
-              @if (step.progress && !step.progress.passed) {
+              } @else if (step.requiresGrading) {
+                <planet-course-icon [icon]="courseIcons.assignmentLate"></planet-course-icon>
+              } @else if (step.progress && !step.progress.passed) {
                 <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
               }
             </mat-expansion-panel-header>
