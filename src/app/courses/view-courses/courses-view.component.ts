@@ -178,7 +178,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     }
     if (stepHasExam(step) && step.submission === undefined) {
       this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
-        this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
+        this.courseDetail.steps[stepNum] = { ...this.courseDetail.steps[stepNum], ...submissionStatus };
         this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
       });
       return;
