@@ -8,7 +8,7 @@ import { appSourceLabel } from '@shared/android/app-source';
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
-import { ageFromUser, dedupeShelfReduce, toProperCase } from '@shared/utils';
+import { ageFromUser, dedupeShelfReduce, normalizeMarkdownWhitespace, toProperCase } from '@shared/utils';
 import { CsvService } from '@shared/export/csv.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
@@ -391,29 +391,27 @@ export class SubmissionsService {
       answerText;
   }
 
+  // Page breaks go on content, not on empty spacer nodes: a spacer that doesn't fit on a full page leaves an empty page
   setHeader(docContent, name) {
-    docContent.push({ text: '', pageBreak: 'before' });
     docContent.push({
       text: name,
       style: 'header',
-      margin: [ 0, 10, 0, 10 ]
+      margin: [ 0, 10, 0, 10 ],
+      pageBreak: 'before'
     });
   }
 
   async buildChartSection(exam, updatedSubmissions, docContent) {
-    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     this.setHeader(docContent, $localize`Charts`);
+    let pageBreak = {};
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
       if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') {
         continue;
       }
       question.index = i;
-      docContent.push({
-        stack: htmlToPdfmake(
-          `<strong>${$localize`Question `} ${i + 1}:</strong> ${this.markdownRenderer.render(question.body, this.imageHost)}`
-        )
-      });
+      const body = this.markdownRenderer.render(normalizeMarkdownWhitespace(question.body), this.imageHost);
+      docContent.push({ ...pageBreak, html: `<strong>${$localize`Question `} ${i + 1}:</strong> ${body}` });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
@@ -466,37 +464,27 @@ export class SubmissionsService {
         const pieImg = await this.generateChartImage(pieAgg);
         docContent.push({ image: pieImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
       }
-      docContent.push({ text: '', pageBreak: 'after' });
+      pageBreak = { pageBreak: 'before' };
     }
   }
 
   async buildAnalysisSection(exam, updatedSubmissions, docContent) {
-    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
-      stack: htmlToPdfmake(this.markdownRenderer.render(analysisPayload.chat, '', 'chat')),
+      html: this.markdownRenderer.render(normalizeMarkdownWhitespace(analysisPayload.chat), '', 'chat'),
       margin: [ 0, 10, 0, 10 ]
     });
   }
 
-  async buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
-    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
+  buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
     const submissionHtml = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
-    const submissionContents = submissionHtml.map((html, index) => {
-      const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
-      return {
-        ...pageBreak,
-        stack: htmlToPdfmake(this.markdownRenderer.sanitizeHtml(html))
-      };
-    });
     return [
       { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
-      { text: exam.description || '' },
+      { markdown: exam.description || '' },
       { text: '\n' },
       { text: $localize`Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
-      { text: '', pageBreak: 'after' },
-      ...submissionContents
+      ...submissionHtml.map(html => ({ html, pageBreak: 'before' }))
     ];
   }
 
@@ -544,7 +532,7 @@ export class SubmissionsService {
         }
         try {
           const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-          const docContent = await this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
+          const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
           if (exportOptions.includeCharts) {
             await this.buildChartSection(exam, updatedSubmissions, docContent);
           }
@@ -567,10 +555,7 @@ export class SubmissionsService {
                 fontSize: 12,
                 bold: true,
                 alignment: 'center'
-              },
-              'markdown-align-left': { alignment: 'left' },
-              'markdown-align-center': { alignment: 'center' },
-              'markdown-align-right': { alignment: 'right' }
+              }
             }
           }, `${this.localizedSubmissionType(type)} - ${exam.name}.pdf`);
         } catch {
@@ -620,8 +605,8 @@ export class SubmissionsService {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
       const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
-      const renderedText = this.markdownRenderer.render(text, this.imageHost);
-      return `<div class="markdown-align-${alignment}"><strong>${localizedLabel} ${index + 1}:</strong><br>${renderedText}</div>`;
+      const renderedText = this.markdownRenderer.render(normalizeMarkdownWhitespace(text), this.imageHost);
+      return `<div class="markdown-align-${alignment}"><div><strong>${localizedLabel} ${index + 1}:</strong></div>${renderedText}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
