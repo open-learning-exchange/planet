@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { AiChatService } from './ai-chat.service';
@@ -40,5 +40,16 @@ describe('AiChatService', () => {
 
     service.refreshAIProviders();
     expect(latest(service.providerDiscovery$)).toEqual({ state: 'loaded', providers: [ openai, gemini ] });
+  });
+
+  it('cancels the request a refresh replaces, so its late failure is ignored', () => {
+    const older = new Subject<unknown>();
+    const service = createService(older, of({ providers: [ openai ] }));
+
+    service.refreshAIProviders();
+    older.error(new Error('Bad Gateway'));
+
+    expect(older.observed).toBe(false);
+    expect(latest(service.providerDiscovery$)).toEqual({ state: 'loaded', providers: [ openai ] });
   });
 });

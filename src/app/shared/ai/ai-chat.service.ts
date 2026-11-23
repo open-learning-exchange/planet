@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -22,6 +22,7 @@ import {
   private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private providerDiscovery = new BehaviorSubject<ProviderDiscovery>({ state: 'loading' });
+  private discoveryRequest: Subscription;
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
 
   newChatAdded$ = this.newChatAdded.asObservable();
@@ -60,7 +61,8 @@ import {
 
   refreshAIProviders() {
     this.providerDiscovery.next({ state: 'loading' });
-    this.httpClient.get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`).subscribe({
+    this.discoveryRequest?.unsubscribe();
+    this.discoveryRequest = this.httpClient.get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`).subscribe({
       // A gateway older than #10638 answers in another shape
       next: ({ providers }) => this.providerDiscovery.next(Array.isArray(providers) ? { state: 'loaded', providers } : { state: 'failed' }),
       error: () => this.providerDiscovery.next({ state: 'failed' })
