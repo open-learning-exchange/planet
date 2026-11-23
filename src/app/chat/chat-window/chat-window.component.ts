@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
 import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
@@ -47,6 +48,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
   private onDestroy$ = new Subject<void>();
+  private streamSubscription?: Subscription;
   spinnerOn = true;
   streaming: boolean;
   disabled = false;
@@ -82,7 +84,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
     this.subscribeToAIService();
-    this.checkStreamingStatusAndInitialize();
+    this.streaming = this.stateService.configuration.streaming;
     this.chatService.listAIProviders().subscribe((providers) => {
       this.providers = providers;
       if (!this.provider && providers.length > 0) {
@@ -98,7 +100,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-    this.chatService.closeWebSocket();
+    this.streamSubscription?.unsubscribe();
   }
 
   subscribeToNewChatSelected() {
@@ -122,9 +124,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
             return false;
           }
           return true;
-        })
+        }),
+        filter((conversation: any) => conversation?._id !== this.selectedConversationId?._id)
       )
       .subscribe((conversationId) => {
+        this.stopStreaming();
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
         if (!this.isEditing) {
@@ -149,6 +153,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   resetConversation() {
+    this.stopStreaming();
     this.conversations = [];
     this.selectedConversationId = null;
   }
@@ -194,54 +199,32 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  checkStreamingStatusAndInitialize() {
-    this.isStreamingEnabled();
-    if (this.streaming) {
-      this.chatService.initializeWebSocket();
-      this.initializeChatStream();
-      this.initializeErrorStream();
-    }
+  stopStreaming() {
+    this.streamSubscription?.unsubscribe();
+    this.spinnerOn = true;
   }
 
-  isStreamingEnabled() {
-    const configuration = this.stateService.configuration;
-    this.streaming = configuration.streaming;
-  }
-
-  initializeErrorStream() {
-    this.chatService.getErrorStream().subscribe((errorMessage) => {
-      const lastConversation = this.conversations[this.conversations.length - 1];
-      this.conversations[this.conversations.length - 1] = {
-        ...lastConversation,
-        response: 'Error: ' + errorMessage,
-        error: true
-      };
-      this.spinnerOn = true;
-      this.promptForm.controls.prompt.setValue('');
+  streamTurn(content: string) {
+    const turn = { id: Date.now().toString(), role: 'user', query: content, response: '', error: false };
+    this.conversations.push(turn);
+    this.streamSubscription = this.chatService.streamPrompt(this.data).subscribe({
+      next: (message) => {
+        if (message.type === 'final') {
+          this.selectedConversationId = { _id: message.couchDBResponse.id, _rev: message.couchDBResponse.rev };
+          this.postSubmit();
+        } else {
+          this.spinnerOn = false;
+          turn.response += message.response;
+          this.scrollTo('bottom');
+        }
+      },
+      error: (error: Error) => {
+        turn.response = `${turn.response}\n\nError: ${error.message}`.trim();
+        turn.error = true;
+        this.spinnerOn = true;
+        this.promptForm.controls.prompt.setValue('');
+      }
     });
-  }
-
-  initializeChatStream() {
-    // Subscribe to WebSocket messages
-    this.chatService.getChatStream().subscribe((message) => {
-      // Handle incoming messages from the chat stream
-      this.handleIncomingMessage(JSON.parse(message));
-    });
-  }
-
-  handleIncomingMessage(message: any) {
-    if (message.type === 'final') {
-      this.selectedConversationId = {
-        _id: message.couchDBResponse?.id,
-        _rev: message.couchDBResponse?.rev
-      };
-      this.postSubmit();
-    } else {
-      this.spinnerOn = false;
-      const lastConversation = this.conversations[this.conversations.length - 1];
-      lastConversation.response += message.response;
-      this.scrollTo('bottom');
-    }
   }
 
   postSubmit() {
@@ -270,8 +253,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.streaming) {
-      this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
-      this.chatService.sendUserInput(this.data);
+      this.streamTurn(content);
     } else {
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
@@ -282,8 +264,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           };
           this.postSubmit();
         },
-        (error: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
+        (error: HttpErrorResponse) => {
+          const message = error.error?.message || error.message;
+          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + message, error: true });
           this.spinnerOn = true;
           this.promptForm.controls.prompt.setValue('');
         }
