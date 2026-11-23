@@ -49,7 +49,7 @@ describe('PdfService', () => {
     const definition = createdDefinition();
     expect(couchService.getAttachment).toHaveBeenCalledTimes(2);
     expect(definition.images[loaded]).toMatch(/^data:image\/png;base64,/);
-    expect(definition.content[0].stack[0]).toEqual({ image: loaded, fit: [ 400, 400 ] });
+    expect(definition.content[0].stack[0]).toEqual({ image: loaded });
     expect(definition.content[1]).toEqual({ text: '' });
   });
 
@@ -87,15 +87,18 @@ describe('PdfService', () => {
     expect(stack).not.toContain('"image"');
   });
 
-  it('embeds an image uploaded into markdown', async () => {
+  it('embeds an image uploaded into markdown and fits every markdown image to the page', async () => {
     couchService.getAttachment.mockReturnValue(of(new Blob([ 'png' ], { type: 'image/png' })));
+    const markdown = '![diagram](resources/a/diagram.png)\n\n![pasted](data:image/png;base64,iVBORw0KGgo=)';
 
-    await service.download({ content: [ { markdown: '![diagram](resources/a/diagram.png)' } ] }, 'markdown.pdf');
+    await service.download({ content: [ { markdown } ] }, 'markdown.pdf');
 
     const definition = createdDefinition();
     const [ url ] = couchService.getAttachment.mock.calls[0];
+    expect(couchService.getAttachment).toHaveBeenCalledTimes(1);
     expect(url).toMatch(/^https?:\/\/.+\/resources\/a\/diagram\.png$/);
     expect(definition.images[url]).toMatch(/^data:image\/png;base64,/);
+    expect(JSON.stringify(definition.content[0].stack).match(/"fit":\[400,400\]/g)).toHaveLength(2);
   });
 
   it('sanitizes an html node before converting it', async () => {

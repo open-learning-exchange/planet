@@ -104,27 +104,27 @@ const findNodes = (node: any, matches: (node: any) => boolean): any[] => {
   return [ ...(matches(node) ? [ node ] : []), ...Object.values(node).flatMap(child => findNodes(child, matches)) ];
 };
 
-// The markdown renderer puts these classes on aligned table cells, and the survey export on its questions and responses
 const markdownAlignStyles = {
   'markdown-align-left': { alignment: 'left' },
   'markdown-align-center': { alignment: 'center' },
   'markdown-align-right': { alignment: 'right' }
 };
 
-const htmlToPdfmakeOptions = {
-  // Roboto has no ☑/☐ task-list glyphs
-  replaceText: (text: string) => text.replace(/☑/g, '[x]').replace(/☐/g, '[ ]'),
-  customTag: ({ element, ret }) => {
-    // The renderer removes unsafe image URLs, and pdfmake fails the whole PDF on an image without one
-    if (element.nodeName === 'IMG' && !ret.image) {
-      return { text: '' };
-    }
-    // The newlines between block tags end up as blank stack entries (blank lines); between inline tags they're real spaces
-    if (Array.isArray(ret.stack)) {
-      ret.stack = ret.stack.filter(child => typeof child.text !== 'string' || child.text.trim());
-    }
-    return ret;
+// pdfmake fails the whole PDF on an image whose unsafe URL the renderer removed, and prints an unsized one at its pixel width
+const fitImage = (image: any) => {
+  if (!image.image) {
+    return { text: '' };
   }
+  return image.width ? image : { ...image, fit: [ 400, 400 ] };
+};
+
+const dropBlankLines = (node: any) =>
+  Array.isArray(node.stack) ? { ...node, stack: node.stack.filter(child => typeof child.text !== 'string' || child.text.trim()) } : node;
+
+const htmlToPdfmakeOptions = {
+  // Roboto has no ☑/☐ glyphs
+  replaceText: (text: string) => text.replace(/☑/g, '[x]').replace(/☐/g, '[ ]'),
+  customTag: ({ element, ret }) => element.nodeName === 'IMG' ? fitImage(ret) : dropBlankLines(ret)
 };
 
 @Injectable({
@@ -181,8 +181,6 @@ export class PdfService {
         if (!images[node.image]) {
           delete node.image;
           node.text = '';
-        } else if (!node.fit && !node.width) {
-          node.fit = [ 400, 400 ];
         }
       });
       return { ...documentDefinition, images: { ...documentDefinition.images, ...images } };
