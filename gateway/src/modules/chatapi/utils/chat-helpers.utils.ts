@@ -1,9 +1,7 @@
-import OpenAI from 'openai';
-
 import { HttpError } from '../../../middleware/errors';
 import { ChatMessage } from '../models/chat.model';
+import { runProviderChat } from '../providers';
 import { ProviderClient } from '../providers/clients';
-import { openaiChat } from '../providers/openai.provider';
 import { fetchResourceAttachments, isPlainDocId, streamResourceAttachment } from './db.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
@@ -124,35 +122,7 @@ async function withDeadline(
   }
 }
 
-async function openaiResponse(
-  provider: ProviderClient,
-  messages: ChatMessage[],
-  instructions: string,
-  signal: AbortSignal,
-  callback?: (response: string) => void
-): Promise<string> {
-  const result = await openaiChat(provider.client, {
-    'model': provider.model,
-    messages,
-    'instructions': instructions || undefined,
-    'onDelta': callback,
-    signal
-  });
-  return result.text;
-}
-
-function completionMessages(messages: ChatMessage[], instructions: string): OpenAI.Chat.ChatCompletionMessageParam[] {
-  return instructions ? [ { 'role': 'system', 'content': instructions }, ...messages ] : messages;
-}
-
-/**
- * Generates a chat completion with streaming enabled: OpenAI through the Responses API, other providers through their completions endpoint
- * @param messages - Array of chat messages
- * @param provider - The AI provider's client and model
- * @param instructions - Planet prompt
- * @returns Completion text
- */
-export async function aiChatStream(
+export async function aiChat(
   messages: ChatMessage[],
   provider: ProviderClient,
   instructions: string,
@@ -160,60 +130,13 @@ export async function aiChatStream(
   callback?: (response: string) => void
 ): Promise<string> {
   return withDeadline(provider, async (signal, send) => {
-    const input = await withReference(messages, context);
-    if (provider.name === 'openai') {
-      return await openaiResponse(provider, input, instructions, signal, send);
-    }
-
-    const completion = await provider.client.chat.completions.create({
+    const result = await runProviderChat(provider, {
       'model': provider.model,
-      'messages': completionMessages(input, instructions),
-      'stream': true,
-    }, { signal });
-
-    let completionText = '';
-    for await (const chunk of completion) {
-      if (chunk.choices && chunk.choices.length > 0) {
-        const response = chunk.choices[0].delta?.content || '';
-        completionText += response;
-        send(response);
-      }
-    }
-
-    return completionText;
+      'messages': await withReference(messages, context),
+      'instructions': instructions || undefined,
+      'onDelta': callback && send,
+      signal
+    });
+    return result.text;
   }, callback);
-}
-
-
-/**
- * Generates a chat completion with streaming disabled: OpenAI through the Responses API, other providers through their completions endpoint
- * @param messages - Array of chat messages
- * @param provider - The AI provider's client and model
- * @param instructions - Planet prompt
- * @returns Completion text
- */
-export async function aiChatNonStream(
-  messages: ChatMessage[],
-  provider: ProviderClient,
-  instructions: string,
-  context: any = '',
-): Promise<string> {
-  return withDeadline(provider, async (signal) => {
-    const input = await withReference(messages, context);
-    if (provider.name === 'openai') {
-      return await openaiResponse(provider, input, instructions, signal);
-    }
-
-    const completion = await provider.client.chat.completions.create({
-      'model': provider.model,
-      'messages': completionMessages(input, instructions),
-    }, { signal });
-
-    const completionText = completion.choices[0]?.message?.content;
-    if (!completionText) {
-      throw new Error('Unexpected API response');
-    }
-
-    return completionText;
-  });
 }

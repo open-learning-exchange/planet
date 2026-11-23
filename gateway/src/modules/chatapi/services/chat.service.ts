@@ -5,7 +5,7 @@ import { SessionInfo } from '../../../middleware/auth';
 import { HttpError } from '../../../middleware/errors';
 import { getConfiguration } from '../../../services/config.service';
 import { isPlainDocId, isUserConversationOwner, retrieveChatHistory } from '../utils/db.utils';
-import { aiChat } from '../utils/chat.utils';
+import { aiChat } from '../utils/chat-helpers.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 import { ProviderClient, providerClient } from '../providers/clients';
 
@@ -18,7 +18,7 @@ async function checkTurn(content: unknown, aiProvider?: AIProvider): Promise<Pro
   if (!content || typeof content !== 'string') {
     throw new HttpError(400, '"data.content" must be a non-empty string');
   }
-  return providerClient(aiProvider || { 'name': 'openai' });
+  return providerClient(aiProvider);
 }
 
 /**
@@ -65,7 +65,7 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
 
   messages.push({ 'role': 'user', content });
 
-  const completionText = await aiChat(messages, provider, assistant.instructions, dbData.context, stream, callback);
+  const completionText = await aiChat(messages, provider, assistant.instructions, dbData.context, stream ? callback : undefined);
 
   dbData.conversations[dbData.conversations.length - 1].response = completionText;
 

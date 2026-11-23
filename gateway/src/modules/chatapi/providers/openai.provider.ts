@@ -1,7 +1,6 @@
 import OpenAI from 'openai';
 
 import { ChatMessage, Citation, ProviderChatRequest, ProviderChatResult } from '../models/chat.model';
-import { ProviderError } from '../utils/http-error';
 
 const toInput = (messages: ChatMessage[]): OpenAI.Responses.ResponseInput =>
   messages.map((message) => ({ 'role': message.role, 'content': message.content }));
@@ -35,13 +34,13 @@ const reachedOutputLimit = (response: OpenAI.Responses.Response): boolean => {
 
 const requireUsableResponse = (response: OpenAI.Responses.Response, text: string): string => {
   if (response.status === 'failed') {
-    throw new ProviderError(response.error?.message || 'AI response failed');
+    throw new Error(response.error?.message || 'AI response failed');
   }
   if (response.status && response.status !== 'completed' && !reachedOutputLimit(response)) {
-    throw new ProviderError('AI response incomplete');
+    throw new Error('AI response incomplete');
   }
   if (!text) {
-    throw new ProviderError('Unexpected AI response');
+    throw new Error('Unexpected AI response');
   }
   return text;
 };
@@ -86,15 +85,15 @@ export async function openaiChat(client: OpenAI, request: ProviderChatRequest): 
     } else if (event.type === 'response.completed') {
       finalResponse = event.response;
     } else if (event.type === 'response.failed') {
-      throw new ProviderError(event.response.error?.message || 'AI response failed');
+      throw new Error(event.response.error?.message || 'AI response failed');
     } else if (event.type === 'response.incomplete') {
       finalResponse = event.response;
     } else if (event.type === 'error') {
-      throw new ProviderError(event.message || 'AI response failed');
+      throw new Error(event.message || 'AI response failed');
     }
   }
   if (!finalResponse) {
-    throw new ProviderError('Unexpected AI response');
+    throw new Error('Unexpected AI response');
   }
   const text = requireUsableResponse(finalResponse, finalResponse.output_text || streamedText);
   return { text, 'citations': collectCitations(finalResponse) };

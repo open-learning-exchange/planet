@@ -25,8 +25,7 @@ const provider = (name: ProviderName) => ({
   'model': 'model-test'
 }) as unknown as ProviderClient;
 
-let aiChatNonStream: typeof import('./chat-helpers.utils').aiChatNonStream;
-let aiChatStream: typeof import('./chat-helpers.utils').aiChatStream;
+let aiChat: typeof import('./chat-helpers.utils').aiChat;
 
 const history: ChatMessage[] = [
   { 'role': 'user', 'content': 'earlier question' },
@@ -61,7 +60,7 @@ function storedAttachments(digest = 'md5-a') {
 beforeEach(async () => {
   vi.clearAllMocks();
   vi.resetModules();
-  ({ aiChatNonStream, aiChatStream } = await import('./chat-helpers.utils'));
+  ({ aiChat } = await import('./chat-helpers.utils'));
   mocks.responsesCreate.mockResolvedValue({ 'status': 'completed', 'output_text': 'answer' });
   mocks.completionsCreate.mockResolvedValue({ 'choices': [ { 'message': { 'content': 'answer' } } ] });
   mocks.fetchAttachments.mockResolvedValue(storedAttachments());
@@ -74,7 +73,7 @@ beforeEach(async () => {
 
 describe('OpenAI chat turns', () => {
   it('keeps the Planet prompt as the instructions and sends course context with the first message', async () => {
-    const text = await aiChatNonStream(history, provider('openai'), 'PLANET PROMPT', courseContext);
+    const text = await aiChat(history, provider('openai'), 'PLANET PROMPT', courseContext);
 
     const params = mocks.responsesCreate.mock.calls[0][0];
     expect(text).toEqual('answer');
@@ -92,7 +91,7 @@ describe('OpenAI chat turns', () => {
     })());
     const deltas: string[] = [];
 
-    const text = await aiChatStream(history, provider('openai'), 'PLANET PROMPT', courseContext, (delta) => deltas.push(delta));
+    const text = await aiChat(history, provider('openai'), 'PLANET PROMPT', courseContext, (delta) => deltas.push(delta));
 
     expect(text).toEqual('streamed');
     expect(deltas).toEqual([ 'streamed' ]);
@@ -100,7 +99,7 @@ describe('OpenAI chat turns', () => {
   });
 
   it('sends a turn without context or a prompt as it is', async () => {
-    await aiChatNonStream([ { 'role': 'user', 'content': 'hello' } ], provider('openai'), '');
+    await aiChat([ { 'role': 'user', 'content': 'hello' } ], provider('openai'), '');
 
     const params = mocks.responsesCreate.mock.calls[0][0];
     expect(params.instructions).toBeUndefined();
@@ -111,7 +110,7 @@ describe('OpenAI chat turns', () => {
 
 describe('Chat Completions turns', () => {
   it('sends the Planet prompt as a system message and course context with the first message', async () => {
-    const text = await aiChatNonStream(history, provider('gemini'), 'PLANET PROMPT', courseContext);
+    const text = await aiChat(history, provider('gemini'), 'PLANET PROMPT', courseContext);
 
     expect(text).toEqual('answer');
     expect(mocks.completionsCreate.mock.calls[0][0].messages).toEqual([
@@ -128,7 +127,7 @@ describe('Chat Completions turns', () => {
     })());
     const deltas: string[] = [];
 
-    const text = await aiChatStream(history, provider('deepseek'), 'PLANET PROMPT', courseContext, (delta) => deltas.push(delta));
+    const text = await aiChat(history, provider('deepseek'), 'PLANET PROMPT', courseContext, (delta) => deltas.push(delta));
 
     const params = mocks.completionsCreate.mock.calls[0][0];
     expect(text).toEqual('streamed');
@@ -139,7 +138,7 @@ describe('Chat Completions turns', () => {
   });
 
   it('adds no system message without a prompt', async () => {
-    await aiChatNonStream([ { 'role': 'user', 'content': 'hello' } ], provider('perplexity'), '');
+    await aiChat([ { 'role': 'user', 'content': 'hello' } ], provider('perplexity'), '');
 
     expect(mocks.completionsCreate.mock.calls[0][0].messages).toEqual([ { 'role': 'user', 'content': 'hello' } ]);
   });
@@ -147,20 +146,20 @@ describe('Chat Completions turns', () => {
 
 describe('reference text', () => {
   it('sends the same prefix on every turn of a conversation', async () => {
-    await aiChatNonStream(history.slice(0, 1), provider('deepseek'), 'PLANET PROMPT', courseContext);
-    await aiChatNonStream(history, provider('deepseek'), 'PLANET PROMPT', courseContext);
+    await aiChat(history.slice(0, 1), provider('deepseek'), 'PLANET PROMPT', courseContext);
+    await aiChat(history, provider('deepseek'), 'PLANET PROMPT', courseContext);
 
     const [ first, second ] = mocks.completionsCreate.mock.calls.map(([ params ]) => params.messages);
     expect(second.slice(0, 2)).toEqual(first);
   });
 
   it('extracts an attachment once per stored revision', async () => {
-    await aiChatNonStream(history, provider('openai'), '', courseContext);
-    await aiChatNonStream(history, provider('gemini'), '', courseContext);
+    await aiChat(history, provider('openai'), '', courseContext);
+    await aiChat(history, provider('gemini'), '', courseContext);
     expect(mocks.extractText).toHaveBeenCalledTimes(1);
 
     mocks.fetchAttachments.mockResolvedValue(storedAttachments('md5-new'));
-    await aiChatNonStream(history, provider('openai'), '', courseContext);
+    await aiChat(history, provider('openai'), '', courseContext);
     expect(mocks.extractText).toHaveBeenCalledTimes(2);
   });
 
@@ -168,14 +167,14 @@ describe('reference text', () => {
     mocks.extractText.mockRejectedValueOnce(new Error('not found'));
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
-    const text = await aiChatNonStream(history, provider('openai'), '', courseContext);
+    const text = await aiChat(history, provider('openai'), '', courseContext);
 
     const content: string = mocks.responsesCreate.mock.calls[0][0].input[0].content;
     expect(text).toEqual('answer');
     expect(content).toContain('Course step: Water');
     expect(content).not.toContain('PDF TEXT');
 
-    await aiChatNonStream(history, provider('openai'), '', courseContext);
+    await aiChat(history, provider('openai'), '', courseContext);
     expect(mocks.extractText).toHaveBeenCalledTimes(2);
     expect(mocks.responsesCreate.mock.calls[1][0].input[0].content).toContain('PDF TEXT');
   });
@@ -184,7 +183,7 @@ describe('reference text', () => {
     mocks.fetchAttachments.mockRejectedValue(new Error('missing'));
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
-    await aiChatNonStream(history, provider('openai'), '', courseContext);
+    await aiChat(history, provider('openai'), '', courseContext);
 
     expect(mocks.extractText).not.toHaveBeenCalled();
     expect(mocks.responsesCreate.mock.calls[0][0].input[0].content).toContain('Course step: Water');
@@ -197,7 +196,7 @@ describe('reference text', () => {
     });
     mocks.extractText.mockResolvedValue('x'.repeat(70000));
 
-    await aiChatNonStream(history, provider('openai'), '', courseContext);
+    await aiChat(history, provider('openai'), '', courseContext);
 
     expect(mocks.extractText).toHaveBeenCalledTimes(1);
   });
@@ -205,7 +204,7 @@ describe('reference text', () => {
   it('reads no resource outside the resources database', async () => {
     const escaping = { ...courseContext, 'resource': { 'id': '_design/../../_users/org.couchdb.user:someone' } };
 
-    await aiChatNonStream(history, provider('openai'), '', escaping);
+    await aiChat(history, provider('openai'), '', escaping);
 
     expect(mocks.fetchAttachments).not.toHaveBeenCalled();
     expect(mocks.responsesCreate.mock.calls[0][0].input[0].content).toContain('Course step: Water');
@@ -214,7 +213,7 @@ describe('reference text', () => {
   it('cuts reference text past the cap, keeping the course step', async () => {
     mocks.extractText.mockResolvedValue('x'.repeat(100000));
 
-    await aiChatNonStream(history, provider('openai'), '', courseContext);
+    await aiChat(history, provider('openai'), '', courseContext);
 
     const content: string = mocks.responsesCreate.mock.calls[0][0].input[0].content;
     expect(content).toContain('Course step: Water');
@@ -232,7 +231,7 @@ describe('provider deadline and failures', () => {
     vi.useFakeTimers();
     mocks.responsesCreate.mockReturnValue(new Promise(() => undefined));
 
-    const reply = expect(aiChatNonStream(history, provider('openai'), '')).rejects.toMatchObject({ 'statusCode': 504 });
+    const reply = expect(aiChat(history, provider('openai'), '')).rejects.toMatchObject({ 'statusCode': 504 });
     await vi.advanceTimersByTimeAsync(120000);
     await reply;
   });
@@ -244,7 +243,7 @@ describe('provider deadline and failures', () => {
       await new Promise((resolve) => signal.addEventListener('abort', resolve));
     })());
 
-    const reply = expect(aiChatStream(history, provider('deepseek'), '', '', () => undefined)).rejects.toMatchObject({ 'statusCode': 504 });
+    const reply = expect(aiChat(history, provider('deepseek'), '', '', () => undefined)).rejects.toMatchObject({ 'statusCode': 504 });
     await vi.advanceTimersByTimeAsync(120000);
     await reply;
   });
@@ -258,7 +257,7 @@ describe('provider deadline and failures', () => {
       }
     })());
 
-    const reply = expect(aiChatStream(history, provider('deepseek'), '', '', () => undefined)).rejects.toMatchObject({ 'statusCode': 504 });
+    const reply = expect(aiChat(history, provider('deepseek'), '', '', () => undefined)).rejects.toMatchObject({ 'statusCode': 504 });
     await vi.advanceTimersByTimeAsync(120000);
     await reply;
   });
@@ -272,7 +271,7 @@ describe('provider deadline and failures', () => {
       }
     })());
 
-    const reply = aiChatStream(history, provider('deepseek'), '', '', () => undefined);
+    const reply = aiChat(history, provider('deepseek'), '', '', () => undefined);
     await vi.advanceTimersByTimeAsync(300000);
     await expect(reply).resolves.toEqual('one two three');
   });
@@ -280,7 +279,7 @@ describe('provider deadline and failures', () => {
   it('answers 502 without the provider\'s own message', async () => {
     mocks.responsesCreate.mockRejectedValue(new Error('401 Incorrect API key provided: sk-abc***xyz'));
 
-    await expect(aiChatNonStream(history, provider('openai'), '')).rejects.toMatchObject({
+    await expect(aiChat(history, provider('openai'), '')).rejects.toMatchObject({
       'statusCode': 502,
       'message': 'The AI provider could not answer'
     });

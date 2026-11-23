@@ -12,7 +12,7 @@ vi.mock('../../../config/couch.config', () => ({
   'couchBaseUrl': 'http://couchdb:5984',
   'resourceDB': {}
 }));
-vi.mock('../utils/chat.utils', () => ({ 'aiChat': mocks.aiChat }));
+vi.mock('../utils/chat-helpers.utils', () => ({ 'aiChat': mocks.aiChat }));
 vi.mock('../../../services/config.service', () => ({
   'getConfiguration': async () => ({ 'assistant': { 'instructions': '' } })
 }));
@@ -43,6 +43,7 @@ describe('chat ownership', () => {
   it('saves a new conversation under the session member, whatever the body says', async () => {
     await chat({ 'content': 'Hello', 'user': 'brian' }, amara, false);
     expect(mocks.insert).toHaveBeenLastCalledWith(expect.objectContaining({ 'user': 'amara' }));
+    expect(mocks.providerClient).toHaveBeenCalledWith(undefined);
   });
 
   it('refuses turns on another member\'s conversation and writes nothing', async () => {
