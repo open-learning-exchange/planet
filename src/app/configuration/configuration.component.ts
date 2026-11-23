@@ -303,12 +303,6 @@ export class ConfigurationComponent implements OnInit {
 
     const chatConfig = {
       streaming: false,
-      models: {
-        openai: '',
-        perplexity: '',
-        deepseek: '',
-        gemini: ''
-      },
       assistant: {
         name: 'Planet Context',
         instructions: baseContextPrompt,

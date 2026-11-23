@@ -12,7 +12,7 @@
         @for (name of names; track name) {
           <mat-list-item>
             <div matListItemTitle class="list-item-content">
-              <span>{{ name | titlecase }}</span>
+              <span>{{ label(name) }}</span>
               <div class="key-entry">
                 @if (status[name]) {
                   <span class="key-status" i18n>Set</span>
@@ -21,14 +21,14 @@
                 }
                 <mat-form-field>
                   @if (status[name]) {
-                    <mat-label i18n>Replace {{ name | titlecase }} key</mat-label>
+                    <mat-label i18n>Replace {{ label(name) }} key</mat-label>
                   } @else {
-                    <mat-label i18n>Enter {{ name | titlecase }} key</mat-label>
+                    <mat-label i18n>Enter {{ label(name) }} key</mat-label>
                   }
                   <input matInput type="password" autocomplete="new-password" [formControl]="keyControls[name]">
                 </mat-form-field>
                 @if (status[name]) {
-                  <button mat-button color="warn" type="button" (click)="removeKey(name)" i18n>Remove {{ name | titlecase }} key</button>
+                  <button mat-button color="warn" type="button" (click)="removeKey(name)" i18n>Remove {{ label(name) }} key</button>
                 }
               </div>
             </div>
