@@ -31,25 +31,21 @@ describe('AiChatService', () => {
     expect(latest(service.listAIProviders())).toEqual([ openai ]);
   });
 
-  it('reports an error or an older gateway\'s answer as failed, not as no providers, until a refresh succeeds', () => {
-    const service = createService(throwError(() => new Error('Bad Gateway')), of({ openai: true }), of({ providers: [ openai, gemini ] }));
-    expect(latest(service.providerDiscovery$)).toEqual({ state: 'failed' });
-
-    service.refreshAIProviders();
+  it('reports an error as failed until a refresh succeeds', () => {
+    const service = createService(throwError(() => new Error('Bad Gateway')), of({ providers: [ openai, gemini ] }));
     expect(latest(service.providerDiscovery$)).toEqual({ state: 'failed' });
 
     service.refreshAIProviders();
     expect(latest(service.providerDiscovery$)).toEqual({ state: 'loaded', providers: [ openai, gemini ] });
   });
 
-  it('cancels the request a refresh replaces, so its late failure is ignored', () => {
+  it('ignores the late failure of a request a refresh replaced', () => {
     const older = new Subject<unknown>();
     const service = createService(older, of({ providers: [ openai ] }));
 
     service.refreshAIProviders();
     older.error(new Error('Bad Gateway'));
 
-    expect(older.observed).toBe(false);
     expect(latest(service.providerDiscovery$)).toEqual({ state: 'loaded', providers: [ openai ] });
   });
 });

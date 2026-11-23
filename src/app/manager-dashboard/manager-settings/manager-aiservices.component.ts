@@ -112,7 +112,6 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // addControl keeps an existing control, so a later answer doesn't wipe a model being typed
   private setProviders(providers: AIServiceStatus[]) {
     const models = this.configuration.models || {};
     this.labels = Object.fromEntries(providers.map(({ name, label }) => [ name, label ]));
@@ -127,7 +126,6 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     const { streaming, models, assistantName, assistantInstructions } = this.configForm.getRawValue();
     const configPatch = {
       streaming,
-      // Keeps models for providers the registry no longer lists, since the patch replaces `models` whole
       models: { ...this.configuration.models, ...models },
       assistant: { name: assistantName, instructions: assistantInstructions }
     };

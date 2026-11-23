@@ -18,7 +18,7 @@ describe('ManagerAIServicesComponent', () => {
     { name: 'openai', label: 'OpenAI', configured: true },
     { name: 'deepseek', label: 'DeepSeek', configured: false }
   ];
-  const configurationService = { getKeyStatus: vi.fn(), setKey: vi.fn(), removeKey: vi.fn(), patchLocalConfiguration: vi.fn() };
+  const configurationService = { getKeyStatus: vi.fn(), patchLocalConfiguration: vi.fn() };
   const aiChatService = { providerDiscovery$: new BehaviorSubject<ProviderDiscovery>({ state: 'loading' }), refreshAIProviders: vi.fn() };
   let fixture: ComponentFixture<ManagerAIServicesComponent>;
 
@@ -49,7 +49,7 @@ describe('ManagerAIServicesComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('lists every registry provider by its label for a configuration with no keys or models', () => {
+  it('lists every registry provider by label, with no keys or models saved', () => {
     const component = createComponent({ _id: 'configuration' });
     const text = fixture.nativeElement.textContent;
 
@@ -58,7 +58,7 @@ describe('ManagerAIServicesComponent', () => {
     expect(text).not.toContain('Deepseek');
   });
 
-  it('saves models without touching the shared configuration, keeping edits through a later answer and unlisted models', () => {
+  it('saves models on a copy, keeping unlisted ones and edits made before a later answer', () => {
     const configuration = { _id: 'configuration', models: { openai: 'gpt-4o', retired: 'old-model' } };
     const component = createComponent(configuration);
 
@@ -72,7 +72,7 @@ describe('ManagerAIServicesComponent', () => {
     expect(configuration.models).toEqual({ openai: 'gpt-4o', retired: 'old-model' });
   });
 
-  it('shows a failed provider list as failed, and Try again reloads the providers and the failed keys', () => {
+  it('shows a failed list, and Try again reloads the providers and the failed keys', () => {
     configurationService.getKeyStatus.mockReturnValueOnce(throwError(() => new Error('Bad Gateway')));
     createComponent({ _id: 'configuration' });
     aiChatService.providerDiscovery$.next({ state: 'failed' });

@@ -63,8 +63,7 @@ import {
     this.providerDiscovery.next({ state: 'loading' });
     this.discoveryRequest?.unsubscribe();
     this.discoveryRequest = this.httpClient.get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`).subscribe({
-      // A gateway older than #10638 answers in another shape
-      next: ({ providers }) => this.providerDiscovery.next(Array.isArray(providers) ? { state: 'loaded', providers } : { state: 'failed' }),
+      next: ({ providers }) => this.providerDiscovery.next({ state: 'loaded', providers }),
       error: () => this.providerDiscovery.next({ state: 'failed' })
     });
   }
