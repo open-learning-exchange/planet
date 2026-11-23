@@ -28,6 +28,10 @@ export interface Message {
   response: string;
 }
 
+export type ChatStreamMessage =
+  | { type: 'partial', response: string }
+  | { type: 'final', completionText: string, couchDBResponse: { id: string, rev: string } };
+
 export type ProviderName = string;
 
 export interface AIProvider {

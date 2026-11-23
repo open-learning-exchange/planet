@@ -4,17 +4,14 @@ import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { AIServiceStatus, AIProvider, Conversation, ConversationChange, ProviderName } from '../../chat/chat.model';
+import { AIServiceStatus, AIProvider, ChatStreamMessage, Conversation, ConversationChange, ProviderName } from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
 }) export class AiChatService {
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
   private conversationsUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat/conversations`;
-  private socket: WebSocket;
 
-  private chatStreamSubject: Subject<string> = new Subject<string>();
-  private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
   private toggleAIService = new ReplaySubject<ProviderName>(1);
@@ -33,27 +30,6 @@ import { AIServiceStatus, AIProvider, Conversation, ConversationChange, Provider
     private httpClient: HttpClient
   ) {
     this.fetchAIProviders();
-  }
-
-  initializeWebSocket() {
-    if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-      this.socket = new WebSocket(this.baseUrl.replace(/^http/, 'ws'));
-      this.socket.onerror = (error) => {
-        this.errorSubject.next('WebSocket connection error');
-      };
-      this.socket.addEventListener('message', (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          if (message.type === 'error') {
-            this.errorSubject.next(message.error);
-          } else {
-            this.chatStreamSubject.next(event.data);
-          }
-        } catch (error) {
-          this.errorSubject.next('Invalid message format');
-        }
-      });
-    }
   }
 
   private fetchAIProviders() {
@@ -82,27 +58,25 @@ import { AIServiceStatus, AIProvider, Conversation, ConversationChange, Provider
     }, { withCredentials: true });
   }
 
-  // Subscribe to stream updates
-  getChatStream(): Observable<string> {
-    return this.chatStreamSubject.asObservable();
-  }
-
-  getErrorStream(): Observable<string> {
-    return this.errorSubject.asObservable();
-  }
-
-  // Method to send user input via WebSocket
-  sendUserInput(data: any): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(data));
-    }
-  }
-
-  // Function to close ws connection
-  closeWebSocket(): void {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.close();
-    }
+  // One socket per turn, so no idle socket is left for a proxy timeout or a gateway restart to close
+  streamPrompt(data: object): Observable<ChatStreamMessage> {
+    return new Observable<ChatStreamMessage>((subscriber) => {
+      const socket = new WebSocket(this.baseUrl.replace(/^http/, 'ws'));
+      socket.onopen = () => socket.send(JSON.stringify(data));
+      socket.onmessage = (event) => {
+        const message: ChatStreamMessage | { type: 'error', error: string } = JSON.parse(event.data);
+        if (message.type === 'error') {
+          subscriber.error(new Error(message.error));
+          return;
+        }
+        subscriber.next(message);
+        if (message.type === 'final') {
+          subscriber.complete();
+        }
+      };
+      socket.onclose = () => subscriber.error(new Error('WebSocket connection error'));
+      return () => socket.close();
+    });
   }
 
   listConversations(): Observable<Conversation[]> {
