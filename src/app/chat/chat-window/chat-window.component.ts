@@ -3,6 +3,7 @@ import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFo
 import { Subject, Subscription } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
@@ -263,8 +264,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           };
           this.postSubmit();
         },
-        (error: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
+        (error: HttpErrorResponse) => {
+          const message = error.error?.message || error.message;
+          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + message, error: true });
           this.spinnerOn = true;
           this.promptForm.controls.prompt.setValue('');
         }

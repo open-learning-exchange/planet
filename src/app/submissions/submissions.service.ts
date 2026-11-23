@@ -880,7 +880,7 @@ export class SubmissionsService {
       if (error && error.status === 0) {
         message = $localize`Error analyzing responses: Chat API is not available.`;
       } else {
-        message = $localize`Error analyzing responses: ${error.message || error}`;
+        message = $localize`Error analyzing responses: ${error.error?.message || error.message || error}`;
       }
       this.planetMessageService.showAlert(message);
       response = { chat: message };
