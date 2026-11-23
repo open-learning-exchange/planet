@@ -2,7 +2,6 @@ import { ProviderName } from '../providers/registry';
 
 export interface AIProvider {
   name: ProviderName;
-  model?: string;
 }
 
 export interface ProviderStatus {

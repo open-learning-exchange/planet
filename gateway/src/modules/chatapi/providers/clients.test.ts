@@ -6,6 +6,7 @@ vi.mock('../../../services/config.service', () => ({ 'getConfiguration': mocks.g
 vi.mock('../../../services/keys.service', () => ({ 'getKeys': mocks.getKeys }));
 
 import { listProviders, providerClient } from './clients';
+import { AIProvider } from '../models/chat.model';
 import { ProviderName } from './registry';
 
 describe('provider clients', () => {
@@ -25,9 +26,20 @@ describe('provider clients', () => {
 
   it('refuses a name that is not a provider with 400, and a provider without a key or a model with 503', async () => {
     await expect(providerClient({ 'name': 'constructor' as ProviderName })).rejects.toMatchObject({ 'statusCode': 400 });
-    await expect(providerClient(undefined as any)).rejects.toMatchObject({ 'statusCode': 400 });
+    await expect(providerClient({} as any)).rejects.toMatchObject({ 'statusCode': 400 });
     await expect(providerClient({ 'name': 'openai' })).rejects.toMatchObject({ 'statusCode': 503 });
     await expect(providerClient({ 'name': 'gemini' })).rejects.toMatchObject({ 'statusCode': 503 });
     await expect(providerClient({ 'name': 'deepseek' })).resolves.toMatchObject({ 'model': 'deepseek-model' });
+  });
+
+  it('uses the saved model, whatever model the turn sends', async () => {
+    const costly = { 'name': 'deepseek', 'model': 'deepseek-costly' } as AIProvider;
+    await expect(providerClient(costly)).resolves.toMatchObject({ 'model': 'deepseek-model' });
+  });
+
+  it('answers a turn that names no provider with the first configured one, or 503 when there is none', async () => {
+    await expect(providerClient()).resolves.toMatchObject({ 'name': 'deepseek', 'model': 'deepseek-model' });
+    mocks.getKeys.mockResolvedValue({ 'gemini': 'gemini-key' });
+    await expect(providerClient()).rejects.toMatchObject({ 'statusCode': 503 });
   });
 });
