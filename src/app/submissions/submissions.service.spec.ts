@@ -11,7 +11,7 @@ describe('SubmissionsService survey exports', () => {
   let csvService: { exportCSV: ReturnType<typeof vi.fn> };
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
-  let pdfService: { download: ReturnType<typeof vi.fn>, getHtmlConverter?: ReturnType<typeof vi.fn> };
+  let pdfService: { download: ReturnType<typeof vi.fn> };
   let couchService: { post: ReturnType<typeof vi.fn>, findAll: ReturnType<typeof vi.fn>, datePlaceholder: string };
 
   const exam = {
@@ -149,7 +149,7 @@ describe('SubmissionsService survey exports', () => {
   });
 
   it('exports a PDF submission counted through its embedded team', async () => {
-    const buildPdf = vi.spyOn(service, 'buildInitialSubmissionPDF').mockResolvedValue([]);
+    const buildPdf = vi.spyOn(service, 'buildInitialSubmissionPDF').mockReturnValue([]);
 
     await service.exportSubmissionsPdf(exam, 'survey', {
       includeQuestions: true,
@@ -168,23 +168,28 @@ describe('SubmissionsService survey exports', () => {
     expect(planetMessageService.showMessage).not.toHaveBeenCalledWith('There is no survey response');
   });
 
-  const capturePdfHtml = async (exportOptions: { includeAnswers: boolean, includeQuestions: boolean }) => {
-    const htmlToPdfmake = vi.fn().mockReturnValue([]);
-    pdfService.getHtmlConverter = vi.fn().mockResolvedValue(htmlToPdfmake);
-    await service.buildInitialSubmissionPDF(exam, [ submissionWithEmbeddedTeam ], [ 'Question' ], exportOptions);
-    return htmlToPdfmake.mock.calls.map(call => call[0]).join('\n');
-  };
+  const capturePdfHtml = (exportOptions: { includeAnswers: boolean, includeQuestions: boolean }) =>
+    service.buildInitialSubmissionPDF(exam, [ submissionWithEmbeddedTeam ], [ 'Question' ], exportOptions)
+      .map(node => node.html).filter(Boolean).join('\n');
 
-  it('assembles questions-only PDF content as HTML', async () => {
-    const html = await capturePdfHtml({ includeQuestions: true, includeAnswers: false });
+  it('hands the survey description over as markdown', () => {
+    const survey = { ...exam, description: '## Welcome' };
+    const exportOptions = { includeQuestions: true, includeAnswers: false };
+    const content = service.buildInitialSubmissionPDF(survey, [ submissionWithEmbeddedTeam ], [ 'Question' ], exportOptions);
+
+    expect(content).toContainEqual({ markdown: '## Welcome' });
+  });
+
+  it('assembles questions-only PDF content as HTML', () => {
+    const html = capturePdfHtml({ includeQuestions: true, includeAnswers: false });
 
     expect(html).toContain('<h3>');
     expect(html).not.toContain('###');
     expect(html).toContain('markdown-align-left');
   });
 
-  it('assembles response PDF content as sanitized HTML with alignment classes', async () => {
-    const html = await capturePdfHtml({ includeQuestions: true, includeAnswers: true });
+  it('assembles response PDF content as HTML with alignment classes', () => {
+    const html = capturePdfHtml({ includeQuestions: true, includeAnswers: true });
 
     expect(html).toContain('markdown-align-right');
     expect(html).not.toContain('style="text-align');

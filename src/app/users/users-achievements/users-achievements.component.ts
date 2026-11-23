@@ -350,7 +350,7 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     if (this.achievements.purpose) {
       optionals.push(
         { text: $localize`My Purpose`, style: 'subHeader', alignment: 'center' },
-        { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] },
+        { markdown: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] },
         sectionSpacer
       );
     }
@@ -358,7 +358,7 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     if (this.achievements.goals) {
       optionals.push(
         { text: $localize`My Goals`, style: 'subHeader', alignment: 'center' },
-        { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] },
+        { markdown: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] },
         sectionSpacer
       );
     }
@@ -373,9 +373,12 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
       );
     }
 
-    if (this.achievements.achievements && this.achievements.achievements.length > 0) {
+    if (this.achievements.achievementsHeader || this.achievements.achievements.length > 0) {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
+        ...(this.achievements.achievementsHeader ?
+          [ { markdown: this.achievements.achievementsHeader, alignment: 'left', margin: [ 20, 5 ] } ] :
+          []),
         ...this.achievements.achievements.map((achievement) => {
           const formattedDate = achievement.date ? formatDate(achievement.date, 'mediumDate', this.localeId) : '';
           return [

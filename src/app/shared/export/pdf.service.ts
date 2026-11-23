@@ -3,7 +3,10 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { CouchService } from '@shared/database/couchdb.service';
+import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { normalizeMarkdownWhitespace } from '@shared/utils';
+import { environment } from '../../../environments/environment';
 
 let pdfMakePromise: Promise<any> | null = null;
 let htmlToPdfmakePromise: Promise<any> | null = null;
@@ -23,6 +26,16 @@ const loadPdfMake = (): Promise<any> => {
     });
   }
   return pdfMakePromise;
+};
+
+const loadHtmlToPdfmake = (): Promise<(html: string, options: object) => any> => {
+  if (!htmlToPdfmakePromise) {
+    htmlToPdfmakePromise = import('html-to-pdfmake').then(module => module.default).catch((error) => {
+      htmlToPdfmakePromise = null;
+      throw error;
+    });
+  }
+  return htmlToPdfmakePromise;
 };
 
 const blobToDataUrl = (blob: Blob): Observable<string> => new Observable(observer => {
@@ -81,15 +94,37 @@ const blobToJpegDataUrl = (blob: Blob): Observable<string> => new Observable(obs
 export const imageBlobToPdfDataUrl = (blob: Blob, contentType = blob.type): Observable<string> =>
   [ 'image/jpeg', 'image/png' ].includes(contentType.toLowerCase()) ? blobToDataUrl(blob) : blobToJpegDataUrl(blob);
 
-const linkedImageNodes = (node: any, images: Record<string, string> = {}): any[] => {
+const findNodes = (node: any, matches: (node: any) => boolean): any[] => {
   if (Array.isArray(node)) {
-    return node.flatMap(child => linkedImageNodes(child, images));
+    return node.flatMap(child => findNodes(child, matches));
   }
   if (!node || typeof node !== 'object') {
     return [];
   }
-  const isLinked = typeof node.image === 'string' && !node.image.startsWith('data:') && !images[node.image];
-  return [ ...(isLinked ? [ node ] : []), ...Object.values(node).flatMap(child => linkedImageNodes(child, images)) ];
+  return [ ...(matches(node) ? [ node ] : []), ...Object.values(node).flatMap(child => findNodes(child, matches)) ];
+};
+
+const markdownAlignStyles = {
+  'markdown-align-left': { alignment: 'left' },
+  'markdown-align-center': { alignment: 'center' },
+  'markdown-align-right': { alignment: 'right' }
+};
+
+// pdfmake fails the whole PDF on an image whose unsafe URL the renderer removed, and prints an unsized one at its pixel width
+const fitImage = (image: any) => {
+  if (!image.image) {
+    return { text: '' };
+  }
+  return image.width ? image : { ...image, fit: [ 400, 400 ] };
+};
+
+const dropBlankLines = (node: any) =>
+  Array.isArray(node.stack) ? { ...node, stack: node.stack.filter(child => typeof child.text !== 'string' || child.text.trim()) } : node;
+
+const htmlToPdfmakeOptions = {
+  // Roboto has no ☑/☐ glyphs
+  replaceText: (text: string) => text.replace(/☑/g, '[x]').replace(/☐/g, '[ ]'),
+  customTag: ({ element, ret }) => element.nodeName === 'IMG' ? fitImage(ret) : dropBlankLines(ret)
 };
 
 @Injectable({
@@ -99,18 +134,40 @@ export class PdfService {
 
   constructor(
     private planetMessageService: PlanetMessageService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private markdownRenderer: MarkdownRenderService
   ) {}
 
   download(documentDefinition: any, filename: string): Promise<void> {
-    return Promise.all([ loadPdfMake(), this.embedLinkedImages(documentDefinition) ])
+    return Promise.all([ loadPdfMake(), this.convertHtml(documentDefinition).then(converted => this.embedLinkedImages(converted)) ])
       .then(([ pdfMake, definition ]) => pdfMake.createPdf(definition).download(filename))
       .catch(() => this.planetMessageService.showAlert($localize`There was an error exporting the PDF`));
   }
 
+  // { markdown } and { html } aren't pdfmake nodes: builders use them for rich fields, and they become pdfmake content only here
+  private convertHtml(documentDefinition: any): Promise<any> {
+    const nodes = findNodes(documentDefinition.content, node => typeof node.markdown === 'string' || typeof node.html === 'string');
+    if (nodes.length === 0) {
+      return Promise.resolve(documentDefinition);
+    }
+    return loadHtmlToPdfmake().then(htmlToPdfmake => {
+      nodes.forEach(node => {
+        const safeHtml = typeof node.markdown === 'string' ?
+          this.markdownRenderer.render(normalizeMarkdownWhitespace(node.markdown), `${environment.couchAddress}/`) :
+          this.markdownRenderer.sanitizeHtml(node.html);
+        node.stack = htmlToPdfmake(safeHtml, htmlToPdfmakeOptions);
+        delete node.markdown;
+        delete node.html;
+      });
+      return { ...documentDefinition, styles: { ...markdownAlignStyles, ...documentDefinition.styles } };
+    });
+  }
+
   // pdfmake only embeds data URLs: each linked image is fetched once and keyed by URL, and one that fails to load is left out
   private embedLinkedImages(documentDefinition: any): Promise<any> {
-    const nodes = linkedImageNodes(documentDefinition.content, documentDefinition.images);
+    const nodes = findNodes(documentDefinition.content, node =>
+      typeof node.image === 'string' && !node.image.startsWith('data:') && !documentDefinition.images?.[node.image]
+    );
     if (nodes.length === 0) {
       return Promise.resolve(documentDefinition);
     }
@@ -124,22 +181,10 @@ export class PdfService {
         if (!images[node.image]) {
           delete node.image;
           node.text = '';
-        } else if (!node.fit && !node.width) {
-          node.fit = [ 400, 400 ];
         }
       });
       return { ...documentDefinition, images: { ...documentDefinition.images, ...images } };
     })).toPromise();
-  }
-
-  getHtmlConverter(): Promise<(html: string) => any> {
-    if (!htmlToPdfmakePromise) {
-      htmlToPdfmakePromise = import('html-to-pdfmake').then(module => module.default).catch((error) => {
-        htmlToPdfmakePromise = null;
-        throw error;
-      });
-    }
-    return htmlToPdfmakePromise;
   }
 
 }
