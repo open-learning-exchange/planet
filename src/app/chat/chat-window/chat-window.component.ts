@@ -153,7 +153,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   resetConversation() {
     this.conversations = [];
     this.selectedConversationId = null;
-    this.isSubmitting = false;
   }
 
   createForm() {
@@ -255,21 +254,16 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.chatService.sendNewChatAddedSignal();
   }
 
-  onEnter(event: Event) {
-    const keyboardEvent = event as KeyboardEvent;
-    if (keyboardEvent.shiftKey || keyboardEvent.isComposing) {
+  onEnter(event: KeyboardEvent) {
+    if (event.isComposing || window.matchMedia('(pointer: coarse)').matches) {
       return;
     }
-    keyboardEvent.preventDefault();
-    if (!this.isSubmitting && this.promptForm.valid && this.providers.length > 0 && this.spinnerOn) {
-      this.submitButton?.nativeElement.click();
-    }
+    event.preventDefault();
+    // Not onSubmit(): the spinner opens only on a click, and a disabled button ignores the click.
+    this.submitButton.nativeElement.click();
   }
 
   onSubmit() {
-    if (this.isSubmitting) {
-      return;
-    }
     if (this.promptForm.valid) {
       this.submitPrompt();
     } else {
