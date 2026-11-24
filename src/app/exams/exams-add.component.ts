@@ -125,6 +125,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate, ErrorS
   successMessage: string;
   steps = [];
   showFormError = false;
+  checkedQuestions = 0;
   showPreviewError = false;
   isCourseContent = this.router.url.match(/courses/);
   returnUrl = this.coursesService.returnUrl || 'courses';
@@ -255,11 +256,13 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate, ErrorS
 
   // Question fields sit in their own form, and Save & Return doesn't submit, so a failed save is tracked here.
   isErrorState(control: AbstractControl | null) {
-    return !!(control?.invalid && (control.dirty || this.showFormError));
+    const newQuestion = control?.root !== this.examForm && this.activeQuestionIndex >= this.checkedQuestions;
+    return !!(control?.invalid && (control.dirty || (this.showFormError && !newQuestion)));
   }
 
   showErrorMessage() {
     this.showFormError = true;
+    this.checkedQuestions = this.questions.length;
     this.examsService.checkValidFormComponent(this.examForm);
     this.stepClick(this.activeQuestionIndex);
   }
@@ -337,7 +340,6 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate, ErrorS
     this.planetStepListService.addStep(this.questions.length - 1);
     this.stepClick(this.questions.length - 1);
     this.showPreviewError = false;
-    this.showFormError = false;
   }
 
   removeQuestion(index: number) {
