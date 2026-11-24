@@ -190,6 +190,18 @@ describe('reference text', () => {
     expect(mocks.responsesCreate.mock.calls[0][0].input[0].content).toContain('Course step: Water');
   });
 
+  it('skips a PDF too large to download', async () => {
+    mocks.fetchAttachments.mockResolvedValue({
+      'scan.pdf': { 'content_type': 'application/pdf', 'digest': 'md5-a', 'length': 30 * 1024 * 1024 }
+    });
+    vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    await aiChatNonStream(history, provider('openai'), '', courseContext);
+
+    expect(mocks.streamAttachment).not.toHaveBeenCalled();
+    expect(mocks.responsesCreate.mock.calls[0][0].input[0].content).toContain('Course step: Water');
+  });
+
   it('stops extracting once the cap is reached', async () => {
     mocks.fetchAttachments.mockResolvedValue({
       'a.pdf': { 'content_type': 'application/pdf', 'digest': 'md5-a' },

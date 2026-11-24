@@ -10,6 +10,8 @@ import { extractPdfText } from './text-extraction.utils';
 // Characters, about 15k tokens: one long PDF must not overflow the model or bill the whole book every turn
 const REFERENCE_MAX_LENGTH = 60000;
 const EXTRACTED_TEXT_CACHE_SIZE = 32;
+// Every cache miss writes the file to the Pi's SD card; PDFs this big are mostly scans with little or no text
+const MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024;
 // Under nginx's proxy_read_timeout, which also restarts with each piece of text, so the gateway answers first
 const PROVIDER_DEADLINE_MS = 120000;
 
@@ -58,6 +60,11 @@ async function addResourceTexts(parts: string[], resourceId: unknown): Promise<v
       return;
     }
     if (attachment.content_type !== 'application/pdf') {
+      continue;
+    }
+    if (attachment.length > MAX_ATTACHMENT_BYTES) {
+      // eslint-disable-next-line no-console
+      console.log(`Skipping attachment ${attachmentName} of resource ${resourceId}: ${attachment.length} bytes`);
       continue;
     }
     try {
