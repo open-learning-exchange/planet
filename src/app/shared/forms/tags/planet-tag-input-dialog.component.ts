@@ -228,8 +228,6 @@ export class PlanetTagInputDialogComponent {
         this.addTagForm.controls.name.reset('');
         this.addTagForm.controls.attachedTo.reset('');
       }, () => this.planetMessageService.showAlert($localize`There was a problem adding this collection.`));
-    } else {
-      this.forEachTagControl(this.addTagForm, (_, control) => control.markAsTouched({ onlySelf: true }));
     }
   }
 

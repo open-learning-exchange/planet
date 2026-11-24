@@ -10,7 +10,7 @@
   <div [ngClass]="{'space-container':!isDialog}">
     <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Meetup</mat-toolbar>
     <div class="view-container">
-      <form class="form-spacing" [formGroup]="meetupForm" novalidate>
+      <form id="meetup-form" class="form-spacing" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
         <mat-form-field>
           <mat-label i18n>Title</mat-label>
           <input matInput formControlName="title" required>
@@ -120,6 +120,6 @@
 <ng-template #actionButtons>
   <div [class.mat-mdc-dialog-actions]="!isDialog">
     <button class="margin-lr-2" mat-raised-button type="button" (click)="cancel()" i18n>Cancel</button>
-    <button mat-raised-button type="button" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" (click)="onSubmit()" i18n>Save</button>
+    <button mat-raised-button type="submit" form="meetup-form" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" i18n>Save</button>
   </div>
 </ng-template>

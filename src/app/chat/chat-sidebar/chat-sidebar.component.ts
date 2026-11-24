@@ -18,7 +18,7 @@ import { AiChatService } from '@shared/ai/ai-chat.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { SearchService } from '@shared/search/search.service';
 import { fuzzyWordMatch } from '@shared/search/fuzzy-search';
-import { showFormErrors, trackById } from '@shared/tables/table.helpers';
+import { trackById } from '@shared/tables/table.helpers';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
@@ -171,8 +171,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       const title = formGroup.controls.title.value;
       this.updateConversation(conversation, { title });
       this.toggleEditTitle();
-    } else {
-      showFormErrors(formGroup.controls);
     }
   }
 

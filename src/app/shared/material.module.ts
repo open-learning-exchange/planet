@@ -7,7 +7,9 @@ import { MatButtonToggleModule, MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS } from '@angul
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatNativeDateModule, DateAdapter, NativeDateAdapter } from '@angular/material/core';
+import {
+  MatNativeDateModule, DateAdapter, NativeDateAdapter, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher
+} from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -79,6 +81,8 @@ export class CustomDateAdapter extends NativeDateAdapter {
     MatTooltipModule,
   ],
   providers: [
+    // MatChipsModule and MatStepperModule provide the default matcher, which would shadow one provided at the root.
+    { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
     { provide: DateAdapter, useClass: CustomDateAdapter },
     { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntl },
     {

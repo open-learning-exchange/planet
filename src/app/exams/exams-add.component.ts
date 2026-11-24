@@ -10,6 +10,7 @@ import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -106,9 +107,10 @@ interface ExamDocumentInfo {
     MatListItemLine,
     PlanetStepListFormDirective,
     ExamsQuestionComponent
-  ]
+  ],
+  providers: [ { provide: ErrorStateMatcher, useExisting: ExamsAddComponent } ]
 })
-export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
+export class ExamsAddComponent implements OnInit, CanComponentDeactivate, ErrorStateMatcher {
   readonly dbName = 'exams';
   hasUnsavedChanges = false;
   private initialFormState = '';
@@ -251,6 +253,11 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     );
   }
 
+  // Question fields sit in their own form, and Save & Return doesn't submit, so a failed save is tracked here.
+  isErrorState(control: AbstractControl | null) {
+    return !!(control?.invalid && (control.dirty || this.showFormError));
+  }
+
   showErrorMessage() {
     this.showFormError = true;
     this.examsService.checkValidFormComponent(this.examForm);
@@ -330,6 +337,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     this.planetStepListService.addStep(this.questions.length - 1);
     this.stepClick(this.questions.length - 1);
     this.showPreviewError = false;
+    this.showFormError = false;
   }
 
   removeQuestion(index: number) {

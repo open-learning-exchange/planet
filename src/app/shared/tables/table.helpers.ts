@@ -171,12 +171,6 @@ export const trackByIdVal = (index, item: { id: string }) => item.id;
 
 export const trackByIndex = (index: number) => index;
 
-export const showFormErrors = <T extends { [K in keyof T]: AbstractControl }>(controls: T) => {
-  (Object.values(controls) as AbstractControl[]).forEach(control => {
-    control.markAsTouched({ onlySelf: true });
-  });
-};
-
 export const filterIds = (filterObj: { ids: string[] }) => (data: any, filter: string) => (
   filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true
 );

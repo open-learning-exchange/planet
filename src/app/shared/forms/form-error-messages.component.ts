@@ -9,6 +9,7 @@
 import { Component, Input, OnDestroy, Optional } from '@angular/core';
 import { AbstractControl, AbstractControlDirective, FormGroupDirective, NgForm } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
 
@@ -84,6 +85,7 @@ export class FormErrorMessagesComponent implements OnDestroy {
   date?: Date;
 
   constructor(
+    private errorStateMatcher: ErrorStateMatcher,
     @Optional() private parentForm: NgForm | null,
     @Optional() private parentFormGroup: FormGroupDirective | null
   ) {}
@@ -94,11 +96,8 @@ export class FormErrorMessagesComponent implements OnDestroy {
 
   // Matches the error state Material shows on the surrounding field
   shouldShowError(): boolean {
-    const form = this.parentFormGroup || this.parentForm;
-    return !!(
-      this.targetControl?.errors &&
-      (this.targetControl.dirty || this.targetControl.touched || form?.submitted)
-    );
+    const control = this.targetControl instanceof AbstractControlDirective ? this.targetControl.control : this.targetControl;
+    return this.errorStateMatcher.isErrorState(control ?? null, this.parentFormGroup || this.parentForm);
   }
 
   // Show one error at a time

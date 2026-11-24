@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 
 import { AiChatService } from '@shared/ai/ai-chat.service';
-import { showFormErrors, trackByIdVal } from '@shared/tables/table.helpers';
+import { trackByIdVal } from '@shared/tables/table.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
@@ -253,8 +253,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   onSubmit() {
     if (this.promptForm.valid) {
       this.submitPrompt();
-    } else {
-      showFormErrors(this.promptForm.controls);
     }
   }
 

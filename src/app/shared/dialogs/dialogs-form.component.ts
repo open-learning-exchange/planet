@@ -155,7 +155,6 @@ export class DialogsFormComponent {
 
   onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {
     if (!mForm.valid) {
-      mForm.markAllAsTouched();
       this.scrollToFirstInvalidField();
       return;
     }

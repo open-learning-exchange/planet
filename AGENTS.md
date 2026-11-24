@@ -68,6 +68,7 @@ From `docs/STYLE_GUIDE.md` (read it before making UI changes):
 - Use `i18n` on elements with real text; never on elements whose only content is interpolation. Attribute strings use `i18n-<attr>` (e.g. `i18n-title`).
 - Test-only CSS hooks use the `km-` prefix and must never appear in stylesheets. Unit tests query elements via these classes.
 - All colors/breakpoints go through `src/app/_variables.scss` and the Material theme (`mat-color()`, `$primary`/`$accent`/`$warn`); shared breakpoint overrides use the `screen-sizes` mixin from `_mixins.scss`.
+- Required errors wait for typing or a submit (`ShowOnDirtyErrorStateMatcher` in `MaterialModule`): save through `(ngSubmit)` and show messages with `planet-form-error-messages`; never mark fields touched to reveal errors.
 - Validators live in `src/app/validators/` (`custom-validators.ts` for sync, `validator.service.ts` for async); prefer those over inlining new validation logic.
 - Loading UX: page-level uses `*ngIf="isLoading"` with a "Loading …" i18n string; action-level uses `DialogsLoadingService.start()` / `.stop()` inside an RxJS `finalize`.
 

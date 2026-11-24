@@ -5,8 +5,8 @@
 
 <div class="space-container">
   <div class="view-container view-full-height">
-    <div class="form-container">
-      <form class="form-spacing" [formGroup]="profileForm">
+    <form id="health-form" class="form-container" [formGroup]="healthUpdateForm" (ngSubmit)="onSubmit()">
+      <div class="form-spacing" formGroupName="profile">
         <mat-form-field>
           <mat-label i18n>First Name</mat-label>
           <input matInput required formControlName="firstName">
@@ -53,8 +53,8 @@
           <mat-label i18n>Birthplace</mat-label>
           <input matInput formControlName="birthplace">
         </mat-form-field>
-      </form>
-      <form class="form-spacing" [formGroup]="healthForm">
+      </div>
+      <div class="form-spacing" formGroupName="health">
         <span class="full-width primary-text-color mat-subtitle-2" i18n>Emergency Contact</span>
         <mat-form-field>
           <mat-label i18n>Name</mat-label>
@@ -88,11 +88,11 @@
           <mat-label i18n>Other Notes</mat-label>
           <planet-markdown-textbox [formControl]="healthForm.controls.notes"></planet-markdown-textbox>
         </mat-form-field>
-      </form>
-    </div>
+      </div>
+    </form>
     <div class="action-buttons">
       <button mat-raised-button type="button" (click)="goBack()" i18n>Cancel</button>
-      <button mat-raised-button type="button" color="primary" (click)="onSubmit()" i18n>Submit</button>
+      <button mat-raised-button type="submit" form="health-form" color="primary" i18n>Submit</button>
     </div>
   </div>
 </div>

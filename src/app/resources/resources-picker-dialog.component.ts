@@ -93,7 +93,7 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   }
 
   submitNewResource() {
-    this.resourcesAddComponent.onSubmit();
+    this.resourcesAddComponent.formDirective.onSubmit(new Event('submit'));
   }
 
   addNewResource(resource) {

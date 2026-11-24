@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -21,7 +21,6 @@ import { StateService } from '@shared/state.service';
 import { PlanetStepListService } from '@shared/forms/planet-step-list.component';
 import { PouchService } from '@shared/database/pouch.service';
 import { TagsService } from '@shared/forms/tags/tags.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
 import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
@@ -360,7 +359,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (!this.courseForm.valid) {
       this.submitAttempted = true;
       this.isFormExpanded = true;
-      showFormErrors(this.courseForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
     this.updateCourse(this.courseForm.getRawValue());

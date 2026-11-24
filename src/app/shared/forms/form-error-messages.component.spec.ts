@@ -1,4 +1,5 @@
 import { FormControl, FormGroupDirective, Validators } from '@angular/forms';
+import { ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 
 import { FormErrorMessagesComponent } from './form-error-messages.component';
 
@@ -8,7 +9,7 @@ describe('FormErrorMessagesComponent', () => {
 
   beforeEach(() => {
     parentFormGroup = { submitted: false };
-    component = new FormErrorMessagesComponent(null, parentFormGroup as FormGroupDirective);
+    component = new FormErrorMessagesComponent(new ShowOnDirtyErrorStateMatcher(), null, parentFormGroup as FormGroupDirective);
   });
 
   it('stays quiet when no control is bound', () => {
@@ -25,6 +26,9 @@ describe('FormErrorMessagesComponent', () => {
     expect(component.shouldShowError()).toBe(false);
 
     control.markAsTouched();
+    expect(component.shouldShowError()).toBe(false);
+
+    control.markAsDirty();
     expect(component.shouldShowError()).toBe(true);
 
     control.setValue('valid text');
