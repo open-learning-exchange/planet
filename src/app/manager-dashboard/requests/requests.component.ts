@@ -122,14 +122,14 @@ export class RequestsComponent implements OnInit, OnDestroy {
     this.filterData();
   }
 
-  getCommunityList(search = this.searchValue) {
+  getCommunityList() {
     forkJoin([
       this.managerService.getChildPlanets(),
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
       this.data = attachNamesToPlanets(data);
-      this.filterData(search);
+      this.filterData();
     }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting ${this.childType}`));
   }
 
