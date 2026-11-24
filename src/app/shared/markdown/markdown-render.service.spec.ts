@@ -97,6 +97,16 @@ describe('MarkdownRenderService', () => {
       ]);
     });
 
+    it('keeps links and images whose escapes are not UTF-8', () => {
+      const body = rendered(
+        '[a](https://example.org/caf%E9) <a href="https://example.org/?q=100%">b</a>\n\n![i](https://example.org/caf%E9.png)'
+      );
+
+      expect(Array.from(body.querySelectorAll('a')).map(link => link.getAttribute('href')))
+        .toEqual([ 'https://example.org/caf%E9', 'https://example.org/?q=100%' ]);
+      expect(body.querySelector('img')?.getAttribute('src')).toBe('https://example.org/caf%E9.png');
+    });
+
     it('resolves hosted images and markdown links against the hosted URL', () => {
       const body = rendered('![i](img/a.png)\n\n[part](other.md#my-heading)', 'https://couch.test/db/');
 
@@ -125,11 +135,49 @@ describe('MarkdownRenderService', () => {
         .toBe(false);
     });
 
-    it('leaves unbalanced, nested and placeholder-like container text alone', () => {
+    it('leaves unbalanced and nested container text alone', () => {
       expect(rendered('<div>\n\n<div>**inner**</div>\n\n</div>').querySelectorAll('div strong').length).toBe(1);
       expect(rendered('text with a stray <div> and no close').textContent).toContain('text with a stray');
-      expect(rendered('`code` and literal planetmd0 text').textContent).toContain('planetmd0');
       expect(rendered('`<div>` then <div>**x**</div>').querySelector('code')?.textContent).toBe('<div>');
+    });
+
+    it('parses markdown inside a container that opens a line, up to its close tag', () => {
+      const body = rendered(
+        '<div align="center">![i](img/a.png)</div>\n\n<section>\n**a**\n\n_b_\n</section>\n\ntext\n<div>~~c~~</div>',
+        'https://couch.test/db/'
+      );
+
+      expect(body.querySelector('div[align="center"] img')?.getAttribute('src')).toBe('https://couch.test/db/img/a.png');
+      expect(body.querySelector('section strong')?.textContent).toBe('a');
+      expect(body.querySelector('section em')?.textContent).toBe('b');
+      expect(body.querySelector('div s')?.textContent).toBe('c');
+    });
+
+    it('stops parsing markdown in containers nested past 20 levels of any tag mix', () => {
+      const nested = (levels: number) => {
+        const tags = Array.from({ length: levels }, (_, i) => [ 'div', 'section', 'article', 'aside', 'figure' ][i % 5]);
+        return tags.map(tag => `<${tag}>\n`).join('') + '**x**\n' + tags.reverse().map(tag => `</${tag}>\n`).join('');
+      };
+
+      expect(rendered(nested(20)).querySelector('strong')?.textContent).toBe('x');
+      expect(rendered(nested(21)).querySelector('strong')).toBeFalsy();
+    });
+
+    it('keeps pasted rich-text HTML inside its paragraph', () => {
+      const body = rendered('The story<div><br></div><div>Next part</div>');
+
+      expect(body.querySelectorAll('div').length).toBe(2);
+      expect(body.textContent?.trim()).toBe('The storyNext part');
+    });
+
+    it('marks task items in loose lists', () => {
+      const markers = rendered('- [ ] e\n\n- [x] f').querySelectorAll('.task-list-item .markdown-task-checkbox');
+
+      expect(Array.from(markers).map(marker => marker.textContent)).toEqual([ '☐', '☑' ]);
+    });
+
+    it('leaves emoticons as text', () => {
+      expect(rendered(':) ;) :D').textContent?.trim()).toBe(':) ;) :D');
     });
 
     it('keeps sanitizer-approved raw HTML and parses markdown inside it', () => {
@@ -145,7 +193,7 @@ describe('MarkdownRenderService', () => {
 
       expect(body.querySelector('td.markdown-align-right')).toBeTruthy();
       expect(body.querySelector('.markdown-task-checkbox')?.textContent).toBe('☑');
-      expect(body.querySelector('del')?.textContent).toBe('gone');
+      expect(body.querySelector('s')?.textContent).toBe('gone');
       expect(body.textContent).toContain('😄');
     });
 
@@ -156,6 +204,19 @@ describe('MarkdownRenderService', () => {
       expect(chat.querySelector('br')).toBeTruthy();
       expect(chat.querySelector('a')?.getAttribute('href')).toBe('https://example.org');
       expect(rendered('one\nsee https://example.org').querySelector('a')).toBeFalsy();
+    });
+  });
+
+  describe('crafted input', () => {
+    const payloads: [ string, string ][] = [
+      [ 'unclosed link destinations', '[a]('.repeat(20000) ],
+      [ 'a container followed by unterminated tags', '<div>\n' + '<div '.repeat(60000) ]
+    ];
+
+    payloads.forEach(([ name, markdown ]) => {
+      it(`renders ${name} without stalling`, () => {
+        expect(typeof service.render(markdown)).toBe('string');
+      }, 2000);
     });
   });
 

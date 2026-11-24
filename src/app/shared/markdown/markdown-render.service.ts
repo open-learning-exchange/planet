@@ -1,27 +1,9 @@
 import { Injectable, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import * as showdown from 'showdown';
+import MarkdownIt, { StateBlock } from 'markdown-it';
+import { full as emoji } from 'markdown-it-emoji';
 
 export type MarkdownProfile = 'default' | 'chat';
-
-const PLANET_MARKDOWN_OPTIONS = Object.freeze({
-  disableForced4SpacesIndentedSublists: true,
-  emoji: true,
-  ghCodeBlocks: true,
-  literalMidWordUnderscores: true,
-  noHeaderId: true,
-  simpleLineBreaks: false,
-  simplifiedAutoLink: false,
-  strikethrough: true,
-  tables: true,
-  tasklists: true
-});
-
-const CHAT_MARKDOWN_OPTIONS = Object.freeze({
-  ...PLANET_MARKDOWN_OPTIONS,
-  simpleLineBreaks: true,
-  simplifiedAutoLink: true
-});
 
 const safeLinkProtocols = [ 'http:', 'https:', 'mailto:', 'tel:' ];
 const safeMediaProtocols = [ 'http:', 'https:' ];
@@ -34,14 +16,67 @@ const mediaUrlAttributes: [ string, string ][] = [
 ];
 const safeImageDataUrl = /^data:image\/(bmp|gif|jpeg|jpg|png|tiff|webp);/i;
 
-const markdownContainerRegex = /<(div|section|article|aside|header|footer|nav|blockquote|figure)(\s[^>]*)?>/gi;
-const codeSpanRegex = /(`+)[\s\S]*?\1/g;
+const markdownContainerRegex = /^ {0,3}<(div|section|article|aside|header|footer|nav|blockquote|figure)(\s[^>]*)?>/i;
+// Deeper containers render as plain HTML, which bounds how often a crafted post is rescanned and re-rendered
+const maxContainerDepth = 20;
+const taskMarkerRegex = /^\[([ xX])\](?=\s)/;
+
+// markdown-it percent-encodes destinations, so URLs and fragments are read decoded; a malformed escape is read as written
+const decodeOrKeep = (value: string, decode: (encoded: string) => string) => {
+  try {
+    return decode(value);
+  } catch {
+    return value;
+  }
+};
+
+const containerCloseEnd = (source: string, tag: string, from: number) => {
+  // [^<>] keeps each attempt from running to the end of a post full of unclosed tags
+  const tags = new RegExp(`<(/?)${tag}(?:\\s[^<>]*)?>`, 'gi');
+  tags.lastIndex = from;
+  let depth = 1;
+  for (let match = tags.exec(source); match && depth <= maxContainerDepth; match = tags.exec(source)) {
+    depth += match[1] ? -1 : 1;
+    if (depth === 0) {
+      return tags.lastIndex;
+    }
+  }
+  return -1;
+};
+
+// CommonMark keeps a line-opening <div> and what follows as raw HTML until a blank line. Showdown rendered
+// Markdown up to the matching close tag, and content written for it keeps rendering that way here.
+const markdownContainer = (state: StateBlock, startLine: number, endLine: number, silent: boolean) => {
+  const depth = state.env.containerDepth ?? 0;
+  const lineStart = state.bMarks[startLine] + state.tShift[startLine];
+  const open = depth < maxContainerDepth && state.sCount[startLine] - state.blkIndent < 4 &&
+    markdownContainerRegex.exec(state.src.slice(lineStart, state.eMarks[startLine]));
+  const closeEnd = open ? containerCloseEnd(state.src, open[1], lineStart + open[0].length) : -1;
+  let closeLine = startLine;
+  while (closeLine < endLine && state.eMarks[closeLine] < closeEnd) {
+    closeLine++;
+  }
+  if (!open || closeEnd < 0 || closeLine >= endLine || state.src.slice(closeEnd, state.eMarks[closeLine]).trim()) {
+    return false;
+  }
+  if (silent) {
+    return true;
+  }
+
+  const openTag = open[0].trim();
+  const text = state.getLines(startLine, closeLine + 1, state.blkIndent, false).trim();
+  const token = state.push('html_block', '', 0);
+  const inner = state.md.render(text.slice(openTag.length, text.lastIndexOf('<')), { containerDepth: depth + 1 });
+  token.content = `${openTag}\n${inner}</${open[1]}>\n`;
+  state.line = closeLine + 1;
+  return true;
+};
 
 @Injectable({ providedIn: 'root' })
 export class MarkdownRenderService {
-  private readonly converters = {
-    default: this.createConverter(PLANET_MARKDOWN_OPTIONS),
-    chat: this.createConverter(CHAT_MARKDOWN_OPTIONS)
+  private readonly parsers = {
+    default: this.createParser({}),
+    chat: this.createParser({ breaks: true, linkify: true })
   };
 
   constructor(private sanitizer: DomSanitizer) {}
@@ -81,36 +116,27 @@ export class MarkdownRenderService {
   }
 
   headingId(value: string) {
-    return value
+    return decodeOrKeep(value, decodeURIComponent)
       .replace(/(_|-|\s)+/g, '')
       .replace(/[&+$,/:;=?@"#{}|^~[\]`\\*)(%.!'<>]/g, '')
       .toLowerCase();
   }
 
-  private createConverter(options: object) {
-    const converter = new showdown.Converter({ ...options });
-    converter.listen('hashHTMLBlocks.before', (_event, text: string) => this.markContainersAsMarkdown(text));
-    return converter;
-  }
-
-  private markContainersAsMarkdown(text: string) {
-    const codeSpans: string[] = [];
-    let placeholder = 'planetmd';
-    while (text.includes(placeholder)) {
-      placeholder += 'x';
-    }
-    return text
-      .replace(codeSpanRegex, match => `${placeholder}${codeSpans.push(match) - 1}`)
-      .replace(markdownContainerRegex, (match, tag, attributes = '') =>
-        /\bmarkdown\s*=/i.test(attributes) ? match : `<${tag}${attributes} markdown="1">`)
-      .replace(new RegExp(`${placeholder}(\\d+)`, 'g'), (match, index) => codeSpans[Number(index)] ?? match);
+  private createParser(options: { breaks?: boolean, linkify?: boolean }) {
+    const parser = new MarkdownIt({ html: true, ...options }).use(emoji, { shortcuts: {} });
+    // normalizeLinks and normalizeMediaUrls judge every URL, raw HTML included, so links aren't dropped to text here
+    parser.validateLink = () => true;
+    parser.block.ruler.before('html_block', 'markdown_container', markdownContainer, {
+      alt: [ 'paragraph', 'reference', 'blockquote' ]
+    });
+    return parser;
   }
 
   private parseMarkdown(markdown: any, profile: MarkdownProfile): Document {
     const source = String(markdown ?? '');
-    const document = new DOMParser().parseFromString(this.converters[profile].makeHtml(source), 'text/html');
+    const document = new DOMParser().parseFromString(this.parsers[profile].render(source), 'text/html');
 
-    this.replaceTaskListInputs(document);
+    this.replaceTaskListMarkers(document);
     return document;
   }
 
@@ -120,16 +146,24 @@ export class MarkdownRenderService {
     this.normalizeMediaUrls(document, hostedUrl);
   }
 
-  private replaceTaskListInputs(document: Document) {
-    document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach(input => {
+  private replaceTaskListMarkers(document: Document) {
+    document.querySelectorAll('li').forEach(item => {
+      const text = (item.firstElementChild?.tagName === 'P' ? item.firstElementChild : item).firstChild;
+      const content = text?.nodeType === Node.TEXT_NODE ? text.textContent || '' : '';
+      const match = taskMarkerRegex.exec(content);
+      if (!text || !match) {
+        return;
+      }
+      const checked = match[1] !== ' ';
       const marker = document.createElement('span');
       marker.classList.add('markdown-task-checkbox');
-      marker.setAttribute('aria-checked', input.checked.toString());
+      marker.setAttribute('aria-checked', checked.toString());
       marker.setAttribute('aria-disabled', 'true');
       marker.setAttribute('role', 'checkbox');
-      marker.textContent = input.checked ? '☑' : '☐';
-      input.closest('li')?.removeAttribute('style');
-      input.replaceWith(marker);
+      marker.textContent = checked ? '☑' : '☐';
+      text.textContent = content.slice(match[0].length);
+      text.before(marker);
+      item.classList.add('task-list-item');
     });
   }
 
@@ -190,7 +224,7 @@ export class MarkdownRenderService {
 
   private parseUrl(url: string) {
     try {
-      return new URL(url, window.location.href);
+      return new URL(decodeOrKeep(url, decodeURI), window.location.href);
     } catch {
       return undefined;
     }
