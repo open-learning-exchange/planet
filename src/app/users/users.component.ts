@@ -152,9 +152,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   searchChanged(searchText: string) {
-    if (!searchText) {
-      this.applyFilter('');
-    }
+    this.searchValue = searchText;
     this.searchChange.next(searchText);
   }
 
@@ -191,7 +189,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
     this.changePlanetFilter('local');
-    this.searchChange.next('');
+    this.searchChanged('');
   }
 
   openRolesDialog() {

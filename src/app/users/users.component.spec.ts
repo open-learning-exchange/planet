@@ -48,12 +48,14 @@ describe('Users', () => {
     const { comp } = setup();
     comp.changePlanetFilter('associated');
     comp.onFilterChange('manager');
+    comp.searchChanged('ann');
     expect(comp.activeFilters.length).toBe(2);
 
     comp.resetFilter();
 
     expect(comp.tableState.filterType).toBe('local');
     expect(comp.activeFilters).toEqual([]);
+    expect(comp.searchValue).toBe('');
   });
 
   // describe('Init', () => {
