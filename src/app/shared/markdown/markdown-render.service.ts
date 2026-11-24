@@ -154,17 +154,23 @@ export class MarkdownRenderService {
       if (!text || !match) {
         return;
       }
-      const checked = match[1] !== ' ';
-      const marker = document.createElement('span');
-      marker.classList.add('markdown-task-checkbox');
-      marker.setAttribute('aria-checked', checked.toString());
-      marker.setAttribute('aria-disabled', 'true');
-      marker.setAttribute('role', 'checkbox');
-      marker.textContent = checked ? '☑' : '☐';
       text.textContent = content.slice(match[0].length);
-      text.before(marker);
+      text.before(this.taskMarker(document, match[1] !== ' '));
       item.classList.add('task-list-item');
     });
+    document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach(input => {
+      input.replaceWith(this.taskMarker(document, input.checked));
+    });
+  }
+
+  private taskMarker(document: Document, checked: boolean) {
+    const marker = document.createElement('span');
+    marker.classList.add('markdown-task-checkbox');
+    marker.setAttribute('aria-checked', checked.toString());
+    marker.setAttribute('aria-disabled', 'true');
+    marker.setAttribute('role', 'checkbox');
+    marker.textContent = checked ? '☑' : '☐';
+    return marker;
   }
 
   private normalizeTableAlignment(document: Document) {

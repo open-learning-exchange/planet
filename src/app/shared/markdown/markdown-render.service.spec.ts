@@ -176,6 +176,13 @@ describe('MarkdownRenderService', () => {
       expect(Array.from(markers).map(marker => marker.textContent)).toEqual([ '☐', '☑' ]);
     });
 
+    it('keeps the state of raw HTML checkboxes', () => {
+      const markers = rendered('<ul><li><input type="checkbox"> e</li><li><input type="checkbox" checked> f</li></ul>')
+        .querySelectorAll('.markdown-task-checkbox');
+
+      expect(Array.from(markers).map(marker => marker.getAttribute('aria-checked'))).toEqual([ 'false', 'true' ]);
+    });
+
     it('leaves emoticons as text', () => {
       expect(rendered(':) ;) :D').textContent?.trim()).toBe(':) ;) :D');
     });
