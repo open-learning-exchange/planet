@@ -4,16 +4,7 @@
   </button>
   <span i18n>Certifications</span>
   <ng-template #listSearch>
-    <div class="toolbar-search">
-      <mat-icon>search</mat-icon>
-      <mat-form-field subscriptSizing="dynamic" class="font-size-1">
-        <mat-label i18n>Type certification name to search</mat-label>
-        <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
-        <button type="button" mat-icon-button matSuffix (click)="resetSearch()" [style.visibility]="certifications.filter ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
+    <planet-search-field class="toolbar-search" label="Type certification name to search" i18n-label [value]="certifications.filter" (valueChange)="applyFilter($event)"></planet-search-field>
   </ng-template>
 </planet-list-toolbar>
 

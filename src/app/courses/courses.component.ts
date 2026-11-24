@@ -10,15 +10,14 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
 import { map, switchMap, takeUntil, catchError, finalize } from 'rxjs/operators';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -59,6 +58,7 @@ import { PlanetRatingDialogDirective } from '@shared/ratings/planet-rating-dialo
 import { LanguageLabelComponent } from '@shared/language/language-label.component';
 import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import * as constants from './courses.constants';
 import { CoursesService } from './courses.service';
@@ -83,15 +83,12 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     MatIconButton,
     MatIcon,
     MatFormField,
-    MatSuffix,
     PlanetTagInputComponent,
-    FormsModule,
     ReactiveFormsModule,
     NgTemplateOutlet,
     CoursesSearchComponent,
     MatButton,
     MatLabel,
-    MatInput,
     NgClass,
     MatMiniFabButton,
     RouterLink,
@@ -127,7 +124,8 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     MatNoDataRow,
     MatPaginator,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    SearchFieldComponent
   ]
 })
 

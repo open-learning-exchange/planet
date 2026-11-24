@@ -146,6 +146,8 @@ List pages use the two shared toolbars in `shared/tables` instead of their own `
 - Main toolbar, `planet-list-toolbar`: project the back button and title, and pass the filters and search as `#listFilters` and `#listSearch` templates. Above 1000px they sit in one row; at 1000px and below the search opens on its own row and the filters in a bottom sheet. Pass `[activeFilters]`, one chip for each filter that isn't at its default, with a `clear` that restores that default, and bind `(clearFilters)` to the page's reset.
 - Action toolbar, `planet-list-actions`: pass the actions as a `#listActions` template. It has the primary colour background. At 1000px and below it shows "N selected" once rows are ticked, with the actions inline when `[inline]` is set and in a ⋮ menu otherwise.
 
+Search fields, in these toolbars or anywhere else, use `planet-search-field` from `shared/search`: the search icon sits inside the field, next to its clear button. Fields inside `planet-list-toolbar` reserve no space for hints, so they stay centred in the row.
+
 Other toolbars (item views, forms) keep the older pattern: a white primary toolbar, then secondary toolbars with the `primary-color` class, white icons and text (`mat-icon`, `font-size-1`), and their actions in a ⋮ menu on tablets and phones.
 
 ### Lists on phones and tablets

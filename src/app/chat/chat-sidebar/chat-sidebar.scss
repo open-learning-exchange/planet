@@ -50,6 +50,12 @@ li:hover {
   height: 100%;
 }
 
+// The drawer takes its width from its other rows, so the search field fills it instead of widening it
+planet-search-field {
+  contain: inline-size;
+  width: calc(100% - 6px);
+}
+
 .window-box {
   height: 100%;
 }

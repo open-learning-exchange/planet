@@ -14,8 +14,6 @@ import { catchError, finalize, map, switchMap, tap, takeUntil } from 'rxjs/opera
 import { DatePipe } from '@angular/common';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -40,6 +38,7 @@ import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner
 import { LinkCopyService } from '@shared/ui/link-copy.service';
 import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
 import { ListActionsComponent } from '@shared/tables/list-actions.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { SubmissionsService } from '../submissions/submissions.service';
 import { ExamsService } from '../exams/exams.service';
@@ -68,10 +67,6 @@ interface SurveyFilterForm {
     ListToolbarComponent,
     MatIconButton,
     MatIcon,
-    MatFormField,
-    MatSuffix,
-    MatLabel,
-    MatInput,
     MatMiniFabButton,
     MatButtonToggleGroup,
     FormsModule,
@@ -99,7 +94,8 @@ interface SurveyFilterForm {
     MatRow,
     MatNoDataRow,
     MatPaginator,
-    DatePipe
+    DatePipe,
+    SearchFieldComponent
   ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {

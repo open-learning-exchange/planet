@@ -15,11 +15,31 @@
       </mat-button-toggle-group>
     } @else {
       <ng-template #listFilters>
-        <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
-        <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
+        <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
+          <mat-label i18n>Status</mat-label>
+          <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+            <mat-option i18n value="All">All</mat-option>
+            @for (option of statusOptions; track option) {
+              @if (this.filter.type !== 'survey' || option.text !== 'Not Graded') {
+                <mat-option [value]="option.value">{{option.text}}</mat-option>
+              }
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-button-toggle-group
+          class="margin-lr-5 font-size-1"
+          (change)="onFilterChange($event.value, 'type')"
+          #filterGroup="matButtonToggleGroup">
+          <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
+            Tests
+          </mat-button-toggle>
+          <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
+            Surveys
+          </mat-button-toggle>
+        </mat-button-toggle-group>
       </ng-template>
       <ng-template #listSearch>
-        <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
+        <planet-search-field label="Type name to search..." i18n-label [value]="searchValue" (valueChange)="applyFilter($event)"></planet-search-field>
       </ng-template>
     }
   </planet-list-toolbar>
@@ -29,43 +49,6 @@
     </mat-toolbar>
   }
 }
-
-<ng-template #filterDropdown>
-  <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
-    <mat-label i18n>Status</mat-label>
-    <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
-      <mat-option i18n value="All">All</mat-option>
-      @for (option of statusOptions; track option) {
-        @if (this.filter.type !== 'survey' || option.text !== 'Not Graded') {
-          <mat-option [value]="option.value">{{option.text}}</mat-option>
-        }
-      }
-    </mat-select>
-  </mat-form-field>
-</ng-template>
-<ng-template #filterToggleGroup>
-  <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
-    (change)="onFilterChange($event.value, 'type')"
-    #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
-      Tests
-    </mat-button-toggle>
-    <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
-      Surveys
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-</ng-template>
-<ng-template #filterSearch>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1 mdc-toolbar-input">
-    <mat-label i18n>Type name to search...</mat-label>
-    <input matInput [ngModel]="searchValue" (ngModelChange)="applyFilter($event)">
-    <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-</ng-template>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
   <div class="view-container view-table" [ngClass]="{ 'view-full-height': !isDialog }">

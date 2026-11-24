@@ -8,18 +8,15 @@ import {
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription, zip } from 'rxjs';
-import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
-import { FormsModule } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
 
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
 import { appSourceLabel } from '@shared/android/app-source';
@@ -30,6 +27,7 @@ import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { StateService } from '@shared/state.service';
 import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { SubmissionsService } from './submissions.service';
 import { SubmissionsResultsComponent } from './submissions-results.component';
@@ -55,17 +53,12 @@ const columnsByFilterAndMode = {
     MatToolbar,
     MatIconButton,
     MatIcon,
-    NgTemplateOutlet,
     MatFormField,
     MatLabel,
-    MatSuffix,
     MatSelect,
     MatOption,
     MatButtonToggleGroup,
     MatButtonToggle,
-    MatInput,
-    FormsModule,
-    MatTooltip,
     NgClass,
     MatTable,
     MatSort,
@@ -85,7 +78,8 @@ const columnsByFilterAndMode = {
     MatNoDataRow,
     MatPaginator,
     DatePipe,
-    SubmissionsResultsComponent
+    SubmissionsResultsComponent,
+    SearchFieldComponent
   ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -283,6 +277,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   resetFilter() {
+    this.applyFilter('');
     this.onFilterChange(this.defaultType, 'type');
   }
 

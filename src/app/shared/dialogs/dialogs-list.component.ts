@@ -14,17 +14,16 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
 
 import { composeFilterFunctions, filterDropdowns } from '@shared/tables/table.helpers';
 import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
 import { fullName } from '@shared/utils';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 @Component({
   templateUrl: './dialogs-list.component.html',
@@ -48,9 +47,6 @@ import { fullName } from '@shared/utils';
     MatFormField,
     MatSelect,
     MatOption,
-    MatIcon,
-    MatLabel,
-    MatInput,
     MatTable,
     MatColumnDef,
     MatHeaderCellDef,
@@ -63,7 +59,8 @@ import { fullName } from '@shared/utils';
     MatRow,
     NgClass,
     MatPaginator,
-    MatTooltip
+    MatTooltip,
+    SearchFieldComponent
   ]
 })
 export class DialogsListComponent implements AfterViewInit, OnDestroy {

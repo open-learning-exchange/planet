@@ -21,17 +21,7 @@
           <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
           <mat-datepicker #dateFilterEnd></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="reports-label-field font-size-1">
-          <mat-label i18n>Search by label...</mat-label>
-          <mat-icon matPrefix>search</mat-icon>
-          <input matInput [(ngModel)]="labelFilter" (ngModelChange)="applyFilters()">
-          @if (labelFilter) {
-            <button type="button" mat-icon-button matSuffix (click)="clearLabelFilter()"
-              matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-        </mat-form-field>
+        <planet-search-field class="reports-label-field" appearance="outline" label="Search by label..." i18n-label [value]="labelFilter" (valueChange)="labelFilter = $event; applyFilters()"></planet-search-field>
         @if (hasActiveFilters) {
           <button class="reports-reset-btn" mat-button color="primary" (click)="clearAllFilters()" i18n>Clear filters</button>
         }

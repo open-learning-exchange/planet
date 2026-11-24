@@ -14,10 +14,6 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
 
 import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -32,6 +28,7 @@ import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { TeamsService } from './teams.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
@@ -48,13 +45,7 @@ import { enterpriseJoinAgreement } from './teams.utils';
     MatIconButton,
     RouterLink,
     MatIcon,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    FormsModule,
     MatButton,
-    MatTooltip,
     NgClass,
     MatMiniFabButton,
     MatTable,
@@ -74,7 +65,8 @@ import { enterpriseJoinAgreement } from './teams.utils';
     MatNoDataRow,
     MatPaginator,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    SearchFieldComponent
   ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
@@ -110,7 +102,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Output() rowClick = new EventEmitter<{ mode: 'team' | 'enterprise', teamId: string, teamType: 'local' | 'sync' }>();
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
-  filter: string;
+  filter = '';
   readonly isMobile = this.deviceInfoService.isMobile;
   userNotInShelf = false;
   selection = new SelectionModel(true, []);
@@ -459,11 +451,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         displayName: team.name
       }
     });
-  }
-
-  resetSearch() {
-    this.teams.filter = this.myTeamsFilter ? ' ' : '';
-    this.filter = '';
   }
 
   applyFilter(filterValue: string) {

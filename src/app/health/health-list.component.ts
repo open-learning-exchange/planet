@@ -7,16 +7,13 @@ import { TableState, UsersTableComponent } from '../users/users-table.component'
 import { HealthService } from './health.service';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 @Component({
   templateUrl: './health-list.component.html',
   imports: [
-    ListToolbarComponent, MatIconButton, MatIcon, MatFormField, MatLabel, MatSuffix, MatInput, FormsModule, MatTooltip, UsersTableComponent
+    ListToolbarComponent, MatIconButton, MatIcon, UsersTableComponent, SearchFieldComponent
   ]
 })
 export class HealthListComponent implements OnInit, OnDestroy {
@@ -49,10 +46,6 @@ export class HealthListComponent implements OnInit, OnDestroy {
 
   back() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
-  }
-
-  resetFilter() {
-    this.searchValue = '';
   }
 
   tableDataChange(newData) {

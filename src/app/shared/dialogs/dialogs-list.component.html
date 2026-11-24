@@ -23,11 +23,7 @@
           </mat-select>
         </mat-form-field>
       }
-      <mat-icon>search</mat-icon>
-      <mat-form-field appearance="outline" class="font-size-1">
-        <mat-label i18n>Search</mat-label>
-        <input matInput (keyup)="applyFilter($event.target.value)">
-      </mat-form-field>
+      <planet-search-field appearance="outline" label="Search" i18n-label (valueChange)="applyFilter($event)"></planet-search-field>
     </div>
     <mat-table #table class="responsive-table card-mode" [dataSource]="tableData">
       @for (column of tableColumns; track column; let first = $first) {

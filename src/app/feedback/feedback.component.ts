@@ -13,11 +13,9 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { MatInput } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -35,6 +33,7 @@ import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { truncateText } from '@shared/utils';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { FeedbackService } from './feedback.service';
 import { UsersService } from '../users/users.service';
@@ -66,11 +65,8 @@ import {
     MatToolbarRow,
     MatFormField,
     MatLabel,
-    MatSuffix,
     MatSelect,
     MatOption,
-    MatInput,
-    FormsModule,
     MatButton,
     MatTable,
     MatSort,
@@ -94,7 +90,8 @@ import {
     MatNoDataRow,
     MatPaginator,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    SearchFieldComponent
   ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {

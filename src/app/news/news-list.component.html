@@ -1,14 +1,7 @@
 <div #listContent class="news-list-content">
   @if (replyViewing._id === 'root') {
     <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
-      <mat-form-field class="search-form-field mdc-toolbar-input">
-        <mat-label>{{ searchLabel }}</mat-label>
-        <mat-icon matIconPrefix>search</mat-icon>
-        <input matInput [(ngModel)]="messageSearch" (ngModelChange)="messageSearch$.next($event)">
-        <button type="button" mat-icon-button matSuffix (click)="clearSearch()" [style.visibility]="messageSearch ? 'visible' : 'hidden'" [matTooltip]="clearSearchLabel" [attr.aria-label]="clearSearchLabel">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
+      <planet-search-field class="search-form-field mdc-toolbar-input" [label]="searchLabel" [(value)]="messageSearch" (valueChange)="$event ? messageSearch$.next($event) : clearSearch()"></planet-search-field>
       <mat-form-field class="label-filter-field mdc-toolbar-input">
         <mat-label i18n>Label</mat-label>
         <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">

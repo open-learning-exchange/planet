@@ -7,7 +7,7 @@ import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -18,6 +18,7 @@ import { AiChatService } from '@shared/ai/ai-chat.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { SearchService } from '@shared/search/search.service';
 import { fuzzyWordMatch } from '@shared/search/fuzzy-search';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 import { showFormErrors, trackById } from '@shared/tables/table.helpers';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
@@ -43,9 +44,8 @@ interface TitleForm {
     MatIcon,
     MatMiniFabButton,
     MatFormField,
-    MatLabel,
-    MatSuffix,
     MatInput,
+    SearchFieldComponent,
     FormsModule,
     MatIconButton,
     MatTooltip,
