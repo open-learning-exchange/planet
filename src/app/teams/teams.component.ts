@@ -106,6 +106,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
   @Input() isDialog = false;
   @Input() excludeIds = [];
+  @Input() selectedIds: string[] = [];
   @Output() rowClick = new EventEmitter<{ mode: 'team' | 'enterprise', teamId: string, teamType: 'local' | 'sync' }>();
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
@@ -113,7 +114,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   readonly isMobile = this.deviceInfoService.isMobile;
   userNotInShelf = false;
   selection = new SelectionModel(true, []);
-  selectedId = '';
   get tableData() {
     return this.teams;
   }
@@ -250,7 +250,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamClick(teamId, teamType) {
     if (this.isDialog) {
-      this.selectedId = teamId;
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }

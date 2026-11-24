@@ -20,6 +20,7 @@
           <planet-teams
             [isDialog]="true"
             [excludeIds]="data.excludeIds"
+            [selectedIds]="teamsSelected"
             [mode]="selectedLink?.selector?.type"
             (rowClick)="teamSelect($event)"
           ></planet-teams>
