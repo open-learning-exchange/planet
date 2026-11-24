@@ -4,7 +4,7 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
+import { debounceTime, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -12,8 +12,7 @@ import { MatDivider } from '@angular/material/list';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
@@ -29,6 +28,7 @@ import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { AuthGuard } from '@shared/auth/auth.guard';
 import { trackById } from '@shared/tables/table.helpers';
 import { LabelComponent } from '@shared/ui/label.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -52,16 +52,14 @@ import { NewsListItemComponent } from './news-list-item.component';
     MatToolbar,
     MatFormField,
     MatLabel,
-    MatPrefix,
-    MatSuffix,
-    MatInput,
     MatIcon,
     MatIconButton,
     MatSelect,
     MatSelectTrigger,
     MatOption,
     MatTooltip,
-    LabelComponent
+    LabelComponent,
+    SearchFieldComponent
   ]
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
@@ -121,10 +119,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     return this.isTeamsFeed ? $localize`Search messages` : $localize`Search voice`;
   }
 
-  get clearSearchLabel(): string {
-    return this.isTeamsFeed ? $localize`Clear message search` : $localize`Clear voice search`;
-  }
-
   get pinTooltip(): string {
     if (this.isTeamsFeed) {
       return this.pinned ? $localize`Unpin Messages Toolbar` : $localize`Pin Messages Toolbar`;
@@ -161,8 +155,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.initNews();
       });
     this.searchSubscription = this.messageSearch$.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
+      debounceTime(300)
     ).subscribe(searchValue => {
       this.messageSearch = searchValue;
       this.applyFilters();

@@ -1,16 +1,15 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { MatInput } from '@angular/material/input';
 import { MatDateRangeInput, MatStartDate, MatEndDate, MatDatepickerToggle, MatDateRangePicker } from '@angular/material/datepicker';
-import { MatTooltip } from '@angular/material/tooltip';
 
 import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { MyPlanetFiltersForm } from './filter.base';
 
@@ -27,9 +26,7 @@ import { MyPlanetFiltersForm } from './filter.base';
     MatLabel,
     MatSelect,
     MatOption,
-    FormsModule,
     ReactiveFormsModule,
-    MatInput,
     MatDateRangeInput,
     MatStartDate,
     MatEndDate,
@@ -37,7 +34,7 @@ import { MyPlanetFiltersForm } from './filter.base';
     MatSuffix,
     MatDateRangePicker,
     MatButton,
-    MatTooltip
+    SearchFieldComponent
   ]
 })
 export class MyPlanetToolbarComponent implements OnChanges {

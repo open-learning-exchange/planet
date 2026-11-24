@@ -11,14 +11,12 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
 
 import { CertificationsService } from '@shared/certifications/certifications.service';
 import { sortNumberOrString, filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { ListToolbarComponent } from '@shared/tables/list-toolbar.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { CertificationsManagerService } from './certifications-manager.service';
 
@@ -40,11 +38,6 @@ import { CertificationsManagerService } from './certifications-manager.service';
     MatIconButton,
     RouterLink,
     MatIcon,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatTooltip,
     MatMiniFabAnchor,
     MatTable,
     MatSort,
@@ -60,7 +53,8 @@ import { CertificationsManagerService } from './certifications-manager.service';
     MatRowDef,
     MatRow,
     MatNoDataRow,
-    MatPaginator
+    MatPaginator,
+    SearchFieldComponent
   ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
@@ -121,10 +115,6 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.certifications.filter = filterValue;
-  }
-
-  resetSearch() {
-    this.certifications.filter = '';
   }
 
 }

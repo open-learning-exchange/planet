@@ -8,11 +8,7 @@
   <p class="upload-label mat-caption" i18n>Upload a new image</p>
   <planet-file-upload #imageUpload accept="image/*" i18n-hint hint="JPG, PNG, GIF or WEBP" [typePills]="['JPG','PNG','GIF','WEBP']" (fileSelected)="uploadImage($event)"></planet-file-upload>
   <div class="search-container">
-    <mat-icon>search</mat-icon>
-    <mat-form-field class="search-input">
-      <mat-label i18n>Search by filename</mat-label>
-      <input matInput [(ngModel)]="searchQuery">
-    </mat-form-field>
+    <planet-search-field class="search-input" label="Search by filename" i18n-label [(value)]="searchQuery"></planet-search-field>
   </div>
   @if (images.length !== 0) {
     <mat-grid-list cols="3" rowHeight="1:1">

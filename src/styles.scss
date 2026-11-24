@@ -79,19 +79,9 @@ body {
     flex: 1 1 auto;
   }
 
+  // Room for the longer search labels ("Type certification name to search")
   .toolbar-search {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.5rem;
     width: min(100%, 26rem);
-    min-width: 0;
-
-    > .mat-mdc-form-field {
-      align-self: center;
-      min-width: 0;
-      padding-top: 0;
-    }
   }
 
   .font-size-1 {
@@ -795,8 +785,7 @@ body {
 
   mat-toolbar:first-child > mat-form-field,
   mat-toolbar:first-child > planet-courses-progress-planet-selector,
-  .mat-toolbar form .mat-mdc-form-field,
-  .input-icon {
+  .mat-toolbar form .mat-mdc-form-field {
     &.mat-form-field-type-no-underline {
       margin-top: inherit;
     }

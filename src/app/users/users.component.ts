@@ -6,12 +6,10 @@ import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { MatInput } from '@angular/material/input';
 import { Validators } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
 
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -21,6 +19,7 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
 import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 import { ListActionsComponent } from '@shared/tables/list-actions.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
@@ -48,15 +47,13 @@ const roleLabels = {
     MatButtonToggleGroup,
     MatButtonToggle,
     MatFormField,
-    MatSuffix,
     MatLabel,
     MatSelect,
     MatOption,
     PlanetRoleComponent,
-    MatInput,
     MatButton,
-    MatTooltip,
-    UsersTableComponent
+    UsersTableComponent,
+    SearchFieldComponent
   ]
 })
 export class UsersComponent implements OnInit, OnDestroy {

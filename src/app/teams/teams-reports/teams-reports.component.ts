@@ -9,7 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatFormField, MatLabel, MatSuffix, MatPrefix, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
@@ -28,6 +28,7 @@ import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner
 import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
 import { PlanetChartComponent } from '@shared/charts/planet-chart.component';
 import { styleVariables } from '@shared/utils';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { CustomValidators } from '../../validators/custom-validators';
 import { TeamsService } from '../teams.service';
@@ -73,7 +74,6 @@ interface NewReportForm {
     MatFormField,
     MatLabel,
     MatSuffix,
-    MatPrefix,
     MatError,
     MatInput,
     MatDatepicker,
@@ -81,7 +81,8 @@ interface NewReportForm {
     MatDatepickerToggle,
     FormsModule,
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    SearchFieldComponent
   ]
 })
 export class TeamsReportsComponent implements OnChanges, OnDestroy {
@@ -184,11 +185,6 @@ export class TeamsReportsComponent implements OnChanges, OnDestroy {
         { label: $localize`Debit`, data: oldestFirst.map(card => card.expenses), backgroundColor: styleVariables.warn }
       ]
     };
-  }
-
-  clearLabelFilter() {
-    this.labelFilter = '';
-    this.applyFilters();
   }
 
   clearAllFilters() {

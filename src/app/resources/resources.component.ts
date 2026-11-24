@@ -17,9 +17,8 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -56,6 +55,7 @@ import { PlanetLocalStatusComponent } from '@shared/database/planet-local-status
 import { PlanetRatingDialogDirective } from '@shared/ratings/planet-rating-dialog.component';
 import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -82,13 +82,10 @@ import { CoursesService } from '../courses/courses.service';
     MatIcon,
     ResourcesSearchComponent,
     MatFormField,
-    MatSuffix,
     PlanetTagInputComponent,
-    FormsModule,
     ReactiveFormsModule,
     MatButton,
     MatLabel,
-    MatInput,
     MatMiniFabButton,
     RouterLink,
     PlanetFilteredAmountComponent,
@@ -123,7 +120,8 @@ import { CoursesService } from '../courses/courses.service';
     MatPaginator,
     DatePipe,
     TruncateTextPipe,
-    ResourcesIconComponent
+    ResourcesIconComponent,
+    SearchFieldComponent
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {

@@ -6,6 +6,7 @@ import { MatBadge } from '@angular/material/badge';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatChip, MatChipRemove, MatChipSet } from '@angular/material/chips';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
@@ -34,6 +35,8 @@ export const searchSelectionFilters = (
   templateUrl: './list-toolbar.component.html',
   styleUrls: [ './list-toolbar.component.scss' ],
   encapsulation: ViewEncapsulation.None,
+  // Reaches the fields pages declare inside the toolbar: without hint space they stay centred in the row
+  providers: [ { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } } ],
   imports: [
     NgTemplateOutlet, MatBadge, MatButton, MatIconButton, MatChip, MatChipRemove, MatChipSet, MatIcon, MatToolbar, MatToolbarRow
   ]

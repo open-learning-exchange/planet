@@ -6,9 +6,6 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 import { CouchService } from '@shared/database/couchdb.service';
@@ -18,6 +15,7 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
+import { SearchFieldComponent } from '@shared/search/search-field.component';
 
 import { ValidatorService } from '../../validators/validator.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -37,18 +35,14 @@ import { RequestsTableComponent } from './requests-table.component';
     MatIcon,
     MatButtonToggleGroup,
     MatButtonToggle,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatTooltip,
     MatToolbarRow,
     MatButton,
     RequestsTableComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
-    MatAnchor
+    MatAnchor,
+    SearchFieldComponent
   ]
 })
 export class RequestsComponent implements OnInit, OnDestroy {

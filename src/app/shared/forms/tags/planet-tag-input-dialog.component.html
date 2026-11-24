@@ -8,13 +8,7 @@
   }
 }
 <mat-dialog-content>
-  <mat-form-field class="full-width">
-    <mat-label i18n>Filter by Collection Name</mat-label>
-    <input matInput [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
-    <button type="button" mat-icon-button matSuffix (click)="updateFilter('')" [style.visibility]="filterValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
+  <planet-search-field class="full-width" label="Filter by Collection Name" i18n-label [value]="filterValue" (valueChange)="updateFilter($event)"></planet-search-field>
   <mat-expansion-panel *planetAuthorizedRoles="'manager'">
     <mat-expansion-panel-header>
       <mat-panel-title i18n>Create New Collection</mat-panel-title>

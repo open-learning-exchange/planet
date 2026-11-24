@@ -188,17 +188,6 @@ describe('TeamsReportsComponent', () => {
       expect(component.labelFilter).toBe('');
       expect(component.filteredCards.length).toBe(2);
     });
-
-    it('clears only label search when clearLabelFilter is called', () => {
-      component.startDate = new Date(2026, 0, 1);
-      component.labelFilter = 'Q1';
-      component.applyFilters();
-
-      component.clearLabelFilter();
-
-      expect(component.labelFilter).toBe('');
-      expect(component.startDate).toBeDefined();
-    });
   });
 
   it('lists the latest period first, then the most recently created', () => {
