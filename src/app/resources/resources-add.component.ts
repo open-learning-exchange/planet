@@ -24,7 +24,6 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { languages } from '@shared/language/languages';
-import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { showFormErrors } from '@shared/tables/table.helpers';
 import { deepEqual, normalizedContentType, safeAttachmentName } from '@shared/utils';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
@@ -130,12 +129,14 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @Input() isDialog = false;
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
+  @Output() submitFailed = new EventEmitter<void>();
   attachmentMarkedForDeletion = false;
   hasUnsavedChanges = false;
   submitAttempted = false;
   sectionsExpanded = { details: true, file: false, classification: false, attribution: false };
   private initialState = '';
   @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
+  @ViewChild(SubmitDirective) submitDirective?: SubmitDirective;
 
   get detailsInvalid(): boolean {
     return this.resourceForm.controls.title.invalid ||
@@ -161,7 +162,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     private route: ActivatedRoute,
     private stateService: StateService,
     private resourcesService: ResourcesService,
-    private dialogsLoadingService: DialogsLoadingService,
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -300,7 +300,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       delete this.existingResource.doc._attachments;
     }
     if (!this.resourceForm.valid) {
-      this.dialogsLoadingService.stop();
+      this.submitFailed.emit();
       this.submitAttempted = true;
       if (this.detailsInvalid) {
         this.sectionsExpanded.details = true;
@@ -326,12 +326,18 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(
           (resourceRes) => this.afterResourceUpdate(message, resourceRes),
-          (err) => this.planetMessageService.showAlert($localize`There was an error with this resource`)
+          () => this.saveFailed()
         );
       } else {
         this.afterResourceUpdate(message);
       }
-    });
+    }, () => this.saveFailed());
+  }
+
+  private saveFailed() {
+    this.submitDirective?.closeSpinner();
+    this.submitFailed.emit();
+    this.planetMessageService.showAlert($localize`There was an error with this resource`);
   }
 
   createFileObs() {

@@ -96,6 +96,11 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
     this.resourcesAddComponent.onSubmit();
   }
 
+  submitFailed() {
+    this.isSubmitting = false;
+    this.dialogsLoadingService.stop();
+  }
+
   addNewResource(resource) {
     this.data.okClick(this.existingResource.doc || resource === undefined ? [] : [ resource ]);
   }
