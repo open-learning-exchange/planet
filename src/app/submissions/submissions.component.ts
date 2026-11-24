@@ -277,6 +277,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   resetFilter() {
+    this.applyFilter('');
     this.onFilterChange(this.defaultType, 'type');
   }
 

@@ -152,6 +152,9 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   searchChanged(searchText: string) {
+    if (!searchText) {
+      this.applyFilter('');
+    }
     this.searchChange.next(searchText);
   }
 
