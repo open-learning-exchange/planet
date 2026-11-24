@@ -119,8 +119,8 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
         this.resourcesComponent.selection.changed.subscribe((selection) => this.okDisabled = selection.source.selected.length === 0);
         break;
       case 'resourcesAdd':
-        this.resourcesAddComponent.resourceForm.valueChanges.subscribe(
-          () => this.okDisabled = !this.resourcesAddComponent.resourceForm.valid
+        this.resourcesAddComponent.resourceForm.statusChanges.subscribe(
+          (status) => this.okDisabled = status !== 'VALID'
         );
         break;
     }
