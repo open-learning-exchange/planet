@@ -205,6 +205,9 @@ When creating dialog boxes, follow these button placement rules:
   - Use "Cancel" and "Submit" for form dialogs
   - Use "Close" and "OK" for confirmation dialogs
 
+### Text Size
+Keep text at 12px (`0.75rem`) or larger, small uppercase labels and chips included: smaller text is hard to read on a phone.
+
 ### Text Capitalization
 For consistency in our UI text, follow these capitalization and punctuation rules:
 

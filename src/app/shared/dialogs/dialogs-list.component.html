@@ -30,10 +30,10 @@
       </mat-form-field>
     </div>
     <mat-table #table class="responsive-table card-mode" [dataSource]="tableData">
-      @for (column of tableColumns; track column; let first = $first) {
-        <ng-container [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
-          <mat-cell *matCellDef="let element" [class.card-title]="first">@if (!first) {<span class="card-label">{{column}}</span>}{{element[column]}}</mat-cell>
+      @for (column of data.columns; track column.key; let first = $first) {
+        <ng-container [matColumnDef]="column.key">
+          <mat-header-cell *matHeaderCellDef class="km-column-header">{{column.label}}</mat-header-cell>
+          <mat-cell *matCellDef="let element" [class.card-title]="first">@if (!first) {<span class="card-label">{{column.label}}</span>}{{element[column.key]}}</mat-cell>
         </ng-container>
       }
       <mat-header-row *matHeaderRowDef="tableColumns"></mat-header-row>

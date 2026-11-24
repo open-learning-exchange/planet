@@ -85,7 +85,7 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[];
-    columns: string[];
+    columns: { key: string, label: string }[];
     itemDescription: string;
     nameProperty: string;
     okClick: any;
@@ -97,7 +97,7 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
     selectionOptional?: boolean;
     labels?: any;
   }) {
-    const hasFullName = this.data.columns.some(column => column === 'Full Name');
+    const hasFullName = this.data.columns.some(column => column.key === 'Full Name');
     const tableData = hasFullName ?
       this.appendFullName(this.data.tableData) :
       this.data.tableData;
@@ -109,7 +109,7 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
       selectValue: row => this.selectIdentifier(row), keepAcrossPages: true
     });
     this.tableData.data = tableData;
-    this.tableColumns = this.data.columns;
+    this.tableColumns = this.data.columns.map(column => column.key);
     this.disableRowClick = this.data.disableSelection || false;
     this.emptySubmit = this.data.selectionOptional || false;
     if (this.data.filterPredicate) {

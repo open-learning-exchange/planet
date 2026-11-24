@@ -113,14 +113,14 @@
   @include m.label-chip;
   max-width: 100%;
   min-width: 0;
-  font-size: 11px;
+  font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .report-card-eyebrow {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: v.$grey-text;
   text-transform: uppercase;
@@ -139,7 +139,7 @@
   gap: 2px;
   padding: 3px 8px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -161,7 +161,7 @@
 }
 
 .report-card-hero-label {
-  font-size: 11px;
+  font-size: 12px;
   color: v.$grey-text;
 }
 
@@ -200,7 +200,7 @@
   }
 
   .report-card-stat-label {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.4px;

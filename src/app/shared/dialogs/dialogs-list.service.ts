@@ -8,12 +8,15 @@ import { filterSpecificFields } from '@shared/tables/table.helpers';
 
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 
+const userColumns = [ { key: 'Full Name', label: $localize`Full Name` }, { key: 'name', label: $localize`Username` } ];
 const listColumns = {
-  resources: [ 'title' ],
-  courses: [ 'courseTitle' ],
-  _users: [ 'Full Name', 'name' ],
-  child_users: [ 'Full Name', 'name' ],
-  communityregistrationrequests: [ 'name', 'code', 'localDomain' ]
+  resources: [ { key: 'title', label: $localize`Title` } ],
+  courses: [ { key: 'courseTitle', label: $localize`Title` } ],
+  _users: userColumns,
+  child_users: userColumns,
+  communityregistrationrequests: [
+    { key: 'name', label: $localize`Name` }, { key: 'code', label: $localize`Code` }, { key: 'localDomain', label: $localize`URL` }
+  ]
 };
 
 @Injectable()
