@@ -122,7 +122,10 @@ export class ResourcesService {
     return this.writeResource(resource, file).pipe(
       map((resourceRes) => ({ resourceRes, savedTags: existingTags })),
       // A retried create whose earlier attempt landed gets 409 on its form's id, so this attempt replaces that one
-      catchError((error) => error.status === 409 && !resource._rev ? this.replaceLandedCreate(resource, file) : throwError(() => error)),
+      catchError((error) => error.status === 409 && !resource._rev ?
+        this.replaceLandedCreate(resource, file, error) :
+        throwError(() => error)
+      ),
       switchMap(({ resourceRes, savedTags }) => forkJoin([
         of(resourceRes),
         this.couchService.bulkDocs('tags', this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, newTags, savedTags))
@@ -136,14 +139,20 @@ export class ResourcesService {
       this.couchService.updateDocument(this.dbName, resource);
   }
 
-  private replaceLandedCreate(resource, file) {
+  private replaceLandedCreate(resource, file, conflict) {
     return forkJoin([
       this.couchService.get(`${this.dbName}/${resource._id}`),
       this.couchService.findAll('tags', findDocuments({ docType: 'link', db: this.dbName, linkId: resource._id }))
     ]).pipe(
-      switchMap(([ { _rev }, links ]: [ any, any[] ]) => this.writeResource({ ...resource, _rev }, file).pipe(
-        map((resourceRes) => ({ resourceRes, savedTags: links.map((tagLink) => ({ tagId: tagLink.tagId, tagLink })) }))
-      ))
+      switchMap(([ { _rev }, links ]: [ any, any[] ]) => {
+        // Only this form's own first write leaves the doc at generation 1; a later revision may be another member's edit
+        if (!_rev.startsWith('1-')) {
+          return throwError(() => conflict);
+        }
+        return this.writeResource({ ...resource, _rev }, file).pipe(
+          map((resourceRes) => ({ resourceRes, savedTags: links.map((tagLink) => ({ tagId: tagLink.tagId, tagLink })) }))
+        );
+      })
     );
   }
 

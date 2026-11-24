@@ -207,7 +207,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         validators: CustomValidators.required,
         asyncValidators: [
           // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-          (ac) => this.validatorService.checkUniqueResourceTitle$(ac, this.existingResource._id, this.privateFor)
+          (ac) => this.validatorService.checkUniqueResourceTitle$(ac, this.existingResource._id || this.newResourceId, this.privateFor)
         ]
       }),
       author: this.fb.control(''),

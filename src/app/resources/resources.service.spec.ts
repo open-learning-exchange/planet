@@ -78,6 +78,20 @@ describe('ResourcesService', () => {
     expect(tagsService.tagBulkDocs).toHaveBeenCalledWith('res-1', 'resources', [ 'math' ], [ { tagId: 'math', tagLink: link } ]);
   });
 
+  it('does not replace a landed create that was edited since', () => {
+    const error = vi.fn();
+    const put = vi.fn().mockReturnValue(throwError(() => ({ status: 409 })));
+    const service = setup(put);
+    couchService.get.mockReturnValue(of({ _id: 'res-1', _rev: '2-c' }));
+    couchService.findAll.mockReturnValue(of([]));
+
+    service.updateResource({ _id: 'res-1', filename: 'canción__1.pdf' }, file).subscribe({ error });
+
+    expect(error).toHaveBeenCalledWith({ status: 409 });
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
+  });
+
   it('still fails an edit that gets a 409', () => {
     const error = vi.fn();
     const conflict = throwError(() => ({ status: 409 }));
