@@ -1,5 +1,6 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { NgModule, inject } from '@angular/core';
+import { Routes, RouterModule, Router } from '@angular/router';
+import { StateService } from '@shared/state.service';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { RequestsComponent } from './requests/requests.component';
 import { ManagerSyncComponent } from './manager-sync.component';
@@ -32,7 +33,12 @@ const routes: Routes = [
   { path: 'reports/pending', component: PendingComponent },
   { path: 'reports/myplanet', component: ReportsMyPlanetComponent },
   { path: 'logs/myplanet', component: LogsMyPlanetComponent },
-  { path: 'requests', component: RequestsComponent }
+  {
+    path: 'requests',
+    component: RequestsComponent,
+    // A community has no child planets, and the dashboard hides this link there, so a typed URL goes back to the dashboard
+    canActivate: [ () => inject(StateService).configuration.planetType !== 'community' || inject(Router).createUrlTree([ '/manager' ]) ]
+  }
 ];
 
 @NgModule({

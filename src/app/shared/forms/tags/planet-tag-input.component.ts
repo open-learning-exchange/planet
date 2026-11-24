@@ -1,7 +1,6 @@
 import {
   Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -58,9 +57,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   set value(tags: string[] | null) {
     this._value = tags ?? [];
-    if (this.mode === 'filter' && this.updateRouteParam) {
-      this.filterReroute(this._value);
-    }
     this.onChange(this._value);
     this.stateChanges.next();
   }
@@ -94,8 +90,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() db: string;
   @Input() largeFont = false;
   @Input() selectMany = true;
-  @Input() updateRouteParam = true;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
+  @Output() tagsLoaded = new EventEmitter<TagWithId[]>();
 
   shouldLabelFloat = false;
   stateChanges = new Subject<void>();
@@ -103,16 +99,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   inputControl = new FormControl<string>('', { nonNullable: true });
   focused = false;
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
-  tagUrlDelimiter = '_,_';
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
     private tagsService: TagsService,
-    private dialog: MatDialog,
-    private router: Router,
-    private route: ActivatedRoute
+    private dialog: MatDialog
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -147,17 +140,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
         .reduce(dedupeShelfReduce, []);
       this.value = newValue;
       this.resetDialogData();
+      this.tagsLoaded.emit(tags);
     });
   }
-
-  // newTags is a string of tags delimited by this.tagUrlDelimiter
-  addTags(newTags?: string) {
-    if (newTags === undefined || newTags === null) {
-      return;
-    }
-    newTags.split(this.tagUrlDelimiter).forEach(tag => this.addTag(tag));
-  }
-
 
   addTag(newTag: string) {
     if (this.value.indexOf(newTag.trim()) > -1) {
@@ -262,19 +247,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     } else {
       this.removeTag(tag);
     }
-  }
-
-  /**
-   * Adds parameter to url with currently selected tags to maintain selection after navigation (filter mode only)
-   */
-  filterReroute(tags: string[]) {
-    const collections = tags.join(this.tagUrlDelimiter);
-    const [ url, ...params ] = this.router.url.split(';');
-    const newParams = params.filter(param => param.indexOf('collections') === -1).reduce((paramObj, param) => {
-      const [ key, value ] = param.split('=');
-      return { ...paramObj, [key]: value };
-    }, {});
-    this.router.navigate([ url, { ...newParams, ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 
 }

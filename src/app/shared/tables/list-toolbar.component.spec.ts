@@ -16,6 +16,12 @@ describe('searchSelectionFilters', () => {
     expect(filters.map(filter => filter.label)).toEqual([ 'Grade 1', 'Grade 2', 'Beginner' ]);
   });
 
+  it('starts the chip with the category prefix when the category has one', () => {
+    const medium = [ { label: 'medium', options: [ { label: 'Video', value: 'Video' } ], chipPrefix: 'Medium' } ];
+
+    expect(searchSelectionFilters(medium, { medium: [ 'Video' ] }, vi.fn())[0].label).toBe('Medium: Video');
+  });
+
   it('skips categories that were never selected', () => {
     expect(searchSelectionFilters(categories, { isEmpty: true }, vi.fn())).toEqual([]);
   });

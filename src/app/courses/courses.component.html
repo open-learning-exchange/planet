@@ -4,21 +4,22 @@
       <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
     }
     <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
-    <!-- Hidden on phones rather than removed: it restores the collections route param and keeps it in step -->
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-4 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search" [style.display]="isTabletOrSmaller() ? 'none' : null">
-      <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
-    </mat-form-field>
+    @if (!isTabletOrSmaller()) {
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-4 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
+        <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" (tagsLoaded)="setTags($event)"></planet-tag-input>
+      </mat-form-field>
+    }
     <ng-template #listFilters let-compact>
       @if (compact) {
         <mat-form-field subscriptSizing="dynamic" floatLabel="always">
           <mat-label i18n>Collections</mat-label>
-          <mat-select placeholder="All" i18n-placeholder [value]="tagFilter.value[0]" (selectionChange)="tagFilter.setValue($event.value ? [ $event.value ] : [])">
+          <mat-select placeholder="All" i18n-placeholder panelClass="list-filters-collections" [value]="tagFilter.value[0]" (selectionChange)="tagFilter.setValue($event.value ? [ $event.value ] : [])">
             <mat-option i18n>All</mat-option>
-            @for (tag of tagInputComponent?.tags; track tag._id) {
+            @for (tag of tags; track tag._id) {
               @if (!tag.attachedTo?.length) {
-                <mat-option [value]="tag._id">{{ tag.name }} ({{ tag.count }})</mat-option>
+                <mat-option [value]="tag._id"><span class="ellipsis-text">{{ tag.name }}</span>&nbsp;({{ tag.count }})</mat-option>
                 @for (subTag of tag.subTags; track subTag._id) {
-                  <mat-option class="list-filters-sub-option" [value]="subTag._id">{{ subTag.name }} ({{ subTag.count }})</mat-option>
+                  <mat-option class="list-filters-sub-option" [value]="subTag._id"><span class="ellipsis-text">{{ subTag.name }}</span>&nbsp;({{ subTag.count }})</mat-option>
                 }
               }
             }
@@ -52,90 +53,103 @@
 
 <div [ngClass]="{ 'space-container': !isForm }" class="primary-link-hover">
   @if (!isDialog && !isForm) {
-    <planet-list-actions [selected]="selection.selected.length" [inline]="parent" (clearSelection)="selection.clear()">
+    <planet-list-actions [selected]="selection.selected.length" [menu]="parent ? undefined : actionsMenu" (clearSelection)="selection.clear()">
       @if (isAuthorized) {
         @if (!parent) {
           <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
         }
         <div class="column margin-lr-5">
           <planet-filtered-amount [table]="courses" labelFor="courses"></planet-filtered-amount>
-          <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
+          <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tags"></planet-tag-selected-input>
         </div>
         <span class="toolbar-fill"></span>
       }
-      <ng-template #listActions let-menu>
+      <ng-template #listActions>
         @if (isAuthorized) {
           @if (parent) {
             <button mat-button [disabled]="!selection.selected.length || dialogGuard.isActive('share-course')" (click)="shareCourse('pull', selection.selected)">
               <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
             </button>
           } @else {
-            <ng-container *ngTemplateOutlet="actionButtons; context: { $implicit: menu }"></ng-container>
+            @if (user.isUserAdmin) {
+              <ng-container *ngTemplateOutlet="changeCollections"></ng-container>
+            }
+            <button mat-button [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
+              <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
+              @if (selectedNotEnrolled > 0) {
+                <span> ({{selectedNotEnrolled}})</span>
+              }
+            </button>
+            <button mat-button [disabled]="selectedEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
+              <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
+              @if (selectedEnrolled > 0) {
+                <span> ({{selectedEnrolled}})</span>
+              }
+            </button>
+            @if (user.isUserAdmin) {
+              <button mat-button [matMenuTriggerFor]="actionsMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+            }
           }
         }
       </ng-template>
     </planet-list-actions>
-  }
-
-  <ng-template #actionButtons let-menu>
-    @if (user.isUserAdmin) {
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-3 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
-        <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
-      </mat-form-field>
-    }
-    <button mat-button [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
-      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
-      @if (selectedNotEnrolled > 0) {
-        <span> ({{selectedNotEnrolled}})</span>
-      }
-    </button>
-    <button mat-button [disabled]="selectedEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
-      <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
-      @if (selectedEnrolled > 0) {
-        <span> ({{selectedEnrolled}})</span>
-      }
-    </button>
-    @if (user.isUserAdmin) {
-      @if (menu) {
-        <ng-container *planetAuthorizedRoles="''">
-          <ng-container *ngTemplateOutlet="managerItems"></ng-container>
-        </ng-container>
-      } @else {
-        <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
-      }
-      <mat-menu #managerMenu="matMenu">
-        <!-- Declared inside the manager menu so its items keep that menu's keyboard handling on desktop -->
-        <ng-template #managerItems>
-          <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
-          @if (planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted') {
-            <button mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0 || dialogGuard.isActive('share-course')">
-              <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
-              <span i18n>Send Courses</span>
-              @if (selectedLocal > 0) {
-                <span> ({{selectedLocal}})</span>
-              }
-            </button>
+    <!-- Desktop opens this from Manager Actions. Tablets and phones open it from the selection bar's ⋮, so it starts with the toolbar's actions there -->
+    <mat-menu #actionsMenu="matMenu" class="list-actions-menu">
+      @if (isAuthorized && !parent) {
+        @if (isTabletOrSmaller()) {
+          @if (user.isUserAdmin) {
+            <ng-container *ngTemplateOutlet="changeCollections"></ng-container>
           }
-          @if (planetType !== 'community') {
-            <button mat-menu-item (click)="openSendCourseDialog()" [disabled]="!selection.selected.length || dialogGuard.isActive('send-course')">
-              <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-              <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
+          <button mat-menu-item [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
+            <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
+            @if (selectedNotEnrolled > 0) {
+              <span> ({{selectedNotEnrolled}})</span>
+            }
+          </button>
+          <button mat-menu-item [disabled]="selectedEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
+            <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
+            @if (selectedEnrolled > 0) {
+              <span> ({{selectedEnrolled}})</span>
+            }
+          </button>
+        }
+        @if (user.isUserAdmin) {
+          <ng-container *planetAuthorizedRoles="''">
+            <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
+            @if (planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted') {
+              <button mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0 || dialogGuard.isActive('share-course')">
+                <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
+                <span i18n>Send Courses</span>
+                @if (selectedLocal > 0) {
+                  <span> ({{selectedLocal}})</span>
+                }
+              </button>
+            }
+            @if (planetType !== 'community') {
+              <button mat-menu-item (click)="openSendCourseDialog()" [disabled]="!selection.selected.length || dialogGuard.isActive('send-course')">
+                <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+                <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
+                @if (selection?.selected?.length) {
+                  <span> ({{selection?.selected?.length}})</span>
+                }
+              </button>
+            }
+            <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
+              <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
               @if (selection?.selected?.length) {
                 <span> ({{selection?.selected?.length}})</span>
               }
             </button>
-          }
-          <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
-            <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-            @if (selection?.selected?.length) {
-              <span> ({{selection?.selected?.length}})</span>
-            }
-          </button>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="managerItems"></ng-container>
-      </mat-menu>
-    }
-  </ng-template>
+          </ng-container>
+        }
+      }
+    </mat-menu>
+    <ng-template #changeCollections>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-3 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
+        <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)" (tagsLoaded)="setTags($event)"></planet-tag-input>
+      </mat-form-field>
+    </ng-template>
+  }
 
   <div class="card-table view-container view-full-height view-table" [ngClass]="{ 'fill-parent': isForm }">
     <mat-table #table class="card-mode" [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">

@@ -58,7 +58,7 @@
 
 <div class="space-container">
   @if (!isDialog) {
-    <planet-list-actions [selected]="usersTable?.selection.selected.length ?? 0" [inline]="true" (clearSelection)="usersTable.selection.clear()">
+    <planet-list-actions [selected]="usersTable?.selection.selected.length ?? 0" (clearSelection)="usersTable.selection.clear()">
       <span class="toolbar-fill"></span>
       <ng-template #listActions>
         @if (tableState.filterType === 'local' && isUserAdmin) {
