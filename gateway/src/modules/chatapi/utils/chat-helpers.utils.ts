@@ -5,7 +5,7 @@ import { ChatMessage } from '../models/chat.model';
 import { ProviderClient } from '../providers/clients';
 import { openaiChat } from '../providers/openai.provider';
 import { fetchResourceAttachments, isPlainDocId, streamResourceAttachment } from './db.utils';
-import { extractTextFromDocument } from './text-extraction.utils';
+import { extractPdfText } from './text-extraction.utils';
 
 // Characters, about 15k tokens: one long PDF must not overflow the model or bill the whole book every turn
 const REFERENCE_MAX_LENGTH = 60000;
@@ -15,7 +15,7 @@ const PROVIDER_DEADLINE_MS = 120000;
 
 const extractedTexts = new Map<string, Promise<string>>();
 
-function attachmentText(resourceId: string, attachmentName: string, digest: string, contentType: string): Promise<string> {
+function attachmentText(resourceId: string, attachmentName: string, digest: string): Promise<string> {
   const key = JSON.stringify([ resourceId, attachmentName, digest ]);
   const cached = extractedTexts.get(key);
   if (cached) {
@@ -25,7 +25,7 @@ function attachmentText(resourceId: string, attachmentName: string, digest: stri
   }
 
   // Copies the slice, so the cache doesn't pin the whole extracted text
-  const text = extractTextFromDocument(() => streamResourceAttachment(resourceId, attachmentName), contentType)
+  const text = extractPdfText(() => streamResourceAttachment(resourceId, attachmentName))
     .then((extracted) => Buffer.from(extracted.slice(0, REFERENCE_MAX_LENGTH + 1)).toString());
   text.catch(() => {
     if (extractedTexts.get(key) === text) {
@@ -61,7 +61,7 @@ async function addResourceTexts(parts: string[], resourceId: unknown): Promise<v
       continue;
     }
     try {
-      const text = await attachmentText(resourceId, attachmentName, attachment.digest, attachment.content_type);
+      const text = await attachmentText(resourceId, attachmentName, attachment.digest);
       if (text) {
         parts.push(text);
       }

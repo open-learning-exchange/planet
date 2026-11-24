@@ -17,7 +17,7 @@ vi.mock('./db.utils', async (importOriginal) => ({
   'fetchResourceAttachments': mocks.fetchAttachments,
   'streamResourceAttachment': mocks.streamAttachment
 }));
-vi.mock('./text-extraction.utils', () => ({ 'extractTextFromDocument': mocks.extractText }));
+vi.mock('./text-extraction.utils', () => ({ 'extractPdfText': mocks.extractText }));
 
 const provider = (name: ProviderName) => ({
   name,
