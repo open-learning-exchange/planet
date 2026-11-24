@@ -137,6 +137,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   private initialState = '';
   @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
   @ViewChild(SubmitDirective) submitDirective?: SubmitDirective;
+  private readonly newResourceId = this.couchService.randomId();
 
   get detailsInvalid(): boolean {
     return this.resourceForm.controls.title.invalid ||
@@ -320,7 +321,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
       const existingData = this.attachmentMarkedForDeletion ? { _id, _rev } : this.existingResource.doc;
       // Start with empty object so this.resourceForm.value does not change
-      const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
+      const newResource = Object.assign({ _id: this.newResourceId }, existingData, this.resourceForm.value, resource);
       const message = (this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title;
       const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {

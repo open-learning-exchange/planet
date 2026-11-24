@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Subject, forkJoin, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { RatingService } from '@shared/ratings/rating.service';
 import { UserService } from '@shared/auth/user.service';
@@ -119,14 +119,31 @@ export class ResourcesService {
 
   updateResource(resourceInfo, file, { newTags, existingTags } = { newTags: [], existingTags: [] }) {
     const resource = { createdDate: this.couchService.datePlaceholder, ...resourceInfo };
-    const resourceWrite = file ?
-      this.couchService.putDocumentWithFiles(this.dbName, resource, { [resourceInfo.filename]: file }) :
-      this.couchService.updateDocument(this.dbName, resource);
-    return resourceWrite.pipe(
-      switchMap((resourceRes) => forkJoin([
+    return this.writeResource(resource, file).pipe(
+      map((resourceRes) => ({ resourceRes, savedTags: existingTags })),
+      // A retried create whose earlier attempt landed gets 409 on its form's id, so this attempt replaces that one
+      catchError((error) => error.status === 409 && !resource._rev ? this.replaceLandedCreate(resource, file) : throwError(() => error)),
+      switchMap(({ resourceRes, savedTags }) => forkJoin([
         of(resourceRes),
-        this.couchService.bulkDocs('tags', this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, newTags, existingTags))
+        this.couchService.bulkDocs('tags', this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, newTags, savedTags))
       ]))
+    );
+  }
+
+  private writeResource(resource, file) {
+    return file ?
+      this.couchService.putDocumentWithFiles(this.dbName, resource, { [resource.filename]: file }) :
+      this.couchService.updateDocument(this.dbName, resource);
+  }
+
+  private replaceLandedCreate(resource, file) {
+    return forkJoin([
+      this.couchService.get(`${this.dbName}/${resource._id}`),
+      this.couchService.findAll('tags', findDocuments({ docType: 'link', db: this.dbName, linkId: resource._id }))
+    ]).pipe(
+      switchMap(([ { _rev }, links ]: [ any, any[] ]) => this.writeResource({ ...resource, _rev }, file).pipe(
+        map((resourceRes) => ({ resourceRes, savedTags: links.map((tagLink) => ({ tagId: tagLink.tagId, tagLink })) }))
+      ))
     );
   }
 

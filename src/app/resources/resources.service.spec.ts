@@ -16,20 +16,24 @@ describe('ResourcesService', () => {
 
   const file = new File([ '%PDF' ], 'canción #1.pdf', { type: 'application/pdf' });
   let couchService;
+  let tagsService;
 
   const setup = (putDocumentWithFiles) => {
     couchService = {
       datePlaceholder: {},
       putDocumentWithFiles,
       updateDocument: vi.fn(),
+      get: vi.fn(),
+      findAll: vi.fn(),
       bulkDocs: vi.fn().mockReturnValue(of([]))
     };
+    tagsService = { tagBulkDocs: vi.fn().mockReturnValue([]) };
     TestBed.configureTestingModule({
       providers: [
         { provide: CouchService, useValue: couchService },
         { provide: RatingService, useValue: { ratingsUpdated$: EMPTY } },
         { provide: StateService, useValue: { couchStateListener: () => EMPTY } },
-        { provide: TagsService, useValue: { tagBulkDocs: () => [] } },
+        { provide: TagsService, useValue: tagsService },
         { provide: UserService, useValue: {} },
         { provide: UsersService, useValue: {} },
         { provide: PlanetMessageService, useValue: {} }
@@ -55,6 +59,34 @@ describe('ResourcesService', () => {
 
     expect(error).toHaveBeenCalled();
     expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(couchService.bulkDocs).not.toHaveBeenCalled();
+  });
+
+  it('writes a retried create over its landed attempt and reconciles the tag links already saved', () => {
+    const create = { _id: 'res-1', filename: 'canción__1.pdf' };
+    const link = { _id: 'link-1', _rev: '1-l', docType: 'link', db: 'resources', linkId: 'res-1', tagId: 'math' };
+    const put = vi.fn()
+      .mockReturnValueOnce(throwError(() => ({ status: 409 })))
+      .mockReturnValueOnce(of({ ok: true, id: 'res-1', rev: '2-b' }));
+    const service = setup(put);
+    couchService.get.mockReturnValue(of({ _id: 'res-1', _rev: '1-a' }));
+    couchService.findAll.mockReturnValue(of([ link ]));
+
+    service.updateResource(create, file, { newTags: [ 'math' ], existingTags: undefined }).subscribe();
+
+    expect(put).toHaveBeenLastCalledWith('resources', expect.objectContaining({ ...create, _rev: '1-a' }), { 'canción__1.pdf': file });
+    expect(tagsService.tagBulkDocs).toHaveBeenCalledWith('res-1', 'resources', [ 'math' ], [ { tagId: 'math', tagLink: link } ]);
+  });
+
+  it('still fails an edit that gets a 409', () => {
+    const error = vi.fn();
+    const conflict = throwError(() => ({ status: 409 }));
+
+    const edit = { _id: 'res-1', _rev: '1-a', filename: 'canción__1.pdf' };
+
+    setup(vi.fn().mockReturnValue(conflict)).updateResource(edit, file).subscribe({ error });
+
+    expect(error).toHaveBeenCalled();
     expect(couchService.bulkDocs).not.toHaveBeenCalled();
   });
 
