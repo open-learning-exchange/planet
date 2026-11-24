@@ -320,7 +320,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       const { _id, _rev } = this.existingResource;
       // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
       const existingData = this.attachmentMarkedForDeletion ? { _id, _rev } : this.existingResource.doc;
-      // Start with empty object so this.resourceForm.value does not change
+      // Start with a new object so this.resourceForm.value does not change
       const newResource = Object.assign({ _id: this.newResourceId }, existingData, this.resourceForm.value, resource);
       const message = (this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title;
       const currentTags = (this.existingResource.tags || []).map(tag => tag._id);

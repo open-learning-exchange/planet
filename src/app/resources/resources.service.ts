@@ -121,7 +121,7 @@ export class ResourcesService {
     const resource = { createdDate: this.couchService.datePlaceholder, ...resourceInfo };
     return this.writeResource(resource, file).pipe(
       map((resourceRes) => ({ resourceRes, savedTags: existingTags })),
-      // A retried create whose earlier attempt landed gets 409 on its form's id, so this attempt replaces that one
+      // A 409 on a create means an earlier attempt from this form landed
       catchError((error) => error.status === 409 && !resource._rev ?
         this.replaceLandedCreate(resource, file, error) :
         throwError(() => error)
