@@ -9,7 +9,6 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { dedupeObjectArray, planetAndParentId } from '@shared/utils';
 
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,6 @@ import { environment } from '../../environments/environment';
 export class NewsService {
 
   dbName = 'news';
-  imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
 
@@ -41,20 +39,18 @@ export class NewsService {
       )
     ).subscribe(({ newsItems, avatarMap }) => {
       this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
+        {
+          doc: item,
+          sharedDate: this.findShareDate(item, viewId),
+          avatarAttachment: this.findAvatarAttachment(item.user, avatarMap),
+          _id: item._id
+        }
       )));
     });
   }
 
-  findAvatar(user: any, attachments: Map<string, any>) {
-    const attachmentId = `${user._id}@${user.planetCode}`;
-    const attachment = attachments.get(attachmentId);
-    const extractFilename = (object) => Object.keys(object._attachments)[0];
-    return attachment ?
-      `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
-      user._attachments ?
-        `${this.imgUrlPrefix}/_users/${user._id}/${extractFilename(user)}` :
-        'assets/image.png';
+  findAvatarAttachment(user: any, attachments: Map<string, any>) {
+    return attachments.get(`${user._id}@${user.planetCode}`)?._attachments?.img || user._attachments?.img;
   }
 
   findShareDate(item, viewId) {

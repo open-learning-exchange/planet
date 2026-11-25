@@ -111,18 +111,29 @@ describe('TeamsMemberComponent', () => {
   });
 
   describe('avatar fallback', () => {
-    it('shows the image when the member has a real avatar', () => {
-      component.member = { name: 'ann', avatar: 'http://couch/attachments/ann/img.png' };
+    it('uses the local user doc image for a member of this planet', () => {
+      component.member = {
+        name: 'ann',
+        userPlanetCode: planetCode,
+        attachmentDoc: { _attachments: { img: { digest: 'md5-replica' } } },
+        userDoc: { doc: { _attachments: { img: { digest: 'md5-local' } } } }
+      };
       component.ngOnChanges(memberChange(component.member));
 
       expect(component.hasImage).toBe(true);
+      expect(component.avatarAttachment).toEqual({ digest: 'md5-local' });
     });
 
-    it('shows initials when the avatar is the shared placeholder', () => {
-      component.member = { name: 'ann', avatar: 'assets/image.png' };
+    it('uses the replicated attachment image for a member of another planet', () => {
+      component.member = {
+        name: 'ann',
+        userPlanetCode: 'community-a',
+        attachmentDoc: { _attachments: { img: { digest: 'md5-replica' } } }
+      };
       component.ngOnChanges(memberChange(component.member));
 
-      expect(component.hasImage).toBe(false);
+      expect(component.hasImage).toBe(true);
+      expect(component.avatarAttachment).toEqual({ digest: 'md5-replica' });
     });
 
     it('shows initials when there is no avatar at all', () => {
@@ -136,7 +147,7 @@ describe('TeamsMemberComponent', () => {
     // pass. If ngOnChanges reset hasImage on those runs, a broken avatar would be
     // re-requested forever after its error handler cleared the flag.
     it('keeps a failed image hidden when only other inputs change', () => {
-      component.member = { name: 'ann', avatar: 'http://couch/attachments/ann/gone.png' };
+      component.member = { name: 'ann', userDoc: { doc: { _attachments: { img: { digest: 'md5-gone' } } } } };
       component.ngOnChanges(memberChange(component.member));
       component.hasImage = false;
 
