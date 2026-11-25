@@ -579,13 +579,10 @@ body {
     display: none;
   }
 
-  @mixin card-from($query, $width) {
-    @if $query == container {
-      @container (min-width: #{$width}) {
-        @content;
-      }
-    } @else {
-      @media (min-width: $width) {
+  // Tablet layouts follow the screen: a table in the container branch is at most $screen-sm wide, so it never needs them.
+  @mixin card-tablet($query) {
+    @if $query == media {
+      @media (min-width: v.$screen-sm) {
         @content;
       }
     }
@@ -711,6 +708,7 @@ body {
       }
 
       .mat-mdc-row > .card-actions {
+        align-items: center;
         margin-inline-start: -8px;
 
         &:has(> .table-action-buttons:empty) {
@@ -753,7 +751,7 @@ body {
         }
       }
 
-      @include card-from($query, v.$screen-xs) {
+      @include card-tablet($query) {
         .mat-mdc-row > .card-actions {
           justify-content: flex-end;
 
@@ -762,11 +760,40 @@ body {
           }
         }
 
-        .mat-mdc-row:not(:has(> .card-value)) > .card-actions {
-          grid-column: 4;
-          grid-row: 1;
-          margin-inline-start: 0;
-          padding-inline-start: 12px;
+        // On tablets a row without a value column flows: actions and menu stay on the title line,
+        // and the detail lines run across the width under it.
+        .mat-mdc-row:not(:has(> .card-value)):not(.card-table *) {
+          display: flex;
+          flex-wrap: wrap;
+          row-gap: 0;
+
+          // The line break between the title line (order 0) and the details (order 2).
+          &::after {
+            content: '';
+            order: 1;
+            flex-basis: 100%;
+          }
+
+          > .mat-mdc-cell {
+            flex: none;
+          }
+
+          // A zero basis would let the line break share the title's line; 8rem is the title's room before actions wrap.
+          > .card-title {
+            flex: 1 1 8rem;
+          }
+
+          > .card-actions {
+            margin-inline-start: auto;
+            padding-inline-start: 12px;
+          }
+
+          > .mat-mdc-cell:not([class*='card-']) {
+            order: 2;
+            flex: 0 1 auto;
+            margin-block-start: 4px;
+            margin-inline-end: 24px;
+          }
         }
       }
 
@@ -791,7 +818,7 @@ body {
         align-items: center;
         column-gap: 8px;
 
-        @include card-from($query, v.$screen-sm) {
+        @include card-tablet($query) {
           grid-template-areas:
             'hd progress summary action mn toggle'
             'tags tags tags tags tags tags'
@@ -852,7 +879,7 @@ body {
           height: 10px;
         }
 
-        @include card-from($query, v.$screen-sm) {
+        @include card-tablet($query) {
           min-width: 11rem;
         }
       }
@@ -875,7 +902,7 @@ body {
         padding-top: 8px;
         border-top: 1px solid v.$medium-grey;
 
-        @include card-from($query, v.$screen-sm) {
+        @include card-tablet($query) {
           grid-template-areas:
             'rating total ratio'
             'your-label your your';
