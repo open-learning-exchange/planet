@@ -182,21 +182,23 @@ describe('CouchService parent requests', () => {
   afterEach(() => {
     httpMock.verify();
     environment.parentAddress = '';
+    environment.parentProtocol = 'https';
   });
 
-  it('sends signed-in ole.org parent requests through the /parent/ forward', () => {
-    couchService.post('_session', {}, { domain: 'Nation.Ole.Org/db' }).subscribe();
+  it('sends signed-in parent requests through the /parent/ forward', () => {
+    couchService.post('_session', {}, { domain: 'Nation.Example/db' }).subscribe();
 
-    expect(httpMock.expectOne(`${forward}/nation.ole.org/db/_session`).request.withCredentials).toBe(true);
+    expect(httpMock.expectOne(`${forward}/nation.example/db/_session`).request.withCredentials).toBe(true);
   });
 
-  it('sends anonymous parent requests, other parents and planets given a protocol straight to them', () => {
-    couchService.put('_users/org.couchdb.user:bob', {}, { domain: 'nation.ole.org/db', withCredentials: false }).subscribe();
+  it('sends anonymous parent requests, http parents and planets given a protocol straight to them', () => {
+    couchService.put('_users/org.couchdb.user:bob', {}, { domain: 'nation.example/db', withCredentials: false }).subscribe();
+    couchService.get('_all_dbs', { domain: 'clone.example/db', protocol: 'http' }).subscribe();
+    environment.parentProtocol = 'http';
     couchService.get('courses', { domain: 'nation.example/db' }).subscribe();
-    couchService.get('_all_dbs', { domain: 'clone.ole.org/db', protocol: 'http' }).subscribe();
 
-    httpMock.expectOne('https://nation.ole.org/db/_users/org.couchdb.user:bob');
-    httpMock.expectOne('https://nation.example/db/courses');
-    httpMock.expectOne('http://clone.ole.org/db/_all_dbs');
+    httpMock.expectOne('https://nation.example/db/_users/org.couchdb.user:bob');
+    httpMock.expectOne('http://clone.example/db/_all_dbs');
+    httpMock.expectOne('http://nation.example/db/courses');
   });
 });

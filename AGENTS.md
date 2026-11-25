@@ -21,7 +21,7 @@ Prerequisites: Node.js v22.12 or later, npm v10, Angular CLI v21. A CouchDB inst
 
 ### gateway (`gateway/`)
 
-Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`, plus `CORS_ORIGINS=http://localhost:3000` so `ng serve` can reach it. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`. Every route except `GET /`, `GET /checkproviders` and `/public/surveys/...` needs a CouchDB session; from curl, use Basic auth with a local account (`curl -u admin:admin`).
+Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`, plus `CORS_ORIGINS=http://localhost:3000` so `ng serve` can reach it. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`. Every route except `GET /`, `GET /checkproviders`, `/public/surveys/...` and `GET /parent-check` (nginx's subrequest) needs a CouchDB session; from curl, use Basic auth with a local account (`curl -u admin:admin`).
 
 - `cd gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.
@@ -35,7 +35,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 ## Architecture
 
-Planet Learning is an Angular 21 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace. In production the browser's signed-in Nation requests go through the Community nginx at `/parent/<host>.ole.org/` (`parentAddress`), so the Nation's cookie is first-party; build any new Nation URL that needs the Nation session with `planetAddress()` from `couchdb.service.ts`, not `parentProtocol://parentDomain`.
+Planet Learning is an Angular 21 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace. In production the browser's signed-in Nation requests go through the Community nginx at `/parent/<host>/` (`parentAddress`), which forwards only to the configured parent (the gateway's `GET /parent-check` decides), so the Nation's cookie is first-party; build any new Nation URL that needs the Nation session with `planetAddress()` from `couchdb.service.ts`, not `parentProtocol://parentDomain`.
 
 ### Repository layout
 

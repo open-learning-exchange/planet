@@ -15,7 +15,7 @@ class DatePlaceholder {}
 // cookie is first-party; anonymous ones stay direct, because same-origin requests send cookies anyway.
 export const planetAddress = (domain: string, protocol?: string, withCredentials = true) => {
   const lowerDomain = domain.toLowerCase();
-  if (environment.parentAddress && !protocol && withCredentials && lowerDomain.split('/')[0].endsWith('.ole.org')) {
+  if (environment.parentAddress && !protocol && withCredentials && environment.parentProtocol === 'https') {
     return environment.parentAddress + '/' + lowerDomain;
   }
   return (protocol || environment.parentProtocol) + '://' + domain;

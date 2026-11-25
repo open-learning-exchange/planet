@@ -17,11 +17,11 @@ map $upstream_http_set_cookie $parent_set_cookie {
 # Read from the raw $request_uri, which the browser scopes the cookie by: the decoded $uri would let
 # /parent/<host>/..%2F<other>/ reach another host, and would decode ids and attachment names
 map $request_uri $parent_host {
-  ~^/parent/(?<parent_name>[a-z0-9.-]+\.ole\.org)/ $parent_name;
+  ~^/parent/(?<parent_name>[a-z0-9.-]+(:[0-9]+)?)/ $parent_name;
 }
 
 map $request_uri $parent_request_uri {
-  ~^/parent/[a-z0-9.-]+\.ole\.org(?<parent_rest>/.*)$ $parent_rest;
+  ~^/parent/[a-z0-9.-]+(:[0-9]+)?(?<parent_rest>/.*)$ $parent_rest;
 }
 
 server {
@@ -198,6 +198,7 @@ server {
     if ($parent_host = '') {
       return 404;
     }
+    auth_request /parent-check;
     resolver 127.0.0.11 ipv6=off;
     proxy_pass https://$parent_host$parent_request_uri;
     proxy_ssl_server_name on;
@@ -213,6 +214,17 @@ server {
     proxy_hide_header Access-Control-Allow-Credentials;
     proxy_max_temp_file_size 0;
     client_max_body_size 1024M;
+  }
+
+  # The gateway answers 204 only for this planet's configured parent
+  location = /parent-check {
+    internal;
+    proxy_pass http://chatapi:5000/parent-check;
+    proxy_method GET;
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+    proxy_set_header Cookie "";
+    proxy_set_header X-Parent-Host $parent_host;
   }
 
   location = /upgrade/planetapk {

@@ -10,6 +10,7 @@ import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chata
 import { registerPublicRoutes } from './modules/public/register';
 import { registerCurrencyRoutes } from './modules/currency/register';
 import { registerKeyRoutes } from './modules/keys/register';
+import { registerParentRoutes } from './modules/parent/register';
 import { getConfiguration } from './services/config.service';
 import { getKeys } from './services/keys.service';
 
@@ -22,7 +23,9 @@ const wss = new WebSocket.Server({ 'noServer': true });
 const openRoutes: OpenRoute[] = [
   { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/$/ },
   { 'methods': [ 'GET', 'HEAD' ], 'path': /^\/checkproviders\/?$/i },
-  { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/public\/surveys\//i }
+  { 'methods': [ 'GET', 'HEAD', 'POST' ], 'path': /^\/public\/surveys\//i },
+  // nginx's subrequest, which carries no session: logout's parent DELETE comes after the local one
+  { 'methods': [ 'GET' ], 'path': /^\/parent-check$/ }
 ];
 
 app.use(browserCors);
@@ -43,6 +46,7 @@ registerPublicRoutes(app);
 registerChatApiWebSocket(wss);
 registerCurrencyRoutes(app);
 registerKeyRoutes(app);
+registerParentRoutes(app);
 server.on('upgrade', authenticateUpgrade(wss));
 
 app.use(respondWithError);

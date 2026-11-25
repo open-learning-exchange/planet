@@ -22,7 +22,7 @@ By default on Linux the gateway uses port `5000`. For Windows and macOS, use `54
 
 ## Authentication
 
-Every route needs a Planet session unless it's on the open list in `src/index.ts`: `GET /` and `GET /checkproviders` (status), and `/public/surveys/...` (anonymous public surveys). A new route is closed until it's added there.
+Every route needs a Planet session unless it's on the open list in `src/index.ts`: `GET /` and `GET /checkproviders` (status), `/public/surveys/...` (anonymous public surveys), and `GET /parent-check` (nginx asks it whether a `/parent/<host>/` request is for this planet's configured parent). A new route is closed until it's added there.
 
 - The gateway asks CouchDB's `_session` who the caller is, forwarding the browser's `AuthSession` cookie or an app's `Authorization: Basic` header, and passes a renewed cookie back. Chat takes the member from that session, and only a conversation's owner can add turns to it.
 - The WebSocket is checked during the HTTP upgrade, so a refused client never gets a socket (403 for an untrusted origin, 401 without a session).
@@ -43,6 +43,7 @@ To run the gateway tests, install the repository root dependencies first, then r
 - `modules/chatapi`: chat HTTP + WebSocket flow served through `/ml/`, and the session member's chat history (plus the managers' usage rows) through `/api/chat/`
 - `modules/currency`: exchange rates served through `/currency/`
 - `modules/keys`: provider keys, set and removed by managers through `PUT` and `DELETE /keys/:service/:name`; `GET /keys` says only whether each key is set
+- `modules/parent`: `GET /parent-check`, answering 204 only when the `X-Parent-Host` header is the configured `parentDomain`'s host
 - `modules/public`: scoped public endpoints served through `/public/`
 
 ## Public Endpoints

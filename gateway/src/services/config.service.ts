@@ -5,6 +5,7 @@ import { HttpError } from '../middleware/errors';
 export interface Configuration {
   code: string;
   parentCode: string;
+  parentDomain: string;
   models: Record<string, string>;
   assistant: { instructions: string };
 }
@@ -28,6 +29,7 @@ const readDocument = async (): Promise<any> => {
 const toConfiguration = (doc: any): Configuration => ({
   'code': stringOrEmpty(doc.code),
   'parentCode': stringOrEmpty(doc.parentCode),
+  'parentDomain': stringOrEmpty(doc.parentDomain),
   'models': stringsOnly(doc.models),
   'assistant': { 'instructions': stringOrEmpty(doc.assistant?.instructions) }
 });
