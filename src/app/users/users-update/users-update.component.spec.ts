@@ -21,7 +21,11 @@ describe('UserUpdateProfileComponent', () => {
   let component: UsersUpdateComponent;
   let fixture: ComponentFixture<UsersUpdateComponent>;
   const couchServiceMock = {
-    get: vi.fn().mockReturnValue(of({ name: 'testuser', roles: [] }))
+    get: vi.fn().mockReturnValue(of({
+      name: 'testuser',
+      roles: [],
+      _attachments: { img: { content_type: 'image/jpeg', digest: 'md5-current' } }
+    }))
   };
   const userServiceMock = {
     minBirthDate: new Date(1900, 0, 1),
@@ -68,6 +72,13 @@ describe('UserUpdateProfileComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(couchServiceMock.get).toHaveBeenCalledWith('_users/org.couchdb.user:testuser');
+    expect(component.currentProfileImg).toMatch(/\/_users\/org\.couchdb\.user%3Atestuser\/img\?v=md5-current$/);
+  });
+
+  it('always writes profile images under the stable img attachment key', () => {
+    expect(component.createAttachmentObj('data:image/webp;base64,avatar-data')).toEqual({
+      _attachments: { img: { content_type: 'image/webp', data: 'avatar-data' } }
+    });
   });
 
   it('normalizes legacy gender values before populating the form', () => {

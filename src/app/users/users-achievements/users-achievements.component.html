@@ -47,7 +47,12 @@
         @if (achievements !== undefined) {
           <div class="achievements-container">
             <div class="user-info">
-              <planet-avatar [username]="userName" [planetCode]="userPlanetCode" imgClass="profile-image"></planet-avatar>
+              @if (user._id && hasAvatarToLoad) {
+                <planet-avatar class="profile-image" [username]="userName" [planetCode]="userPlanetCode"
+                  [attachment]="user._attachments?.img"></planet-avatar>
+              } @else {
+                <img class="profile-image" src="assets/image.png" alt="">
+              }
               <h2>{{ ((user | fullName) || user?.name) | truncateText:40 }}</h2>
               @if (!publicView) {
                 <div class="birth-info">
