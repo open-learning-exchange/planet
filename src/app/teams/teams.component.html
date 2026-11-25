@@ -20,7 +20,7 @@
   </ng-template>
 </planet-list-toolbar>
 
-<div [ngClass]="{'space-container':!isDialog}">
+<div class="space-container">
   @if (!isDialog) {
     <mat-toolbar class="primary-color font-size-1">
       @if (isAuthorized) {
@@ -41,7 +41,7 @@
   </div>
   }
 
-  <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
+  <div class="primary-link-hover view-container view-table view-full-height">
     <mat-table #table class="responsive-table card-mode" [class.min-width-table]="!isDialog" [dataSource]="teams" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>

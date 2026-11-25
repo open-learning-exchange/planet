@@ -478,6 +478,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     this.dialog.open(CommunityLinkDialogComponent, {
       width: '50vw',
+      panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
       data: {
         getLinks: () => this.getLinks().pipe(tap(res => this.setLinksAndFinances(res))),

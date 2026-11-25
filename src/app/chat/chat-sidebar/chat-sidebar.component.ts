@@ -294,6 +294,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   openShareDialog(conversation) {
     const dialogRef = this.dialog.open(ChatShareDialogComponent, {
       width: '50vw',
+      panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
       data: {
         news: conversation,

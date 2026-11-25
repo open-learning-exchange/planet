@@ -439,7 +439,7 @@ body {
     }
   }
 
-  :is(mat-sidenav-content, .mat-mdc-dialog-content) > :has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height, > * > .space-container > .view-full-height) {
+  :is(mat-sidenav-content, .mat-mdc-dialog-content) > :not([hidden]):has(> .view-full-height, > .space-container > .view-full-height, > .space-container > * > .view-full-height, > * > .space-container > .view-full-height) {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -469,7 +469,7 @@ body {
     }
   }
 
-  .mat-mdc-dialog-content:has(> * > .view-full-height, > * > .space-container > .view-full-height, > * > .space-container > * > .view-full-height, > planet-resources-viewer :is(iframe, .csv-container)) {
+  .mat-mdc-dialog-content:has(> :not([hidden]) > .view-full-height, > :not([hidden]) > .space-container > .view-full-height, > :not([hidden]) > .space-container > * > .view-full-height, > planet-resources-viewer :is(iframe, .csv-container)) {
     height: 100vh;
   }
 
