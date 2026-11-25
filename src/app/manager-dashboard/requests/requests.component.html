@@ -50,30 +50,39 @@
       <planet-requests-table [data]="filteredData" (requestUpdate)="getCommunityList()"></planet-requests-table>
     }
     @if (shownStatus==='accepted') {
-      @for (hub of hubs; track hub) {
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>{{hub.name}}</mat-panel-title>
-            @if (hub?.planetId) {
-              <a mat-button class="margin-lr-10" (click)="view(hub.planetId)" i18n>View</a>
-            }
-            <a mat-button class="margin-lr-10" (click)="deleteHub(hub, $event)" i18n>
-            <mat-icon>delete</mat-icon>Delete Network
-          </a>
-          </mat-expansion-panel-header>
-          <div class="panel-table-scroll">
-            <planet-requests-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-requests-table>
-          </div>
-        </mat-expansion-panel>
+      <mat-accordion multi>
+        @for (hub of hubs; track hub._id) {
+          @if (!searchValue || hub.children.length || hub.hubPlanetDoc) {
+            <mat-expansion-panel [expanded]="!!searchValue">
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{hub.name}}</mat-panel-title>
+                @if (hub?.planetId) {
+                  <a mat-button class="margin-lr-10" (click)="view(hub.planetId)" i18n>View</a>
+                }
+                <a mat-button class="margin-lr-10" (click)="deleteHub(hub, $event)" i18n>
+                <mat-icon>delete</mat-icon>Delete Network
+              </a>
+              </mat-expansion-panel-header>
+              <div class="panel-table-scroll">
+                <planet-requests-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-requests-table>
+              </div>
+            </mat-expansion-panel>
+          }
+        }
+        @if (!searchValue || sandboxPlanets.length) {
+          <mat-expansion-panel [expanded]="!!searchValue">
+            <mat-expansion-panel-header>
+              <mat-panel-title i18n>Sandbox</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="panel-table-scroll">
+              <planet-requests-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-requests-table>
+            </div>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+      @if (searchValue && !filteredData.length) {
+        <div i18n>{ planetType, select, nation {No Communities Found} center {No Nations Found} }</div>
       }
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title i18n>Sandbox</mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="panel-table-scroll">
-          <planet-requests-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-requests-table>
-        </div>
-      </mat-expansion-panel>
     }
   </div>
 </div>
