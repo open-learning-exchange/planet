@@ -10,7 +10,6 @@ const planetDoc = {
   '_id': 'configuration-1',
   'code': 'planet-1',
   'parentCode': 'earth',
-  'parentDomain': 'planet.earth.example/db',
   'keys': { 'openai': 'sk-1', 'currency': 'oxr-1' },
   'models': { 'openai': 'gpt-test' },
   'assistant': { 'name': 'Planet', 'instructions': 'PLANET PROMPT' }
@@ -38,7 +37,6 @@ describe('configuration service', () => {
     expect(await getConfiguration()).toEqual({
       'code': 'planet-1',
       'parentCode': 'earth',
-      'parentDomain': 'planet.earth.example/db',
       'models': { 'openai': 'gpt-test' },
       'assistant': { 'instructions': 'PLANET PROMPT' }
     });

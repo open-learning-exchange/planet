@@ -250,14 +250,12 @@ describe('Home', () => {
     error.mockRestore();
   });
 
-  it('should not delete a parent session when the user is not the local admin', () => {
-    const { comp, unset, deleteSession, navigate } = setupLogout(new Subject<any>(), { user: { name: 'learner' } });
+  it('should end the parent session for any user, not only the registered admin', () => {
+    const { comp, deleteSession } = setupLogout(new Subject<any>(), { user: { name: 'promoted-admin' } });
 
     comp.logoutClick();
 
-    expect(deleteSession).not.toHaveBeenCalled();
-    expect(unset).toHaveBeenCalled();
-    expect(navigate).toHaveBeenCalledWith([ '/' ], {});
+    expect(deleteSession).toHaveBeenCalledWith('_session', { withCredentials: true, domain: 'parent.example' });
   });
 
   it('should not delete a parent session on a center, which has no parent', () => {
@@ -270,18 +268,6 @@ describe('Home', () => {
     expect(deleteSession).not.toHaveBeenCalled();
     expect(unset).toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledWith([ '/login' ], {});
-  });
-
-  it('should complete logout when neither the configuration nor the user carries a name', () => {
-    const { comp, unset, deleteSession, navigate } = setupLogout(new Subject<any>(), {
-      user: {}, configuration: { adminName: undefined }
-    });
-
-    comp.logoutClick();
-
-    expect(deleteSession).not.toHaveBeenCalled();
-    expect(unset).toHaveBeenCalled();
-    expect(navigate).toHaveBeenCalledWith([ '/' ], {});
   });
 
 });

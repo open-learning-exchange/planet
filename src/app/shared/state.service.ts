@@ -74,7 +74,8 @@ export class StateService {
       case 'local':
         return {};
       default:
-        return { domain: planetField };
+        // Another planet's public data; the /parent/ forward reaches only this planet's parent
+        return { domain: planetField, withCredentials: false };
     }
   }
 
