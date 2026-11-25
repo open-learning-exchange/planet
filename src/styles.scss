@@ -567,25 +567,32 @@ body {
     }
   }
 
-  mat-table.card-mode .card-label {
+  mat-table.card-mode {
+    container-type: inline-size;
+
+    .card-label {
+      display: none;
+    }
+  }
+
+  .card-table :is(.card-summary, .card-toggle, .card-main-action, .card-meta, .card-progress-count) {
     display: none;
   }
 
-  @media (max-width: v.$screen-md) {
-    mat-table.min-width-table {
-      min-width: 0;
-    }
-
-    mat-table.card-mode {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      grid-auto-rows: max-content;
-      align-content: start;
-
-      &.hidden {
-        display: none;
+  @mixin card-from($query, $width) {
+    @if $query == container {
+      @container (min-width: #{$width}) {
+        @content;
       }
+    } @else {
+      @media (min-width: $width) {
+        @content;
+      }
+    }
+  }
 
+  @mixin card-mode($query) {
+    mat-table.card-mode {
       .mat-mdc-header-row:not(:has(.mat-sort-header, .card-select)) {
         @include m.visually-hidden;
       }
@@ -746,7 +753,7 @@ body {
         }
       }
 
-      @media (min-width: v.$screen-xs) {
+      @include card-from($query, v.$screen-xs) {
         .mat-mdc-row > .card-actions {
           justify-content: flex-end;
 
@@ -770,13 +777,7 @@ body {
         font-size: 12px;
       }
     }
-  }
 
-  .card-table :is(.card-summary, .card-toggle, .card-main-action, .card-meta, .card-progress-count) {
-    display: none;
-  }
-
-  @media (max-width: v.$screen-md) {
     .card-table mat-table.card-mode {
       .list-content-menu {
         grid-template-areas:
@@ -790,7 +791,7 @@ body {
         align-items: center;
         column-gap: 8px;
 
-        @media (min-width: v.$screen-sm) {
+        @include card-from($query, v.$screen-sm) {
           grid-template-areas:
             'hd progress summary action mn toggle'
             'tags tags tags tags tags tags'
@@ -851,7 +852,7 @@ body {
           height: 10px;
         }
 
-        @media (min-width: v.$screen-sm) {
+        @include card-from($query, v.$screen-sm) {
           min-width: 11rem;
         }
       }
@@ -874,7 +875,7 @@ body {
         padding-top: 8px;
         border-top: 1px solid v.$medium-grey;
 
-        @media (min-width: v.$screen-sm) {
+        @include card-from($query, v.$screen-sm) {
           grid-template-areas:
             'rating total ratio'
             'your-label your your';
@@ -919,6 +920,20 @@ body {
         display: none;
       }
     }
+  }
+
+  // On desktop, a table in a narrow dialog or panel gets cards by its own width. The screen-width rules come
+  // after, so where both apply (phones and tablets) the screen width decides, as it did before.
+  @container (max-width: #{v.$screen-sm}) {
+    @include card-mode(container);
+  }
+
+  @media (max-width: v.$screen-md) {
+    mat-table.min-width-table {
+      min-width: 0;
+    }
+
+    @include card-mode(media);
   }
 
   .form-width-3 {
