@@ -24,24 +24,18 @@
                 <a mat-button class="margin-lr-10" (click)="viewReport(hub.hubPlanetDoc, $event)" i18n>Report</a>
               }
             </mat-expansion-panel-header>
-            <div class="responsive-table">
-              <planet-reports-table [planets]="hub.children"></planet-reports-table>
-            </div>
+            <planet-reports-table [planets]="hub.children"></planet-reports-table>
           </mat-expansion-panel>
         }
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title i18n>Sandbox</mat-panel-title>
           </mat-expansion-panel-header>
-          <div class="responsive-table">
-            <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
-          </div>
+          <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
         </mat-expansion-panel>
       </mat-accordion>
     } @else {
-      <div class="responsive-table">
-        <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
-      </div>
+      <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
     }
   </div>
 </div>

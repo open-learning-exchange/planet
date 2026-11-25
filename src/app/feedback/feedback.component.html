@@ -47,7 +47,7 @@
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table">
-    <mat-table #table class="responsive-table card-mode" [dataSource]="feedback" matSort [matSortDisableClear]="true">
+    <mat-table #table class="card-mode" [dataSource]="feedback" matSort [matSortDisableClear]="true">
       <!-- Title Column -->
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>

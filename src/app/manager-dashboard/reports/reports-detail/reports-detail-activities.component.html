@@ -1,4 +1,4 @@
-<mat-table #table class="responsive-table card-mode" [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
+<mat-table #table class="card-mode" [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
     <mat-cell *matCellDef="let element" class="card-title">{{element?.max?.title}}</mat-cell>

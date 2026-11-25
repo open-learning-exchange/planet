@@ -156,7 +156,7 @@ Up to `$screen-md`, a `mat-table` with the `card-mode` class shows each row as a
 - Every other cell is a detail line. Start it with `<span class="card-label" i18n>…</span>` using the column header's exact text, so translators get no new string. Put the label inside the same `@if` as its value, so a blank cell renders empty and is hidden. A value that explains itself, such as the date under a ledger row's title, may go without a label.
 - From `$screen-xs` up, `card-actions` ends the title row instead of taking its own line, unless the row has a `card-value` cell.
 - The header row becomes a strip of sort pills plus the select-all box; cells without `mat-sort-header` are hidden.
-- Card mode sets `--responsive-table-min-width: 0`, which is what cancels `.min-width-table` inside cards.
+- `.min-width-table` keeps a wide desktop table at 1000px, scrolling inside its view; card mode cancels it up to `$screen-md`.
 - Only tables whose columns are built from the data stay tables with sideways scrolling: the health exams table and the CSV preview. A short table that fits a phone as it is (the reports week comparison) stays a plain table.
 
 ### Loading Indicators

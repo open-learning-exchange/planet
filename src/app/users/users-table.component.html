@@ -2,7 +2,7 @@
   @if (isLoading) {
     <planet-loading-spinner text="Loading users..." i18n-text></planet-loading-spinner>
   }
-  <mat-table #table class="responsive-table card-mode" [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc" [class.hidden]="isLoading" [class.min-width-table]="columns.includes('action')">
+  <mat-table #table class="card-mode" [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc" [class.hidden]="isLoading" [class.min-width-table]="columns.includes('action')">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef class="card-select">
         <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"

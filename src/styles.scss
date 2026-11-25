@@ -500,26 +500,13 @@ body {
 
   // Wide tables scroll inside themselves, so the paginator beside them stays on screen.
   @media (max-width: v.$screen-md) {
-    .view-container.view-table,
-    :is(mat-table.responsive-table, .responsive-table mat-table) {
+    .view-container.view-table {
       overflow-x: auto;
     }
   }
 
-  @media (max-width: v.$screen-sm) {
-    :is(mat-table.responsive-table, .responsive-table mat-table) > :is(.mat-mdc-header-row, .mat-mdc-row) {
-      min-width: var(--responsive-table-min-width, 800px);
-    }
-
-    table.mat-mdc-table.responsive-table {
-      overflow-x: auto;
-      min-width: var(--responsive-table-min-width, 800px);
-    }
-  }
-
-  mat-table.responsive-table.min-width-table,
-  table.mat-mdc-table.responsive-table.min-width-table {
-    min-width: var(--responsive-table-min-width, 1000px);
+  mat-table.min-width-table {
+    min-width: 1000px;
     width: 100%;
   }
 
@@ -585,8 +572,11 @@ body {
   }
 
   @media (max-width: v.$screen-md) {
+    mat-table.min-width-table {
+      min-width: 0;
+    }
+
     mat-table.card-mode {
-      --responsive-table-min-width: 0;
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       grid-auto-rows: max-content;
