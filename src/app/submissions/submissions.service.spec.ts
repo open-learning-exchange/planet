@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 
 import { MarkdownRenderService } from '@shared/markdown/markdown-render.service';
@@ -12,7 +12,11 @@ describe('SubmissionsService survey exports', () => {
   let dialogsLoadingService: { stop: ReturnType<typeof vi.fn> };
   let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
   let pdfService: { download: ReturnType<typeof vi.fn>, getHtmlConverter?: ReturnType<typeof vi.fn> };
-  let couchService: { post: ReturnType<typeof vi.fn>, findAll: ReturnType<typeof vi.fn>, datePlaceholder: string };
+  let couchService: {
+    post: ReturnType<typeof vi.fn>; findAll: ReturnType<typeof vi.fn>; get: ReturnType<typeof vi.fn>;
+    updateDocument: ReturnType<typeof vi.fn>; datePlaceholder: string;
+  };
+  let coursesService: { updateProgress: ReturnType<typeof vi.fn> };
 
   const exam = {
     _id: 'team-survey-1',
@@ -35,11 +39,12 @@ describe('SubmissionsService survey exports', () => {
     dialogsLoadingService = { stop: vi.fn() };
     planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     pdfService = { download: vi.fn().mockResolvedValue(undefined) };
-    couchService = { post: vi.fn(), findAll: vi.fn(), datePlaceholder: 'NOW' };
+    couchService = { post: vi.fn(), findAll: vi.fn(), get: vi.fn(), updateDocument: vi.fn(), datePlaceholder: 'NOW' };
+    coursesService = { updateProgress: vi.fn() };
     service = new SubmissionsService(
       couchService as any,
       { configuration: { name: 'Planet', code: 'planet-1' } } as any,
-      {} as any,
+      coursesService as any,
       {} as any,
       csvService as any,
       planetMessageService as any,
@@ -136,6 +141,53 @@ describe('SubmissionsService survey exports', () => {
       [ 'from myPlanet, at full marks', 'complete', 2, testCopy('1-a', [ '', '' ], ''), true ]
     ])('judges an attempt %s', (_, status, grade, parent, passes) => {
       expect(attemptPasses({ status, grade, parent })).toBe(passes);
+    });
+  });
+
+  describe('finishing a test', () => {
+    const learner = { name: 'learner', _id: 'org.couchdb.user:learner' };
+    const attempt = (marks: (number | string)[], passingPercentage: number | string) => ({
+      type: 'exam', parentId: 'exam-1@course-1', user: learner, status: 'requires grading', grade: 1,
+      parent: { questions: marks.map(m => ({ marks: m })), passingPercentage },
+      answers: [ { value: 'yes', grade: 1 }, { value: 'because' } ]
+    });
+
+    beforeEach(() => {
+      couchService.updateDocument.mockReturnValue(of({ id: 'attempt-1', rev: '2-a' }));
+      couchService.get.mockReturnValue(of({ steps: [ {}, { exam: { _id: 'exam-1' } } ] }));
+    });
+
+    it.each([
+      [ 'at its pass mark with an answer marked Incorrect', attempt([ 1, 1 ], 50), 0, 1 ],
+      [ 'from myPlanet with every answer marked Correct', attempt([ '', '' ], ''), 1, 2 ]
+    ])('saves the step as passed once the last grade is saved, %s', (_, submission, lastGrade, grade) => {
+      service.submission = submission;
+      service.submitGrade(lastGrade, 1, '').subscribe();
+
+      expect(couchService.updateDocument).toHaveBeenCalledWith('submissions', expect.objectContaining({ status: 'complete', grade }));
+      expect(coursesService.updateProgress).toHaveBeenCalledWith({ courseId: 'course-1', stepNum: 2, passed: true }, learner._id);
+    });
+
+    it('leaves progress alone when the attempt fails to save', () => {
+      couchService.updateDocument.mockReturnValue(throwError(() => new Error('conflict')));
+      service.submission = attempt([ 1, 1 ], 50);
+      service.submitGrade(1, 1, '').subscribe({ error: () => {} });
+
+      expect(coursesService.updateProgress).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      [ 'a survey', { type: 'survey', parentId: 'survey-1@course-1', answers: [ { value: 'fine' } ] }, 0 ],
+      [
+        'a test removed from its step',
+        { ...attempt([ 1, 1 ], 50), parentId: 'exam-2@course-1', answers: [ { grade: 1 }, { grade: 1 } ] },
+        1
+      ]
+    ])('saves no progress for %s', (_, submission, courseLookups) => {
+      service.updateSubmission({ ...submission, user: learner }, false, -1).subscribe();
+
+      expect(couchService.get).toHaveBeenCalledTimes(courseLookups);
+      expect(coursesService.updateProgress).not.toHaveBeenCalled();
     });
   });
 

@@ -73,7 +73,6 @@ describe('TasksComponent', () => {
       userId: 'org.couchdb.user:alex',
       userPlanetCode: 'planet-b',
       name: 'alex',
-      avatar: '/current-avatar',
       userDoc: { doc: { _attachments: { img: {} } } }
     };
     const task = {
@@ -81,8 +80,7 @@ describe('TasksComponent', () => {
       assignee: {
         userId: currentMember.userId,
         userPlanetCode: currentMember.userPlanetCode,
-        name: 'old-name',
-        avatar: '/old-avatar'
+        name: 'old-name'
       }
     };
     component.assignees = [ currentMember ];
@@ -96,8 +94,7 @@ describe('TasksComponent', () => {
       assignee: {
         userId: currentMember.userId,
         userPlanetCode: currentMember.userPlanetCode,
-        name: 'old-name',
-        avatar: '/old-avatar'
+        name: 'old-name'
       }
     });
   });
@@ -106,8 +103,7 @@ describe('TasksComponent', () => {
     const snapshot = {
       userId: 'org.couchdb.user:alex',
       userPlanetCode: 'planet-b',
-      name: 'alex',
-      avatar: '/snapshot-avatar'
+      name: 'alex'
     };
     const task = { _id: 'task-1', assignee: snapshot };
     component.assignees = [];
@@ -122,14 +118,12 @@ describe('TasksComponent', () => {
     const snapshot = {
       userId: 'org.couchdb.user:alex',
       userPlanetCode: 'planet-a',
-      name: 'snapshot-alex',
-      avatar: '/snapshot-avatar'
+      name: 'snapshot-alex'
     };
     const unresolvedMember = {
       userId: snapshot.userId,
       userPlanetCode: snapshot.userPlanetCode,
-      name: 'current-alex',
-      avatar: 'assets/image.png'
+      name: 'current-alex'
     };
     component.assignees = [ unresolvedMember ];
     component.ngOnInit();
@@ -137,21 +131,18 @@ describe('TasksComponent', () => {
     taskUpdates.next([ { _id: 'task-1', assignee: snapshot } ]);
 
     expect(component.taskViews[0].assignee).toBe(snapshot);
-    expect(component.taskViews[0].avatarSrc).toBe(`${component.imgUrlPrefix}/snapshot-avatar`);
   });
 
-  it('uses a resolved no-image state and refreshes when an attachment appears', () => {
+  it('refreshes a local member avatar when their image appears', () => {
     const snapshot = {
       userId: 'org.couchdb.user:alex',
       userPlanetCode: 'planet-a',
-      name: 'snapshot-alex',
-      avatar: '/previous-avatar'
+      name: 'snapshot-alex'
     };
     const resolvedMember = {
       userId: snapshot.userId,
       userPlanetCode: snapshot.userPlanetCode,
       name: 'current-alex',
-      avatar: 'assets/image.png',
       userDoc: { doc: {} }
     };
     component.assignees = [ resolvedMember ];
@@ -159,16 +150,11 @@ describe('TasksComponent', () => {
     taskUpdates.next([ { _id: 'task-1', assignee: snapshot } ]);
 
     expect(component.taskViews[0].assignee).toBe(resolvedMember);
-    expect(component.taskViews[0].avatarSrc).toBe('assets/image.png');
+    expect(component.taskViews[0].avatarAttachment).toBeUndefined();
 
-    const attachmentDoc = {
-      _id: `${snapshot.userId}@${snapshot.userPlanetCode}`,
-      _attachments: { img: { digest: 'md5-current' } }
-    };
-    component.assignees = [ { ...resolvedMember, attachmentDoc } ];
+    component.assignees = [ { ...resolvedMember, userDoc: { doc: { _attachments: { img: { digest: 'md5-current' } } } } } ];
 
-    expect(component.taskViews[0].avatarSrc)
-      .toMatch(/\/attachments\/org\.couchdb\.user:alex@planet-a\/img$/);
+    expect(component.taskViews[0].avatarAttachment).toEqual({ digest: 'md5-current' });
   });
 
   it('separates My Tasks ownership for same-id users on different planets', () => {
@@ -254,36 +240,6 @@ describe('TasksComponent', () => {
     });
   });
 
-  it('retains a failed avatar until the member source changes', () => {
-    const member = (attachmentName: string) => ({
-      userId: 'org.couchdb.user:alex',
-      userPlanetCode: 'planet-b',
-      name: 'alex',
-      attachmentDoc: {
-        _id: 'org.couchdb.user:alex@planet-b',
-        _attachments: { [attachmentName]: { digest: `md5-${attachmentName}` } }
-      }
-    });
-    component.assignees = [ member('img') ];
-    component.ngOnInit();
-    taskUpdates.next([ {
-      _id: 'task-1',
-      assignee: {
-        userId: 'org.couchdb.user:alex',
-        userPlanetCode: 'planet-b'
-      }
-    } ]);
-
-    component.useDefaultAvatar(component.filteredTaskViews[0]);
-    expect(component.filteredTaskViews[0].avatarSrc).toBe('assets/image.png');
-
-    component.assignees = [ member('img') ];
-    expect(component.filteredTaskViews[0].avatarSrc).toBe('assets/image.png');
-
-    component.assignees = [ member('img_') ];
-    expect(component.filteredTaskViews[0].avatarSrc).toMatch(/\/img_$/);
-  });
-
   it('keeps a historical missing-code assignee unresolved', () => {
     const remoteMember = {
       userId: 'org.couchdb.user:alex',
@@ -306,7 +262,7 @@ describe('TasksComponent', () => {
     expect(component.taskViews[0].assignee).toBe(task.assignee);
   });
 
-  it('precomputes the current attachment key whenever member data refreshes', () => {
+  it('refreshes a remote member avatar digest whenever member data refreshes', () => {
     const task = {
       _id: 'task-1',
       assignee: {
@@ -314,24 +270,18 @@ describe('TasksComponent', () => {
         userPlanetCode: 'planet-b'
       }
     };
-    const member = (attachmentName: string) => ({
+    const member = (digest: string) => ({
       ...task.assignee,
-      attachmentDoc: {
-        _id: 'org.couchdb.user:alex@planet-b',
-        _attachments: { [attachmentName]: { digest: `md5-${attachmentName}` } }
-      }
+      attachmentDoc: { _id: 'org.couchdb.user:alex@planet-b', _attachments: { img: { digest } } }
     });
-    component.assignees = [ member('img') ];
+    component.assignees = [ member('md5-old') ];
     component.ngOnInit();
     taskUpdates.next([ task ]);
 
-    expect(component.filteredTaskViews[0].avatarSrc).toMatch(/\/attachments\/org\.couchdb\.user:alex@planet-b\/img$/);
+    expect(component.filteredTaskViews[0].avatarAttachment).toEqual({ digest: 'md5-old' });
 
-    component.assignees = [ member('img_') ];
-    expect(component.filteredTaskViews[0].avatarSrc).toMatch(/\/img_$/);
-
-    component.assignees = [ member('img') ];
-    expect(component.filteredTaskViews[0].avatarSrc).toMatch(/\/img$/);
+    component.assignees = [ member('md5-new') ];
+    expect(component.filteredTaskViews[0].avatarAttachment).toEqual({ digest: 'md5-new' });
   });
 
   it('rebuilds the task view when a task is reassigned', () => {
@@ -369,13 +319,6 @@ describe('TasksComponent', () => {
     expect(component.filteredTaskViews[0].assignee).toBe(secondMember);
   });
 
-  it('keeps relative and absolute fallback avatar URLs distinct', () => {
-    expect(component.avatarSrc({ avatar: '/_users/org.couchdb.user:alex/img' }))
-      .toBe(`${component.imgUrlPrefix}/_users/org.couchdb.user:alex/img`);
-    expect(component.avatarSrc({ avatar: 'https://planet.example/_users/org.couchdb.user:alex/img' }))
-      .toBe('https://planet.example/_users/org.couchdb.user:alex/img');
-  });
-
   it('can notify a remote assignee without a local user document', () => {
     component.toggleAssignee({ _id: 'task-1' }, {
       userId: 'org.couchdb.user:other',
@@ -391,7 +334,6 @@ describe('TasksComponent', () => {
       userId: 'org.couchdb.user:other',
       userPlanetCode: 'planet-b',
       name: 'other',
-      avatar: 'https://planet.example/attachments/other/img',
       attachmentDoc: {
         _id: 'org.couchdb.user:other@planet-b',
         _attachments: { img: { digest: 'md5-image' } }

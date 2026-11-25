@@ -31,4 +31,13 @@ describe('respondWithError', () => {
     expect(res.status).toHaveBeenCalledWith(504);
     expect(res.json).toHaveBeenCalledWith({ 'error': 'Gateway Timeout', 'message': 'The AI provider took too long to answer' });
   });
+
+  it('adds the error\'s code when it has one', () => {
+    const res = { 'status': vi.fn().mockReturnThis(), 'json': vi.fn() };
+
+    const limit = new HttpError(409, 'Turn limit reached', 'conversation_turn_limit');
+    respondWithError(limit, {} as Request, res as unknown as Response, vi.fn());
+
+    expect(res.json).toHaveBeenCalledWith({ 'error': 'Conflict', 'message': 'Turn limit reached', 'code': 'conversation_turn_limit' });
+  });
 });
