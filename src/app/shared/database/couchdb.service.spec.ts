@@ -8,10 +8,10 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { environment } from '../../../environments/environment';
 import { CouchService } from './couchdb.service';
 
-const readText = (blob: Blob) => new Promise<string>((resolve) => {
+const readBinaryString = (blob: Blob) => new Promise<string>((resolve) => {
   const reader = new FileReader();
-  reader.onload = () => resolve(reader.result as string);
-  reader.readAsText(blob);
+  reader.onload = () => resolve(String.fromCharCode(...new Uint8Array(reader.result as ArrayBuffer)));
+  reader.readAsArrayBuffer(blob);
 });
 
 describe('CouchService 403 alerts', () => {
@@ -68,12 +68,12 @@ describe('CouchService', () => {
 
   afterEach(() => httpMock.verify());
 
-  const putWithFile = async (doc) => {
-    couchService.putDocumentWithFiles('resources', doc, { 'a.pdf': file }).subscribe();
+  const putWithFile = async (doc, files: { [name: string]: File } = { 'a.pdf': file }) => {
+    couchService.putDocumentWithFiles('resources', doc, files).subscribe();
     httpMock.expectOne(request => request.url.endsWith('/time')).flush(1000);
     const put = httpMock.expectOne(request => request.method === 'PUT');
     const boundary = put.request.headers.get('Content-Type').match(/^multipart\/related; boundary="(.+)"$/)[1];
-    const [ , docPart, ...fileParts ] = (await readText(put.request.body)).split(`--${boundary}`);
+    const [ , docPart, ...fileParts ] = (await readBinaryString(put.request.body)).split(`--${boundary}`);
     return { url: put.request.url, sentDoc: JSON.parse(docPart.split('\r\n\r\n')[1]), fileParts };
   };
 
@@ -85,6 +85,20 @@ describe('CouchService', () => {
       _id: 'res-1', _rev: '1-a', _attachments: { 'a.pdf': { follows: true, content_type: 'application/pdf', length: 4 } }
     });
     expect(fileParts).toEqual([ '\r\n\r\n%PDF\r\n', '--' ]);
+  });
+
+  it('sends no part for a kept stub and each new file\'s bytes in the order the doc lists them', async () => {
+    const stub = { stub: true, content_type: 'text/html', length: 3, digest: 'md5-x', revpos: 1 };
+    const files = {
+      'a.css': new File([ new Uint8Array([ 0xff, 0x00, 0x0d ]) ], 'a.css', { type: 'text/css' }),
+      'b.png': new File([ new Uint8Array([ 0x89, 0xfe, 0xff, 0x0a ]) ], 'b.png', { type: 'image/png' })
+    };
+
+    const { sentDoc, fileParts } = await putWithFile({ _id: 'res-1', _rev: '1-a', _attachments: { 'index.html': stub } }, files);
+
+    expect(Object.keys(sentDoc._attachments)).toEqual([ 'index.html', 'a.css', 'b.png' ]);
+    expect(sentDoc._attachments['index.html']).toEqual(stub);
+    expect(fileParts).toEqual([ '\r\n\r\n\xff\x00\x0d\r\n', '\r\n\r\n\x89\xfe\xff\x0a\r\n', '--' ]);
   });
 
   it('puts a new doc under one generated id, the same in the URL and the body', async () => {

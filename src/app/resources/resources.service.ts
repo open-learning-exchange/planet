@@ -117,10 +117,10 @@ export class ResourcesService {
     }));
   }
 
-  updateResource(resourceInfo, file, { newTags, existingTags } = { newTags: [], existingTags: [] }) {
+  updateResource(resourceInfo, files, { newTags, existingTags } = { newTags: [], existingTags: [] }) {
     const resource = { createdDate: this.couchService.datePlaceholder, ...resourceInfo };
-    const resourceWrite = file ?
-      this.couchService.putDocumentWithFiles(this.dbName, resource, { [resourceInfo.filename]: file }) :
+    const resourceWrite = Object.keys(files).length ?
+      this.couchService.putDocumentWithFiles(this.dbName, resource, files) :
       this.couchService.updateDocument(this.dbName, resource);
     return resourceWrite.pipe(
       switchMap((resourceRes) => forkJoin([

@@ -1,9 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
+import { Observable, of, forkJoin, combineLatest, race, interval, from } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
-import mime from 'mime';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
@@ -38,7 +37,7 @@ import * as constants from './resources.constants';
 import { ValidatorService } from '../validators/validator.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ResourcesService } from './resources.service';
-import { loadZipFile } from './resources-zip.utils';
+import { loadZipFile, unzipFiles, zipFileNames } from './resources-zip.utils';
 
 type DatePlaceholderType = CouchService['datePlaceholder'];
 
@@ -292,7 +291,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       mediaType,
       _attachments: {}
     };
-    return of({ resource, file });
+    return of({ resource, files: { [resource.filename]: file } });
   }
 
   onSubmit() {
@@ -315,7 +314,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     const fileObs: Observable<any> = this.createFileObs();
-    fileObs.subscribe(({ resource, file }) => {
+    fileObs.subscribe(({ resource, files }) => {
       const { _id, _rev } = this.existingResource;
       // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
       const existingData = this.attachmentMarkedForDeletion ? { _id, _rev } : this.existingResource.doc;
@@ -324,7 +323,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       const message = (this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title;
       const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
-        this.updateResource(newResource, file).subscribe(
+        this.updateResource(newResource, files).subscribe(
           (resourceRes) => this.afterResourceUpdate(message, resourceRes),
           (err) => this.planetMessageService.showAlert($localize`There was an error with this resource`)
         );
@@ -338,8 +337,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     // If file doesn't exist, mediaType will be undefined or null
     const mediaType = this.file && this.resourcesService.simpleMediaType(normalizedContentType(this.file));
     if (!mediaType) {
-      // Creates an observable that immediately returns an empty object
-      return of({ resource: {} });
+      return of({ resource: {}, files: {} });
     }
     switch (mediaType) {
       case 'zip':
@@ -349,10 +347,10 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  updateResource(resourceInfo, file) {
+  updateResource(resourceInfo, files) {
     return this.resourcesService.updateResource(
       { ...resourceInfo, updatedDate: this.couchService.datePlaceholder, privateFor: resourceInfo.private ? this.privateFor : undefined },
-      file,
+      files,
       { newTags: this.tags.value, existingTags: this.existingResource.tags }
     ).pipe(
       switchMap(([ res ]) => forkJoin([
@@ -384,52 +382,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.hasUnsavedChanges = true;
   }
 
-  // Returns a function which takes a file name located in the zip file and returns an observer
-  // which resolves with the file's data
-  private processZip = (zipFile) => (fileName) => new Observable((observer) => {
-    // When file was not read error block wasn't called from async so added try...catch block
-    try {
-      zipFile.file(fileName).async('base64').then((data) => {
-        observer.next({ name: fileName, data });
-        observer.complete();
-      }, (e) => {
-        observer.error(e);
-      });
-    } catch (e) {
-      console.log(fileName + ' has caused error.');
-      observer.error(e);
-    }
-  });
-
-  private getFileNames(data) {
-    const files = data.files;
-    return Object.keys(files).filter(path => !files[path].dir && path.indexOf('DS_Store') === -1);
-  }
-
   zipObs(zipFile) {
-    return new Observable((observer) => {
-      // This loads an object with file information from the zip, but not the data of the files
-      loadZipFile(zipFile).then((zip) => {
-        const fileNames = this.getFileNames(zip);
-
-        // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
-        forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
-          // Create object in format for multiple attachment upload to CouchDB
-          const filesObj = filesArray.reduce((newFilesObj: any, file: any) => {
-            // Default to text/plain if no mime type found
-            const fileType = mime.getType(file.name) || 'text/plain';
-            newFilesObj[file.name] = { data: file.data, content_type: fileType };
-            return newFilesObj;
-          }, {});
-          // Leave filename blank (since it is many files) and call mediaType 'HTML'
-          observer.next({ resource: { filename: '', mediaType: 'HTML', _attachments: filesObj } });
-          observer.complete();
-        }, (error) => {
-          console.log(error);
-          observer.error(error);
-        });
-      }, (error) => observer.error(error));
-    });
+    return from(unzipFiles(zipFile)).pipe(map((files) => ({ resource: { filename: '', mediaType: 'HTML', _attachments: {} }, files })));
   }
 
   cancel() {
@@ -464,7 +418,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.resourceForm.controls.openWhichFile.enable();
     loadZipFile(this.file)
       .then((data) => {
-        this.attachedZipFiles = this.getFileNames(data);
+        this.attachedZipFiles = zipFileNames(data);
       })
       .catch(err => {
         console.log('error', err.message);

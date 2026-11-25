@@ -41,17 +41,28 @@ describe('ResourcesService', () => {
   it('saves an edit that replaces the file as one write carrying the doc and the new file', () => {
     const edit = { _id: 'res-1', _rev: '1-a', filename: 'canción__1.pdf', _attachments: {} };
 
-    setup(vi.fn().mockReturnValue(of({ ok: true, id: 'res-1', rev: '2-b' }))).updateResource(edit, file).subscribe();
+    setup(vi.fn().mockReturnValue(of({ ok: true, id: 'res-1', rev: '2-b' }))).updateResource(edit, { 'canción__1.pdf': file }).subscribe();
 
     expect(couchService.putDocumentWithFiles).toHaveBeenCalledWith('resources', expect.objectContaining(edit), { 'canción__1.pdf': file });
     expect(couchService.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('saves an edit with no new file as a plain doc write', () => {
+    const edit = { _id: 'res-1', _rev: '1-a', title: 'Renamed' };
+    const service = setup(vi.fn());
+    couchService.updateDocument.mockReturnValue(of({ ok: true, id: 'res-1', rev: '2-b' }));
+
+    service.updateResource(edit, {}).subscribe();
+
+    expect(couchService.updateDocument).toHaveBeenCalledWith('resources', expect.objectContaining(edit));
+    expect(couchService.putDocumentWithFiles).not.toHaveBeenCalled();
   });
 
   it('writes nothing else when the write with the file fails', () => {
     const error = vi.fn();
 
     setup(vi.fn().mockReturnValue(throwError(() => new Error('offline'))))
-      .updateResource({ filename: 'canción__1.pdf' }, file).subscribe({ error });
+      .updateResource({ filename: 'canción__1.pdf' }, { 'canción__1.pdf': file }).subscribe({ error });
 
     expect(error).toHaveBeenCalled();
     expect(couchService.updateDocument).not.toHaveBeenCalled();
