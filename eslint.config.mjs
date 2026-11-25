@@ -24,7 +24,7 @@ const rxjsPath = {
     message: "Please import directly from 'rxjs' instead",
 };
 
-const markdownPaths = ["showdown"].map(name => ({
+const markdownPaths = ["markdown-it", "markdown-it-emoji"].map(name => ({
     name,
     message: "Render through MarkdownRenderService, which sanitizes the generated HTML",
 }));

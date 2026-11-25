@@ -7,11 +7,5 @@ export default defineConfig({
     // The Angular builder turns this off, which lets specs leak into each other
     isolate: true,
     reporters: [ 'default' ],
-    server: {
-      // Showdown is CommonJS; inlining keeps the named exports MarkdownRenderService uses
-      deps: {
-        inline: [ 'showdown' ],
-      },
-    },
   },
 });

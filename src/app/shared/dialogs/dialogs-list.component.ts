@@ -34,9 +34,12 @@ import { fullName } from '@shared/utils';
       align-items: center;
       justify-content: flex-end;
     }
+    mat-dialog-content {
+      display: flex;
+      flex-direction: column;
+    }
     mat-table {
       overflow-y: auto;
-      height: calc(100% - 160px);
     }
   `],
   imports: [

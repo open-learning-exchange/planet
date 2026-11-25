@@ -2,47 +2,37 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
-import { finalize, switchMap } from 'rxjs/operators';
+import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
-import { TitleCasePipe, KeyValuePipe } from '@angular/common';
 import { MatList, MatListItem, MatListItemTitle } from '@angular/material/list';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 
+import { AiChatService } from '@shared/ai/ai-chat.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 
-import { ProviderName } from '../../chat/chat.model';
+import { AIServiceStatus, ProviderDiscovery } from '../../chat/chat.model';
 import { ConfigurationService } from '../../configuration/configuration.service';
 import { ManagerKeysComponent } from './manager-keys.component';
 
-const DEFAULT_AI_PROVIDERS: Record<ProviderName, string> = {
-  openai: '',
-  perplexity: '',
-  deepseek: '',
-  gemini: ''
-};
-
-interface FixedConfigFormControls {
+interface ConfigFormControls {
   streaming: FormControl<boolean>;
+  models: FormGroup<Record<string, FormControl<string>>>;
   assistantName: FormControl<string>;
   assistantInstructions: FormControl<string>;
 }
 
-type DynamicConfigControlKey = `models_${string}`;
-type DynamicConfigFormControls = Partial<Record<DynamicConfigControlKey, FormControl<string>>>;
-type ConfigFormControls = FixedConfigFormControls & DynamicConfigFormControls;
-
 interface AIConfiguration {
   [key: string]: unknown;
   streaming?: boolean;
-  models?: Record<string, unknown>;
+  models?: Record<string, string>;
   assistant?: {
     name?: string;
     instructions?: string;
@@ -72,8 +62,6 @@ interface AIConfiguration {
     MatSlideToggle,
     MatTooltip,
     MatButton,
-    TitleCasePipe,
-    KeyValuePipe,
     ManagerKeysComponent
   ]
 })
@@ -81,6 +69,8 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   @ViewChild(ManagerKeysComponent) keysCard: ManagerKeysComponent;
   configuration: AIConfiguration = {};
   configForm: FormGroup<ConfigFormControls>;
+  discovery: ProviderDiscovery = { state: 'loading' };
+  labels: Record<string, string> = {};
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -89,19 +79,25 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
-  ) {
-    this.configForm = this.fb.group<ConfigFormControls>({
-      streaming: this.fb.control(false),
-      assistantName: this.fb.control(''),
-      assistantInstructions: this.fb.control('')
-    });
-  }
+    private dialogsLoadingService: DialogsLoadingService,
+    private aiChatService: AiChatService
+  ) {}
 
   ngOnInit() {
     this.configuration = this.stateService.configuration;
-    this.configuration.models = { ...DEFAULT_AI_PROVIDERS, ...this.configuration.models };
-    this.initForm();
+    this.configForm = this.fb.group({
+      streaming: this.fb.control(!!this.configuration.streaming),
+      models: this.fb.group<Record<string, FormControl<string>>>({}),
+      assistantName: this.fb.control(this.configuration.assistant?.name || ''),
+      assistantInstructions: this.fb.control(this.configuration.assistant?.instructions || '')
+    });
+    this.aiChatService.refreshAIProviders();
+    this.aiChatService.providerDiscovery$.pipe(takeUntil(this.unsubscribe$)).subscribe((discovery) => {
+      this.discovery = discovery;
+      if (discovery.state === 'loaded') {
+        this.setProviders(discovery.providers);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -109,23 +105,17 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  initForm() {
-    this.configForm = this.fb.group<ConfigFormControls>({
-      streaming: this.fb.control(!!this.configuration.streaming),
-      ...this.mapConfigToFormControls(this.configuration.models, 'models_'),
-      assistantName: this.fb.control(this.configuration.assistant?.name || ''),
-      assistantInstructions: this.fb.control(this.configuration.assistant?.instructions || '')
-    });
+  retry() {
+    this.aiChatService.refreshAIProviders();
+    if (this.keysCard.statusFailed) {
+      this.keysCard.loadStatus();
+    }
   }
 
-  mapConfigToFormControls(configObject: Record<string, unknown> | undefined, prefix: 'models_'): DynamicConfigFormControls {
-    const formGroupObj: DynamicConfigFormControls = {};
-    if (configObject) {
-      for (const key of Object.keys(configObject)) {
-        formGroupObj[`${prefix}${key}`] = this.fb.control(String(configObject[key] ?? ''));
-      }
-    }
-    return formGroupObj;
+  private setProviders(providers: AIServiceStatus[]) {
+    const models = this.configuration.models || {};
+    this.labels = Object.fromEntries(providers.map(({ name, label }) => [ name, label ]));
+    providers.forEach(({ name }) => this.configForm.controls.models.addControl(name, this.fb.control(models[name] || '')));
   }
 
   saveConfig() {
@@ -133,13 +123,11 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
       return;
     }
     this.dialogsLoadingService.start();
+    const { streaming, models, assistantName, assistantInstructions } = this.configForm.getRawValue();
     const configPatch = {
-      streaming: this.configForm.controls.streaming.value,
-      models: this.extractFormValues(this.configuration.models, 'models_'),
-      assistant: {
-        name: this.getStringControlValue('assistantName'),
-        instructions: this.getStringControlValue('assistantInstructions')
-      }
+      streaming,
+      models: { ...this.configuration.models, ...models },
+      assistant: { name: assistantName, instructions: assistantInstructions }
     };
     this.keysCard.saveKeys().pipe(
       switchMap(() => this.configurationService.patchLocalConfiguration(configPatch)),
@@ -153,22 +141,6 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
         this.planetMessageService.showMessage($localize`Configuration Updated Successfully`);
       }
     );
-  }
-
-  extractFormValues(configObject: Record<string, unknown> | undefined, prefix: 'models_'): Record<string, string> {
-    const values: Record<string, string> = {};
-    if (!configObject) {
-      return values;
-    }
-    for (const key of Object.keys(configObject)) {
-      values[key] = this.getStringControlValue(prefix + key);
-    }
-    return values;
-  }
-
-  private getStringControlValue(controlName: string): string {
-    const value = this.configForm.get(controlName)?.value;
-    return typeof value === 'string' ? value : '';
   }
 
 }

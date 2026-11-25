@@ -515,7 +515,7 @@ export const normalizeMarkdownWhitespace = (content: string) => {
     const nextLineIsTableHeader = markdownTableRowRegex.test(lines[index + 1] || '');
     const followingLineIsTableDivider = /^[ \t]*\|[ \t]*:?-{3,}/.test(lines[index + 2] || '');
 
-    // EasyMDE accepts a table directly below a list item, while Showdown needs a blank line.
+    // EasyMDE accepts a table directly below a list item, while markdown-it needs a blank line.
     if (isTopLevelListItem && nextLineIsTableHeader && followingLineIsTableDivider) {
       normalizedLines.push('');
     }

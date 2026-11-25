@@ -29,6 +29,7 @@ import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
+import { AvatarComponent } from '@shared/ui/avatar.component';
 import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
 
 import { UsersService } from './users.service';
@@ -69,7 +70,8 @@ export class TableState {
     MatRow,
     MatNoDataRow,
     MatPaginator,
-    DatePipe
+    DatePipe,
+    AvatarComponent
   ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
@@ -283,14 +285,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   toggleStatus(event, user, type: 'admin' | 'manager', isDemotion: boolean) {
     event.stopPropagation();
-    const request: Observable<any> = type === 'admin' ?
-      this.usersService.toggleAdminStatus(user) :
-      this.usersService.toggleManagerStatus(user);
-    request.subscribe(
-      () => {
-        this.usersService.requestUsers(true);
-        this.planetMessageService.showMessage($localize`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
-      },
+    const request: Observable<any> = type === 'manager' ? this.usersService.toggleManagerStatus(user) :
+      isDemotion ? this.usersService.demoteFromAdmin(user) : this.usersService.promoteToAdmin(user);
+    request.pipe(finalize(() => this.usersService.requestUsers(true))).subscribe(
+      () => this.planetMessageService.showMessage($localize`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`),
       () => this.planetMessageService.showAlert($localize`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
     );
   }

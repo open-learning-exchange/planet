@@ -190,6 +190,10 @@ body {
         display: flex;
         align-items: center;
       }
+
+      > .mat-icon {
+        flex-shrink: 0;
+      }
     }
 
     .content {
@@ -446,6 +450,8 @@ body {
       flex-shrink: 0;
     }
 
+    > :has(> .space-container > .view-full-height),
+    > * > .space-container:has(> .view-full-height),
     > .space-container:has(> .view-full-height, > * > .view-full-height),
     > .space-container > :has(> .view-full-height) {
       display: flex;
@@ -455,6 +461,7 @@ body {
     }
 
     > .view-full-height,
+    > * > .space-container > .view-full-height,
     > .space-container > .view-full-height,
     > .space-container > * > .view-full-height {
       flex: 1 1 0;
@@ -573,9 +580,6 @@ body {
     }
   }
 
-  // On phones and tablets each row becomes a full-width card: role classes place the
-  // select box, image, title, menu and actions, every other cell is a labelled detail line, and the
-  // header keeps only sort controls.
   mat-table.card-mode .card-label {
     display: none;
   }
@@ -693,7 +697,6 @@ body {
         margin-inline-end: -8px;
       }
 
-      // Values stack down the last column while the detail lines stack beside them, so each packs on its own.
       .mat-mdc-row:has(> .card-value) {
         grid-auto-flow: row dense;
 
@@ -753,7 +756,6 @@ body {
         }
       }
 
-      // On tablets the actions end the title line, so the right side of a row of detail lines isn't empty.
       @media (min-width: v.$screen-xs) {
         .mat-mdc-row > .card-actions {
           justify-content: flex-end;
@@ -776,6 +778,155 @@ body {
         margin-inline-end: 8px;
         color: v.$grey-text;
         font-size: 12px;
+      }
+    }
+  }
+
+  .card-table :is(.card-summary, .card-toggle, .card-main-action, .card-meta, .card-progress-count) {
+    display: none;
+  }
+
+  @media (max-width: v.$screen-md) {
+    .card-table mat-table.card-mode {
+      .list-content-menu {
+        grid-template-areas:
+          'hd hd summary toggle'
+          'tags tags tags tags'
+          'meta meta meta meta'
+          'progress action action mn'
+          'cn cn cn cn';
+        grid-template-columns: minmax(0, 1fr) auto auto auto;
+        grid-template-rows: auto;
+        align-items: center;
+        column-gap: 8px;
+
+        @media (min-width: v.$screen-sm) {
+          grid-template-areas:
+            'hd progress summary action mn toggle'
+            'tags tags tags tags tags tags'
+            'meta meta meta meta meta meta'
+            'cn cn cn cn cn cn';
+          grid-template-columns: minmax(0, 1fr) auto auto auto auto auto;
+        }
+
+        .header {
+          margin: 0;
+          font-size: 15px;
+          font-weight: 500;
+        }
+      }
+
+      .card-summary {
+        display: inline-flex;
+        grid-area: summary;
+        align-items: center;
+        gap: 2px;
+        font-size: 13px;
+      }
+
+      .card-toggle {
+        display: inline-flex;
+        grid-area: toggle;
+      }
+
+      .card-main-action {
+        display: inline-flex;
+        grid-area: action;
+        justify-self: end;
+      }
+
+      .card-meta {
+        display: block;
+        grid-area: meta;
+        color: v.$grey-text;
+        font-size: 13px;
+
+        > span:not(:last-child)::after {
+          content: ' · ';
+        }
+      }
+
+      .course-progress {
+        grid-template-columns: 1fr max-content;
+        align-items: center;
+        margin: 0;
+        font-size: 12px;
+        color: v.$grey-text;
+
+        > span:not(.card-progress-count) {
+          display: none;
+        }
+
+        planet-courses-progress-bar {
+          height: 10px;
+        }
+
+        @media (min-width: v.$screen-sm) {
+          min-width: 11rem;
+        }
+      }
+
+      .card-progress-count {
+        display: inline;
+      }
+
+      .compress-rating .list-item-rating {
+        grid-template-areas:
+          'rating ratio'
+          'total total'
+          'your-label your';
+        grid-template-columns: auto minmax(0, 10rem);
+        grid-template-rows: auto;
+        justify-content: space-between;
+        gap: 8px 12px;
+        max-width: none;
+        margin: 4px 0 0;
+        padding-top: 8px;
+        border-top: 1px solid v.$medium-grey;
+
+        @media (min-width: v.$screen-sm) {
+          grid-template-areas:
+            'rating total ratio'
+            'your-label your your';
+          grid-template-columns: auto minmax(0, 1fr) minmax(0, 10rem);
+        }
+
+        .avg-rating {
+          display: flex;
+          align-items: baseline;
+          align-self: center;
+          gap: 6px;
+
+          .rating-number {
+            display: inline;
+            font-size: 1.5rem;
+          }
+        }
+
+        .stats-total,
+        .your-rating-label {
+          text-align: start;
+        }
+
+        .your-rating-label {
+          color: v.$grey-text;
+          font-size: 13px;
+        }
+
+        .your-rating {
+          justify-self: end;
+        }
+      }
+
+      .mat-mdc-row > .mat-column-rating planet-rating {
+        flex: 1;
+      }
+
+      .preview-toggle,
+      .expanded-row .card-meta,
+      .mat-mdc-row:not(.expanded-row) .list-content-menu .content,
+      .mat-mdc-row:not(.expanded-row) > :is(.mat-column-info, .mat-column-createdDate, .mat-column-rating) {
+        display: none;
       }
     }
   }

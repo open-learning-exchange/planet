@@ -29,6 +29,8 @@ Every route needs a Planet session unless it's on the open list in `src/index.ts
 - Up to `SESSION_VALIDATION_CONCURRENCY` checks (default 16) run against CouchDB at once; the rest wait their turn, and after 2 s get a 503. On the reference Pi 5, 16 at once was faster than 8 or 40, and a class of 40 arriving together all got through within 0.15 s.
 - An origin is trusted when it matches the request's `Host`, port included, and the scheme in `X-Forwarded-Proto` when a proxy sends one, or when it's listed in `CORS_ORIGINS`. Behind a proxy that rewrites `Host`, list the public origin there.
 
+Course-step chat reads PDF attachments with `pdftotext` from poppler-utils (`sudo apt install poppler-utils`; the Docker image already has it). Without it, chat answers without the PDF text.
+
 To run the gateway locally:
 
 ```bash

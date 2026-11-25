@@ -4,7 +4,7 @@ import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angul
 import { forkJoin } from 'rxjs';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
@@ -30,6 +30,7 @@ import { MyPlanetTableComponent } from './myplanet-table.component';
     MatToolbar,
     MatToolbarRow,
     MatButton,
+    MatAccordion,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,

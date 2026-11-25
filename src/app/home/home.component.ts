@@ -21,6 +21,7 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { AvatarComponent } from '@shared/ui/avatar.component';
 import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
 import { ChallengesService } from '@shared/challenges/challenges.service';
 import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
@@ -28,7 +29,6 @@ import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directiv
 import { ChangePasswordDirective } from '@shared/auth/change-password.directive';
 import { ANDROID_APPS } from '@shared/android/android-apps';
 
-import { environment } from '../../environments/environment';
 import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
 import { LoginDialogComponent, loginDialogId } from '../login/login-dialog.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
@@ -54,7 +54,7 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     RouterLinkActive, PlanetBetaDirective, AuthorizedRolesDirective, FeedbackDirective, SyncDirective,
     PlanetLanguageComponent, MatMenuTrigger, MatBadge, MatMenu, MatMenuItem, ChangePasswordDirective,
     NgClass, MatDivider, MatSidenavContainer, MatSidenav, NgTemplateOutlet, MatSidenavContent,
-    RouterOutlet, PulsateIconDirective, DatePipe
+    RouterOutlet, PulsateIconDirective, DatePipe, AvatarComponent
   ]
 })
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
@@ -70,7 +70,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   private onDestroy$ = new Subject<void>();
   notifications = [];
   user: any = {};
-  userImgSrc = '';
   layout = 'classic';
   forceModern: boolean;
   sidenavState = 'closed';
@@ -206,12 +205,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   onUserUpdate() {
     this.user = this.userService.get();
     this.isLoggedIn = this.user._id !== undefined;
-    if (this.user._attachments) {
-      const filename = Object.keys(this.user._attachments)[0];
-      this.userImgSrc = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/' + filename;
-    } else {
-      this.userImgSrc = '';
-    }
   }
 
   subscribeToLogoutClick() {
