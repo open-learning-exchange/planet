@@ -647,7 +647,6 @@ describe('TeamsService cover image handling', () => {
   const createService = () => {
     const couchService = {
       updateDocument: vi.fn((db, doc) => of({ id: doc._id || 'new-id', rev: '2-rev' })),
-      putAttachment: vi.fn(),
       get: vi.fn()
     };
     const service = new TeamsService(
@@ -704,7 +703,6 @@ describe('TeamsService cover image handling', () => {
       coverFileName: 'cover.png',
       _attachments: { 'cover.png': { content_type: 'image/png', data: btoa('data') } }
     });
-    expect(couchService.putAttachment).not.toHaveBeenCalled();
     expect(couchService.get).not.toHaveBeenCalled();
     expect(savedTeam._id).toBe('new-id');
     expect(savedTeam._attachments).toEqual({ 'cover.png': { content_type: 'image/png', length: 4, stub: true } });

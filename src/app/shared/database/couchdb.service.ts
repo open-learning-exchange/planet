@@ -74,10 +74,6 @@ export class CouchService {
     return this.formatHttpReq(this.http.get(url, { ...httpOpts, responseType: 'blob' as const })) as Observable<Blob>;
   }
 
-  putAttachment(db: string, file: File | FormData, opts?: any) {
-    return this.couchDBReq('put', db, this.setOpts(opts), file);
-  }
-
   putDocumentWithFiles(db: string, doc: any, files: { [name: string]: File }) {
     const boundary = this.randomId();
     return this.currentTime().pipe(

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, forkJoin, Subject, interval, merge, of, race } from 'rxjs';
+import { combineLatest, Subject, interval, merge, of, race } from 'rxjs';
 import { catchError, takeUntil, debounce, filter, startWith, take, switchMap } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
@@ -21,7 +21,6 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { StateService } from '@shared/state.service';
 import { PlanetStepListComponent, PlanetStepListItemComponent } from '@shared/forms/planet-step-list.component';
 import { showFormErrors } from '@shared/tables/table.helpers';
-import { normalizedContentType } from '@shared/utils';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { FileUploadComponent } from '@shared/forms/file-upload.component';
@@ -538,11 +537,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
 
     if (this.resumeFile) {
       achievementsDoc.resumeFileName = this.resumeFile.name;
-      if (this.existingResumeAttachment) {
-        achievementsDoc._attachments = {
-          [this.resumeAttachmentKey]: this.existingResumeAttachment
-        };
-      }
     } else if (!this.resumeMarkedForDeletion && this.currentResumeFileName) {
       achievementsDoc.resumeFileName = this.currentResumeFileName;
       if (this.existingResumeAttachment) {
@@ -552,16 +546,11 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       }
     }
 
-    this.couchService.post(this.dbName, achievementsDoc).pipe(
-      switchMap((achievementsRes) => forkJoin([
-        this.resumeFile ?
-          this.couchService.putAttachment(
-            this.dbName + '/' + achievementsRes.id + '/' + this.resumeAttachmentKey + '?rev=' + achievementsRes.rev,
-            this.resumeFile, { headers: { 'Content-Type': normalizedContentType(this.resumeFile) } }
-          ) :
-          of({}),
-        this.userService.updateUser(userInfo)
-      ]))
+    const saveAchievements = this.resumeFile ?
+      this.couchService.putDocumentWithFiles(this.dbName, achievementsDoc, { [this.resumeAttachmentKey]: this.resumeFile }) :
+      this.couchService.post(this.dbName, achievementsDoc);
+    saveAchievements.pipe(
+      switchMap(() => this.userService.updateUser(userInfo))
     ).subscribe(() => {
       this.resumeFile = null;
       this.resumeMarkedForDeletion = false;
