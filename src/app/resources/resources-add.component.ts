@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl, FormGroup, FormGroupDirective, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
@@ -25,7 +27,6 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { languages } from '@shared/language/languages';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { deepEqual, normalizedContentType, safeAttachmentName } from '@shared/utils';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
@@ -136,6 +137,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   sectionsExpanded = { details: true, file: false, classification: false, attribution: false };
   private initialState = '';
   @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
+  @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
   get detailsInvalid(): boolean {
     return this.resourceForm.controls.title.invalid ||
@@ -311,7 +313,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       if (this.classificationInvalid) {
         this.sectionsExpanded.classification = true;
       }
-      showFormErrors(this.resourceForm.controls);
       return;
     }
     const fileObs: Observable<any> = this.createFileObs();

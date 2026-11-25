@@ -10,6 +10,7 @@ import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -106,9 +107,10 @@ interface ExamDocumentInfo {
     MatListItemLine,
     PlanetStepListFormDirective,
     ExamsQuestionComponent
-  ]
+  ],
+  providers: [ { provide: ErrorStateMatcher, useExisting: ExamsAddComponent } ]
 })
-export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
+export class ExamsAddComponent implements OnInit, CanComponentDeactivate, ErrorStateMatcher {
   readonly dbName = 'exams';
   hasUnsavedChanges = false;
   private initialFormState = '';
@@ -123,6 +125,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   successMessage: string;
   steps = [];
   showFormError = false;
+  checkedQuestions = 0;
   showPreviewError = false;
   isCourseContent = this.router.url.match(/courses/);
   returnUrl = this.coursesService.returnUrl || 'courses';
@@ -251,8 +254,15 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     );
   }
 
+  // Question fields sit in their own form, and Save & Return doesn't submit, so a failed save is tracked here.
+  isErrorState(control: AbstractControl | null) {
+    const newQuestion = control?.root !== this.examForm && this.activeQuestionIndex >= this.checkedQuestions;
+    return !!(control?.invalid && (control.dirty || (this.showFormError && !newQuestion)));
+  }
+
   showErrorMessage() {
     this.showFormError = true;
+    this.checkedQuestions = this.questions.length;
     this.examsService.checkValidFormComponent(this.examForm);
     this.stepClick(this.activeQuestionIndex);
   }

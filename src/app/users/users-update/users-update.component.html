@@ -112,11 +112,7 @@
               </div>
             </mat-radio-button>
           }
-          @if (editForm.controls.gender.invalid && editForm.controls.gender.touched) {
-            <mat-error i18n>
-            This field is required
-          </mat-error>
-          }
+          <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
           @if (!submissionMode && planetConfiguration.betaEnabled==='user') {
             <mat-slide-toggle
               formControlName="betaEnabled" i18n i18n-matTooltip

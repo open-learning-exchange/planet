@@ -24,7 +24,6 @@ import { FileUploadComponent } from '@shared/forms/file-upload.component';
 import { UserService } from '@shared/auth/user.service';
 import { languages } from '@shared/language/languages';
 import { StateService } from '@shared/state.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
 import { CouchService } from '@shared/database/couchdb.service';
@@ -221,7 +220,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     }
 
     if (!this.editForm.valid) {
-      showFormErrors(this.editForm.controls);
       return;
     }
     this.hasUnsavedChanges = this.getHasUnsavedChanges();

@@ -18,7 +18,6 @@ import { MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { CouchService } from '@shared/database/couchdb.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { UserService } from '@shared/auth/user.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { StateService } from '@shared/state.service';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
@@ -247,7 +246,6 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   onSubmit() {
     if (this.meetupForm.invalid) {
-      showFormErrors(this.meetupForm.controls);
       return;
     }
     const dayFormArray = this.dayFormArray;

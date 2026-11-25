@@ -20,7 +20,6 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { StateService } from '@shared/state.service';
 import { PlanetStepListComponent, PlanetStepListItemComponent } from '@shared/forms/planet-step-list.component';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { normalizedContentType } from '@shared/utils';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
@@ -126,6 +125,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   achievementNotFound = false;
   editForm!: FormGroup<EditFormControls>;
   profileForm!: FormGroup<ProfileFormControls>;
+  achievementsUpdateForm!: FormGroup<{ profile: FormGroup<ProfileFormControls>, edit: FormGroup<EditFormControls> }>;
   private onDestroy$ = new Subject<void>();
   initialFormValues: any;
   hasUnsavedChanges = false;
@@ -163,6 +163,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   ) {
     this.createForm();
     this.createProfileForm();
+    this.achievementsUpdateForm = this.fb.group({ profile: this.profileForm, edit: this.editForm });
   }
 
   ngOnInit() {
@@ -479,9 +480,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       this.submitAttempted = false;
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
       this.hasUnsavedChanges = false;
-    } else {
-      this.markAsInvalid(this.editForm);
-      this.markAsInvalid(this.profileForm);
     }
   }
 
@@ -498,13 +496,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.onSubmit();
       }
     });
-  }
-
-  markAsInvalid(userForm: FormGroup<any>) {
-    if (!userForm.valid) {
-      userForm.markAllAsTouched();
-      showFormErrors(userForm.controls);
-    }
   }
 
   sectionError(section: 'achievements' | 'references' | 'links'): string {

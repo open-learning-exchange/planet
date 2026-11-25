@@ -1,7 +1,8 @@
 import { vi } from 'vitest';
 import { Component, ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
@@ -45,6 +46,9 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
       {} as any,
       { runOutsideAngular: (callback: () => void) => callback() } as any,
       {} as any,
+      new ShowOnDirtyErrorStateMatcher(),
+      null,
+      null,
       dialogRef as any
     );
   };
@@ -203,11 +207,14 @@ class PlainFormControlHostComponent {
 }
 
 @Component({
-  template: '<planet-markdown-textbox [formControl]="control" imageGroup="community"></planet-markdown-textbox>',
+  template: `<form [formGroup]="form">
+    <planet-markdown-textbox formControlName="text" imageGroup="community"></planet-markdown-textbox>
+  </form>`,
   imports: [ ReactiveFormsModule, PlanetMarkdownTextboxComponent ]
 })
 class RequiredFormControlHostComponent {
   control = new FormControl<any>('', CustomValidators.requiredMarkdown);
+  form = new FormGroup({ text: this.control });
 }
 
 @Component({
@@ -241,7 +248,10 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
 
   beforeEach(() => {
     FakeEasyMDE.instance = undefined;
-    TestBed.configureTestingModule({ providers: [ { provide: MatDialog, useValue: {} } ] });
+    TestBed.configureTestingModule({ providers: [
+      { provide: MatDialog, useValue: {} },
+      { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }
+    ] });
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -266,17 +276,43 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
     expect(FakeEasyMDE.instance.value()).toBe('saved text');
   });
 
-  it('shows the error when an empty required field is left, without marking the form dirty', async () => {
+  it('shows no error when an empty required field is only left, and leaves the form clean', async () => {
     stubEditor();
     const fixture = TestBed.createComponent(RequiredFormControlHostComponent);
     await settle(fixture);
     const textbox = fixture.debugElement.query(By.directive(PlanetMarkdownTextboxComponent)).componentInstance;
 
-    textbox.onFocusOut();
+    fixture.debugElement.query(By.css('textarea')).nativeElement.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    fixture.detectChanges();
+
+    expect(textbox.errorState).toBe(false);
+    expect(fixture.componentInstance.control.touched).toBe(false);
+    expect(fixture.componentInstance.control.pristine).toBe(true);
+  });
+
+  it('shows the required error once text is cleared', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(RequiredFormControlHostComponent);
+    await settle(fixture);
+    const textbox = fixture.debugElement.query(By.directive(PlanetMarkdownTextboxComponent)).componentInstance;
+
+    FakeEasyMDE.instance.type('typed');
+    FakeEasyMDE.instance.type('');
     fixture.detectChanges();
 
     expect(textbox.errorState).toBe(true);
-    expect(fixture.componentInstance.control.touched).toBe(true);
+  });
+
+  it('shows the required error once its form is submitted', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(RequiredFormControlHostComponent);
+    await settle(fixture);
+    const textbox = fixture.debugElement.query(By.directive(PlanetMarkdownTextboxComponent)).componentInstance;
+
+    fixture.debugElement.query(By.css('form')).nativeElement.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(textbox.errorState).toBe(true);
     expect(fixture.componentInstance.control.pristine).toBe(true);
   });
 
@@ -300,6 +336,22 @@ describe('PlanetMarkdownTextboxComponent editor', () => {
 
     fixture.componentInstance.control.setValue('from the form');
     expect(FakeEasyMDE.instance.value()).toBe('from the form');
+  });
+
+  it('takes a later form write as its text and images value without marking the form dirty', async () => {
+    stubEditor();
+    const fixture = TestBed.createComponent(RequiredFormControlHostComponent);
+    await settle(fixture);
+    const textbox = fixture.debugElement.query(By.directive(PlanetMarkdownTextboxComponent)).componentInstance;
+
+    fixture.componentInstance.form.patchValue({ text: 'loaded later' });
+    expect(fixture.componentInstance.control.value).toEqual({ text: 'loaded later', images: [] });
+    expect(FakeEasyMDE.instance.value()).toBe('loaded later');
+
+    fixture.componentInstance.form.patchValue({ text: '' });
+    fixture.detectChanges();
+    expect(fixture.componentInstance.control.pristine).toBe(true);
+    expect(textbox.errorState).toBe(false);
   });
 
   it('keeps text typed before the editor arrives', async () => {

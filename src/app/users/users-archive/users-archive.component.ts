@@ -5,7 +5,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButton } from '@angular/material/button';
 
 import { CouchService } from '@shared/database/couchdb.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMarkdownTextboxComponent } from '@shared/markdown/planet-markdown-textbox.component';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
@@ -69,8 +68,6 @@ export class UsersArchiveComponent implements OnInit {
   onSubmit() {
     if (this.archiveForm.valid) {
       this.archiveUser();
-    } else {
-      showFormErrors(this.archiveForm.controls);
     }
   }
 

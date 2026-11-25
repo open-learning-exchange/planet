@@ -2,7 +2,8 @@ import {
   AfterViewInit, Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef,
   DoCheck, ViewChild, NgZone
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, FormGroupDirective, NgControl, NgForm } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
@@ -55,10 +56,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     return this._value;
   }
   set value(newValue: ValueWithImages | string) {
-    this._value = newValue || (this.imageGroup ? { text: '', images: [] } : '');
-    this.textValue = typeof this._value === 'string' ? this._value : this._value.text;
+    this.showValue(newValue);
     this.onChange(this._value);
-    this.stateChanges.next();
   }
   #textValue: string;
   get textValue(): string {
@@ -84,6 +83,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
   private restoreDisableClose?: ReturnType<typeof setTimeout>;
   private easyMDE: any;
   private destroyed = false;
+  private echoesWrites = false;
   #placeholder: string;
   @Input()
   get placeholder() {
@@ -133,6 +133,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     private dialog: MatDialog,
     private ngZone: NgZone,
     private markdownRenderer: MarkdownRenderService,
+    private errorStateMatcher: ErrorStateMatcher,
+    @Optional() private parentForm: NgForm | null,
+    @Optional() private parentFormGroup: FormGroupDirective | null,
     @Optional() private dialogRef: MatDialogRef<unknown>
   ) {
     if (this.ngControl) {
@@ -244,11 +247,11 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
   }
 
   ngAfterViewInit() {
-    // The first write lands before registerOnChange, and forms read their { text, images } value from this echo.
-    // It goes in as a model write, because onChange would mark an untouched form dirty.
+    // The first write lands before registerOnChange, so its echo waits for this.
     Promise.resolve().then(() => {
       if (!this.destroyed) {
-        this.ngControl.control.setValue(this.value, { emitModelToViewChange: false });
+        this.echoesWrites = true;
+        this.echoToForm();
       }
     });
     this.loadEditor().then(({ default: EasyMDE }) => {
@@ -290,7 +293,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
       codemirror.on('change', () => {
         const text = this.easyMDE.value();
         if (text !== this.textValue) {
-          this.ngZone.run(() => this.writeValue(text));
+          this.ngZone.run(() => this.editText(text));
         }
       });
     });
@@ -396,8 +399,29 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
   }
 
   writeValue(val: string) {
-    this.value = typeof this._value === 'string' || this.imageGroup === undefined ? val : { ...this._value, text: val || '' };
-    this.setErrorState();
+    this.showValue(this.withText(val));
+    if (this.echoesWrites && this._value !== val) {
+      this.echoToForm();
+    }
+  }
+
+  editText(text: string) {
+    this.value = this.withText(text);
+  }
+
+  private withText(text: string) {
+    return typeof this._value === 'string' || this.imageGroup === undefined ? text : { ...this._value, text: text || '' };
+  }
+
+  private showValue(newValue: ValueWithImages | string) {
+    this._value = newValue || (this.imageGroup ? { text: '', images: [] } : '');
+    this.textValue = typeof this._value === 'string' ? this._value : this._value.text;
+    this.stateChanges.next();
+  }
+
+  // Forms read their { text, images } value from this echo. It goes in as a model write, because onChange would mark the form dirty.
+  private echoToForm() {
+    this.ngControl.control.setValue(this.value, { emitModelToViewChange: false });
   }
 
   onChange(_: any) {}
@@ -421,17 +445,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, Aft
     }
   }
 
-  setErrorState() {
-    this.errorState = this.ngControl.touched && (typeof this._value === 'string' ? this._value : this._value.text) === '';
-  }
-
-  onFocusOut() {
-    this.ngControl.control.markAsTouched({ onlySelf: true });
-    this.setErrorState();
-  }
-
   checkHighlight() {
-    if (this.ngControl.touched && this.ngControl.valid !== true) {
+    if (this.errorStateMatcher.isErrorState(this.ngControl.control, this.parentFormGroup || this.parentForm)) {
       this.errorState = true;
       this.stateChanges.next();
     } else {

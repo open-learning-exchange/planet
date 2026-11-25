@@ -17,7 +17,7 @@
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="form-container">
-            <form [formGroup]="courseForm" class="form-spacing" novalidate>
+            <form id="course-form" [formGroup]="courseForm" class="form-spacing" (ngSubmit)="onSubmit()" novalidate>
               <mat-form-field class="full-width">
                 <mat-label i18n>Course Title</mat-label>
                 <input matInput formControlName="courseTitle" required>
@@ -82,7 +82,7 @@
       </div>
     </div>
     <div class="actions-container">
-      <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>
+      <button type="submit" form="course-form" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>
       <button type="button" mat-stroked-button color="primary" (click)="addStep()">
         <mat-icon>add</mat-icon>
         <span i18n>Add Step</span>

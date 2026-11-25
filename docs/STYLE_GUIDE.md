@@ -238,6 +238,10 @@ For consistency in forms across the application, follow these standards:
   - Use Sentence case
   - End with a period
   - Be specific about the error
+- When Errors Show:
+  - Errors appear once a field is typed in or its form is submitted, never on blur. `MaterialModule` provides `ShowOnDirtyErrorStateMatcher` for this, so don't mark fields touched to reveal errors.
+  - Save through `(ngSubmit)` so the form is marked submitted. A button outside the `<form>` uses `type="submit" form="<form id>"`, and a page with two form groups wraps them in one parent group.
+  - Show messages with `<mat-error><planet-form-error-messages [control]="...">`, which follows the same rule, instead of hand-written `touched` checks.
 
 ### Form Validation Patterns
 For form validation, refer to these standard validator implementations:

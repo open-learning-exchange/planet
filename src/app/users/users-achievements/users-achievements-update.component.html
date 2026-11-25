@@ -13,8 +13,8 @@
     <span>{{ ((user | fullName) || user?.name) | truncateText:40 }}</span>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="achievements-forms-container">
-      <form [formGroup]="profileForm" class="form-spacing">
+    <form id="achievements-form" class="achievements-forms-container" [formGroup]="achievementsUpdateForm" (ngSubmit)="onSubmit()">
+      <div formGroupName="profile" class="form-spacing">
         <mat-form-field>
           <mat-label i18n>First Name</mat-label>
           <input matInput formControlName="firstName" required>
@@ -40,8 +40,8 @@
           <mat-label i18n>Birthplace</mat-label>
           <input matInput formControlName="birthplace">
         </mat-form-field>
-      </form>
-      <form [formGroup]="editForm">
+      </div>
+      <div formGroupName="edit">
         <mat-form-field class="full-width mat-form-field-type-no-underline">
           <mat-label i18n>My Purpose - What are your educational and professional ambitions?</mat-label>
           <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.purpose"></planet-markdown-textbox>
@@ -138,10 +138,10 @@
         <mat-checkbox formControlName="sendToNation" class="full-width achievements-checkbox" i18n>
           Allow your achievements to be shared with the nation
         </mat-checkbox>
-      </form>
-    </div>
+      </div>
+    </form>
     <div class="achievement-button">
-      <button type="button" (click)="onSubmit()" mat-raised-button [planetSubmit]="editForm.valid && profileForm.valid" color="primary" i18n>Submit</button>
+      <button type="submit" form="achievements-form" mat-raised-button [planetSubmit]="achievementsUpdateForm.valid" color="primary" i18n>Submit</button>
       <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
     </div>
   </div>

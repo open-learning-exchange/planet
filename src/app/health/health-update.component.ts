@@ -13,7 +13,6 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 
 import { UserService } from '@shared/auth/user.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { languages } from '@shared/language/languages';
 import { CanComponentDeactivate } from '@shared/unsaved-changes/unsaved-changes.guard';
 import { warningMsg } from '@shared/unsaved-changes/unsaved-changes-prompt.component';
@@ -85,6 +84,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   profileForm: FormGroup<ProfileFormGroup>;
   healthForm: FormGroup<HealthFormGroup>;
+  healthUpdateForm: FormGroup<{ profile: FormGroup<ProfileFormGroup>, health: FormGroup<HealthFormGroup> }>;
   existingData: { _id?: string, _rev?: string, profile?: HealthFormValue } = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
@@ -103,6 +103,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   ) {
     this.initProfileForm();
     this.initHealthForm();
+    this.healthUpdateForm = this.fb.group({ profile: this.profileForm, health: this.healthForm });
   }
 
   ngOnInit() {
@@ -190,9 +191,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   onSubmit() {
-    if (!(this.profileForm.valid && this.healthForm.valid)) {
-      showFormErrors(this.profileForm.controls);
-      showFormErrors(this.healthForm.controls);
+    if (!this.healthUpdateForm.valid) {
       return;
     }
     const profileValue = this.profileForm.getRawValue();

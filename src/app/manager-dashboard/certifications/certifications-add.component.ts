@@ -11,7 +11,6 @@ import { MatInput } from '@angular/material/input';
 
 import { CertificationsService } from '@shared/certifications/certifications.service';
 import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
-import { showFormErrors } from '@shared/tables/table.helpers';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
@@ -119,7 +118,6 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   submitCertificate(reroute: boolean) {
     if (!this.certificateForm.valid) {
-      showFormErrors(this.certificateForm.controls);
       return;
     }
     const certificateFormValue = this.certificateForm.getRawValue();

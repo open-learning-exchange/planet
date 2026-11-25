@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
@@ -61,6 +62,7 @@ describe('DialogsFormComponent', () => {
       imports: [ DialogsFormComponent ],
       providers: [
         FormBuilder,
+        { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MatDialog, useValue: { open: vi.fn(), openDialogs: [] } },
         { provide: MAT_DIALOG_DATA, useValue: data },
@@ -152,18 +154,15 @@ describe('DialogsFormComponent', () => {
     radioInputs.forEach(input => expect(input.nativeElement.required).toBe(false));
   });
 
-  it('shows error messages and marks radio groups as touched when submitting an invalid form', () => {
+  it('shows error messages when submitting an invalid form', () => {
     createComponent();
 
     expect(component.modalForm.valid).toBe(false);
     expect(radioErrorText()).toEqual([ '', '' ]);
 
-    fixture.debugElement.query(By.css('form')).triggerEventHandler('ngSubmit', null);
+    fixture.debugElement.query(By.css('form')).nativeElement.dispatchEvent(new Event('submit'));
     fixture.detectChanges();
 
-    expect(component.modalForm.controls['priority'].touched).toBe(true);
-    expect(component.modalForm.controls['type'].touched).toBe(true);
-    expect(component.modalForm.controls['message'].touched).toBe(true);
     expect(dialogRef.close).not.toHaveBeenCalled();
 
     expect(radioErrorText()).toEqual([ 'This field is required', 'This field is required' ]);

@@ -16,7 +16,6 @@ import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
-import { showFormErrors } from '@shared/tables/table.helpers';
 
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
@@ -84,7 +83,6 @@ export class LoginFormComponent implements OnInit {
 
   onSubmit() {
     if (!this.userForm.valid) {
-      showFormErrors(this.userForm.controls);
       return;
     }
     const credentials = this.getLoginCredentials();
