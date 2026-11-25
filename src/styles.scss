@@ -577,9 +577,6 @@ body {
     }
   }
 
-  // On phones and tablets each row becomes a full-width card: role classes place the
-  // select box, image, title, menu and actions, every other cell is a labelled detail line, and the
-  // header keeps only sort controls.
   mat-table.card-mode .card-label {
     display: none;
   }
@@ -697,7 +694,6 @@ body {
         margin-inline-end: -8px;
       }
 
-      // Values stack down the last column while the detail lines stack beside them, so each packs on its own.
       .mat-mdc-row:has(> .card-value) {
         grid-auto-flow: row dense;
 
@@ -757,7 +753,6 @@ body {
         }
       }
 
-      // On tablets the actions end the title line, so the right side of a row of detail lines isn't empty.
       @media (min-width: v.$screen-xs) {
         .mat-mdc-row > .card-actions {
           justify-content: flex-end;
@@ -784,8 +779,6 @@ body {
     }
   }
 
-  // Course and library rows on phones and tablets: a compact row with its main action, and the
-  // description, details and rating shown once the row is expanded.
   .card-table :is(.card-summary, .card-toggle, .card-main-action, .card-meta, .card-progress-count) {
     display: none;
   }
@@ -839,7 +832,6 @@ body {
         justify-self: end;
       }
 
-      // The levels sit under the title until the row opens and shows them as labelled lines.
       .card-meta {
         display: block;
         grid-area: meta;
@@ -875,7 +867,6 @@ body {
         display: inline;
       }
 
-      // The rating block lays out as a summary line (average, total, who rated) above the member's own stars.
       .compress-rating .list-item-rating {
         grid-template-areas:
           'rating ratio'
