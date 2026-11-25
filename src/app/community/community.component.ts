@@ -34,7 +34,6 @@ import { CommunityLinkDialogComponent } from './community-link-dialog.component'
 import { TeamsService } from '../teams/teams.service';
 import { UsersService } from '../users/users.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { environment } from '../../environments/environment';
 import { ConfigurationCheckService } from '../configuration/configuration-check.service';
 import { NewsListComponent } from '../news/news-list.component';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
@@ -444,7 +443,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
     const councillorUsers = users
       .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1);
-    const attachmentIds = councillorUsers
+    const attachmentIds = planetCode === this.stateService.configuration.code ? [] : councillorUsers
       .map(user => `org.couchdb.user:${user.doc.name}@${user.doc.planetCode}`)
       .filter(id => !!id);
 
@@ -453,10 +452,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
         const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
         const attachmentDoc: any = this.attachmentMap[attachmentId];
-        const avatar = attachmentDoc ?
-          `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
-          (user.imageSrc || 'assets/image.png');
-        return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
+        return { attachmentDoc, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
       });
     });
   }

@@ -6,6 +6,11 @@ const memberNameCompare = (member1, member2) => {
 
 export const memberCompare = (member1, member2) => member1.userId === member2.userId && member1.userPlanetCode === member2.userPlanetCode;
 
+export const memberAvatarAttachment = (member, localPlanetCode: string) =>
+  member?.userPlanetCode && member.userPlanetCode !== localPlanetCode ?
+    member.attachmentDoc?._attachments?.img :
+    member?.userDoc?.doc?._attachments?.img;
+
 export const requestDateCompare = (request1, request2) =>
   (request1.createdDate || 0) - (request2.createdDate || 0) ||  (request1.userId || '').localeCompare(request2.userId || '');
 
