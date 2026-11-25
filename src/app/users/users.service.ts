@@ -127,7 +127,6 @@ export class UsersService {
     ));
   }
 
-  // The admin's parent planet account is created at their first login that reaches the parent (LoginTasksService)
   promoteToAdmin(user) {
     const { name, password_scheme, derived_key, salt, iterations } = user;
     return forkJoin([
