@@ -14,7 +14,6 @@ import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
 import { LanguageLabelComponent } from '@shared/language/language-label.component';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { couchAttachmentUrl } from '@shared/utils';
-import { planetAddress } from '@shared/database/couchdb.service';
 
 import * as constants from '../courses.constants';
 import { CoursesService } from '../courses.service';
@@ -53,7 +52,7 @@ export class CoursesViewDetailComponent implements OnChanges {
 
   coverImageUrl() {
     const base = this.imageSource === 'parent' ?
-      planetAddress(this.planetConfiguration.parentDomain) :
+      `${environment.parentProtocol}://${this.planetConfiguration.parentDomain}` :
       environment.couchAddress;
     return couchAttachmentUrl(base, 'courses', this.courseDetail._id, this.courseDetail.coverFileName);
   }

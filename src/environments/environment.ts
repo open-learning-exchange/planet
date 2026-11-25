@@ -11,7 +11,6 @@ export const environment = {
   centerAddress: 'planet.earth.ole.org/db',
   centerProtocol: 'https',
   parentProtocol: 'https',
-  parentAddress: '',
   upgradeAddress: window.location.origin + '/upgrade',
   syncAddress: window.location.protocol + '//localhost:5984'
 };

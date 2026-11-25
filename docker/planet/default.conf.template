@@ -3,39 +3,6 @@ upstream couchdb {
   keepalive 16;
 }
 
-# The parent's AuthSession is stored as ParentSession so it can't collide with the local one
-map $cookie_ParentSession $parent_cookie {
-  ''      '';
-  default 'AuthSession=$cookie_ParentSession';
-}
-
-# Only the parent's own session cookie, keeping its lifetime so it survives a browser restart like the local one
-map $upstream_http_set_cookie $parent_set_cookie {
-  ~^AuthSession= 'ParentSession=$upstream_cookie_AuthSession; Path=/parent/$parent_host/; HttpOnly; SameSite=Strict$parent_max_age';
-  default        '';
-}
-
-map $upstream_http_set_cookie $parent_max_age {
-  ~Max-Age=(?<parent_max_age_value>[0-9]+) '; Max-Age=$parent_max_age_value';
-  default                                  '';
-}
-
-# Read from the raw $request_uri, which the browser scopes the cookie by: the decoded $uri would let
-# /parent/<host>/..%2F<other>/ reach another host, and would decode ids and attachment names
-map $request_uri $parent_host {
-  ~^/parent/(?<parent_name>[a-z0-9.-]+(:[0-9]+)?)/ $parent_name;
-}
-
-map $request_uri $parent_request_uri {
-  ~^/parent/[a-z0-9.-]+(:[0-9]+)?(?<parent_rest>/.*)$ $parent_rest;
-}
-
-# Logout clears the cookie here too, so it goes even when the gateway or the parent can't be reached
-map "$request_method $parent_request_uri" $parent_logout_cookie {
-  "~^DELETE /db/_session(\?|$)" 'ParentSession=; Path=/parent/$parent_host/; Max-Age=0';
-  default                        '';
-}
-
 server {
 
   listen 80;
@@ -203,42 +170,6 @@ server {
     # a slow client holds CouchDB back instead of spooling the response to disk
     proxy_max_temp_file_size 0;
     client_max_body_size 1024M;
-  }
-
-  # Browsers drop the parent's cookie cross-site; through here it is first-party
-  location /parent/ {
-    if ($parent_host = '') {
-      return 404;
-    }
-    auth_request /parent-check;
-    resolver 127.0.0.11 ipv6=off;
-    proxy_pass https://$parent_host$parent_request_uri;
-    proxy_ssl_server_name on;
-    proxy_ssl_verify on;
-    proxy_ssl_verify_depth 3;
-    proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
-    proxy_set_header Cookie $parent_cookie;
-    proxy_set_header Authorization "";
-    proxy_hide_header Set-Cookie;
-    add_header Set-Cookie $parent_set_cookie;
-    add_header Set-Cookie $parent_logout_cookie always;
-    # The parent's HTML would otherwise run on this origin with the local session
-    add_header Content-Security-Policy "sandbox" always;
-    proxy_hide_header Access-Control-Allow-Origin;
-    proxy_hide_header Access-Control-Allow-Credentials;
-    proxy_max_temp_file_size 0;
-    client_max_body_size 1024M;
-  }
-
-  # The gateway answers 204 only for this planet's configured parent
-  location = /parent-check {
-    internal;
-    proxy_pass http://chatapi:5000/parent-check;
-    proxy_method GET;
-    proxy_pass_request_body off;
-    proxy_pass_request_headers off;
-    proxy_set_header Content-Length "";
-    proxy_set_header X-Parent-Host $parent_host;
   }
 
   location = /upgrade/planetapk {

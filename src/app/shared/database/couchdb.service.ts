@@ -11,16 +11,6 @@ import { findDocuments } from './mango-queries';
 
 class DatePlaceholder {}
 
-// Only the parent is called without a protocol. Its signed-in requests use nginx's /parent/ forward so the
-// cookie is first-party; anonymous ones stay direct, because same-origin requests send cookies anyway.
-export const planetAddress = (domain: string, protocol?: string, withCredentials = true) => {
-  const lowerDomain = domain.toLowerCase();
-  if (environment.parentAddress && !protocol && withCredentials && environment.parentProtocol === 'https') {
-    return environment.parentAddress + '/' + lowerDomain;
-  }
-  return (protocol || environment.parentProtocol) + '://' + domain;
-};
-
 @Injectable({
   providedIn: 'root'
 })
@@ -42,7 +32,7 @@ export class CouchService {
   }
 
   private couchDBReq(type: string, db: string, [ domain, protocol, opts, suppressMessage ]: any[], data?: any) {
-    const url = (domain ? planetAddress(domain, protocol, opts.withCredentials) : this.baseUrl) + '/' + db;
+    const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
       httpReq = this.http[type](url, data, opts);

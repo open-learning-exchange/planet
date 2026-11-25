@@ -233,8 +233,7 @@ export class ConfigurationComponent implements OnInit {
         ac,
         {
           exceptions: [ this.configuration[controlName] ],
-          // Runs before this planet's configuration names its parent, so it can't use the /parent/ forward
-          opts: { domain: parentDomain, withCredentials: false }
+          opts: { domain: parentDomain }
         }
       );
     };

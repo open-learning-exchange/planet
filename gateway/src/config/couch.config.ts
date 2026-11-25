@@ -37,7 +37,5 @@ const examsDB = db.use('exams');
 const keysDB = db.use('keys');
 const submissionsDB = db.use('submissions');
 const teamsDB = db.use('teams');
-// Anonymous, as the login page reads it, so a changed admin password can't block the parent check
-const anonymousConfigurationDB = nano(couchBaseUrl).use<{ parentDomain?: unknown }>('configurations');
 
-export { anonymousConfigurationDB, chatDB, configurationDB, couchBaseUrl, examsDB, keysDB, resourceDB, submissionsDB, teamsDB };
+export { chatDB, configurationDB, couchBaseUrl, examsDB, keysDB, resourceDB, submissionsDB, teamsDB };

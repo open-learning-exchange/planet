@@ -88,3 +88,25 @@ docker-compose -f planet.yml -p planet down
 ```
 
 Remember when your containers active you can always look to your containers logs to see whats going on on the background.
+
+### Nation proxy
+
+A Nation runs a TLS proxy container (nginx) in front of these containers, configured in `/srv/<nation>/proxy/app.conf` on the host. It sends `/` to the planet container but `/db/` straight to CouchDB and `/ml/` straight to the gateway, so the settings in `planet/default.conf.template` don't reach those paths on a Nation. The proxy needs its own copy of these:
+
+* `/db/`: Chrome blocks the Nation's session cookie when a Community is opened over http, by IP or on `.local`, because that's a different site. This marks the cookie for cross-site use and partitions it, so the cookie a Community's pages get is sent only from that Community's pages and never from another site the user opens:
+
+  ```nginx
+  proxy_cookie_path / "/; Secure; SameSite=None; Partitioned";
+  ```
+
+  It stays out of the planet template because `Secure` cookies need https, and Communities serve plain http with no proxy.
+* `/ml/`: `proxy_read_timeout 150s;`, as in the template, so a chat answer can run past the gateway's 120 s AI deadline instead of being cut at nginx's 60 s default.
+
+`app.conf` is mounted as a single file, so edit it in place (an editor that writes a new file leaves the running proxy on the old one), then check and load it:
+
+```
+docker exec <nation>-proxy-1 nginx -t
+docker exec <nation>-proxy-1 nginx -s reload
+```
+
+or let the next `docker-compose down` and `up` pick it up.
