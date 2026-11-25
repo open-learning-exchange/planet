@@ -579,7 +579,6 @@ body {
     display: none;
   }
 
-  // Tablet layouts follow the screen: a table in the container branch is at most $screen-sm wide, so it never needs them.
   @mixin card-tablet($query) {
     @if $query == media {
       @media (min-width: v.$screen-sm) {
@@ -760,14 +759,11 @@ body {
           }
         }
 
-        // On tablets a row without a value column flows: actions and menu stay on the title line,
-        // and the detail lines run across the width under it.
         .mat-mdc-row:not(:has(> .card-value)):not(.card-table *) {
           display: flex;
           flex-wrap: wrap;
           row-gap: 0;
 
-          // The line break between the title line (order 0) and the details (order 2).
           &::after {
             content: '';
             order: 1;
@@ -778,7 +774,7 @@ body {
             flex: none;
           }
 
-          // A zero basis would let the line break share the title's line; 8rem is the title's room before actions wrap.
+          // With a zero basis the ::after line break would fit beside the title; 8rem is the title's room before actions wrap.
           > .card-title {
             flex: 1 1 8rem;
           }
@@ -949,8 +945,7 @@ body {
     }
   }
 
-  // On desktop, a table in a narrow dialog or panel gets cards by its own width. The screen-width rules come
-  // after, so where both apply (phones and tablets) the screen width decides, as it did before.
+  // Container rules first: where both match (phones and tablets), the screen-width rules after them win.
   @container (max-width: #{v.$screen-sm}) {
     @include card-mode(container);
   }

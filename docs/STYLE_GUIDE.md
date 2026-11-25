@@ -157,7 +157,7 @@ Up to `$screen-md`, a `mat-table` with the `card-mode` class shows each row as a
 - From `$screen-sm` up, `card-actions` ends the title row instead of taking its own line, and the detail lines run across the width under the title line, unless the row has a `card-value` cell or sits in a `.card-table`.
 - The header row becomes a strip of sort pills plus the select-all box; cells without `mat-sort-header` are hidden.
 - `.min-width-table` keeps a wide desktop table at 1000px, scrolling inside its view; card mode cancels it up to `$screen-md`.
-- The table is a size container, and a container's width never comes from its content, so a `card-mode` table has to be stretched by its parent (a block, or a stretched flex or grid item). As a shrink-to-fit item it collapses to zero width.
+- The table is a size container, and a container's width never comes from its content, so a `card-mode` table has to be stretched by its parent (a block, or a stretched flex or grid item). As a shrink-to-fit item it collapses to zero width. It is also the containing block for absolutely positioned descendants, so open popovers through the CDK overlay, as Material's menus and tooltips do.
 - Only tables whose columns are built from the data stay tables with sideways scrolling: the health exams table and the CSV preview. A short table that fits a phone as it is (the reports week comparison) stays a plain table.
 
 ### Loading Indicators
