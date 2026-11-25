@@ -450,6 +450,8 @@ body {
       flex-shrink: 0;
     }
 
+    > :has(> .space-container > .view-full-height),
+    > * > .space-container:has(> .view-full-height),
     > .space-container:has(> .view-full-height, > * > .view-full-height),
     > .space-container > :has(> .view-full-height) {
       display: flex;
@@ -459,6 +461,7 @@ body {
     }
 
     > .view-full-height,
+    > * > .space-container > .view-full-height,
     > .space-container > .view-full-height,
     > .space-container > * > .view-full-height {
       flex: 1 1 0;
