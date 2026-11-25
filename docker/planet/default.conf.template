@@ -30,6 +30,12 @@ map $request_uri $parent_request_uri {
   ~^/parent/[a-z0-9.-]+(:[0-9]+)?(?<parent_rest>/.*)$ $parent_rest;
 }
 
+# Logout clears the cookie here too, so it goes even when the gateway or the parent can't be reached
+map "$request_method $parent_request_uri" $parent_logout_cookie {
+  "~^DELETE /db/_session(\?|$)" 'ParentSession=; Path=/parent/$parent_host/; Max-Age=0';
+  default                        '';
+}
+
 server {
 
   listen 80;
@@ -215,6 +221,7 @@ server {
     proxy_set_header Authorization "";
     proxy_hide_header Set-Cookie;
     add_header Set-Cookie $parent_set_cookie;
+    add_header Set-Cookie $parent_logout_cookie always;
     # The parent's HTML would otherwise run on this origin with the local session
     add_header Content-Security-Policy "sandbox" always;
     proxy_hide_header Access-Control-Allow-Origin;
