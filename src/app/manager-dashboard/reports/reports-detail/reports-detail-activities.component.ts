@@ -41,7 +41,7 @@ const columns = {
   styles: `
     :host {
       display: grid;
-      grid-template-rows: 1fr 56px;
+      grid-template-rows: 1fr auto;
       height: 100%;
 
       mat-table {
