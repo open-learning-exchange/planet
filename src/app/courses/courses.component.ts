@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil, catchError, finalize } from 'rxjs/operators';
+import { map, switchMap, takeUntil, catchError, finalize, distinctUntilChanged } from 'rxjs/operators';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -44,7 +44,7 @@ import { dedupeShelfReduce, findByIdInArray } from '@shared/utils';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
-import { TagsService } from '@shared/forms/tags/tags.service';
+import { TagsService, rerouteCollections, routeCollections } from '@shared/forms/tags/tags.service';
 import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
 import { SearchService } from '@shared/search/search.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
@@ -186,7 +186,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   planetType = this.planetConfiguration.planetType;
   isAuthorized = false;
   tagFilter = new FormControl<string[]>([], { nonNullable: true });
-  tagFilterValue: string[] = [];
+  tags: any[] = [];
   searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
@@ -205,9 +205,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   activeFilters: ActiveFilter[] = [];
   expandedElement: any = null;
   certifications: any[] = [];
-
-  @ViewChild(PlanetTagInputComponent)
-  private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
     private couchService: CouchService,
@@ -236,8 +233,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnInit() {
+    if (!this.isDialog && !this.isForm) {
+      this.tagFilter.setValue(routeCollections(this.route));
+    }
     this.titleSearch = '';
     this.getCourses();
+    if (!this.isForm) {
+      this.getTags();
+    }
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = commonSortingDataAccessor;
@@ -272,10 +275,13 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.courses.data.forEach((course: any) => course.inCertification = this.isInCertification(course._id));
       });
     }
-    this.tagFilter.valueChanges.subscribe((tags) => {
-      this.tagFilterValue = tags;
+    // The desktop tag input echoes each value back, so every change would otherwise arrive twice
+    this.tagFilter.valueChanges.pipe(distinctUntilChanged((previous, current) => previous.join() === current.join())).subscribe((tags) => {
       this.setActiveFilters();
       this.titleSearch = this.titleSearch;
+      if (!this.isDialog && !this.isForm) {
+        rerouteCollections(this.router, tags);
+      }
     });
   }
 
@@ -319,12 +325,24 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.coursesService.requestCourses(this.parent);
   }
 
+  getTags() {
+    this.tagsService.getTags(this.dbName, this.parent).subscribe(tags => this.setTags(tags));
+  }
+
+  // Also takes the tag inputs' lists, which reload when a collection is created, renamed or deleted in their dialogs
+  setTags(tags: any[]) {
+    this.tags = tags;
+    const knownTags = this.tagFilter.value.filter(tagId => tags.some(tag => tag._id === tagId));
+    if (knownTags.length < this.tagFilter.value.length) {
+      this.tagFilter.setValue(knownTags);
+    } else {
+      this.setActiveFilters();
+    }
+  }
+
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
-    if (this.tagInputComponent) {
-      this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
-    }
   }
 
   searchFilter(filterValue: string) {
@@ -490,7 +508,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   private setActiveFilters() {
     this.activeFilters = [
       ...this.tagFilter.value.map(tagId => ({
-        label: this.tagInputComponent.tagName(tagId),
+        label: this.tagsService.findTag(tagId, this.tags).name,
         clear: () => this.tagFilter.setValue(this.tagFilter.value.filter(id => id !== tagId))
       })),
       ...searchSelectionFilters(coursesSearchCategories, this.searchSelection, event => this.onSearchChange(event))
@@ -503,7 +521,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   resetFilter() {
     this.tagFilter.setValue([]);
-    this.tagFilterValue = [];
     Object.keys(this.searchSelection).forEach(key => this.searchSelection[key] = []);
     if (this.searchComponent) {
       this.searchComponent.reset();
@@ -638,15 +655,16 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.tagsService.updateManyTags(
       this.courses.data, this.dbName, { selectedIds: this.selection.selected, tagIds: selected, indeterminateIds: indeterminate }
     ).subscribe(() => {
-      this.tagInputComponent?.initTags();
+      this.getTags();
       this.getCourses();
       this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
 
   addTag(tag: string) {
-    if (tag.trim()) {
-      this.tagInputComponent.writeValue([ tag ]);
+    // Certification lists have no toolbar to show or clear the filter
+    if (tag.trim() && !this.isForm) {
+      this.tagFilter.setValue([ tag ]);
     }
   }
 

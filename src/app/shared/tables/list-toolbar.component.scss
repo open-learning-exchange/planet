@@ -74,6 +74,12 @@ planet-list-toolbar {
   padding-inline-start: 2.5rem;
 }
 
+// A long collection name stays on one line with its count visible, as in the Collections dialog
+.list-filters-collections .mat-mdc-option .mdc-list-item__primary-text {
+  display: flex;
+  min-width: 0;
+}
+
 .list-filters-sheet .mat-bottom-sheet-container {
   // Material narrows the sheet only from 960px; one width keeps it the same across tablets
   min-width: min(100vw, 640px);

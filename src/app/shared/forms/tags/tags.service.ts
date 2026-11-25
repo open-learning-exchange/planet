@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -7,6 +8,22 @@ import { StateService } from '@shared/state.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { fuzzyWordMatch } from '@shared/search/fuzzy-search';
 import { createDeleteArray } from '@shared/tables/table.helpers';
+
+const collectionsDelimiter = '_,_';
+
+export const routeCollections = (route: ActivatedRoute): string[] =>
+  route.snapshot.paramMap.get('collections')?.split(collectionsDelimiter) ?? [];
+
+// Keeps the picked collections in the list's URL, so they are still picked after leaving the list and coming back
+export const rerouteCollections = (router: Router, tags: string[]) => {
+  const collections = tags.join(collectionsDelimiter);
+  const [ url, ...params ] = router.url.split(';');
+  const newParams = params.filter(param => param.indexOf('collections') === -1).reduce((paramObj, param) => {
+    const [ key, value ] = param.split('=');
+    return { ...paramObj, [key]: value };
+  }, {});
+  router.navigate([ url, { ...newParams, ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
+};
 
 @Injectable({
   providedIn: 'root'

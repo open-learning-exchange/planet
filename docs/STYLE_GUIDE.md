@@ -144,7 +144,7 @@ Common patterns from our components:
 List pages use the two shared toolbars in `shared/tables` instead of their own `mat-toolbar` rows, so every list switches at the same width (1000px):
 
 - Main toolbar, `planet-list-toolbar`: project the back button and title, and pass the filters and search as `#listFilters` and `#listSearch` templates. Above 1000px they sit in one row; at 1000px and below the search opens on its own row and the filters in a bottom sheet. Pass `[activeFilters]`, one chip for each filter that isn't at its default, with a `clear` that restores that default, and bind `(clearFilters)` to the page's reset.
-- Action toolbar, `planet-list-actions`: pass the actions as a `#listActions` template. It has the primary colour background. At 1000px and below it shows "N selected" once rows are ticked, with the actions inline when `[inline]` is set and in a ⋮ menu otherwise.
+- Action toolbar, `planet-list-actions`: pass the actions as a `#listActions` template. It has the primary colour background. At 1000px and below it shows "N selected" once rows are ticked, with the actions in a ⋮ menu when the page passes one as `[menu]` and inline otherwise. Declare that `mat-menu` in the page with `mat-menu-item` buttons: a menu gets arrow-key navigation only for items declared inside it, so the `#listActions` buttons can't be reused there.
 
 Other toolbars (item views, forms) keep the older pattern: a white primary toolbar, then secondary toolbars with the `primary-color` class, white icons and text (`mat-icon`, `font-size-1`), and their actions in a ⋮ menu on tablets and phones.
 

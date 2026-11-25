@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip, finalize, catchError } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, finalize, catchError, distinctUntilChanged } from 'rxjs/operators';
 import { Subject, of, combineLatest, defer } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -38,6 +38,7 @@ import {
 import { PaginatedSelection } from '@shared/tables/paginated-selection.helpers';
 import { SyncService } from '@shared/database/sync.service';
 import { PlanetTagInputComponent } from '@shared/forms/tags/planet-tag-input.component';
+import { TagsService, rerouteCollections, routeCollections } from '@shared/forms/tags/tags.service';
 import { DialogsListService } from '@shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '@shared/dialogs/dialogs-list.component';
 import { couchAttachmentPath, findByIdInArray } from '@shared/utils';
@@ -150,7 +151,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
-  tagFilterValue = [];
+  tags: any[] = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   #titleSearch = '';
@@ -188,9 +189,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   activeFilters: ActiveFilter[] = [];
   expandedElement: any = null;
 
-  @ViewChild(PlanetTagInputComponent)
-  private tagInputComponent: PlanetTagInputComponent;
-
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
@@ -206,12 +204,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private tagsService: TagsService
   ) {}
 
   ngOnInit() {
     if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
+    }
+    if (!this.isDialog) {
+      this.tagFilter.setValue(routeCollections(this.route));
     }
     this.titleSearch = '';
     this.dialogsLoadingService.start();
@@ -233,11 +235,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
-    this.tagFilter.valueChanges.subscribe((tags) => {
-      this.tagFilterValue = tags;
+    // The desktop tag input echoes each value back, so every change would otherwise arrive twice
+    this.tagFilter.valueChanges.pipe(distinctUntilChanged((previous, current) => previous.join() === current.join())).subscribe((tags) => {
       this.setActiveFilters();
       this.titleSearch = this.titleSearch;
+      if (!this.isDialog) {
+        rerouteCollections(this.router, tags);
+      }
     });
+    this.getTags();
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.pageSelection.connect(this.resources, this.onDestroy$);
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
@@ -270,8 +276,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
-    if (this.tagInputComponent) {
-      this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+  }
+
+  getTags() {
+    this.tagsService.getTags(this.dbName, this.parent).subscribe(tags => this.setTags(tags));
+  }
+
+  // Also takes the tag inputs' lists, which reload when a collection is created, renamed or deleted in their dialogs
+  setTags(tags: any[]) {
+    this.tags = tags;
+    const knownTags = this.tagFilter.value.filter(tagId => tags.some(tag => tag._id === tagId));
+    if (knownTags.length < this.tagFilter.value.length) {
+      this.tagFilter.setValue(knownTags);
+    } else {
+      this.setActiveFilters();
     }
   }
 
@@ -427,7 +445,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addTagsToSelected({ selected, indeterminate }) {
     this.resourcesService.updateResourceTags(this.selection.selected, selected, indeterminate).subscribe(() => {
-      this.tagInputComponent?.initTags();
+      this.getTags();
       this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
@@ -444,7 +462,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   private setActiveFilters() {
     this.activeFilters = [
       ...this.tagFilter.value.map(tagId => ({
-        label: this.tagInputComponent.tagName(tagId),
+        label: this.tagsService.findTag(tagId, this.tags).name,
         clear: () => this.tagFilter.setValue(this.tagFilter.value.filter(id => id !== tagId))
       })),
       ...searchSelectionFilters(resourcesSearchCategories, this.searchSelection, event => this.onSearchChange(event))
@@ -457,7 +475,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resetFilter() {
     this.tagFilter.setValue([]);
-    this.tagFilterValue = [];
     Object.keys(this.searchSelection).forEach(key => this.searchSelection[key] = []);
     if (this.searchComponent) {
       this.searchComponent.reset();
@@ -487,7 +504,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addTag(tag: string) {
     if (tag.trim()) {
-      this.tagInputComponent.writeValue([ tag ]);
+      this.tagFilter.setValue([ tag ]);
     }
   }
 

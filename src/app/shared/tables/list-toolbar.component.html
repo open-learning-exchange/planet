@@ -5,7 +5,7 @@
     <ng-content select="[planetListToolbarEnd]"></ng-content>
     @if (compact()) {
       @if (searchTemplate) {
-        <button mat-icon-button (click)="searchOpen.set(!searchOpen())" [attr.aria-expanded]="searchOpen()" aria-label="Search" i18n-aria-label>
+        <button mat-icon-button (click)="searchOpen.set(!searchOpen())" [attr.aria-expanded]="searchOpen()" [attr.aria-controls]="searchRowId" aria-label="Search" i18n-aria-label>
           <mat-icon class="list-toolbar-dot" matBadge="•" [matBadgeHidden]="searchOpen() || !searchValue()" matBadgeColor="accent" matBadgeSize="small">search</mat-icon>
         </button>
       }
@@ -21,7 +21,7 @@
   </mat-toolbar-row>
   <ng-content select="[planetListToolbarRow]"></ng-content>
   @if (compact() && searchTemplate && searchOpen()) {
-    <mat-toolbar-row class="list-toolbar-search">
+    <mat-toolbar-row #searchRow class="list-toolbar-search" [id]="searchRowId">
       <ng-container *ngTemplateOutlet="searchTemplate; context: { $implicit: true }"></ng-container>
     </mat-toolbar-row>
   }

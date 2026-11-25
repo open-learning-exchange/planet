@@ -102,6 +102,11 @@ export class RequestsComponent implements OnInit, OnDestroy {
     this.filterData();
   }
 
+  resetFilter() {
+    this.searchValue = '';
+    this.shownStatusChange('pending');
+  }
+
   filterData(search = this.searchValue) {
     const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { name: planet.nameDoc.name } : {}) });
     const filterFunction = filterSpecificFieldsHybrid([ 'name' ], [ 'code' ]);
@@ -118,14 +123,14 @@ export class RequestsComponent implements OnInit, OnDestroy {
     this.filterData();
   }
 
-  getCommunityList(search = this.searchValue) {
+  getCommunityList() {
     forkJoin([
       this.managerService.getChildPlanets(),
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
       this.data = attachNamesToPlanets(data);
-      this.filterData(search);
+      this.filterData();
     }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting ${this.childType}`));
   }
 

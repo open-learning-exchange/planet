@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  Component, ContentChild, DestroyRef, TemplateRef, ViewChild, ViewEncapsulation, effect, input, output, signal
+  Component, ContentChild, DestroyRef, ElementRef, TemplateRef, ViewChild, ViewEncapsulation, afterRenderEffect, effect, input, output,
+  signal, viewChild
 } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -18,16 +19,20 @@ export interface ActiveFilter {
 export interface SearchCategory {
   label: string;
   options: { label: string, value: string }[];
+  chipPrefix?: string;
 }
 
 export const searchSelectionFilters = (
   categories: SearchCategory[],
   selection: Record<string, any>,
   change: (event: { category: string, items: string[] }) => void
-): ActiveFilter[] => categories.flatMap(({ label: category, options }) => (selection[category] || []).map((value: string) => ({
-  label: options.find(option => option.value === value).label,
-  clear: () => change({ category, items: selection[category].filter((item: string) => item !== value) })
-})));
+): ActiveFilter[] => categories.flatMap(({ label: category, options, chipPrefix }) => (selection[category] || []).map((value: string) => {
+  const label = options.find(option => option.value === value).label;
+  return {
+    label: chipPrefix ? `${chipPrefix}: ${label}` : label,
+    clear: () => change({ category, items: selection[category].filter((item: string) => item !== value) })
+  };
+}));
 
 @Component({
   selector: 'planet-list-toolbar',
@@ -40,10 +45,14 @@ export const searchSelectionFilters = (
 })
 export class ListToolbarComponent {
 
+  static nextId = 0;
+
   readonly activeFilters = input<ActiveFilter[]>([]);
   readonly searchValue = input('');
   readonly clearFilters = output<void>();
   readonly searchOpen = signal(false);
+  readonly searchRowId = `list-toolbar-search-${ListToolbarComponent.nextId++}`;
+  private readonly searchRow = viewChild('searchRow', { read: ElementRef });
   @ContentChild('listSearch') searchTemplate: TemplateRef<unknown>;
   @ContentChild('listFilters') filtersTemplate: TemplateRef<unknown>;
   @ViewChild('filtersSheet') filtersSheet: TemplateRef<unknown>;
@@ -61,6 +70,8 @@ export class ListToolbarComponent {
       }
     });
     destroyRef.onDestroy(() => this.closeFilters());
+    // The search row only exists after the next render, so its field gets focus from there
+    afterRenderEffect(() => this.searchRow()?.nativeElement.querySelector('input')?.focus());
   }
 
   openFilters() {

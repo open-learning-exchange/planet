@@ -12,10 +12,8 @@ planet-list-actions {
   }
 }
 
-// Lists render their toolbar buttons here, so they are made to read as menu rows
+// Courses and resources put their Change Collections field in the selection menu, so its button is made to read as a menu row
 .list-actions-menu .mat-mdc-menu-content {
-  --mat-button-text-label-text-size: var(--mat-menu-item-label-text-size, 16px);
-  --mat-button-text-label-text-weight: var(--mat-menu-item-label-text-weight, 400);
   --mat-button-outlined-label-text-size: var(--mat-menu-item-label-text-size, 16px);
   --mat-button-outlined-label-text-weight: var(--mat-menu-item-label-text-weight, 400);
   --mat-button-outlined-outline-color: transparent;
@@ -42,12 +40,5 @@ planet-list-actions {
     height: 48px;
     padding: 0 16px;
     border-radius: 0;
-
-    .mat-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-      margin: 0 16px 0 0;
-    }
   }
 }

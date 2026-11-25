@@ -18,8 +18,9 @@ import { resourceFileTypeValue } from '../resources.utils';
 export const resourcesSearchCategories = [
   { label: 'subject', options: constants.subjectList },
   { label: 'language', options: languages },
-  { label: 'medium', options: constants.media },
-  { label: 'fileType', options: constants.fileTypes, docValue: resourceFileTypeValue },
+  // Both have Text and Video options, so their chips name the category
+  { label: 'medium', options: constants.media, chipPrefix: $localize`Medium` },
+  { label: 'fileType', options: constants.fileTypes, docValue: resourceFileTypeValue, chipPrefix: $localize`File Type` },
   { label: 'level', options: constants.levelList }
 ];
 

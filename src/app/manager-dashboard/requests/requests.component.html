@@ -1,4 +1,4 @@
-<planet-list-toolbar [activeFilters]="activeFilters" [searchValue]="searchValue" (clearFilters)="shownStatusChange('pending')">
+<planet-list-toolbar [activeFilters]="activeFilters" [searchValue]="searchValue" (clearFilters)="resetFilter()">
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>

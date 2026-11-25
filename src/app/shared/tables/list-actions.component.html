@@ -3,19 +3,16 @@
     <button mat-icon-button (click)="clearSelection.emit()" aria-label="Clear selection" i18n-aria-label><mat-icon>close</mat-icon></button>
     <span class="margin-lr-3" i18n>{{ selected() }} selected</span>
     <span class="toolbar-fill"></span>
-    @if (inline()) {
-      <ng-container *ngTemplateOutlet="actionsTemplate; context: { $implicit: false }"></ng-container>
+    @if (menu()) {
+      <button mat-icon-button [matMenuTriggerFor]="menu()" aria-label="Actions for selected" i18n-aria-label><mat-icon>more_vert</mat-icon></button>
     } @else {
-      <button mat-icon-button [matMenuTriggerFor]="actionsMenu" aria-label="Actions for selected" i18n-aria-label><mat-icon>more_vert</mat-icon></button>
-      <mat-menu #actionsMenu="matMenu" class="list-actions-menu">
-        <ng-container *ngTemplateOutlet="actionsTemplate; context: { $implicit: true }"></ng-container>
-      </mat-menu>
+      <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
     }
   }
   <span class="list-actions-idle" [class.list-actions-hidden]="selecting()">
     <ng-content></ng-content>
     @if (!compact()) {
-      <ng-container *ngTemplateOutlet="actionsTemplate; context: { $implicit: false }"></ng-container>
+      <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
     }
   </span>
 </mat-toolbar>
