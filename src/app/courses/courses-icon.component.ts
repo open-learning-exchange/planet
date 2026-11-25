@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
@@ -8,6 +8,7 @@ export const courseIcons = {
   attachFile: 'attach_file',
   description: 'description',
   done: 'done',
+  lock: 'lock',
   rotateRight: 'rotate_right'
 } as const;
 
@@ -32,6 +33,16 @@ export type CourseIcon = typeof courseIcons[keyof typeof courseIcons] | '';
         @case (courseIcons.done) {
           <span i18n-matTooltip matTooltip="This step has been completed."><mat-icon>done</mat-icon></span>
         }
+        @case (courseIcons.lock) {
+          <span
+            role="img"
+            i18n-aria-label
+            aria-label="Pass previous test to unlock."
+            i18n-matTooltip
+            matTooltip="Pass previous test to unlock.">
+            <mat-icon>lock</mat-icon>
+          </span>
+        }
         @case (courseIcons.rotateRight) {
           <span i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
         }
@@ -44,5 +55,16 @@ export class CoursesIconComponent {
 
   courseIcons = courseIcons;
   @Input() icon: CourseIcon = '';
+  @ViewChild(MatTooltip) tooltip?: MatTooltip;
+
+  showTooltipOnKeyboardFocus(event: FocusEvent) {
+    if ((event.currentTarget as HTMLElement)?.matches(':focus-visible')) {
+      this.tooltip?.show();
+    }
+  }
+
+  hideTooltip() {
+    this.tooltip?.hide();
+  }
 
 }
