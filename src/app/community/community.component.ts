@@ -443,7 +443,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
     const councillorUsers = users
       .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1);
-    // Local councillors' images are on their _users docs; only another planet's councillors need the replicated copies
     const attachmentIds = planetCode === this.stateService.configuration.code ? [] : councillorUsers
       .map(user => `org.couchdb.user:${user.doc.name}@${user.doc.planetCode}`)
       .filter(id => !!id);
