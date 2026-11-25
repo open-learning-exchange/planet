@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterLink, RouterStateSnapshot } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Observable, Subject, defer } from 'rxjs';
-import { takeUntil, switchMap, take, filter, map, finalize } from 'rxjs/operators';
+import { Observable, Subject, combineLatest, defer, of } from 'rxjs';
+import { takeUntil, switchMap, take, filter, map, finalize, catchError } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -17,6 +17,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '@shared/auth/user.service';
+import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
 import { trackByIndex } from '@shared/tables/table.helpers';
@@ -120,12 +121,22 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
         this.canManage = this.coursesService.canManageCourse(this.courseDetail, { readOnly: this.parent });
-        return this.stateService.getCouchState('exams', 'local');
+        return combineLatest([
+          this.stateService.getCouchState('exams', 'local'),
+          this.getUngradedExamParentIds(course)
+        ]);
       }),
       takeUntil(this.onDestroy$)
-    ).subscribe((exams) => {
+    ).subscribe(([ exams, ungradedIds ]: [ any[], Set<string> ]) => {
       const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
-      this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
+      this.courseDetail.steps = this.courseDetail.steps.map(step => {
+        const exam = stepExam(step);
+        return {
+          ...step,
+          exam,
+          requiresGrading: !step.progress?.passed && !!exam?._id && ungradedIds.has(`${exam._id}@${this.courseDetail._id}`)
+        };
+      });
     }, () => this.isLoading = false);
     this.coursesService.courseTagsListener$(this.parent).pipe(
       filter(({ courseId }) => courseId === this.courseDetail._id),
@@ -143,6 +154,23 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  private getUngradedExamParentIds(course: any): Observable<Set<string>> {
+    const userName = this.userService.get()?.name;
+    const parentIds = (course?.steps || [])
+      .filter(step => step.exam?._id)
+      .map(step => `${step.exam._id}@${course._id}`);
+    if (this.parent || !this.isUserEnrolled || !userName || parentIds.length === 0 || !this.submissionsService?.getSubmissions) {
+      return of(new Set<string>());
+    }
+    return this.submissionsService.getSubmissions(findDocuments(
+      { type: 'exam', status: 'requires grading', 'user.name': userName, parentId: { $in: parentIds } },
+      [ 'parentId' ]
+    )).pipe(
+      map((docs: any[]) => new Set(docs.map(doc => doc.parentId))),
+      catchError(() => of(new Set<string>()))
+    );
+  }
+
   setStepButtonStatus(step, stepNum, stepClickedNum = stepNum, getPrevious = true) {
     if (stepNum > 0 && getPrevious) {
       const previousStep = this.courseDetail.steps[stepNum - 1];
@@ -150,7 +178,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     }
     if (stepHasExam(step) && step.submission === undefined) {
       this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
-        this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
+        this.courseDetail.steps[stepNum] = { ...this.courseDetail.steps[stepNum], ...submissionStatus };
         this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
       });
       return;
