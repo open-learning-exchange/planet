@@ -19,6 +19,7 @@ import { LabelComponent } from '@shared/ui/label.component';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { AvatarComponent } from '@shared/ui/avatar.component';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
@@ -56,7 +57,8 @@ import {
     MatMenuItem,
     SlicePipe,
     TimeAgoPipe,
-    FullNamePipe
+    FullNamePipe,
+    AvatarComponent
   ]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {

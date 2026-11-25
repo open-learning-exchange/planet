@@ -119,7 +119,7 @@
               @switch (element.userStatus) {
                 @case ('member') {
                   @if (!element.isLeader) {
-                    <button mat-raised-button color="primary" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
+                    <button mat-raised-button color="warn" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
                       <mat-icon>remove_circle</mat-icon>
                       <label i18n> Leave </label>
                     </button>

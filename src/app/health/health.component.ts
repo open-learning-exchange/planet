@@ -23,10 +23,10 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 import { LabelComponent } from '@shared/ui/label.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
+import { AvatarComponent } from '@shared/ui/avatar.component';
 
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
-import { environment } from '../../environments/environment';
 import { conditionAndTreatmentFields } from './health.constants';
 
 @Component({
@@ -56,7 +56,8 @@ import { conditionAndTreatmentFields } from './health.constants';
     MatRow,
     DatePipe,
     TruncateTextPipe,
-    FullNamePipe
+    FullNamePipe,
+    AvatarComponent
   ]
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -68,8 +69,6 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   eventTable = new MatTableDataSource();
   displayedColumns: string[] = [];
   additionalInfo: any = {};
-  imageSrc = '';
-  urlPrefix = environment.couchAddress + '/_users/';
   initializeEvents = true;
   isWaitingForEvents = true;
   isOwnUser = true;
@@ -115,9 +114,6 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.healthService.getHealthData(this.userDetail._id).pipe(
       switchMap(([ { profile, events, userKey } ]: any[]) => {
         this.userDetail = { ...profile, ...this.userDetail };
-        if (this.userDetail._attachments) {
-          this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;
-        }
         this.healthDetail = profile;
         this.events = events || [];
         return userKey ? this.couchService.findAll('health', findDocuments({ profileId: userKey })) : of([]);

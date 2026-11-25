@@ -52,12 +52,14 @@
         }
         <ng-container matListItemMeta>
           @if (taskView.assignees.length === 1 && taskView.assignee; as assignee) {
-            <img class="task-avatar"
-              (click)="openMemberDialog(assignee); $event.stopPropagation()"
-              (error)="useDefaultAvatar(taskView)"
-              alt="{{assignee | assigneeName}}"
-              matTooltip="{{assignee | assigneeName}}"
-              [src]="taskView.avatarSrc">
+            @if (taskView.avatarAttachment) {
+              <planet-avatar class="task-avatar" [username]="assignee.name" [planetCode]="assignee.userPlanetCode"
+                [attachment]="taskView.avatarAttachment" [alt]="assignee | assigneeName" [matTooltip]="assignee | assigneeName"
+                (click)="openMemberDialog(assignee); $event.stopPropagation()"></planet-avatar>
+            } @else {
+              <img class="task-avatar" src="assets/image.png" [alt]="assignee | assigneeName" [matTooltip]="assignee | assigneeName"
+                (click)="openMemberDialog(assignee); $event.stopPropagation()">
+            }
           }
           @if (taskView.assignees.length > 1) {
             <button mat-icon-button class="view-assignees km-view-assignees" matTooltip="View Assignees" i18n-matTooltip
