@@ -59,10 +59,11 @@
   <div class="view-container">
     <div class="profile-container">
       <div class="profile-image-section">
-        @if (userDetail.name || urlName) {
-          <planet-avatar [username]="userDetail.name || urlName" [planetCode]="planetCode" imgClass="profile-image-large"></planet-avatar>
+        @if (userDetail.name && hasAvatarToLoad) {
+          <planet-avatar class="profile-image-large" [username]="userDetail.name" [planetCode]="planetCode"
+            [attachment]="userDetail._attachments?.img"></planet-avatar>
         } @else {
-          <img class="profile-image-large" src="assets/image.png">
+          <img class="profile-image-large" src="assets/image.png" alt="">
         }
       </div>
       <mat-list class="profile-list-lt">

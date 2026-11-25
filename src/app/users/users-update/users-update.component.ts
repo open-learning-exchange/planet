@@ -21,6 +21,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 
 import { FileUploadComponent } from '@shared/forms/file-upload.component';
+import { avatarUrl } from '@shared/ui/avatar.component';
 import { UserService } from '@shared/auth/user.service';
 import { languages } from '@shared/language/languages';
 import { StateService } from '@shared/state.service';
@@ -33,7 +34,6 @@ import { PlanetNumberValidatorDirective } from '@shared/forms/planet-number-vali
 import { SubmitDirective } from '@shared/dialogs/submit.directive';
 import { genderOptions, parseGender } from '@shared/demographics/gender.constants';
 
-import { environment } from '../../../environments/environment';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { educationLevel } from '../users.constants';
@@ -98,11 +98,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   genderOptions = genderOptions;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup<UsersUpdateFormGroup>;
-  currentImgKey: string | null = null;
   currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
   uploadImage = false;
-  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   redirectUrl = '/';
   file: string | null = null;
@@ -154,10 +152,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         }
         this.editForm.patchValue(this.mapUserToFormValue(data));
         this.initialFormValues = { ...this.editForm.getRawValue() };
-        if (data._attachments) {
-          // If multiple attachments this could break? Entering the if-block as well
-          this.currentImgKey = Object.keys(data._attachments)[0];
-          this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
+        if (data._attachments?.img) {
+          this.currentProfileImg = avatarUrl('_users', 'org.couchdb.user:' + this.urlName, data._attachments.img.digest);
           this.uploadImage = true;
           this.originalAttachments = { ...data._attachments };
         }
@@ -258,16 +254,14 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     // Replacing start ['data:'] of content type string
     const contentType: string = imgDataArr[0].replace(/data:/, '');
     const data: string = imgDataArr[1];
-    // Create attachment object
-    const attachments: Record<string, UserAttachment> = {};
-    // Alter between two possible keys for image element to ensure database updates
-    const imgKey: string = this.currentImgKey === 'img' ? 'img_' : 'img';
-    attachments[imgKey] = {
-      content_type: contentType,
-      data
+    return {
+      _attachments: {
+        img: {
+          content_type: contentType,
+          data
+        }
+      }
     };
-
-    return { _attachments: attachments };
   }
 
   goBack() {
@@ -293,13 +287,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   deleteImageAttachment() {
-    if (!this.currentImgKey) {
+    if (!this.originalAttachments?.img) {
       return;
     }
 
-    if (this.user._attachments && this.user._attachments[this.currentImgKey]) {
-      delete this.user._attachments[this.currentImgKey];
-    }
+    delete this.user._attachments.img;
 
     this.currentProfileImg = 'assets/image.png';
     this.removeImageFile();
@@ -311,8 +303,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   resetSelection() {
     if (this.attachmentDeleted && this.originalAttachments) {
       this.user._attachments = { ...this.originalAttachments };
-      this.currentImgKey = Object.keys(this.originalAttachments)[0];
-      this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
+      this.currentProfileImg = avatarUrl('_users', 'org.couchdb.user:' + this.urlName, this.originalAttachments.img?.digest);
       this.uploadImage = true;
       this.attachmentDeleted = false;
       this.previewSrc = this.currentProfileImg;

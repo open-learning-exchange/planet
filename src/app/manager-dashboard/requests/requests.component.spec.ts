@@ -79,4 +79,26 @@ describe('RequestsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('keeps network panels in place while searching and hides networks without matches', () => {
+    const planet = (name: string) => ({ doc: { _id: name, name, code: name, registrationRequest: 'accepted' } });
+    component.data = [ planet('kibera'), planet('kisumu'), planet('xela') ];
+    component.hubs = [
+      { _id: 'kenya', name: 'Kenya', spokes: [ 'kibera', 'kisumu' ] },
+      { _id: 'highlands', name: 'Highlands', spokes: [ 'xela' ] }
+    ];
+    component.shownStatusChange('accepted');
+    fixture.detectChanges();
+    const kenya = fixture.nativeElement.querySelector('mat-expansion-panel');
+
+    component.requestListFilter('k');
+    fixture.detectChanges();
+    component.requestListFilter('ki');
+    fixture.detectChanges();
+
+    const titles = Array.from(fixture.nativeElement.querySelectorAll('mat-panel-title'), (title: HTMLElement) => title.textContent.trim());
+    expect(titles).toEqual([ 'Kenya' ]);
+    expect(fixture.nativeElement.querySelector('mat-expansion-panel')).toBe(kenya);
+    expect(kenya.classList).toContain('mat-expanded');
+  });
 });

@@ -98,11 +98,10 @@ export class LoginTasksService {
 
   private createParentSession({ name, password }: { name: string, password: string }) {
     const opts = { withCredentials: true, domain: this.stateService.configuration.parentDomain };
-    const isRegisteredAdmin = name === this.stateService.configuration.adminName;
     // Read before the request: the user may have changed by the time the parent answers
     const { _id, _rev, _attachments, ...user } = { ...this.userService.get(), ...this.userService.credentials };
     return this.couchService.post('_session', { name, password }, opts).pipe(
-      catchError(error => error.status === 401 && isRegisteredAdmin ?
+      catchError(error => error.status === 401 ?
         this.restoreParentAccount(name, user).pipe(
           switchMap(() => this.couchService.post('_session', { name, password }, opts)),
           catchError(() => throwError(error))

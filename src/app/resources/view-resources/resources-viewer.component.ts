@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { switchMap, takeUntil } from 'rxjs/operators';
-import { Subject, Subscription } from 'rxjs';
+import { catchError, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, Subscription, of } from 'rxjs';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -18,10 +18,10 @@ import { UserService } from '@shared/auth/user.service';
 import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '@shared/export/csv.service';
+import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { couchAttachmentPath } from '@shared/utils';
 
 import { environment } from '../../../environments/environment';
-import { ResourcesService } from '../resources.service';
 import { formatResourceAttachmentSize, resourceAttachmentFilename } from '../resources.utils';
 
 @Component({
@@ -31,21 +31,20 @@ import { formatResourceAttachmentSize, resourceAttachmentFilename } from '../res
   imports: [
     NgClass, NgTemplateOutlet, MatIconButton, MatIcon, MatAnchor, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
     MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatSort,
-    MatSortHeader, MatPaginator
+    MatSortHeader, MatPaginator, PlanetLoadingSpinnerComponent
   ]
 })
 export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   @Input() resourceId: string;
-  @Input() fetchRating = true;
   @Input() isDialog = false;
   @Output() resourceUrl = new EventEmitter<any>();
+  isLoading = true;
+  resourceMissing = false;
   mediaType: string;
   contentType: string;
   resourceSrc: string;
   formattedFileSize = '';
-  shownResourceId: string;
-  resource: any;
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
   csvColumns: string[] = [];
@@ -58,6 +57,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   private sortRef: MatSort;
   private paginatorRef: MatPaginator;
   private csvLoadSub: Subscription;
+  private resourceIds = new Subject<string>();
   private onDestroy$ = new Subject<void>();
   @ViewChild('pdfViewer') pdfViewer: ElementRef;
   @ViewChild(MatSort) set sort(sort: MatSort) {
@@ -71,7 +71,6 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   constructor(
     private sanitizer: DomSanitizer,
-    private resourcesService: ResourcesService,
     private route: ActivatedRoute,
     private stateService: StateService,
     private userService: UserService,
@@ -80,22 +79,24 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private router: Router,
     private challengesProgressService: ChallengesProgressService
   ) {
-    this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
-      .subscribe((resources) => {
-        if (this.shownResourceId !== this.resourceId) {
-          this.resource = resources.find((r: any) => r._id === this.resourceId);
-          if (this.resource) {
-            this.shownResourceId = this.resourceId;
-            this.setResource(this.resource.doc);
-          } else {
-            this.formattedFileSize = '';
-          }
-        }
-      });
+    const opts = this.parent ? { domain: this.stateService.configuration.parentDomain } : {};
+    this.resourceIds.pipe(
+      switchMap(resourceId => this.couchService.get(`resources/${encodeURIComponent(resourceId)}`, opts).pipe(
+        catchError(() => of(undefined))
+      )),
+      takeUntil(this.onDestroy$)
+    ).subscribe(resource => {
+      this.isLoading = false;
+      this.resourceMissing = !resource;
+      if (resource) {
+        this.setResource(resource);
+      }
+    });
   }
 
   ngOnChanges() {
-    this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
+    this.isLoading = true;
+    this.resourceIds.next(this.resourceId);
   }
 
   get urlPrefix() {

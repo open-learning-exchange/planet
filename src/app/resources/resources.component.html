@@ -194,10 +194,34 @@
               }
             }
           </mat-chip-set>
+          <div class="card-meta">
+            @if (element.doc.medium) {
+              <span>{{ element.doc.medium }}</span>
+            }
+            @if (element.doc.language) {
+              <span>{{ element.doc.language }}</span>
+            }
+            @if (element.doc.level) {
+              <span>{{ formatLevels(element.doc.level) }}</span>
+            }
+          </div>
           <div class="content">
             <planet-markdown-preview [content]="resourceDescription(element)" [imageSource]="parent ? 'parent' : 'local'" [expanded]="isExpanded(element)" (expandedChange)="toggleRow(element)"></planet-markdown-preview>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
+          @if (element.rating.totalRating) {
+            <span class="card-summary"><mat-icon [inline]="true">star</mat-icon>{{ (element.rating.rateSum / element.rating.totalRating).toFixed(1) }} ({{ element.rating.totalRating }})</span>
+          }
+          <button mat-icon-button type="button" class="card-toggle" [attr.aria-expanded]="isExpanded(element)" i18n-aria-label aria-label="Full description" (click)="toggleRow(element)">
+            <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+          </button>
+          @if (!parent && !isDialog && myView !== 'myPersonals') {
+            @if (element.libraryInfo) {
+              <a mat-flat-button color="primary" class="card-main-action" [routerLink]="['view', element._id]" i18n>Open</a>
+            } @else {
+              <button mat-flat-button color="primary" type="button" class="card-main-action" (click)="libraryToggle([ element._id ], 'add')" i18n>Add to myLibrary</button>
+            }
+          }
           @if (!parent && !isDialog) {
             <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
               <mat-icon>more_vert</mat-icon>
