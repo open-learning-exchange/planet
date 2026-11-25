@@ -6,7 +6,7 @@ import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -35,6 +35,7 @@ import { MyPlanetTableComponent } from './myplanet-table.component';
     MatToolbar,
     MatToolbarRow,
     MatButton,
+    MatAccordion,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
