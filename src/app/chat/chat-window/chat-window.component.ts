@@ -46,8 +46,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() conversations: any[] | null = null;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
+  @ViewChild('submitButton', { read: ElementRef }) submitButton: ElementRef<HTMLButtonElement>;
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
+  isSubmitting = false;
   streaming: boolean;
   disabled = false;
   clearChat = true;
@@ -217,6 +219,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         error: true
       };
       this.spinnerOn = true;
+      this.isSubmitting = false;
       this.promptForm.controls.prompt.setValue('');
     });
   }
@@ -246,8 +249,18 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit() {
     this.spinnerOn = true;
+    this.isSubmitting = false;
     this.promptForm.controls.prompt.setValue('');
     this.chatService.sendNewChatAddedSignal();
+  }
+
+  onEnter(event: KeyboardEvent) {
+    if (event.isComposing || window.matchMedia('(pointer: coarse)').matches) {
+      return;
+    }
+    event.preventDefault();
+    // Not onSubmit(): the spinner opens only on a click, and a disabled button ignores the click.
+    this.submitButton.nativeElement.click();
   }
 
   onSubmit() {
@@ -259,6 +272,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
+    this.isSubmitting = true;
     const content = this.promptForm.controls.prompt.value;
     this.data = { ...this.data, content, aiProvider: this.provider };
 
@@ -285,6 +299,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         (error: any) => {
           this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
           this.spinnerOn = true;
+          this.isSubmitting = false;
           this.promptForm.controls.prompt.setValue('');
         }
       );
