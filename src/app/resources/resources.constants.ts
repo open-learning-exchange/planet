@@ -39,7 +39,8 @@ export const media = [
   { label: $localize`Text`, value: 'Text' },
   { label: $localize`Graphic/Pictures`, value: 'Graphic/Pictures' },
   { label: $localize`Audio/Music/Book`, value: 'Audio/Music/Book' },
-  { label: $localize`Video`, value: 'Video' }
+  { label: $localize`Video`, value: 'Video' },
+  { label: $localize`Game`, value: 'Game'}
 ];
 
 export const openWith = [
