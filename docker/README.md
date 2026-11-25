@@ -88,3 +88,38 @@ docker-compose -f planet.yml -p planet down
 ```
 
 Remember when your containers active you can always look to your containers logs to see whats going on on the background.
+
+### Nation proxy
+
+A Nation, and a cloud clone of a Community, runs a TLS proxy container (nginx) in front of these containers, configured in `/srv/<name>/proxy/app.conf` on the host. It sends `/db/` straight to CouchDB and `/ml/` straight to the gateway, so the settings in `planet/default.conf.template` don't reach those paths, and everything else reaches the planet container through a `location /` that speaks HTTP/1.0, passes no WebSocket upgrade and waits nginx's default 60 s. The proxy needs its own copy of these:
+
+* `/db/`: Chrome blocks the Nation's session cookie when a Community is opened over http, by IP or on `.local`, because that's a different site. This marks the cookie for cross-site use and partitions it, so the cookie a Community's pages get is sent only from that Community's pages and never from another site the user opens:
+
+  ```nginx
+  proxy_cookie_path / "/; Secure; SameSite=None; Partitioned";
+  ```
+
+  It stays out of the planet template because `Secure` cookies need https, and Communities serve plain http with no proxy.
+* `/api/`: chat streams over a WebSocket and can wait up to the gateway's 120 s AI deadline, so it gets its own block. It goes to the planet container, whose template decides how the path reaches the gateway:
+
+  ```nginx
+  location /api/ {
+    proxy_pass http://planet:80;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+    proxy_read_timeout 150s;
+    client_max_body_size 1024M;
+  }
+  ```
+* `/ml/`: `proxy_read_timeout 150s;`, as in the template, for chat until it moves to `/api/`.
+
+`app.conf` is mounted as a single file, so edit it in place (an editor that writes a new file leaves the running proxy on the old one), then check and load it:
+
+```
+docker exec <name>-proxy-1 nginx -t
+docker exec <name>-proxy-1 nginx -s reload
+```
+
+or let the next `docker-compose down` and `up` pick it up.
