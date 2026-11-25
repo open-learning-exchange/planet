@@ -17,7 +17,7 @@ vi.mock('./db.utils', async (importOriginal) => ({
   'fetchResourceAttachments': mocks.fetchAttachments,
   'streamResourceAttachment': mocks.streamAttachment
 }));
-vi.mock('./text-extraction.utils', () => ({ 'extractTextFromDocument': mocks.extractText }));
+vi.mock('./text-extraction.utils', () => ({ 'extractPdfText': mocks.extractText }));
 
 const provider = (name: ProviderName) => ({
   name,
@@ -187,6 +187,18 @@ describe('reference text', () => {
     await aiChatNonStream(history, provider('openai'), '', courseContext);
 
     expect(mocks.extractText).not.toHaveBeenCalled();
+    expect(mocks.responsesCreate.mock.calls[0][0].input[0].content).toContain('Course step: Water');
+  });
+
+  it('skips a PDF too large to download', async () => {
+    mocks.fetchAttachments.mockResolvedValue({
+      'scan.pdf': { 'content_type': 'application/pdf', 'digest': 'md5-a', 'length': 30 * 1024 * 1024 }
+    });
+    vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    await aiChatNonStream(history, provider('openai'), '', courseContext);
+
+    expect(mocks.streamAttachment).not.toHaveBeenCalled();
     expect(mocks.responsesCreate.mock.calls[0][0].input[0].content).toContain('Course step: Water');
   });
 
