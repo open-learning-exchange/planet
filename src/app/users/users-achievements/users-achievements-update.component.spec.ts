@@ -27,10 +27,22 @@ describe('UsersAchievementsUpdateComponent', () => {
   let fixture: ComponentFixture<UsersAchievementsUpdateComponent>;
   let dialogMock: any;
   let dialogRefMock: any;
+  let couchServiceMock: any;
+  let userServiceMock: any;
 
   beforeEach(async () => {
     dialogRefMock = { close: vi.fn() };
     dialogMock = { open: vi.fn().mockImplementation(() => dialogRefMock), openDialogs: [] };
+    couchServiceMock = {
+      get: vi.fn().mockReturnValue(of({})),
+      post: vi.fn().mockReturnValue(of({})),
+      putDocumentWithFiles: vi.fn().mockReturnValue(of({}))
+    };
+    userServiceMock = {
+      minBirthDate: new Date(1900, 0, 1),
+      get: vi.fn().mockReturnValue({ _id: 'user1', name: 'testuser' }),
+      updateUser: vi.fn().mockReturnValue(of({}))
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -40,7 +52,7 @@ describe('UsersAchievementsUpdateComponent', () => {
       providers: [
         provideNativeDateAdapter(),
         { provide: MatDialog, useValue: dialogMock },
-        { provide: CouchService, useValue: { get: vi.fn().mockReturnValue(of({})) } },
+        { provide: CouchService, useValue: couchServiceMock },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -51,13 +63,7 @@ describe('UsersAchievementsUpdateComponent', () => {
             }
           }
         },
-        {
-          provide: UserService,
-          useValue: {
-            minBirthDate: new Date(1900, 0, 1),
-            get: vi.fn().mockReturnValue({ _id: 'user1', name: 'testuser' })
-          }
-        },
+        { provide: UserService, useValue: userServiceMock },
         {
           provide: UsersAchievementsService,
           useValue: {
@@ -161,5 +167,19 @@ describe('UsersAchievementsUpdateComponent', () => {
     expect(component.resumeMarkedForDeletion).toBe(true);
     expect(component.currentResumeFileName).toBe('');
     expect(component.resumeFile).toBe(pendingResume);
+  });
+
+  it('saves a new resume with its achievements doc in one write, then updates the user', () => {
+    const resume = new File([ '%PDF' ], 'my cv.pdf', { type: 'application/pdf' });
+    component.resumeFile = resume;
+    vi.spyOn(component, 'goBack').mockImplementation(() => undefined);
+
+    component.updateAchievements(component.docInfo, component.editForm.value, {});
+
+    expect(couchServiceMock.putDocumentWithFiles).toHaveBeenCalledWith(
+      'achievements', expect.objectContaining({ _id: 'user1@undefined', resumeFileName: 'my cv.pdf' }), { 'resume.pdf': resume }
+    );
+    expect(couchServiceMock.post).not.toHaveBeenCalled();
+    expect(userServiceMock.updateUser).toHaveBeenCalledTimes(1);
   });
 });
