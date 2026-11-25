@@ -56,7 +56,7 @@ describe('PlanetMarkdownComponent', () => {
   it('renders strikethroughs and hard line breaks', () => {
     const fixture = render({ content: '~~deleted~~\n\nFirst   \nSecond' });
 
-    expect(fixture.nativeElement.querySelector('del')?.textContent).toBe('deleted');
+    expect(fixture.nativeElement.querySelector('s')?.textContent).toBe('deleted');
     expect(fixture.nativeElement.querySelector('br')).toBeTruthy();
   });
 
@@ -103,6 +103,13 @@ const config = {
 
     expect(heading.id).toBe('myheading');
     expect(fixture.nativeElement.querySelector('.markdown-content a')?.getAttribute('href')).toBe(`#${heading.id}`);
+  });
+
+  it('matches fragment links to headings outside ASCII', () => {
+    const fixture = render({ content: '# परिचय भाग\n\n[jump](#परिचय-भाग)' });
+
+    expect(fixture.nativeElement.querySelector('.markdown-content a')?.getAttribute('href'))
+      .toBe(`#${fixture.nativeElement.querySelector('h1').id}`);
   });
 
   it('does not rebuild code-block controls when an unrelated input changes', () => {
