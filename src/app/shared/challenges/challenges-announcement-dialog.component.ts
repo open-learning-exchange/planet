@@ -13,7 +13,7 @@ import { ChallengesService, PlanetChallenge } from './challenges.service';
       @if (coverImageUrl) {
         <img
           [src]="coverImageUrl"
-          [alt]="challenge.title || 'Challenge banner'"
+          [alt]="challenge.title"
           class="announcement-banner"
         />
       }
