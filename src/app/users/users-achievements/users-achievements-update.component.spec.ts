@@ -7,7 +7,7 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { CouchService } from '@shared/database/couchdb.service';
@@ -169,8 +169,11 @@ describe('UsersAchievementsUpdateComponent', () => {
     expect(component.resumeFile).toBe(pendingResume);
   });
 
+  const resume = new File([ '%PDF' ], 'my cv.pdf', { type: 'application/pdf' });
+
   it('saves a new resume with its achievements doc in one write, then updates the user', () => {
-    const resume = new File([ '%PDF' ], 'my cv.pdf', { type: 'application/pdf' });
+    const save = new Subject<any>();
+    couchServiceMock.putDocumentWithFiles.mockReturnValue(save);
     component.resumeFile = resume;
     vi.spyOn(component, 'goBack').mockImplementation(() => undefined);
 
@@ -180,6 +183,19 @@ describe('UsersAchievementsUpdateComponent', () => {
       'achievements', expect.objectContaining({ _id: 'user1@undefined', resumeFileName: 'my cv.pdf' }), { 'resume.pdf': resume }
     );
     expect(couchServiceMock.post).not.toHaveBeenCalled();
+    expect(userServiceMock.updateUser).not.toHaveBeenCalled();
+
+    save.next({});
+
     expect(userServiceMock.updateUser).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves the profile unsaved when the achievements write fails', () => {
+    couchServiceMock.putDocumentWithFiles.mockReturnValue(throwError(() => ({ status: 500 })));
+    component.resumeFile = resume;
+
+    component.updateAchievements(component.docInfo, component.editForm.value, {});
+
+    expect(userServiceMock.updateUser).not.toHaveBeenCalled();
   });
 });
