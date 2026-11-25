@@ -18,7 +18,6 @@ export const loadZipFile = async (file: Blob): Promise<JSZip> => {
   return new jsZip().loadAsync(file);
 };
 
-// __MACOSX/ holds Finder's resource forks, which are never opened
 export const zipFileNames = (zip: JSZip): string[] => Object.keys(zip.files)
   .filter(path => !zip.files[path].dir && path.indexOf('DS_Store') === -1 && !path.startsWith('__MACOSX/'));
 

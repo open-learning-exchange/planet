@@ -8,8 +8,7 @@ import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { environment } from '../../../environments/environment';
 import { CouchService } from './couchdb.service';
 
-// One character per byte, so binary parts compare exactly
-const readBytes = (blob: Blob) => new Promise<string>((resolve) => {
+const readBinaryString = (blob: Blob) => new Promise<string>((resolve) => {
   const reader = new FileReader();
   reader.onload = () => resolve(String.fromCharCode(...new Uint8Array(reader.result as ArrayBuffer)));
   reader.readAsArrayBuffer(blob);
@@ -74,7 +73,7 @@ describe('CouchService', () => {
     httpMock.expectOne(request => request.url.endsWith('/time')).flush(1000);
     const put = httpMock.expectOne(request => request.method === 'PUT');
     const boundary = put.request.headers.get('Content-Type').match(/^multipart\/related; boundary="(.+)"$/)[1];
-    const [ , docPart, ...fileParts ] = (await readBytes(put.request.body)).split(`--${boundary}`);
+    const [ , docPart, ...fileParts ] = (await readBinaryString(put.request.body)).split(`--${boundary}`);
     return { url: put.request.url, sentDoc: JSON.parse(docPart.split('\r\n\r\n')[1]), fileParts };
   };
 
