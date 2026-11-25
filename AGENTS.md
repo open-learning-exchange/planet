@@ -35,7 +35,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 ## Architecture
 
-Planet Learning is an Angular 21 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
+Planet Learning is an Angular 21 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace. In production the browser's signed-in Nation requests go through the Community nginx at `/parent/<host>.ole.org/` (`parentAddress`), so the Nation's cookie is first-party; build any new Nation URL that needs the Nation session with `planetAddress()` from `couchdb.service.ts`, not `parentProtocol://parentDomain`.
 
 ### Repository layout
 

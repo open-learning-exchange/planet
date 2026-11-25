@@ -8,6 +8,7 @@ export const environment = {
   centerAddress: 'planet-center-address',
   centerProtocol: 'https',
   parentProtocol: 'planet-parent-protocol',
+  parentAddress: window.location.origin + '/parent',
   upgradeAddress: window.location.origin + '/upgrade',
   syncAddress: 'planet-sync-address'
 };

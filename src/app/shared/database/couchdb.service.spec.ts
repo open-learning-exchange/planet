@@ -164,3 +164,39 @@ describe('CouchService findAll', () => {
     expect(error.status).toBe(500);
   });
 });
+
+describe('CouchService parent requests', () => {
+  const forward = window.location.origin + '/parent';
+  let couchService: CouchService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [ provideHttpClient(), provideHttpClientTesting(), { provide: PlanetMessageService, useValue: {} } ]
+    });
+    couchService = TestBed.inject(CouchService);
+    httpMock = TestBed.inject(HttpTestingController);
+    environment.parentAddress = forward;
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+    environment.parentAddress = '';
+  });
+
+  it('sends signed-in ole.org parent requests through the /parent/ forward', () => {
+    couchService.post('_session', {}, { domain: 'Nation.Ole.Org/db' }).subscribe();
+
+    expect(httpMock.expectOne(`${forward}/nation.ole.org/db/_session`).request.withCredentials).toBe(true);
+  });
+
+  it('sends anonymous parent requests, other parents and planets given a protocol straight to them', () => {
+    couchService.put('_users/org.couchdb.user:bob', {}, { domain: 'nation.ole.org/db', withCredentials: false }).subscribe();
+    couchService.get('courses', { domain: 'nation.example/db' }).subscribe();
+    couchService.get('_all_dbs', { domain: 'clone.ole.org/db', protocol: 'http' }).subscribe();
+
+    httpMock.expectOne('https://nation.ole.org/db/_users/org.couchdb.user:bob');
+    httpMock.expectOne('https://nation.example/db/courses');
+    httpMock.expectOne('http://clone.ole.org/db/_all_dbs');
+  });
+});
