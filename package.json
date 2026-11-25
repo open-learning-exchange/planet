@@ -73,7 +73,7 @@
     "@angular-eslint/eslint-plugin-template": "21.4.0",
     "@angular-eslint/schematics": "21.4.0",
     "@angular-eslint/template-parser": "21.4.0",
-    "@angular/build": "^21.2.23",
+    "@angular/build": "^21.2.31",
     "@angular/cli": "21.2.23",
     "@angular/compiler-cli": "21.2.22",
     "@angular/language-service": "21.2.22",
@@ -99,7 +99,7 @@
     "sass-lint": "^1.13.1",
     "ts-node": "~8.5.4",
     "typescript": "~5.9.3",
-    "vite": "^7.3.6",
+    "vite": "^7.3.8",
     "vitest": "^4.1.11"
   },
   "overrides": {
