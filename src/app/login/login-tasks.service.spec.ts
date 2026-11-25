@@ -88,14 +88,14 @@ describe('LoginTasksService parent account repair', () => {
     expect(writes[0][1].requestId).toBe('request-1');
   });
 
-  it('repairs only the registered admin\'s parent account', async () => {
-    const { service, couchService, planetMessageService } = buildService({ sessions: [ throwError(unauthorized) ] });
+  it('repairs a promoted admin\'s parent account too', async () => {
+    const { service, couchService, planetMessageService } = buildService({ sessions: [ throwError(unauthorized), of({ ok: true }) ] });
 
     await login(service, 'ops');
 
-    expect(couchService.post).toHaveBeenCalledTimes(1);
-    expect(couchService.updateDocument).not.toHaveBeenCalled();
-    expect(planetMessageService.showMessage).toHaveBeenCalledWith(expect.stringContaining('Can not login'));
+    const [ [ , parentUser ] ] = writesTo(couchService, '_users');
+    expect(parentUser).toMatchObject({ _id: 'org.couchdb.user:ops@planet1', name: 'ops@planet1', roles: [ 'learner' ] });
+    expect(planetMessageService.showMessage).not.toHaveBeenCalled();
   });
 
   it('recreates the account with the credentials read when the login started', async () => {

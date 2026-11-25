@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { AIServiceStatus, AIProvider, Conversation, ConversationChange, ProviderName } from '../../chat/chat.model';
+import {
+  AIServiceStatus, AIProvider, Conversation, ConversationChange, ProviderDiscovery, ProviderName
+} from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,20 +21,21 @@ import { AIServiceStatus, AIProvider, Conversation, ConversationChange, Provider
   private newChatSelected: Subject<void> = new Subject<void>();
   private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
-  private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
+  private providerDiscovery = new BehaviorSubject<ProviderDiscovery>({ state: 'loading' });
+  private discoveryRequest: Subscription;
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
   toggleAIService$: Observable<ProviderName> = this.toggleAIService.asObservable();
-  aiProviders$ = this.aiProvidersSubject.asObservable();
+  providerDiscovery$ = this.providerDiscovery.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
   currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
 
   constructor(
     private httpClient: HttpClient
   ) {
-    this.fetchAIProviders();
+    this.refreshAIProviders();
   }
 
   initializeWebSocket() {
@@ -56,23 +59,19 @@ import { AIServiceStatus, AIProvider, Conversation, ConversationChange, Provider
     }
   }
 
-  private fetchAIProviders() {
-    this.httpClient
-      .get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`)
-      .pipe(
-        map(({ providers }) => providers.filter(({ configured }) => configured)),
-        catchError((err) => {
-          console.error(err);
-          return of([]);
-        })
-      )
-      .subscribe((providers) => {
-        this.aiProvidersSubject.next(providers);
-      });
+  refreshAIProviders() {
+    this.providerDiscovery.next({ state: 'loading' });
+    this.discoveryRequest?.unsubscribe();
+    this.discoveryRequest = this.httpClient.get<{ providers: AIServiceStatus[] }>(`${this.baseUrl}/checkproviders`).subscribe({
+      next: ({ providers }) => this.providerDiscovery.next({ state: 'loaded', providers }),
+      error: () => this.providerDiscovery.next({ state: 'failed' })
+    });
   }
 
   listAIProviders(): Observable<Array<AIProvider>> {
-    return this.aiProviders$;
+    return this.providerDiscovery$.pipe(
+      map((discovery) => discovery.state === 'loaded' ? discovery.providers.filter(({ configured }) => configured) : [])
+    );
   }
 
   getPrompt(data: object, save: boolean): Observable<any> {

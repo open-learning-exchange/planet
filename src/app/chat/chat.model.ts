@@ -40,3 +40,6 @@ export interface AIServiceStatus {
   label: string;
   configured: boolean;
 }
+
+export type ProviderDiscovery =
+  { state: 'loading' } | { state: 'loaded', providers: AIServiceStatus[] } | { state: 'failed' };

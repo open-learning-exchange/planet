@@ -59,4 +59,12 @@ describe('UserProfileComponent', () => {
     const backButton = fixture.debugElement.query(By.css('.km-profile-back-button'));
     expect(backButton).toBeNull();
   });
+
+  it('shows the placeholder without requesting an image for a local user with no photo', () => {
+    component.userDetail = { name: 'member' };
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.profile-image-section planet-avatar')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.profile-image-section img').getAttribute('src')).toBe('assets/image.png');
+  });
 });

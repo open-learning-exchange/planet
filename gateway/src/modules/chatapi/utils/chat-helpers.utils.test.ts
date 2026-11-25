@@ -289,6 +289,14 @@ describe('provider deadline and failures', () => {
     await expect(reply).resolves.toEqual('one two three');
   });
 
+  it('answers 502 when a stream ends without reply text', async () => {
+    mocks.completionsCreate.mockResolvedValue((async function* () {
+      yield { 'choices': [ { 'delta': {}, 'finish_reason': 'length' } ] };
+    })());
+
+    await expect(aiChatStream(history, provider('deepseek'), '', '', () => undefined)).rejects.toMatchObject({ 'statusCode': 502 });
+  });
+
   it('answers 502 without the provider\'s own message', async () => {
     mocks.responsesCreate.mockRejectedValue(new Error('401 Incorrect API key provided: sk-abc***xyz'));
 

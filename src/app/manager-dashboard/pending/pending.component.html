@@ -15,13 +15,15 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    @for (planet of planets; track planet) {
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
-        </mat-expansion-panel-header>
-        <planet-pending-table [data]="planet.children" (requestUpdate)="getCommunityList()"></planet-pending-table>
-      </mat-expansion-panel>
-    }
+    <mat-accordion multi>
+      @for (planet of planets; track planet._id) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
+          </mat-expansion-panel-header>
+          <planet-pending-table [data]="planet.children" (requestUpdate)="getCommunityList()"></planet-pending-table>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
   </div>
 </div>
