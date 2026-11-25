@@ -70,7 +70,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   searchValue = '';
   filter = { 'doc.roles' : '' };
   planetType = '';
-  displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   isUserAdmin = false;
   children: any;
   roleList = this.usersService.roleList;
@@ -133,20 +132,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   changePlanetFilter(type, child: any = {}) {
-    this.filterDisplayColumns(type);
     this.tableState = { ...this.tableState, filterType: type, selectedChild: child };
     this.setActiveFilters();
-  }
-
-  filterDisplayColumns(type: string) {
-    if (type === 'local') {
-      this.displayedColumns = [ 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
-      if (this.isUserAdmin) {
-        this.displayedColumns.unshift('select');
-      }
-    } else {
-      this.displayedColumns = [ 'profile', 'name', 'joinDate', 'lastLogin', 'action' ];
-    }
   }
 
   applyFilter(filterValue: string) {

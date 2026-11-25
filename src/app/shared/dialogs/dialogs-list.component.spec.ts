@@ -18,7 +18,7 @@ describe('DialogsListComponent select all', () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: {
           tableData: rows,
-          columns: [ 'name' ],
+          columns: [ { key: 'name', label: 'Username' } ],
           itemDescription: 'members',
           nameProperty: 'name',
           okClick: () => {},
@@ -106,6 +106,11 @@ describe('DialogsListComponent select all', () => {
     expect(component.isAllSelected()).toBe('no');
     await goToNextPage();
     expect(component.isAllSelected()).toBe('no');
+  });
+
+  it('heads each column with its label rather than its key', async () => {
+    await createComponent();
+    expect(fixture.nativeElement.querySelector('.km-column-header').textContent.trim()).toBe('Username');
   });
 
   it('returns to the first page before applying a filter', async () => {
