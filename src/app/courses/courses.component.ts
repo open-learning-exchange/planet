@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, defer, of } from 'rxjs';
-import { map, switchMap, takeUntil, catchError, finalize } from 'rxjs/operators';
+import { map, switchMap, takeUntil, catchError, finalize, filter } from 'rxjs/operators';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
@@ -134,6 +134,7 @@ import { stepProgress } from './courses.utils';
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   isLoading = true;
+  loadFailed = false;
   selection = new SelectionModel(true, []);
   pageSelection = new PaginatedSelection(this.selection);
   selectedNotEnrolled = 0;
@@ -259,6 +260,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         .filter((course: any) => !this.requireSteps || course.doc.steps?.length > 0);
       this.stopLoading();
     }, () => this.stopLoading());
+    this.stateService.couchStateListener(this.dbName).pipe(
+      filter(({ planetField }) => planetField === (this.parent ? 'parent' : 'local')),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ failed }) => {
+      if (failed === true && !this.loadFailed) {
+        this.planetMessageService.showAlert($localize`There was a problem getting courses.`);
+      }
+      this.loadFailed = failed === true;
+    });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
