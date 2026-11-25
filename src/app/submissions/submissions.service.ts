@@ -20,7 +20,7 @@ import { MarkdownRenderService } from '@shared/markdown/markdown-render.service'
 import { getGenderLabel, parseGender } from '@shared/demographics/gender.constants';
 
 import { CoursesService } from '../courses/courses.service';
-import { attemptPasses } from '../courses/courses.utils';
+import { attemptPasses, questionMarks } from '../courses/courses.utils';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { environment } from '../../environments/environment';
@@ -165,25 +165,31 @@ export class SubmissionsService {
     if (submission.type === 'exam' && submission.answers.findIndex(ans => ans.grade === undefined) > -1) {
       return 'requires grading';
     }
-    const [ examId, getCourseId ] = this.submission.parentId.split('@');
-    this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
-      this.courseService.updateProgress({
-        courseId: res._id,
-        stepNum: res.steps.findIndex((step: any) => step.exam && (step.exam._id === examId)) + 1,
-        passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
-      }, submission.user._id);
-    }, error => console.log(error));
     return 'complete';
+  }
+
+  private updateStepProgress(submission: any) {
+    const [ examId, courseId ] = submission.parentId.split('@');
+    this.couchService.get('courses/' + courseId).subscribe((course: any) => {
+      const stepNum = course.steps.findIndex((step: any) => step.exam?._id === examId) + 1;
+      // A test removed from its step before the attempt was graded has no step left to record
+      if (stepNum > 0) {
+        this.courseService.updateProgress({ courseId, stepNum, passed: attemptPasses(submission) }, submission.user._id);
+      }
+    }, error => console.log(error));
   }
 
   calcTotalGrade(submission: any) {
     return submission.answers.reduce((total: number, answer: any, index: number) =>
-      total + (submission.parent.questions[index].marks * (answer && answer.grade || 0)), 0);
+      total + (questionMarks(submission.parent.questions[index]) * (answer && answer.grade || 0)), 0);
   }
 
   updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
     submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
     return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
+      if (submission.type === 'exam' && submission.status === 'complete') {
+        this.updateStepProgress(submission);
+      }
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
         attempts += 1;
