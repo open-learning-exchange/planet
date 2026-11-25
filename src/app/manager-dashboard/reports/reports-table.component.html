@@ -12,11 +12,11 @@
   </ng-container> -->
   <ng-container matColumnDef="views">
     <mat-header-cell *matHeaderCellDef i18n>Resource Views</mat-header-cell>
-    <mat-cell *matCellDef="let element" class="card-value"><span class="card-label" i18n>Resource Views</span>{{element?.doc?.resourceViews}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-value">@if (element?.doc?.resourceViews !== undefined) {<span class="card-label" i18n>Resource Views</span>{{element.doc.resourceViews}}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="logins">
     <mat-header-cell *matHeaderCellDef i18n>Member Visits</mat-header-cell>
-    <mat-cell *matCellDef="let element" class="card-value"><span class="card-label" i18n>Member Visits</span>{{element?.doc?.userVisits}}</mat-cell>
+    <mat-cell *matCellDef="let element" class="card-value">@if (element?.doc?.userVisits !== undefined) {<span class="card-label" i18n>Member Visits</span>{{element.doc.userVisits}}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastUpgrade">
     <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>

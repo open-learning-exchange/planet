@@ -1,7 +1,7 @@
 <mat-table #table class="card-mode" [dataSource]="myPlanets" matSort [matSortDisableClear]="true">
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef i18n>ID</mat-header-cell>
-    <mat-cell *matCellDef="let element"><span class="card-label" i18n>ID</span>{{element.androidId}}</mat-cell>
+    <mat-cell *matCellDef="let element">@if (element.androidId) {<span class="card-label" i18n>ID</span>{{element.androidId}}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
@@ -25,7 +25,7 @@
   </ng-container>
   <ng-container matColumnDef="versionName">
     <mat-header-cell *matHeaderCellDef mat-sort-header="versionName" i18n>Version</mat-header-cell>
-    <mat-cell *matCellDef="let element"><span class="card-label" i18n>Version</span>{{element.versionName || element.version}}</mat-cell>
+    <mat-cell *matCellDef="let element">@if (element.versionName || element.version) {<span class="card-label" i18n>Version</span>{{element.versionName || element.version}}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
     <mat-header-cell *matHeaderCellDef mat-sort-header="count" i18n>No of Visits</mat-header-cell>
