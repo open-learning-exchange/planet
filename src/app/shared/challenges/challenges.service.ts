@@ -7,10 +7,10 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { UserService } from '@shared/auth/user.service';
+import { couchAttachmentUrl } from '@shared/utils';
 
+import { environment } from '../../../environments/environment';
 import { ChallengesAnnouncementDialogComponent } from './challenges-announcement-dialog.component';
-
-const DEFAULT_BANNER = 'assets/challenge/dec challenge.jpeg';
 
 export type ChallengeTaskType = 'course_join' | 'course_complete' | 'course_step' | 'exam_pass' | 'survey_complete' |
   'voice_post' | 'voice_reply' | 'login' | 'resource_open' | 'rating' | 'team_join';
@@ -45,7 +45,7 @@ export interface PlanetChallenge {
   enabled: boolean;
   startsAt?: string;
   endsAt?: string;
-  bannerImageUrl?: string;
+  coverFileName?: string;
   notificationMessage?: string;
   successMessage?: string;
   goal: number;
@@ -112,6 +112,12 @@ export class ChallengesService {
     return { start: this.parseDateBoundary(challenge.startsAt, 'start'), end: this.parseDateBoundary(challenge.endsAt, 'end') };
   }
 
+  coverImageUrl(challenge: PlanetChallenge): string {
+    return challenge.coverFileName ?
+      couchAttachmentUrl(environment.couchAddress, 'challenges', challenge._id, challenge.coverFileName) :
+      '';
+  }
+
   createChallengeNotification(userId: string, challenge: PlanetChallenge, time: any) {
     return {
       _id: `challenge:${challenge._id}:${userId}`,
@@ -159,7 +165,6 @@ export class ChallengesService {
       enabled: challenge?.enabled !== false,
       startsAt: challenge?.startsAt || '',
       endsAt: challenge?.endsAt || '',
-      bannerImageUrl: challenge?.bannerImageUrl || DEFAULT_BANNER,
       notificationMessage: challenge?.notificationMessage || '',
       successMessage: challenge?.successMessage || $localize`Congratulations, challenge complete!`,
       goal: this.getNumber(challenge?.goal, 500),

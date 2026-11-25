@@ -69,6 +69,13 @@ describe('ChallengesService', () => {
     expect(forNone).toBeUndefined();
   });
 
+  it('builds a cover URL only when a cover is attached', () => {
+    const normalized = service.normalizeChallenge(challenge as any);
+
+    expect(service.coverImageUrl(normalized)).toBe('');
+    expect(service.coverImageUrl({ ...normalized, coverFileName: 'cover.jpg' })).toMatch(/\/challenges\/reto\/cover\.jpg$/);
+  });
+
   it('gives each user one notification per challenge', () => {
     const notification = service.createChallengeNotification('org.couchdb.user:maria', service.normalizeChallenge(challenge as any), 0);
 

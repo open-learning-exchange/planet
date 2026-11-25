@@ -1,0 +1,142 @@
+<div class="announcement-container">
+  @if (coverImageUrl()) {
+    <img
+      [src]="coverImageUrl()"
+      [alt]="challenge.title"
+      class="announcement-banner"
+      />
+  }
+
+  <div class="thermometer-container">
+    <div class="thermometer">
+      <div class="thermometer-bar" [style.width.%]="goalPercentage()">
+        <div
+          class="thermometer-label"
+          [ngClass]="{ outside: goalPercentage() < 8 }"
+          >
+          ${{ groupEarned }} / ${{ challenge.goal }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  @if (!progress) {
+    <div>
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <div class="steps-container">
+      @for (taskProgress of progress.tasks; track taskProgress.task.id) {
+        @let task = taskProgress.task;
+        <div class="step">
+          <mat-icon color="primary">{{ taskProgress.done ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          <span>
+            @switch (task.type) {
+              @case ('course_join') {
+                <span i18n>Join the course {{ courseTitle(task.targetId) }} [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('course_complete') {
+                <span i18n>Finish the course {{ courseTitle(task.targetId) }} [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('course_step') {
+                <span i18n>Finish steps of the course {{ courseTitle(task.targetId) }} [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('exam_pass') {
+                <span i18n>Pass the test [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('survey_complete') {
+                <span i18n>Complete the survey [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('voice_post') {
+                <span i18n>Share your voice in Our Voices [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('voice_reply') {
+                <span i18n>Reply to voices in Our Voices [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('login') {
+                <span i18n>Visit Planet [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('resource_open') {
+                @if (task.targetId) {
+                  <span i18n>Open the resource [{{ rewardLabel(task) }}]</span>
+                } @else {
+                  <span i18n>Open resources in the Library [{{ rewardLabel(task) }}]</span>
+                }
+              }
+              @case ('rating') {
+                <span i18n>Rate courses or resources [{{ rewardLabel(task) }}]</span>
+              }
+              @case ('team_join') {
+                <span i18n>Join the team [{{ rewardLabel(task) }}]</span>
+              }
+            }
+            @if (task.optional) {
+              <br><span i18n>Bonus, not needed to finish</span>
+            }
+            @if (isRepeatable(task) && task.requiredCount > 1) {
+              <br><span i18n>{{ taskProgress.count }} of {{ task.requiredCount }} to finish</span>
+            }
+            @if (isRepeatable(task) && task.maxCount) {
+              <br><span i18n>{{ taskProgress.rewarded }} of {{ task.maxCount }} rewarded</span>
+            }
+          </span>
+          @if (!taskProgress.settled) {
+            @switch (task.type) {
+              @case ('course_join') {
+                <a mat-raised-button color="primary" type="button" [disabled]="isJoining" (click)="joinCourse(task)" i18n>Join</a>
+              }
+              @case ('course_complete') {
+                <a mat-raised-button color="primary" type="button" (click)="openCourse(task)" i18n>Open course</a>
+              }
+              @case ('course_step') {
+                <a mat-raised-button color="primary" type="button" (click)="openCourse(task)" i18n>Open course</a>
+              }
+              @case ('exam_pass') {
+                @if (taskStep(task)) {
+                  <a mat-raised-button color="primary" type="button" (click)="openTestStep(task)" i18n>Test</a>
+                }
+              }
+              @case ('survey_complete') {
+                @if (taskStep(task)) {
+                  <a mat-raised-button color="primary" type="button" (click)="doSurvey(task)" i18n>Survey</a>
+                }
+              }
+              @case ('voice_post') {
+                <a mat-raised-button color="primary" type="button" (click)="shareVoice()" i18n>Chat and share</a>
+              }
+              @case ('voice_reply') {
+                <a mat-raised-button color="primary" type="button" (click)="shareVoice()" i18n>Our Voices</a>
+              }
+              @case ('resource_open') {
+                <a mat-raised-button color="primary" type="button"
+                  (click)="openPage(task.targetId ? '/resources/view/' + task.targetId : '/resources')" i18n>Library</a>
+              }
+              @case ('rating') {
+                <a mat-raised-button color="primary" type="button" (click)="openPage('/resources')" i18n>Library</a>
+              }
+              @case ('team_join') {
+                <a mat-raised-button color="primary" type="button" (click)="openPage('/teams/view/' + task.targetId)" i18n>Open team</a>
+              }
+            }
+          } @else if (isRepeatable(task)) {
+            <div class="daily-voces-dots">
+              @for (dot of countDots(task); track dot) {
+                <div class="dot" [ngClass]="{ completed: dot < taskProgress.rewarded }"></div>
+              }
+            </div>
+          }
+        </div>
+      }
+      @if (preview) {
+        <div i18n>Managers set challenges up and don't take part in them.</div>
+      } @else {
+        <div>
+          <span i18n>My earnings: <b>${{ progress.earned }}</b></span>
+          <span> / ${{ maxEarnable() }}</span>
+        </div>
+      }
+    </div>
+  }
+
+</div>
