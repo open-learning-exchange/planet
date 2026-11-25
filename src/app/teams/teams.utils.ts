@@ -6,7 +6,6 @@ const memberNameCompare = (member1, member2) => {
 
 export const memberCompare = (member1, member2) => member1.userId === member2.userId && member1.userPlanetCode === member2.userPlanetCode;
 
-// Remote members' user docs arrive without attachments, so their digest comes from the replicated attachments copy.
 export const memberAvatarAttachment = (member, localPlanetCode: string) =>
   member?.userPlanetCode && member.userPlanetCode !== localPlanetCode ?
     member.attachmentDoc?._attachments?.img :
