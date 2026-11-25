@@ -122,7 +122,6 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  // The configuration is fetched asynchronously and route activation does not wait for it, so no ID is built from a missing local code
   private localPlanetCode(): Observable<string> {
     return merge(
       this.stateService.couchStateListener('configurations').pipe(
@@ -155,7 +154,6 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     } else {
       const name = nameParam.split('@')[0];
       achievementsId = 'org.couchdb.user:' + name + '@' + planetCode;
-      // Set synchronously so the newly routed user's name shows while its document is still loading; the avatar waits for it
       this.userName = name;
       this.userPlanetCode = planetCode;
       this.user = { name, planetCode };
