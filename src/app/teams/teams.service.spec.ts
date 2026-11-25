@@ -52,7 +52,6 @@ describe('TeamsService membership writes', () => {
 
   const enrichedFields = {
     name: 'Alex',
-    avatar: '/avatar',
     status: 'active',
     userDoc: { doc: { derived_key: 'secret', salt: 'secret-salt' } },
     attachmentDoc: { _attachments: { img: {} } },

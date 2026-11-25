@@ -20,13 +20,14 @@ import { ConfigurationService, KeyService } from '../../configuration/configurat
   templateUrl: './manager-keys.component.html',
   styleUrls: [ './manager-settings.shared.scss' ],
   imports: [
-    ReactiveFormsModule, TitleCasePipe, MatButton, MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+    ReactiveFormsModule, MatButton, MatCard, MatCardHeader, MatCardTitle, MatCardContent,
     MatList, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput
   ]
 })
 export class ManagerKeysComponent implements OnInit {
   @Input() service: KeyService;
   @Input() heading = '';
+  @Input() labels: Record<string, string> = {};
   status: Record<string, boolean> | undefined;
   statusFailed = false;
   keyControls: Record<string, FormControl<string>> = {};
@@ -40,6 +41,12 @@ export class ManagerKeysComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadStatus();
+  }
+
+  loadStatus() {
+    this.status = undefined;
+    this.statusFailed = false;
     this.configurationService.getKeyStatus().subscribe({
       next: (status) => {
         this.status = status[this.service] || {};
@@ -53,6 +60,10 @@ export class ManagerKeysComponent implements OnInit {
     return Object.keys(this.status || {});
   }
 
+  label(name: string): string {
+    return this.labels[name] || new TitleCasePipe().transform(name);
+  }
+
   // One at a time, since every key of a service is saved in the same CouchDB document
   saveKeys(): Observable<unknown> {
     const entered = this.names.filter((name) => this.keyControls[name].value.trim());
@@ -61,7 +72,7 @@ export class ManagerKeysComponent implements OnInit {
   }
 
   removeKey(name: string) {
-    const label = new TitleCasePipe().transform(name);
+    const label = this.label(name);
     this.removeDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {

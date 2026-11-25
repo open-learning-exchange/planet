@@ -7,7 +7,6 @@ import { fullName } from '@shared/utils';
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 
-import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
@@ -20,7 +19,6 @@ export class UsersService {
   private dbName = '_users';
   private adminConfig = '_node/nonode@nohost/_config/admins/';
   usersUpdated = new Subject<any>();
-  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   data: { users: any[], loginActivities: any[], childUsers: any[], parentUsers: any[] } = {
     users: [], loginActivities: [], childUsers: [], parentUsers: []
   };
@@ -100,18 +98,10 @@ export class UsersService {
     const userInfo = {
       _id: user._id,
       doc: user,
-      imageSrc: '',
       fullName: fullName(user) || user.name,
       ...this.userLoginActivities(user, this.data.loginActivities)
     };
-    if (user._attachments) {
-      userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
-    }
     return userInfo;
-  }
-
-  toggleAdminStatus(user) {
-    return user.isUserAdmin ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
   }
 
   demoteFromAdmin(user) {
@@ -133,29 +123,11 @@ export class UsersService {
 
   promoteToAdmin(user) {
     const { name, password_scheme, derived_key, salt, iterations } = user;
-    const { code, _id: requestId, parentDomain: domain } = this.stateService.configuration;
-    const adminName = name + '@' + code;
-    const adminId = `org.couchdb.user:${adminName}`;
-    const parentUser = {
-      ...user,
-      _id: adminId,
-      requestId,
-      isUserAdmin: false,
-      roles: [ 'learner' ],
-      name: adminName,
-      sync: true,
-      _attachments: undefined,
-      _rev: undefined
-    };
-    return this.couchService.get(this.dbName + '/' + adminId, { domain }).pipe(
-      catchError(() => of(null)),
-      switchMap(oldDoc => forkJoin([
-        oldDoc ? of({}) : this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false }),
-        this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
-        this.setRoles({ ...user, isUserAdmin: true }, []),
-        this.removeFromTabletUsers(user)
-      ]))
-    );
+    return forkJoin([
+      this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
+      this.setRoles({ ...user, isUserAdmin: true }, []),
+      this.removeFromTabletUsers(user)
+    ]);
   }
 
   toggleManagerStatus(user) {

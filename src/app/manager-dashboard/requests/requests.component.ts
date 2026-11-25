@@ -9,7 +9,7 @@ import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { filterSpecificFieldsHybrid } from '@shared/tables/table.helpers';
@@ -45,6 +45,7 @@ import { RequestsTableComponent } from './requests-table.component';
     MatToolbarRow,
     MatButton,
     RequestsTableComponent,
+    MatAccordion,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,

@@ -127,28 +127,29 @@ describe('UsersService community account deletion', () => {
   });
 });
 
-describe('UsersService toggleAdminStatus', () => {
-  it('calls demoteFromAdmin when user.isUserAdmin is true', () => {
-    const service = new UsersService({} as any, {} as any, { couchStateListener: () => NEVER } as any, {} as any, {} as any);
-    const demoteSpy = vi.spyOn(service, 'demoteFromAdmin').mockReturnValue(of({} as any));
-    const promoteSpy = vi.spyOn(service, 'promoteToAdmin').mockReturnValue(of({} as any));
+describe('UsersService promoteToAdmin', () => {
+  it('promotes with local writes only', () => {
+    const couchService = { put: vi.fn().mockReturnValue(of({})), delete: vi.fn().mockReturnValue(of({})) };
+    const service = new UsersService(
+      couchService as any,
+      {} as any,
+      { couchStateListener: () => NEVER } as any,
+      {} as any,
+      {} as any
+    );
+    const user = {
+      _id: 'org.couchdb.user:alex', _rev: '1-user', name: 'alex', roles: [ 'learner' ],
+      password_scheme: 'pbkdf2', derived_key: 'key', salt: 'salt', iterations: 10
+    };
+    let promoted = false;
 
-    const user = { name: 'adminUser', isUserAdmin: true, roles: [] };
-    service.toggleAdminStatus(user);
+    service.promoteToAdmin(user).subscribe(() => promoted = true);
 
-    expect(demoteSpy).toHaveBeenCalledWith(user);
-    expect(promoteSpy).not.toHaveBeenCalled();
-  });
-
-  it('calls promoteToAdmin when user.isUserAdmin is false even if roles are empty', () => {
-    const service = new UsersService({} as any, {} as any, { couchStateListener: () => NEVER } as any, {} as any, {} as any);
-    const demoteSpy = vi.spyOn(service, 'demoteFromAdmin').mockReturnValue(of({} as any));
-    const promoteSpy = vi.spyOn(service, 'promoteToAdmin').mockReturnValue(of({} as any));
-
-    const deactivatedUser = { name: 'inactiveUser', isUserAdmin: false, roles: [] };
-    service.toggleAdminStatus(deactivatedUser);
-
-    expect(promoteSpy).toHaveBeenCalledWith(deactivatedUser);
-    expect(demoteSpy).not.toHaveBeenCalled();
+    expect(promoted).toBe(true);
+    expect(couchService.put).toHaveBeenCalledWith('_node/nonode@nohost/_config/admins/alex', '-pbkdf2-key,salt,10');
+    expect(couchService.put).toHaveBeenCalledWith(
+      '_users/org.couchdb.user:alex', expect.objectContaining({ isUserAdmin: true, roles: [], oldRoles: [ 'learner' ] })
+    );
+    expect(couchService.delete).toHaveBeenCalledWith('tablet_users/org.couchdb.user:alex?rev=1-user');
   });
 });

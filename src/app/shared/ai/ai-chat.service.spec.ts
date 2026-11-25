@@ -1,35 +1,51 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { CouchService } from '@shared/database/couchdb.service';
-import { AIProvider } from '../../chat/chat.model';
 import { AiChatService } from './ai-chat.service';
 
 describe('AiChatService', () => {
-  const offeredProviders = (response: Observable<unknown>) => {
+  const openai = { name: 'openai', label: 'OpenAI', configured: true };
+  const gemini = { name: 'gemini', label: 'Gemini', configured: false };
+
+  const createService = (...answers: Observable<unknown>[]) => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: HttpClient, useValue: { get: () => response } },
+        { provide: HttpClient, useValue: { get: () => answers.shift() } },
         { provide: CouchService, useValue: {} }
       ]
     });
-    let providers: AIProvider[] = [];
-    TestBed.inject(AiChatService).listAIProviders().subscribe(list => providers = list);
-    return providers;
+    return TestBed.inject(AiChatService);
+  };
+
+  const latest = <T>(source: Observable<T>): T => {
+    let value: T;
+    source.subscribe(next => value = next).unsubscribe();
+    return value;
   };
 
   it('offers only the providers the gateway reports as configured', () => {
-    const openai = { name: 'openai', label: 'OpenAI', configured: true };
-    const gemini = { name: 'gemini', label: 'Gemini', configured: false };
+    const service = createService(of({ providers: [ openai, gemini ] }));
 
-    expect(offeredProviders(of({ providers: [ openai, gemini ] }))).toEqual([ openai ]);
+    expect(latest(service.listAIProviders())).toEqual([ openai ]);
   });
 
-  it('offers none when a gateway answers in another shape', () => {
-    const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
+  it('reports an error as failed until a refresh succeeds', () => {
+    const service = createService(throwError(() => new Error('Bad Gateway')), of({ providers: [ openai, gemini ] }));
+    expect(latest(service.providerDiscovery$)).toEqual({ state: 'failed' });
 
-    expect(offeredProviders(of({ openai: true }))).toEqual([]);
-    expect(logged).toHaveBeenCalled();
+    service.refreshAIProviders();
+    expect(latest(service.providerDiscovery$)).toEqual({ state: 'loaded', providers: [ openai, gemini ] });
+  });
+
+  it('ignores the late failure of a request a refresh replaced', () => {
+    const older = new Subject<unknown>();
+    const service = createService(older, of({ providers: [ openai ] }));
+
+    service.refreshAIProviders();
+    older.error(new Error('Bad Gateway'));
+
+    expect(latest(service.providerDiscovery$)).toEqual({ state: 'loaded', providers: [ openai ] });
   });
 });

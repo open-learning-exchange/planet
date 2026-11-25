@@ -5,11 +5,11 @@ import { tmpdir } from 'os';
 import nano from 'nano';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { extractTextFromDocument } from './text-extraction.utils';
+import { extractPdfText } from './text-extraction.utils';
 
 const tempDirs = async () => (await readdir(tmpdir())).filter((name) => name.startsWith('chatapi-'));
 
-describe('extractTextFromDocument', () => {
+describe('extractPdfText', () => {
   let server: Server;
 
   afterEach(() => new Promise<void>((resolve) => server.close(() => resolve())));
@@ -25,7 +25,7 @@ describe('extractTextFromDocument', () => {
     const resources = nano(`http://127.0.0.1:${port}`).use('resources');
     const before = await tempDirs();
 
-    const extraction = extractTextFromDocument(() => resources.attachment.getAsStream('resource-1', 'guide.pdf'), 'application/pdf', 300);
+    const extraction = extractPdfText(() => resources.attachment.getAsStream('resource-1', 'guide.pdf'), 300);
 
     await expect(extraction).rejects.toThrow();
     expect(await tempDirs()).toEqual(before);

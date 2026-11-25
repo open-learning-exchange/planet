@@ -149,6 +149,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.attempts = attempts;
         // A stored pass stands even when no attempt here passes (another app saved it), and progress never un-passes
         this.examPassed = !!this.progress.passed || passed;
+        // Progress only syncs up and myPlanet doesn't upload test passes, so a pass graded elsewhere arrives only as its attempt
         if (!this.parent && passed && !this.progress.passed) {
           this.coursesService.updateProgress({ courseId: this.courseId, stepNum: this.stepNum, passed: true });
         }
