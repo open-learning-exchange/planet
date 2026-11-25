@@ -76,7 +76,7 @@
         </div>
       }
       <mat-card class="finance-table-card">
-        <mat-table class="finance-table responsive-table card-mode" [dataSource]="table">
+        <mat-table class="finance-table card-mode" [dataSource]="table">
           <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef mat-sort-header="date" i18n>Date</mat-header-cell>
             <mat-cell *matCellDef="let element">{{ element.date | date }}</mat-cell>

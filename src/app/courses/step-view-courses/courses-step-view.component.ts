@@ -310,6 +310,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   openReviewDialog() {
     this.dialog.open(CoursesStepAttemptsDialogComponent, {
+      width: '600px',
       minWidth: '500px',
       maxWidth: '90vw',
       maxHeight: '90vh',

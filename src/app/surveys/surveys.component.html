@@ -50,7 +50,7 @@
     @if (isLoading && !useDialogLoading) {
       <planet-loading-spinner text="Loading surveys..." i18n-text></planet-loading-spinner>
     }
-    <mat-table #table class="responsive-table min-width-table card-mode" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
+    <mat-table #table class="min-width-table card-mode" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef class="card-select">
           <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
