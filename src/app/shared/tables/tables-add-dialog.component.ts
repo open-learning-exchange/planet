@@ -35,7 +35,7 @@ export class TablesAddDialogComponent implements AfterViewInit {
   @ViewChild(UsersComponent) usersComponent: UsersComponent;
   @ViewChild(TeamsComponent) teamsComponent: TeamsComponent;
   mode: 'courses' | 'users' | 'teams' = 'courses';
-  okDisabled = true;
+  selectedCount = 0;
   get component() {
     return this.mode === 'courses' ? this.coursesComponent :
       this.mode === 'users' ? this.usersComponent.usersTable :
@@ -59,7 +59,7 @@ export class TablesAddDialogComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.component.selection.changed.subscribe((selection) => {
-      this.okDisabled = selection.source.selected.length === 0;
+      this.selectedCount = selection.source.selected.length;
     });
   }
 
@@ -87,7 +87,7 @@ export class TablesAddDialogComponent implements AfterViewInit {
     } else {
       this.teamsSelected.splice(index, 1);
     }
-    this.okDisabled = this.teamsSelected.length === 0;
+    this.selectedCount = this.teamsSelected.length;
   }
 
   onSelectionChange(selected: any) {

@@ -15,6 +15,9 @@
   <span class="list-actions-idle" [class.list-actions-hidden]="selecting()">
     <ng-content></ng-content>
     @if (!compact()) {
+      @if (selected()) {
+        <span class="margin-lr-3" i18n>{{ selected() }} selected</span>
+      }
       <ng-container *ngTemplateOutlet="actionsTemplate; context: { $implicit: false }"></ng-container>
     }
   </span>

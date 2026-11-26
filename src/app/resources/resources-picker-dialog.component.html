@@ -9,6 +9,9 @@
   }
 </mat-dialog-content>
 <mat-dialog-actions>
+  @if (view === 'resources' && selectedCount) {
+    <span class="margin-lr-8" i18n>{{ selectedCount }} selected</span>
+  }
   @if (data.canAdd && !updateResource) {
     <button color="accent" mat-raised-button (click)="toggleNewOrExisting()" i18n>
       {view, select, resources {Create New Resource} resourcesAdd {Select Existing Resource(s)}}

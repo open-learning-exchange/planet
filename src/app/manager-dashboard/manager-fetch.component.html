@@ -7,6 +7,9 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
+    @if (selection.selected.length) {
+      <span class="margin-lr-3" i18n>{{ selection.selected.length }} selected</span>
+    }
     <button mat-button class="fetch-action" [disabled]="!selection.selected.length || dialogGuard.isActive('fetch-items')" (click)="getPushedItem()">
       <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Courses/Resources</span>
     </button>
