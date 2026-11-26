@@ -71,11 +71,10 @@ export class TablesAddDialogComponent implements AfterViewInit {
     if (!this.data.noSpinner) {
       this.dialogsLoadingService.start();
     }
-    const tableData = this.component.tableData;
     if (this.mode === 'teams') {
-      const items = tableData.data.filter((item: any) => this.teamsSelected.indexOf(item.doc._id) > -1);
-      this.data.okClick(items);
+      this.data.okClick(this.teamsSelected);
     } else {
+      const tableData = this.component.tableData;
       const selection = this.component.selection.selected;
       const items = typeof selection[0] === 'string' ?
         tableData.data.filter((item: any) => selection.indexOf(item._id) > -1) :
@@ -85,9 +84,10 @@ export class TablesAddDialogComponent implements AfterViewInit {
   }
 
   teamSelect({ teamId }) {
-    const index = this.teamsSelected.indexOf(teamId);
+    const index = this.teamsSelected.findIndex(team => team.doc._id === teamId);
     if (index === -1) {
-      this.teamsSelected.push(teamId);
+      // Kept as rows, since switching between teams and enterprises reloads the table without them
+      this.teamsSelected.push(this.component.tableData.data.find((team: any) => team.doc._id === teamId));
     } else {
       this.teamsSelected.splice(index, 1);
     }
