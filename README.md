@@ -93,7 +93,7 @@ The gateway only answers browsers on its own host or listed origins, and chat ne
 
 ## Gateway Notes
 
-Configure the AI services through `manager dashboard -> AI Configurations`. Models and Assistant settings live in the `configurations` database. API keys are saved through the gateway into the admin-only `keys` database and are never shown again; a key edited directly in CouchDB applies only after the gateway restarts.
+Configure the AI services through `manager dashboard -> AI Configurations`. Models, streaming and the chat prompt live in the `configurations` database. API keys are saved through the gateway into the admin-only `keys` database and are never shown again; a key edited directly in CouchDB applies only after the gateway restarts.
 
 Supported models: *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini*
 

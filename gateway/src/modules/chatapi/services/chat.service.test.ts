@@ -14,7 +14,7 @@ vi.mock('../../../config/couch.config', () => ({
 }));
 vi.mock('../utils/chat.utils', () => ({ 'aiChat': mocks.aiChat }));
 vi.mock('../../../services/config.service', () => ({
-  'getConfiguration': async () => ({ 'assistant': { 'instructions': '' } })
+  'getConfiguration': async () => ({ 'promptProfiles': { 'general_chat': '' } })
 }));
 vi.mock('../providers/clients', () => ({ 'providerClient': mocks.providerClient }));
 

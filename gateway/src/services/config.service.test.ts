@@ -12,7 +12,7 @@ const planetDoc = {
   'parentCode': 'earth',
   'keys': { 'openai': 'sk-1', 'currency': 'oxr-1' },
   'models': { 'openai': 'gpt-test' },
-  'assistant': { 'name': 'Planet', 'instructions': 'PLANET PROMPT' }
+  'promptProfiles': { 'general_chat': 'PLANET PROMPT' }
 };
 
 const loadService = async () => {
@@ -38,7 +38,7 @@ describe('configuration service', () => {
       'code': 'planet-1',
       'parentCode': 'earth',
       'models': { 'openai': 'gpt-test' },
-      'assistant': { 'instructions': 'PLANET PROMPT' }
+      'promptProfiles': { 'general_chat': 'PLANET PROMPT' }
     });
     expect(mocks.find).toHaveBeenCalledWith({ 'selector': { '_id': { '$gt': null } }, 'limit': 1 });
   });
@@ -59,7 +59,7 @@ describe('configuration service', () => {
     const { getConfiguration } = await loadService();
 
     expect((await getConfiguration()).models).toEqual({});
-    expect((await getConfiguration()).assistant.instructions).toEqual('');
+    expect((await getConfiguration()).promptProfiles.general_chat).toEqual('');
   });
 
   it('reads again while the planet has no configuration yet, so setup after boot is picked up', async () => {

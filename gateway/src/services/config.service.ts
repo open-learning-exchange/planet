@@ -6,7 +6,7 @@ export interface Configuration {
   code: string;
   parentCode: string;
   models: Record<string, string>;
-  assistant: { instructions: string };
+  promptProfiles: { general_chat: string };
 }
 
 let snapshot: Configuration | undefined;
@@ -29,7 +29,7 @@ const toConfiguration = (doc: any): Configuration => ({
   'code': stringOrEmpty(doc.code),
   'parentCode': stringOrEmpty(doc.parentCode),
   'models': stringsOnly(doc.models),
-  'assistant': { 'instructions': stringOrEmpty(doc.assistant?.instructions) }
+  'promptProfiles': { 'general_chat': stringOrEmpty(doc.promptProfiles?.general_chat) }
 });
 
 const read = async (): Promise<Configuration> => {
