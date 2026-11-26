@@ -18,7 +18,6 @@ export class PaginatedSelection<T = any, S = any> {
     this.isSelectable = options.isSelectable ?? (() => true);
   }
 
-  // Pickers pass keepFilteredOut so a pick survives searching for the next one
   connect(dataSource: MatTableDataSource<T>, until: Observable<unknown>, { keepFilteredOut = false } = {}) {
     dataSource.connect().pipe(takeUntil(until)).subscribe(rows => {
       this.renderedRows = rows;
