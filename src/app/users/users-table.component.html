@@ -6,8 +6,8 @@
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef class="card-select">
         <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
-          [checked]="selection.hasValue() && pageSelection.isAllSelected()"
-          [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()">
+          [checked]="pageSelection.isAllSelected()"
+          [indeterminate]="pageSelection.isAnySelected() && !pageSelection.isAllSelected()">
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row" class="card-select">

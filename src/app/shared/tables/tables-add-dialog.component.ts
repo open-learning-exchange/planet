@@ -35,7 +35,7 @@ export class TablesAddDialogComponent implements AfterViewInit {
   @ViewChild(UsersComponent) usersComponent: UsersComponent;
   @ViewChild(TeamsComponent) teamsComponent: TeamsComponent;
   mode: 'courses' | 'users' | 'teams' = 'courses';
-  okDisabled = true;
+  selectedCount = 0;
   get component() {
     return this.mode === 'courses' ? this.coursesComponent :
       this.mode === 'users' ? this.usersComponent.usersTable :
@@ -58,8 +58,12 @@ export class TablesAddDialogComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // Teams mode counts through teamSelect, and its table is not rendered until a link type is chosen
+    if (this.mode === 'teams') {
+      return;
+    }
     this.component.selection.changed.subscribe((selection) => {
-      this.okDisabled = selection.source.selected.length === 0;
+      this.selectedCount = selection.source.selected.length;
     });
   }
 
@@ -67,11 +71,10 @@ export class TablesAddDialogComponent implements AfterViewInit {
     if (!this.data.noSpinner) {
       this.dialogsLoadingService.start();
     }
-    const tableData = this.component.tableData;
     if (this.mode === 'teams') {
-      const items = tableData.data.filter((item: any) => this.teamsSelected.indexOf(item.doc._id) > -1);
-      this.data.okClick(items);
+      this.data.okClick(this.teamsSelected);
     } else {
+      const tableData = this.component.tableData;
       const selection = this.component.selection.selected;
       const items = typeof selection[0] === 'string' ?
         tableData.data.filter((item: any) => selection.indexOf(item._id) > -1) :
@@ -81,13 +84,13 @@ export class TablesAddDialogComponent implements AfterViewInit {
   }
 
   teamSelect({ teamId }) {
-    const index = this.teamsSelected.indexOf(teamId);
+    const index = this.teamsSelected.findIndex(team => team.doc._id === teamId);
     if (index === -1) {
-      this.teamsSelected.push(teamId);
+      this.teamsSelected.push(this.component.tableData.data.find((team: any) => team.doc._id === teamId));
     } else {
       this.teamsSelected.splice(index, 1);
     }
-    this.okDisabled = this.teamsSelected.length === 0;
+    this.selectedCount = this.teamsSelected.length;
   }
 
   onSelectionChange(selected: any) {

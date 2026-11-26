@@ -27,6 +27,7 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   view: 'resources' | 'resourcesAdd' = 'resources';
   linkInfo: any;
   okDisabled = true;
+  selectedCount = 0;
   updateResource = false;
   existingResource: any = {};
   isSubmitting = false;
@@ -103,6 +104,8 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   toggleNewOrExisting() {
     leaveUnlessUnsaved(this.dialog, () => this.hasUnsavedChanges(), () => {
       this.view = this.view === 'resources' ? 'resourcesAdd' : 'resources';
+      this.okDisabled = true;
+      this.selectedCount = 0;
       // Use setTimeout to wait for Angular building the component being switched to
       setTimeout(() => this.initOkDisableChange());
     });
@@ -111,7 +114,10 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   initOkDisableChange() {
     switch (this.view) {
       case 'resources':
-        this.resourcesComponent.selection.changed.subscribe((selection) => this.okDisabled = selection.source.selected.length === 0);
+        this.resourcesComponent.selection.changed.subscribe((selection) => {
+          this.selectedCount = selection.source.selected.length;
+          this.okDisabled = this.selectedCount === 0;
+        });
         break;
       case 'resourcesAdd':
         this.resourcesAddComponent.resourceForm.valueChanges.subscribe(

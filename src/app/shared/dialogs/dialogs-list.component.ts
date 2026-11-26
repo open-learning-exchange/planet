@@ -109,7 +109,7 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
     const initialSelection = (this.data.initialSelection || []).filter(id => this.rowsByIdentifier.has(id));
     this.selection = new SelectionModel(this.data.allowMulti || false, initialSelection);
     this.pageSelection = new PaginatedSelection(this.selection, {
-      selectValue: row => this.selectIdentifier(row), keepAcrossPages: true
+      selectValue: row => this.selectIdentifier(row)
     });
     this.tableData.data = tableData;
     this.tableColumns = this.data.columns;
@@ -124,7 +124,7 @@ export class DialogsListComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.tableData.paginator = this.paginator;
-    this.pageSelection.connect(this.tableData, this.onDestroy$);
+    this.pageSelection.connect(this.tableData, this.onDestroy$, { keepFilteredOut: true });
   }
 
   ngOnDestroy() {

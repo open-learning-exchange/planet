@@ -1,5 +1,5 @@
 import { FormBuilder } from '@angular/forms';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DeviceType } from '@shared/ui/device-info.service';
@@ -170,6 +170,8 @@ describe('SurveysComponent', () => {
   });
 
   it('clears the selection when switching views', () => {
+    component.pageSelection.connect(component.surveys, NEVER);
+    component.surveys.data = [ { _id: 'survey-1' } ];
     component.selection.select('survey-1');
     component.currentFilter.viewMode = 'adopt';
 

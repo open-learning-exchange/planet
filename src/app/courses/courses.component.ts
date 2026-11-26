@@ -178,7 +178,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.courses.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    this.pageSelection.removeFiltered();
   }
   user = this.userService.get();
   userShelf: any = [];
@@ -241,7 +240,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = commonSortingDataAccessor;
-    this.pageSelection.connect(this.courses, this.onDestroy$);
+    this.pageSelection.connect(this.courses, this.onDestroy$, { keepFilteredOut: this.isDialog });
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
       switchMap((courses: any) => this.parent && courses !== undefined ?
