@@ -1,3 +1,5 @@
+import { isAssociatedAccount } from '@shared/ui/avatar.component';
+
 const memberNameCompare = (member1, member2) => {
   const memberName = (member) =>
     (member.userDoc && member.userDoc.doc.lastName) || (member.userId || '').split(':')[1] || member.userId || '';
@@ -7,7 +9,7 @@ const memberNameCompare = (member1, member2) => {
 export const memberCompare = (member1, member2) => member1.userId === member2.userId && member1.userPlanetCode === member2.userPlanetCode;
 
 export const memberAvatarAttachment = (member, localPlanetCode: string) =>
-  member?.userPlanetCode && member.userPlanetCode !== localPlanetCode ?
+  isAssociatedAccount(member?.userId) || (member?.userPlanetCode && member.userPlanetCode !== localPlanetCode) ?
     member.attachmentDoc?._attachments?.img :
     member?.userDoc?.doc?._attachments?.img;
 

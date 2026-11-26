@@ -20,8 +20,8 @@
     <ng-container matColumnDef="profile">
       <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
       <mat-cell *matCellDef="let element" class="card-image">
-        @if (element.doc._attachments?.img) {
-          <planet-avatar class="profile-image" [username]="element.doc.name" [attachment]="element.doc._attachments.img"></planet-avatar>
+        @if (mayHaveAvatar(element.doc)) {
+          <planet-avatar class="profile-image" [username]="element.doc.name" [attachment]="element.doc._attachments?.img"></planet-avatar>
         } @else {
           <img class="profile-image" alt="" src="assets/avatar.png">
         }

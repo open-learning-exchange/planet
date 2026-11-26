@@ -21,7 +21,7 @@ import { findDocuments } from '@shared/database/mango-queries';
 import { PouchAuthService } from '@shared/database/pouch-auth.service';
 import { StateService } from '@shared/state.service';
 import { DeviceInfoService } from '@shared/ui/device-info.service';
-import { AvatarComponent } from '@shared/ui/avatar.component';
+import { AvatarComponent, mayHaveAvatar } from '@shared/ui/avatar.component';
 import { PlanetLanguageComponent } from '@shared/language/planet-language.component';
 import { ChallengesService } from '@shared/challenges/challenges.service';
 import { PlanetBetaDirective } from '@shared/auth/planet-beta.directive';
@@ -70,6 +70,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   private onDestroy$ = new Subject<void>();
   notifications = [];
   user: any = {};
+  mayHaveAvatar = mayHaveAvatar;
   layout = 'classic';
   forceModern: boolean;
   sidenavState = 'closed';

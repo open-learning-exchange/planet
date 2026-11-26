@@ -10,6 +10,7 @@ import { DialogsFormService, DialogField } from '@shared/dialogs/dialogs-form.se
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { AttachmentInputState, ExistingAttachment } from '@shared/forms/file-upload.component';
 import { StateService } from '@shared/state.service';
+import { avatarCopyId } from '@shared/ui/avatar.component';
 import {
   fullName, planetAndParentId, truncateText, couchAttachmentUrl, withImageAttachment, attachmentStubs, UNPROCESSABLE_IMAGE_ERROR
 } from '@shared/utils';
@@ -423,7 +424,7 @@ export class TeamsService {
       ...membershipDocs.map(doc => ({
         ...doc,
         userDoc: users.find(user => (user.doc.couchId || user._id) === doc.userId && user.doc.planetCode === doc.userPlanetCode),
-        attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
+        attachmentDoc: attachments.find(attachment => attachment._id === avatarCopyId(doc.userId, doc.userPlanetCode))
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));

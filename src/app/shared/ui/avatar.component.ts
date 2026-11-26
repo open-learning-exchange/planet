@@ -11,6 +11,15 @@ export interface AvatarAttachment {
   digest?: string;
 }
 
+// A community admin's account on its parent is named `<name>@<home planet>` (native names can't contain `@`) and has
+// no photo of its own: its avatar is the home account's replicated copy, which carries the same ID.
+export const isAssociatedAccount = (nameOrId: string): boolean => !!nameOrId?.includes('@');
+
+export const avatarCopyId = (userId: string, planetCode: string): string =>
+  isAssociatedAccount(userId) ? userId : `${userId}@${planetCode}`;
+
+export const mayHaveAvatar = (user): boolean => !!user?._attachments?.img || isAssociatedAccount(user?.name);
+
 export const avatarUrl = (db: '_users' | 'attachments', docId: string, digest?: string): string => {
   const url = couchAttachmentUrl(environment.couchAddress, db, docId, 'img');
   return digest ? `${url}?v=${encodeURIComponent(digest)}` : url;
@@ -86,7 +95,7 @@ export class AvatarComponent implements OnChanges, OnDestroy {
   }
 
   isLocal() {
-    return !this.planetCode || this.planetCode === this.stateService.configuration.code;
+    return !isAssociatedAccount(this.username) && (!this.planetCode || this.planetCode === this.stateService.configuration.code);
   }
 
   imgLoadError() {
@@ -98,8 +107,8 @@ export class AvatarComponent implements OnChanges, OnDestroy {
   }
 
   setImgSrc(db: '_users' | 'attachments') {
-    const docName = `org.couchdb.user:${this.username}${db === 'attachments' ? '@' + this.planetCode : ''}`;
-    this.imgSrc = avatarUrl(db, docName, this.attachment?.digest);
+    const userId = `org.couchdb.user:${this.username}`;
+    this.imgSrc = avatarUrl(db, db === 'attachments' ? avatarCopyId(userId, this.planetCode) : userId, this.attachment?.digest);
   }
 
 }

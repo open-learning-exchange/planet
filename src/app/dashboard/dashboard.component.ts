@@ -16,7 +16,7 @@ import { StateService } from '@shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray, fullName } from '@shared/utils';
 import { CertificationsService } from '@shared/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
-import { AvatarComponent } from '@shared/ui/avatar.component';
+import { AvatarComponent, mayHaveAvatar } from '@shared/ui/avatar.component';
 import { PlanetRoleComponent } from '@shared/auth/planet-role.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 
@@ -48,6 +48,7 @@ import { DashboardTileComponent } from './dashboard-tile.component';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   user = this.userService.get();
+  mayHaveAvatar = mayHaveAvatar;
   data = { resources: [], courses: [], myTeams: [] };
   loading = { resources: true, courses: true, myTeams: true };
   loadedShelf: any = {};
