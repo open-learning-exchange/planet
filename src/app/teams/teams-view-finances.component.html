@@ -16,7 +16,7 @@
       </div>
     }
     <div class="finance-toolbar">
-      @if (!(allTransactions.length === 0)) {
+      @if (allTransactions.length > 0 || startDate || endDate) {
         <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
           <mat-label i18n>Start date</mat-label>
           <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
