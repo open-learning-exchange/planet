@@ -6,7 +6,7 @@ import { takeUntil, switchMap, take, filter, map, finalize } from 'rxjs/operator
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
@@ -18,7 +18,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { ViewActionsComponent } from '@shared/ui/view-actions.component';
 import { trackByIndex } from '@shared/tables/table.helpers';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
@@ -40,7 +41,6 @@ import { ResourcesMenuComponent } from '../../resources/view-resources/resources
   imports: [
     MatToolbar,
     MatIcon,
-    NgTemplateOutlet,
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
@@ -59,7 +59,8 @@ import { ResourcesMenuComponent } from '../../resources/view-resources/resources
     MatAnchor,
     RouterLink,
     MatMenuItem,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    ViewActionsComponent
   ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
@@ -77,9 +78,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  readonly deviceType = this.deviceInfoService.deviceType;
   readonly isMobile = this.deviceInfoService.isMobile;
-  deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
   constructor(

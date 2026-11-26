@@ -125,8 +125,58 @@
           <span class="unread-reply-dot corner" aria-hidden="true"></span>
         }
       </button>
-      <mat-menu #actionsMenu="matMenu" class="actions-menu">
-        <ng-container *ngTemplateOutlet="actionItems"></ng-container>
+      <mat-menu #actionsMenu="matMenu">
+        @if (!readOnly && (editable || item.public === true)) {
+          <button mat-menu-item type="button" (click)="addReply(item.doc)">
+            <mat-icon>reply</mat-icon>
+            <span i18n>Reply</span>
+          </button>
+          <button class="km-react-voice" mat-menu-item type="button" [matMenuTriggerFor]="reactionMenu">
+            <mat-icon>mood</mat-icon>
+            <span i18n>Reactions</span>
+          </button>
+        }
+        @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
+          <button mat-menu-item type="button" [attr.aria-label]="repliesLabel" (click)="showReplies(item)">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <span i18n>View replies</span><span> ({{replyObject[item.doc._id]?.length}})</span>
+            @if (hasUnreadReplies) {
+              <span class="unread-reply-dot" aria-hidden="true"></span>
+            }
+          </button>
+        }
+        @if (!readOnly) {
+          <button class="km-copy-voice" mat-menu-item type="button" (click)="copyLink(item.doc)">
+            <mat-icon>link</mat-icon>
+            <span i18n>Copy Voice Link</span>
+          </button>
+        }
+        @if (canModifyNews) {
+          @if (!readOnly) {
+            <button class="km-edit-voice" mat-menu-item type="button" (click)="editNews(item.doc)">
+              <mat-icon>edit</mat-icon>
+              <span i18n>Edit Voice</span>
+            </button>
+            <button class="km-delete-voice" mat-menu-item type="button" (click)="openDeleteDialog(item.doc)">
+              <mat-icon>delete</mat-icon>
+              <span i18n>Delete Voice</span>
+            </button>
+          }
+          @if (!readOnly && canEditLabels && labels.listed.length > 0) {
+            <button mat-menu-item type="button" [matMenuTriggerFor]="labelMenu">
+              <mat-icon>label</mat-icon>
+              <span i18n>Add Label</span>
+            </button>
+          }
+          @if (showShare) {
+            <button mat-menu-item type="button" (click)="shareStory(item.doc)">
+              <mat-icon>share</mat-icon>
+              <span i18n>Share with {
+      shareTarget, select, community {Community} nation {Nation} center {Earth}
+    }</span>
+            </button>
+          }
+        }
       </mat-menu>
     } @else {
       @if (!readOnly && (editable || item.public === true)) {
@@ -156,11 +206,6 @@
         @if (!readOnly && canEditLabels && labels.listed.length > 0) {
           <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
         }
-        <mat-menu #labelMenu="matMenu">
-          @for (label of labels.listed; track label) {
-            <button mat-menu-item (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
-          }
-        </mat-menu>
         @if (showShare) {
           <button mat-button (click)="shareStory(item.doc)" i18n>Share with {
       shareTarget, select, community {Community} nation {Nation} center {Earth}
@@ -171,46 +216,13 @@
   </mat-card-actions>
 </mat-card>
 
-<ng-template #actionItems>
-  @if (!readOnly && (editable || item.public === true)) {
-    <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
-    <button class="km-react-voice" mat-menu-item type="button" [matMenuTriggerFor]="reactionMenu">
-      <mat-icon>mood</mat-icon><span i18n>Reactions</span>
-    </button>
-  }
-  @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-    <button mat-button type="button" matTooltip="View replies" i18n-matTooltip [attr.aria-label]="repliesLabel" (click)="showReplies(item)">
-      <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
-      @if (hasUnreadReplies) {
-        <span class="unread-reply-dot" aria-hidden="true"></span>
-      }
-    </button>
-  }
-  @if (!readOnly) {
-    <button class="km-copy-voice" mat-menu-item type="button" (click)="copyLink(item.doc)">
-      <mat-icon>link</mat-icon><span i18n>Copy Voice Link</span>
-    </button>
-  }
-  @if (canModifyNews) {
-    @if (!readOnly) {
-      <button class="km-edit-voice" mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
-      <button class="km-delete-voice" mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
+<mat-menu #labelMenu="matMenu">
+  <ng-template matMenuContent>
+    @for (label of labels.listed; track label) {
+      <button mat-menu-item (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
     }
-    @if (!readOnly && canEditLabels && labels.listed.length > 0) {
-      <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
-    }
-    <mat-menu #labelMenu="matMenu">
-      @for (label of labels.listed; track label) {
-        <button mat-menu-item (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
-      }
-    </mat-menu>
-    @if (showShare) {
-      <button mat-button (click)="shareStory(item.doc)" i18n>Share with {
-      shareTarget, select, community {Community} nation {Nation} center {Earth}
-    }</button>
-    }
-  }
-</ng-template>
+  </ng-template>
+</mat-menu>
 
 <mat-menu #reactionMenu="matMenu" class="reaction-menu">
   <ng-template matMenuContent>

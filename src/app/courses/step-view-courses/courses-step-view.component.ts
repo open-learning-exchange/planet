@@ -75,7 +75,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
-  isGridView = true;
+  isGridView = !this.deviceInfoService.isMobile();
   showChat = false;
   hasAIProvider = false;
   isLoading = true;

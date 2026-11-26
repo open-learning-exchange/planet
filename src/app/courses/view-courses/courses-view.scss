@@ -45,26 +45,44 @@
     flex-shrink: 0;
   }
 
+  // One scroll on phones instead of one per pane
   @media (max-width: v.$screen-sm) {
     .course-container {
-      grid-template-columns: 1fr;
-      grid-template-areas: 
-      'detail'
-      'view';
-      grid-row-gap: 1rem;
+      display: block;
+      flex: none;
     }
 
-    .full-view-container.course-container {
-      grid-template-columns: 1fr;
-      grid-template-rows: 0 1fr;
-    } 
-    
+    .course-detail {
+      margin: 0 0 1rem;
+    }
+
+    .full-view-container .course-detail {
+      display: none;
+    }
+
+    // Material gives the step icons twice the title's share of the header, so on phones they take only their own width
+    .mat-expansion-panel-header-description {
+      flex: none;
+    }
   }
 }
 
 mat-expansion-panel-header {
   display: flex;
   justify-content: space-between;
+
+  // Material fixes the header height, so a wrapped step title needs it to grow
+  @media (max-width: v.$screen-sm) {
+    box-sizing: border-box;
+    height: auto;
+    min-height: var(--mat-expansion-header-collapsed-state-height, 48px);
+    padding-block: 8px;
+
+    &.mat-expanded {
+      height: auto;
+      min-height: var(--mat-expansion-header-expanded-state-height, 64px);
+    }
+  }
 }
 
 mat-panel-title {
@@ -82,6 +100,7 @@ mat-panel-title {
   }
 
   @media (max-width: v.$screen-sm) {
-    max-width: 45ch;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }

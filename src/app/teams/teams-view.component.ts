@@ -7,7 +7,7 @@ import { takeUntil, switchMap, finalize, map, tap, catchError, distinctUntilChan
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -23,7 +23,8 @@ import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { StateService } from '@shared/state.service';
 import { TablesAddDialogComponent } from '@shared/tables/tables-add-dialog.component';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
+import { ViewActionsComponent } from '@shared/ui/view-actions.component';
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { PlanetCalendarComponent } from '@shared/calendar/planet-calendar.component';
@@ -59,7 +60,6 @@ import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
     MatToolbar,
     MatIconAnchor,
     MatIcon,
-    NgTemplateOutlet,
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
@@ -89,7 +89,8 @@ import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
     SurveysComponent,
     DatePipe,
     TruncateTextPipe,
-    ResourcesIconComponent
+    ResourcesIconComponent,
+    ViewActionsComponent
   ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -131,9 +132,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reportsCount = 0;
   financesCount = 0;
   configuration = this.stateService.configuration;
-  readonly deviceType = this.deviceInfoService.deviceType;
   readonly isMobile = this.deviceInfoService.isMobile;
-  deviceTypes: typeof DeviceType = DeviceType;
 
   get requestBadgeDescription(): string {
     return $localize`Pending join requests: ${this.requests.length}:count:`;
