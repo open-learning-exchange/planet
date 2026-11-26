@@ -171,6 +171,8 @@ export class UsersComponent implements OnInit, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(
       () => {
+        // The picks hold the old _rev, so a second Set Roles on them would conflict
+        this.usersTable.selection.clear();
         this.usersService.requestUsers(true);
         this.planetMessageService.showMessage($localize`Roles updated`);
       },
