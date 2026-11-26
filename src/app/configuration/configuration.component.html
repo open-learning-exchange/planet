@@ -1,6 +1,6 @@
-<mat-horizontal-stepper [linear]="true">
-  @if (configurationType === 'new') {
-    <mat-step [stepControl]="loginForm" [optional]="configurationType === 'update'">
+@if (configurationType === 'new') {
+  <mat-horizontal-stepper [linear]="true">
+    <mat-step [stepControl]="loginForm">
       <ng-template matStepLabel i18n>Create Admin</ng-template>
       <form class="form-spacing" [formGroup]="loginForm">
         <mat-form-field>
@@ -24,126 +24,157 @@
       </form>
       <div id="login-status">{{message}}</div>
     </mat-step>
-  }
 
-  <mat-step [stepControl]="configurationFormGroup">
-    <ng-template matStepLabel i18n>{ configurationType, select, new {Set Up Configuration} update {Update Configuration}}</ng-template>
-    <form class="form-spacing configuration-form" [formGroup]="configurationFormGroup">
+    <mat-step [stepControl]="configurationFormGroup">
+      <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
+      <ng-container [ngTemplateOutlet]="planetFields"></ng-container>
+      <div>
+        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+        <!-- Fields from a template miss the step's error display, so Next marks them touched itself -->
+        <button mat-raised-button color="primary" matStepperNext (click)="configurationFormGroup.markAllAsTouched()" i18n>Next</button>
+      </div>
+    </mat-step>
+
+    <mat-step [stepControl]="contactFormGroup">
+      <ng-template matStepLabel i18n>Contact Details</ng-template>
+      <ng-container [ngTemplateOutlet]="contactFields"></ng-container>
+      <div>
+        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+        <button mat-raised-button type="button" color="primary" (click)="onSubmitConfiguration()" i18n>Submit</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+} @else {
+  <div class="configuration-cards">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title i18n>Planet</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ng-container [ngTemplateOutlet]="planetFields"></ng-container>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title i18n>Contact Details</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ng-container [ngTemplateOutlet]="contactFields"></ng-container>
+      </mat-card-content>
+    </mat-card>
+    <button
+      mat-raised-button
+      type="button"
+      color="primary"
+      (click)="onSubmitConfiguration()"
+      [disabled]="!configurationFormGroup.dirty && !contactFormGroup.dirty"
+      i18n>Update</button>
+  </div>
+}
+
+<ng-template #planetFields>
+  <form class="form-spacing configuration-form" [formGroup]="configurationFormGroup">
+    <mat-form-field>
+      <mat-label i18n>Select Nation/Community</mat-label>
+      <mat-select (selectionChange)="onChange($event.value)" formControlName="planetType" required>
+        <mat-option value="nation" i18n>Nation</mat-option>
+        <mat-option value="community" i18n>Community</mat-option>
+      </mat-select>
+      <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planetType"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    @if (nationOrCommunity === 'community') {
       <mat-form-field>
-        <mat-label i18n>Select Nation/Community</mat-label>
-        <mat-select (selectionChange)="onChange($event.value)" formControlName="planetType" required>
-          <mat-option value="nation" i18n>Nation</mat-option>
-          <mat-option value="community" i18n>Community</mat-option>
-        </mat-select>
-        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planetType"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      @if (nationOrCommunity === 'community') {
-        <mat-form-field>
-          <mat-label i18n>Nation(s)</mat-label>
-          <mat-select formControlName="parentDomain" (selectionChange)="onChangeNation()" required>
-            @for (nation of nations; track nation) {
-              <mat-option [value]="nation.localDomain">{{nation.name}}</mat-option>
-            }
-          </mat-select>
-          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      }
-      @if (nationOrCommunity === 'nation') {
-        <mat-form-field>
-          <mat-label i18n>Center</mat-label>
-          <input matInput formControlName="parentDomain" required readonly>
-        </mat-form-field>
-      }
-      <mat-form-field class="new-line">
-        <mat-label i18n>Name</mat-label>
-        <input matInput formControlName="name" required (keyup)="planetNameChange()">
-        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Code</mat-label>
-        <input matInput formControlName="code" required readonly>
-        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Language</mat-label>
-        <input matInput formControlName="preferredLang" [matAutocomplete]="auto" required>
-        <mat-autocomplete #auto="matAutocomplete">
-          @for (language of languageNames; track language) {
-            <mat-option [value]="language">
-              {{ language }}
-            </mat-option>
+        <mat-label i18n>Nation(s)</mat-label>
+        <mat-select formControlName="parentDomain" (selectionChange)="onChangeNation()" required>
+          @for (nation of nations; track nation) {
+            <mat-option [value]="nation.localDomain">{{nation.name}}</mat-option>
           }
-        </mat-autocomplete>
+        </mat-select>
+        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      <mat-expansion-panel class="full-width mat-elevation-z0">
-        <mat-expansion-panel-header>
-          <mat-panel-title i18n>Advanced Options</mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="advanced-options-container">
-          <mat-form-field>
-            <mat-label i18n>Local URL</mat-label>
-            <input matInput formControlName="localDomain">
-          </mat-form-field>
+    }
+    @if (nationOrCommunity === 'nation') {
+      <mat-form-field>
+        <mat-label i18n>Center</mat-label>
+        <input matInput formControlName="parentDomain" required readonly>
+      </mat-form-field>
+    }
+    <mat-form-field class="new-line">
+      <mat-label i18n>Name</mat-label>
+      <input matInput formControlName="name" required (keyup)="planetNameChange()">
+      <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n>Code</mat-label>
+      <input matInput formControlName="code" required readonly>
+      <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n>Language</mat-label>
+      <input matInput formControlName="preferredLang" [matAutocomplete]="auto" required>
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (language of languageNames; track language) {
+          <mat-option [value]="language">
+            {{ language }}
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+    <mat-expansion-panel class="full-width mat-elevation-z0">
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n>Advanced Options</mat-panel-title>
+        <mat-panel-description i18n>Local URL, beta features, members, online</mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="advanced-options-container">
+        <mat-form-field>
+          <mat-label i18n>Local URL</mat-label>
+          <input matInput formControlName="localDomain">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label i18n>Beta features</mat-label>
+          <mat-select
+            formControlName="betaEnabled"
+            i18n-matTooltip
+            matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+            <mat-option value="off" i18n>Always off</mat-option>
+            <mat-option value="on" i18n>Always on</mat-option>
+            <mat-option value="user" i18n>User preferences</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="advanced-toggles">
           <mat-slide-toggle formControlName="autoAccept" i18n>Auto accept Members</mat-slide-toggle>
-          <mat-form-field>
-            <mat-label i18n>Beta features</mat-label>
-            <mat-select
-              formControlName="betaEnabled"
-              i18n-matTooltip
-              matTooltip="Beta features may not work as intended. It's recommended to leave this off">
-              <mat-option value="off" i18n>Always off</mat-option>
-              <mat-option value="on" i18n>Always on</mat-option>
-              <mat-option value="user" i18n>User preferences</mat-option>
-            </mat-select>
-          </mat-form-field>
           <mat-slide-toggle formControlName="alwaysOnline" i18n>Always Online Planet</mat-slide-toggle>
         </div>
-      </mat-expansion-panel>
-    </form>
-    <div>
-      @if (configurationType === 'new') {
-        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-      }
-      <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
-    </div>
-  </mat-step>
-
-  <mat-step [stepControl]="contactFormGroup">
-    <form class="form-spacing" [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
-      <ng-template matStepLabel i18n>{ configurationType, select, new {Contact Details} update {Update Contact Details}}</ng-template>
-      <mat-form-field>
-        <mat-label i18n>First Name</mat-label>
-        <input matInput formControlName="firstName" required>
-        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Middle Name</mat-label>
-        <input matInput formControlName="middleName">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Last Name</mat-label>
-        <input matInput formControlName="lastName" required>
-        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.lastName"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Email</mat-label>
-        <input matInput formControlName="email" required>
-        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.email"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Phone Number</mat-label>
-        <input matInput formControlName="phoneNumber" required>
-        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.phoneNumber"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <div class="full-width">
-        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          [disabled]="configurationType === 'update' && !configurationFormGroup.dirty && !contactFormGroup.dirty"
-          i18n>{ configurationType, select, new {Submit} update {Update}}</button>
       </div>
-    </form>
-  </mat-step>
-</mat-horizontal-stepper>
+    </mat-expansion-panel>
+  </form>
+</ng-template>
+
+<ng-template #contactFields>
+  <form class="form-spacing" [formGroup]="contactFormGroup">
+    <mat-form-field>
+      <mat-label i18n>First Name</mat-label>
+      <input matInput formControlName="firstName" required>
+      <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n>Middle Name</mat-label>
+      <input matInput formControlName="middleName">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n>Last Name</mat-label>
+      <input matInput formControlName="lastName" required>
+      <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.lastName"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n>Email</mat-label>
+      <input matInput formControlName="email" required>
+      <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.email"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n>Phone Number</mat-label>
+      <input matInput formControlName="phoneNumber" required>
+      <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.phoneNumber"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+  </form>
+</ng-template>

@@ -3,7 +3,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { vi } from 'vitest';
 
@@ -72,6 +72,11 @@ describe('ConfigurationComponent', () => {
     component.configurationFormGroup.controls.parentDomain.setValue('vi.example/db');
     expect(component.configurationFormGroup.hasError('required')).toBe(false);
   });
+
+  it('shows what is missing when submitted incomplete', () => {
+    component.onSubmitConfiguration();
+    expect(component.contactFormGroup.controls.firstName.touched).toBe(true);
+  });
 });
 
 describe('ConfigurationComponent update', () => {
@@ -84,17 +89,20 @@ describe('ConfigurationComponent update', () => {
   const afterClosed = vi.fn();
   const dialogMock = { open: vi.fn().mockReturnValue({ afterClosed }) };
   const configurationServiceMock = { patchConfiguration: vi.fn().mockReturnValue(of({})) };
+  const messageServiceMock = { showMessage: vi.fn(), showAlert: vi.fn() };
+  let nationList: Subject<any>;
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    nationList = new Subject();
     TestBed.configureTestingModule({
       imports: [ ConfigurationComponent ],
       providers: [
-        { provide: CouchService, useValue: { get: () => of(saved).pipe(delay(0)), post: () => of({ docs: [] }), datePlaceholder: {} } },
+        { provide: CouchService, useValue: { get: () => of(saved).pipe(delay(0)), post: () => nationList, datePlaceholder: {} } },
         { provide: ValidatorService, useValue: { isUnique$: () => of(null) } },
         { provide: ConfigurationService, useValue: configurationServiceMock },
-        { provide: PlanetMessageService, useValue: { showMessage: vi.fn(), showAlert: vi.fn() } },
-        { provide: StateService, useValue: { configuration: { _id: 'config_id' }, requestData: vi.fn() } },
+        { provide: PlanetMessageService, useValue: messageServiceMock },
+        { provide: StateService, useValue: { configuration: saved, requestData: vi.fn() } },
         { provide: ActivatedRoute, useValue: { snapshot: { data: { update: true } } } },
         { provide: MatDialog, useValue: dialogMock },
         { provide: DialogsLoadingService, useValue: { start: vi.fn(), stop: vi.fn() } }
@@ -110,11 +118,29 @@ describe('ConfigurationComponent update', () => {
     expect(component.configurationFormGroup.controls.code.disabled).toBe(true);
   });
 
+  it('shows the saved parent until the nation list arrives', () => {
+    const parentDomain = component.configurationFormGroup.controls.parentDomain;
+    expect(parentDomain.disabled).toBe(true);
+    expect(component.nations).toEqual([ { localDomain: 'vi.example/db', name: 'vi' } ]);
+
+    nationList.next({ docs: [ { localDomain: 'vi.example/db', name: 'Example Nation' } ] });
+    expect(parentDomain.enabled).toBe(true);
+    expect(component.nations[0].name).toBe('Example Nation');
+  });
+
+  it('keeps the saved parent when the nation list fails', () => {
+    nationList.error(new Error('offline'));
+    expect(component.configurationFormGroup.controls.parentDomain.disabled).toBe(true);
+    expect(component.configurationFormGroup.getRawValue().parentDomain).toBe('vi.example/db');
+    expect(messageServiceMock.showAlert).toHaveBeenCalled();
+  });
+
   it('saves a settings change without asking', () => {
     component.configurationFormGroup.controls.alwaysOnline.setValue(true);
     component.onSubmitConfiguration();
     expect(dialogMock.open).not.toHaveBeenCalled();
-    expect(configurationServiceMock.patchConfiguration).toHaveBeenCalled();
+    expect(configurationServiceMock.patchConfiguration)
+      .toHaveBeenCalledWith(expect.objectContaining({ alwaysOnline: true, code: 'planet', parentCode: 'vi' }));
   });
 
   it.each([

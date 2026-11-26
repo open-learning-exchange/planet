@@ -1,0 +1,86 @@
+@use "../variables" as v;
+
+.mat-mdc-raised-button {
+  margin: 0px 2px 2px 0px;
+}
+
+.configuration-form {
+  align-items: start;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  mat-expansion-panel {
+    margin-bottom: 16px;
+    border: 1px solid v.$medium-grey;
+    border-radius: 4px;
+  }
+
+  // Lines the panel's title up with the fill fields' labels, which sit 16px in
+  mat-expansion-panel-header {
+    padding: 0 16px;
+  }
+
+  mat-panel-description {
+    justify-content: flex-end;
+    color: v.$grey-text;
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    padding: 0 16px 16px;
+  }
+}
+
+.advanced-options-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.advanced-options-container > * {
+  margin-bottom: 10px;
+}
+
+.advanced-toggles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+:host ::ng-deep .mat-stepper-horizontal-line {
+  flex: 0 0 56px;
+}
+
+.configuration-cards {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  mat-card {
+    width: 95%;
+  }
+
+  .form-spacing,
+  .advanced-options-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 16px;
+  }
+}
+
+@media (max-width: v.$screen-sm) {
+  .configuration-cards {
+    .form-spacing,
+    .advanced-options-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  mat-panel-description {
+    display: none;
+  }
+}

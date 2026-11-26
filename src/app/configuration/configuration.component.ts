@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators, ReactiveFormsModule
 } from '@angular/forms';
@@ -12,7 +13,10 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import {
+  MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelHeader, MatExpansionPanelTitle
+} from '@angular/material/expansion';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 
 import { languages } from '@shared/language/languages';
@@ -71,32 +75,7 @@ interface ContactForm {
 @Component({
   selector: 'planet-configuration',
   templateUrl: './configuration.component.html',
-  styles: [`
-    .mat-mdc-raised-button {
-      margin: 0px 2px 2px 0px;
-    }
-    .configuration-form {
-      align-items: start;
-    }
-    .configuration-form mat-form-field {
-      width: 100%;
-    }
-    .configuration-form mat-expansion-panel {
-      margin-bottom: 16px;
-    }
-    .advanced-options-container {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .advanced-options-container > * {
-      margin-bottom: 10px;
-    }
-
-    :host ::ng-deep .mat-stepper-horizontal-line {
-      flex: 0 0 56px;
-    }
-  `],
+  styleUrl: './configuration.component.scss',
   imports: [
     MatStepper,
     MatStep,
@@ -120,7 +99,13 @@ interface ContactForm {
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
-    MatStepperPrevious
+    MatExpansionPanelDescription,
+    MatStepperPrevious,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    NgTemplateOutlet
   ]
 })
 export class ConfigurationComponent implements OnInit {
@@ -212,7 +197,9 @@ export class ConfigurationComponent implements OnInit {
 
   initUpdate() {
     this.configurationType = 'update';
-    const configurationId = this.stateService.configuration._id;
+    const { _id: configurationId, parentDomain, parentCode } = this.stateService.configuration;
+    // The parent's name only comes with the nation list, so its code stands in until then
+    this.nations = [ { localDomain: parentDomain, name: parentCode } ];
     this.couchService.get('configurations/' + configurationId).subscribe((data: any) => {
       this.configuration = data;
       this.nationOrCommunity = data.planetType;
@@ -256,9 +243,9 @@ export class ConfigurationComponent implements OnInit {
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ planetType: 'nation', registrationRequest: 'accepted' }, 0 ),
       { domain: environment.centerAddress, protocol: environment.centerProtocol })
-      .pipe(finalize(() => parentDomain.enable()))
       .subscribe((data) => {
         this.nations = data.docs;
+        parentDomain.enable();
       }, (error) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`));
   }
 
@@ -324,6 +311,8 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (!this.allValid()) {
+      this.configurationFormGroup.markAllAsTouched();
+      this.contactFormGroup.markAllAsTouched();
       return;
     }
     const changes = this.configurationType === 'update' ?
