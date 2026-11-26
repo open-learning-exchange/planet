@@ -153,7 +153,7 @@
                   <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="!step.submission || isStepLocked(stepNum) || (!canManage && stepNum > 0 && !step.isPreviousTestTaken)" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
                 }
                 @if (step?.survey?.questions.length && isUserEnrolled) {
-                  <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="isStepLocked(stepNum)" (click)="goToSurvey(stepNum)" i18n>Take Survey</button>
+                  <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="isStepLocked(stepNum)" (click)="goToSurvey(stepNum)" i18n>{step.surveyText, select, continue {Continue Survey} retake {Retake Survey} other {Take Survey}}</button>
                 }
                 @if (canManage && (step?.exam?.questions.length || step?.survey?.questions.length)) {
                   <button class="margin-lr-10" color="accent" mat-raised-button

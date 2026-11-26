@@ -67,6 +67,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   resourceUrl = '';
   examStart = 1;
   examText: 'continue' | 'retake' | 'take' = 'take';
+  surveyText: 'continue' | 'retake' | 'take' = 'take';
   attempts = 0;
   isUserEnrolled = false;
   resource: any;
@@ -130,6 +131,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
       this.courseId = params.get('id');
       this.attempts = 0;
+      this.surveyText = 'take';
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
     this.chatService.listAIProviders().subscribe((providers) => {
@@ -202,6 +204,16 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         parent: exam,
         user: this.userService.get(),
         type: 'exam' });
+    }
+    const survey = this.stepDetail.survey && (exams.find(({ _id }) => _id === this.stepDetail.survey._id) || this.stepDetail.survey);
+    if (survey?.questions?.length) {
+      this.submissionsService.getSurveyButtonStatus(`${survey._id}@${course._id}`, survey._rev, this.userService.get().name)
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe((surveyText) => {
+          if (this.stepDetail?.survey?._id === survey._id && this.courseId === course._id) {
+            this.surveyText = surveyText;
+          }
+        });
     }
     this.isLoading = false;
   }
