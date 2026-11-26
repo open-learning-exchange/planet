@@ -77,7 +77,7 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
 }> {
   const { content } = data;
   const provider = await checkTurn(content, data.aiProvider);
-  const { assistant } = await getConfiguration();
+  const { promptProfiles } = await getConfiguration();
 
   if (data._id && !isPlainDocId(data._id)) {
     throw notOwner();
@@ -86,7 +86,7 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
   const context = data.context ?? stored?.context;
   const messages: ChatMessage[] = [ ...historyMessages(stored?.conversations || []), { 'role': 'user', content } ];
 
-  const completionText = await aiChat(messages, provider, assistant.instructions, context, stream, callback);
+  const completionText = await aiChat(messages, provider, promptProfiles.general_chat, context, stream, callback);
 
   const turn: ChatItem = { 'id': Date.now().toString(), 'query': content, 'response': completionText };
   const change = { 'aiProvider': provider.name, 'context': data.context };

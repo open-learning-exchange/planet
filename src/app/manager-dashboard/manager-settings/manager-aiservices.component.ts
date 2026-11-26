@@ -8,12 +8,14 @@ import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem, MatListItemTitle } from '@angular/material/list';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { AiChatService } from '@shared/ai/ai-chat.service';
+import { baseContextPrompt } from '@shared/ai/ai-prompts.constants';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
 import { StateService } from '@shared/state.service';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
@@ -25,18 +27,14 @@ import { ManagerKeysComponent } from './manager-keys.component';
 interface ConfigFormControls {
   streaming: FormControl<boolean>;
   models: FormGroup<Record<string, FormControl<string>>>;
-  assistantName: FormControl<string>;
-  assistantInstructions: FormControl<string>;
+  generalChatPrompt: FormControl<string>;
 }
 
 interface AIConfiguration {
   [key: string]: unknown;
   streaming?: boolean;
   models?: Record<string, string>;
-  assistant?: {
-    name?: string;
-    instructions?: string;
-  };
+  promptProfiles?: Record<string, string>;
 }
 
 @Component({
@@ -58,8 +56,12 @@ interface AIConfiguration {
     MatListItemTitle,
     MatFormField,
     MatLabel,
+    MatHint,
     MatInput,
     MatSlideToggle,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
     MatTooltip,
     MatButton,
     ManagerKeysComponent
@@ -71,6 +73,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configForm: FormGroup<ConfigFormControls>;
   discovery: ProviderDiscovery = { state: 'loading' };
   labels: Record<string, string> = {};
+  readonly defaultPrompt = baseContextPrompt.trim();
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -88,8 +91,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     this.configForm = this.fb.group({
       streaming: this.fb.control(!!this.configuration.streaming),
       models: this.fb.group<Record<string, FormControl<string>>>({}),
-      assistantName: this.fb.control(this.configuration.assistant?.name || ''),
-      assistantInstructions: this.fb.control(this.configuration.assistant?.instructions || '')
+      generalChatPrompt: this.fb.control(this.configuration.promptProfiles?.general_chat || '')
     });
     this.aiChatService.refreshAIProviders();
     this.aiChatService.providerDiscovery$.pipe(takeUntil(this.unsubscribe$)).subscribe((discovery) => {
@@ -123,11 +125,11 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
       return;
     }
     this.dialogsLoadingService.start();
-    const { streaming, models, assistantName, assistantInstructions } = this.configForm.getRawValue();
+    const { streaming, models, generalChatPrompt } = this.configForm.getRawValue();
     const configPatch = {
       streaming,
       models: { ...this.configuration.models, ...models },
-      assistant: { name: assistantName, instructions: assistantInstructions }
+      promptProfiles: { ...this.configuration.promptProfiles, general_chat: generalChatPrompt.trim() || this.defaultPrompt }
     };
     this.keysCard.saveKeys().pipe(
       switchMap(() => this.configurationService.patchLocalConfiguration(configPatch)),

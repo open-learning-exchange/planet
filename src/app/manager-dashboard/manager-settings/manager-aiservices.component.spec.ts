@@ -5,6 +5,7 @@ import { BehaviorSubject, of, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { AiChatService } from '@shared/ai/ai-chat.service';
+import { baseContextPrompt } from '@shared/ai/ai-prompts.constants';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
@@ -70,6 +71,19 @@ describe('ManagerAIServicesComponent', () => {
       models: { openai: 'gpt-4o', retired: 'old-model', deepseek: 'deepseek-chat' }
     }));
     expect(configuration.models).toEqual({ openai: 'gpt-4o', retired: 'old-model' });
+  });
+
+  it('saves the chat prompt trimmed, and a blank one as the default prompt', () => {
+    const component = createComponent({ _id: 'configuration', promptProfiles: { general_chat: 'Old prompt' } });
+    const savedPrompt = () => configurationService.patchLocalConfiguration.mock.lastCall[0].promptProfiles.general_chat;
+
+    component.configForm.controls.generalChatPrompt.setValue('  Our prompt \n');
+    component.saveConfig();
+    expect(savedPrompt()).toEqual('Our prompt');
+
+    component.configForm.controls.generalChatPrompt.setValue('   ');
+    component.saveConfig();
+    expect(savedPrompt()).toEqual(baseContextPrompt.trim());
   });
 
   it('shows a failed list, and Try again reloads the providers and the failed keys', () => {

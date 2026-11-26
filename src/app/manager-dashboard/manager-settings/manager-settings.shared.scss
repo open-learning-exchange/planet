@@ -46,6 +46,10 @@ mat-list-item.mat-mdc-list-item {
   line-height: 1.5;
 }
 
+.default-prompt {
+  white-space: pre-line;
+}
+
 .key-entry {
   display: flex;
   flex-wrap: wrap;

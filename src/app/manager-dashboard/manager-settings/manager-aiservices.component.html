@@ -39,31 +39,24 @@
 
       <mat-card class="card">
         <mat-card-header>
-          <mat-card-title i18n>Assistant Configuration</mat-card-title>
-          </mat-card-header>
-          @if (configuration.assistant) {
-            <mat-card-content>
-              <mat-list>
-                <mat-list-item>
-                  <div matListItemTitle class="list-item-content">
-                    <span i18n>Name:</span>
-                      <mat-form-field>
-                        <mat-label i18n>Assistant name</mat-label>
-                          <input matInput formControlName="assistantName" />
-                        </mat-form-field>
-                      </div>
-                    </mat-list-item>
-                  </mat-list>
-                  <div class="list-item-content instructions">
-                    <span i18n>Instructions:</span>
-                      <mat-form-field>
-                        <mat-label i18n>Assistant instructions</mat-label>
-                          <textarea matInput formControlName="assistantInstructions"></textarea>
-                        </mat-form-field>
-                      </div>
-                    </mat-card-content>
-                  }
-                </mat-card>
+          <mat-card-title i18n>Chat Prompt</mat-card-title>
+        </mat-card-header>
+          <mat-card-content>
+            <div class="instructions">
+              <mat-form-field class="full-width">
+                <mat-label i18n>General chat prompt</mat-label>
+                <textarea matInput formControlName="generalChatPrompt"></textarea>
+                <mat-hint i18n>Leave blank to use the default prompt</mat-hint>
+              </mat-form-field>
+              <mat-expansion-panel class="mat-elevation-z0">
+                <mat-expansion-panel-header>
+                  <mat-panel-title i18n>Default prompt</mat-panel-title>
+                </mat-expansion-panel-header>
+                <p class="default-prompt">{{ defaultPrompt }}</p>
+              </mat-expansion-panel>
+            </div>
+          </mat-card-content>
+        </mat-card>
 
                 <mat-card class="card">
                   <mat-card-header>

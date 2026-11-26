@@ -303,10 +303,7 @@ export class ConfigurationComponent implements OnInit {
 
     const chatConfig = {
       streaming: false,
-      assistant: {
-        name: 'Planet Context',
-        instructions: baseContextPrompt,
-      }
+      promptProfiles: { general_chat: baseContextPrompt }
     };
 
     const configuration = Object.assign(
