@@ -4,8 +4,10 @@ import { MatButton } from '@angular/material/button';
 import { MatActionList, MatListItem } from '@angular/material/list';
 
 import { AvatarComponent } from '@shared/ui/avatar.component';
+import { StateService } from '@shared/state.service';
 
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
+import { memberAvatarAttachment } from '../teams/teams.utils';
 import { assigneeName } from './tasks.utils';
 
 @Component({
@@ -17,8 +19,12 @@ import { assigneeName } from './tasks.utils';
         @for (assignee of data.assignees; track $index) {
           <button mat-list-item (click)="openMemberDialog(assignee)">
             <span class="task-assignee-row-content">
-              <planet-avatar class="task-assignee-avatar" aria-hidden="true" [username]="assignee.name"
-                [planetCode]="assignee.userPlanetCode"></planet-avatar>
+              @if (avatarAttachment(assignee); as attachment) {
+                <planet-avatar class="task-assignee-avatar" aria-hidden="true" [username]="assignee.name"
+                  [planetCode]="assignee.userPlanetCode" [attachment]="attachment"></planet-avatar>
+              } @else {
+                <img class="task-assignee-avatar" src="assets/image.png" alt="">
+              }
               <span class="task-assignee-name">{{assigneeName(assignee)}}</span>
             </span>
           </button>
@@ -45,12 +51,17 @@ export class TasksAssigneesDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { assignees: any[] },
-    private usersProfileDialogService: UsersProfileDialogService
+    private usersProfileDialogService: UsersProfileDialogService,
+    private stateService: StateService
   ) {}
 
   openMemberDialog(assignee) {
     this.usersProfileDialogService.open({
       member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode }
     });
+  }
+
+  avatarAttachment(assignee) {
+    return memberAvatarAttachment(assignee, this.stateService.configuration.code);
   }
 }

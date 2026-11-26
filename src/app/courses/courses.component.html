@@ -188,6 +188,7 @@
             <div class="course-progress">
               <span i18n>myProgress:</span>
               <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress" [canManage]="element.canManage"></planet-courses-progress-bar>
+              <span class="card-progress-count">{{ completedSteps(element) }} / {{ element.doc.steps.length }}</span>
             </div>
           }
           <mat-chip-set #tagsList class="tags-list" aria-label="Course tags" i18n-aria-label>
@@ -208,11 +209,31 @@
               }
             }
           </mat-chip-set>
+          <div class="card-meta">
+            @if (element.doc.gradeLevel) {
+              <span><planet-language-label [options]="gradeOptions" [label]="element.doc.gradeLevel"></planet-language-label></span>
+            }
+            @if (element.doc.subjectLevel) {
+              <span><planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></span>
+            }
+            <span>{{ element.doc.steps.length }} <ng-container i18n>Steps</ng-container></span>
+          </div>
           <div class="content">
             <planet-markdown-preview [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [expanded]="isExpanded(element)" (expandedChange)="toggleRow(element)"></planet-markdown-preview>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
+          @if (element.rating.totalRating) {
+            <span class="card-summary"><mat-icon [inline]="true">star</mat-icon>{{ (element.rating.rateSum / element.rating.totalRating).toFixed(1) }} ({{ element.rating.totalRating }})</span>
+          }
+          <button mat-icon-button type="button" class="card-toggle" [attr.aria-expanded]="isExpanded(element)" i18n-aria-label aria-label="Full description" (click)="toggleRow(element)">
+            <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+          </button>
           @if (!parent && !isDialog && !isForm) {
+            @if (element.admission) {
+              <a mat-flat-button color="primary" class="card-main-action" [routerLink]="['view', element._id]" i18n>Continue</a>
+            } @else if (element.doc.steps.length) {
+              <button mat-flat-button color="primary" type="button" class="card-main-action" (click)="courseToggle(element._id, 'admission')" i18n>Join</button>
+            }
             <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
               <mat-icon>more_vert</mat-icon>
             </button>

@@ -9,11 +9,12 @@ import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
+import { AvatarAttachment, AvatarComponent } from '@shared/ui/avatar.component';
 
 import { TasksService } from '../tasks/tasks.service';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
+import { memberAvatarAttachment } from './teams.utils';
 
-const defaultAvatar = 'assets/image.png';
 // Must match the length of $initials-palette in _variables.scss, which owns the colors.
 const initialsColorCount = 12;
 
@@ -33,7 +34,8 @@ const initialsColorCount = 12;
     MatListItemTitle,
     DatePipe,
     TruncateTextPipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    AvatarComponent
   ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
@@ -59,6 +61,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   initials = '';
   initialsColorIndex = 0;
   hasImage = false;
+  avatarAttachment: AvatarAttachment;
 
   constructor(
     private userService: UserService,
@@ -92,7 +95,8 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     const userDoc = this.member?.userDoc;
     this.displayName = userDoc?.fullName || userDoc?.firstName || userDoc?.doc?.fullName || userDoc?.doc?.firstName ||
       this.member?.name || '';
-    this.hasImage = !!this.member?.avatar && this.member.avatar !== defaultAvatar;
+    this.avatarAttachment = memberAvatarAttachment(this.member, this.planetCode);
+    this.hasImage = !!this.avatarAttachment;
     this.setInitials(this.displayName);
   }
 

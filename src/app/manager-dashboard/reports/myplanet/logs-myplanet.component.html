@@ -32,23 +32,25 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    @for (planet of apklogs; track planet) {
-      @if (planet.children.length) {
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="responsive-table">
-            <planet-myplanet-table dataType="logs" [data]="planet.children"></planet-myplanet-table>
-          </div>
-          @if (!isEmpty) {
-            <button mat-raised-button color="accent" (click)="exportSingle(planet)" style="margin-right: 2rem;">
-              <span i18n>Export</span>
-            </button>
-          }
-        </mat-expansion-panel>
+    <mat-accordion multi>
+      @for (planet of apklogs; track planet.doc._id) {
+        @if (planet.children.length) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="responsive-table">
+              <planet-myplanet-table dataType="logs" [data]="planet.children"></planet-myplanet-table>
+            </div>
+            @if (!isEmpty) {
+              <button mat-raised-button color="accent" (click)="exportSingle(planet)" style="margin-right: 2rem;">
+                <span i18n>Export</span>
+              </button>
+            }
+          </mat-expansion-panel>
+        }
       }
-    }
+    </mat-accordion>
     @if (isLoading) {
       <planet-loading-spinner text="Loading logs..." i18n-text></planet-loading-spinner>
     }

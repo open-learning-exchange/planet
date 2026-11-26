@@ -68,7 +68,7 @@
           Add Courses
         </button>
         @if (!isUserLeader && mode !== 'services') {
-          <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
+          <button mat-raised-button color="warn" class="toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
         }
       }
       @case ('unrelated') {

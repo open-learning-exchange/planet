@@ -35,7 +35,6 @@ import { TeamsService } from './teams.service';
 import { NewsService } from '../news/news.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ResourcesPickerDialogComponent } from '../resources/resources-picker-dialog.component';
-import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { ResourcesViewerDialogComponent } from '../resources/view-resources/resources-viewer-dialog.component';
 import { CustomValidators } from '../validators/custom-validators';
@@ -324,17 +323,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.teamDataLoading = true;
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
-      const src = (member) => {
-        const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
-        if (member.attachmentDoc) {
-          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
-        }
-        if (member.userDoc && member.userDoc.doc._attachments) {
-          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
-        }
-        return 'assets/image.png';
-      };
-      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1] }));
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(requestDateCompare);
