@@ -117,6 +117,8 @@ describe('TeamsViewFinancesComponent', () => {
 
   const clearFiltersButton = (): HTMLButtonElement | null => fixture.nativeElement.querySelector('.km-clear-filters');
 
+  const dateFieldsShown = () => fixture.debugElement.queryAll(By.css('.finance-date-field')).length === 2;
+
   it('should create TeamsViewFinancesComponent', () => {
     expect(component).toBeTruthy();
   });
@@ -225,6 +227,30 @@ describe('TeamsViewFinancesComponent', () => {
     expect(renderedDescriptions()).toEqual([ 'Grant Funding', 'Hardware Supplies', 'Initial Deposit' ]);
     expect(balanceShown()).toBe(true);
     expect(clearFiltersButton()).toBeNull();
+  });
+
+  it('should hide the date filters when the team has no transactions', () => {
+    component.finances = [];
+    component.ngOnChanges();
+    fixture.detectChanges();
+
+    expect(dateFieldsShown()).toBe(false);
+    expect(clearFiltersButton()).toBeNull();
+  });
+
+  it('should keep the date filters while a date range is set, even with no rows to show', () => {
+    component.startDate = new Date('2027-01-01T00:00:00Z');
+    component.transactionFilter();
+    fixture.detectChanges();
+    expect(component.emptyTable).toBe(true);
+    expect(dateFieldsShown()).toBe(true);
+
+    component.finances = [];
+    component.ngOnChanges();
+    fixture.detectChanges();
+
+    expect(dateFieldsShown()).toBe(true);
+    expect(clearFiltersButton()).not.toBeNull();
   });
 
   it('should not reorder the table data source when exporting', () => {

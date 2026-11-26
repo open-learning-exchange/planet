@@ -16,23 +16,25 @@
       </div>
     }
     <div class="finance-toolbar">
-      <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
-        <mat-label i18n>Start date</mat-label>
-        <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
-        <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
-        <mat-datepicker #dateFilterStart></mat-datepicker>
-        @if (startDate > endDate) {
-          <mat-error i18n>Start date must be before end date</mat-error>
+      @if (allTransactions.length > 0 || startDate || endDate) {
+        <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
+          <mat-label i18n>Start date</mat-label>
+          <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
+          <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
+          <mat-datepicker #dateFilterStart></mat-datepicker>
+          @if (startDate > endDate) {
+            <mat-error i18n>Start date must be before end date</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
+          <mat-label i18n>End date</mat-label>
+          <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" [min]="startDate">
+          <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
+          <mat-datepicker #dateFilterEnd></mat-datepicker>
+        </mat-form-field>
+        @if (startDate || endDate || !defaultSort) {
+          <button class="finance-reset-btn km-clear-filters" mat-button color="primary" (click)="clearFilters()" i18n>Clear filters</button>
         }
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
-        <mat-label i18n>End date</mat-label>
-        <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" [min]="startDate">
-        <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
-        <mat-datepicker #dateFilterEnd></mat-datepicker>
-      </mat-form-field>
-      @if (startDate || endDate || !defaultSort) {
-        <button class="finance-reset-btn km-clear-filters" mat-button color="primary" (click)="clearFilters()" i18n>Clear filters</button>
       }
       <span class="spacer"></span>
       @if (!emptyTable) {
