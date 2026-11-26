@@ -19,12 +19,22 @@
   }
   @if (deviceType() !== deviceTypes.DESKTOP) {
     <span class="toolbar-fill"></span>
-    @if (chartData?.length) {
+    @if (chartData?.length || selectedStep !== undefined) {
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>
     }
-    <mat-menu #actionsMenu="matMenu" class="actions-menu">
-      <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
-      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    <mat-menu #actionsMenu="matMenu">
+      @if (selectedStep !== undefined) {
+        <button mat-menu-item type="button" (click)="resetToFullCourse()">
+          <mat-icon>equalizer</mat-icon>
+          <span i18n>Show full course</span>
+        </button>
+      }
+      @if (chartData?.length) {
+        <button mat-menu-item type="button" (click)="exportChartData()">
+          <mat-icon>file_download</mat-icon>
+          <span i18n>Export</span>
+        </button>
+      }
     </mat-menu>
   }
 </mat-toolbar>
@@ -59,6 +69,10 @@
   }
 </ng-template>
 <div class="view-container view-full-height">
+  <!-- A click inside a mat-menu closes it, so the dropdowns stay out of ⋮ -->
+  @if (deviceType() !== deviceTypes.DESKTOP) {
+    <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
+  }
   @if (chartData?.length) {
     <planet-courses-progress-chart [label]="chartLabel" [inputs]="chartData" [height]="yAxisLength" [showAvatar]="true" (clickAction)="memberClick($event)" (changeData)="changeData($event)">
     </planet-courses-progress-chart>

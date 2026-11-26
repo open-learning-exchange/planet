@@ -3,7 +3,7 @@
   <span i18n>{ mode, select, team {Teams} enterprise {Enterprises} }</span>
 </mat-toolbar>
 <div class="space-container teams-view">
-  <mat-toolbar class="primary-color font-size-1">
+  <planet-view-actions [menu]="actionsMenu" [edit]="editDetails" [actions]="actionButtons">
     @if (team !== undefined) {
       @if (team?.coverFileName) {
         <img class="team-toolbar-cover" [src]="coverImageUrl()" alt="" />
@@ -17,30 +17,69 @@
   @if (mode==='services') {
     <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
   }
-  @if (deviceType() === deviceTypes.DESKTOP) {
-    <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-    <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-  }
-  @if ( deviceType() === deviceTypes.TABLET) {
-    <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-    <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-      <mat-icon>more_vert</mat-icon>
+</planet-view-actions>
+<mat-menu #actionsMenu="matMenu">
+  @if (isMobile() && isUserLeader) {
+    <button mat-menu-item type="button" (click)="updateTeam()">
+      <mat-icon>edit</mat-icon>
+      <span i18n>Edit details</span>
     </button>
-    <mat-menu #actionsMenu="matMenu" class="actions-menu">
-      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-    </mat-menu>
   }
-  @if (isMobile()) {
-    <span class="toolbar-fill"></span>
-    <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-      <mat-icon>more_vert</mat-icon>
+  @if (user.isUserAdmin || user.roles.length) {
+    @switch (userStatus) {
+      @case ('member') {
+        <a mat-menu-item [routerLink]="['surveys']">
+          <mat-icon>description</mat-icon>
+          <span i18n>Manage Surveys</span>
+        </a>
+        @if (mode!=='services') {
+          <button mat-menu-item type="button" (click)="openInviteMemberDialog()" [disabled]="disableAddingMembers">
+            <mat-icon>person_add</mat-icon>
+            <span i18n>Add Members</span>
+          </button>
+        }
+        <button mat-menu-item type="button" (click)="openResourcesDialog()">
+          <mat-icon>library_add</mat-icon>
+          <span i18n>{ mode, select, team {Add Resources} enterprise {Add Documents} services {Add Documents} }</span>
+        </button>
+        <button mat-menu-item type="button" (click)="openCourseDialog()">
+          <mat-icon>school</mat-icon>
+          <span i18n>Add Courses</span>
+        </button>
+        @if (!isUserLeader && mode !== 'services') {
+          <button mat-menu-item type="button" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })">
+            <mat-icon>clear</mat-icon>
+            <span i18n>Leave</span>
+          </button>
+        }
+      }
+      @case ('unrelated') {
+        @if (mode!=='services') {
+          <button mat-menu-item type="button" (click)="changeMembership('request')">
+            <mat-icon>group_add</mat-icon>
+            <span i18n>Request to Join</span>
+          </button>
+        }
+      }
+      @case ('requesting') {
+        <button mat-menu-item type="button" disabled>
+          <mat-icon>hourglass_empty</mat-icon>
+          <span i18n>Request pending</span>
+        </button>
+        <button mat-menu-item type="button" (click)="openCancelJoinRequestDialog()">
+          <mat-icon>cancel</mat-icon>
+          <span i18n>Cancel Join Request</span>
+        </button>
+      }
+    }
+  }
+  @if (mode!=='services') {
+    <button *planetAuthorizedRoles="''" mat-menu-item type="button" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })">
+      <mat-icon>delete_forever</mat-icon>
+      <span i18n>Delete</span>
     </button>
-    <mat-menu #actionsMenu="matMenu" class="actions-menu">
-      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-    </mat-menu>
   }
-</mat-toolbar>
+</mat-menu>
 
 <ng-template #editDetails>
   @if (isUserLeader) {
@@ -48,7 +87,6 @@
       <mat-icon>edit</mat-icon>
     </button>
   }
-  <span class="toolbar-fill"></span>
 </ng-template>
 
 <ng-template #actionButtons>
@@ -72,11 +110,9 @@
         }
       }
       @case ('unrelated') {
-        <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="changeMembership('request')">
-          @if (mode!=='services') {
-            <ng-container i18n>Request to Join</ng-container>
-          }
-        </button>
+        @if (mode!=='services') {
+          <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="changeMembership('request')" i18n>Request to Join</button>
+        }
       }
       @case ('requesting') {
         <mat-chip-set aria-label="Request status" i18n-aria-label><mat-chip color="accent" highlighted i18n>Request pending</mat-chip></mat-chip-set>

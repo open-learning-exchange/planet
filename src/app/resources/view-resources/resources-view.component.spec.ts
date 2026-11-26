@@ -14,7 +14,7 @@ import { UserService } from '@shared/auth/user.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { DeviceInfoService, DeviceType, isMobileOrSmaller } from '@shared/ui/device-info.service';
+import { DeviceInfoService, DeviceType, isMobileOrSmaller, isTabletOrSmaller } from '@shared/ui/device-info.service';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
 import { RatingService } from '@shared/ratings/rating.service';
 import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
@@ -88,7 +88,13 @@ describe('ResourcesViewComponent', () => {
         { provide: ResourcesService, useValue: resourcesServiceMock },
         { provide: RatingService, useValue: ratingServiceMock },
         { provide: PlanetMessageService, useValue: planetMessageServiceMock },
-        { provide: DeviceInfoService, useValue: { deviceType, isMobile: computed(() => isMobileOrSmaller(deviceType())) } },
+        {
+          provide: DeviceInfoService,
+          useValue: {
+            isMobile: computed(() => isMobileOrSmaller(deviceType())),
+            isTabletOrSmaller: computed(() => isTabletOrSmaller(deviceType()))
+          }
+        },
         { provide: LinkCopyService, useValue: linkCopyServiceMock },
         { provide: CouchService, useValue: couchServiceMock },
         { provide: ChallengesProgressService, useValue: { record: vi.fn(() => of(false)) } },
@@ -145,7 +151,7 @@ describe('ResourcesViewComponent', () => {
     resourcesServiceMock.resourcesListener.mockReturnValue(of([ { _id: 'id', doc: {} } ]));
     fixture.detectChanges();
 
-    fixture.debugElement.query(By.css('.menu')).nativeElement.click();
+    fixture.debugElement.query(By.css('.km-view-actions-menu')).nativeElement.click();
     fixture.detectChanges();
     await fixture.whenStable();
 

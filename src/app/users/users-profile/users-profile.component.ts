@@ -3,10 +3,10 @@ import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgTemplateOutlet, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } from '@angular/material/list';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
@@ -39,7 +39,7 @@ import { TeamsService } from '../../teams/teams.service';
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
-    NgTemplateOutlet,
+    MatMenuItem,
     MatButton,
     RouterLink,
     MatAnchor,

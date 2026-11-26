@@ -12,7 +12,7 @@ describe('CoursesViewComponent', () => {
     component = new CoursesViewComponent(
       routerMock as any, { get: () => ({ name: 'u', shelf: { courseIds: [] } }) } as any,
       { snapshot: { data: {} } } as any, {} as any, {} as any,
-      { configuration: {} } as any, { deviceType: signal(undefined) } as any, {} as any, {} as any, {} as any
+      { configuration: {} } as any, { isMobile: signal(false) } as any, {} as any, {} as any, {} as any
     );
   });
 
@@ -118,7 +118,7 @@ describe('CoursesViewComponent', () => {
     component = new CoursesViewComponent(
       routerMock, { get: () => ({ name: 'u' }), shelf: { courseIds: [] } } as any,
       { snapshot: { data: {} }, paramMap: of(new Map([ [ 'id', 'c1' ] ])) } as any, coursesService as any, {} as any,
-      { configuration: {}, getCouchState: () => of([]) } as any, { deviceType: signal(undefined) } as any, {} as any, {} as any,
+      { configuration: {}, getCouchState: () => of([]) } as any, { isMobile: signal(false) } as any, {} as any, {} as any,
       { resetRatingInteraction: vi.fn() } as any
     );
 

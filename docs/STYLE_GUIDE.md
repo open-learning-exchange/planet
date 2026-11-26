@@ -146,7 +146,11 @@ List pages use the two shared toolbars in `shared/tables` instead of their own `
 - Main toolbar, `planet-list-toolbar`: project the back button and title, and pass the filters and search as `#listFilters` and `#listSearch` templates. Above 1000px they sit in one row; at 1000px and below the search opens on its own row and the filters in a bottom sheet. Pass `[activeFilters]`, one chip for each filter that isn't at its default, with a `clear` that restores that default, and bind `(clearFilters)` to the page's reset.
 - Action toolbar, `planet-list-actions`: pass the actions as a `#listActions` template. It has the primary colour background. At 1000px and below it shows "N selected" once rows are ticked, with the actions inline when `[inline]` is set and in a ⋮ menu otherwise.
 
-Other toolbars (item views, forms) keep the older pattern: a white primary toolbar, then secondary toolbars with the `primary-color` class, white icons and text (`mat-icon`, `font-size-1`), and their actions in a ⋮ menu on tablets and phones.
+The course, resource and team views draw their primary-colour band with `planet-view-actions` in `shared/ui`: project the title and pass `[edit]` and `[actions]` templates plus `[menu]`, the page's own `<mat-menu>`. Above 1000px both templates sit in the band; at 1000px and below the actions move into ⋮, and at 780px and below the edit controls too, so the page's menu lists its edit items only when `isMobile()`.
+
+Other toolbars (forms and the remaining views) keep the older pattern: a white primary toolbar, then secondary toolbars with the `primary-color` class, white icons and text (`mat-icon`, `font-size-1`), and their actions in a ⋮ menu on tablets and phones.
+
+Every ⋮ menu lists its actions as `mat-menu-item`s, each with an icon and a label, declared inside the page's `<mat-menu>`, since Material only gives arrow keys to items declared there; don't stamp the page's toolbar buttons into a menu. A click inside a menu closes it, so form fields don't belong in one either. The one exception for now is `planet-list-actions` above, which still stamps `#listActions` into its ⋮ until #10768 lands.
 
 ### Lists on phones and tablets
 Up to `$screen-md`, a `mat-table` with the `card-mode` class shows each row as a full-width card (rules in `styles.scss`). Opt a list in by putting a role class on its cells, never by styling its columns for phones:

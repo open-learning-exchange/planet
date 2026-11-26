@@ -47,24 +47,39 @@
 
   @media (max-width: v.$screen-sm) {
     .course-container {
-      grid-template-columns: 1fr;
-      grid-template-areas: 
-      'detail'
-      'view';
-      grid-row-gap: 1rem;
+      display: block;
+      flex: none;
     }
 
-    .full-view-container.course-container {
-      grid-template-columns: 1fr;
-      grid-template-rows: 0 1fr;
-    } 
-    
+    .course-detail {
+      margin: 0 0 1rem;
+    }
+
+    .full-view-container .course-detail {
+      display: none;
+    }
+
+    .mat-expansion-panel-header-description {
+      flex: none;
+    }
   }
 }
 
 mat-expansion-panel-header {
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: v.$screen-sm) {
+    box-sizing: border-box;
+    height: auto;
+    min-height: var(--mat-expansion-header-collapsed-state-height, 48px);
+    padding-block: 8px;
+
+    &.mat-expanded {
+      height: auto;
+      min-height: var(--mat-expansion-header-expanded-state-height, 64px);
+    }
+  }
 }
 
 mat-panel-title {
@@ -82,6 +97,7 @@ mat-panel-title {
   }
 
   @media (max-width: v.$screen-sm) {
-    max-width: 45ch;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }

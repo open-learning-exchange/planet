@@ -24,8 +24,55 @@
       <button mat-icon-button [matMenuTriggerFor]="mobileActionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>
-      <mat-menu #mobileActionsMenu="matMenu" class="actions-menu">
-        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      <mat-menu #mobileActionsMenu="matMenu">
+        @if (stepDetail.unavailableResources) {
+          <button mat-menu-item type="button" disabled>
+            <mat-icon>block</mat-icon>
+            <span>{{ stepDetail.unavailableResources + ' ' }}<span i18n>{stepDetail.unavailableResources, plural, =1 {resource is not available.} other {resources are not available.}}</span></span>
+          </button>
+        }
+        @if (hasAIProvider && stepDetail?.description) {
+          <button mat-menu-item type="button" (click)="showChat = !showChat">
+            <mat-icon>chat</mat-icon>
+            <span i18n>{showChat, select, true {Hide Course Chat} other {Show Course Chat}}</span>
+          </button>
+        }
+        @if (attempts > 0) {
+          <button mat-menu-item type="button" (click)="openReviewDialog()">
+            <mat-icon>history</mat-icon>
+            <span i18n>Review Attempts</span>
+          </button>
+        }
+        @if (stepDetail?.exam?.questions.length && isUserEnrolled) {
+          <button mat-menu-item type="button" (click)="goToExam()">
+            <mat-icon>assignment</mat-icon>
+            <span i18n>{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}</span>
+          </button>
+        }
+        @if (stepDetail?.survey?.questions.length && isUserEnrolled) {
+          <button mat-menu-item type="button" (click)="goToExam('survey')">
+            <mat-icon>description</mat-icon>
+            <span i18n>Take Survey</span>
+          </button>
+        }
+        @if (canManage && stepDetail?.exam?.questions.length) {
+          <button mat-menu-item type="button" (click)="goToExam('exam', true)">
+            <mat-icon>visibility</mat-icon>
+            <span i18n>Preview Test</span>
+          </button>
+        }
+        @if (canManage && stepDetail?.survey?.questions.length) {
+          <button mat-menu-item type="button" (click)="goToExam('survey', true)">
+            <mat-icon>visibility</mat-icon>
+            <span i18n>Preview Survey</span>
+          </button>
+        }
+        @if (stepDetail.resources.length !== 0) {
+          <a mat-menu-item [routerLink]="['/resources/view', resource._id]" target="_blank">
+            <mat-icon>open_in_new</mat-icon>
+            <span i18n>View Resource Details</span>
+          </a>
+        }
       </mat-menu>
     }
     <span>{{stepNum}}/{{maxStep}}</span>
@@ -56,7 +103,7 @@
 
 <ng-template #actionButtons>
   @if (stepDetail.unavailableResources) {
-    <span [ngClass]="{ 'margin-lr-10': !isMobile() }">
+    <span class="margin-lr-10">
       {{ stepDetail.unavailableResources + ' ' }}
       <span i18n>{stepDetail.unavailableResources, plural, =1 {resource is not available.} other {resources are not available.}}</span>
     </span>
@@ -64,7 +111,7 @@
   @if (hasAIProvider && stepDetail?.description) {
     <button
       mat-stroked-button
-      [ngClass]="{ 'margin-lr-3': !isMobile() }"
+      class="margin-lr-3"
       (click)="showChat = !showChat" i18n>
       {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
@@ -73,7 +120,7 @@
     <button
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'margin-lr-10': !isMobile() }"
+      class="margin-lr-10"
       (click)="openReviewDialog()" i18n>
       Review Attempts
     </button>
@@ -82,7 +129,7 @@
     <button
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'margin-lr-10': !isMobile() }"
+      class="margin-lr-10"
       (click)="goToExam()" i18n>
       {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
     </button>
@@ -91,7 +138,7 @@
     <button
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'margin-lr-10': !isMobile() }"
+      class="margin-lr-10"
       (click)="goToExam('survey')" i18n>
       Take Survey
     </button>
@@ -99,7 +146,7 @@
   @if (canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)) {
     <button
       #previewTrigger="matMenuTrigger"
-      [ngClass]="{ 'margin-lr-10': !isMobile() }"
+      class="margin-lr-10"
       color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
       Preview
     </button>
@@ -122,7 +169,7 @@
     <a
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'margin-lr-10': !isMobile() }"
+      class="margin-lr-10"
       [routerLink]="['/resources/view', resource._id]"
       target="_blank"
       i18n>

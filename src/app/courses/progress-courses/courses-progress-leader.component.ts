@@ -6,7 +6,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
@@ -39,6 +39,7 @@ import { CoursesProgressChartComponent } from './courses-progress-chart.componen
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
+    MatMenuItem,
     CoursesProgressPlanetSelectorComponent,
     MatFormField,
     MatLabel,

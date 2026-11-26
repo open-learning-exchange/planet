@@ -4,32 +4,52 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
+  <planet-view-actions [menu]="actionsMenu" [edit]="editDetails" [actions]="actionButtons">
     <span class="margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
-    @if (deviceType() === deviceTypes.DESKTOP) {
-      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-    }
-    @if ( deviceType() === deviceTypes.TABLET) {
-      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #actionsMenu="matMenu" class="actions-menu">
-        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-      </mat-menu>
-    }
+  </planet-view-actions>
+  <mat-menu #actionsMenu="matMenu">
     @if (isMobile()) {
-      <span class="toolbar-fill"></span>
-      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-        <mat-icon>more_vert</mat-icon>
+      <button mat-menu-item type="button" (click)="toggleFullView()">
+        <mat-icon>info</mat-icon>
+        <span i18n>{fullView, select, on {Show} off {Hide}} details</span>
       </button>
-      <mat-menu #actionsMenu="matMenu" class="actions-menu">
-        <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-      </mat-menu>
+      @if (canManage) {
+        <button mat-menu-item type="button" (click)="updateResource()">
+          <mat-icon>edit</mat-icon>
+          <span i18n>Edit Resource</span>
+        </button>
+      }
     }
-  </mat-toolbar>
+    @if (!parent) {
+      @if (resource.doc?._attachments) {
+        <a mat-menu-item [href]="resourceSrc" target="_blank">
+          <mat-icon>open_in_new</mat-icon>
+          <span i18n>Open in new tab</span>
+        </a>
+      }
+      @if (isUserEnrolled) {
+        <button mat-menu-item type="button" (click)="libraryToggle(resource._id, 'remove')">
+          <mat-icon>clear</mat-icon>
+          <span i18n>Remove from myLibrary</span>
+        </button>
+      } @else {
+        <button mat-menu-item type="button" (click)="libraryToggle(resource._id, 'add')">
+          <mat-icon>library_add</mat-icon>
+          <span i18n>Add to myLibrary</span>
+        </button>
+      }
+      <button class="km-copy-resource-link" mat-menu-item type="button" (click)="copyLink()">
+        <mat-icon>link</mat-icon>
+        <span i18n>Copy Resource Link</span>
+      </button>
+    }
+    @if (resource?.doc?.isDownloadable && resourceSrc) {
+      <a mat-menu-item [href]="resourceSrc" download>
+        <mat-icon>file_download</mat-icon>
+        <span i18n>Download</span>@if (downloadFileSize) {<span> ({{ downloadFileSize }})</span>}
+      </a>
+    }
+  </mat-menu>
 
   <ng-template #editDetails>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
@@ -40,7 +60,6 @@
         <mat-icon>edit</mat-icon>
       </button>
     }
-    <span class="toolbar-fill"></span>
   </ng-template>
 
   <ng-template #actionButtons>
@@ -58,15 +77,9 @@
         Remove from myLibrary
       </button>
       }
-      @if (deviceType() === deviceTypes.DESKTOP) {
-        <button class="km-copy-resource-link" mat-icon-button type="button" (click)="copyLink()" matTooltip="Copy Resource Link" i18n-matTooltip aria-label="Copy Resource Link" i18n-aria-label>
-          <mat-icon>link</mat-icon>
-        </button>
-      } @else {
-        <button class="km-copy-resource-link" mat-menu-item type="button" (click)="copyLink()">
-          <mat-icon>link</mat-icon><span i18n>Copy Resource Link</span>
-        </button>
-      }
+      <button class="km-copy-resource-link" mat-icon-button type="button" (click)="copyLink()" matTooltip="Copy Resource Link" i18n-matTooltip aria-label="Copy Resource Link" i18n-aria-label>
+        <mat-icon>link</mat-icon>
+      </button>
     }
     @if (resource?.doc?.isDownloadable && resourceSrc) {
       <a mat-button [href]="resourceSrc" download>

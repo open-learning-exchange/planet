@@ -3,32 +3,45 @@
   <span i18n>Course</span>
 </mat-toolbar>
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
+  <planet-view-actions [menu]="actionsMenu" [edit]="editDetails" [actions]="actionButtons">
     <h3 class="margin-lr-3 ellipsis-title">{{courseDetail.courseTitle}}</h3>
-    @if (deviceType() === deviceTypes.DESKTOP) {
-      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-    }
-    @if ( deviceType() === deviceTypes.TABLET) {
-      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #actionsMenu="matMenu" class="actions-menu">
-        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-      </mat-menu>
-    }
+  </planet-view-actions>
+  <mat-menu #actionsMenu="matMenu">
     @if (isMobile()) {
-      <span class="toolbar-fill"></span>
-      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-        <mat-icon>more_vert</mat-icon>
+      <button mat-menu-item type="button" (click)="toggleFullView('details')">
+        <mat-icon>info</mat-icon>
+        <span i18n>{fullView, select, on {Show} off {Hide}} details</span>
       </button>
-      <mat-menu #actionsMenu="matMenu" class="actions-menu">
-        <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-      </mat-menu>
+      @if (canManage) {
+        <button mat-menu-item type="button" (click)="updateCourse()">
+          <mat-icon>edit</mat-icon>
+          <span i18n>Edit Course</span>
+        </button>
+      }
     }
-  </mat-toolbar>
+    @if (canManage && !parent) {
+      <a mat-menu-item [routerLink]="['/courses/submissions', courseDetail._id]">
+        <mat-icon>assignment_turned_in</mat-icon>
+        <span i18n>Submissions & Grading</span>
+      </a>
+    }
+    @if (!parent && !isUserEnrolled && courseDetail.steps.length) {
+      <button mat-menu-item type="button" (click)="courseToggle(courseDetail._id, 'admission')">
+        <mat-icon>school</mat-icon>
+        <span i18n>Join</span>
+      </button>
+    }
+    <button mat-menu-item type="button" (click)="viewStep()" [disabled]="!courseDetail?.steps?.length">
+      <mat-icon>arrow_forward</mat-icon>
+      <span i18n>View Step</span>
+    </button>
+    @if (!parent && isUserEnrolled && courseDetail.steps.length) {
+      <button mat-menu-item type="button" (click)="courseToggle(courseDetail._id, 'resign')">
+        <mat-icon>clear</mat-icon>
+        <span i18n>Leave</span>
+      </button>
+    }
+  </mat-menu>
 
   <ng-template #editDetails>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView('details')" i18n>
@@ -39,7 +52,6 @@
         <mat-icon>edit</mat-icon>
       </button>
     }
-    <span class="toolbar-fill"></span>
   </ng-template>
 
   <ng-template #actionButtons>

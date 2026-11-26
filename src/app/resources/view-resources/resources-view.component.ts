@@ -6,14 +6,14 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { NgTemplateOutlet, NgClass } from '@angular/common';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { NgClass } from '@angular/common';
+import { MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '@shared/auth/user.service';
 import { StateService } from '@shared/state.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
-import { DeviceInfoService, DeviceType } from '@shared/ui/device-info.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { languages } from '@shared/language/languages';
 import { PlanetRatingComponent } from '@shared/ratings/planet-rating.component';
 import { RatingService } from '@shared/ratings/rating.service';
@@ -23,6 +23,7 @@ import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { DialogsLoadingService } from '@shared/dialogs/dialogs-loading.service';
 import { LinkCopyService } from '@shared/ui/link-copy.service';
+import { ViewActionsComponent } from '@shared/ui/view-actions.component';
 
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../resources.service';
@@ -38,9 +39,7 @@ import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../
     MatIconAnchor,
     MatIcon,
     MatTooltip,
-    NgTemplateOutlet,
     MatIconButton,
-    MatMenuTrigger,
     MatMenu,
     MatMenuItem,
     MatButton,
@@ -50,7 +49,8 @@ import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../
     PlanetMarkdownComponent,
     LanguageLabelComponent,
     PlanetLoadingSpinnerComponent,
-    ResourcesViewerComponent
+    ResourcesViewerComponent,
+    ViewActionsComponent
   ]
 })
 
@@ -84,9 +84,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceId: string;
   constantsOptions = constants;
   languageOptions = languages;
-  readonly deviceType = this.deviceInfoService.deviceType;
   readonly isMobile = this.deviceInfoService.isMobile;
-  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     private route: ActivatedRoute,

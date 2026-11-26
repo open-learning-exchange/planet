@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
-import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
+import { NgClass, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -53,7 +53,6 @@ import {
     MatMenuTrigger,
     MatMenu,
     MatMenuContent,
-    NgTemplateOutlet,
     MatMenuItem,
     SlicePipe,
     TimeAgoPipe,
