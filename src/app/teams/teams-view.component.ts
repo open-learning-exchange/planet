@@ -113,6 +113,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
+  enrolledCourseIds = new Set<string>(this.userService.shelf.courseIds);
   visits: any = {};
   leader: any = {};
   planetCode: string;
