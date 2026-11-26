@@ -45,8 +45,8 @@
     </mat-step>
   </mat-horizontal-stepper>
 } @else {
-  <div class="container configuration-cards">
-    <mat-card class="card">
+  <div class="configuration-cards">
+    <mat-card>
       <mat-card-header>
         <mat-card-title i18n>Planet</mat-card-title>
       </mat-card-header>
@@ -54,7 +54,7 @@
         <ng-container [ngTemplateOutlet]="planetFields"></ng-container>
       </mat-card-content>
     </mat-card>
-    <mat-card class="card">
+    <mat-card>
       <mat-card-header>
         <mat-card-title i18n>Contact Details</mat-card-title>
       </mat-card-header>
@@ -62,15 +62,13 @@
         <ng-container [ngTemplateOutlet]="contactFields"></ng-container>
       </mat-card-content>
     </mat-card>
-    <div class="update-button-container">
-      <button
-        mat-raised-button
-        type="button"
-        color="primary"
-        (click)="onSubmitConfiguration()"
-        [disabled]="!configurationFormGroup.dirty && !contactFormGroup.dirty"
-        i18n>Update</button>
-    </div>
+    <button
+      mat-raised-button
+      type="button"
+      color="primary"
+      (click)="onSubmitConfiguration()"
+      [disabled]="!configurationFormGroup.dirty && !contactFormGroup.dirty"
+      i18n>Update</button>
   </div>
 }
 

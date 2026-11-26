@@ -75,7 +75,7 @@ interface ContactForm {
 @Component({
   selector: 'planet-configuration',
   templateUrl: './configuration.component.html',
-  styleUrls: [ './configuration.component.scss', '../manager-dashboard/manager-settings/manager-settings.shared.scss' ],
+  styleUrl: './configuration.component.scss',
   imports: [
     MatStepper,
     MatStep,
