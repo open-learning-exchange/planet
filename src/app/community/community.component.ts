@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -72,6 +73,7 @@ interface CommunityDescriptionForm {
     MatListItemIcon,
     MatListItemTitle,
     MatListItemMeta,
+    NgTemplateOutlet,
     CommunityListComponent,
     TeamsViewFinancesComponent,
     TeamsReportsComponent,
@@ -92,7 +94,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   communityDataLoading = false;
   councillors: any[] = [];
   reports: any[] = [];
-  deleteMode = false;
+  reorderingLinks = false;
   onDestroy$ = new Subject<void>();
   communityDataRequest$ = new Subject<boolean>();
   newsRequestSubscription?: Subscription;
@@ -423,13 +425,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }));
   }
 
+  private sortLinks(links: any[]): any[] {
+    return [ ...links ].sort((a, b) => {
+      const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+      const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+      return orderA !== orderB ? orderA - orderB : (a.createdDate || 0) - (b.createdDate || 0);
+    });
+  }
+
   setLinksAndFinances({ links, finances, reports }) {
-    this.links = (links || []).map(link => ({
+    this.links = this.sortLinks((links || []).map(link => ({
       ...link,
       // for backward compatibility, some old links might have 'web' as icon instead of 'website'
       icon: link.icon === 'web' ? 'website' : link.icon
-    }));
-    this.deleteMode = this.deleteMode && this.links.length !== 0;
+    })));
     this.finances = finances;
     this.reports = reports;
     this.communityDataLoading = false;
@@ -472,7 +481,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
-  openAddLinkDialog() {
+  openAddLinkDialog(link?: any) {
     if (this.isRemoteExchange) {
       return;
     }
@@ -480,8 +489,59 @@ export class CommunityComponent implements OnInit, OnDestroy {
       width: '50vw',
       maxHeight: '90vh',
       data: {
+        link,
         getLinks: () => this.getLinks().pipe(tap(res => this.setLinksAndFinances(res))),
-        excludeIds: this.links.map(link => link.linkId || link.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
+        excludeIds: this.links
+          .filter(item => !link || item._id !== link._id)
+          .map(item => item.linkId || item.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
+      }
+    });
+  }
+
+  moveLink(sectionLinks: any[], index: number, direction: -1 | 1) {
+    const targetIndex = index + direction;
+    if (this.isRemoteExchange || this.reorderingLinks || targetIndex < 0 || targetIndex >= sectionLinks.length) {
+      return;
+    }
+    const reordered = [ ...sectionLinks ];
+    [ reordered[index], reordered[targetIndex] ] = [ reordered[targetIndex], reordered[index] ];
+    const updated = reordered.map((item, idx) => ({ ...item, order: idx }));
+    const updatedDocs = updated.filter((item, idx) => sectionLinks.find(orig => orig._id === item._id)?.order !== idx);
+    if (updatedDocs.length === 0) {
+      return;
+    }
+
+    const previousOrderById = new Map(sectionLinks.map(item => [ item._id, item.order ]));
+    const updatedById = new Map(updated.map(item => [ item._id, item ]));
+    this.links = this.sortLinks(this.links.map(item => updatedById.get(item._id) || item));
+    this.reorderingLinks = true;
+    this.couchService.bulkDocs('teams', updatedDocs).pipe(
+      switchMap((results: any) => {
+        const entries = Array.isArray(results) ? results : [];
+        const revById = new Map(entries.filter(r => r?.ok && r.id && r.rev).map(r => [ r.id, r.rev ]));
+        if (revById.size > 0) {
+          this.links = this.links.map(item => revById.has(item._id) ? { ...item, _rev: revById.get(item._id) } : item);
+        }
+        if (entries.some(r => r?.error)) {
+          this.planetMessageService.showAlert($localize`There was an error reordering links`);
+        }
+        return this.getLinks().pipe(
+          catchError(() => {
+            this.planetMessageService.showAlert(
+              $localize`There was a problem refreshing the links. Reload the page to see the updated links.`
+            );
+            return EMPTY;
+          })
+        );
+      }),
+      finalize(() => this.reorderingLinks = false)
+    ).subscribe({
+      next: (res) => this.setLinksAndFinances(res),
+      error: () => {
+        this.links = this.sortLinks(this.links.map(item =>
+          previousOrderById.has(item._id) ? { ...item, order: previousOrderById.get(item._id) } : item
+        ));
+        this.planetMessageService.showAlert($localize`There was an error reordering links`);
       }
     });
   }
@@ -539,13 +599,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   toggleShowButton(data) {
     this.activeReplyId = data._id === 'root' ? null : data._id;
-  }
-
-  toggleDeleteMode() {
-    if (this.isRemoteExchange) {
-      return;
-    }
-    this.deleteMode = !this.deleteMode;
   }
 
   openChangeTitleDialog({ member: councillor }) {

@@ -102,17 +102,52 @@ export class CommunityLinkDialogComponent {
     private validatorService: ValidatorService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
+    const editLink = this.data?.link;
+    const isSocialEdit = editLink?.teamType === 'social';
+    const initialPlatform = isSocialEdit ? (editLink.icon === 'web' ? 'website' : (editLink.icon || 'website')) : '';
+
     this.linkForm = this.fb.group({
-      title: this.fb.control('', {
+      title: this.fb.control(editLink?.title || '', {
         validators: [CustomValidators.required],
-        asyncValidators: [ac => this.validatorService.isUnique$('teams', 'title', ac, {})]
+        asyncValidators: [ac => this.validatorService.isUnique$('teams', 'title', ac, {
+          exceptions: editLink ? [ editLink.title ] : [],
+          selectors: editLink?._id ? { _id: { $ne: editLink._id } } : {}
+        })]
       }),
-      route: this.fb.control('', { validators: [CustomValidators.required] }),
-      linkId: this.fb.control(''),
-      teamType: this.fb.control(''),
-      icon: this.fb.control(''),
-      platform: this.fb.control('')
+      route: this.fb.control(editLink?.route || '', { validators: [CustomValidators.required] }),
+      linkId: this.fb.control(editLink?.linkId || ''),
+      teamType: this.fb.control(editLink?.teamType || ''),
+      icon: this.fb.control(editLink?.icon || ''),
+      platform: this.fb.control(initialPlatform)
     });
+
+    if (editLink) {
+      if (isSocialEdit) {
+        this.selectedLink = this.links[2];
+        this.onPlatformSelect(initialPlatform);
+      } else {
+        this.selectedLink = editLink.route?.startsWith('/enterprises/') ? this.links[1] : this.links[0];
+      }
+    }
+  }
+
+  get isEditMode(): boolean {
+    return !!this.data?.link;
+  }
+
+  onLinkTypeChange(selection: CommunityLinkSelection) {
+    const currentTitle = this.linkForm.controls.title.value;
+    this.linkForm.patchValue({
+      title: currentTitle,
+      route: '',
+      linkId: '',
+      teamType: selection.db === 'social' ? 'social' : '',
+      icon: '',
+      platform: ''
+    });
+    const routeCtrl = this.linkForm.controls.route;
+    routeCtrl.setAsyncValidators([]);
+    routeCtrl.updateValueAndValidity();
   }
 
   get linkTitleForm(): FormControl<string> {
@@ -129,7 +164,7 @@ export class CommunityLinkDialogComponent {
   }
 
   linkStepperChange({ selectedIndex }: StepperSelectionEvent) {
-    if (selectedIndex === 0 && this.linkForm.pristine !== true) {
+    if (!this.isEditMode && selectedIndex === 0 && this.linkForm.pristine !== true) {
       this.linkForm.reset({
         title: '',
         route: '',
@@ -144,22 +179,29 @@ export class CommunityLinkDialogComponent {
   linkSubmit() {
     const linkTitle = this.linkForm.controls.title.value;
     const link = this.linkForm.getRawValue();
+    const request$ = this.isEditMode
+      ? this.teamsService.updateServicesLink(this.data.link, link)
+      : this.teamsService.createServicesLink(link);
 
     this.dialogsLoadingService.start();
-    this.teamsService.createServicesLink(link).pipe(
+    request$.pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe({
       next: () => {
         this.dialogRef.close();
-        this.planetMessageService.showMessage($localize`Added link: ${linkTitle}`);
+        this.planetMessageService.showMessage(
+          this.isEditMode ? $localize`Updated link: ${linkTitle}` : $localize`Added link: ${linkTitle}`
+        );
         this.data.getLinks().subscribe({
           error: () => this.planetMessageService.showAlert(
-            $localize`There was a problem refreshing the links. Reload the page to see the new link.`
+            $localize`There was a problem refreshing the links. Reload the page to see the updated links.`
           )
         });
       },
       error: () => {
-        this.planetMessageService.showAlert($localize`Error adding link`);
+        this.planetMessageService.showAlert(
+          this.isEditMode ? $localize`Error updating link` : $localize`Error adding link`
+        );
       }
     });
   }

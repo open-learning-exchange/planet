@@ -585,6 +585,16 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
+  updateServicesLink(existingLink: any, { title, route, teamType, icon }) {
+    return this.updateTeam({
+      ...existingLink,
+      title,
+      route,
+      teamType,
+      icon
+    });
+  }
+
   getTeamsByUser(userName: string, userPlanetCode: string) {
     const selector = {
       $or: [
