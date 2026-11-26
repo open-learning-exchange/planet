@@ -113,7 +113,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
-  enrolledCourseIds = new Set<string>(this.userService.shelf?.courseIds || []);
+  enrolledCourseIds = new Set<string>(this.userService.shelf.courseIds);
   visits: any = {};
   leader: any = {};
   planetCode: string;
@@ -175,11 +175,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setTasks(tasks);
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$), skip(1)).subscribe(params => this.selectLinkedTab(params));
-    this.userService.shelfChange$
-      .pipe(skip(1), takeUntil(this.onDestroy$))
-      .subscribe((shelf) => {
-        this.enrolledCourseIds = new Set<string>(shelf?.courseIds || []);
-      });
   }
 
   ngAfterViewChecked() {
