@@ -104,6 +104,8 @@ export class ResourcesPickerDialogComponent implements AfterViewInit {
   toggleNewOrExisting() {
     leaveUnlessUnsaved(this.dialog, () => this.hasUnsavedChanges(), () => {
       this.view = this.view === 'resources' ? 'resourcesAdd' : 'resources';
+      this.okDisabled = true;
+      this.selectedCount = 0;
       // Use setTimeout to wait for Angular building the component being switched to
       setTimeout(() => this.initOkDisableChange());
     });

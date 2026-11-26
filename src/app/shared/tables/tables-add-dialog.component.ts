@@ -58,6 +58,10 @@ export class TablesAddDialogComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // Teams mode counts through teamSelect, and its table is not rendered until a link type is chosen
+    if (this.mode === 'teams') {
+      return;
+    }
     this.component.selection.changed.subscribe((selection) => {
       this.selectedCount = selection.source.selected.length;
     });
