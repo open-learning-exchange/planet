@@ -69,7 +69,7 @@
   }
 </ng-template>
 <div class="view-container view-full-height">
-  <!-- A click inside a menu closes it, so the dropdowns can't live in the ⋮ menu -->
+  <!-- A click inside a mat-menu closes it, so the dropdowns stay out of ⋮ -->
   @if (deviceType() !== deviceTypes.DESKTOP) {
     <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
   }

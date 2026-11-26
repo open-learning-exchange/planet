@@ -45,7 +45,6 @@
     flex-shrink: 0;
   }
 
-  // One scroll on phones instead of one per pane
   @media (max-width: v.$screen-sm) {
     .course-container {
       display: block;
@@ -60,7 +59,6 @@
       display: none;
     }
 
-    // Material gives the step icons twice the title's share of the header, so on phones they take only their own width
     .mat-expansion-panel-header-description {
       flex: none;
     }
@@ -71,7 +69,6 @@ mat-expansion-panel-header {
   display: flex;
   justify-content: space-between;
 
-  // Material fixes the header height, so a wrapped step title needs it to grow
   @media (max-width: v.$screen-sm) {
     box-sizing: border-box;
     height: auto;

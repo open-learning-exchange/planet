@@ -14,7 +14,7 @@ describe('CoursesViewComponent enrollment', () => {
       coursesService,
       {} as any,
       { configuration: {} } as any,
-      { deviceType: signal(undefined) } as any,
+      { isMobile: signal(false) } as any,
       dialog,
       { start: vi.fn(), stop: vi.fn() } as any,
       ratingService

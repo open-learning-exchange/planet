@@ -30,7 +30,7 @@ import { DeviceInfoService } from './device-info.service';
 })
 export class ViewActionsComponent {
 
-  // The page declares the menu so it can register its own mat-menu-items, which is what gives the menu its keyboard navigation
+  // Material only gives arrow keys to items declared inside the menu, so the page owns it
   readonly menu = input.required<MatMenuPanel>();
   readonly edit = input.required<TemplateRef<unknown>>();
   readonly actions = input.required<TemplateRef<unknown>>();

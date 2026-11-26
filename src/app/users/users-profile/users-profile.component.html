@@ -36,13 +36,13 @@
       }
     }
     <mat-menu #menu="matMenu">
-      @if (hasAchievement && !isDialog) {
+      @if (hasAchievement) {
         <a mat-menu-item [routerLink]="['achievements', { planet: userDetail.planetCode }]">
           <mat-icon>visibility</mat-icon>
           <span i18n>View Achievements</span>
         </a>
       }
-      @if (editable && !isDialog) {
+      @if (editable) {
         <a mat-menu-item [routerLink]="['../../update/', urlName]">
           <mat-icon>mode_edit</mat-icon>
           <span i18n>Edit Profile</span>

@@ -45,15 +45,9 @@ describe('ViewActionsComponent', () => {
     });
   });
 
-  it('shows edit and actions in the bar on desktop', () => {
+  it('moves actions into the menu on tablets and edit too on phones', () => {
     expect(render(DeviceType.DESKTOP)).toEqual({ edit: true, actions: true, menu: false });
-  });
-
-  it('keeps edit in the bar and moves actions into the menu on tablets', () => {
     expect(render(DeviceType.TABLET)).toEqual({ edit: true, actions: false, menu: true });
-  });
-
-  it('shows only the menu on phones', () => {
     expect(render(DeviceType.MOBILE)).toEqual({ edit: false, actions: false, menu: true });
   });
 });
