@@ -86,7 +86,6 @@ export class TablesAddDialogComponent implements AfterViewInit {
   teamSelect({ teamId }) {
     const index = this.teamsSelected.findIndex(team => team.doc._id === teamId);
     if (index === -1) {
-      // Kept as rows, since switching between teams and enterprises reloads the table without them
       this.teamsSelected.push(this.component.tableData.data.find((team: any) => team.doc._id === teamId));
     } else {
       this.teamsSelected.splice(index, 1);
