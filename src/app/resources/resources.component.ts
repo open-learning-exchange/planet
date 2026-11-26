@@ -162,7 +162,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this.#titleSearch = value;
     this.recordSearch();
-    this.pageSelection.removeFiltered();
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -239,7 +238,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.titleSearch = this.titleSearch;
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
-    this.pageSelection.connect(this.resources, this.onDestroy$);
+    this.pageSelection.connect(this.resources, this.onDestroy$, { keepFilteredOut: this.isDialog });
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
   }
@@ -397,7 +396,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           okClick: {
             request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
             onNext: () => {
-              this.pageSelection.removeFiltered();
               this.onSelectionChange(this.selection.selected);
               dialogRef.close();
             },
@@ -411,7 +409,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resourcesService.libraryAddRemove(resourceIds, type).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
-      this.pageSelection.removeFiltered();
       this.onSelectionChange(this.selection.selected);
     }, () => this.planetMessageService.showAlert($localize`There was a problem adding to myLibrary.`));
   }

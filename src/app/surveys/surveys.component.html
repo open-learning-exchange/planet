@@ -54,8 +54,8 @@
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef class="card-select">
           <mat-checkbox (change)="$event ? pageSelection.masterToggle() : null"
-            [checked]="selection.hasValue() && pageSelection.isAllSelected()"
-            [indeterminate]="selection.hasValue() && !pageSelection.isAllSelected()"
+            [checked]="pageSelection.isAllSelected()"
+            [indeterminate]="pageSelection.isAnySelected() && !pageSelection.isAllSelected()"
             [disabled]="currentFilter.viewMode === 'adopt'">
           </mat-checkbox>
         </mat-header-cell>
@@ -190,8 +190,7 @@
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
-      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="pageSelection.onPageChange()">
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>
   </div>
 </div>

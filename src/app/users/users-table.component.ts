@@ -126,7 +126,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   selection = new SelectionModel(true, [], true,
     (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
   );
-  pageSelection = new PaginatedSelection(this.selection, { selectValue: (row: any) => row.doc, keepAcrossPages: true });
+  pageSelection = new PaginatedSelection(this.selection, { selectValue: (row: any) => row.doc });
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
@@ -161,7 +161,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
     this.usersTable.filterPredicate = this.filterPredicate();
-    this.pageSelection.connect(this.usersTable, this.onDestroy$);
+    this.pageSelection.connect(this.usersTable, this.onDestroy$, { keepFilteredOut: this.isDialog });
     this.usersTable.connect().pipe(takeUntil(this.onDestroy$)).subscribe(data => {
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);

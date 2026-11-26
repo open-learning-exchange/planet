@@ -151,7 +151,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.meetups.filter = filterValue;
-    this.pageSelection.removeFiltered();
   }
 
   ngOnDestroy() {
