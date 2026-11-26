@@ -23,7 +23,7 @@ import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.compon
 import { LabelComponent } from '@shared/ui/label.component';
 import { TruncateTextPipe } from '@shared/text/truncate-text.pipe';
 import { FullNamePipe } from '@shared/text/full-name.pipe';
-import { AvatarComponent } from '@shared/ui/avatar.component';
+import { AvatarComponent, mayHaveAvatar } from '@shared/ui/avatar.component';
 
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
@@ -64,6 +64,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('examsTable') examsTable: ElementRef;
   userDetail = this.userService.get();
+  mayHaveAvatar = mayHaveAvatar;
   healthDetail: any = {};
   events: any[] = [];
   eventTable = new MatTableDataSource();

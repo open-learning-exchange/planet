@@ -6,6 +6,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { avatarCopyId } from '@shared/ui/avatar.component';
 import { findDocuments } from '@shared/database/mango-queries';
 import { dedupeObjectArray, planetAndParentId } from '@shared/utils';
 
@@ -50,7 +51,7 @@ export class NewsService {
   }
 
   findAvatarAttachment(user: any, attachments: Map<string, any>) {
-    return attachments.get(`${user._id}@${user.planetCode}`)?._attachments?.img || user._attachments?.img;
+    return attachments.get(avatarCopyId(user._id, user.planetCode))?._attachments?.img || user._attachments?.img;
   }
 
   findShareDate(item, viewId) {
@@ -62,7 +63,7 @@ export class NewsService {
     newsItems.forEach((item: any) => {
       const user = item?.user;
       if (user && user._id && user.planetCode) {
-        ids.add(`${user._id}@${user.planetCode}`);
+        ids.add(avatarCopyId(user._id, user.planetCode));
       }
     });
     return Array.from(ids);

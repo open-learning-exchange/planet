@@ -135,6 +135,15 @@ describe('AvatarComponent', () => {
     expect(component.imgSrc).toBe(`${url('_users', 'org.couchdb.user:local-user', 'img')}?v=md5-a%2Fb%2B%3D`);
   });
 
+  it('shows an associated account with its home account\'s replicated photo', () => {
+    component.username = 'admin@community';
+    component.planetCode = 'local-planet';
+
+    component.ngOnChanges(changesFor('username', 'planetCode'));
+
+    expect(component.imgSrc).toBe(url('attachments', 'org.couchdb.user:admin@community', 'img'));
+  });
+
   it('re-resolves the URL when the digest changes', () => {
     component.username = 'local-user';
     component.attachment = { digest: 'md5-old' };

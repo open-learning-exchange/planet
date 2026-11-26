@@ -9,8 +9,8 @@
 <mat-card class="horizontal">
   <div class="dashboard-info-container">
     <a [routerLink]="['/users/profile', user.name]" class="profile-link">
-      @if (user._attachments?.img) {
-        <planet-avatar class="profile-avatar" [username]="user.name" [attachment]="user._attachments.img"
+      @if (mayHaveAvatar(user)) {
+        <planet-avatar class="profile-avatar" [username]="user.name" [attachment]="user._attachments?.img"
           [alt]="displayName"></planet-avatar>
       } @else {
         <img class="profile-avatar" src="assets/image.png" [alt]="displayName">

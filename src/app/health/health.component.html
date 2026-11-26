@@ -25,8 +25,8 @@
     } @else {
       <div class="profile-container">
         <div>
-          @if (userDetail._attachments?.img) {
-            <planet-avatar class="profile-image-large" [username]="userDetail.name" [attachment]="userDetail._attachments.img"></planet-avatar>
+          @if (mayHaveAvatar(userDetail)) {
+            <planet-avatar class="profile-image-large" [username]="userDetail.name" [attachment]="userDetail._attachments?.img"></planet-avatar>
           } @else {
             <img class="profile-image-large" src="assets/image.png" alt="">
           }

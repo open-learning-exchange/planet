@@ -1,4 +1,4 @@
-import { memberCompare } from './teams.utils';
+import { memberAvatarAttachment, memberCompare } from './teams.utils';
 import { TeamsViewComponent } from './teams-view.component';
 
 describe('team member helpers', () => {
@@ -61,5 +61,17 @@ describe('team member helpers', () => {
     component.userService = { doesUserHaveRole: () => false };
 
     expect(component.canManageLabels).toBe(true);
+  });
+});
+
+describe('memberAvatarAttachment', () => {
+  it('reads an associated account\'s photo from the replicated copy even when its row carries the local code', () => {
+    const member = {
+      userId: 'org.couchdb.user:admin@community',
+      userPlanetCode: 'nation',
+      attachmentDoc: { _attachments: { img: { digest: 'md5-home' } } }
+    };
+
+    expect(memberAvatarAttachment(member, 'nation')).toEqual({ digest: 'md5-home' });
   });
 });

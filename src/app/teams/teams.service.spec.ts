@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { IMAGE_MAX_FALLBACK_BYTES } from '@shared/utils';
@@ -814,5 +814,22 @@ describe('TeamsService.getTeamResources', () => {
     service.getTeamResources(linkDocs).subscribe(res => (result = res));
 
     expect(result.map(({ resource }) => resource._id)).toEqual([ 'res-2', 'res-1' ]);
+  });
+});
+
+describe('TeamsService.getTeamMembers', () => {
+  it('finds an associated account\'s photo under its home account', async () => {
+    const homeCopy = { _id: 'org.couchdb.user:admin@community', _attachments: { img: { digest: 'md5-home' } } };
+    const rows = [
+      { _id: 'added', docType: 'membership', userId: 'org.couchdb.user:admin@community', userPlanetCode: 'community' },
+      { _id: 'joined', docType: 'membership', userId: 'org.couchdb.user:admin@community', userPlanetCode: 'nation' }
+    ];
+    const couchService = { findAll: vi.fn((db: string) => of(db === 'attachments' ? [ homeCopy ] : db === 'teams' ? rows : [])) };
+    const usersService = { requestUserData: vi.fn(), usersListener: () => of([]) };
+    const service = new TeamsService(couchService as any, {} as any, {} as any, {} as any, usersService as any, {} as any, {} as any);
+
+    const members: any[] = await firstValueFrom(service.getTeamMembers({ _id: 'team-1', teamPlanetCode: 'nation' }));
+
+    expect(members.map(member => member.attachmentDoc)).toEqual([ homeCopy, homeCopy ]);
   });
 });

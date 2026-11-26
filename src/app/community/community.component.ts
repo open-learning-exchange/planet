@@ -28,6 +28,7 @@ import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner
 import { AuthorizedRolesDirective } from '@shared/auth/authorized-roles.directive';
 import { PlanetMarkdownComponent } from '@shared/markdown/planet-markdown.component';
 import { PlanetCalendarComponent } from '@shared/calendar/planet-calendar.component';
+import { avatarCopyId } from '@shared/ui/avatar.component';
 
 import { NewsService } from '../news/news.service';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
@@ -444,13 +445,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const councillorUsers = users
       .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1);
     const attachmentIds = planetCode === this.stateService.configuration.code ? [] : councillorUsers
-      .map(user => `org.couchdb.user:${user.doc.name}@${user.doc.planetCode}`)
+      .map(user => avatarCopyId(`org.couchdb.user:${user.doc.name}`, user.doc.planetCode))
       .filter(id => !!id);
 
     this.fetchMissingAttachments(attachmentIds).pipe(take(1)).subscribe(() => {
       this.councillors = councillorUsers.map(user => {
         const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
-        const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
+        const attachmentId = avatarCopyId(`org.couchdb.user:${name}`, userPlanetCode);
         const attachmentDoc: any = this.attachmentMap[attachmentId];
         return { attachmentDoc, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
       });

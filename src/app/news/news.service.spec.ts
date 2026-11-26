@@ -78,6 +78,13 @@ describe('NewsService avatar metadata', () => {
     expect(service.findAvatarAttachment(user, attachments)).toEqual({ digest: 'md5-current' });
   });
 
+  it('finds an associated author\'s photo under its home account', () => {
+    const author = { _id: 'org.couchdb.user:admin@community', planetCode: 'community' };
+    const attachments = new Map([ [ 'org.couchdb.user:admin@community', { _attachments: { img: { digest: 'md5-home' } } } ] ]);
+
+    expect(service.findAvatarAttachment(author, attachments)).toEqual({ digest: 'md5-home' });
+  });
+
   it('falls back to the snapshot in the post when nothing was replicated', () => {
     expect(service.findAvatarAttachment(user, new Map())).toEqual({ digest: 'md5-snapshot' });
   });
