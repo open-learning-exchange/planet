@@ -41,6 +41,7 @@ mat-card-content {
 
 .user-name-truncate {
   flex: 1 1 auto;
+  min-width: 0;
   max-width: 50%;
   display: block;
   overflow: hidden;
@@ -57,6 +58,7 @@ mat-card-content {
 .reactions-container {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.375rem;
   margin-top: 0.5rem;
 }
@@ -131,16 +133,17 @@ mat-card-content {
   }
 }
 
+.replies-button {
+  margin-left: auto;
+}
+
 .unread-reply-dot {
   @include m.unread-dot;
   display: inline-block;
   margin-left: 4px;
   vertical-align: middle;
+}
 
-  &.corner {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    margin-left: 0;
-  }
+.visually-hidden {
+  @include m.visually-hidden;
 }

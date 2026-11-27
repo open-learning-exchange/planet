@@ -150,17 +150,11 @@ describe('NewsListItemComponent read-only template', () => {
     expect(fixture.debugElement.query(By.css('.km-react-voice'))).toBeNull();
   });
 
-  it('hides mobile copy and mutation controls', async () => {
+  it('hides the mobile menu and reactions', async () => {
     const fixture = await renderReadOnly(DeviceType.MOBILE);
 
-    fixture.debugElement.query(By.css('.menu')).nativeElement.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(document.body.querySelector('.km-copy-voice')).toBeNull();
-    expect(document.body.querySelector('.km-edit-voice')).toBeNull();
-    expect(document.body.querySelector('.km-delete-voice')).toBeNull();
-    expect(document.body.querySelector('.km-react-voice')).toBeNull();
+    expect(fixture.debugElement.query(By.css('.km-voice-menu'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('.km-react-voice'))).toBeNull();
   });
 
   it('shows the placeholder without requesting an image when the author has none', async () => {
@@ -413,7 +407,7 @@ describe('NewsListItemComponent emoji reactions', () => {
 });
 
 describe('NewsListItemComponent reactions template', () => {
-  const renderWithReactions = async (reactions: any = { '👍': ['user-1'], '❤️': ['user-2'] }) => {
+  const renderWithReactions = async (reactions: any = { '👍': ['user-1'], '❤️': ['user-2'] }, isMobile = false, replies: any[] = []) => {
     await TestBed.configureTestingModule({
       imports: [NewsListItemComponent],
       providers: [
@@ -430,7 +424,7 @@ describe('NewsListItemComponent reactions template', () => {
         { provide: MatDialog, useValue: {} },
         { provide: AuthGuard, useValue: { checkAuthenticationStatus: () => of(undefined) } },
         { provide: LinkCopyService, useValue: { copyLink: vi.fn() } },
-        { provide: DeviceInfoService, useValue: { isMobile: signal(false) } },
+        { provide: DeviceInfoService, useValue: { isMobile: signal(isMobile) } },
         provideNoopAnimations()
       ]
     }).compileComponents();
@@ -448,7 +442,7 @@ describe('NewsListItemComponent reactions template', () => {
         viewIn: []
       }
     });
-    fixture.componentRef.setInput('replyObject', { 'voice-1': [] });
+    fixture.componentRef.setInput('replyObject', { 'voice-1': replies });
     fixture.componentRef.setInput('readOnly', false);
     fixture.detectChanges();
 
@@ -474,5 +468,12 @@ describe('NewsListItemComponent reactions template', () => {
 
     const reactBtn = fixture.debugElement.query(By.css('.km-react-voice'));
     expect(reactBtn).not.toBeNull();
+  });
+
+  it('shows React and the reply count on the card on phones', async () => {
+    const fixture = await renderWithReactions({}, true, [ {}, {}, {} ]);
+
+    expect(fixture.debugElement.query(By.css('.km-react-voice'))).not.toBeNull();
+    expect(fixture.debugElement.query(By.css('.km-reply-count')).nativeElement.textContent).toContain('3 replies');
   });
 });
