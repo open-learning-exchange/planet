@@ -74,7 +74,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() hasUnreadReplies = false;
-  // Undefined while loading; null when the gateway leaves the share out
   @Input() chatPreview: SharedChat | null | undefined;
   chatReturnState: { returnState: { route: string } };
   @Output() changeReplyViewing = new EventEmitter<any>();
@@ -249,7 +248,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.changeLabels.emit({ label, action, news: this.item.doc });
   }
 
-  // A chat's audience is set when it's shared, so sharing its voice onward would only show "isn't shared with you"
+  // A chat voice's readers are set by its share
   shouldShowShare() {
     return !this.readOnly && !this.item.doc.chat && this.shareTarget &&
       (this.editable || this.item.doc.user._id === this.currentUser._id) &&

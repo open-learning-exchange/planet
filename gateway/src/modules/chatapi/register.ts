@@ -84,7 +84,6 @@ export function registerChatApiRoutes(app: Express) {
       .catch(next);
   });
 
-  // By share id alone, so deleting a voice, which holds only the share id, can stop its share
   app.delete('/chat/shares/:shareId', (req: any, res: any, next: any) => {
     stopSharing(req.params.shareId, res.locals.session)
       .then((stopped) => stopped ? res.status(204).end() : next(new HttpError(404, 'Share not found')))

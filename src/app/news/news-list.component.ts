@@ -83,7 +83,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   observer: IntersectionObserver;
   displayedItems: any[] = [];
   chatPreviews: Record<string, SharedChat | null> = {};
-  // Shares asked for since the voices or the reader last changed; shown previews stay until a new answer replaces them
   private freshChatPreviews = new Set<string>();
   filteredItems: any[] = [];
   messageSearch = '';
@@ -175,7 +174,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.applyFilters();
     });
 
-    // A different reader may see different shares; logging out on the community page keeps this feed mounted
     this.readerSubscription = this.userService.userChange$.subscribe(() => {
       this.chatPreviews = {};
       this.freshChatPreviews.clear();
@@ -205,7 +203,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
     this.itemsById = new Map<string, any>(this.items.map(item => [ item._id, item ]));
     if (changes.items) {
-      // Refreshed voices can carry stopped shares or new turns of a share kept up to date
       this.freshChatPreviews.clear();
     }
     this.availableLabels = this.getAvailableLabels(this.items);
@@ -475,8 +472,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const parentId = isMainStory ? this.replyViewing.doc.replyTo || 'root' : this.replyViewing._id;
     const deleteFromAllViews = this.viewableBy === 'teams';
     return {
-      // Replies move only once the voice is gone (a chat voice stays when its share can't be stopped);
-      // the delete's own refresh can land before the move, so the feed is asked again
+      // Replies move after the delete, which a chat voice's share can stop; the delete's own refresh misses them
       request: this.newsService.deleteNews(news, this.viewableId, deleteFromAllViews).pipe(
         switchMap(() => this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)),
         tap(() => this.newsService.requestNews())
@@ -636,14 +632,14 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
     shareIds.forEach(shareId => this.freshChatPreviews.add(shareId));
-    // A reader change swaps in a new map, so an answer meant for the previous reader lands in the old one
+    // A reader change swaps the map, so a late answer lands in the old one
     const chatPreviews = this.chatPreviews;
     this.aiChatService.sharePreviews(shareIds).subscribe({
       next: previews => shareIds.forEach(shareId => {
         chatPreviews[shareId] = previews[shareId] || null;
       }),
       error: (error) => shareIds.forEach(shareId => {
-        // Signed out on the public community page nothing is readable, so the card says so and isn't asked again
+        // Signed out, nothing is readable
         if (error.status === 401) {
           chatPreviews[shareId] = null;
         } else {

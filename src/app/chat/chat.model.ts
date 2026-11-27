@@ -29,7 +29,6 @@ export type ShareAudience = { type: 'community' } | { type: 'team', teamId: stri
 export interface ChatShare {
   id: string;
   audience: ShareAudience;
-  // None on an up-to-date share
   turns?: number;
   sharedDate: number;
 }

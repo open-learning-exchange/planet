@@ -40,7 +40,7 @@ export class NewsService {
         )
       )
     ).subscribe(({ newsItems, avatarMap }) => {
-      // Chats shared before shares became links copied the whole conversation; they aren't shown
+      // Chat voices from before share links hold a whole copy; hidden
       this.newsUpdated$.next(newsItems.filter((item: any) => !item.chat || item.news?.shareId).map((item: any) => (
         {
           doc: item,
@@ -99,7 +99,7 @@ export class NewsService {
       return this.postNews({ ...post, viewIn: updatedViewIn }, $localize`Message deleted`);
     }
     const stopShare = post.chat && post.user?.name === this.userService.get().name ?
-      // Stopped first, so a failure keeps the voice rather than leave the chat readable; a share already gone counts as stopped
+      // Stopped first, so a failure keeps the voice
       this.aiChatService.stopSharing(post.news.shareId).pipe(
         catchError(error => error.status === 404 ? of(undefined) : throwError(error))
       ) :

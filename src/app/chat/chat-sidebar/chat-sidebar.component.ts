@@ -219,7 +219,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       );
   }
 
-  // The window stays mounted while a share is open, so it still hears the selection made here
+  // The window stays mounted under a share, so it still hears this selection
   private leaveShare() {
     if (this.readingShare) {
       this.router.navigate([ '/chat' ]);

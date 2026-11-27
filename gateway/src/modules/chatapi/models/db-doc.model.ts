@@ -6,7 +6,6 @@ export type ShareAudience = { type: 'community' } | { type: 'team'; teamId: stri
 export interface ChatShare {
   id: string;
   audience: ShareAudience;
-  // Turns are only appended, so a snapshot is a turn count, not a copy; none means up to date
   turns?: number;
   sharedDate: number;
 }

@@ -40,7 +40,7 @@ export async function shareConversation(
   return share;
 }
 
-// Until couchdb-setup.sh uploads the view, nano's 404 would read as "no such share", and the client takes that as already stopped
+// A missing view must not answer 404: the client takes that as already stopped
 const sharesView = (params: { key?: string; keys?: string[] }) =>
   chatDB.view<null>('chat_history', 'shares', { ...params, 'include_docs': true }).catch((error) => {
     throw error?.statusCode === 404 ? new HttpError(503, 'Chat sharing is not set up on this server yet') : error;
@@ -60,7 +60,7 @@ export async function stopSharing(shareId: string, session: SessionInfo): Promis
 async function memberTeamIds(session: SessionInfo): Promise<Set<string>> {
   const { code } = await getConfiguration();
   const { docs } = await teamsDB.find({
-    // Both shapes the teams pages accept (`getTeamsByUser`)
+    // Both membership shapes `getTeamsByUser` accepts
     'selector': { 'docType': 'membership', '$or': [
       { 'userId': `org.couchdb.user:${session.name}`, 'userPlanetCode': code },
       { 'userId': `org.couchdb.user:${session.name}@${code}` }
@@ -71,7 +71,6 @@ async function memberTeamIds(session: SessionInfo): Promise<Set<string>> {
   return new Set(docs.map((doc: any) => doc.teamId));
 }
 
-// Unknown ids and shares the reader can't see are left out alike, so the answer reveals nothing about either
 async function readableShares(ids: string[], session: SessionInfo): Promise<Array<{ doc: DbDoc; share: ChatShare }>> {
   const { rows } = await sharesView({ 'keys': ids });
   const found = rows.flatMap((row) => {

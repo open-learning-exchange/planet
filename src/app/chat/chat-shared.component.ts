@@ -14,7 +14,6 @@ import { SharedChat } from './chat.model';
   imports: [ MatIcon, PlanetMarkdownComponent, TimeAgoPipe ]
 })
 export class ChatSharedComponent implements OnInit {
-  // Undefined while loading; null when the gateway doesn't share it with this reader
   sharedChat?: SharedChat | null;
   loadFailed = false;
 
