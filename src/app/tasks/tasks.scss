@@ -1,95 +1,219 @@
 @use '../variables' as v;
 
 planet-tasks {
-  mat-list {
-    .mat-mdc-list-item {
-      align-items: center;
-    }
+  .task-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-bottom: 12px;
+  }
 
-    .task-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      vertical-align: middle;
-    }
+  .task-group-header {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
 
-    .task-title-row {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      max-width: 100%;
-    }
+  .task-group-count {
+    color: v.$grey-text;
+    font-weight: normal;
+  }
 
-    .view-assignees.mat-mdc-icon-button {
-      --mat-icon-button-state-layer-size: 40px;
-      padding: 8px;
+  .task-group-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 40px;
+    padding-inline: 12px 8px;
+    border: 0;
+    background-color: v.$light-grey;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  .task-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 0;
+    border-bottom: 1px solid v.$medium-grey;
+  }
+
+  .task-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .task-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+
+    .task-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      // An empty column has to stay tall enough to drop a task into.
+      min-height: 120px;
+      padding: 8px 12px 12px;
+      border-radius: 8px;
       background-color: v.$light-grey;
-      color: v.$grey-text;
     }
 
-    .task-title {
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .task-group-header {
+      padding: 4px 0;
     }
 
-    .task-title:focus-visible {
-      outline: 2px solid v.$primary;
-      outline-offset: 2px;
+    .task-card {
+      padding: 12px;
+      border: 1px solid v.$medium-grey;
+      border-radius: 8px;
+      background-color: v.$white;
     }
 
-    .task-status-badge {
-      display: inline-flex;
-      align-items: center;
-      flex: none;
-      padding: 2px 8px;
-      border: 0;
-      border-radius: 12px;
-      font: inherit;
-      font-size: 12px;
-      font-weight: 500;
-      line-height: 16px;
-
-      .mat-icon {
-        width: 16px;
-        height: 16px;
-        margin-right: -4px;
-        font-size: 16px;
-      }
-
-      &.status-to_do {
-        background-color: v.$primary-lighter;
-        color: v.$primary-lighter-text;
-      }
-
-      &.status-in_progress {
-        background-color: v.$accent-lighter;
-        color: v.$accent-lighter-text;
-      }
-
-      &.status-completed {
-        background-color: v.$planet-green-lighter;
-        color: v.$planet-green-dark;
-      }
+    .task-card:not(.cdk-drag-disabled) {
+      cursor: grab;
     }
+
+    .cdk-drop-list-dragging {
+      outline: 2px dashed v.$primary-light;
+    }
+  }
+
+  .cdk-drag-placeholder {
+    opacity: 0.4;
+  }
+
+  .task-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .task-title {
+    flex: 1;
+    min-width: 0;
+    padding-top: 6px;
+    overflow-wrap: anywhere;
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .task-title:focus-visible {
+    outline: 2px solid v.$primary;
+    outline-offset: 2px;
+  }
+
+  .task-assignees {
+    display: flex;
+    flex: none;
+    margin-inline-start: auto;
+    padding: 2px;
+    border: 0;
+    border-radius: 18px;
+    background: none;
+    cursor: pointer;
+  }
+
+  .task-avatar {
+    width: 32px;
+    height: 32px;
+    box-sizing: border-box;
+    margin-inline-start: -12px;
+    border: 2px solid v.$white;
+    border-radius: 50%;
+    object-fit: cover;
+
+    &:first-child {
+      margin-inline-start: 0;
+    }
+  }
+
+  .task-avatar-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: v.$medium-grey;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .task-menu-button {
+    margin: -8px 0;
+  }
+
+  .task-details {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+  }
+
+  .task-status-badge {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    padding: 2px 8px;
+    border: 0;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+
+    .mat-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: -4px;
+      font-size: 16px;
+    }
+
+    &.status-to_do {
+      background-color: v.$primary-lighter;
+      color: v.$primary-lighter-text;
+    }
+
+    &.status-in_progress {
+      background-color: v.$accent-lighter;
+      color: v.$accent-lighter-text;
+    }
+
+    &.status-completed {
+      background-color: v.$planet-green-lighter;
+      color: v.$planet-green-lighter-text;
+    }
+  }
+
+  .task-deadline,
+  .task-completed {
+    color: v.$grey-text;
   }
 
   .deadline-soon {
-    color: v.$accent;
+    color: v.$accent-lighter-text;
   }
 
   .deadline-passed {
-    color: v.$warn;
+    color: v.$warn-dark;
   }
+}
 
-  mat-button-toggle-group {
-    font-size: 14px;
-    max-width: 100%;
-    overflow-x: auto;
-    mat-button-toggle {
-      line-height: 34px;
-    }
-  }
-
+.task-drag-preview {
+  max-width: 280px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background-color: v.$white;
+  font-size: 16px;
 }
 
 planet-tasks-assignees-dialog {

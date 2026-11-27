@@ -1,13 +1,11 @@
-import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { Component, Input, OnDestroy, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
+import { forkJoin, of, Subscription } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { NgClass, DatePipe } from '@angular/common';
+import { CdkDrag, CdkDragDrop, CdkDragPreview, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import {
-  MatList, MatListItem, MatListItemTitle, MatListItemLine, MatListItemMeta
-} from '@angular/material/list';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
@@ -20,6 +18,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { DialogsPromptComponent } from '@shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 
 import { TasksService } from './tasks.service';
 import { TasksAssigneesDialogComponent } from './tasks-assignees-dialog.component';
@@ -31,8 +30,6 @@ import {
   assigneeIdentityCandidates, assigneeKey, assigneeMatches, assigneeName, effectiveAssignees,
   effectiveTaskStatus, storedAssignee, TaskStatus, taskStatusBadgeLabel
 } from './tasks.utils';
-
-type TaskFilter = 'self' | 'all' | 'to_do' | 'in_progress' | 'completed';
 
 @Pipe({ name: 'assigneeName' })
 export class AssigneeNamePipe implements PipeTransform {
@@ -56,16 +53,14 @@ interface AssigneeUpdateState {
   styleUrls: ['./tasks.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
+    CdkDropListGroup,
+    CdkDropList,
+    CdkDrag,
+    CdkDragPreview,
     MatButton,
-    MatButtonToggleGroup,
-    MatButtonToggle,
-    MatList,
-    MatListItem,
-    MatListItemTitle,
-    MatListItemLine,
+    MatSlideToggle,
     NgClass,
     MatTooltip,
-    MatListItemMeta,
     MatIconButton,
     MatIcon,
     MatMenuTrigger,
@@ -77,7 +72,7 @@ interface AssigneeUpdateState {
     AvatarComponent
   ]
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, OnDestroy {
 
   @Input() mode: any;
   @Input() link: any;
@@ -112,14 +107,20 @@ export class TasksComponent implements OnInit {
   myTasks: any[] = [];
   taskViews: any[] = [];
   filteredTaskViews: any[] = [];
-  filter: TaskFilter = 'self';
+  taskGroups: { status: TaskStatus, label: string, taskViews: any[] }[] = [];
+  collapsedGroups = new Set<TaskStatus>();
+  onlyMine = true;
   trackById = trackById;
   statusOptions = ([ 'to_do', 'in_progress', 'completed' ] as TaskStatus[])
     .map(status => ({ status, label: taskStatusBadgeLabel(status) }));
+  readonly isTabletOrSmaller = this.deviceInfoService.isTabletOrSmaller;
+  // A touch has to rest on a card before it drags, so a swipe across the board still scrolls the page.
+  readonly dragStartDelay = { touch: 250, mouse: 0 };
   private assigneesList: any[] = [];
   private currentAssignees = new Map<string, any>();
   private assigneeUpdates = new Map<string, AssigneeUpdateState>();
-  private statusSaves = new Set<string>();
+  private statusSaves = new Map<string, TaskStatus>();
+  private tasksSubscription: Subscription;
 
   constructor(
     private tasksService: TasksService,
@@ -130,18 +131,22 @@ export class TasksComponent implements OnInit {
     private dialog: MatDialog,
     private usersProfileDialogService: UsersProfileDialogService,
     private dialogsFormService: DialogsFormService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private deviceInfoService: DeviceInfoService
   ) {}
 
   ngOnInit() {
-    this.tasksService.tasksListener(this.link).subscribe((tasks) => {
+    this.tasksSubscription = this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
       this.setMyTasks();
-      this.filter = this.filter === 'self' && this.myTasks.length === 0 ? 'all' : this.filter;
       this.setTaskViews();
       this.filterTasks();
     });
     this.tasksService.getTasks();
+  }
+
+  ngOnDestroy() {
+    this.tasksSubscription.unsubscribe();
   }
 
   private setCurrentAssignees() {
@@ -153,6 +158,10 @@ export class TasksComponent implements OnInit {
   addTask(task?) {
     this.openAddDialog({ link: this.link, sync: this.sync }, task, () => {
       this.tasksService.getTasks();
+      if (!task) {
+        // A new task has no assignees yet, so myTasks would hide it.
+        this.setOnlyMine(false);
+      }
       const msg = task ? $localize`Task updated successfully` : $localize`Task created successfully`;
       this.planetMessageService.showMessage(msg);
     });
@@ -230,23 +239,21 @@ export class TasksComponent implements OnInit {
     if (this.statusSaves.has(task._id) || this.assigneeUpdates.has(task._id) || status === effectiveTaskStatus(task)) {
       return;
     }
-    this.statusSaves.add(task._id);
-    this.tasksService.setTaskStatus(task, status).pipe(
-      finalize(() => this.statusSaves.delete(task._id))
-    ).subscribe({
+    this.statusSaves.set(task._id, status);
+    this.refreshTaskViews();
+    this.tasksService.setTaskStatus(task, status).subscribe({
       next: res => {
+        this.statusSaves.delete(task._id);
         this.replaceTask(res.doc);
         this.refreshTaskViews();
       },
       error: () => {
+        this.statusSaves.delete(task._id);
+        this.refreshTaskViews();
         this.tasksService.getTasks();
         this.planetMessageService.showAlert($localize`There was a problem updating the task status.`);
       }
     });
-  }
-
-  openAssigneeMenu(event) {
-    event.stopPropagation();
   }
 
   toggleAssignee(task, assignee) {
@@ -348,16 +355,35 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  setFilter(newFilter: TaskFilter) {
-    this.filter = newFilter;
+  get filteringMine() {
+    return this.onlyMine && this.editable && this.myTasks.length > 0;
+  }
+
+  setOnlyMine(onlyMine: boolean) {
+    this.onlyMine = onlyMine;
     this.filterTasks();
   }
 
   filterTasks() {
     const myTaskIds = new Set(this.myTasks.map(task => task._id));
-    this.filteredTaskViews = this.taskViews.filter(({ task, status }) =>
-      this.filter === 'all' || (this.filter === 'self' ? myTaskIds.has(task._id) : status === this.filter)
-    );
+    this.filteredTaskViews = this.filteringMine ? this.taskViews.filter(({ task }) => myTaskIds.has(task._id)) : this.taskViews;
+    this.taskGroups = this.statusOptions.map(option => ({
+      ...option,
+      taskViews: this.filteredTaskViews.filter(({ status }) => status === option.status)
+    }));
+  }
+
+  toggleGroup(status: TaskStatus) {
+    if (!this.collapsedGroups.delete(status)) {
+      this.collapsedGroups.add(status);
+    }
+  }
+
+  // CDK reports a release outside every column against the last column the card crossed.
+  dropTask(event: CdkDragDrop<TaskStatus>) {
+    if (event.isPointerOverContainer) {
+      this.setTaskStatus(event.item.data, event.container.data);
+    }
   }
 
   sendNotifications(assignee: any = '') {
@@ -400,6 +426,14 @@ export class TasksComponent implements OnInit {
     return this.taskAssignees(task).some(item => assigneeMatches(item, assignee, this.localPlanetCode));
   }
 
+  openAssignees(assignees: any[]) {
+    if (assignees.length === 1) {
+      this.openMemberDialog(assignees[0]);
+    } else {
+      this.openAssigneesPopup(assignees);
+    }
+  }
+
   openAssigneesPopup(assignees: any[]) {
     this.dialog.open(TasksAssigneesDialogComponent, {
       data: { assignees },
@@ -421,13 +455,15 @@ export class TasksComponent implements OnInit {
   private setTaskViews() {
     this.taskViews = this.tasks.map(task => {
       const assignees = this.taskAssignees(task).map(item => this.currentAssigneeMetadata(item));
-      const assignee = assignees[0];
-      const status = effectiveTaskStatus(task);
+      const shownCount = assignees.length > 3 ? 2 : assignees.length;
+      const status = this.statusSaves.get(task._id) ?? effectiveTaskStatus(task);
       return {
         task,
         assignees,
-        assignee,
-        avatarAttachment: memberAvatarAttachment(assignee, this.localPlanetCode),
+        avatars: assignees.slice(0, shownCount)
+          .map(assignee => ({ assignee, attachment: memberAvatarAttachment(assignee, this.localPlanetCode) })),
+        moreCount: assignees.length - shownCount,
+        assigneesLabel: assignees.length === 1 ? assigneeName(assignees[0]) : $localize`View Assignees`,
         status,
         statusLabel: taskStatusBadgeLabel(status)
       };
