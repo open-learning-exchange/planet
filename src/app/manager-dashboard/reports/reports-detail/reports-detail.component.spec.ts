@@ -23,6 +23,7 @@ describe('ReportsDetailComponent exports', () => {
       {} as any,
       new FormBuilder().nonNullable,
       {} as any,
+      {} as any,
       'en-US'
     );
 

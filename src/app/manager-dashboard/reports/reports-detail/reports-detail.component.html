@@ -106,103 +106,144 @@
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'stepCompletedChart' }"></ng-container>
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'chatUsageChart' }"></ng-container>
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'voicesCreatedChart' }"></ng-container>
-        <div class="reports-table-container">
-          <div>
+        <div class="reports-summary">
+          <section>
             <h1 class="mat-headline-6" i18n>Members</h1>
-            <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="subheading label" i18n>Total Members</mat-grid-tile>
-              <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
-              @for (genderOption of reportGenderOptions; track genderOption.value) {
-                <mat-grid-tile class="label">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>
-                  <span>{{genderOption.label}}</span>
-                </mat-grid-tile>
-                <mat-grid-tile>{{reports?.usersByGender?.[genderOption.value] || 0}}</mat-grid-tile>
-              }
-              <mat-grid-tile class="subheading label" i18n>Total Visits</mat-grid-tile>
-              <mat-grid-tile>{{reports?.totalMemberVisits}}</mat-grid-tile>
-              <mat-grid-tile class="subheading label" i18n>Members by Visits</mat-grid-tile>
-              <mat-grid-tile i18n class="subheading">Total Visits by Member</mat-grid-tile>
-              @if (!reports?.visits || reports?.visits.length === 0) {
-                <mat-grid-tile colspan="2" i18n>There are no visits</mat-grid-tile>
-              }
-              @for (visit of reports?.visits; track visit) {
-                <mat-grid-tile class="label">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>
-                  <span [attr.tabindex]="visit.userDoc ? 0 : null" [attr.role]="visit.userDoc ? 'button' : null" [class.cursor-pointer]="visit.userDoc" (keydown.enter)="openMemberView(visit.userDoc?.doc, $event)" (keydown.space)="openMemberView(visit.userDoc?.doc, $event)" (click)="openMemberView(visit.userDoc?.doc, $event)">{{visit.userDoc?.fullName || visit.user }}</span>
-                </mat-grid-tile>
-                <mat-grid-tile>{{visit.count}}</mat-grid-tile>
-              }
-            </mat-grid-list>
-          </div>
-          <div>
+            <div class="summary-tiles">
+              <div class="summary-tile summary-tile-wide">
+                <span class="summary-tile-label" i18n>Total Members</span>
+                <span class="summary-tile-value">{{reports?.totalUsers}}</span>
+                <div class="gender-bar" aria-hidden="true">
+                  @for (genderOption of reportGenderOptions; track genderOption.value) {
+                    <span [style.flex-grow]="reports?.usersByGender?.[genderOption.value] || 0" [style.background]="genderOption.color"></span>
+                  }
+                </div>
+                <div class="gender-legend">
+                  @for (genderOption of reportGenderOptions; track genderOption.value) {
+                    <span><span class="gender-swatch" [style.background]="genderOption.color"></span>{{genderOption.label}} {{reports?.usersByGender?.[genderOption.value] || 0}}</span>
+                  }
+                </div>
+              </div>
+              <div class="summary-tile">
+                <span class="summary-tile-label" i18n>Total Visits</span>
+                <span class="summary-tile-value">{{reports?.totalMemberVisits}}</span>
+              </div>
+            </div>
+            <div class="summary-lists">
+              <mat-expansion-panel [expanded]="!isTabletOrSmaller()">
+                <mat-expansion-panel-header>
+                  <mat-panel-title i18n>Members by Visits</mat-panel-title>
+                  <mat-panel-description i18n>Total Visits by Member</mat-panel-description>
+                </mat-expansion-panel-header>
+                @for (visit of reports?.visits; track visit; let i = $index) {
+                  <div class="summary-row">
+                    <span class="summary-rank">{{i + 1}}</span>
+                    <span class="summary-label" [title]="visit.userDoc?.fullName || visit.user" [attr.tabindex]="visit.userDoc ? 0 : null" [attr.role]="visit.userDoc ? 'button' : null" [class.cursor-pointer]="visit.userDoc" (keydown.enter)="openMemberView(visit.userDoc?.doc, $event)" (keydown.space)="openMemberView(visit.userDoc?.doc, $event)" (click)="openMemberView(visit.userDoc?.doc, $event)">{{visit.userDoc?.fullName || visit.user }}</span>
+                    <span>{{visit.count}}</span>
+                    <span class="summary-bar" [style.width.%]="visit.count / reports.visits[0].count * 100"></span>
+                  </div>
+                } @empty {
+                  <p i18n>There are no visits</p>
+                }
+              </mat-expansion-panel>
+            </div>
+          </section>
+          <section>
             <h1 class="mat-headline-6" i18n>Resources</h1>
-            <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="subheading label" i18n>Total Resources</mat-grid-tile>
-              <mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile>
-              <mat-grid-tile class="subheading label" i18n>Total Views</mat-grid-tile>
-              <mat-grid-tile>{{reports?.totalResourceViews}}</mat-grid-tile>
-              <mat-grid-tile class="subheading label" i18n>Most Visited</mat-grid-tile>
-              <mat-grid-tile class="subheading" i18n>Total Visits by Resource</mat-grid-tile>
-              @if (!reports?.resources || reports?.resources.length === 0) {
-                <mat-grid-tile colspan="2" i18n>No resources have been visited</mat-grid-tile>
-              }
-              @for (resource of reports?.resources; track resource) {
-                <mat-grid-tile class="label">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>
-                  <span class="cursor-pointer" (click)="openResourceView(resource.resourceId)">{{resource?.max?.title}}</span>
-                </mat-grid-tile>
-                <mat-grid-tile>{{resource.count}}</mat-grid-tile>
-              }
-              <mat-grid-tile class="subheading label" i18n>Highest Rated</mat-grid-tile>
-              <mat-grid-tile class="subheading" i18n>Average Rating</mat-grid-tile>
-              @if (!reports?.resourceRatings || reports?.resourceRatings.length === 0) {
-                <mat-grid-tile colspan="2" i18n>There are no resource ratings</mat-grid-tile>
-              }
-              @for (rating of reports?.resourceRatings; track rating) {
-                <mat-grid-tile class="label">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>
-                  <span class="cursor-pointer" (click)="openResourceView(rating.item)">{{rating?.title}}</span>
-                </mat-grid-tile>
-                <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
-              }
-            </mat-grid-list>
-          </div>
-          <div>
+            <div class="summary-tiles">
+              <div class="summary-tile">
+                <span class="summary-tile-label" i18n>Total Resources</span>
+                <span class="summary-tile-value">{{reports?.totalResources}}</span>
+              </div>
+              <div class="summary-tile">
+                <span class="summary-tile-label" i18n>Total Views</span>
+                <span class="summary-tile-value">{{reports?.totalResourceViews}}</span>
+              </div>
+            </div>
+            <div class="summary-lists">
+              <mat-expansion-panel [expanded]="!isTabletOrSmaller()">
+                <mat-expansion-panel-header>
+                  <mat-panel-title i18n>Most Visited</mat-panel-title>
+                  <mat-panel-description i18n>Total Visits by Resource</mat-panel-description>
+                </mat-expansion-panel-header>
+                @for (resource of reports?.resources; track resource; let i = $index) {
+                  <div class="summary-row">
+                    <span class="summary-rank">{{i + 1}}</span>
+                    <button type="button" class="summary-label" [title]="resource?.max?.title" (click)="openResourceView(resource.resourceId)">{{resource?.max?.title}}</button>
+                    <span>{{resource.count}}</span>
+                    <span class="summary-bar" [style.width.%]="resource.count / reports.resources[0].count * 100"></span>
+                  </div>
+                } @empty {
+                  <p i18n>No resources have been visited</p>
+                }
+              </mat-expansion-panel>
+              <mat-expansion-panel [expanded]="!isTabletOrSmaller()">
+                <mat-expansion-panel-header>
+                  <mat-panel-title i18n>Highest Rated</mat-panel-title>
+                  <mat-panel-description i18n>Average Rating</mat-panel-description>
+                </mat-expansion-panel-header>
+                @for (rating of reports?.resourceRatings; track rating; let i = $index) {
+                  <div class="summary-row">
+                    <span class="summary-rank">{{i + 1}}</span>
+                    <button type="button" class="summary-label" [title]="rating?.title" (click)="openResourceView(rating.item)">{{rating?.title}}</button>
+                    <span>{{rating?.value}}</span>
+                  </div>
+                } @empty {
+                  <p i18n>There are no resource ratings</p>
+                }
+              </mat-expansion-panel>
+            </div>
+          </section>
+          <section>
             <h1 class="mat-headline-6" i18n>Courses</h1>
-            <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="subheading label" i18n>Total Courses</mat-grid-tile>
-              <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
-              <mat-grid-tile class="subheading label" i18n>Total Views</mat-grid-tile>
-              <mat-grid-tile>{{reports?.totalCourseViews}}</mat-grid-tile>
-              <mat-grid-tile class="subheading label" i18n>Steps Completed</mat-grid-tile>
-              <mat-grid-tile>{{reports?.totalStepCompleted}}</mat-grid-tile>
-              <mat-grid-tile class="subheading label" i18n>Most Visited</mat-grid-tile>
-              <mat-grid-tile class="subheading" i18n>Total Visits by Course</mat-grid-tile>
-              @if (!reports?.courses || reports?.courses.length === 0) {
-                <mat-grid-tile colspan="2" i18n>No courses have been visited</mat-grid-tile>
-              }
-              @for (course of reports?.courses; track course) {
-                <mat-grid-tile class="label">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>
-                  <span class="cursor-pointer" (click)="openCourseView(course.courseId)">{{course?.max?.title}}</span>
-                </mat-grid-tile>
-                <mat-grid-tile>{{course.count}}</mat-grid-tile>
-              }
-              <mat-grid-tile class="subheading label" i18n>Highest Rated</mat-grid-tile>
-              <mat-grid-tile class="subheading" i18n>Average Rating</mat-grid-tile>
-              @if (!reports?.courseRatings || reports?.courseRatings.length === 0) {
-                <mat-grid-tile colspan="2" i18n>There are no course ratings</mat-grid-tile>
-              }
-              @for (rating of reports?.courseRatings; track rating) {
-                <mat-grid-tile class="label">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>
-                  <span class="cursor-pointer" (click)="openCourseView(rating.item)">{{rating?.title}}</span>
-                </mat-grid-tile>
-                <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
-              }
-            </mat-grid-list>
-          </div>
+            <div class="summary-tiles">
+              <div class="summary-tile">
+                <span class="summary-tile-label" i18n>Total Courses</span>
+                <span class="summary-tile-value">{{reports?.totalCourses}}</span>
+              </div>
+              <div class="summary-tile">
+                <span class="summary-tile-label" i18n>Total Views</span>
+                <span class="summary-tile-value">{{reports?.totalCourseViews}}</span>
+              </div>
+              <div class="summary-tile">
+                <span class="summary-tile-label" i18n>Steps Completed</span>
+                <span class="summary-tile-value">{{reports?.totalStepCompleted}}</span>
+              </div>
+            </div>
+            <div class="summary-lists">
+              <mat-expansion-panel [expanded]="!isTabletOrSmaller()">
+                <mat-expansion-panel-header>
+                  <mat-panel-title i18n>Most Visited</mat-panel-title>
+                  <mat-panel-description i18n>Total Visits by Course</mat-panel-description>
+                </mat-expansion-panel-header>
+                @for (course of reports?.courses; track course; let i = $index) {
+                  <div class="summary-row">
+                    <span class="summary-rank">{{i + 1}}</span>
+                    <button type="button" class="summary-label" [title]="course?.max?.title" (click)="openCourseView(course.courseId)">{{course?.max?.title}}</button>
+                    <span>{{course.count}}</span>
+                    <span class="summary-bar" [style.width.%]="course.count / reports.courses[0].count * 100"></span>
+                  </div>
+                } @empty {
+                  <p i18n>No courses have been visited</p>
+                }
+              </mat-expansion-panel>
+              <mat-expansion-panel [expanded]="!isTabletOrSmaller()">
+                <mat-expansion-panel-header>
+                  <mat-panel-title i18n>Highest Rated</mat-panel-title>
+                  <mat-panel-description i18n>Average Rating</mat-panel-description>
+                </mat-expansion-panel-header>
+                @for (rating of reports?.courseRatings; track rating; let i = $index) {
+                  <div class="summary-row">
+                    <span class="summary-rank">{{i + 1}}</span>
+                    <button type="button" class="summary-label" [title]="rating?.title" (click)="openCourseView(rating.item)">{{rating?.title}}</button>
+                    <span>{{rating?.value}}</span>
+                  </div>
+                } @empty {
+                  <p i18n>There are no course ratings</p>
+                }
+              </mat-expansion-panel>
+            </div>
+          </section>
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Comparison Trend">
