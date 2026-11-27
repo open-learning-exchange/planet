@@ -21,7 +21,8 @@ export type KeyStatus = Record<string, Record<string, boolean>>;
 })
 export class ConfigurationService {
 
-  private readonly keysUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/keys`;
+  private readonly gatewayUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}`;
+  private readonly keysUrl = `${this.gatewayUrl}/keys`;
 
   constructor(
     private httpClient: HttpClient,
@@ -228,6 +229,10 @@ export class ConfigurationService {
 
   removeKey(service: KeyService, name: string) {
     return this.httpClient.delete(`${this.keysUrl}/${service}/${name}`, { withCredentials: true });
+  }
+
+  reloadGatewayConfiguration() {
+    return this.httpClient.post(`${this.gatewayUrl}/configuration/reload`, null, { withCredentials: true });
   }
 
   createUser(name, details, opts?) {

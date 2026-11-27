@@ -92,6 +92,20 @@ describe('configuration service', () => {
     expect((await getConfiguration()).parentCode).toEqual('earth');
   });
 
+  it('replaces the kept configuration on reload, and keeps it when the reload cannot read', async () => {
+    mocks.find
+      .mockResolvedValueOnce(found(planetDoc))
+      .mockResolvedValueOnce(found({ ...planetDoc, 'models': { 'openai': 'gpt-new' } }))
+      .mockRejectedValueOnce(new Error('connection refused'));
+    const { getConfiguration, reloadConfiguration } = await loadService();
+
+    await getConfiguration();
+    await reloadConfiguration();
+    expect((await getConfiguration()).models.openai).toEqual('gpt-new');
+    await expect(reloadConfiguration()).rejects.toMatchObject({ 'statusCode': 503 });
+    expect((await getConfiguration()).models.openai).toEqual('gpt-new');
+  });
+
   it('answers 503 until CouchDB answers, as when the gateway starts first', async () => {
     mocks.find.mockRejectedValueOnce(new Error('connection refused')).mockResolvedValueOnce(found(planetDoc));
     const { getConfiguration } = await loadService();

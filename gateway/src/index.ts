@@ -1,16 +1,16 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import http from 'http';
 import WebSocket from 'ws';
 
-import { authenticateUpgrade, OpenRoute, requireSessionExcept } from './middleware/auth';
+import { authenticateUpgrade, OpenRoute, requireManager, requireSessionExcept } from './middleware/auth';
 import { respondWithError } from './middleware/errors';
 import { browserCors } from './middleware/origin';
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
 import { registerCurrencyRoutes } from './modules/currency/register';
 import { registerKeyRoutes } from './modules/keys/register';
-import { getConfiguration } from './services/config.service';
+import { getConfiguration, reloadConfiguration } from './services/config.service';
 import { getKeys } from './services/keys.service';
 
 dotenv.config();
@@ -36,6 +36,10 @@ app.get('/', (req: Request, res: Response) => {
     'status': 'Success',
     'message': 'OLE Gateway Service',
   });
+});
+
+app.post('/configuration/reload', requireManager, (req: Request, res: Response, next: NextFunction) => {
+  reloadConfiguration().then(() => res.status(204).end(), next);
 });
 
 registerChatApiRoutes(app);

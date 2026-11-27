@@ -48,7 +48,7 @@ const read = async (): Promise<Configuration> => {
   }
 };
 
-// Read until the planet's configuration is found, then keep it until the gateway restarts
+// Read until the planet's configuration is found, then keep it until the gateway restarts or a reload replaces it
 export const getConfiguration = async (): Promise<Configuration> => {
   if (snapshot) {
     return snapshot;
@@ -57,11 +57,18 @@ export const getConfiguration = async (): Promise<Configuration> => {
   return reading;
 };
 
+const readCurrentDocument = () => readDocument().catch((error) => {
+  console.error(`Error reading the planet configuration: ${error}`);
+  throw unavailable();
+});
+
 // For writes stamped with the planet's code and parent, which a manager can change while the gateway runs
-export const getCurrentConfiguration = async (): Promise<Configuration> => {
-  const doc = await readDocument().catch((error) => {
-    console.error(`Error reading the planet configuration: ${error}`);
-    throw unavailable();
-  });
-  return toConfiguration(doc || {});
+export const getCurrentConfiguration = async (): Promise<Configuration> => toConfiguration(await readCurrentDocument() || {});
+
+// A fresh read rather than a shared one, which could have started before the save it follows
+export const reloadConfiguration = async (): Promise<void> => {
+  const doc = await readCurrentDocument();
+  if (doc) {
+    snapshot = toConfiguration(doc);
+  }
 };

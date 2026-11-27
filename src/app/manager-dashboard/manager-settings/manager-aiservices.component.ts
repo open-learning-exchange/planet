@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Subject } from 'rxjs';
-import { finalize, switchMap, takeUntil } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { catchError, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -131,14 +131,23 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     };
     this.keysCard.saveKeys().pipe(
       switchMap(() => this.configurationService.patchLocalConfiguration(configPatch)),
+      switchMap(() => this.configurationService.reloadGatewayConfiguration().pipe(map(() => true), catchError(() => of(false)))),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(
-      () => this.stateService.requestData('configurations', 'local'),
+      (reloaded) => {
+        this.stateService.requestData('configurations', 'local');
+        this.router.navigate([ '/manager' ]);
+        if (reloaded) {
+          this.aiChatService.refreshAIProviders();
+          this.planetMessageService.showMessage($localize`Configuration Updated Successfully`);
+        } else {
+          this.planetMessageService.showAlert(
+            $localize`Configuration saved, but the chat service did not pick it up. Save again to retry, or it applies at the next restart`
+          );
+        }
+      },
       err => {
         this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
-      }, () => {
-        this.router.navigate([ '/manager' ]);
-        this.planetMessageService.showMessage($localize`Configuration Updated Successfully`);
       }
     );
   }
