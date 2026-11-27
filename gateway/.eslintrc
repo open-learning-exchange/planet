@@ -27,7 +27,11 @@
     "@typescript-eslint/naming-convention": ["error",
       {
         "selector": "variableLike",
-        "format": ["camelCase", "UPPER_CASE"]
+        "format": ["camelCase", "UPPER_CASE"],
+        "filter": {
+          "match": false,
+          "regex": "^(_id|_rev|_attachments)$"
+        }
       },
       {
         "selector": "variable",
