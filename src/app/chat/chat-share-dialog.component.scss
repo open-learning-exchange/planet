@@ -1,0 +1,23 @@
+.mat-expansion-panel {
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.share-mode {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.share-hint {
+  display: block;
+  font-size: 0.875em;
+  opacity: 0.75;
+}
+
+.share-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}

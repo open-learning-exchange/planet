@@ -150,6 +150,7 @@ upsert_doc courses_progress _design/courses_progress @./design/courses-progress/
 upsert_doc submissions _design/surveyData @./design/submissions/submissions-design.json
 upsert_doc challenges _design/challenges @./design/challenges/challenges-design.json
 upsert_doc challenge_progress _design/challenge_progress @./design/challenge-progress/challenge-progress-design.json
+upsert_doc chat_history _design/chat_history @./design/chat-history/chat-history-design.json
 
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing

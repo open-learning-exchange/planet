@@ -1,0 +1,1 @@
+{"views":{"shares":{"map":"function (doc) {\n        (doc.shares || []).forEach(function (share) {\n          emit(share.id, null);\n        });\n      }"}}}

@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { forkJoin, of, Subject, Subscription, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap } from 'rxjs/operators';
+import { of, Subject, Subscription, merge } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -29,6 +29,7 @@ import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 import { AuthGuard } from '@shared/auth/auth.guard';
 import { trackById } from '@shared/tables/table.helpers';
 import { LabelComponent } from '@shared/ui/label.component';
+import { AiChatService } from '@shared/ai/ai-chat.service';
 
 import { NewsService } from './news.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -36,6 +37,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { CustomVoiceLabel, dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from './news.utils';
 import { NewsListItemComponent } from './news-list-item.component';
+import { SharedChat } from '../chat/chat.model';
 
 @Component({
   selector: 'planet-news-list',
@@ -80,6 +82,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @ViewChild('listContent', { static: false }) listContent: ElementRef<HTMLElement>;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
+  chatPreviews: Record<string, SharedChat | null> = {};
+  private freshChatPreviews = new Set<string>();
   filteredItems: any[] = [];
   messageSearch = '';
   messageSearch$ = new Subject<string>();
@@ -112,6 +116,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   unreadReplyIds = new Set<string>();
   private routerEventsSubscription: Subscription;
   private unreadRepliesSubscription: Subscription;
+  private readerSubscription: Subscription;
 
   get isTeamsFeed(): boolean {
     return this.viewableBy === 'teams';
@@ -151,7 +156,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private router: Router,
     private route: ActivatedRoute,
     private authGuard: AuthGuard,
-    private challengesProgressService: ChallengesProgressService
+    private challengesProgressService: ChallengesProgressService,
+    private aiChatService: AiChatService
   ) {}
 
   ngOnInit() {
@@ -168,6 +174,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.applyFilters();
     });
 
+    this.readerSubscription = this.userService.userChange$.subscribe(() => {
+      this.chatPreviews = {};
+      this.freshChatPreviews.clear();
+      this.loadChatPreviews([ ...this.displayedItems, this.replyViewing ]);
+    });
     this.unreadRepliesSubscription = merge(this.userService.notificationStateChange$, this.userService.userChange$).pipe(
       startWith(null),
       switchMap(() => this.notificationsService.getUnreadReplyIds$()),
@@ -191,6 +202,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.resetFilters();
     }
     this.itemsById = new Map<string, any>(this.items.map(item => [ item._id, item ]));
+    if (changes.items) {
+      this.freshChatPreviews.clear();
+    }
     this.availableLabels = this.getAvailableLabels(this.items);
     this.applyFilters();
     if (changes.items?.previousValue?.length === 0 && this.items.length > 0) {
@@ -267,6 +281,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.routerEventsSubscription?.unsubscribe();
     this.searchSubscription?.unsubscribe();
     this.unreadRepliesSubscription?.unsubscribe();
+    this.readerSubscription?.unsubscribe();
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -447,7 +462,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         okClick: this.deleteNews(news),
         changeType: 'delete',
         type: 'news',
-        displayName: news.chat ? news.news.conversations[0].response : news.message
+        displayName: news.chat ? news.news.title : news.message
       }
     });
   }
@@ -457,14 +472,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const parentId = isMainStory ? this.replyViewing.doc.replyTo || 'root' : this.replyViewing._id;
     const deleteFromAllViews = this.viewableBy === 'teams';
     return {
-      request: forkJoin([
-        this.newsService.deleteNews(
-          news,
-          this.viewableId,
-          deleteFromAllViews
-        ),
-        this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
-      ]),
+      // Replies move after the delete, which a chat voice's share can stop; the delete's own refresh misses them
+      request: this.newsService.deleteNews(news, this.viewableId, deleteFromAllViews).pipe(
+        switchMap(() => this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)),
+        tap(() => this.newsService.requestNews())
+      ),
       onNext: (data) => {
         if (isMainStory) {
           this.showReplies({ _id: parentId });
@@ -610,6 +622,31 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.isLoadingMore = false;
       this.totalReplies = news.length;
     }
+    this.loadChatPreviews([ ...this.displayedItems, this.replyViewing ]);
+  }
+
+  private loadChatPreviews(items: any[]) {
+    const shareIds = items.filter(item => item?.doc?.chat).map(item => item.doc.news.shareId)
+      .filter(shareId => !this.freshChatPreviews.has(shareId));
+    if (shareIds.length === 0) {
+      return;
+    }
+    shareIds.forEach(shareId => this.freshChatPreviews.add(shareId));
+    // A reader change swaps the map, so a late answer lands in the old one
+    const chatPreviews = this.chatPreviews;
+    this.aiChatService.sharePreviews(shareIds).subscribe({
+      next: previews => shareIds.forEach(shareId => {
+        chatPreviews[shareId] = previews[shareId] || null;
+      }),
+      error: (error) => shareIds.forEach(shareId => {
+        // Signed out, nothing is readable
+        if (error.status === 401) {
+          chatPreviews[shareId] = null;
+        } else {
+          this.freshChatPreviews.delete(shareId);
+        }
+      })
+    });
   }
 
   loadMoreItems() {

@@ -11,6 +11,7 @@ vi.mock('../../../config/couch.config', () => ({
 import { chatUsage, conversationChange, getConversation, listConversations, updateConversation } from './history.service';
 
 const amara = { 'name': 'amara', 'roles': [ 'learner' ] };
+const share = { 'id': 'share-1', 'audience': { 'type': 'community' }, 'sharedDate': 1 };
 const brianConversation = {
   '_id': 'chat-1',
   '_rev': '1-a',
@@ -48,23 +49,23 @@ describe('chat history', () => {
   });
 
   it('renames on top of the stored document and its current revision', async () => {
-    mocks.get.mockResolvedValue({ ...brianConversation, 'user': 'amara', 'shared': true });
+    mocks.get.mockResolvedValue({ ...brianConversation, 'user': 'amara', 'shares': [ share ] });
 
     const renamed = await updateConversation('chat-1', amara, { 'title': 'Halves' });
 
     expect(mocks.insert).toHaveBeenCalledWith(expect.objectContaining({
       '_rev': '1-a',
       'title': 'Halves',
-      'shared': true,
+      'shares': [ share ],
       'conversations': brianConversation.conversations
     }));
     expect(renamed?._rev).toEqual('2-b');
   });
 
-  it('changes only the title or the shared flag', () => {
+  it('changes only the title', () => {
     expect(conversationChange({ 'title': 'Halves', 'user': 'brian' })).toEqual({ 'title': 'Halves' });
     expect(conversationChange({ 'title': '  ' })).toBeUndefined();
-    expect(conversationChange({ 'shared': false })).toBeUndefined();
+    expect(conversationChange({ 'shared': true })).toBeUndefined();
   });
 
   it('gives managers one row per conversation without the turns', async () => {

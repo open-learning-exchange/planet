@@ -7,7 +7,7 @@ import { isPlainDocId, isUserConversationOwner } from '../utils/db.utils';
 
 const PAGE_SIZE = 1000;
 
-export type ConversationChange = { title: string } | { shared: true };
+export type ConversationChange = { title: string };
 
 export interface ChatUsage {
   _id: string;
@@ -46,12 +46,8 @@ export async function getConversation(id: string, session: SessionInfo): Promise
   }
 }
 
-export const conversationChange = ({ title, shared }: any = {}): ConversationChange | undefined => {
-  if (typeof title === 'string' && title.trim()) {
-    return { title };
-  }
-  return shared === true ? { shared } : undefined;
-};
+export const conversationChange = ({ title }: any = {}): ConversationChange | undefined =>
+  typeof title === 'string' && title.trim() ? { title } : undefined;
 
 export async function updateConversation(id: string, session: SessionInfo, change: ConversationChange): Promise<DbDoc | undefined> {
   const doc = await getConversation(id, session);
@@ -73,7 +69,7 @@ export async function chatUsage(): Promise<ChatUsage[]> {
       'createdDate': doc.createdDate,
       'aiProvider': doc.aiProvider,
       'assistant': !!doc.assistant,
-      'shared': !!doc.shared,
+      'shared': (doc.shares?.length || 0) > 0,
       'turns': doc.conversations?.length || 0,
       // The course step stores the resource's `_attachments` object, not a list
       'hasAttachments': Object.keys(doc.context?.resource?.attachments || {}).length > 0

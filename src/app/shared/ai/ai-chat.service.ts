@@ -5,14 +5,15 @@ import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
-  AIServiceStatus, AIProvider, Conversation, ConversationChange, ProviderDiscovery, ProviderName
+  AIServiceStatus, AIProvider, ChatShare, Conversation, ConversationChange, ProviderDiscovery, ProviderName, SharedChat
 } from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
 }) export class AiChatService {
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
-  private conversationsUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat/conversations`;
+  private chatUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/chat`;
+  private conversationsUrl = `${this.chatUrl}/conversations`;
   private socket: WebSocket;
 
   private chatStreamSubject: Subject<string> = new Subject<string>();
@@ -114,6 +115,24 @@ import {
 
   updateConversation(id: string, change: ConversationChange): Observable<Conversation> {
     return this.httpClient.patch<Conversation>(`${this.conversationsUrl}/${id}`, change, { withCredentials: true });
+  }
+
+  shareConversation(id: string, share: { audience: 'community' } | { audience: 'team', teamId: string }, live: boolean) {
+    return this.httpClient.post<ChatShare>(`${this.conversationsUrl}/${id}/shares`, { ...share, live }, { withCredentials: true });
+  }
+
+  stopSharing(shareId: string) {
+    return this.httpClient.delete<void>(`${this.chatUrl}/shares/${encodeURIComponent(shareId)}`, { withCredentials: true });
+  }
+
+  getSharedChat(shareId: string): Observable<SharedChat> {
+    return this.httpClient.get<SharedChat>(`${this.chatUrl}/shares/${encodeURIComponent(shareId)}`, { withCredentials: true });
+  }
+
+  sharePreviews(shareIds: string[]): Observable<Record<string, SharedChat>> {
+    return this.httpClient.get<Record<string, SharedChat>>(
+      `${this.chatUrl}/shares`, { params: { ids: shareIds.join(',') }, withCredentials: true }
+    );
   }
 
   sendNewChatAddedSignal() {

@@ -1,0 +1,33 @@
+<div class="shared-chat">
+  @if (sharedChat) {
+    <header class="shared-chat-header">
+      <div class="shared-chat-heading">
+        <h2>{{ sharedChat.title }}</h2>
+        @if (sharedChat.live) {
+          <span class="shared-chat-kind live" i18n>Up to date</span>
+        } @else {
+          <span class="shared-chat-kind" i18n>Snapshot</span>
+        }
+      </div>
+      <span class="shared-chat-meta" i18n>Shared {{ sharedChat.sharedDate | timeAgo }} · {{ sharedChat.totalTurns * 2 }} chat messages</span>
+    </header>
+  }
+  <div class="shared-chat-messages">
+    @if (sharedChat) {
+      @for (turn of sharedChat.turns; track $index) {
+        <planet-markdown class="conversation-query" [content]="turn.query" profile="chat"></planet-markdown>
+        <planet-markdown class="conversation-response" [content]="turn.response" profile="chat"></planet-markdown>
+      }
+    } @else if (loadFailed) {
+      <p i18n>There was a problem opening this chat.</p>
+    } @else if (sharedChat === null) {
+      <p i18n>This chat isn't shared with you, or it may have been unshared.</p>
+    } @else {
+      <p i18n>Loading chat…</p>
+    }
+  </div>
+  <div class="shared-chat-bar">
+    <mat-icon>lock</mat-icon>
+    <span i18n>This chat is read-only</span>
+  </div>
+</div>

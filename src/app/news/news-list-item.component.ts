@@ -1,13 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
-import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 
 import { UserService } from '@shared/auth/user.service';
@@ -24,6 +24,7 @@ import { LinkCopyService } from '@shared/ui/link-copy.service';
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
 
 import { NewsService } from './news.service';
+import { SharedChat } from '../chat/chat.model';
 import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import {
   CustomVoiceLabel, DEFAULT_VOICE_LABELS, DEFAULT_VOICE_REACTIONS, dedupeCustomVoiceLabels, dedupeVoiceLabels, labelColorClass,
@@ -35,6 +36,8 @@ import {
   templateUrl: 'news-list-item.component.html',
   styleUrls: ['./news-list-item.scss'],
   imports: [
+    RouterLink,
+    MatAnchor,
     MatCard,
     MatCardHeader,
     MatCardSubtitle,
@@ -55,7 +58,6 @@ import {
     MatMenuContent,
     NgTemplateOutlet,
     MatMenuItem,
-    SlicePipe,
     TimeAgoPipe,
     FullNamePipe,
     AvatarComponent
@@ -72,6 +74,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() hasUnreadReplies = false;
+  @Input() chatPreview: SharedChat | null | undefined;
+  chatReturnState: { returnState: { route: string } };
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
@@ -127,6 +131,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.item.sharedSourceInfo = null;
     }
     this.handleItemExpansion();
+    if (this.item.doc.chat) {
+      this.chatReturnState = { returnState: { route: this.router.serializeUrl(this.router.createUrlTree(this.voiceLink(this.item.doc))) } };
+    }
   }
 
   updateLabelsAll() {
@@ -156,6 +163,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   get canModifyNews(): boolean {
     return this.item.doc.user?.name === this.currentUser.name || this.currentUser.isUserAdmin;
+  }
+
+  get moreChatMessages() {
+    return (this.chatPreview.totalTurns - this.chatPreview.turns.length) * 2;
   }
 
   ngOnDestroy() {
@@ -188,14 +199,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.expansionKey = expansionKey;
       this.showLess = !this.item.latestMessage;
     }
-    if (this.item.doc.news?.conversations?.length > 1) {
-      this.showExpand = true;
-    } else {
-      const message = typeof this.item.doc.message === 'string' ? this.item.doc.message : '';
-      const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
-      this.showExpand = doesMarkdownPreviewTruncate(message, this.previewLimit) ||
-        hasMarkdownImages(message) || imagesLength > 0;
-    }
+    const message = typeof this.item.doc.message === 'string' ? this.item.doc.message : '';
+    const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
+    this.showExpand = doesMarkdownPreviewTruncate(message, this.previewLimit) ||
+      hasMarkdownImages(message) || imagesLength > 0;
   }
 
   editNews(news) {
@@ -241,8 +248,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.changeLabels.emit({ label, action, news: this.item.doc });
   }
 
+  // A chat voice's readers are set by its share
   shouldShowShare() {
-    return !this.readOnly && this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
+    return !this.readOnly && !this.item.doc.chat && this.shareTarget &&
+      (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 
@@ -272,13 +281,18 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private get isTeamFeed(): boolean {
-    return [ 'teams', 'enterprises' ].some(route => this.router.url.includes(route));
+    // Any case: teams also open under /myDashboard/myTeams
+    return /teams|enterprises/i.test(this.router.url);
+  }
+
+  private voiceLink(voice): any[] {
+    const threadId = voice.replyTo && voice.replyTo !== 'root' ? voice.replyTo : voice._id;
+    return this.isTeamFeed ? [ this.router.url.split(/[;?#]/)[0], { voice: threadId } ] : [ '/voices', threadId ];
   }
 
   copyLink(voice) {
-    const threadId = voice.replyTo && voice.replyTo !== 'root' ? voice.replyTo : voice._id;
     this.linkCopyService.copyLink(
-      this.isTeamFeed ? [ this.router.url.split(/[;?#]/)[0], { voice: threadId } ] : [ '/voices', threadId ],
+      this.voiceLink(voice),
       {
         success: $localize`Voice link copied to clipboard`,
         failure: $localize`Failed to copy voice link`

@@ -6,6 +6,7 @@ import { HttpError } from '../../../middleware/errors';
 import { getConfiguration } from '../../../services/config.service';
 import { isPlainDocId, isUserConversationOwner } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
+import { truncateText } from '../utils/chat-helpers.utils';
 import { AIProvider, ChatItem, ChatMessage } from '../models/chat.model';
 import { DbDoc } from '../models/db-doc.model';
 import { ProviderClient, providerClient } from '../providers/clients';
@@ -42,12 +43,6 @@ const historyMessages = (turns: ChatItem[]): ChatMessage[] => turns.flatMap(({ q
   { 'role': 'user' as const, 'content': query },
   { 'role': 'assistant' as const, 'content': response }
 ]);
-
-// By code point: CouchDB refuses a title ending in half an emoji
-const truncateTitle = (content: string): string => {
-  const characters = Array.from(content);
-  return characters.length > TITLE_MAX_LENGTH ? `${characters.slice(0, TITLE_MAX_LENGTH - 1).join('')}…` : content;
-};
 
 async function addTurn(stored: DbDoc, session: SessionInfo, change: Partial<DbDoc>, turn: ChatItem): Promise<DocumentInsertResponse> {
   const withTurn = (doc: DbDoc) => ({
@@ -94,7 +89,7 @@ export async function chat(data: any, session: SessionInfo, stream?: boolean, ca
     return { completionText, 'couchSaveResponse': await addTurn(stored, session, change, turn) };
   }
   const created: Partial<DbDoc> = {
-    ...change, 'user': session.name, 'title': truncateTitle(content), 'conversations': [ turn ], 'createdDate': Date.now()
+    ...change, 'user': session.name, 'title': truncateText(content, TITLE_MAX_LENGTH), 'conversations': [ turn ], 'createdDate': Date.now()
   };
   return { completionText, 'couchSaveResponse': await chatDB.insert(created) };
 }

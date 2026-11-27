@@ -29,7 +29,46 @@ mat-card-content {
 .chat-container {
   border: dashed 1px v.$primary-dark;
   border-radius: 5px;
+  overflow: hidden;
+}
+
+.chat-share-body {
   padding: 5%;
+}
+
+.chat-share-title {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.chat-share-kind {
+  padding: 0.125rem 0.625rem;
+  border: 1px solid v.$grey;
+  border-radius: 12px;
+  background-color: v.$white;
+  font-weight: 500;
+
+  &.live {
+    border-color: v.$primary-lighter;
+    background-color: v.$primary-lighter;
+    color: v.$primary-lighter-text;
+  }
+}
+
+.chat-share-open {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: v.$light-grey;
+  border-top: 1px solid v.$grey;
+  color: v.$grey-text;
+}
+
+.chat-share-note {
+  margin: 0.5rem 0 0;
+  color: v.$grey-text;
 }
 
 .profile-outline {

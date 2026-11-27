@@ -17,6 +17,12 @@ const PROVIDER_DEADLINE_MS = 120000;
 
 const extractedTexts = new Map<string, Promise<string>>();
 
+// By code point: CouchDB refuses a string ending in half an emoji
+export const truncateText = (text: string, maxLength: number): string => {
+  const characters = Array.from(text);
+  return characters.length > maxLength ? `${characters.slice(0, maxLength - 1).join('')}…` : text;
+};
+
 function attachmentText(resourceId: string, attachmentName: string, digest: string): Promise<string> {
   const key = JSON.stringify([ resourceId, attachmentName, digest ]);
   const cached = extractedTexts.get(key);
