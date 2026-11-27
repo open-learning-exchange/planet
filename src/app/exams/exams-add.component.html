@@ -17,10 +17,10 @@
           <button mat-raised-button color="primary" type="button" [disabled]="questions.length === 0" (click)="onSubmit(true)" i18n>Save & Return</button>
           <div class="menu-button"><button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button></div>
           <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
+          @if (isManagerRoute) {
+            <mat-checkbox formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic;" i18n>Allow team view</span></mat-checkbox>
+          }
         </div>
-        @if (isManagerRoute) {
-          <mat-checkbox formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic;" i18n>Allow team view</span></mat-checkbox>
-        }
         @if (showFormError) {
           <span i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
         }
@@ -58,7 +58,8 @@
           </mat-expansion-panel>
         </mat-accordion>
       }
-      <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
+      <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" [confirmDelete]="true" defaultName="Question" i18n-defaultName
+        deletePromptMessage="Are you sure you want to delete the following question?" i18n-deletePromptMessage (stepClicked)="stepClick($event)">
         @for (question of questions?.controls; track question; let i = $index) {
           <planet-step-list-item >
             <span matListItemTitle>{{ getQuestionLabel(question.value.body, i) }}</span>
@@ -67,11 +68,11 @@
             }
           </planet-step-list-item>
         }
+        <span class="mat-caption" planetStepListNumber>
+          <span i18n>Question</span>{{ ' ' + (this.activeQuestionIndex + 1) + ' ' }}
+          <span i18n>of</span>{{ ' ' + questions?.length }}
+        </span>
         <div planetStepListForm>
-          <span class="mat-caption margin-lr-5">
-            <span i18n>Editing Question</span>{{ ' ' + (this.activeQuestionIndex + 1) + ' ' }}
-            <span i18n>of</span>{{ ' ' + questions?.length }}
-          </span>
           @if (activeQuestionIndex > -1) {
             <planet-exam-question [(question)]="question" [examType]="examType" [imageGroup]="imageGroup"></planet-exam-question>
           }

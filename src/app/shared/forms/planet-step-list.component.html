@@ -10,11 +10,11 @@
 @if (!listMode) {
   <div class="planet-step-list-form-container">
     <div class="action-buttons">
-      <button class="back-button" (click)="toList()" mat-stroked-button type="button" i18n><mat-icon>keyboard_arrow_left</mat-icon>Return to List</button>
-      <button mat-stroked-button [disabled]="this.openIndex === 0" (click)="changeStep(-1)" type="button" i18n>Previous</button>
-      <button mat-stroked-button [disabled]="this.openIndex >= (this.stepListItems.length - 1)" (click)="changeStep(1)" type="button" i18n>Next</button>
-      <button mat-stroked-button color="warn" (click)="removeStep()" type="button" i18n>Delete</button>
-      <ng-content select="[planetStepListNumber]"></ng-content>
+      <button mat-icon-button type="button" (click)="toList()" matTooltip="Return to List" i18n-matTooltip aria-label="Return to List" i18n-aria-label><mat-icon>list</mat-icon></button>
+      <span class="planet-step-list-number"><ng-content select="[planetStepListNumber]"></ng-content></span>
+      <button mat-icon-button type="button" [disabled]="this.openIndex === 0" (click)="changeStep(-1)" matTooltip="Previous" i18n-matTooltip aria-label="Previous" i18n-aria-label><mat-icon>chevron_left</mat-icon></button>
+      <button mat-icon-button type="button" [disabled]="this.openIndex >= (this.stepListItems.length - 1)" (click)="changeStep(1)" matTooltip="Next" i18n-matTooltip aria-label="Next" i18n-aria-label><mat-icon>chevron_right</mat-icon></button>
+      <button mat-icon-button type="button" color="warn" (click)="removeStep()" matTooltip="Delete" i18n-matTooltip aria-label="Delete" i18n-aria-label><mat-icon>delete</mat-icon></button>
     </div>
     <ng-content select="[planetStepListForm]"></ng-content>
     <ng-content select="[planetStepListActions]"></ng-content>

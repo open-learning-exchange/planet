@@ -27,6 +27,7 @@ planet-courses-step planet-step-list {
 
 .course-attach {
   .attach-grid {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
@@ -91,10 +92,11 @@ planet-courses-step planet-step-list {
     }
   }
 
+  // 4px keeps the button's 48px touch target inside the card, so a full-width card adds no sideways scroll.
   .attach-remove.mat-mdc-icon-button {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 4px;
+    right: 4px;
     --mat-icon-button-state-layer-size: 40px;
     padding: 8px;
     color: v.$warn;

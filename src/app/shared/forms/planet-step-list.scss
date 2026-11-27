@@ -1,7 +1,3 @@
-.back-button {
-  padding: 0 0.5rem 0 0;
-}
-
 .mat-mdc-nav-list.no-pointer .mat-mdc-list-item {
   cursor: auto;
 }
@@ -25,12 +21,39 @@
   }
 }
 
+// Rows grow for a wrapped line, such as the exam editor's error; a 20px line height keeps a two-line title inside 48px.
+planet-step-list {
+  --mat-list-list-item-one-line-container-height: auto;
+
+  .mat-mdc-list-item-unscoped-content {
+    flex-wrap: wrap;
+
+    > span:first-child {
+      flex: 1 1 0;
+      white-space: normal;
+      line-height: 20px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+  }
+}
+
 .planet-step-list-form-container {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100%;
 
-  .action-buttons,
+  .action-buttons {
+    display: flex;
+    align-items: center;
+  }
+
+  .planet-step-list-number {
+    flex: 1;
+    min-width: 0;
+  }
+
   .planet-step-list-actions {
     display: flex;
     align-items: center;

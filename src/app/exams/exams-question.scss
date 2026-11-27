@@ -23,6 +23,10 @@
     grid-template-columns: 2fr 8fr;
     grid-column-gap: 1rem;
     align-items: center;
+
+    @media (max-width: v.$screen-sm) {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   .scale-max-field {
