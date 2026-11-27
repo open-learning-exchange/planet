@@ -340,7 +340,6 @@ export class TasksComponent implements OnInit, OnDestroy {
         assigneeMatches(assignee, identity, this.localPlanetCode)
       ))
     );
-    // Only editors get the myTasks switch, so nobody else may be filtered by it.
     this.onlyMine = this.onlyMine && this.editable && this.myTasks.length > 0;
   }
 
@@ -453,9 +452,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   private setTaskViews() {
     this.taskViews = this.tasks.map(task => {
       const assignees = this.taskAssignees(task).map(item => this.currentAssigneeMetadata(item));
-      // Three avatars fit; beyond that two and a count keep the stack the same width however many there are.
       const shownCount = assignees.length > 3 ? 2 : assignees.length;
-      // A status being saved shows at once, so a dropped card stays in the column it landed in.
       const status = this.statusSaves.get(task._id) ?? effectiveTaskStatus(task);
       return {
         task,
