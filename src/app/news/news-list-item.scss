@@ -41,7 +41,6 @@ mat-card-content {
 
 .user-name-truncate {
   flex: 1 1 auto;
-  // below mat-button's 64px minimum, so the name takes the squeeze on narrow phones instead of pushing ⋮ off the card
   min-width: 0;
   max-width: 50%;
   display: block;
