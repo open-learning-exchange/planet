@@ -47,6 +47,8 @@ To run the gateway tests, install the repository root dependencies first, then r
 - `modules/keys`: provider keys, set and removed by managers through `PUT` and `DELETE /keys/:service/:name`; `GET /keys` says only whether each key is set
 - `modules/public`: scoped public endpoints served through `/public/`
 
+The gateway reads the planet configuration at startup and keeps it. Saving on the AI services page calls `POST /configuration/reload` (managers only) to read it again. A change made directly in CouchDB, such as in Fauxton, applies only after that call or a gateway restart.
+
 ## Public Endpoints
 
 - `GET /public/surveys/:teamId/:surveyId`
