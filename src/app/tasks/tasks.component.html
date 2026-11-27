@@ -1,7 +1,7 @@
 @if (editable) {
   <div class="task-toolbar">
     <button i18n mat-stroked-button (click)="addTask()">Add a task</button>
-    <mat-slide-toggle [checked]="onlyMine" [disabled]="myTasks.length === 0" (change)="setOnlyMine($event.checked)" i18n>
+    <mat-slide-toggle [checked]="filteringMine" [disabled]="myTasks.length === 0" (change)="setOnlyMine($event.checked)" i18n>
       myTasks
     </mat-slide-toggle>
   </div>

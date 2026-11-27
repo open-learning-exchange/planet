@@ -490,22 +490,27 @@ describe('TasksComponent', () => {
     expect(groupIds()).toEqual([ [ 'owned' ], [ 'other-progress' ], [ 'other-done' ] ]);
   });
 
-  it('switches myTasks off when no task is mine, and for anyone who cannot edit', () => {
+  it('filters to my tasks once some are mine, even after an earlier load had none, and never for non-editors', () => {
+    const other = {
+      _id: 'other', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' }
+    };
+    const owned = {
+      _id: 'owned', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' }
+    };
+    const shownIds = () => component.filteredTaskViews.map(({ task }) => task._id);
     component.ngOnInit();
-    taskUpdates.next([
-      { _id: 'other', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' } }
-    ]);
 
-    expect(component.onlyMine).toBe(false);
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'other' ]);
+    taskUpdates.next([ other ]);
+    expect(component.filteringMine).toBe(false);
+    expect(shownIds()).toEqual([ 'other' ]);
 
-    component.onlyMine = true;
+    taskUpdates.next([ other, owned ]);
+    expect(component.filteringMine).toBe(true);
+    expect(shownIds()).toEqual([ 'owned' ]);
+
     component.editable = false;
-    taskUpdates.next([
-      { _id: 'owned', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' } },
-      { _id: 'other', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' } }
-    ]);
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned', 'other' ]);
+    taskUpdates.next([ other, owned ]);
+    expect(shownIds()).toEqual([ 'other', 'owned' ]);
   });
 
   it('turns myTasks off after creating a task, which starts unassigned', () => {

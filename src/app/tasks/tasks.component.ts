@@ -340,7 +340,6 @@ export class TasksComponent implements OnInit, OnDestroy {
         assigneeMatches(assignee, identity, this.localPlanetCode)
       ))
     );
-    this.onlyMine = this.onlyMine && this.editable && this.myTasks.length > 0;
   }
 
   private currentUserIdentities() {
@@ -356,6 +355,10 @@ export class TasksComponent implements OnInit, OnDestroy {
     }
   }
 
+  get filteringMine() {
+    return this.onlyMine && this.editable && this.myTasks.length > 0;
+  }
+
   setOnlyMine(onlyMine: boolean) {
     this.onlyMine = onlyMine;
     this.filterTasks();
@@ -363,7 +366,7 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   filterTasks() {
     const myTaskIds = new Set(this.myTasks.map(task => task._id));
-    this.filteredTaskViews = this.onlyMine ? this.taskViews.filter(({ task }) => myTaskIds.has(task._id)) : this.taskViews;
+    this.filteredTaskViews = this.filteringMine ? this.taskViews.filter(({ task }) => myTaskIds.has(task._id)) : this.taskViews;
     this.taskGroups = this.statusOptions.map(option => ({
       ...option,
       taskViews: this.filteredTaskViews.filter(({ status }) => status === option.status)
