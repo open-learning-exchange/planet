@@ -196,7 +196,7 @@ export class ChatShareDialogComponent implements OnInit {
     };
     this.aiChatService.stopSharing(share.id).subscribe({
       next: removeShare,
-      // Already stopped elsewhere, e.g. by deleting its voice
+      // Already stopped, e.g. by deleting its voice
       error: (error) => error.status === 404 ?
         removeShare() :
         this.planetMessageService.showAlert($localize`There was a problem stopping this share.`)

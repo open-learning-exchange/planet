@@ -475,8 +475,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const parentId = isMainStory ? this.replyViewing.doc.replyTo || 'root' : this.replyViewing._id;
     const deleteFromAllViews = this.viewableBy === 'teams';
     return {
-      // Replies move only once the voice is gone: deleting a chat voice stops at its share when that can't be stopped.
-      // The delete's own refresh can land before the move, so the feed is asked again after it
+      // Replies move only once the voice is gone (a chat voice stays when its share can't be stopped);
+      // the delete's own refresh can land before the move, so the feed is asked again
       request: this.newsService.deleteNews(news, this.viewableId, deleteFromAllViews).pipe(
         switchMap(() => this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)),
         tap(() => this.newsService.requestNews())
