@@ -21,7 +21,9 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import {
+  MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription
+} from '@angular/material/expansion';
 import {
   MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
@@ -36,6 +38,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { AppSourceFilter, appSourceLabel, appSources } from '@shared/android/app-source';
 import { findDocuments } from '@shared/database/mango-queries';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 import { PlanetLoadingSpinnerComponent } from '@shared/ui/planet-loading-spinner.component';
 import { ListToolbarComponent, ActiveFilter } from '@shared/tables/list-toolbar.component';
 import { reportGenderOptions, ReportGenderValue } from '@shared/demographics/gender.constants';
@@ -97,8 +100,10 @@ interface DateFilterForm {
     MatMenuItem,
     MatTabGroup,
     MatTab,
-    MatGridList,
-    MatGridTile,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
     PlanetLoadingSpinnerComponent,
     MatTable,
     MatColumnDef,
@@ -167,6 +172,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   comparisonTableData: any[] = [];
   comparisonColumns = ['metric', 'week1', 'week2', 'change'];
   reportGenderOptions = reportGenderOptions;
+  readonly isTabletOrSmaller = this.deviceInfoService.isTabletOrSmaller;
   week1Label = $localize`Week 1`;
   week2Label = $localize`Week 2`;
   comparisonData1: any = {};
@@ -192,6 +198,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private usersProfileDialogService: UsersProfileDialogService,
     private fb: NonNullableFormBuilder,
     private planetMessageService: PlanetMessageService,
+    private deviceInfoService: DeviceInfoService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
     this.initDateFilterForm();

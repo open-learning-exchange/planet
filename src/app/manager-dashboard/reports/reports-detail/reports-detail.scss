@@ -1,9 +1,5 @@
 @use '../../../variables' as v;
 
-.subheading {
-  font-weight: bold;
-}
-
 .manager-reports-detail {
   .app-source-toggle {
     flex-wrap: wrap;
@@ -17,20 +13,123 @@
     }
   }
 
-  mat-grid-tile.label figure {
-    justify-content: start;
-    span, a {
-      text-overflow: ellipsis;
+  .reports-summary {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 24px;
+    margin: 3vh 0;
+
+    section {
+      flex: 1 1 300px;
+      min-width: 0;
+    }
+
+    .summary-tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+      gap: 8px;
+      margin: 8px 0 16px;
+    }
+
+    .summary-tile {
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      border: 1px solid v.$medium-grey;
+      border-radius: 8px;
+    }
+
+    .summary-tile-wide {
+      grid-column: span 2;
+    }
+
+    .summary-tile-label {
+      font-size: 12px;
+      color: v.$grey-text;
+    }
+
+    .summary-tile-value {
+      font-size: 28px;
+      line-height: 36px;
+      overflow-wrap: anywhere;
+    }
+
+    .gender-bar {
+      display: flex;
+      height: 8px;
+      margin: 8px 0 6px;
+      border-radius: 4px;
       overflow: hidden;
+    }
+
+    .gender-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      font-size: 12px;
+    }
+
+    .gender-swatch {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 4px;
+      border-radius: 2px;
+    }
+
+    .summary-lists {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+
+    .mat-expansion-panel-header-title {
+      flex: 1 1 auto;
+    }
+
+    .mat-expansion-panel-header-description {
+      flex: 0 1 auto;
+      font-size: 12px;
+      text-align: end;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 1rem minmax(0, 1fr) auto;
+      column-gap: 8px;
+      padding: 4px 0;
+    }
+
+    .summary-rank {
+      font-size: 12px;
+      color: v.$grey-text;
+    }
+
+    .summary-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
-  }
 
-  .reports-table-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-column-gap: 1vw;
-    margin: 3vh 0;
+    button.summary-label {
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      color: inherit;
+      text-align: start;
+      cursor: pointer;
+    }
+
+    .summary-bar {
+      grid-column: 2 / -1;
+      height: 4px;
+      margin-top: 4px;
+      border-radius: 2px;
+      background: v.$primary-light;
+    }
   }
 
   h1 {
@@ -89,17 +188,5 @@
         }
       }
     }
-  }
-}
-
-@media(max-width: #{v.$screen-md}) {
-  mat-button-toggle-group.full-width {
-    mat-button-toggle {
-      flex: 1;
-    }
-  }
-
-  .reports-table-container {
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   }
 }
