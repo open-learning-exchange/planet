@@ -146,14 +146,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     return this.editable && originPlanet === this.planetCode && this.canModifyNews;
   }
 
-  get repliesLabel(): string {
-    return this.hasUnreadReplies ? $localize`View replies, including unread` : $localize`View replies`;
-  }
-
-  get actionsLabel(): string {
-    return this.hasUnreadReplies ? $localize`More actions, unread replies` : $localize`More actions`;
-  }
-
   get canModifyNews(): boolean {
     return this.item.doc.user?.name === this.currentUser.name || this.currentUser.isUserAdmin;
   }
