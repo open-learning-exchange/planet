@@ -18,13 +18,14 @@ describe('ManagerAIServicesComponent', () => {
     { name: 'openai', label: 'OpenAI', configured: true },
     { name: 'deepseek', label: 'DeepSeek', configured: false }
   ];
-  const configurationService = { getKeyStatus: vi.fn(), patchLocalConfiguration: vi.fn() };
+  const configurationService = { getKeyStatus: vi.fn(), patchLocalConfiguration: vi.fn(), reloadGatewayConfiguration: vi.fn() };
   const aiChatService = { providerDiscovery$: new BehaviorSubject<ProviderDiscovery>({ state: 'loading' }), refreshAIProviders: vi.fn() };
   let fixture: ComponentFixture<ManagerAIServicesComponent>;
 
   const createComponent = (configuration: object) => {
     configurationService.getKeyStatus.mockReturnValue(of({ ai: { openai: true, deepseek: false } }));
     configurationService.patchLocalConfiguration.mockReturnValue(of({}));
+    configurationService.reloadGatewayConfiguration.mockReturnValue(of(null));
     aiChatService.providerDiscovery$.next({ state: 'loaded', providers });
     TestBed.configureTestingModule({
       imports: [ ManagerAIServicesComponent ],
@@ -70,6 +71,27 @@ describe('ManagerAIServicesComponent', () => {
       models: { openai: 'gpt-4o', retired: 'old-model', deepseek: 'deepseek-chat' }
     }));
     expect(configuration.models).toEqual({ openai: 'gpt-4o', retired: 'old-model' });
+  });
+
+  it('refreshes the providers once the gateway has reloaded the saved configuration', () => {
+    const component = createComponent({ _id: 'configuration' });
+
+    component.saveConfig();
+
+    expect(configurationService.reloadGatewayConfiguration).toHaveBeenCalledTimes(1);
+    expect(aiChatService.refreshAIProviders).toHaveBeenCalledTimes(2);
+    expect(TestBed.inject(PlanetMessageService).showMessage).toHaveBeenCalled();
+  });
+
+  it('keeps a save the gateway could not reload, and says it applies at the next restart', () => {
+    const component = createComponent({ _id: 'configuration' });
+    configurationService.reloadGatewayConfiguration.mockReturnValue(throwError(() => new Error('Unauthorized')));
+
+    component.saveConfig();
+
+    expect(aiChatService.refreshAIProviders).toHaveBeenCalledTimes(1);
+    expect(TestBed.inject(PlanetMessageService).showAlert).toHaveBeenCalledWith(expect.stringContaining('next restart'));
+    expect(TestBed.inject(Router).navigate).toHaveBeenCalledWith([ '/manager' ]);
   });
 
   it('shows a failed list, and Try again reloads the providers and the failed keys', () => {
