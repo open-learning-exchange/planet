@@ -636,14 +636,16 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
     shareIds.forEach(shareId => this.freshChatPreviews.add(shareId));
+    // A reader change swaps in a new map, so an answer meant for the previous reader lands in the old one
+    const chatPreviews = this.chatPreviews;
     this.aiChatService.sharePreviews(shareIds).subscribe({
       next: previews => shareIds.forEach(shareId => {
-        this.chatPreviews[shareId] = previews[shareId] || null;
+        chatPreviews[shareId] = previews[shareId] || null;
       }),
       error: (error) => shareIds.forEach(shareId => {
         // Signed out on the public community page nothing is readable, so the card says so and isn't asked again
         if (error.status === 401) {
-          this.chatPreviews[shareId] = null;
+          chatPreviews[shareId] = null;
         } else {
           this.freshChatPreviews.delete(shareId);
         }

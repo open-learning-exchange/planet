@@ -506,6 +506,23 @@ describe('NewsListComponent shared chat previews', () => {
     expect(component.chatPreviews).toEqual({});
   });
 
+  it('never shows an answer that was asked for by the previous reader', () => {
+    const component = createComponent([ chatVoice('a') ]);
+    const preview = { title: 'a', turns: [], totalTurns: 1, live: false, sharedDate: 1 };
+    const answer = new Subject<any>();
+    const signedOut = throwError(() => ({ status: 401 }));
+    component.aiChatService = { sharePreviews: vi.fn().mockReturnValueOnce(answer).mockReturnValueOnce(signedOut) };
+    component.router = { events: new Subject() };
+    component.route = { firstChild: null, snapshot: { paramMap: { get: () => null } } };
+    component.ngOnInit();
+    component.loadPagedItems();
+
+    component.userService.userChange$.next();
+    answer.next({ 'share-a': preview });
+
+    expect(component.chatPreviews).toEqual({ 'share-a': null });
+  });
+
   it('marks shares unreadable for a signed-out reader instead of asking again', () => {
     const component = createComponent([ chatVoice('a') ]);
     const sharePreviews = vi.fn().mockReturnValue(throwError(() => ({ status: 401 })));
