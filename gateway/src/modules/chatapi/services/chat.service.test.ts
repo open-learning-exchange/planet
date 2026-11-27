@@ -22,6 +22,7 @@ import { HttpError } from '../../../middleware/errors';
 import { chat, chatNoSave } from './chat.service';
 
 const amara = { 'name': 'amara', 'roles': [ 'learner' ] };
+const share = { 'id': 'share-1', 'audience': { 'type': 'community' }, 'sharedDate': 1 };
 const brianConversation = {
   '_id': 'chat-1',
   '_rev': '1-a',
@@ -97,13 +98,13 @@ describe('chat ownership', () => {
       sentRevisions.push(doc._rev);
       return { 'id': 'chat-1', 'rev': '2-b' };
     });
-    mocks.get.mockResolvedValue({ ...brianConversation, 'user': 'amara', 'shared': true, 'context': { 'type': 'coursestep' } });
+    mocks.get.mockResolvedValue({ ...brianConversation, 'user': 'amara', 'shares': [ share ], 'context': { 'type': 'coursestep' } });
 
     await chat({ 'content': 'And a third?', '_id': 'chat-1', '_rev': '0-stale' }, amara, false);
 
     expect(sentRevisions[0]).toEqual('1-a');
     expect(mocks.insert).toHaveBeenLastCalledWith(expect.objectContaining({
-      'shared': true,
+      'shares': [ share ],
       'title': 'Fractions',
       'context': { 'type': 'coursestep' }
     }));

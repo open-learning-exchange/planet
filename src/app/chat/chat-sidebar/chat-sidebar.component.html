@@ -68,7 +68,7 @@
                 }
               } @else {
                 <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
-                @if (conversation.shared) {
+                @if (conversation.shares?.length) {
                   <button mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
                     <mat-icon>done_all</mat-icon>
                   </button>
@@ -104,6 +104,7 @@
           <mat-icon class="material-icons">{{ drawer.opened && deviceType() !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</mat-icon>
         </button>
       </div>
-      <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
+      <planet-chat-window [isEditing]="isEditing" [hidden]="readingShare"></planet-chat-window>
+      <router-outlet></router-outlet>
     </div>
   </mat-drawer-container>

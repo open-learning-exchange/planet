@@ -102,6 +102,15 @@ describe('NewsListItemComponent read-only behavior', () => {
     expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/teams/view/team-1', { voice: 'message-id' } ]);
   });
 
+  it('links a message on a team opened from myTeams to its thread there', () => {
+    const { component, linkCopyService, router } = createComponent();
+    router.url = '/myDashboard/myTeams/view/team-1';
+
+    component.copyLink({ _id: 'message-id' });
+
+    expect(linkCopyService.copyLink.mock.calls[0][0]).toEqual([ '/myDashboard/myTeams/view/team-1', { voice: 'message-id' } ]);
+  });
+
 });
 
 describe('NewsListItemComponent read-only template', () => {
@@ -230,6 +239,17 @@ describe('NewsListItemComponent label choices', () => {
 
     component.item.doc.messagePlanetCode = 'foreign';
     expect(component.canEditLabels).toBe(false);
+  });
+});
+
+describe('NewsListItemComponent shared chat voices', () => {
+  it('offers no onward share, since the chat\'s share sets who can read it', () => {
+    const component = Object.create(NewsListItemComponent.prototype) as NewsListItemComponent;
+    component.item = { doc: { chat: true, news: { shareId: 'share-1', title: 'Fractions' }, user: { _id: 'author' } } };
+    component.shareTarget = 'community';
+    component.editable = true;
+
+    expect(component.shouldShowShare()).toBe(false);
   });
 });
 

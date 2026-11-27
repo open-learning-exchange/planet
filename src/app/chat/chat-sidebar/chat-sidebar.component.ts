@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, startWith, takeUntil } from 'rxjs/operators';
 import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -60,6 +61,7 @@ interface TitleForm {
     NgTemplateOutlet,
     PlanetLoadingSpinnerComponent,
     ChatWindowComponent,
+    RouterOutlet,
     TruncateTextPipe
   ]
 })
@@ -90,13 +92,16 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   titleForm: Record<string, FormGroup<TitleForm>> = {};
   trackByFn = trackById;
   isLoading = true;
+  readingShare = false;
 
   constructor(
     private chatService: AiChatService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
     private formBuilder: NonNullableFormBuilder,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.lastRenderedConversation = -1;
   }
@@ -106,6 +111,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.getChatHistory();
     this.subscribeToNewChats();
     this.subscribeToAIService();
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd), startWith(null), takeUntil(this.onDestroy$))
+      .subscribe(() => this.readingShare = !!this.route.firstChild);
   }
 
   ngOnDestroy() {
@@ -132,6 +139,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   newChat() {
+    this.leaveShare();
     this.chatService.sendNewChatSelectedSignal();
     this.chatService.setChatAIProvider(undefined);
     this.selectedConversation = null;
@@ -211,7 +219,15 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       );
   }
 
+  // The window stays mounted while a share is open, so it still hears the selection made here
+  private leaveShare() {
+    if (this.readingShare) {
+      this.router.navigate([ '/chat' ]);
+    }
+  }
+
   selectConversation(conversation: Conversation, index: number) {
+    this.leaveShare();
     this.selectedConversation = conversation;
     if (this.selectedConversation?.aiProvider) {
       const aiProvider: AIProvider = {
@@ -292,18 +308,10 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   openShareDialog(conversation) {
-    const dialogRef = this.dialog.open(ChatShareDialogComponent, {
+    this.dialog.open(ChatShareDialogComponent, {
       width: '50vw',
       maxHeight: '90vh',
-      data: {
-        news: conversation,
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.updateConversation(conversation, { shared: true });
-      }
+      data: { conversation }
     });
   }
 }

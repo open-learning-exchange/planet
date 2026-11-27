@@ -1,4 +1,15 @@
+<h2 mat-dialog-title i18n>Share "{{ conversation.title }}"</h2>
 <mat-dialog-content>
+  <mat-radio-group class="share-mode" [(ngModel)]="live" aria-label="What readers see" i18n-aria-label>
+    <mat-radio-button [value]="false">
+      <span i18n>What's here now ({{ messageCount }} chat messages)</span>
+      <span class="share-hint" i18n>Messages you send after sharing stay private</span>
+    </mat-radio-button>
+    <mat-radio-button [value]="true">
+      <span i18n>Keep it updated</span>
+      <span class="share-hint" i18n>Readers also see what you ask next</span>
+    </mat-radio-button>
+  </mat-radio-group>
   <mat-accordion [multi]="false">
     <mat-expansion-panel>
       <mat-expansion-panel-header>
@@ -60,6 +71,25 @@
         </ng-template>
       </mat-expansion-panel>
     </mat-accordion>
+    @if (conversation.shares?.length) {
+      <h3 i18n>Already shared</h3>
+      @for (share of conversation.shares; track share.id) {
+        <div class="share-row">
+          <span>
+            @if (share.audience.type === 'team') {
+              {{ teamNames.get(share.audience.teamId) || teamLabel }}
+            } @else {
+              <ng-container i18n>Community</ng-container>
+            }
+            ·
+            @if (share.turns === undefined) {<ng-container i18n>up to date</ng-container>} @else {<ng-container i18n>{{ share.turns * 2 }} chat messages</ng-container>}
+            · {{ share.sharedDate | timeAgo }}
+          </span>
+          <button mat-stroked-button color="warn" type="button" (click)="stopSharing(share)" i18n>Stop sharing</button>
+        </div>
+      }
+      <p class="share-hint" i18n>A stopped share's card says it may have been unshared. Deleting the voice stops its share too. Sharing again makes a new link.</p>
+    }
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-raised-button mat-dialog-close i18n>Close</button>

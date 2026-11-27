@@ -1,4 +1,4 @@
-import { Subject, of } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DialogGuardService } from '@shared/dialogs/dialog-guard.service';
@@ -31,6 +31,8 @@ const createComponent = (items: any[] = []) => {
   component.newsService = { postSharedWithCommunity: () => true, requestNews: vi.fn() };
   component.dialogsLoadingService = { start: vi.fn(), stop: vi.fn() };
   component.challengesProgressService = { record: vi.fn().mockReturnValue(of(false)) };
+  component.chatPreviews = {};
+  component.freshChatPreviews = new Set<string>();
   return component;
 };
 
@@ -452,5 +454,107 @@ describe('NewsListComponent reply notifications', () => {
 
     expect(sendReplyNotification).not.toHaveBeenCalled();
     expect(component.challengesProgressService.record).not.toHaveBeenCalled();
+  });
+});
+
+describe('NewsListComponent shared chat previews', () => {
+  const chatVoice = (id: string) => ({ _id: id, doc: { chat: true, news: { shareId: `share-${id}`, title: id } } });
+
+  it('asks once per page, even when it reloads before the answer, and marks a share left out as unavailable', () => {
+    const component = createComponent([ chatVoice('a'), { _id: 'b', doc: { message: 'Hello' } }, chatVoice('c') ]);
+    const preview = { title: 'a', turns: [], totalTurns: 1, live: false, sharedDate: 1 };
+    const answer = new Subject<any>();
+    const sharePreviews = vi.fn().mockReturnValue(answer);
+    component.aiChatService = { sharePreviews };
+
+    component.loadPagedItems();
+    component.loadPagedItems();
+    answer.next({ 'share-a': preview });
+
+    expect(sharePreviews).toHaveBeenCalledOnce();
+    expect(sharePreviews).toHaveBeenCalledWith([ 'share-a', 'share-c' ]);
+    expect(component.chatPreviews).toEqual({ 'share-a': preview, 'share-c': null });
+  });
+
+  it('asks again after the voices refresh, keeping the shown preview until the answer arrives', () => {
+    const component = createComponent([ chatVoice('a') ]);
+    const preview = { title: 'a', turns: [], totalTurns: 1, live: true, sharedDate: 1 };
+    const refreshed = { ...preview, totalTurns: 2 };
+    const answer = new Subject<any>();
+    component.aiChatService = { sharePreviews: vi.fn().mockReturnValueOnce(of({ 'share-a': preview })).mockReturnValueOnce(answer) };
+    component.loadPagedItems();
+
+    component.ngOnChanges({ items: {} as any });
+
+    expect(component.chatPreviews['share-a']).toBe(preview);
+    answer.next({ 'share-a': refreshed });
+    expect(component.chatPreviews['share-a']).toBe(refreshed);
+  });
+
+  it('drops the previews shown to the previous reader when the reader changes', () => {
+    const component = createComponent([ chatVoice('a') ]);
+    const preview = { title: 'a', turns: [], totalTurns: 1, live: false, sharedDate: 1 };
+    component.aiChatService = { sharePreviews: vi.fn().mockReturnValueOnce(of({ 'share-a': preview }))
+      .mockReturnValueOnce(throwError(() => new Error('401'))) };
+    component.router = { events: new Subject() };
+    component.route = { firstChild: null, snapshot: { paramMap: { get: () => null } } };
+    component.ngOnInit();
+    component.loadPagedItems();
+
+    component.userService.userChange$.next();
+
+    expect(component.chatPreviews).toEqual({});
+  });
+
+  it('marks shares unreadable for a signed-out reader instead of asking again', () => {
+    const component = createComponent([ chatVoice('a') ]);
+    const sharePreviews = vi.fn().mockReturnValue(throwError(() => ({ status: 401 })));
+    component.aiChatService = { sharePreviews };
+
+    component.loadPagedItems();
+    component.loadPagedItems();
+
+    expect(sharePreviews).toHaveBeenCalledOnce();
+    expect(component.chatPreviews).toEqual({ 'share-a': null });
+  });
+
+  it('asks again for a page whose request failed', () => {
+    const component = createComponent([ chatVoice('a') ]);
+    const sharePreviews = vi.fn().mockReturnValueOnce(throwError(() => new Error('gateway down'))).mockReturnValueOnce(of({}));
+    component.aiChatService = { sharePreviews };
+
+    component.loadPagedItems();
+    component.loadPagedItems();
+
+    expect(sharePreviews).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('NewsListComponent deleting a voice', () => {
+  it('moves the replies only once the voice is deleted', () => {
+    const component = createComponent([ { _id: 'voice-1', doc: { _id: 'voice-1' } } ]);
+    component.replyObject = { 'voice-1': [ { _id: 'reply-1', doc: { _id: 'reply-1', replyTo: 'voice-1' } } ] };
+    const rearrangeRepliesForDelete = vi.fn(() => of({}));
+    const deleteNews = vi.fn(() => throwError(() => ({ status: 502 })));
+    component.newsService = { ...component.newsService, deleteNews, rearrangeRepliesForDelete };
+
+    component.deleteNews({ _id: 'voice-1' }).request.subscribe({ error: () => {} });
+
+    expect(rearrangeRepliesForDelete).not.toHaveBeenCalled();
+  });
+
+  it('refreshes the feed once the replies have moved', () => {
+    const component = createComponent([ { _id: 'voice-1', doc: { _id: 'voice-1' } } ]);
+    component.replyObject = { 'voice-1': [ { _id: 'reply-1', doc: { _id: 'reply-1', replyTo: 'voice-1' } } ] };
+    const moved = new Subject<any>();
+    const requestNews = vi.fn();
+    const rearrangeRepliesForDelete = vi.fn(() => moved);
+    component.newsService = { ...component.newsService, requestNews, deleteNews: vi.fn(() => of({})), rearrangeRepliesForDelete };
+
+    component.deleteNews({ _id: 'voice-1' }).request.subscribe();
+    expect(requestNews).not.toHaveBeenCalled();
+    moved.next({});
+
+    expect(requestNews).toHaveBeenCalledOnce();
   });
 });

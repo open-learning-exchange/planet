@@ -1,6 +1,16 @@
 import { ProviderName } from '../providers/registry';
 import { ChatItem } from './chat.model';
 
+export type ShareAudience = { type: 'community' } | { type: 'team'; teamId: string };
+
+export interface ChatShare {
+  id: string;
+  audience: ShareAudience;
+  // Turns are only appended, so a snapshot is a turn count, not a copy; none means up to date
+  turns?: number;
+  sharedDate: number;
+}
+
 export interface DbDoc {
   _id: string;
   _rev: string;
@@ -11,7 +21,7 @@ export interface DbDoc {
   aiProvider?: ProviderName;
   conversations: ChatItem[];
   context?: any;
-  shared?: boolean;
+  shares?: ChatShare[];
   assistant?: boolean;
 }
 

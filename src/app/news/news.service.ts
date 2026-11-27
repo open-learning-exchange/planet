@@ -6,6 +6,7 @@ import { CouchService } from '@shared/database/couchdb.service';
 import { StateService } from '@shared/state.service';
 import { UserService } from '@shared/auth/user.service';
 import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { AiChatService } from '@shared/ai/ai-chat.service';
 import { findDocuments } from '@shared/database/mango-queries';
 import { dedupeObjectArray, planetAndParentId } from '@shared/utils';
 
@@ -23,7 +24,8 @@ export class NewsService {
     private couchService: CouchService,
     private stateService: StateService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private aiChatService: AiChatService
   ) {}
 
   requestNews({ selectors, viewId } = this.currentOptions) {
@@ -38,7 +40,8 @@ export class NewsService {
         )
       )
     ).subscribe(({ newsItems, avatarMap }) => {
-      this.newsUpdated$.next(newsItems.map((item: any) => (
+      // Chats shared before shares became links copied the whole conversation; they aren't shown
+      this.newsUpdated$.next(newsItems.filter((item: any) => !item.chat || item.news?.shareId).map((item: any) => (
         {
           doc: item,
           sharedDate: this.findShareDate(item, viewId),
@@ -91,16 +94,17 @@ export class NewsService {
   }
 
   deleteNews(post, viewId, deleteFromAllViews = false) {
-    if (deleteFromAllViews) {
-      return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
-    } else {
-      const updatedViewIn = post.viewIn.filter(view => view._id !== viewId);
-      if (updatedViewIn.length === 0) {
-        return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
-      } else {
-        return this.postNews({ ...post, viewIn: updatedViewIn }, $localize`Message deleted`);
-      }
+    const updatedViewIn = deleteFromAllViews ? [] : post.viewIn.filter(view => view._id !== viewId);
+    if (updatedViewIn.length > 0) {
+      return this.postNews({ ...post, viewIn: updatedViewIn }, $localize`Message deleted`);
     }
+    const stopShare = post.chat && post.user?.name === this.userService.get().name ?
+      // Stopped first, so a failure keeps the voice rather than leave the chat readable; a share already gone counts as stopped
+      this.aiChatService.stopSharing(post.news.shareId).pipe(
+        catchError(error => error.status === 404 ? of(undefined) : throwError(error))
+      ) :
+      of(undefined);
+    return stopShare.pipe(switchMap(() => this.postNews({ ...post, _deleted: true }, $localize`Message deleted`)));
   }
 
   createImagesArray(post, message) {

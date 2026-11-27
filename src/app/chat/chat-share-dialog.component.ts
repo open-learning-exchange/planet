@@ -2,8 +2,10 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogClose, MatDialogActions } from '@angular/material/dialog';
-import { forkJoin } from 'rxjs';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogClose, MatDialogActions, MatDialogTitle
+} from '@angular/material/dialog';
+import { forkJoin, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
@@ -15,13 +17,18 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 
 import { CouchService } from '@shared/database/couchdb.service';
 import { UserService } from '@shared/auth/user.service';
 import { ChallengesProgressService } from '@shared/challenges/challenges-progress.service';
 import { FormErrorMessagesComponent } from '@shared/forms/form-error-messages.component';
+import { AiChatService } from '@shared/ai/ai-chat.service';
+import { PlanetMessageService } from '@shared/ui/planet-message.service';
+import { TimeAgoPipe } from '@shared/text/time-ago.pipe';
 
 import { NewsService } from '../news/news.service';
+import { ChatShare, Conversation } from './chat.model';
 import { TeamsService } from '../teams/teams.service';
 import { TeamsComponent } from '../teams/teams.component';
 
@@ -37,11 +44,7 @@ interface CommunityForm {
 
 @Component({
   templateUrl: './chat-share-dialog.component.html',
-  styles: [`
-    .mat-expansion-panel {
-      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
-    }
-  `],
+  styleUrls: [ './chat-share-dialog.component.scss' ],
   imports: [
     CdkScrollable,
     MatDialogContent,
@@ -65,15 +68,22 @@ interface CommunityForm {
     TeamsComponent,
     MatError,
     FormErrorMessagesComponent,
-    MatDialogActions
+    MatDialogActions,
+    MatDialogTitle,
+    MatRadioGroup,
+    MatRadioButton,
+    TimeAgoPipe
   ]
 })
 export class ChatShareDialogComponent implements OnInit {
   user = this.userService.get();
-  conversation: any;
+  conversation: Conversation;
+  live = false;
   teamInfo: any;
   membersInfo: any;
   excludeIds: any[] = [];
+  teamNames = new Map<string, string>();
+  teamLabel = $localize`Team`;
   showForm: boolean;
   teamForm: FormGroup<TeamForm>;
   communityForm: FormGroup<CommunityForm>;
@@ -94,8 +104,14 @@ export class ChatShareDialogComponent implements OnInit {
     private teamsService: TeamsService,
     private userService: UserService,
     private challengesProgressService: ChallengesProgressService,
+    private aiChatService: AiChatService,
+    private planetMessageService: PlanetMessageService
   ) {
-    this.conversation = data || this.conversation;
+    this.conversation = data.conversation;
+  }
+
+  get messageCount() {
+    return this.conversation.conversations.length * 2;
   }
 
   ngOnInit() {
@@ -149,13 +165,37 @@ export class ChatShareDialogComponent implements OnInit {
   }
 
   compareTeams(allTeams, userTeams) {
+    this.teamNames = new Map(allTeams.map(team => [ team._id, team.name ]));
     const difference = allTeams.filter(team => !userTeams.some(userTeam => userTeam.teamId === team._id));
     this.excludeIds = [ ...this.excludeIds, ...difference.map(team => team._id) ];
   }
 
-  sendNotifications(type, members, teamType) {
+  sendNotifications(type, members) {
+    const section = this.teamInfo.type === 'enterprise' ? 'enterprises' : 'teams';
     return this.teamsService.sendNotifications(type, members, {
-      url: `${teamType}/view/${this.teamInfo._id}`, team: { ...this.teamInfo }
+      url: `/${section}/view/${this.teamInfo._id}`, team: { ...this.teamInfo }
+    });
+  }
+
+  private share(audience: { audience: 'community' } | { audience: 'team', teamId: string }): Observable<{ chat: true, news: object }> {
+    return this.aiChatService.shareConversation(this.conversation._id, audience, this.live).pipe(
+      map((share: ChatShare) => {
+        this.conversation.shares = [ ...(this.conversation.shares || []), share ];
+        return { chat: true, news: { shareId: share.id, title: this.conversation.title } };
+      })
+    );
+  }
+
+  private shareFailed() {
+    this.planetMessageService.showAlert($localize`There was a problem sharing this chat.`);
+  }
+
+  stopSharing(share: ChatShare) {
+    this.aiChatService.stopSharing(share.id).subscribe({
+      next: () => {
+        this.conversation.shares = this.conversation.shares.filter(({ id }) => id !== share.id);
+      },
+      error: () => this.planetMessageService.showAlert($localize`There was a problem stopping this share.`)
     });
   }
 
@@ -164,39 +204,34 @@ export class ChatShareDialogComponent implements OnInit {
       return;
     }
 
-    const team = this.teamForm.getRawValue();
-    this.conversation.message = team.message ? team.message : '</br>';
-    const { linkId, teamType } = team;
-
+    const { message, linkId, teamType } = this.teamForm.getRawValue();
     this.getTeam(linkId).pipe(
       switchMap((teamData) => {
         this.teamInfo = teamData;
-        return this.getTeamMembers(teamData);
-      })
-    ).subscribe((membersData) => {
-      this.conversation.chat = true;
-      this.newsService.postNews({
-        viewIn: [ { _id: linkId, section: 'teams', public: false } ],
+        return forkJoin([ this.share({ audience: 'team', teamId: linkId }), this.getTeamMembers(teamData) ]);
+      }),
+      switchMap(([ chatVoice, membersData ]) => this.newsService.postNews({
+        viewIn: [ { _id: linkId, section: 'teams', public: false, name: this.teamInfo.name, mode: this.teamInfo.type } ],
         messageType: teamType,
-        messagePlanetCode: this.teamInfo.planetCode,
-        ...this.conversation
+        messagePlanetCode: this.teamInfo.teamPlanetCode,
+        message: message || '</br>',
+        ...chatVoice
       }, $localize`Chat has been shared to ${this.teamInfo.type} ${this.teamInfo.name}`).pipe(
-        switchMap(() => this.sendNotifications('message', membersData, teamType)),
-      ).subscribe();
-    });
+        switchMap(() => this.sendNotifications('message', membersData))
+      ))
+    ).subscribe({ error: () => this.shareFailed() });
     this.interact();
   }
 
   shareWithCommunity() {
-    if (this.communityForm.valid) {
-      const message = this.communityForm.controls.message.value;
-      this.conversation.message = message ? { text: message, images: [] } : { text: '</br>', images: [] };
-    }
-    this.conversation.chat = true;
-    this.interact();
-    this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).pipe(
+    const message = this.communityForm.controls.message.value;
+    this.share({ audience: 'community' }).pipe(
+      switchMap((chatVoice) => this.newsService.shareNews(
+        { message: { text: message || '</br>', images: [] }, ...chatVoice }, null, $localize`Chat has been successfully shared to community`
+      )),
       switchMap(() => this.challengesProgressService.record('voice_post'))
-    ).subscribe();
+    ).subscribe({ error: () => this.shareFailed() });
+    this.interact();
   }
 
   interact() {

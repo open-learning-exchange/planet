@@ -16,11 +16,31 @@ export interface Conversation {
   createdDate: number;
   updatedDate: number;
   aiProvider?: ProviderName;
-  shared?: boolean;
+  shares?: ChatShare[];
   context?: any;
 }
 
-export type ConversationChange = { title: string } | { shared: true };
+export interface ConversationChange {
+  title: string;
+}
+
+export type ShareAudience = { type: 'community' } | { type: 'team', teamId: string };
+
+export interface ChatShare {
+  id: string;
+  audience: ShareAudience;
+  // Missing on a live share
+  turns?: number;
+  sharedDate: number;
+}
+
+export interface SharedChat {
+  title: string;
+  turns: Pick<Message, 'query' | 'response'>[];
+  totalTurns: number;
+  live: boolean;
+  sharedDate: number;
+}
 
 export interface Message {
   id: string;

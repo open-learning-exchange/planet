@@ -67,13 +67,39 @@
   </mat-card-header>
   <mat-card-content>
     <div>
-      <planet-markdown class="img-resize" [content]="item.doc.message" [previewMode]="showLess" [limit]="previewLimit"></planet-markdown>
+      <!-- A share without a note is posted with '</br>' as its message -->
+      @if (item.doc.message !== '</br>') {
+        <planet-markdown class="img-resize" [content]="item.doc.message" [previewMode]="showLess" [limit]="previewLimit"></planet-markdown>
+      }
       @if (item.doc.chat) {
         <div class="chat-container">
-          @for (conversation of (showLess ? (item.doc.news.conversations | slice:0:1) : item.doc.news.conversations); track conversation) {
-            <div>
-              <planet-markdown class="conversation-query" [content]="conversation.query" profile="chat"></planet-markdown>
-              <planet-markdown [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [content]="conversation.response" profile="chat"></planet-markdown>
+          <div class="chat-share-body">
+            <strong class="chat-share-title">{{ chatPreview?.title || item.doc.news.title }}</strong>
+            @if (item.doc.createdOn !== planetCode) {
+              <p class="chat-share-note" i18n>This chat lives on Planet {{ item.doc.createdOn }}. Open it from there.</p>
+            } @else if (chatPreview) {
+              @for (turn of chatPreview.turns; track $index) {
+                <planet-markdown class="conversation-query" [content]="turn.query" profile="chat"></planet-markdown>
+                <planet-markdown class="conversation-response" [content]="turn.response" profile="chat"></planet-markdown>
+              }
+            } @else if (chatPreview === null) {
+              <p class="chat-share-note" i18n>This chat isn't shared with you, or it may have been unshared.</p>
+            }
+          </div>
+          @if (item.doc.createdOn === planetCode && chatPreview) {
+            <div class="chat-share-open">
+              <mat-icon class="small-icon">lock</mat-icon>
+              <span i18n>Read-only</span>
+              @if (chatPreview.live) {
+                <span class="chat-share-kind live" i18n>Up to date</span>
+              } @else {
+                <span class="chat-share-kind" i18n>Snapshot</span>
+              }
+              @if (moreChatMessages > 0) {
+                <span i18n>· {{ moreChatMessages }} more chat messages</span>
+              }
+              <span class="toolbar-fill"></span>
+              <a mat-stroked-button [routerLink]="[ '/chat/shared', item.doc.news.shareId ]" [state]="chatReturnState" i18n>Open chat</a>
             </div>
           }
         </div>
