@@ -52,6 +52,7 @@ $planet-green-dark: mat.m2-get-color-from-palette($planet-app-green, $dark-hue);
 // shades are the established low-emphasis fill (chips, table highlights, selected
 // states); pair them with these rather than inventing a new tint.
 $primary-lighter-text: mat.m2-get-color-from-palette($planet-app-primary, 900);
+$planet-green-lighter-text: mat.m2-get-color-from-palette($planet-app-green, 900);
 $accent-lighter-text: color.adjust($accent, $lightness: -30%);
 
 // Backgrounds for generated member initials, picked by hashing the name. A fixed set

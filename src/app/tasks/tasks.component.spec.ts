@@ -8,6 +8,7 @@ import { UserService } from '@shared/auth/user.service';
 import { CouchService } from '@shared/database/couchdb.service';
 import { DialogsFormService } from '@shared/dialogs/dialogs-form.service';
 import { StateService } from '@shared/state.service';
+import { DeviceInfoService } from '@shared/ui/device-info.service';
 
 import { TasksComponent } from './tasks.component';
 import { TasksService } from './tasks.service';
@@ -29,7 +30,7 @@ describe('TasksComponent', () => {
   let dialog: { open: ReturnType<typeof vi.fn> };
   let usersProfileDialogService: { open: ReturnType<typeof vi.fn> };
   let notificationsService: { sendNotificationToUser: ReturnType<typeof vi.fn> };
-  let planetMessageService: { showAlert: ReturnType<typeof vi.fn> };
+  let planetMessageService: { showAlert: ReturnType<typeof vi.fn>, showMessage: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     taskUpdates = new Subject<any[]>();
@@ -49,7 +50,7 @@ describe('TasksComponent', () => {
     dialog = { open: vi.fn() };
     usersProfileDialogService = { open: vi.fn() };
     notificationsService = { sendNotificationToUser: vi.fn().mockReturnValue(of({})) };
-    planetMessageService = { showAlert: vi.fn() };
+    planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
     component = new TasksComponent(
       tasksService as any as TasksService,
       planetMessageService as any as PlanetMessageService,
@@ -59,7 +60,8 @@ describe('TasksComponent', () => {
       dialog as any as MatDialog,
       usersProfileDialogService as any as UsersProfileDialogService,
       {} as DialogsFormService,
-      notificationsService as any as NotificationsService
+      notificationsService as any as NotificationsService,
+      { isTabletOrSmaller: () => false } as any as DeviceInfoService
     );
     component.link = { teams: 'team-1' };
   });
@@ -88,7 +90,7 @@ describe('TasksComponent', () => {
 
     taskUpdates.next([ task ]);
 
-    expect(component.taskViews[0].assignee).toBe(currentMember);
+    expect(component.taskViews[0].assignees[0]).toBe(currentMember);
     expect(task).toEqual({
       _id: 'task-1',
       assignee: {
@@ -111,7 +113,7 @@ describe('TasksComponent', () => {
 
     taskUpdates.next([ task ]);
 
-    expect(component.taskViews[0].assignee).toBe(snapshot);
+    expect(component.taskViews[0].assignees[0]).toBe(snapshot);
   });
 
   it('keeps the stored snapshot when the matching current member is not enriched', () => {
@@ -130,7 +132,7 @@ describe('TasksComponent', () => {
 
     taskUpdates.next([ { _id: 'task-1', assignee: snapshot } ]);
 
-    expect(component.taskViews[0].assignee).toBe(snapshot);
+    expect(component.taskViews[0].assignees[0]).toBe(snapshot);
   });
 
   it('refreshes a local member avatar when their image appears', () => {
@@ -149,12 +151,12 @@ describe('TasksComponent', () => {
     component.ngOnInit();
     taskUpdates.next([ { _id: 'task-1', assignee: snapshot } ]);
 
-    expect(component.taskViews[0].assignee).toBe(resolvedMember);
-    expect(component.taskViews[0].avatarAttachment).toBeUndefined();
+    expect(component.taskViews[0].assignees[0]).toBe(resolvedMember);
+    expect(component.taskViews[0].avatars[0].attachment).toBeUndefined();
 
     component.assignees = [ { ...resolvedMember, userDoc: { doc: { _attachments: { img: { digest: 'md5-current' } } } } } ];
 
-    expect(component.taskViews[0].avatarAttachment).toEqual({ digest: 'md5-current' });
+    expect(component.taskViews[0].avatars[0].attachment).toEqual({ digest: 'md5-current' });
   });
 
   it('separates My Tasks ownership for same-id users on different planets', () => {
@@ -259,7 +261,7 @@ describe('TasksComponent', () => {
     taskUpdates.next([ task ]);
 
     expect(component.myTasks).toEqual([ task ]);
-    expect(component.taskViews[0].assignee).toBe(task.assignee);
+    expect(component.taskViews[0].assignees[0]).toBe(task.assignee);
   });
 
   it('refreshes a remote member avatar digest whenever member data refreshes', () => {
@@ -278,10 +280,10 @@ describe('TasksComponent', () => {
     component.ngOnInit();
     taskUpdates.next([ task ]);
 
-    expect(component.filteredTaskViews[0].avatarAttachment).toEqual({ digest: 'md5-old' });
+    expect(component.filteredTaskViews[0].avatars[0].attachment).toEqual({ digest: 'md5-old' });
 
     component.assignees = [ member('md5-new') ];
-    expect(component.filteredTaskViews[0].avatarAttachment).toEqual({ digest: 'md5-new' });
+    expect(component.filteredTaskViews[0].avatars[0].attachment).toEqual({ digest: 'md5-new' });
   });
 
   it('rebuilds the task view when a task is reassigned', () => {
@@ -307,7 +309,7 @@ describe('TasksComponent', () => {
         userPlanetCode: firstMember.userPlanetCode
       }
     } ]);
-    expect(component.filteredTaskViews[0].assignee).toBe(firstMember);
+    expect(component.filteredTaskViews[0].assignees[0]).toBe(firstMember);
 
     taskUpdates.next([ {
       _id: 'task-1',
@@ -316,7 +318,7 @@ describe('TasksComponent', () => {
         userPlanetCode: secondMember.userPlanetCode
       }
     } ]);
-    expect(component.filteredTaskViews[0].assignee).toBe(secondMember);
+    expect(component.filteredTaskViews[0].assignees[0]).toBe(secondMember);
   });
 
   it('can notify a remote assignee without a local user document', () => {
@@ -372,7 +374,7 @@ describe('TasksComponent', () => {
 
     taskUpdates.next([ { _id: 'legacy-task', assignee: snapshot } ]);
 
-    expect(component.taskViews[0].assignee).toBe(snapshot);
+    expect(component.taskViews[0].assignees[0]).toBe(snapshot);
   });
 
   it('deduplicates shelf and membership entries while keeping same-id remote members', () => {
@@ -399,7 +401,7 @@ describe('TasksComponent', () => {
     const task = { _id: 'task-1', _rev: '1-a', assignee: '', assignees: [] };
     const member = { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a', name: 'other' };
     component.tasks = [ task ];
-    component.filter = 'all';
+    component.onlyMine = false;
 
     component.toggleAssignee(task, member);
     expect(component.taskViews[0].assignees).toHaveLength(1);
@@ -464,7 +466,7 @@ describe('TasksComponent', () => {
     expect(notificationsService.sendNotificationToUser).not.toHaveBeenCalled();
   });
 
-  it('filters task views when switching between filter modes', () => {
+  it('groups task views by status, showing only my tasks until switched off', () => {
     component.ngOnInit();
     taskUpdates.next([
       {
@@ -480,23 +482,73 @@ describe('TasksComponent', () => {
         assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' }
       }
     ]);
+    const groupIds = () => component.taskGroups.map(({ taskViews }) => taskViews.map(({ task }) => task._id));
 
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
+    expect(groupIds()).toEqual([ [ 'owned' ], [], [] ]);
 
-    component.setFilter('all');
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned', 'other-progress', 'other-done' ]);
+    component.setOnlyMine(false);
+    expect(groupIds()).toEqual([ [ 'owned' ], [ 'other-progress' ], [ 'other-done' ] ]);
+  });
 
-    component.setFilter('to_do');
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
+  it('switches myTasks off when no task is mine, and for anyone who cannot edit', () => {
+    component.ngOnInit();
+    taskUpdates.next([
+      { _id: 'other', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' } }
+    ]);
 
-    component.setFilter('in_progress');
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'other-progress' ]);
+    expect(component.onlyMine).toBe(false);
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'other' ]);
 
-    component.setFilter('completed');
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'other-done' ]);
+    component.onlyMine = true;
+    component.editable = false;
+    taskUpdates.next([
+      { _id: 'owned', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' } },
+      { _id: 'other', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' } }
+    ]);
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned', 'other' ]);
+  });
 
-    component.setFilter('self');
-    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
+  it('turns myTasks off after creating a task, which starts unassigned', () => {
+    vi.spyOn(component, 'openAddDialog').mockImplementation((_fields, _task, onSuccess) => onSuccess({}));
+    component.ngOnInit();
+    taskUpdates.next([
+      { _id: 'owned', status: 'to_do', completed: false, assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' } }
+    ]);
+    expect(component.onlyMine).toBe(true);
+
+    component.addTask();
+    expect(component.onlyMine).toBe(false);
+  });
+
+  it('stops following task updates once destroyed', () => {
+    component.ngOnInit();
+    component.ngOnDestroy();
+    taskUpdates.next([ { _id: 'task-1', status: 'to_do', completed: false } ]);
+
+    expect(component.tasks).toEqual([]);
+  });
+
+  it('saves the column status when a task is dropped on the board, but not when released outside it', () => {
+    const task = { _id: 'task-1', status: 'to_do', completed: false };
+    component.dropTask({ item: { data: task }, container: { data: 'completed' }, isPointerOverContainer: false } as any);
+    expect(tasksService.setTaskStatus).not.toHaveBeenCalled();
+
+    component.dropTask({ item: { data: task }, container: { data: 'completed' }, isPointerOverContainer: true } as any);
+    expect(tasksService.setTaskStatus).toHaveBeenCalledWith(task, 'completed');
+  });
+
+  it('shows a new status while it saves and puts the old one back if the save fails', () => {
+    const save = new Subject<any>();
+    tasksService.setTaskStatus.mockReturnValueOnce(save);
+    component.ngOnInit();
+    taskUpdates.next([ { _id: 'task-1', _rev: '1-a', status: 'to_do', completed: false } ]);
+    const groupIds = () => component.taskGroups.map(({ taskViews }) => taskViews.map(({ task }) => task._id));
+
+    component.setTaskStatus(component.tasks[0], 'completed');
+    expect(groupIds()).toEqual([ [], [], [ 'task-1' ] ]);
+
+    save.error(new Error('409'));
+    expect(groupIds()).toEqual([ [ 'task-1' ], [], [] ]);
   });
 
   it('saves the chosen status and ignores the current one', () => {
@@ -597,6 +649,7 @@ describe('TasksComponent read-only template', () => {
           useValue: { get: vi.fn().mockReturnValue({ _id: assignees[0].userId, planetCode: 'planet-a' }) }
         },
         { provide: StateService, useValue: { configuration: { code: 'planet-a' } } },
+        { provide: DeviceInfoService, useValue: { isTabletOrSmaller: () => false } },
         { provide: CouchService, useValue: { datePlaceholder: 0 } },
         { provide: MatDialog, useValue: dialog },
         { provide: UsersProfileDialogService, useValue: { open: vi.fn() } },
