@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -84,7 +84,7 @@ export class PlanetStepListItemComponent {
   templateUrl: './planet-step-list.component.html',
   styleUrls: ['./planet-step-list.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [MatNavList, NgClass, MatListItem, NgTemplateOutlet, MatButton, MatIcon]
+  imports: [MatNavList, NgClass, MatListItem, NgTemplateOutlet, MatIconButton, MatIcon, MatTooltip]
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
